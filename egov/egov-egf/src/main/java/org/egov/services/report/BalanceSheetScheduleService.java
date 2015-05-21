@@ -53,6 +53,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.report.Statement;
@@ -77,7 +78,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 		majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF,"coa_majorcode_length"));
 		Date fromDate = balanceSheetService.getFromDate(balanceSheet);
 		Date toDate = balanceSheetService.getToDate(balanceSheet);
-		CChartOfAccounts coa = null;////This fix is for Phoenix Migration.(CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
+		CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
 		List<Fund> fundList = balanceSheet.getFunds();
 		populateCurrentYearAmountForSchedule(balanceSheet,fundList,balanceSheetService.getFilterQuery(balanceSheet),toDate,fromDate,majorCode,coa.getType());
 		addCurrentOpeningBalancePerFund(balanceSheet, fundList,balanceSheetService.getTransactionQuery(balanceSheet));
@@ -96,7 +97,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 	public void addCurrentOpeningBalancePerFund(Statement balanceSheet,List<Fund> fundList,String transactionQuery) {
 		BigDecimal divisor = balanceSheet.getDivisor();
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("addCurrentOpeningBalancePerFund");
-		Query query = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+balanceSheet.getFinancialYear().getId()+transactionQuery+" GROUP BY ts.fundid,coa.glcode,coa.type");
+		Query query = HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+balanceSheet.getFinancialYear().getId()+transactionQuery+" GROUP BY ts.fundid,coa.glcode,coa.type");
 		List<Object[]> openingBalanceAmountList = query.list();
 		for(Object[] obj :openingBalanceAmountList){
 			if(obj[0]!=null && obj[1]!=null){
@@ -129,10 +130,10 @@ public class BalanceSheetScheduleService extends ScheduleService{
 	public void addOpeningBalanceForPreviousYear(Statement balanceSheet,String transactionQuery,Date fromDate) {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("addOpeningBalanceForPreviousYear");
 		BigDecimal divisor = balanceSheet.getDivisor();
-		FinancialYearHibernateDAO finYrHibernate=new FinancialYearHibernateDAO(CFinancialYear.class,null);//This fix is for Phoenix Migration.
+		FinancialYearHibernateDAO finYrHibernate=new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
 		CFinancialYear prevFinanciaYr = finYrHibernate.getPreviousFinancialYearByDate(fromDate);
 		String prevFinancialYrId=prevFinanciaYr.getId().toString();
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+prevFinancialYrId+transactionQuery+" GROUP BY coa.glcode,coa.type");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+prevFinancialYrId+transactionQuery+" GROUP BY coa.glcode,coa.type");
 		List<Object[]> openingBalanceAmountList = query.list();
 		for(Object[] obj :openingBalanceAmountList){
 			if(obj[0]!=null && obj[1]!=null){
@@ -156,7 +157,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 
 
 	private String getGlcodeForPurposeCode7() {
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select glcode from chartofaccounts where purposeid=7");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select glcode from chartofaccounts where purposeid=7");
 		List list = query.list();
 		String glCode = "";
 		if(list.get(0) != null)
@@ -166,7 +167,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 	
 	
 	private String getGlcodeForPurposeCode7MinorCode() {
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select substr(glcode,0,"+minorCodeLength+") from chartofaccounts where purposeid=7");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select substr(glcode,0,"+minorCodeLength+") from chartofaccounts where purposeid=7");
 		List list = query.list();
 		String glCode = "";
 		if(list.get(0) != null)
@@ -175,7 +176,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 	}
 	/*For Detailed*/
 	private String getGlcodeForPurposeCode7DetailedCode() {
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select substr(glcode,0,"+detailCodeLength+") from chartofaccounts where purposeid=7");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select substr(glcode,0,"+detailCodeLength+") from chartofaccounts where purposeid=7");
 		List list = query.list();
 		String glCode = "";
 		if(list.get(0) != null)
@@ -205,7 +206,7 @@ public class BalanceSheetScheduleService extends ScheduleService{
 				"' and c.glcode in (select distinct coad.glcode from chartofaccounts coa2, schedulemapping s " +
 				",chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = 'BS'" +
 				" and coa2.glcode=SUBSTR(coad.glcode,0,"+minorCodeLength+") and coad.classification=4 and coad.majorcode='"+majorCode+"')  and c.majorcode='"+majorCode+"' and c.classification=4 "+filterQuery+ " group by c.glcode");
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());
 		List<Object[]> result = query.list();
 		for (Object[] row : result) {  
 			for (int index = 0; index < balanceSheet.size(); index++) {

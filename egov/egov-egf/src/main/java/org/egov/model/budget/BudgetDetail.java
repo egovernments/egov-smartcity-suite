@@ -291,10 +291,10 @@ public class BudgetDetail extends StateAware {
 				: budgetReAppropriations;
 		for (BudgetReAppropriation entry : budgetReAppropriations) {
 
-			if (true/*Constants.END.equalsIgnoreCase(entry.getState().getValue())
+			if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
 					&& !entry.getStatus().getDescription()
 							.equalsIgnoreCase("Cancelled")
-					&& entry.getState().getCreatedDate().before(asOnDate)*/) {//This fix is for Phoenix Migration.
+					&& entry.getState().getCreatedDate().isBefore(Long.parseLong(asOnDate.toString()))) {
 				if (entry.getAdditionAmount() != null
 						&& !BigDecimal.ZERO.equals(entry.getAdditionAmount()))
 					total = total.add(entry.getAdditionAmount());

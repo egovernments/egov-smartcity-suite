@@ -57,6 +57,7 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -67,6 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BudgetAppropriationService extends PersistenceService{
 	private FinancialYearDAO financialYearDAO;
 	private BudgetDetailsDAO budgetDetailsDAO;
+	private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
 	//private GenericDaoFactory genericDao;
 	
 	public void setBudgetDetailsDAO(BudgetDetailsDAO budgetDetailsDAO) {
@@ -118,7 +120,7 @@ public class BudgetAppropriationService extends PersistenceService{
 	}
 	
 	private boolean isBudgetCheckNeeded(CChartOfAccounts coa){
-    	List<AppConfigValues> list = null;//This fix is for Phoenix Migration. genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","budgetCheckRequired");
+    	List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey("EGF","budgetCheckRequired");
     	boolean checkReq=false;
     	if("Y".equalsIgnoreCase(((AppConfigValues)list.get(0)).getValue())){
 			if(null!=coa &&  null!= coa.getBudgetCheckReq() &&  coa.getBudgetCheckReq()){	
@@ -299,9 +301,15 @@ public class BudgetAppropriationService extends PersistenceService{
 		return soFarAppropriated;
 	}
 
-/*	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
+	public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
+		return appConfigValuesHibernateDAO;
 	}
-*/
+
+	public void setAppConfigValuesHibernateDAO(
+			AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
+		this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
+	}
+
+
 }
 

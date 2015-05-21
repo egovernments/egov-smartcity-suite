@@ -226,7 +226,7 @@ public class ContingentBillAction extends BaseBillAction {
 			if(LOGGER.isInfoEnabled())     LOGGER.info(c.getGlcode());
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("netPayList............................."+netPayList.size());
-		//This fix is for Phoenix Migration. getSession().put("netPayList", netPayList);
+		getSession().put("netPayList", netPayList);
 	}
 	@SuppressWarnings("unchecked")
 	@SkipValidation	      

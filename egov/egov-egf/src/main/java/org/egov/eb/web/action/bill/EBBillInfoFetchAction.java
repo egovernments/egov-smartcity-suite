@@ -85,6 +85,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
@@ -150,7 +151,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 	private Accountdetailtype accDetailType; 
 	private CChartOfAccounts coaDebit;
 	private SequenceGenerator sequenceGenerator;
-	
+	private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
 	private EBBillInfoService billInfoService;
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 	private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -439,7 +440,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 			}
 
 			if (nextUser != null) {
-				//addActionMessage(" File is forwared successfully  " + nextUser.getUserMaster().getUserName());
+				addActionMessage(" File is forwared successfully  " + nextUser.getUserMaster().getUsername());
 			}
 
 		} else if (actionNm.equalsIgnoreCase("cancel")) {
@@ -476,8 +477,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 
 			}
 			if (createdUser != null) {
-				//This fix is for Phoenix Migration.
-				//addActionMessage(getText("File is rejected Sent back to " + createdUser.getUserName()));
+				addActionMessage(getText("File is rejected Sent back to " + createdUser.getUsername()));
 			}
 		}
 		
@@ -535,7 +535,6 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		EBDetails eBDetail=ebDetailsService.find("from EBDetails where id = ? ",ebDetail.getId());
 		eBDetail.setStatus(getCancelledStatus());            
 		ebDetailsService.persist(eBDetail);
-		//This fix is for Phoenix Migration.
 		if (LOGGER.isDebugEnabled()) LOGGER.debug("Exiting from cancel");
 		
 		return "viewMessage";
@@ -697,21 +696,16 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		egBillRegister.setBilltype(FinancialConstants.STANDARD_BILLTYPE_FINALBILL);
 
 		egBillregistermis.setEgBillregister(egBillRegister);
-		//This fix is for Phoenix Migration.
-		List<AppConfigValues> appConfigPayTo ; /*GenericDaoFactory
-				.getDAOFactory()
-				.getAppConfigValuesDAO()
+		List<AppConfigValues> appConfigPayTo = appConfigValuesHibernateDAO
 				.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
-						EBConstants.APPCONFIG_KEY_NMAE_PAYTO);*/
-		//This fix is for Phoenix Migration.
-		/*if (appConfigPayTo == null || appConfigPayTo.isEmpty()) {
+						EBConstants.APPCONFIG_KEY_NMAE_PAYTO);
+		if (appConfigPayTo == null || appConfigPayTo.isEmpty()) {
 			errorMsg = "Pay to is not configured...";
 			if (isDebugEnabled) LOGGER.debug(errorMsg);
 			throw new ValidationException(Arrays.asList(new ValidationError(errorMsg, errorMsg)));
 		}
 		
 		egBillregistermis.setPayto(appConfigPayTo.get(0).getValue());
-*/
 		EgBillSubType egBillSutType =(EgBillSubType) HibernateUtil.getCurrentSession()
 				.createQuery("from EgBillSubType where name = :name and expenditureType = :expType")
 				.setString("name", EBConstants.BILL_SUB_TYPE_NAME)
@@ -1043,4 +1037,14 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 	public void setEbSchedulerLogService(EbSchedulerLogService ebSchedulerLogService) {
 		this.ebSchedulerLogService = ebSchedulerLogService;
 	}
+
+	public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
+		return appConfigValuesHibernateDAO;
+	}
+
+	public void setAppConfigValuesHibernateDAO(
+			AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
+		this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
+	}
+	
 }

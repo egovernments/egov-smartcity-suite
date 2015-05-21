@@ -49,11 +49,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Persistence;
+
 import org.apache.log4j.Logger;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
@@ -67,7 +70,7 @@ import org.hibernate.type.BooleanType;
  *
  */
 @SuppressWarnings("unchecked")
-public class FundFlowService  {
+public class FundFlowService extends PersistenceService {
 	private static Logger LOGGER=Logger.getLogger(FundFlowService.class);
 	SimpleDateFormat sqlformat=new SimpleDateFormat("dd-MMM-yyyy");
 	final String START_FINANCIALYEAR_DATE="01-Apr-2012";
@@ -369,8 +372,8 @@ public BigDecimal	getBankBalance(Long bankaccountId,Date asPerDate, Long bankAcc
 	{
 		throw new ValidationException(Arrays.asList(new ValidationError("bankaccount.id.is.null","BankAccountId is not provided")));
 	}
-	//This fix is for Phoenix Migration.setType(FundFlowBean.class);
-	 FundFlowBean fundFlowBean=null;//This fix is for Phoenix Migration.(FundFlowBean) this.find("from FundFlowBean where bankAccountId=? and to_date(reportDate)=?",BigDecimal.valueOf(bankaccountId),asPerDate);
+	setType(FundFlowBean.class);
+	 FundFlowBean fundFlowBean=(FundFlowBean) this.find("from FundFlowBean where bankAccountId=? and to_date(reportDate)=?",BigDecimal.valueOf(bankaccountId),asPerDate);
 	//Means Report is not Generated
 	 if(fundFlowBean==null)
 	 {

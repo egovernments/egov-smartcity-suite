@@ -891,30 +891,23 @@ public class InstrumentService {
 
 		PersistenceService<InstrumentHeader, Long> iHeaderService = new PersistenceService<InstrumentHeader, Long>();
 		iHeaderService.setType(InstrumentHeader.class);
-		//This fix is for Phoenix Migration.iHeaderService.setSessionFactory(new SessionFactory());
 		this.setInstrumentHeaderService(iHeaderService);
 		PersistenceService<InstrumentVoucher, Long> iVoucherService = new PersistenceService<InstrumentVoucher, Long>();
 		iVoucherService.setType(InstrumentVoucher.class);
-		//This fix is for Phoenix Migration.iVoucherService.setSessionFactory(new SessionFactory());
 		this.setInstrumentVouherService(iVoucherService);
 		PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService = new PersistenceService<InstrumentOtherDetails, Long>();
 		iOtherDetailsService.setType(InstrumentOtherDetails.class);
-		//This fix is for Phoenix Migration.iOtherDetailsService.setSessionFactory(new SessionFactory());
 		this.setInstrumentOtherDetailsService(iOtherDetailsService);
 		PersistenceService persistenceService = new PersistenceService();
-		//This fix is for Phoenix Migration.persistenceService.setSessionFactory(new SessionFactory());
 		this.setPersistenceService(persistenceService);
 		PersistenceService<InstrumentType, Long> iTypeService = new PersistenceService<InstrumentType, Long>();
 		iTypeService.setType(InstrumentType.class);
-		//This fix is for Phoenix Migration.iTypeService.setSessionFactory(new SessionFactory());
 		this.setInstrumentTypeService(iTypeService);
 		PersistenceService<InstrumentAccountCodes, Long> iAccountCodeService = new PersistenceService<InstrumentAccountCodes, Long>();
 		iAccountCodeService.setType(InstrumentAccountCodes.class);
-		//This fix is for Phoenix Migration.iAccountCodeService.setSessionFactory(new SessionFactory());
 		this.setInstrumentAccountCodesService(iAccountCodeService);
 		PersistenceService<Bankreconciliation, Integer> bankreconciliationService = new PersistenceService<Bankreconciliation, Integer>();
 		bankreconciliationService.setType(Bankreconciliation.class);
-		//This fix is for Phoenix Migration.bankreconciliationService.setSessionFactory(new SessionFactory());
 		this.setBankreconciliationService(bankreconciliationService);
 
 	}

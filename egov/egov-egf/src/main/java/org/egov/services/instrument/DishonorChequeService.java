@@ -67,7 +67,7 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
 		// Get cheque creator details                     
 		
 		if(null == dishonorCheque.getState()){                     
-			Position pos = null;//This fix is for Phoenix Migration.eisService.getPrimaryPositionForUser(dishonorCheque.getPayinSlipCreator(),new Date());
+			Position pos = eisService.getPrimaryPositionForUser(dishonorCheque.getPayinSlipCreator().longValue(),new Date());
 			if(LOGGER.isDebugEnabled())
 			LOGGER.error(pos.getName()+""+pos.getId());  
 			//TODO call the updateSourceInstrumentVoucher here

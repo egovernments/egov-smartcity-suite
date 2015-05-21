@@ -502,7 +502,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 			{
 				// A financial Year can have multiple fiscalPeriod  so comparing previous and new financial year id 
 				CFiscalPeriod fiscalPeriod= (CFiscalPeriod) persistenceService.find(" from CFiscalPeriod where id=?", Long.valueOf(fiscalPeriodIdStr));
-				String financialYearId = null;//This fix is for Phoenix Migration.financialYearDAO.getFinancialYearId(Constants.DDMMYYYYFORMAT2.format(existingVH.getVoucherDate()));
+				String financialYearId = financialYearDAO.getFinancialYearId(Constants.DDMMYYYYFORMAT2.format(existingVH.getVoucherDate()));
 				CFinancialYear financialYear = (CFinancialYear) financialYearDAO.getFinancialYearById(Long.valueOf(financialYearId));
 				if( existingVH.getFiscalPeriodId().equals(voucherHeader.getFiscalPeriodId()) && fiscalPeriod.getFinancialYearId().longValue()==financialYear.getId().longValue()){
 				String vDate = Constants.DDMMYYYYFORMAT2.format(voucherHeader.getVoucherDate());
@@ -603,12 +603,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 				 for (VoucherDetails subledgerDetails: subLedgerlist) {
 					 
 					 String detailGlCode = subledgerDetails.getGlcode().getId().toString();
-					 /*if(null!=voucherHeader.getIsRestrictedtoOneFunctionCenter() && voucherHeader.getIsRestrictedtoOneFunctionCenter()){
+					 if(null!=voucherHeader.getIsRestrictedtoOneFunctionCenter() && voucherHeader.getIsRestrictedtoOneFunctionCenter()){
 					
 					  detailedFunc = voucherHeader.getFunctionId().toString();
 					 }else{
 						  detailedFunc = subledgerDetails.getFunctionDetail();
-					 }*///This fix is for Phoenix Migration.
+					 }
 					 String detailtypeid = subledgerDetails.getDetailType().getId().toString();
 					 if(glcodeId.equals(detailGlCode) && (repeatedglCodes.contains(glcodeId)?accDetailFunc.equals(detailedFunc):true)){
 						 TransaxtionParameter reqData=new TransaxtionParameter();
@@ -960,7 +960,7 @@ public List<EmployeeView>  getUserByDeptAndDesgName(String departmentId,String d
 	paramMap.put("departmentId",departmentId);
 	paramMap.put("designationId", designationId);
 	paramMap.put("functionaryId",functionaryId);
-	List<EmployeeView> empInfoList = null;//This fix is for Phoenix Migration. eisService.getEmployeeInfoforPosition(paramMap); 
+	List<EmployeeView> empInfoList = eisService.getEmployeeInfoList(paramMap); 
 	return empInfoList;
 }
 /**

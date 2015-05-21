@@ -45,18 +45,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.report.Statement;
@@ -84,7 +84,7 @@ public class BalanceSheetService extends ReportService{
 	}
 	public void addCurrentOpeningBalancePerFund(Statement balanceSheet,List<Fund> fundList,String transactionQuery) {
 		BigDecimal divisor = balanceSheet.getDivisor();
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+balanceSheet.getFinancialYear().getId()+transactionQuery+" GROUP BY ts.fundid,coa.majorcode,coa.type");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+balanceSheet.getFinancialYear().getId()+transactionQuery+" GROUP BY ts.fundid,coa.majorcode,coa.type");
 		List<Object[]> openingBalanceAmountList = query.list();
 		for(Object[] obj :openingBalanceAmountList){
 			if(obj[0]!=null && obj[1]!=null){
@@ -120,7 +120,7 @@ public class BalanceSheetService extends ReportService{
 		FinancialYearHibernateDAO finYrHibernate=new FinancialYearHibernateDAO(CFinancialYear.class,null);
 		CFinancialYear prevFinancialYr=finYrHibernate.getPreviousFinancialYearByDate(fromDate);
 		String prevFinancialYearId = prevFinancialYr.getId().toString();
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+prevFinancialYearId+transactionQuery+" GROUP BY coa.majorcode,coa.type");
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID  AND ts.financialyearid="+prevFinancialYearId+transactionQuery+" GROUP BY coa.majorcode,coa.type");
 		List<Object[]> openingBalanceAmountList = query.list();
 		for(Object[] obj :openingBalanceAmountList){
 			if(obj[0]!=null && obj[1]!=null){
@@ -156,7 +156,7 @@ public class BalanceSheetService extends ReportService{
 				if(balanceSheet.getDepartment()!=null && balanceSheet.getDepartment().getId()!=-1)
 					qry.append(" and v.id= mis.voucherheaderid  and mis.departmentid= "+balanceSheet.getDepartment().getId());	
 				qry.append(" and coa.ID=g.glcodeid and coa.type in ('I','E') "+filterQuery+" group by v.fundid");
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());  
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());  
 		List<Object[]> excessieAmountList = query.list();
 		for (StatementEntry entry : balanceSheet.getEntries()) {
 			if(entry.getGlCode()!=null && glCodeForExcessIE.equals(entry.getGlCode())){
@@ -197,7 +197,7 @@ public class BalanceSheetService extends ReportService{
 			qry.append(" and v.id= mis.voucherheaderid");	
 				
 		qry.append(" and coa.type in ('I','E') "+filterQuery+" group by v.fundid");
-		Query query =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());   
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery(qry.toString());   
 		List<Object[]> excessieAmountList = query.list();
 		for(Object[] obj :excessieAmountList){
 			sum = sum.add((BigDecimal) obj[0]);

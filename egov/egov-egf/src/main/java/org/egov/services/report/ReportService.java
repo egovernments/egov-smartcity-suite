@@ -317,7 +317,7 @@ public abstract class ReportService  {
 		CFinancialYear financialYear = null;
 		if ("Date".equalsIgnoreCase(statement.getPeriod())
 				&& statement.getAsOndate() != null) {
-			String financialYearId = null;//This fix is for Phoenix Migration.financialYearDAO.getFinancialYearId(getFormattedDate(statement.getAsOndate()));
+			String financialYearId = financialYearDAO.getFinancialYearId(getFormattedDate(statement.getAsOndate()));
 			financialYear = (CFinancialYear) financialYearDAO
 					.getFinancialYearById(Long.valueOf(financialYearId));
 			statement.setFinancialYear(financialYear);

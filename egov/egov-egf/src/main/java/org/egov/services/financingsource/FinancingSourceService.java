@@ -47,6 +47,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.Fundsource;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
@@ -69,7 +70,7 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
 	public List<Fundsource> getFinancialSourceBasedOnSubScheme(Integer subSchemeId){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("FinancingSourceService | getFinancialSourceBasedOnSubScheme | Start ");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Received sub scheme id = "+ subSchemeId);
-		Criteria criteria = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
+		Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
 		criteria.add(Restrictions.eq("isactive", true));
 		if(!subSchemeId.equals(-1)){
 			Criterion subschmeNull = Restrictions.isNull("subSchemeId");
@@ -86,7 +87,7 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
 	public List<Fundsource> getListOfSharedFinancialSource(){
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("FinancingSourceService | getListOfSharedFinancialSource | Start ");
-		Criteria criteria =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
+		Criteria criteria =HibernateUtil.getCurrentSession().createCriteria(Fundsource.class);
 		criteria.add(Restrictions.eq("isactive", true));
 		criteria.add(Restrictions.isNull("subSchemeId"));
 		criteria.addOrder(Order.asc("name"));

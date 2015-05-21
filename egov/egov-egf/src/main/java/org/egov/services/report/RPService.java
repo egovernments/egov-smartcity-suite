@@ -54,7 +54,7 @@ import org.egov.web.actions.report.StatementResultObject;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 
-public class RPService  {
+public class RPService  extends ScheduleService{
 	
 	final static Logger	LOGGER	= Logger.getLogger(RPService.class);
 	
@@ -86,11 +86,11 @@ public class RPService  {
 	
 	public String getConditionalQuery(CFinancialYear finId, Statement statement){
 		StringBuffer query=new StringBuffer();
-		/*if(statement.getPeriod().equals("Yearly")){
+		if(statement.getPeriod().equals("Yearly")){
 			query.append(" and vh.voucherdate between '"+getFormattedDate(finId.getStartingDate())+"' And '"+getFormattedDate(finId.getEndingDate())+"'");
 		}else if(statement.getPeriod().equals("Date Range")){
 			query.append(" and vh.voucherdate between '"+getFormattedDate(statement.getFromDate())+"' And '"+getFormattedDate(statement.getToDate())+"'");
-		}*///This fix is for Phoenix Migration.
+		}
 		if(statement.getFund()!=null && statement.getFund().getId() != null && statement.getFund().getId() !=0){
 			query.append(" AND rpmap.is_consolidated = 0 and rpmap.fund_code = '"+statement.getFund().getCode()+"'");
 		}else{

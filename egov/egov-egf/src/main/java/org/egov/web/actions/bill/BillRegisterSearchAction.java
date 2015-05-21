@@ -61,6 +61,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
@@ -248,7 +249,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 			{
 				newGLDList = new ArrayList<Object[]>();
 				toIndex += step;  
-				 Query ownerNamesQuery = null;//This fix is for Phoenix Migration. HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
+				 Query ownerNamesQuery =  HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
 				 ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
 				 newGLDList = ownerNamesQuery.list();
 				 fromIndex = toIndex;
@@ -266,7 +267,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 				newGLDList = new ArrayList<Object[]>();
 				fromIndex = toIndex;
 				toIndex = fromIndex+size;
-				Query ownerNamesQuery = null;//This fix is for Phoenix Migration. HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
+				Query ownerNamesQuery =  HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
 				ownerNamesQuery.setParameterList("IDS", stateIds.subList(fromIndex, toIndex));
 				newGLDList = ownerNamesQuery.list();
 				if(newGLDList!=null)
@@ -278,7 +279,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
 		}else
 		{
-			Query ownerNamesQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
+			Query ownerNamesQuery = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
 			ownerNamesQuery.setParameterList("IDS",stateIds);
 			ownerNamesList = ownerNamesQuery.list();
 		}

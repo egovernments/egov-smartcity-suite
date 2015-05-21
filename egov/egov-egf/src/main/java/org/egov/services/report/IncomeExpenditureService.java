@@ -46,20 +46,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.egov.commons.Fund;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.web.actions.report.IEStatementEntry;
-import org.egov.web.actions.report.ReportSearch;
 import org.egov.web.actions.report.Statement;
-import org.egov.web.actions.report.StatementEntry;
 import org.egov.web.actions.report.StatementResultObject;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
 public class IncomeExpenditureService extends ReportService{
@@ -511,7 +507,7 @@ inner:	for(StatementResultObject stm:budgetForMajorCodes)
 		
 		queryStr.append(" order by 1");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("query is "+queryStr.toString());
-		SQLQuery budgteQuery =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+		SQLQuery budgteQuery =HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
 		budgteQuery.addScalar("glCode").addScalar("amount").setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		budgteQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())
 		.setString("isBeRe", "RE");
@@ -544,7 +540,7 @@ inner:	for(StatementResultObject stm:budgetForMajorCodes)
 
 		queryStr.append(" order by 1 asc");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("query is "+queryStr.toString());
-		SQLQuery budgteReappQuery =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
+		SQLQuery budgteReappQuery =HibernateUtil.getCurrentSession().createSQLQuery(queryStr.toString());
 		budgteReappQuery.addScalar("glCode").addScalar("amount").setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		budgteReappQuery.setLong("finYearId", incomeExpenditureStatement.getFinancialYear().getId())
 		.setString("isBeRe", "RE");

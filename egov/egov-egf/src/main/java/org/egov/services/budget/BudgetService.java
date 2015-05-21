@@ -310,11 +310,6 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 		this.budgetDetailWorkflowService = budgetDetailWorkflowService;
 	}
 	
-	public User getUserForPosition (Integer posId, Date date) {
-		String query = "select 	emp.userMaster  from org.egov.pims.model.EmployeeView emp where emp.position.id = ? and ((emp.toDate is null and emp.fromDate <= ? ) OR (emp.fromDate <= ? AND emp.toDate > ?))";
-		User user =null;;//This fix is for Phoenix Migration.= (User) super.find(query, posId, date, date, date);
-		return user;
-	}
 	
 	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
 		PersonalInformation pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());

@@ -51,11 +51,12 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
-import org.hibernate.type.*;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 
@@ -111,7 +112,7 @@ public class LoanGrantService extends PersistenceService {
 					schemeUtilSql.append(" ORDER by ss.name, pc.code,vh.voucherdate ");
 		}
 		String schemeUtilSqlQry=schemeUtilSql.toString();
-		SQLQuery schemeUtilQry =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(schemeUtilSqlQry);
+		SQLQuery schemeUtilQry =HibernateUtil.getCurrentSession().createSQLQuery(schemeUtilSqlQry);
 		schemeUtilQry.addScalar("subScheme").addScalar("code").addScalar("voucherNumber").addScalar("voucherDate").addScalar("amount", BigDecimalType.INSTANCE)
 				.addScalar("id", LongType.INSTANCE).setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		
@@ -278,7 +279,7 @@ public class LoanGrantService extends PersistenceService {
 		if (subSchemeId != null)
 			sql.append(" and lgd.agencyId= " + agencyId);
 		sql.append(" ) order by  voucherNumber,detailType desc,detailKey");
-		SQLQuery gcSql =null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(sql.toString());
+		SQLQuery gcSql =HibernateUtil.getCurrentSession().createSQLQuery(sql.toString());
 		if(LOGGER.isInfoEnabled())     LOGGER.info("sql:  " + sql.toString());
 		gcSql.addScalar("voucherNumber").addScalar("code").addScalar("amount", BigDecimalType.INSTANCE).addScalar("agencyAmount", BigDecimalType.INSTANCE)
 				.addScalar("detailKey", IntegerType.INSTANCE).addScalar("detailType", IntegerType.INSTANCE).setResultTransformer(
@@ -417,8 +418,8 @@ public class LoanGrantService extends PersistenceService {
 	 */
 	private BigDecimal getLoanPaidSoFar(Integer schemeId, Long agencyId) {
 		 BigDecimal amount=BigDecimal.ZERO;
-		SQLQuery query =null;/*//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select amount as amount from egf_loan_paid where schemeid="+
-			 schemeId+" and agencyid="+agencyId);*/
+		SQLQuery query =HibernateUtil.getCurrentSession().createSQLQuery("select amount as amount from egf_loan_paid where schemeid="+
+			 schemeId+" and agencyid="+agencyId);
 	 	query.addScalar("amount",BigDecimalType.INSTANCE)
 	 		 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 	 	List<LoanGrantBean> list = query.list();

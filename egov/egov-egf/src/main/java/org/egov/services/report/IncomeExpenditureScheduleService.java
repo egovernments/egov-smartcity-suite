@@ -40,8 +40,6 @@
 package org.egov.services.report;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,14 +49,11 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.web.actions.report.IEStatementEntry;
 import org.egov.web.actions.report.Statement;
 import org.egov.web.actions.report.StatementEntry;
-import org.egov.web.actions.report.StatementResultObject;
-
 import org.hibernate.Query;
 
 public class IncomeExpenditureScheduleService extends ScheduleService{
@@ -77,7 +72,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService{
 		Date fromDate = incomeExpenditureService.getFromDate(statement);
 		Date toDate = incomeExpenditureService.getToDate(statement);
 		String filterQuery=incomeExpenditureService.getFilterQuery(statement);
-		CChartOfAccounts coa = null;//This fix is for Phoenix Migration. (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
+		CChartOfAccounts coa =(CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
 		populateCurrentYearAmountForDetail(statement,toDate,fromDate,majorCode,coa.getType(),filterQuery);
 		incomeExpenditureService.removeFundsWithNoDataIE(statement);
 		computeAndAddScheduleTotals(statement);
@@ -110,12 +105,12 @@ public class IncomeExpenditureScheduleService extends ScheduleService{
 			formattedToDate = incomeExpenditureService.getFormattedDate(fromDate);
 		else
 			formattedToDate = incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(toDate));
-		Query query =null;/*//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery("select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from " +
+		Query query =HibernateUtil.getCurrentSession().createSQLQuery("select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from " +
 				"generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in"+fundId +
 				" and v.id=g.voucherheaderid " +
 				" and c.id=g.glcodeid and v.status not in("+voucherStatusToExclude+")  AND v.voucherdate < '"+formattedToDate+"' and v.voucherdate >='"+
 				incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(fromDate))+"'"+majorCodeQuery+
-				filterQuery+" group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type");*/
+				filterQuery+" group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type");
 		if(LOGGER.isInfoEnabled())     LOGGER.info("prevoius year to Date="+formattedToDate+" and from Date="+incomeExpenditureService.getPreviousYearFor(fromDate));
 		return query;
 	}
@@ -321,7 +316,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService{
 		BigDecimal preAmount = BigDecimal.ZERO;
 		String fundId=incomeExpenditureService.getfundList(statement.getFunds());
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Getting All ledger codes ..");
-		List<Object[]> AllLedger =null;//This fix is for Phoenix Migration. HibernateUtil.getCurrentSession().createSQLQuery("select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode="+majorCode+" and coa.classification=4 and coa.type='"+type+"'  order by coa.glcode").list();
+		List<Object[]> AllLedger =HibernateUtil.getCurrentSession().createSQLQuery("select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode="+majorCode+" and coa.classification=4 and coa.type='"+type+"'  order by coa.glcode").list();
 		List<Object[]> previousLedgerBalance= populatePreviousYearTotals(statement,toDate,fromDate,majorCode,filterQuery,fundId).list();
 		List<Object[]> allGlCodes =  getAllGlCodesForSubSchedule(majorCode,type,IE); // for schedule name AND MINOR code
 		

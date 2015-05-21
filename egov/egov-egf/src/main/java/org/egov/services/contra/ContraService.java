@@ -69,6 +69,7 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -363,7 +364,6 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		
 		 PersistenceService<AppConfig, Integer> appConfigSer;
 		 appConfigSer = new PersistenceService<AppConfig, Integer>();
-		//This fix is for Phoenix Migration. appConfigSer.setSessionFactory(new SessionFactory());
 		 appConfigSer.setType(AppConfig.class);
 		
 		 AppConfig appConfig= (AppConfig) appConfigSer.find("from AppConfig where key_name =?", "PREAPPROVEDVOUCHERSTATUS");
@@ -517,7 +517,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		String ioSql = "update EGF_INSTRUMENTOTHERDETAILS set PAYINSLIPID=:payinId,INSTRUMENTSTATUSDATE=:ihStatusDate," +
 				       " LASTMODIFIEDBY=:modifiedBy, LASTMODIFIEDDATE =:modifiedDate where INSTRUMENTHEADERID=:ihId";
 
-		SQLQuery ioSQLQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+		SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
 		ioSQLQuery.setLong("payinId", (Long)instrumentDetailsMap.get("payinid"))
 		          .setLong("ihId", (Long)instrumentDetailsMap.get("instrumentheader"))
 		          .setDate("ihStatusDate",(Date)instrumentDetailsMap.get("depositdate") )
@@ -528,7 +528,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		String ihSql = "update EGF_instrumentheader  set ID_STATUS=:statusId,BANKACCOUNTID=:bankAccId,LASTMODIFIEDBY=:modifiedBy,"
 				     + " LASTMODIFIEDDATE =:modifiedDate where id=:ihId";
 
-		SQLQuery ihSQLQuery =null;//This fix is for Phoenix Migration. HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
+		SQLQuery ihSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
 		ihSQLQuery.setLong("statusId",(Long)instrumentDetailsMap.get("instrumentDepositedStatus"))
 		          .setLong("ihId", (Long)instrumentDetailsMap.get("instrumentheader"))
 		          .setInteger("bankAccId",(Integer)instrumentDetailsMap.get("bankaccountid"))
@@ -552,7 +552,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	throws EGOVRuntimeException {
 		String brsSql=	"Insert into bankreconciliation (ID,BANKACCOUNTID,AMOUNT,TRANSACTIONTYPE,INSTRUMENTHEADERID) values " +
         				" (seq_bankreconciliation.nextVal,:bankAccId,:amount,:trType,:ihId)";
-		SQLQuery brsSQLQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(brsSql);
+		SQLQuery brsSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(brsSql);
 		
 		brsSQLQuery.setInteger("bankAccId",(Integer)instrumentDetailsMap.get("bankaccountid"))
 					.setBigDecimal("amount",(BigDecimal)instrumentDetailsMap.get("instrumentamount") )
@@ -568,7 +568,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		String ioSql=	"update EGF_instrumentOtherdetails set reconciledamount=:reconciledAmt,INSTRUMENTSTATUSDATE=:ihStatusDate,LASTMODIFIEDBY=:modifiedBy," +
         " LASTMODIFIEDDATE =:modifiedDate where INSTRUMENTHEADERID=:ihId";
 
-		SQLQuery ioSQLQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+		SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
 		ioSQLQuery.setLong("ihId", (Long)instrumentDetailsMap.get("instrumentheader"))
 				  .setBigDecimal("reconciledAmt",(BigDecimal)instrumentDetailsMap.get("instrumentamount") )
 				  .setDate("ihStatusDate", (Date)instrumentDetailsMap.get("depositdate"))
@@ -578,7 +578,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		
 		String ihSql=	"update EGF_instrumentheader  set ID_STATUS=:statusId,LASTMODIFIEDBY=:modifiedBy," +
         				" LASTMODIFIEDDATE =:modifiedDate where id=:ihId";
-		SQLQuery ihSQLQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
+		SQLQuery ihSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ihSql);
 		ihSQLQuery.setLong("statusId",(Long)instrumentDetailsMap.get("instrumentReconciledStatus"))
 				  .setLong("ihId", (Long)instrumentDetailsMap.get("instrumentheader"))
 				  .setDate("modifiedDate", new Date())
@@ -593,7 +593,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		 String ioSql=	"Insert into contrajournalvoucher (ID,VOUCHERHEADERID,FROMBANKACCOUNTID,TOBANKACCOUNTID,INSTRUMENTHEADERID"+
 		 				" ,STATE_ID,CREATEDBY,LASTMODIFIEDBY) values "+
 		 				" (seq_contrajournalvoucher.nextVal,:vhId,null,:depositedBankId,:ihId,null,:createdBy,:createdBy)";
-		 SQLQuery ioSQLQuery =null;//This fix is for Phoenix Migration. HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
+		 SQLQuery ioSQLQuery = HibernateUtil.getCurrentSession().createSQLQuery(ioSql);
 		 ioSQLQuery.setLong("vhId",(Long)instrumentDetailsMap.get("payinid"))
 		 	       	.setLong("ihId", (Long)instrumentDetailsMap.get("instrumentheader"))
 		 	       	.setLong("depositedBankId", (Integer)instrumentDetailsMap.get("bankaccountid"))

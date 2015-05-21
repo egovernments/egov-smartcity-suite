@@ -47,7 +47,6 @@ public class RemittancePersistenceService  extends PersistenceService<EgRemittan
 public RemittancePersistenceService() {
 		super();
 		setType(EgRemittance.class);
-		//This fix is for Phoenix Migration.setSessionFactory(new SessionFactory());
 		// TODO Auto-generated constructor stub
 	}
 

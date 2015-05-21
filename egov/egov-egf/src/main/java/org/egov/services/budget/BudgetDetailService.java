@@ -71,9 +71,11 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -89,12 +91,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
-//This fix is for Phoenix Migration.
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long>{
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
     private GenericHibernateDaoFactory genericDao;
     private ScriptService scriptExecutionService;
+    private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
     PersistenceService persistenceService;
     private static final Logger LOGGER=Logger.getLogger(BudgetDetailService.class);
 
@@ -160,7 +162,7 @@ criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value","NEW"));
         if(detail.getBudget()!=null && detail.getBudget().getId()!=0l){
             Map<String, Object> map = new HashMap<String, Object>();
             addCriteriaExcludingBudget(detail, map);
-            Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(BudgetDetail.class);
+            Criteria criteria =getSession().createCriteria(BudgetDetail.class);
             addBudgetDetailCriteria(map, criteria);
             return criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", type)).list();
         }
@@ -216,18 +218,18 @@ criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value","NEW"));
     }
 
     private Budget findBudget(Budget budget) {
-        return (Budget)null;//HibernateUtil.getCurrentSession().load(Budget.class, budget.getId());
+        return (Budget)getSession().load(Budget.class, budget.getId());
     }
 
 
     public List<Budget> findBudgetsForFY(Long financialYear) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+        Criteria criteria =getSession().createCriteria(Budget.class);
         return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true)).list();
     }
 
     public List<Budget> findApprovedBudgetsForFY(Long financialYear) {
         if(LOGGER.isDebugEnabled())     LOGGER.debug("starting findApprovedBudgetsForFY...");
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+        Criteria criteria =getSession().createCriteria(Budget.class);
         return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true))
             .addOrder(Property.forName("name").asc())
             .createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.value","END"))
@@ -235,18 +237,18 @@ criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value","NEW"));
     }
 
     public List<Budget> findBudgetsForFYWithNewState(Long financialYear) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+        Criteria criteria =getSession().createCriteria(Budget.class);
         criteria.createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.value","NEW"));
         return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true)).list();
     }
 
     public List<Budget> findPrimaryBudgetForFY(Long financialYear) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+        Criteria criteria =getSession().createCriteria(Budget.class);
         return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true)).add(Restrictions.isNull("parent")).list();
     }
 
     public Budget findApprovedPrimaryParentBudgetForFY(Long financialYear) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+        Criteria criteria =getSession().createCriteria(Budget.class);
         List<Budget> budgetList = criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", "RE"))
 .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
 .add(Restrictions.isNull("parent"))
@@ -254,7 +256,7 @@ criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value","NEW"));
                                     .createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.value","END"))
                                     .list();
         if(budgetList.isEmpty()){
-            Criteria c =null;//HibernateUtil.getCurrentSession().createCriteria(Budget.class);
+            Criteria c =getSession().createCriteria(Budget.class);
             budgetList =  c.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", "BE"))
                             .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
                             .add(Restrictions.isNull("parent"))
@@ -302,7 +304,7 @@ criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value","NEW"));
 
     private Criteria constructCriteria(BudgetDetail example) {
         Map<String, Object> map = createCriteriaMap(example);
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(BudgetDetail.class);
+        Criteria criteria =getSession().createCriteria(BudgetDetail.class);
         addBudgetDetailCriteria(map, criteria);
         return criteria;
 
@@ -338,7 +340,7 @@ criteria.add(Restrictions.isNull(criterion.getKey()));
     	}
 
     public void checkForDuplicates(BudgetDetail detail) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(BudgetDetail.class);
+        Criteria criteria =getSession().createCriteria(BudgetDetail.class);
         Map<String, Object> map = new HashMap<String, Object>();
         addCriteriaExcludingBudget(detail, map);
         addBudgetDetailCriteriaIncudingNullRestrictions(map, criteria);
@@ -412,7 +414,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
     }
 
     public List<BudgetDetail> getRemainingDetailsForApproveOrReject(Budget budget) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(BudgetDetail.class);
+        Criteria criteria =getSession().createCriteria(BudgetDetail.class);
         //criteria.createCriteria("materializedPath", "state").add(Restrictions.eq("state.value","NEW"));
 criteria.createCriteria(Constants.BUDGET,Constants.BUDGET).add(Restrictions.eq("budget.id",budget.getId()));
         return criteria.list();
@@ -420,7 +422,7 @@ criteria.createCriteria(Constants.BUDGET,Constants.BUDGET).add(Restrictions.eq("
     }
     public List<BudgetDetail> getRemainingDetailsForSave(
             Budget budget,Position currPos) {
-        Criteria criteria =null;//HibernateUtil.getCurrentSession().createCriteria(BudgetDetail.class);
+        Criteria criteria =getSession().createCriteria(BudgetDetail.class);
         criteria.createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.owner",currPos));
 criteria.createCriteria(Constants.BUDGET,Constants.BUDGET).add(Restrictions.eq("budget.id",budget.getId()));
         return criteria.list();
@@ -490,7 +492,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 "vouchermis vmis,"+budgetGroupQuery+",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and " +
                 "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("+voucherstatusExclude+") and " +
                         "vh.voucherDate>= to_date('"+fromDate+"','dd/MM/yyyy') and vh.voucherDate <= to_date("+toVoucherDate+",'dd/MM/yyyy') "+miscQuery+" and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) group by bd.id");
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isDebugEnabled())     LOGGER.debug("Finished fetchActualsForFY"+fromDate );
         return result;
     }
@@ -582,7 +584,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         */
 
     //    if(LOGGER.isDebugEnabled())     LOGGER.debug("Query for fetchActualsForFY "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchActualsForFY "+result.size()+"      "+query.toString());
         if(LOGGER.isInfoEnabled()) LOGGER.info("==============================================================================================" );
         return result;
@@ -672,7 +674,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         */
 
     //    if(LOGGER.isDebugEnabled())     LOGGER.debug("Query for fetchActualsForFY "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchActualsForFY "+result.size()+"      "+query.toString());
         if(LOGGER.isInfoEnabled()) LOGGER.info("==============================================================================================" );
         return result;
@@ -694,7 +696,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         String functionCondition = "";
         if(function!=null)
             functionCondition = " and gl.functionId="+function.getId();
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
         if(list.isEmpty())
             throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
         String voucherstatusExclude = ((AppConfigValues)list.get(0)).getValue();
@@ -738,7 +740,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " AND bd.budgetgroup      =bg.id AND (bg.ACCOUNTTYPE     ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND vh.status NOT      IN ("+voucherstatusExclude+") AND vh.fundId           =bd.fund "+functionCondition+"" +
                 " AND vmis.departmentid   =bd.executing_department and bd.executing_department =" +dept.getId()+" AND gl.glcodeid         = bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndActuals......."+query.toString());
 
         return result;
@@ -772,7 +774,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd.budget=b.id AND f.id="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd.budgetgroup=bg.id AND (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND bd.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndName..........."+query.toString());
 
         return result;
@@ -809,7 +811,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b1.financialyearid="+topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndBEAmount");
 
         return result;
@@ -829,7 +831,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b1.financialyearid="+topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' and b2.isbere='BE' AND bd2.budgetgroup =bg.id  " +
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd1.state_id = wf.id GROUP BY bd2.uniqueno");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchUniqueNoAndBEAmount");
 
         return result;
@@ -877,7 +879,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " OR bg.ACCOUNTTYPE           ='CAPITAL_RECEIPTS') AND cao.id                  =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode           IS NULL AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+" "+functionCondition1+" AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+"" +
                 " "+functionCondition2+" AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner                 ="+pos.getId()+") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndAppropriation");
 
         return result;
@@ -898,7 +900,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " AND cao.id                  =bg.mincode AND cao.id                  =bg.maxcode AND bg.majorcode           IS NULL AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+" "+functionCondition1+" AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+"" +
                 " "+functionCondition2+" AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner                 ="+pos.getId()+") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY bd2.uniqueno");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchUniqueNoAndApprAmount");
 
         return result;
@@ -928,7 +930,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         query = query.append("SELECT cao.majorcode, SUM(bd.anticipatory_amount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf" +
                 " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndAnticipatory");
 
         return result;
@@ -958,7 +960,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         query = query.append("SELECT cao.majorcode, SUM(bd.originalamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf" +
                 " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndOriginalAmount");
 
         return result;
@@ -995,7 +997,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndBENextYr");
 
         return result;
@@ -1025,7 +1027,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         query = query.append("SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf" +
                 " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndApprovedAmount");
 
         return result;
@@ -1062,7 +1064,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+"%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="+pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
         */
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndBENextYrApproved");
 
         return result;
@@ -1085,7 +1087,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="+financialYear.getId()+" AND b.financialyearid="+financialYear.getId()+" AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" +budgetingType+"'"+excludeDept+
                 " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.value='END' AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndName");
 
         return result;
@@ -1121,7 +1123,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+" AND vh.status NOT      IN ("+voucherstatusExclude+") AND vh.fundId           =bd.fund AND gl.functionid = bd.function " +
                 " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid         =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode       IS NULL AND wf.value='END' AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndActuals");
 
         return result;
@@ -1144,7 +1146,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="+financialYear.getId()+" AND b1.financialyearid="+financialYear.getId()+" AND b2.financialyearid="+financialYear.getId()+"  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.value='END' AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled()) LOGGER.info("------------------------------------------------------------------------------------------------------");
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndBEAmount"+query.toString());
         if(LOGGER.isInfoEnabled()) LOGGER.info("------------------------------------------------------------------------------------------------------");
@@ -1167,7 +1169,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         query = query.append("SELECT cao.majorcode, SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf" +
                 " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="+financialYear.getId()+" AND b.financialyearid="+financialYear.getId()+" AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+" AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.value='END' AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndApprovedAmount");
 
         return result;
@@ -1190,7 +1192,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="+financialYear.getId()+" AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.value='END' AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchMajorCodeAndBENextYrApproved");
 
         return result;
@@ -1212,7 +1214,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="+financialYear.getId()+" AND b.financialyearid="+financialYear.getId()+" AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" +budgetingType+"'"+excludeDept+
                 " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.value='END' AND bd.state_id = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchGlCodeAndNameForReport");
 
         return result;
@@ -1248,7 +1250,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+" AND vh.status NOT      IN ("+voucherstatusExclude+") AND vh.fundId           =bd.fund AND gl.functionid = bd.function " +
                 " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid         =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode       IS NULL AND wf.value='END' AND bd.state_id = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchActualsForReport");
 
         return result;
@@ -1271,7 +1273,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="+financialYear.getId()+" AND b1.financialyearid="+financialYear.getId()+" AND b2.financialyearid="+financialYear.getId()+"  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.value='END' AND bd1.state_id = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled()) LOGGER.info("------------------------------------------------------------------------------------------------------");
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchGlCodeAndBEAmountForReport"+query.toString());
         if(LOGGER.isInfoEnabled()) LOGGER.info("------------------------------------------------------------------------------------------------------");
@@ -1294,7 +1296,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         query = query.append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf" +
                 " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="+financialYear.getId()+" AND b.financialyearid="+financialYear.getId()+" AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+" AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.value='END' AND bd.state_id = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchGlCodeAndApprovedAmountForReport");
 
         return result;
@@ -1317,7 +1319,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="+financialYear.getId()+" AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"+budgetingType+"'"+excludeDept+
                 " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.value='END' AND bd1.state_id = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         if(LOGGER.isInfoEnabled())     LOGGER.info("Finished fetchGlCodeAndBENextYrApprovedForReport");
 
         return result;
@@ -1339,7 +1341,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.billstatus != 'Cancelled' and bmis.voucherheaderid " +
                 "is null and br.billdate>= to_date('"+fromDate+"','dd/MM/yyyy') and br.billdate <= to_date("+toVoucherDate+",'dd/MM/yyyy') "+miscQuery+" and ((bdetail.glcodeid between bg.mincode " +
                 "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         return result;
     }
     public List<Object[]> fetchActualsForFYWithParams(String fromDate,String toVoucherDate,StringBuffer miscQuery) {
@@ -1362,7 +1364,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                         "vouchermis vmis,"+budgetGroupQuery+",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and " +
                         "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("+voucherstatusExclude+") and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and " +
                         "vh.voucherDate>= to_date('"+fromDate+"','dd/MM/yyyy') and vh.voucherDate <= to_date("+toVoucherDate+",'dd/MM/yyyy') "+miscQuery+" and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) group by bd.id");
-            List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+            List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
 
             return result;
     }
@@ -1398,7 +1400,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                     "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"+
                     " ) group by bud ");
             if(LOGGER.isDebugEnabled())     LOGGER.debug(" Main Query :"+query);
-            List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+            List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
             return result;
     }
     /*
@@ -1423,7 +1425,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
                 "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id" +
                 " ) group by bud ");
         if(LOGGER.isDebugEnabled())     LOGGER.debug(" Main Query :"+query);
-        List<Object[]> result =null;//HibernateUtil.getCurrentSession().createSQLQuery(query.toString()).list();
+        List<Object[]> result =getSession().createSQLQuery(query.toString()).list();
         return result;
 }
 
@@ -1508,4 +1510,14 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
 
         return consolidateBudget;
     }
+
+	public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
+		return appConfigValuesHibernateDAO;
+	}
+
+	public void setAppConfigValuesHibernateDAO(
+			AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
+		this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
+	}
+    
 } 

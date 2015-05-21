@@ -448,7 +448,7 @@ public class ScheduledRemittanceService {
              List<Long> entityIds=new ArrayList<Long>(detailTypeMapForPanValidation.get(s));
              List<EntityType> enities=new ArrayList<EntityType>();
              int size = entityIds.size();
-           /*  if(size>999)
+             if(size>999)
              {
             	 int fromIndex=0;
             	 int toIndex=999; 
@@ -464,7 +464,7 @@ public class ScheduledRemittanceService {
              }else
              {
             	 enities.addAll((List<EntityType>)entityService.getEntitiesById(entityIds));
-             }*///This fix is for Phoenix Migration.
+             }
     		if(enities!=null && !enities.isEmpty())
     		{
     			
@@ -704,8 +704,8 @@ public class ScheduledRemittanceService {
     private void updateScheduleLogDetail(CVoucherHeader voucherHeader,Long schedularLogId) {
 	RemittanceSchedulePayment rsPaymentLog=new RemittanceSchedulePayment();
 	rsPaymentLog.setVoucherheaderId(voucherHeader);
-	//This fix is for Phoenix Migration.rsPaymentLog.setSchId((RemittanceSchedulerLogHibernateUtil.getCurrentSession().load(RemittanceSchedulerLog.class,schedularLogId ));
-HibernateUtil.getCurrentSession().save(rsPaymentLog);
+	rsPaymentLog.setSchId((RemittanceSchedulerLog)HibernateUtil.getCurrentSession().load(RemittanceSchedulerLog.class,schedularLogId ));
+	HibernateUtil.getCurrentSession().save(rsPaymentLog);
 		
 	}
 /**
@@ -941,7 +941,7 @@ private Map<Integer, String> getDepartments() {
 	}
 
 	private void updateScheduleLog(String message,String jobName,String glcode,boolean success, Long schedularLogId) {
-       RemittanceSchedulerLog record=null;//This fix is for Phoenix Migration.(RemittanceSchedulerLog.getSession().load(RemittanceSchedulerLog.class, schedularLogId);
+		RemittanceSchedulerLog record=(RemittanceSchedulerLog)HibernateUtil.getCurrentSession().load(RemittanceSchedulerLog.class, schedularLogId);
        record.setGlcode(glcode);
        record.setLastRunDate(new Date());
        if(success)
@@ -996,12 +996,12 @@ private Map<Integer, String> getDepartments() {
 			//update to EgRemittanceGldtl only if the recovery is control code .
 			if(isControlCode)
 			{
-			EgRemittanceGldtl remittancegldtl 	=null;//This fix is for Phoenix Migration.(EgRemittanceGldtl)egRemittancegldtlServiceHibernateUtil.getCurrentSession().load(EgRemittanceGldtl.class,Integer.valueOf(bean.getRemittanceGldtlId()));
+				EgRemittanceGldtl remittancegldtl 	=(EgRemittanceGldtl)egRemittancegldtlService.getSession().load(EgRemittanceGldtl.class,Integer.valueOf(bean.getRemittanceGldtlId()));
 			remittancegldtl.setRemittedamt(BigDecimal.valueOf(bean.getGldtlAmount()));
 			remitDetail.setEgRemittanceGldtl(remittancegldtl);
 			}else
 			{
-				//This fix is for Phoenix Migration.remitDetail.setGeneralLedger((CGeneralLedger)remittancePersistenceServiceHibernateUtil.getCurrentSession().load(CGeneralLedger.class,Long.valueOf(bean.getGeneralledgerId())));
+				remitDetail.setGeneralLedger((CGeneralLedger)remittancePersistenceService.getSession().load(CGeneralLedger.class,Long.valueOf(bean.getGeneralledgerId())));
 				remitDetail.setRemittedamt(BigDecimal.valueOf(bean.getGldtlAmount()));
 			}
 			egRemittanceDetail.add(remitDetail);

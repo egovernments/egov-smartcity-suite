@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -53,8 +55,9 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.services.ScriptService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetReAppropriation;
@@ -75,7 +78,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 	private GenericHibernateDaoFactory genericDao;
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 	private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationService.class);
-
+	protected ScriptService sequenceNumberScript;
 	public SequenceGenerator getSequenceGenerator() {
 		return sequenceGenerator;
 	}
@@ -291,10 +294,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 		miscWorkflowService.transition(actionName, misc, misc.getRemarks());
 		return misc;
 	}
-	
 	protected String getSequenceNumber(BudgetDetail detail){
-		Script sequenceNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "egf.budget.reappropriation.sequence.generator").get(0);
-		return "";//This fix is for Phoenix Migration.(String) sequenceNumberScript.eval(Script.createContext("wfItem",detail,"sequenceGenerator",sequenceGenerator));
+		ScriptContext scriptContext = ScriptService.createContext("wfItem",detail,"sequenceGenerator",sequenceGenerator);
+		return (String) sequenceNumberScript.executeScript("egf.budget.reappropriation.sequence.generator",scriptContext);
 	}
 	
 	public BudgetReAppropriation findBySequenceNumberAndBudgetDetail(String sequenceNumber,Long budgetDetailId){
@@ -303,7 +305,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
 	public BudgetReAppropriationMisc performActionOnMisc(String action, BudgetReAppropriationMisc reApp,String comment) {
 		BudgetReAppropriationMisc misc = miscWorkflowService.transition(action, reApp,comment);
-		//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().flush();
+		HibernateUtil.getCurrentSession().flush();
 		return misc;
 	}
 	
@@ -316,7 +318,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 	 * @return
 	 */
 	public void updatePlanningBudget(BudgetReAppropriation reAppropriation){
-		//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().flush();
+		HibernateUtil.getCurrentSession().flush();
 		//BigDecimal multiplicationFactor = new BigDecimal(Double.parseDouble(getAppConfigFor("EGF","planning_budget_multiplication_factor")));
 		BudgetDetail budgetDetail = (BudgetDetail) budgetDetailService.find("from BudgetDetail where id=?",reAppropriation.getBudgetDetail().getId());
 		BigDecimal budgetAvailable = budgetDetail.getBudgetAvailable()==null?BigDecimal.ZERO:budgetDetail.getBudgetAvailable();
@@ -346,7 +348,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 		budgetAvailable = planningBudgetApproved.subtract(planningBudgetUsage);
 		budgetDetail.setBudgetAvailable(budgetAvailable);
 		budgetDetailService.update(budgetDetail);
-		//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().flush();
+		HibernateUtil.getCurrentSession().flush();
 	}
 	
 	protected BigDecimal zeroOrValue(BigDecimal value) {
@@ -387,6 +389,14 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
 	public void setBudgetDetailsDAO(BudgetDetailsHibernateDAO budgetDetailsDAO) {
 		this.budgetDetailsDAO = budgetDetailsDAO;
+	}
+
+	public ScriptService getSequenceNumberScript() {
+		return sequenceNumberScript;
+	}
+
+	public void setSequenceNumberScript(ScriptService sequenceNumberScript) {
+		this.sequenceNumberScript = sequenceNumberScript;
 	}
 
 }

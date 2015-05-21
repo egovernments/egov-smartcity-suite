@@ -47,7 +47,6 @@ public class AccountdetailkeyService extends PersistenceService<Accountdetailkey
 	 public AccountdetailkeyService() {
 			super();
 			setType(Accountdetailkey.class);
-			//This fix is for Phoenix Migration.setSessionFactory(new SessionFactory());
 			// TODO Auto-generated constructor stub
 		}
 
