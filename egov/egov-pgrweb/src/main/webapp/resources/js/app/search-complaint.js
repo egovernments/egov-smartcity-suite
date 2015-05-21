@@ -241,7 +241,7 @@ jQuery(document).ready(function ($) {
 		
         $(".checkdate").change(function () {
 			console.log("custom dates");
-			$("select#when_date").prop('selectedIndex', 4);
+		//	$("select#when_date").prop('selectedIndex', 4);
 		});
 		
 	});
@@ -282,7 +282,6 @@ jQuery(document).ready(function ($) {
 	}
 	
 	$("form").submit(function(event){
-		alert("inside submit");
 		if($("select#when_date option:selected").index() == 0){
 			
 			}else{

@@ -70,56 +70,93 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-public class ComplaintSearchControllerTest extends AbstractContextControllerTest<ComplaintSearchController> {
+/**
+ * @author elzan
+ *
+ */
+public class ComplaintSearchControllerTest extends
+		AbstractContextControllerTest<ComplaintSearchController> {
 
-    private MockMvc mockMvc;
-    @Mock
-    private SearchService searchService;
+	private MockMvc mockMvc;
+	@Mock
+	private SearchService searchService;
 
-    @Override
-    protected ComplaintSearchController initController() {
-        MockitoAnnotations.initMocks(this);
-        return new ComplaintSearchController(searchService);
-    }
+	@Override
+	protected ComplaintSearchController initController() {
+		MockitoAnnotations.initMocks(this);
+		return new ComplaintSearchController(searchService);
+	}
 
-    @Before
-    public void before() {
-        mockMvc = mvcBuilder.build();
-    }
+	@Before
+	public void before() {
+		mockMvc = mvcBuilder.build();
+	}
 
-    @Test
-    public void shouldRetrieveSearchPage() throws Exception {
-        this.mockMvc.perform(get("/complaint/citizen/anonymous/search"))
-                .andExpect(view().name("complaint-search"))
-                .andExpect(status().isOk());
-    }
+	@Test
+	public void shouldRetrieveSearchPage() throws Exception {
+		this.mockMvc.perform(get("/complaint/citizen/anonymous/search"))
+				.andExpect(view().name("complaint-search"))
+				.andExpect(status().isOk());
+	}
 
-    @Test
-    public void shouldSearchForGivenRequest() throws Exception {
-        when(searchService.search(anyList(), anyList(), anyString(), any(Filters.class), eq(Sort.NULL), eq(Page.NULL)))
-                .thenReturn(SearchResult.from(Classpath.readAsString("complaintSearchControllerTest-searchResponse.json")));
+	@Test
+	public void shouldSearchForGivenRequest() throws Exception {
+		when(
+				searchService.search(anyList(), anyList(), anyString(),
+						any(Filters.class), eq(Sort.NULL), eq(Page.NULL)))
+				.thenReturn(
+						SearchResult.from(Classpath
+								.readAsString("complaintSearchControllerTest-searchResponse.json")));
 
-        MvcResult mvcResult = this.mockMvc.perform(
-                    post("/complaint/citizen/anonymous/search")
-                        .param("searchText", "road")
-                        .param("complaintNumber", "CRN123")
-                    )
-                .andExpect(status().isOk())
-                .andReturn();
+		MvcResult mvcResult = this.mockMvc
+				.perform(
+						post("/complaint/citizen/anonymous/search").param(
+								"searchText", "road").param("complaintNumber",
+								"CRN123")).andExpect(status().isOk())
+				.andReturn();
 
-        ArgumentCaptor<Filters> filterCaptor =ArgumentCaptor.forClass(Filters.class);
+		ArgumentCaptor<Filters> filterCaptor = ArgumentCaptor
+				.forClass(Filters.class);
 
-        verify(searchService).search(eq(asList(Index.PGR.toString())),
-                eq(asList(IndexType.COMPLAINT.toString())),
-                eq("road"),
-                filterCaptor.capture(),
-                eq(Sort.NULL), eq(Page.NULL));
+		verify(searchService).search(eq(asList(Index.PGR.toString())),
+				eq(asList(IndexType.COMPLAINT.toString())), eq("road"),
+				filterCaptor.capture(), eq(Sort.NULL), eq(Page.NULL));
 
-        Filters actualFilters = filterCaptor.getValue();
-        Filter filter = actualFilters.getAndFilters().get(0);
-        assertThat(filter.field(), is("searchable.crn"));
-        assertThat(filter, instanceOf(QueryStringFilter.class));
-        assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
-    }
+		Filters actualFilters = filterCaptor.getValue();
+		Filter filter = actualFilters.getAndFilters().get(0);
+		assertThat(filter.field(), is("searchable.crn"));
+		assertThat(filter, instanceOf(QueryStringFilter.class));
+		assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
+	}
 
+	/*	@Test
+	public void shouldSearchForGivenDateRange() throws Exception {
+		when(
+				searchService.search(anyList(), anyList(), anyString(),
+						any(Filters.class), eq(Sort.NULL), eq(Page.NULL)))
+				.thenReturn(
+						SearchResult.from(Classpath
+								.readAsString("complaintSearchControllerTest-searchResponse.json")));
+
+		MvcResult mvcResult = this.mockMvc
+				.perform(
+						post("/complaint/citizen/anonymous/search").param(
+								"complaintNumber", "CRN123").param(
+								"complaintDate", "today"))
+				.andExpect(status().isOk()).andReturn();
+
+		ArgumentCaptor<Filters> filterCaptor = ArgumentCaptor
+				.forClass(Filters.class);
+
+		verify(searchService).search(eq(asList(Index.PGR.toString())),
+				eq(asList(IndexType.COMPLAINT.toString())), null,
+				filterCaptor.capture(), eq(Sort.NULL), eq(Page.NULL));
+
+		Filters actualFilters = filterCaptor.getValue();
+		Filter filter = actualFilters.getAndFilters().get(0);
+		assertThat(filter.field(), is("searchable.crn"));
+		assertThat(filter, instanceOf(QueryStringFilter.class));
+		assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
+	}
+*/
 }

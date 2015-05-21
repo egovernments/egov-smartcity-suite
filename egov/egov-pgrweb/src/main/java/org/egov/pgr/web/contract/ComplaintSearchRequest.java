@@ -106,17 +106,19 @@ public class ComplaintSearchRequest {
 
 	public void setFromDate(String fromDate) {
 		this.fromDate = fromDate;
-		/*
-		 * if(null!=fromDate){
-		 * 
-		 * try {logger.info("Date Range From start.. :"+ft.parse(fromDate));
-		 * this.fromDate=ft.format(ft.parse(fromDate)); }catch(Exception e){} }
-		 * logger.info("Date Range From :"+fromDate);
-		 */
+		if (null != fromDate) {
+			logger.info("Date Range From start.. :"
+					+ ft.format(new Date(fromDate)));
+			this.fromDate = ft.format(new Date(fromDate));
+		}
 	}
 
 	public void setToDate(String toDate) {
 		this.toDate = toDate;
+		if (null != toDate) {
+			logger.info("Date Range Till .. :" + ft.format(new Date(fromDate)));
+			this.toDate = ft.format(new Date(fromDate));
+		}
 	}
 
 	public void setComplaintDate(String complaintDate) {
@@ -169,8 +171,7 @@ public class ComplaintSearchRequest {
 				complaintType));
 		andFilters.add(rangeFilter("common.createdDate", complaintDateFrom,
 				complaintDateTo));
-		// andFilters.add(rangeFilter("common.createdDate", ft.format(fromDate),
-		// ft.format(toDate)));
+		andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
 		logger.info("finished filters");
 		return Filters.withAndFilters(andFilters);
 	}

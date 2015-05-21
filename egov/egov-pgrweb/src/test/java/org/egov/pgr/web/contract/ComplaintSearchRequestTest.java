@@ -39,9 +39,13 @@
  */
 package org.egov.pgr.web.contract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.QueryStringFilter;
+import org.egov.search.domain.RangeFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,28 +55,56 @@ import static org.junit.Assert.assertThat;
 
 public class ComplaintSearchRequestTest {
 
-    private ComplaintSearchRequest request;
+	private ComplaintSearchRequest request;
 
-    @Before
-    public void before() {
-        request = new ComplaintSearchRequest();
-    }
+	@Before
+	public void before() {
+		request = new ComplaintSearchRequest();
+	}
 
-    @Test
-    public void shouldConstructFilters() {
-        request.setComplaintNumber("CRN123");
-        request.setSearchText("road");
+	@Test
+	public void shouldConstructFilters() {
+		request.setComplaintNumber("CRN123");
+		request.setSearchText("road");
 
-        Filters filters = request.searchFilters();
-        String searchQuery = request.searchQuery();
+		Filters filters = request.searchFilters();
+		String searchQuery = request.searchQuery();
 
-        assertThat(searchQuery, is("road"));
-        assertThat(filters.getAndFilters().size(), is(1));
+		assertThat(searchQuery, is("road"));
+		assertThat(filters.getAndFilters().size(), is(1));
 
-        Filter filter = filters.getAndFilters().get(0);
-        assertThat(filter.field(), is("searchable.crn"));
-        assertThat(filter, instanceOf(QueryStringFilter.class));
-        assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
-    }
+		Filter filter = filters.getAndFilters().get(0);
+		assertThat(filter.field(), is("searchable.crn"));
+		assertThat(filter, instanceOf(QueryStringFilter.class));
+		assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
+	}
 
+	@Test
+	public void searchForNoOfDays() {
+		request.setComplaintDate("today");
+
+		Filters filters = request.searchFilters();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = new Date();
+		
+		assertThat(filters.getAndFilters().size(), is(1));
+		Filter filter = filters.getAndFilters().get(0);
+		
+		assertThat(filter.field(), is("common.createdDate"));
+		assertThat(filter, instanceOf(RangeFilter.class));
+		assertThat(((RangeFilter) filter).to(), is(ft.format(today)));
+	}
+
+	@Test
+	public void searchForDateRange() {
+		request.setFromDate("01/05/2015");
+	//	request.setToDate("19/05/2015");
+		
+		Filters filters = request.searchFilters();
+		assertThat(filters.getAndFilters().size(), is(1));
+		
+		Filter filter = filters.getAndFilters().get(0);
+		assertThat(filter.field(), is("common.createdDate"));
+		assertThat(filter, instanceOf(RangeFilter.class));
+	}
 }
