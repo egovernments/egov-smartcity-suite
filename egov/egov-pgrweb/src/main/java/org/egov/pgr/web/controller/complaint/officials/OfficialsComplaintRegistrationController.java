@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -65,22 +65,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class OfficialsComplaintRegistrationController extends GenericComplaintController {
 
     private @Autowired ReceivingCenterService receivingCenterService;
-    
+
     public @ModelAttribute("receivingCenters") List<ReceivingCenter> receivingCenters() {
-        return this.receivingCenterService.findAll();
+        return receivingCenterService.findAll();
     }
-    
+
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
         return "complaint/officials/registration-form";
     }
 
     @RequestMapping(value = "register", method = POST)
-    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, final RedirectAttributes redirectAttributes,@RequestParam("files") final MultipartFile[] files) {
-        if(complaint.getReceivingMode().equals(ReceivingMode.PAPER) && complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
+    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
+
+        if (complaint.getReceivingMode().equals(ReceivingMode.PAPER) && complaint.getReceivingCenter().isCrnRequired()
+                && complaint.getCRN().isEmpty())
             resultBinder.rejectValue("CRN", "crn.mandatory.for.receivingcenter");
+
+        if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
+            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
+                resultBinder.rejectValue("location", "location.required");
+
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";
+
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
         redirectAttributes.addFlashAttribute("complaint", complaint);

@@ -72,7 +72,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<form:textarea path="details" id="doc" placeholder="" maxlength="500" cssClass="form-control autogrow" required="required"/>
+							<form:textarea path="details" id="doc" placeholder="" minlength="10" maxlength="500" cssClass="form-control autogrow" required="required"/>
 							<div class="text-left"><small><spring:message code="lbl.comp.details"/></small></div>
 							<form:errors path="details" cssClass="add-margin error-msg"/>
 						</div>
@@ -111,10 +111,10 @@
 								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location" id="locationid"/>
-								<form:errors path="location" cssClass="add-margin error-msg"/>
-				   				<form:hidden path="lat" id="lat"/>
+								<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
 							</div>
+							<form:errors path="location" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					
