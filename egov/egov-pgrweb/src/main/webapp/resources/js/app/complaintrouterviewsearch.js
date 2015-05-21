@@ -98,7 +98,7 @@ jQuery(document).ready(function($)
 							// JavaScript object array
 							return $.map(data, function(boundList) {
 								return {
-									name: boundList.localName,
+									name: boundList.name,
 									value: boundList.id
 								};
 							});
@@ -187,4 +187,3 @@ jQuery(document).ready(function($)
 	});
 		
 });
-

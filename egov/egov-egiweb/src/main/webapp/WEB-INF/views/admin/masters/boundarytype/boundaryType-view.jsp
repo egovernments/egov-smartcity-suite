@@ -89,8 +89,8 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					  <button type="button" class="btn btn-default" name="back" onclick="history.back()">back</button>
-				      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
+					<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+				    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>

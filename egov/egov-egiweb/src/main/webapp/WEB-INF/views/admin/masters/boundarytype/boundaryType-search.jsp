@@ -45,9 +45,6 @@
 
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
-<script type="text/javascript">
-        var contextPath = "<%=request.getContextPath() %>";
-</script>
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
