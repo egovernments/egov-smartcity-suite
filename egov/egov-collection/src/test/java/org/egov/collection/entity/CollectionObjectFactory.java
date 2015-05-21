@@ -1398,7 +1398,7 @@ public class CollectionObjectFactory {
 		scheme.setCode(code + getRandomNumber());
 		scheme.setName(name + getRandomNumber());
 		scheme.setFund(fund);
-		scheme.setIsactive("1");
+		scheme.setIsactive(true);
 		session.saveOrUpdate(scheme);
 		return scheme;
 	}
