@@ -46,6 +46,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
@@ -92,7 +93,7 @@ public class SchemeAction extends BaseFormAction{
 	}
 	          
 	@SkipValidation
-@Action(value="/masters/scheme-newForm")
+	@Action(value="/masters/scheme-newForm", results = @Result(name = NEW, location = "/WEB-INF/jsp/masters/scheme-new.jsp"))
 	public String newForm() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("..Inside NewForm method..");
 		this.mode=NEW; 

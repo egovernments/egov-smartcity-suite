@@ -12,7 +12,7 @@
 
     <name>e-governments erp</name>
 
-    <modules>
+   <modules>
         <module>egov-config</module>
      	<module>egov-database</module>
         <module>egov-egi</module>
@@ -219,6 +219,12 @@
                 <artifactId>struts2-jquery-plugin</artifactId>
                 <version>3.7.1</version>
             </dependency>
+            <dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-dojo-plugin</artifactId>
+				<version>${struts2-version}</version>
+			</dependency>
+            
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>

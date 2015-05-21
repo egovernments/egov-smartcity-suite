@@ -1,95 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
 
 <taglib>
 
-	<tlibversion>1.0</tlibversion>
-	<jspversion>1.1</jspversion>
-	<shortname>sitemesh-page-tags</shortname>
-	<uri>http://www.opensymphony.com/sitemesh/page</uri>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>sitemesh-page</short-name>
+    <uri>http://www.opensymphony.com/sitemesh/page</uri>
+    <display-name>SiteMesh Page Tags</display-name>
 
-	<tag>
-		<name>applyDecorator</name>
-		<tagclass>com.opensymphony.module.sitemesh.taglib.page.ApplyDecoratorTag</tagclass>
-		<bodycontent>JSP</bodycontent>
-		<attribute>
-			<name>name</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>page</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>title</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>id</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>contentType</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+    <tag>
+        <name>applyDecorator</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.page.ApplyDecoratorTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>name</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>page</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>title</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>contentType</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     <attribute>
       <name>encoding</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
-	</tag>
+    </tag>
 
-	<!-- Deprecated tag: use applyDecorator instead -->
-	<tag>
-		<name>apply-decorator</name>
-		<tagclass>com.opensymphony.module.sitemesh.taglib.page.ApplyDecoratorTag</tagclass>
-		<bodycontent>JSP</bodycontent>
-		<attribute>
-			<name>name</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>page</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>title</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>id</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+    <!-- Deprecated tag: use applyDecorator instead -->
+    <tag>
+        <name>apply-decorator</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.page.ApplyDecoratorTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>name</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>page</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>title</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     <attribute>
-			<name>contentType</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
+            <name>contentType</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     <attribute>
       <name>encoding</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
-	</tag>
+    </tag>
 
-	<tag>
-		<name>param</name>
-		<tagclass>com.opensymphony.module.sitemesh.taglib.page.ParamTag</tagclass>
-		<bodycontent>JSP</bodycontent>
-		<attribute>
-			<name>name</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-	</tag>
+    <tag>
+        <name>param</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.page.ParamTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>name</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
 </taglib>

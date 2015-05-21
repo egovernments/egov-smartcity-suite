@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE taglib
 PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
 "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
@@ -26,11 +26,6 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
 			<name>labels</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-	</attribute>
-	<attribute>
-			<name>colspan</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
 	</attribute>
 </tag>
 <!-- Other tags defined later... -->

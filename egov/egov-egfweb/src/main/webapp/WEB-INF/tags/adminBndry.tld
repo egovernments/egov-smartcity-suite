@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -37,16 +38,25 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<decorators defaultdir="/decorators">
-    <excludes>
-        <pattern>/40*.jsp</pattern>       	
-        <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-        <pattern>/commonyui/egov/menutree.jsp</pattern>
-        <pattern>/*Ajax.action</pattern>
-        <pattern>/*Ajax.do</pattern>
-        <pattern>/*decorate=false*</pattern>
-    </excludes>
-    <decorator name="default" page="default.jsp">
-      <pattern>/*</pattern>
-    </decorator>
-</decorators>
+<!DOCTYPE taglib
+PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<!-- a tag library descriptor -->
+<taglib>
+<!-- after this the default space is
+"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+-->
+<tlibversion>1.0</tlibversion>
+<jspversion>1.1</jspversion>
+<shortname>adminBndry</shortname>
+<uri>http://localhost/WEB-INF/lib/egov_taglibs.jar</uri>
+<info>A Boundary tag</info>
+<tag>
+	<name>select</name>
+	<tagclass>org.egov.infstr.client.taglib.BndryTag</tagclass>
+	<bodycontent>empty</bodycontent>
+	<info>Populates boundries on selection of a top level boundary</info>
+	
+</tag>
+<!-- Other tags defined later... -->
+</taglib>
