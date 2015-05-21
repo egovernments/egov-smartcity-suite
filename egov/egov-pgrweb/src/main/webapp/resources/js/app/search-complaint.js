@@ -64,12 +64,16 @@ jQuery(document).ready(function ($) {
 			
 			$('#complaintSearchResults').dataTable({
 				destroy:true,
-				columnDefs: [
-				{
-					defaultContent: "Not Available",
-					targets: "_all",
-					searchable:false
-				}],
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"autoWidth": false,
+				/*"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["copy", "csv", "xls", "pdf", "print"]
+				},*/
+				searchable:true,
 				data: searchResult,
 				columns: [
 				{title: 'Complaint Number', data: 'resource.searchable.crn'},
@@ -87,11 +91,12 @@ jQuery(document).ready(function ($) {
 	
     tableContainer = $("#csearch").dataTable({
 		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
-			"sSwfPath": "../../../../../../egov-egiweb/src/main/webapp/resources/global/swf/copy_csv_xls_pdf.swf",
+			"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 			"aButtons": ["copy", "csv", "xls", "pdf", "print"]
 		}
 	});
