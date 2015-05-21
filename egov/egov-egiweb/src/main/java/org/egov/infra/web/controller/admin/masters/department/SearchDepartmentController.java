@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -55,16 +55,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/department/")
 public class SearchDepartmentController {
 
-    private static final String DEPARTMENTS = "departments";
     private static final String UPDATE = "update";
-    private static final String VIEW = "view";
-    private static final String REDIRECT_DEPARTMENT_VIEW = "redirect:/department/view/";
-    private static final String REDIRECT_DEPARTMENT_UPDATE = "redirect:/department/update/";
-    private static final String DEPARTMENT_SEARCH = "department-search";
-    DepartmentService departmentService;
+    private static final String VIEW = "view"; 
+    private final DepartmentService departmentService;
 
     @Autowired
-    public SearchDepartmentController(DepartmentService departmentService) {
+    public SearchDepartmentController(final DepartmentService departmentService) {
         this.departmentService = departmentService;
     }
 
@@ -74,18 +70,18 @@ public class SearchDepartmentController {
     }
 
     @RequestMapping(value = { VIEW, UPDATE }, method = RequestMethod.GET)
-    public String searchForm(Model model) {
-        model.addAttribute(DEPARTMENTS, departmentService.getAllDepartments());
-        return DEPARTMENT_SEARCH;
+    public String searchForm(final Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "department-search";
     }
 
     @RequestMapping(value = VIEW, method = RequestMethod.POST)
-    public String viewDepartment(@ModelAttribute Department department) {
-        return REDIRECT_DEPARTMENT_VIEW + department.getName();
+    public String viewDepartment(@ModelAttribute final Department department) {
+        return "redirect:/department/view/" + department.getName();
     }
 
     @RequestMapping(value = UPDATE, method = RequestMethod.POST)
-    public String updateDepartmentForm(@ModelAttribute Department department) {
-        return REDIRECT_DEPARTMENT_UPDATE + department.getName();
+    public String updateDepartmentForm(@ModelAttribute final Department department) {
+        return "redirect:/department/update/" + department.getName();
     }
 }

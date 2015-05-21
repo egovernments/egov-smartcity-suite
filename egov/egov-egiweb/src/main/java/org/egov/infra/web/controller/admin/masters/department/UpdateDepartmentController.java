@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -59,34 +59,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/department/update/{name}")
 public class UpdateDepartmentController {
 
-    private static final String REDIRECT_VIEW_DEPARTMENT = "redirect:/department/view/";
-    private static final String DEPARTMENT_UPDATE_FORM = "department-updateForm";
-    DepartmentService departmentService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    public UpdateDepartmentController(DepartmentService departmentService) {
+    public UpdateDepartmentController(final DepartmentService departmentService) {
         this.departmentService = departmentService;
     }
 
     @ModelAttribute
-    public Department departmentModel(@PathVariable String name) {
+    public Department departmentModel(@PathVariable final String name) {
         return departmentService.getDepartmentByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String updateDepartmentForm() {
-        return DEPARTMENT_UPDATE_FORM;
+        return "department-updateForm";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateDepartment(@ModelAttribute @Valid Department department, BindingResult errors,
-            RedirectAttributes redirectAttributes) {
-        if (errors.hasErrors()) {
-            return DEPARTMENT_UPDATE_FORM;
-        }
+    public String updateDepartment(@ModelAttribute @Valid final Department department, final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors())
+            return "department-updateForm";
 
         departmentService.updateDepartment(department);
         redirectAttributes.addFlashAttribute("message", "Successfully updated Department !");
-        return REDIRECT_VIEW_DEPARTMENT + department.getName();
+        return "redirect:/department/view/" + department.getName();
     }
 }
