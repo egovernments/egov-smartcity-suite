@@ -245,5 +245,99 @@ $(document).ready(function()
 		});
 		e.stopPropagation();
 	});
+
+	var jsonresponse = [{"id":"22#1","sender":"Unknown / Admin","date":"31/03/2015 07:31 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-yvyjm","link":"/pgr/complaint-update?id\u003d40"},{"id":"21#1","sender":"Unknown / Admin","date":"31/03/2015 07:24 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-57xOq","link":"/pgr/complaint-update?id\u003d39"},{"id":"20#1","sender":"Unknown / Admin","date":"31/03/2015 07:17 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-3zZYS","link":"/pgr/complaint-update?id\u003d38"},{"id":"19#1","sender":"Unknown / Admin","date":"31/03/2015 11:03 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-6RNTy","link":"/pgr/complaint-update?id\u003d37"},{"id":"18#1","sender":"Unknown / Admin","date":"31/03/2015 10:31 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-bGOMD","link":"/pgr/complaint-update?id\u003d36"},{"id":"17#1","sender":"Unknown / Admin","date":"31/03/2015 10:18 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-OlTX4","link":"/pgr/complaint-update?id\u003d33"},{"id":"15#1","sender":"Unknown / Admin","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-K5O10","link":"/pgr/complaint-update?id\u003d30"},{"id":"13#1","sender":"Unknown / Admin","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"14#1","sender":"Unknown / Admin","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-XpTSH","link":"/pgr/complaint-update?id\u003d27"},{"id":"30#1","sender":"Unknown / Admin","date":"09/04/2015 05:22 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-tj3h6","link":"/pgr/complaint-update?id\u003d48"},{"id":"23#1","sender":"Unknown / Admin","date":"31/03/2015 08:50 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-Y0QBo","link":"/pgr/complaint-update?id\u003d41"},{"id":"22#1","sender":"Unknown / Admin","date":"31/03/2015 07:31 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-yvyjm","link":"/pgr/complaint-update?id\u003d40"},{"id":"21#1","sender":"Unknown / Admin","date":"31/03/2015 07:24 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-57xOq","link":"/pgr/complaint-update?id\u003d39"},{"id":"20#1","sender":"Unknown / Admin","date":"31/03/2015 07:17 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-3zZYS","link":"/pgr/complaint-update?id\u003d38"},{"id":"19#1","sender":"Unknown / Admin","date":"31/03/2015 11:03 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-6RNTy","link":"/pgr/complaint-update?id\u003d37"},{"id":"18#1","sender":"Unknown / Admin","date":"31/03/2015 10:31 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-bGOMD","link":"/pgr/complaint-update?id\u003d36"},{"id":"17#1","sender":"Unknown / Admin","date":"31/03/2015 10:18 AM","task":"Complaint","status":"Registered","details":"CRN : CRN-OlTX4","link":"/pgr/complaint-update?id\u003d33"},{"id":"15#1","sender":"Unknown / Admin","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-K5O10","link":"/pgr/complaint-update?id\u003d30"},{"id":"13#1","sender":"Mohammed Aslam","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Dinesh","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Azharudeen","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Venkatachalam","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"NandhaKumar","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Syed Muzakir","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Arjun","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Vigish Chandran","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Shahid Ali","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Sreekanth","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"},{"id":"13#1","sender":"Mohammed Aslam Abdul Rahman","date":"30/03/2015 07:34 PM","task":"Complaint","status":"Registered","details":"CRN : CRN-LmxHD","link":"/pgr/complaint-update?id\u003d26"}];
+
+	loadnotificationdata(jsonresponse);
+	//console.log(JSON.stringify(jsonresponse.data));
+
+	//search through div
+	/*$( "#notifysearch" ).keyup(function() {
+	    var searchText = $(this).val(); 
+	    $(".notify-msgs").each(function() {
+		if ($(this).text().toLowerCase().search(searchText.toLowerCase()) === -1) {
+	             $(this).hide();
+	         }else {
+	             $(this).show();
+	     	 }
+	    });
+	});*/
+
+	var searchresponse = [];
+	var lengtharray, globalresponse, pagecount;
+	//search through json
+	$( "#notifysearch" ).keyup(function() {
+	    searchresponse = [];
+	    var searchText = $(this).val(); 
+	    $.each(jsonresponse, function(idx, obj) {
+		if( ((obj.sender).toLowerCase().search(searchText.toLowerCase()) === -1) && ((obj.details).toLowerCase().search(searchText.toLowerCase()) === -1) && ((obj.status).toLowerCase().search(searchText.toLowerCase()) === -1) && ((obj.date).toLowerCase().search(searchText.toLowerCase()) === -1)){
+			
+		}else{
+			var searchjson = {};
+			searchjson['sender'] = obj.sender;
+			searchjson['details'] = obj.details;
+			searchjson['status'] = obj.status;
+			searchjson['date'] = obj.date;
+			searchresponse.push(searchjson);
+		}
+	    });
+		loadnotificationdata(searchresponse); //$('.notificaton-card').paged_scroll(NotifyDiv);
+		$(window).paged_scroll(NotifyDiv);
+	});
+
+	
+	function loadnotificationdata(data){
+		globalresponse = data;
+		lengtharray = (globalresponse.length) -20;
+		pagecount = parseInt(lengtharray/5)+1;
+		pagebasevalue = 20;
+		console.log("Pagecount is:"+pagecount+"<--->length of json:"+lengtharray);
+		$('.notificaton-card').html('');
+		$.each(data, function(idx, obj) {
+			if(idx == 20){
+				return false;			
+			}else{
+			var sender = ((obj.sender).length >= 20) ? (obj.sender).substring(0, 17)+" ..." : obj.sender;
+			var details = ((obj.details).length >= 30) ? (obj.details).substring(0, 27)+" ..." : obj.details;
+			var status = ((obj.status).length >= 20) ? (obj.status).substring(0, 17)+" ..." : obj.status;
+			$('.notificaton-card').append('<div class="msg notify-msgs"> <header> <div class="row"> <div class="col-lg-10 col-xs-8"> <span class="sender">'+sender+'</span> <span class="dot">•</span> <span><a href="javascript:void(0);">'+details+'</a></span> <span class="dot">•</span> <span><a href="javascript:void(0);">'+status+'</a></span> <span class="dot">•</span> <span class="msg-date">'+obj.date+'</div> <div class="col-lg-2 col-xs-4 text-right"> <span><i class="fa fa-file-text"></i></span> <span><i class="fa fa-history notification-history"></i></span> </div> </div> </header> </div>');
+		}
+		});	
+		
+	}
+
+var aslam = false;
+	var NotifyDiv = {
+		handleScroll:function (page,container,doneCallback) {
+		console.log('Page base value at start'+pagebasevalue);
+		    setTimeout(function () {
+			console.log("Page is:", page+"<--->Logical pagecount:"+ pagecount);
+			//check worklist or drafts or notification and assign corresponding targetElement
+			for (var i = pagebasevalue; i < (pagebasevalue+5); ++i) {
+				obj = globalresponse[i];
+				if(obj == undefined){ break; }
+				var sender = ((obj.sender).length >= 20) ? (obj.sender).substring(0, 17)+" ..." : obj.sender;
+				var details = ((obj.details).length >= 30) ? (obj.details).substring(0, 27)+" ..." : obj.details;
+				var status = ((obj.status).length >= 20) ? (obj.status).substring(0, 17)+" ..." : obj.status;
+				$('.notificaton-card').append('<div class="msg notify-msgs"> <header> <div class="row"> <div class="col-lg-10 col-xs-8"> <span class="sender">'+sender+'</span> <span class="dot">•</span> <span><a href="javascript:void(0);">'+details+'</a></span> <span class="dot">•</span> <span><a href="javascript:void(0);">'+status+'</a></span> <span class="dot">•</span> <span class="msg-date">'+obj.date+'</div> <div class="col-lg-2 col-xs-4 text-right"> <span><i class="fa fa-file-text"></i></span> <span><i class="fa fa-history notification-history"></i></span> </div> </div> </header> </div>');
+			}
+		      pagebasevalue = pagebasevalue+5;
+			console.log('Page base value at end'+pagebasevalue);
+			doneCallback();
+			//console.log("DIV scrolled to page",page);
+		    },100);
+
+		},
+		pagesToScroll : pagecount,
+		triggerFromBottom:'50',
+		loader:'<div class="loader"></div>',
+		debug  : false,
+		targetElement : $('.notificaton-card'),
+		monitorTargetChange:false
+	    };
+
+	    //$('.notificaton-card').paged_scroll(NotifyDiv);
+
+	$(window).paged_scroll(NotifyDiv);
 	
 });
