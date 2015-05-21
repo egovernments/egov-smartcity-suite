@@ -37,8 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <style type="text/css">
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {

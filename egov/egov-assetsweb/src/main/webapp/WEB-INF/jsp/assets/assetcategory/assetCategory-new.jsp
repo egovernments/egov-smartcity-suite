@@ -37,8 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">
@@ -78,6 +77,7 @@
 				var revAccountCode = dom.get("revAccountCode").value;
 				var assetAccountCode  = dom.get("assetAccountCode").value;
 				var uom  = dom.get("uom").value;
+				var depreciationMethod  = dom.get("depreciationMethod").value;
 				var pattern=/[^0-9a-zA-Z-&:/ ]/;
 				var namepattern=/[^0-9a-zA-Z-&:/ ]/;
 				if(code.match(pattern)){
@@ -101,7 +101,8 @@
 				} else if (uom == -1){
 					showMessage('category_error', '<s:text name="assetcat.uom.null" />');
 					return false;
-				} else {
+				}
+				else {
 				    clearMessage('category_error')
 					links=document.assetCategoryForm.getElementsByTagName("span");
 					errors=false;
@@ -126,7 +127,7 @@
 				}
 		</script>
 		<s:form action="assetCategory" theme="simple" name="assetCategoryForm">
-		<s:token/>
+		<s:token name="%{tokenName()}"/> 
 			<div class="errorstyle" id="category_error" style="display:none;"></div>
 			<s:push value="model">
 				<div class="navibarshadowwk">
@@ -138,10 +139,6 @@
 							<div></div>
 							</div>
 							<div class="rbcontent2">
-								<div class="datewk">
-									<span class="bold">Today</span>
-									<egov:now />
-								</div>
 								<s:hidden name="id" />
 								<s:hidden name="userMode" />
 								<%@ include file='assetCategory-form.jsp'%>

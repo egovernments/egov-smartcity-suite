@@ -41,30 +41,35 @@ package org.egov.asset.web.actions.assetcategory;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
+import org.egov.asset.service.AssetCategoryService;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 @Namespace("/assetcategory")
 @Results({
-    @Result(name=AjaxAssetCategoryAction.PARENT_CATEGORIES,location="/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-parentcategories.jsp")  ,
-    @Result(name=AjaxAssetCategoryAction.ASSET_CAT_DETAILS,location="/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-assetcatdetails.jsp")
-  })
+    @Result(name = AjaxAssetCategoryAction.PARENT_CATEGORIES, location = "/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-parentcategories.jsp"),
+    @Result(name = AjaxAssetCategoryAction.ASSET_CAT_DETAILS, location = "/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-assetcatdetails.jsp") })
 public class AjaxAssetCategoryAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -8703869606104325609L;
+    private static final Logger LOGGER = Logger.getLogger(AjaxAssetCategoryAction.class);
     public static final String PARENT_CATEGORIES = "parentcategories";
     public static final String ASSET_CAT_DETAILS = "assetcatdetails";
     private String assetType; // Set by Ajax call
     private Long parentCatId; // Set by Ajax call
     private AssetCategory parentCategory;
     private List<AssetCategory> assetCategoryList;
+    private AssetCategoryService assetCategoryService;
 
     @Override
     public Object getModel() {
@@ -78,17 +83,21 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
 
     @Action(value = "/ajaxAssetCategory-populateParentCategories")
     public String populateParentCategories() {
-        if (assetType.equalsIgnoreCase("-1"))
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory");
-        else
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType = ?", assetType);
-
+        try {
+            if (assetType.equalsIgnoreCase("-1"))
+                assetCategoryList = assetCategoryService.findAll();
+            else
+                assetCategoryList = assetCategoryService.getAllAssetCategoryByAssetType(assetType);
+        } catch (final Exception e) {
+            LOGGER.error("Error while loading assetCategoryList in populateParentCategories() method " + e.getMessage());
+            throw new EGOVRuntimeException(e.getMessage());
+        }
         return PARENT_CATEGORIES;
     }
-    
+
     @Action(value = "/ajaxAssetCategory-populateParentDetails")
     public String populateParentDetails() {
-        parentCategory = (AssetCategory) getPersistenceService().find("from AssetCategory where id=?", parentCatId);
+        parentCategory = assetCategoryService.findById(parentCatId, false);
         return ASSET_CAT_DETAILS;
     }
 
@@ -108,6 +117,10 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
 
     public AssetCategory getParentCategory() {
         return parentCategory;
+    }
+
+    public void setAssetCategoryService(final AssetCategoryService assetCategoryService) {
+        this.assetCategoryService = assetCategoryService;
     }
 
 }

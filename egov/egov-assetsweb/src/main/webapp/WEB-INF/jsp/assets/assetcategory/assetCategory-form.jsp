@@ -37,8 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
-
 <style type="text/css">
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
 	Width: 100%;
@@ -59,7 +57,7 @@ function goNewForm()
 function setupAjaxAssettype(elem){
     resetParentFields();
     //TODO : Phoenix migration - commented out since ajax call giving an exception
-	//populateparentcat({assetType:elem.value});
+	populateparentcat({assetType:elem.value});
 	disableDepreciation(elem.value);
 }
 function disableDepreciation(assettype){
@@ -79,18 +77,18 @@ function setupAjaxParentcat(elem){
     parent_cat_id=elem.options[elem.selectedIndex].value;
     makeJSONCall(["xDepreciationMethod","xAssetAccountCode","xAccDepAccountCode","xRevAccountCode","xDepExpAccountCode",
     	 "xUom","xCatAttrTemplate"],
-    	'${pageContext.request.contextPath}/assetcategory/ajaxAssetCategory!populateParentDetails.action',
+    	'${pageContext.request.contextPath}/assetcategory/ajaxAssetCategory-populateParentDetails.action',
     	{parentCatId:parent_cat_id},mySuccessHandler,myFailureHandler) ;
 }
 
 function resetParentFields(){
-	//document.getElementById('depreciationMethod').value='-1';
+	document.getElementById('depreciationMethod').value='';
 	document.getElementById('assetAccountCode').value=-1;
 	document.getElementById('accDepAccountCode').value=-1;
 	document.getElementById('revAccountCode').value=-1;
 	document.getElementById('depExpAccountCode').value=-1;
 	document.getElementById('uom').value=-1;
-	//document.getElementById('catTemVal').value='';
+	document.getElementById('catTemVal').value='';
 }
 
 mySuccessHandler = function(req,res){
@@ -100,7 +98,7 @@ mySuccessHandler = function(req,res){
   if(results[0].xDepreciationMethod!="")
 	document.getElementById('depreciationMethod').value=results[0].xDepreciationMethod;
   else
-	document.getElementById('depreciationMethod').value='-1';
+	document.getElementById('depreciationMethod').value='';
 	}
   if(results[0].xAssetAccountCode!="")
 	document.getElementById('assetAccountCode').value=results[0].xAssetAccountCode;
@@ -201,8 +199,8 @@ parentCatDetailsSuccessHandler = function(req,res){
 							id="assetType" cssClass="selectwk"
 							list="dropdownData.assetTypeList" 
 							onChange="setupAjaxAssettype(this);"/>
-						<egov:ajaxdropdown id="populateParentcat" fields="['Text','Value']" 
-							dropdownId='parentcat' url='assetcategory/ajaxAssetCategory-populateParentCategories.action' 
+						<egov:ajaxdropdown id="parentcat" fields="['Text','Value']" 
+							dropdownId="parentcat" url="assetcategory/ajaxAssetCategory-populateParentCategories.action" 
 							selectedValue="%{parent.id}"/>
 					</td>
 				</tr>
@@ -223,7 +221,7 @@ parentCatDetailsSuccessHandler = function(req,res){
 						<s:text	name="asset.dep.method" />
 					</td>
 					<td width="21%" class="greybox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{sDisabled}"
+						<s:select headerKey="" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="depreciationMethod"
 							id="depreciationMethod" cssClass="selectwk"
 							list="dropdownData.depreciationMethodList"/>
