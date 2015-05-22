@@ -42,19 +42,30 @@ package org.egov.collection.web.actions.service;
 import java.util.Collection;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.egov.collection.constants.CollectionConstants;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.service.ServiceCategoryService;
 import org.egov.infstr.models.ServiceCategory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@Result(name = ServiceCategoryAction.SUCCESS, type = "redirect", location = "serviceCategory.action")
+import com.opensymphony.xwork2.validator.annotations.Validations;
+
+
 @ParentPackage("egov")
-@Transactional(readOnly=true)
+@Validations
+@Transactional(readOnly = true)
+@Namespace("/service")
+@ResultPath("/WEB-INF/jsp/")
+@Results({
+    @Result(name=ServiceCategoryAction.NEW,location="service/serviceCategory-new.jsp")  ,
+    @Result(name=ServiceCategoryAction.EDIT,location="service/serviceCategory-edit.jsp"),
+    @Result(name=ServiceCategoryAction.INDEX, location="service/serviceCategory-index.jsp")
+  })
 public class ServiceCategoryAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -62,36 +73,35 @@ public class ServiceCategoryAction extends BaseFormAction {
 	private ServiceCategoryService serviceCategoryService;
 	private Collection<ServiceCategory> serviceCategoryList = null;
 	private ServiceCategory serviceCategoryInstance = new ServiceCategory();
+	private String code;
 
-	@Override
-	public String execute() throws Exception {
-		return list();
-	}
-
-	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW,location="/WEB-INF/jsp/service/serviceCategory-new.jsp")})
+	@Action(value="/serviceCategory-newform")
 	public String newform() {
 		return NEW;
 	}
 
+	@Action(value="/serviceCategory-list")
 	public String list() {
-		serviceCategoryList = serviceCategoryService.getAllServiceCategoriesByCodeLike(CollectionConstants.SERVICECATEGORY_CODE);
+		serviceCategoryList = serviceCategoryService.getAllServiceCategoriesOrderByCode();
 		return INDEX;
 	}
 
-	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT,location="/WEB-INF/jsp/service/serviceCategory-new.jsp")})
+	@Action(value="/serviceCategory-edit")
 	public String edit() {
-		serviceCategoryInstance = serviceCategoryService.findById(serviceCategoryInstance.getId());
+		serviceCategoryInstance = serviceCategoryService.findByCode(code);
 		return EDIT;
 	}
 
+	@Action(value="/serviceCategory-save")
 	public String save() {
 		serviceCategoryService.update(serviceCategoryInstance);
-		return SUCCESS;
+		return list();
 	}
 
+	@Action(value="/serviceCategory-create")
 	public String create() {
 		serviceCategoryService.create(serviceCategoryInstance);
-		return SUCCESS;
+		return list();
 	}
 
 	public Object getModel() {
@@ -107,5 +117,13 @@ public class ServiceCategoryAction extends BaseFormAction {
 	 */
 	public Collection<ServiceCategory> getServiceCategoryList() {
 		return serviceCategoryList;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

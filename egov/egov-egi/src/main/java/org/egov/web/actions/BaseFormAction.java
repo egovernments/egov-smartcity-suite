@@ -105,16 +105,17 @@ public abstract class BaseFormAction extends ActionSupport implements ModelDrive
 			final String id = ids[0];
 			if (id != null && id.length() > 0) {
 				try {
-
+					relation = getPersistenceService().find("from " + class1.getName() + " where id="+id);
+					/*
 					if (class1.getMethod("getId").getReturnType().getSimpleName().equals("Long")) {
 						relation = getPersistenceService().find("from " + class1.getName() + " where id=?", Long.parseLong(id));
 					} else {
 						relation = getPersistenceService().find("from " + class1.getName() + " where id=?", Integer.parseInt(id));
-					}
+					}*/
 
 					setValue(relationshipName, relation);
 
-				} catch (final NoSuchMethodException iae) {
+				} catch (final Exception iae) {
 					throw new EGOVRuntimeException("Model class does not have getId method", iae);
 				}
 			}

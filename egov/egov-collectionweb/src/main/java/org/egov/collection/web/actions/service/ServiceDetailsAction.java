@@ -53,7 +53,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.service.ServiceCategoryService;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
@@ -74,19 +77,29 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Namespace("/service")
+@ResultPath("/WEB-INF/jsp/")
+@Results({
+    @Result(name=ServiceDetailsAction.NEW,location="service/serviceDetails-new.jsp"),
+    @Result(name="list",location="service/serviceDetails-list.jsp"),
+    @Result(name=ServiceDetailsAction.BEFORECREATE,location="service/serviceDetails-beforeCreate.jsp"),
+    @Result(name="codeUniqueCheck",location="service/serviceDetails-beforeCreate.jsp")
+  })
 public class ServiceDetailsAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
-	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
+	@Autowired
+	private ServiceCategoryService serviceCategoryService;
 	private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 	private ServiceDetails serviceDetails = new ServiceDetails();
-	private static final String BEFORECREATE =  "beforeCreate" ; 
-	private static final String BEFOREMODIFY =  "beforeModify" ; 
-	private static final String MESSAGE =  "message" ; 
+	protected static final String BEFORECREATE =  "beforeCreate" ; 
+	protected static final String BEFOREMODIFY =  "beforeModify" ; 
+	protected static final String MESSAGE =  "message" ; 
 	private List<ServiceAccountDetails> accountDetails = new ArrayList<ServiceAccountDetails>();
 	private List<ServiceSubledgerInfo> subledgerDetails = new ArrayList<ServiceSubledgerInfo> ();
 	private List<Long> departmentList = new ArrayList<Long>(); 
@@ -110,9 +123,9 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return serviceDetails;
 	}
 
-	@Action(value="/service/serviceDetails-newform",results = { @Result(name = NEW,location="/WEB-INF/jsp/service/serviceDetails-new.jsp")})
+	@Action(value="/serviceDetails-newform")
 	public String newform(){
-		addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+		addDropdownData("serviceCategoryList", serviceCategoryService.getAllActiveServiceCategories());
 		return NEW;
 	}
 	
@@ -129,8 +142,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 			for(Department department : serviceDetails.getServiceDept()){
 				departmentList.add(department.getId());
 			}
-		}else if(null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getId()){
-			ServiceCategory category = serviceCategoryService.findById(serviceDetails.getServiceCategory().getId(),false);
+		}else if(null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getCode()){
+			ServiceCategory category = serviceCategoryService.findByCode(serviceDetails.getServiceCategory().getCode());
 			serviceDetails.setServiceCategory(category);
 		} 
 		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
@@ -155,8 +168,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
 	}
 	
+	@Action(value="/serviceDetails-beforeCreate")
 	public String beforeCreate(){
-		
 		accountDetails.add(new ServiceAccountDetails());
 		subledgerDetails.add(new ServiceSubledgerInfo());
 		return BEFORECREATE;
@@ -172,8 +185,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return MESSAGE;
 	}
 
-
-	
+	@Action(value="/serviceDetails-listServices")
 	public String listServices(){
 		return "list";
 	}
@@ -388,7 +400,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return Boolean.TRUE;
 	}
 	
-	
+	@Action(value="/serviceDetails-codeUniqueCheck")
 	public String codeUniqueCheck(){
 		
 		return "codeUniqueCheck";
@@ -420,11 +432,11 @@ public class ServiceDetailsAction extends BaseFormAction {
 
 	/**
 	 * @param serviceCategoryService the serviceCategoryService to set
-	 */
+	 *//*
 	public void setServiceCategoryService(
 			PersistenceService<ServiceCategory, Long> serviceCategoryService) {
 		this.serviceCategoryService = serviceCategoryService;
-	}
+	}*/
 
 	public List<ServiceAccountDetails> getAccountDetails() {
 		return accountDetails;

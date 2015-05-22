@@ -59,15 +59,15 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 			fetch="select">
 			<column name="MODIFIED_BY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="name" column="SERVICENAME" type="string" />
+		<property name="name" column="name" type="string" />
 		<property name="serviceUrl" column="SERVICEURL" type="string" />
 		<property name="isEnabled" column="ISENABLED" type="java.lang.Boolean" />
 		<property name="callBackurl" column="CALLBACKURL" type="string" />
 		<property name="serviceType" column="SERVICETYPE" type="string" />
 		<property name="code" column="CODE" type="string" />
-		<property name="voucherCreation" column="VOUCHER_CREATION" type="java.lang.Boolean" />
+		<property name="voucherCreation" column="VOUCHERCREATION" type="java.lang.Boolean" />
 		<property name="isVoucherApproved" column="ISVOUCHERAPPROVED" type="java.lang.Boolean" />
-		<property name="orderNumber" column="ORDERNUMBER" type="java.lang.Integer" />
+		<!-- <property name="orderNumber" column="ORDERNUMBER" type="java.lang.Integer" /> -->
 		<property name="voucherCutOffDate" type="date">
 			<column name="VOUCHERCUTOFFDATE" length="7" />
 		</property>

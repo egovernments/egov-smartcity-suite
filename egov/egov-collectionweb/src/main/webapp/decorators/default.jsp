@@ -50,9 +50,8 @@
         <!-- <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/css/egov.css'/>" />
       	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
 	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" /> -->
-
-	<link href="../css/commonegov.css" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" type="text/css" href="<c:url value='/css/collections.css'/>" />
+	<link rel="stylesheet" type="text/css" href="/collection/css/commonegov.css"/>
+	<link rel="stylesheet" type="text/css" href="/collection/css/collections.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 	
@@ -64,26 +63,13 @@
 	<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 	<script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
 	
-	<script type="text/javascript" src="<c:url value='/javascript/propertyTax.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/javascript/helper.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/javascript/WorkFlow.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/script/calendar.js'/>" ></script>
-	<script type="text/javascript" src="<c:url value='/dhtml.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/validations.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/SASvalidation.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/dateValidation.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/createProperty.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/json2.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/javascript/modifyProperty.js'/>"></script>
-	<SCRIPT type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></SCRIPT>
-	
 	<script type="text/javascript" src="<c:url value='/commonyui/build/yahoo/yahoo.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/build/dom/dom.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/build/autocomplete/autocomplete-debug.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/js/helper.js' context='/collection'/>"></script>
 	
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.4.custom.css' context='/egi'/>" />
     <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-1.7.2.min.js' context='/egi'/>"></script>

@@ -58,7 +58,6 @@ function EnableVoucherDetails(obj){
 <title> <s:text name="service.master.search.header"></s:text> </title>
 
 </head>
-
 <body onLoad="onBodyLoad();loadDropDownCodes();loadDropDownCodesFunction();loadGridOnValidationFail();">
 <s:form theme="simple" name="serviceDetailsForm" action="serviceDetails" method="post">
 <s:token />

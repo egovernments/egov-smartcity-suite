@@ -43,9 +43,16 @@ import java.util.List;
 
 import org.egov.infstr.models.ServiceCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory, Long> {
-	List<ServiceCategory> findByCodeContainingIgnoreCase(String code);
+	@Query("select sc from org.egov.infstr.models.ServiceCategory sc where sc.isActive='1' order by sc.name")
+	List<ServiceCategory> findAllActiveServiceCategories();
+	
+	@Query("from ServiceCategory ORDER BY code")
+	List<ServiceCategory> findAllByOrderByCodeAsc();
+	
+	ServiceCategory findByCode(String code);
 }

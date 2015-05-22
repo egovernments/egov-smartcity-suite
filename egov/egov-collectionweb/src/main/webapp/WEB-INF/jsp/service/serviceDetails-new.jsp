@@ -42,14 +42,16 @@
 <title>  <s:text name="service.master.search.header"></s:text> </title>
 
 <script>
-function validate(){
-	dom.get('error_area').innerHTML = '';
-	dom.get("error_area").style.display="none"
-	if(dom.get('serviceCategoryid').value == -1){
-		dom.get("error_area").innerHTML = '<s:text name="error.select.service.category" />';
-		dom.get("error_area").style.display="block";
+function validate(obj){
+	document.getElementById('error_area').innerHTML = '';
+	document.getElementById("error_area").style.display="none"
+	if(document.getElementById('serviceCategoryid').value == -1){
+		document.getElementById("error_area").innerHTML = '<s:text name="error.select.service.category" />';
+		document.getElementById("error_area").style.display="block";
 		return false;
 	}
+	document.forms[0].action=obj;
+	document.forms[0].submit;
    return true;
 }
 </script>
@@ -84,14 +86,14 @@ function validate(){
 	<div class="buttonbottom">
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="Create Service" method="beforeCreate"
-					onclick="return validate();" />
+					value="Create Service" 
+					onclick="return validate('serviceDetails-beforeCreate.action');" />
 			</label>&nbsp;
 			
 			<label>
 				<s:submit type="submit" cssClass="buttonsubmit" id="button"
-					value="List Services" method="listServices"
-					onclick="return validate();" />
+					value="List Services" 
+					onclick="return validate('serviceDetails-listServices.action');" />
 			</label>			
 		</div>
 

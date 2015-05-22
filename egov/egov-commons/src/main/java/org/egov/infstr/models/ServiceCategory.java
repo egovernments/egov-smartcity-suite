@@ -42,31 +42,40 @@ package org.egov.infstr.models;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * @author manoranjan
- *
- */
-@Unique(fields = { "code" }, id = "id", tableName = "EG_SERVICECATEGORY", columnName = { "CODE" }, message = "masters.serviceCategoryCode.isunique")
+@Entity
+@Unique(fields = { "code" }, id = "id", tableName = "egcl_servicecategory", columnName = { "CODE" },message = "masters.serviceCategoryCode.isunique" )
+@Table(name="egcl_servicecategory")
+public class ServiceCategory  extends AbstractAuditable<User, Long> {
 
-public class ServiceCategory extends BaseModel {
-	
-
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6424646245490617480L;
 
 	@Required(message = "serviceCategoryName.null.validation")
-	@Length(max = 256, message = "masters.serviceCategory.nameLength")
+	@Length(min=1, max = 256, message = "masters.serviceCategory.nameLength")
+	@Column(name = "name")
 	private String name;
 	
 	@Required(message = "serviceCategoryCode.null.validation")
 	@Length(max = 256, message = "masters.serviceCategory.codeLength")
+	@Column(name = "code")
 	private String code;
 	
+	@Column(name = "isactive")
 	private Boolean isActive;
 	
+	@OneToMany(mappedBy = "serviceCategory",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<ServiceDetails> services = new LinkedHashSet<ServiceDetails>(0);
 
 	/**
@@ -114,6 +123,7 @@ public class ServiceCategory extends BaseModel {
             this.isActive = isActive;
 		}
 	}
+	
 	public Set<ServiceDetails> getServices() {
 		return services;
 	}
@@ -121,5 +131,4 @@ public class ServiceCategory extends BaseModel {
 	public void setServices(Set<ServiceDetails> services) {
 		this.services = services;
 	}
-
 }

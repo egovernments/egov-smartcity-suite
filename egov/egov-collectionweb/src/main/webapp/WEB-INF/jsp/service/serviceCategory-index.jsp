@@ -41,9 +41,17 @@
 <html>  
 	<head>  
 		<title><s:text name="list.title.serviceCategory"/></title>  
+		<script>
+function onSubmit(obj){
+	document.forms[0].action=obj;
+	document.forms[0].submit;
+   return true;
+}
+</script>
 	</head>  
 
 	<body>  
+	<s:form action="serviceCategory" theme="simple" > 
 	  	<div class="subheadnew"><s:text name="serviceCategory.edit.title"/></div>
 	  	<table width="80%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		        <tr>  
@@ -89,15 +97,15 @@
 						
 					<td class="blueborderfortd">
 					<div align="center">  
-   						<a href="serviceCategory!edit.action?id=<s:property value='%{id}'/>"><s:text name="masters.edit"/></a>  
+   						<a href="serviceCategory-edit.action?code=<s:property value='%{code}'/>"><s:text name="masters.edit"/></a>  
    					</div>
 					</td>  
 	            </tr>  
 	        	</s:iterator> 
 			</table> 
-			<s:form action="courtMaster" theme="simple" >  
+			<s:hidden name="id" value="%{id}"/> 
 				<div class="buttonbottom">
-			 		<input name="button2" type="button" class="buttonsubmit" id="button" onclick="location.href='serviceCategory!newform.action'" value="Add New"/>
+			 		<input name="button2" type="submit" class="buttonsubmit" id="button" onclick="return onSubmit('serviceCategory-newform.action');" value="Add New"/>
 					<input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 				</div>
          </s:form>   

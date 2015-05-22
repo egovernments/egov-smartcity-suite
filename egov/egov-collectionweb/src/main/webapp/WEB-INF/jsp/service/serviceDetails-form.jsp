@@ -36,7 +36,7 @@
  
    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 --> 
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>  
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <div class="formmainbox">
 	 <div class="errorstyle" id="error_area" style="display:none;"></div>
@@ -65,7 +65,7 @@
 		</tr>
 		<s:set name="serviceCodeInitVal" id="serviceCodeInitVal" value="%{code}"></s:set>
 		<tr>
-			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails!codeUniqueCheck.action'
+			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
 			<td width="25%" class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory">*</span></td>
 			<td width="25%" class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
@@ -117,12 +117,12 @@
 		</tr>
 		
 		<tr>
-		<egov:ajaxdropdown id="scheme"fields="['Text','Value']" dropdownId="schemeId" url="/receipts/ajaxReceiptCreate!ajaxLoadSchemes.action" />
+		<egov:ajaxdropdown id="scheme"fields="['Text','Value']" dropdownId="schemeId" url="/receipts/ajaxReceiptCreate-ajaxLoadSchemes.action" />
 			<td width="25%" class="bluebox"> <s:text name="service.master.create.scheme"></s:text> </td>
 				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="scheme" id="schemeId" cssClass="selectwk"
 					list="dropdownData.schemeList" listKey="id" listValue="name" value="%{scheme.id}"  onChange= "populatesubSchemes(this)" /></td>
-		<egov:ajaxdropdown id="subscheme"fields="['Text','Value']" dropdownId="subschemeId" url="/receipts/ajaxReceiptCreate!ajaxLoadSubSchemes.action" />
+		<egov:ajaxdropdown id="subscheme"fields="['Text','Value']" dropdownId="subschemeId" url="/receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action" />
 				<td width="25%" class="bluebox"><s:text name="service.master.create.subscheme"></s:text>  </td>
 				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="subscheme" id="subschemeId" cssClass="selectwk"
@@ -139,7 +139,7 @@
 			<td width="25%" class="bluebox2"> <s:text name="service.master.create.department"></s:text> </td>
 				<td width="25%" class="bluebox2">
 				<s:select name="departmentList"  list="dropdownData.departmentList" listKey="id"
-					 listValue="deptName"  multiple="true" size="6" required="true"/></td>
+					 listValue="name"  multiple="true" size="6" /></td>
 		</tr>
 		
 		

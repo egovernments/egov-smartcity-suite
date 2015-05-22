@@ -29,11 +29,15 @@ public class ServiceCategoryService{
         serviceCategoryRepository.save(serviceCategory);
     }
     
-    public List<ServiceCategory> getAllServiceCategoriesByCodeLike(String code){
-		return serviceCategoryRepository.findByCodeContainingIgnoreCase(code);
+    public List<ServiceCategory> getAllServiceCategoriesOrderByCode(){
+		return serviceCategoryRepository.findAllByOrderByCodeAsc();
 	}
     
-    public ServiceCategory findById(Long id) {
-    	return serviceCategoryRepository.findOne(id);
+    public ServiceCategory findByCode(String code) {
+    	return serviceCategoryRepository.findByCode(code);
+    }
+    
+    public List<ServiceCategory> getAllActiveServiceCategories() {
+    	return serviceCategoryRepository.findAllActiveServiceCategories();    	
     }
 }

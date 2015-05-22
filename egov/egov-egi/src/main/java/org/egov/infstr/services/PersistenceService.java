@@ -100,13 +100,13 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         return entityManager.unwrap(Session.class);
     }
 
-    protected void validate(final T model) {
+    public void validate(final T model) {
         final List<ValidationError> errors = this.validateModel(model);
         if (!errors.isEmpty())
             throw new ValidationException(errors);
     }
 
-    protected List<ValidationError> validateModel(final T model) {
+    public List<ValidationError> validateModel(final T model) {
         LOG.debug("Validating Model");
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (model == null) {

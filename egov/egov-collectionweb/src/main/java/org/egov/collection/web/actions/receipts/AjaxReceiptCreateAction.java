@@ -46,7 +46,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -67,6 +70,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Transactional(readOnly=true)
+@Namespace("/receipts")
+@ResultPath("/WEB-INF/jsp/receipts/")
+@Results({
+    @Result(name="schemeList",location="ajaxReceiptCreate-schemeList.jsp") ,
+    @Result(name="subSchemeList",location="ajaxReceiptCreate-subSchemeList.jsp")  
+  })
 public class AjaxReceiptCreateAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final String DETAILTYPEID = "detailtypeid";
@@ -107,7 +116,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction{
     return RESULT;
 }*/
 
-public String getMISdetailsForService() {
+	public String getMISdetailsForService() {
     value = "";
     String serviceId = parameters.get("serviceId")[0];
     
@@ -371,7 +380,7 @@ public String getMISdetailsForService() {
 
 	
 
-	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxReceiptCreate-ajaxLoadSchemes")
 	public String ajaxLoadSchemes()
 	{
 		
@@ -386,6 +395,7 @@ public String getMISdetailsForService() {
 		return "schemeList";
 	}
 	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxReceiptCreate-ajaxLoadSubSchemes")
 	public String ajaxLoadSubSchemes()
 	{
 		Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
