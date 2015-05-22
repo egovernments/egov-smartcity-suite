@@ -101,6 +101,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Results({
     @Result(name="ward",location="ajaxCommon-ward.jsp") ,
     @Result(name="street",location="ajaxCommon-street.jsp")  ,
+    @Result(name="area",location="ajaxCommon-area.jsp") ,
     @Result(name="category",location="ajaxCommon-category.jsp")  ,
     @Result(name="structural",location="ajaxCommon-structural.jsp")  
   })
@@ -114,7 +115,8 @@ public class AjaxCommonAction extends BaseFormAction {
 	private static final String RESULT_STRUCTURAL = "structural";
 	private static final String RESULT_PART_NUMBER = "partNumber";
 	private static final String WARD = "ward";
-
+	private static final String AREA = "area";
+	
 	private Long zoneId;
 	private Long wardId;
 	private Long areaId;
@@ -159,6 +161,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-areaByWard")
 	public String areaByWard() {
 		LOGGER.debug("Entered into areaByWard, wardId: " + wardId);
 		areaList = new ArrayList<Boundary>();
@@ -168,7 +171,7 @@ public class AjaxCommonAction extends BaseFormAction {
 						AREA_BNDRY_TYPE, getWardId());
 		LOGGER.debug("Exiting from areaByWard, No of areas in ward: " + wardId + " are "
 				+ ((areaList != null) ? areaList : ZERO));
-		return "area";
+		return AREA;
 	}
 
 	@SuppressWarnings("unchecked")

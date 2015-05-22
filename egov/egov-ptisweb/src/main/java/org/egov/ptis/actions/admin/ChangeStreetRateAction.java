@@ -59,9 +59,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BoundaryCategoryDao;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
@@ -73,6 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 @Namespace("/admin")
+@ResultPath("/WEB-INF/jsp/")
 public class ChangeStreetRateAction extends BaseFormAction {
 	private Integer zoneId;
 	private Integer wardId;
@@ -90,6 +94,9 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	@Autowired
 	private BoundaryCategoryDao boundaryCategoryDAO;
 
+	@Autowired
+	private BoundaryService boundaryService;
+	
 	private static final String SEARCH = "search";
 	private static final String RESULTS = "results";
 	private static final String ACK = "ack";
@@ -109,18 +116,20 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		LOGGER.debug("Entered into the prepare method");
-
-		List<Boundary> zoneList = getPersistenceService().findAllBy(
+		List<Boundary> zoneList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.ZONE, PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
+		/*List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
 		LOGGER.debug("prepare : zones: " + ((zoneList != null) ? zoneList : ZERO));
-		List<Boundary> wardList = getPersistenceService().findAllBy(
+	*/	/*List<Boundary> wardList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.name", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.name", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);*/
+		List<Boundary> wardList =boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD, PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
 		LOGGER.debug("prepare : wards: " + ((wardList != null) ? wardList : ZERO));
 		addDropdownData("Zone", zoneList);
 		prepareWardDropDownData(zoneId != null, wardId != null);
-		prepareAreaDropDownData(wardId != null, areaId != null);
+		//prepareAreaDropDownData(wardId != null, areaId != null);//TODO PHOENIX commented area and used street by passing ward.
+		prepareStreetDropDownData(wardId != null);
 		addDropdownData("categoryList", Collections.EMPTY_LIST);
 
 		LOGGER.debug("Exit from prepare method");
@@ -133,8 +142,8 @@ public class ChangeStreetRateAction extends BaseFormAction {
 			List<Boundary> wardNewList = new ArrayList<Boundary>();
 			wardNewList = getPersistenceService()
 					.findAllBy(
-							"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-							WARD_BNDRY_TYPE, getZoneId());
+							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
+							PropertyTaxConstants.WARD, getZoneId());
 			LOGGER.debug("prepareWardDropDownData : No of wards in zone: " + getZoneId() + " are: "
 					+ ((wardNewList != null) ? wardNewList.size() : ZERO));
 			addDropdownData("wardList", wardNewList);
@@ -151,8 +160,9 @@ public class ChangeStreetRateAction extends BaseFormAction {
 			List<Boundary> areaNewList = new ArrayList<Boundary>();
 			areaNewList = getPersistenceService()
 					.findAllBy(
-							"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
+							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
 							AREA_BNDRY_TYPE, getWardId());
+			
 			LOGGER.debug("prepareAreaDropDownData : No of areas in ward: " + getWardId() + " are: "
 					+ ((areaNewList != null) ? areaNewList.size() : ZERO));
 			addDropdownData("areaList", areaNewList);
@@ -161,8 +171,25 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		}
 		LOGGER.debug("Exit from prepareAreaDropDownData");
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void prepareStreetDropDownData(boolean wardExists) {
+		LOGGER.debug("Entered into the prepareAreaDropDownData");
+		if (wardExists ) {
+			List<Boundary> streetList = new ArrayList<Boundary>();
+			streetList = getPersistenceService()
+					.findAllBy("select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ",getWardId());
+			
+			LOGGER.debug("prepareStreetDropDownData : No of areas in ward: " + getWardId() + " are: "
+					+ ((streetList != null) ? streetList.size() : ZERO));
+			addDropdownData("streetList", streetList);
+		} else {
+			addDropdownData("streetList", Collections.EMPTY_LIST);
+		}
+		LOGGER.debug("Exit from prepareStreetDropDownData");
+	}
 
-	@Action(value="/changeStreetRate-searchForm",results = { @Result(name = SEARCH, location="/changeStreetRate-search.jsp") })
+	@Action(value="/changeStreetRate-searchForm",results = { @Result(name = SEARCH, location="admin/changeStreetRate-search.jsp") })
 	public String searchForm() {
 		LOGGER.debug("Entered into searchForm");
 		LOGGER.debug("Exit from searchForm");
