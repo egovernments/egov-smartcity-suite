@@ -68,7 +68,7 @@
 		<many-to-one name="bndry" column="ID_BNDRY"
 			class="org.egov.infra.admin.master.entity.Boundary" not-null="true" />
 
-		<many-to-one name="category" column="category"
+		<many-to-one name="category" column="id_category"
 			class="org.egov.ptis.domain.entity.property.Category" not-null="true" />
 
 		<property name="fromDate" column="FROM_DATE" />

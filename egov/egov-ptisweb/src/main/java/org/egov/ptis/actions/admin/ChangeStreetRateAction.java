@@ -143,7 +143,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 			wardNewList = getPersistenceService()
 					.findAllBy(
 							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-							PropertyTaxConstants.WARD, getZoneId());
+							PropertyTaxConstants.WARD, getZoneId().longValue());
 			LOGGER.debug("prepareWardDropDownData : No of wards in zone: " + getZoneId() + " are: "
 					+ ((wardNewList != null) ? wardNewList.size() : ZERO));
 			addDropdownData("wardList", wardNewList);
@@ -161,7 +161,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 			areaNewList = getPersistenceService()
 					.findAllBy(
 							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-							AREA_BNDRY_TYPE, getWardId());
+							AREA_BNDRY_TYPE, getWardId().longValue());
 			
 			LOGGER.debug("prepareAreaDropDownData : No of areas in ward: " + getWardId() + " are: "
 					+ ((areaNewList != null) ? areaNewList.size() : ZERO));
@@ -178,7 +178,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		if (wardExists ) {
 			List<Boundary> streetList = new ArrayList<Boundary>();
 			streetList = getPersistenceService()
-					.findAllBy("select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ",getWardId());
+					.findAllBy("select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ",getWardId().longValue());
 			
 			LOGGER.debug("prepareStreetDropDownData : No of areas in ward: " + getWardId() + " are: "
 					+ ((streetList != null) ? streetList.size() : ZERO));
@@ -197,7 +197,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "search")
-	@Action(value="/changeStreetRate-search")
+	@Action(value="/changeStreetRate-search" ,results = { @Result(name = RESULTS, location="admin/changeStreetRate-results.jsp") })
 	public String search() {
 		LOGGER.debug("Enered into search");
 		LOGGER.debug("Exit from search");
@@ -214,8 +214,14 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 		LOGGER.debug("searchForCategories, areaId:" + areaId);
 
-		boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
-		try {
+		//boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
+	
+		
+	 if(areaId!=null){
+		boundary =boundaryService.getBoundaryById(areaId.longValue());
+	  }
+	
+	try {
 			List<Category> list = boundaryCategoryDAO.getCategoriesByBoundry(boundary);
 			Map<String, String> fields = null;
 			for (Category cat : list) {

@@ -102,7 +102,7 @@
   	<s:actionerror/>
   </div>
   
-  <s:form name="ChBaseRateAreaForm" action="changeStreetRate" theme="simple" method="post">
+  <s:form name="ChBaseRateAreaForm" action="changeStreetRate-search" theme="simple" method="post">
   <div class="formmainbox">
   	<div class="formheading"></div>
 	<div class="headingbg"><s:text name="ChBaseRateAreaHeader"/></div>
