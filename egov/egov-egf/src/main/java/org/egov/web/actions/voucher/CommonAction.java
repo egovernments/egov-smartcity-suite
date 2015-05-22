@@ -1080,7 +1080,7 @@ public class CommonAction extends BaseFormAction{
 	public String ajaxHodForDept() throws Exception{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxHodForDept...");
 		userList = new ArrayList<User>();
-		//phoenix migration fix
+		
 		List<PersonalInformation> listOfPI = null;//new EisUtilService().getAllHodEmpByDept(departmentId);
 		for (PersonalInformation personalInformation : listOfPI) {
 

@@ -62,6 +62,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -269,8 +270,8 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     }
 
     public String setUpDataForList(){
-        /*if(financialYear == null &&HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID)!= null)
-            financialYear = (Long)HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID);*///phoenix migration 
+        if(financialYear == null && getSession().get(Constants.FINANCIALYEARID)!= null)
+            financialYear = (Long) getSession().get(Constants.FINANCIALYEARID);
         dropdownData.put("budgetList", budgetDetailService.findBudgetsForFYWithNewState(financialYear==null?getFinancialYear():financialYear));
         return Constants.LIST;
     }

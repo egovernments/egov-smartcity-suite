@@ -232,13 +232,13 @@ public class BudgetProposalAction extends BaseFormAction {
 		financialYear = topBudget.getFinancialYear();
 		currentfinYearRange=financialYear.getFinYearRange();
 		   
-		//This fix is for Phoenix Migration.	nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
+		nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
 		nextfinYearRange=nextFinancialYear.getFinYearRange();
 		
 		prevFinancialYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
 		previousfinYearRange=prevFinancialYear.getFinYearRange();
 		
-		//This fix is for Phoenix Migration.	beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+		beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
 		twopreviousfinYearRange=beforeLastFinancialYear.getFinYearRange();
 		
 		budgetDetailApprove();
@@ -276,13 +276,13 @@ public class BudgetProposalAction extends BaseFormAction {
 		financialYear = topBudget.getFinancialYear();
 		currentfinYearRange=financialYear.getFinYearRange();
 		
-		//This fix is for Phoenix Migration.nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
+		nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
 		nextfinYearRange=nextFinancialYear.getFinYearRange();
 		
 		prevFinancialYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
 		previousfinYearRange=prevFinancialYear.getFinYearRange();
 		
-		//This fix is for Phoenix Migration.beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+		beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
 		twopreviousfinYearRange=beforeLastFinancialYear.getFinYearRange();
 		
 		budgetApprove();

@@ -786,7 +786,7 @@ public void loadBankBranchForFund(){
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = null;//This fix is for Phoenix Migration.eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		positionsForUser = eisService.getPositionsForUser(EGOVThreadLocals.getUserId(), new Date());
 		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");

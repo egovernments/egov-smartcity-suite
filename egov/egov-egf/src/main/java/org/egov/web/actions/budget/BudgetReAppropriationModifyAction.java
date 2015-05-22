@@ -45,6 +45,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.script.ScriptContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -63,6 +65,7 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -115,7 +118,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	private boolean enableApprovedAmount = false;
 	private boolean enableOriginalAmount = false;
 	protected EisUtilService eisService;
-
+	private ScriptService scriptService;
 	
 	public void setMiscWorkflowService(WorkflowService<BudgetReAppropriationMisc> miscWorkflowService) {
 		this.miscWorkflowService = miscWorkflowService;
@@ -485,7 +488,8 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 
 	private void setEnablingAmounts(BudgetReAppropriationMisc misc){
 		Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.enable.amounts").get(0);
-		String value = "";//This fix is for Phoenix Migration.(String) script.eval(Script.createContext("wfItem",misc,"persistenceService",budgetService));
+		ScriptContext scriptContext = ScriptService.createContext("wfItem",misc,"persistenceService",budgetService);
+		String value = (String) scriptService.executeScript(script,scriptContext );
 		if("approved".equalsIgnoreCase(value))
 			enableApprovedAmount = true;
 		else if("original".equalsIgnoreCase(value))
@@ -586,7 +590,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = null;//This fix is for Phoenix Migration.eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		positionsForUser = eisService.getPositionsForUser(EGOVThreadLocals.getUserId(), new Date());
 		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
@@ -603,6 +607,14 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	}
 	public void setBudgetReAppropriationWorkflowService(WorkflowService<BudgetReAppropriation> budgetReAppropriationWorkflowService) {
 		this.budgetReAppropriationWorkflowService = budgetReAppropriationWorkflowService;
+	}
+
+	public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 
 

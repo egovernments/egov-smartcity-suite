@@ -463,7 +463,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			// validateInterFundAccount(voucherHeader.getFundId(),toFund);
 
 			createVoucher.deleteVoucherdetailAndGL( voucherHeader);
-			createVoucher.deleteVoucherdetailAndGL( voucherHeader2);//This fix is for Phoenix Migration.
+			createVoucher.deleteVoucherdetailAndGL( voucherHeader2);
 
 		HibernateUtil.getCurrentSession().flush();
 			HashMap<String, Object> detailMap = null;
@@ -524,14 +524,14 @@ public class ContraBTBAction extends BaseVoucherAction {
 		HibernateUtil.getCurrentSession().flush();
 			Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
 			txnList2 = transactions2.toArray(txnList2);
-			/*if (!engine.postTransaxtions(txnList2, formatter.format(voucherHeader2//Phoenix
+			if (!engine.postTransaxtions(txnList2, formatter.format(voucherHeader2
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays
 								.asList(new ValidationError(
 										EXCEPTION_WHILE_SAVING_DATA,
 										TRANSACTION_FAILED)));
-			}*/
+			}
 
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage());
@@ -924,7 +924,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 		cjv.setInstrumentHeaderId(ih);
 		final PersistenceService<ContraJournalVoucher, Long> contraJVService = new PersistenceService<ContraJournalVoucher, Long>();
 		contraJVService.setType(ContraJournalVoucher.class);
-		//This fix is for Phoenix Migration.contraJVService.setSessionFactory(new SessionFactory());
 		cjv.setVoucherHeaderId(vh);
 		getHibObjectsFromContraBean();
 		cjv.setFromBankAccountId(contraVoucher.getFromBankAccountId());

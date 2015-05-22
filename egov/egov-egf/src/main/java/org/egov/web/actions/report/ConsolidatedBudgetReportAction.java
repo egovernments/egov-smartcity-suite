@@ -139,7 +139,7 @@ public class ConsolidatedBudgetReportAction extends BaseFormAction {
     	prevFinYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
     	prevFinYearRange = prevFinYear.getFinYearRange();
     	currentFinYearRange = financialYear.getFinYearRange();
-    	nextFinYearRange=null;//phoenix getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate()).getFinYearRange();
+    	nextFinYearRange=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate()).getFinYearRange();
     	
     	bpBeanMajList = new ArrayList<BudgetProposalBean>();
     	bpBeanDetList = new ArrayList<BudgetProposalBean>();

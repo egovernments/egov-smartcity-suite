@@ -185,7 +185,7 @@ public class FundAction extends BaseFormAction{
 			}
 			
 
-			fundNameStr.append(fund.getCode()).append("-").append(""/*fund.getFundNameActual()*/);//phoenix Migration 
+			fundNameStr.append(fund.getCode()).append("-").append(fund.getFundNameActual());
 			fundOld.setName(fundNameStr.toString());
 			fundOld.setCode(fund.getCode());
 			fundOld.setIdentifier(fund.getIdentifier());
@@ -193,10 +193,10 @@ public class FundAction extends BaseFormAction{
 			fundOld.setLlevel(parentLevel);
 			fundOld.setLastmodified(new Date());
 			fundOld.setModifiedby(getLoggedInUser());
-		//	fundOld.setFundNameActual(fund.getFundNameActual());//phoenix Migration
-			/*if (fund.getChartofaccountsByPayglcodeid() != null) {
+			fundOld.setFundNameActual(fund.getFundNameActual());
+			if (fund.getChartofaccountsByPayglcodeid() != null) {
 				fundOld.setChartofaccountsByPayglcodeid(fund.getChartofaccountsByPayglcodeid());
-			}*/
+			}
 			if (fund.getFund() != null && fund.getFund().getId() != null) {
 				parentFund.setIsnotleaf(true);
 			}
@@ -206,10 +206,10 @@ public class FundAction extends BaseFormAction{
 			persistenceService.setType(Fund.class);
 			persistenceService.persist(fund);
 			if(fund.getName().contains("-"))
-				//phoenix Migration fund.setFundNameActual(fund.getName().split("-")[1]);
-				;
+				fund.setFundNameActual(fund.getName().split("-")[1]);
+				
 			else
-				//phoenix Migration fund.setFundNameActual(fund.getName());
+				 fund.setFundNameActual(fund.getName());
 			setSuccess("yes");
 			
 		} catch (Exception e) {
@@ -258,7 +258,7 @@ public class FundAction extends BaseFormAction{
 		
 	 	  if (fund.getName().contains("-")) {
 			String fundName[] = fund.getName().split("-");
-			//phoenix Migration fund.setFundNameActual(fundName[1]);
+			fund.setFundNameActual(fundName[1]);
 	    }
 		return EDIT;
 	}
@@ -308,10 +308,10 @@ public class FundAction extends BaseFormAction{
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					"fund.code.mandatory", getText("mandatory.fund.code"))));
 		}
-		/*if (fund.getFundNameActual() == null || "".equals(fund.getFundNameActual())) {
+		if (fund.getFundNameActual() == null || "".equals(fund.getFundNameActual())) {
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					"fund.name.mandatory", getText("mandatory.fund.actualname"))));
-		}*///phoenix Migration 
+		}
 		if (fund.getCode() != null) {
 			if(getCheckCode()) {
 				throw new ValidationException(Arrays.asList(new ValidationError(

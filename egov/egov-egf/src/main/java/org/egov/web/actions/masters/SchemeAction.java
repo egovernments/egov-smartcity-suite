@@ -152,7 +152,7 @@ public class SchemeAction extends BaseFormAction{
 	public String edit() {
 		if (scheme.getIsactive() == null) {
 			
-			//phoenix Migration scheme.setIsactive(false);
+			scheme.setIsactive(false);
 		}
 		try {
 			schemeService.persist(scheme);
@@ -180,7 +180,7 @@ public class SchemeAction extends BaseFormAction{
 	public String create() {    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("............................Creating New Scheme method.......................");
 		if (scheme.getIsactive() == null) {
-			//phoenix Migration scheme.setIsactive(false);
+			scheme.setIsactive(false);
 		}
 		try {
 			schemeService.persist(scheme);
