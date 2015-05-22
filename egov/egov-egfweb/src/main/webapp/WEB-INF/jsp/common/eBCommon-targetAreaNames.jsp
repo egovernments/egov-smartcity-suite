@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -36,6 +36,6 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@ page contentType="text/json" %><%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %><s:if test="targetAreaName==null">Please Enter TargetArea Name </s:if><s:else><s:if test="targetAreaNameList.size == 0 "> Nothing found to display
 </s:if><s:else><s:iterator var="s" value="targetAreaNameList" status="status"><s:property value="%{s}" />~^</s:iterator></s:else></s:else>

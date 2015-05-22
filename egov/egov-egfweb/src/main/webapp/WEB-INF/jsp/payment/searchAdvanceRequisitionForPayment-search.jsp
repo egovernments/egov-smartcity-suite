@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -36,7 +36,7 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%> 
 <script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/autocomplete/autocomplete-min.js'/>"></script>

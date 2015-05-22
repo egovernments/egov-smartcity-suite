@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -36,7 +36,7 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@page language="java" import="ChartDirector.*,java.sql.*,java.util.*,java.text.*,com.exilant.eGov.src.reports.GISIncomeExpenditure,com.exilant.eGov.src.reports.*,org.egov.infstr.utils.EGovConfig"%>
 <%
 int index=0;
