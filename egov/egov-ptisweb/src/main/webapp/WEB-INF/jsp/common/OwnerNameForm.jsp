@@ -1,4 +1,3 @@
-
 <!--
 	eGov suite of products aim to improve the internal efficiency,transparency, 
     accountability and the service delivery of the government  organizations.
@@ -52,8 +51,8 @@
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td>
         <td class="greybox">
-        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
+      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
         </td>
         </tr>
      </s:if>
@@ -65,8 +64,8 @@
         				onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         		</td>
         		<td class="greybox">
-        			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-      				<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+        			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
+      				<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
         		</td>
         	</tr>
         </s:iterator>

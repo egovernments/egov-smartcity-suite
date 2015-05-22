@@ -267,7 +267,8 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ propUsageId + ", propOccId: " + propOccId);
 		long startTimeMillis = System.currentTimeMillis();
 				
-		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
+		//BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
+		BasicProperty basicProperty = new BasicPropertyImpl();
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
 		String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
 				.getBoundaryNum().toString());
@@ -642,7 +643,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		
 		//TODO FIX ME
-		//setupWorkflowDetails();
+		setupWorkflowDetails();
 		
 		//super.prepare();
 		LOGGER.debug("prepare: PropTypeList: "

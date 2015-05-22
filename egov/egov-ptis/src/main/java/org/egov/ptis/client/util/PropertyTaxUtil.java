@@ -2318,8 +2318,8 @@ public class PropertyTaxUtil {
 	 *
 	 * @return departments of currently logged in user
 	 */
-	public List<Department> getDepartmentsForLoggedInUser(Map<String, Object> sessionMap) {
-		Department dept = getDepartmentOfUser(getLoggedInUser(sessionMap));
+	public List<Department> getDepartmentsForLoggedInUser(User user) {
+		Department dept = getDepartmentOfUser(user);
 		List<Department> departments = persistenceService.findAllByNamedQuery(
 				QUERY_DEPARTMENTS_BY_DEPTCODE, dept.getCode());
 		return departments;

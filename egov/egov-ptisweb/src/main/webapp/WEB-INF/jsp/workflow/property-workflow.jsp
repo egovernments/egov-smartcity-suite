@@ -1,4 +1,3 @@
-
 <!--
 	eGov suite of products aim to improve the internal efficiency,transparency, 
     accountability and the service delivery of the government  organizations.
@@ -38,11 +37,9 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-
-<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <div align="center">
-	<br>
+	<br>Hi
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td colspan="5" width="5%">
@@ -115,8 +112,8 @@
 					cols="80" onblur="checkLength(this);" />
 			</td>
 			<td class="bluebox" width="15%" colspan="2"></td>
-		</tr>
-		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
+		</tr> 
+		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" /> --%>
 	</table>
 </div>
 

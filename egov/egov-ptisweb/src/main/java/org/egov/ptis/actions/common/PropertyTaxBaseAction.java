@@ -169,7 +169,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		AjaxCommonAction ajaxCommonAction = new AjaxCommonAction();
 		ajaxCommonAction.setPersistenceService(persistenceService);
 		List<Department> departmentsForLoggedInUser = Collections.EMPTY_LIST;
-		departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser((getSession()));
+		//TO DO FIX ME
+		//departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser(securityUtils.getCurrentUser());
 		workflowBean.setDepartmentList(departmentsForLoggedInUser);
 		if (workflowBean.getDepartmentId() != null && workflowBean.getDepartmentId() != -1) {
 			ajaxCommonAction.setDepartmentId(workflowBean.getDepartmentId());

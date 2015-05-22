@@ -40,17 +40,15 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
-
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>  	
     <title>
-    	<s:text name='NewProp.title'/>    	
+    	<%-- <s:text name='NewProp.title'/>     --%>	
+    	New Property
     </title>
-	<sx:head/>	
-	<script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script>
+	<!-- <sx:head/>	 -->
+	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script type="text/javascript">
 
 jQuery.noConflict();
@@ -91,13 +89,13 @@ function loadOnStartUp() {
 		resetDetailsForTenantOnload();
 	}
 	
-	populateLocationFactors();	
-	populateFloorConstTypeDropDowns();
-	toggleForResNonRes();	
-	toggleFloorDetails();
-	toggleUnitTypeAndCategory();
-	prepareUnitTypeCategories();
-	prepareUsagesForUnitTypes();
+	//populateLocationFactors();	
+	//populateFloorConstTypeDropDowns();
+	//toggleForResNonRes();	
+	//toggleFloorDetails();
+	//toggleUnitTypeAndCategory();
+	//prepareUnitTypeCategories();
+	//prepareUsagesForUnitTypes();
 	
 	var intervalId = -1;
 	var propTypeMstr = document.getElementById("propTypeMaster");
@@ -117,9 +115,9 @@ function loadOnStartUp() {
 var areUnitTypeCatsAndUsagePopulated = false;
 function doOnValidationErrors() {	
 
-	if (!areUnitTypeCatsAndUsagePopulated && isCategoriesPrepared && isUsagesPrepared) {
+	/* if (!areUnitTypeCatsAndUsagePopulated && isCategoriesPrepared && isUsagesPrepared) {
 		populateUnitTypeCatAndUsageOnValidationErrors();	
-	} 
+	}  */
 }
 
 function resetFloorDetailsForResdAndNonResd(obj) {
@@ -356,7 +354,7 @@ function finishAllChangesMsg(button) {
 
 </script>
 </head>
-  
+ 
   <body onload="loadOnStartUp();">
   
   <div align="left">
@@ -379,11 +377,11 @@ function finishAllChangesMsg(button) {
 		<tr>
         	<%@ include file="createPropertyForm.jsp"%>  
         </tr>
-        <tr>
+         <tr>
         	<%@ include file="../workflow/property-workflow.jsp" %>
         </tr>
         <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-        <tr>
+      <tr>
         	<div id="loadingMask" style="display:none" align="center">
         	<p align="center"><img src="/egi/images/bar_loader.gif"> 
         		<span id="message">
@@ -405,9 +403,9 @@ function finishAllChangesMsg(button) {
 						id="Create:Forward" method="forward" cssClass="buttonsubmit"
 						onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 				<td><input type="button" name="button2" id="button2"
-						value="Close" class="button" onclick="return confirmClose();"></td>				
+						value="Close" class="buttonsubmit" onclick="return confirmClose();"></td>				
 			</div>
-		</tr>                  
+		</tr> 
 		</table>
 	</div>
   </s:push>

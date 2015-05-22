@@ -1,43 +1,3 @@
-<!--
-	eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-    Copyright (C) <2015>  eGovernments Foundation
- 
-	The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
- 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
- 
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
-
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -74,7 +34,7 @@
 		<td class="greybox" width="5%">&nbsp;&nbsp;&nbsp;</td>
 
 		<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-			dropdownId="wardId" url="common/ajaxCommon!wardByZone.action" />
+			dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 		<td class="greybox" width=""><s:text name="Ward" /> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select name="wardId" id="wardId"
@@ -277,7 +237,7 @@
 			<s:text name="locationFactor" /> 
 			<span class="mandatory1">*</span> :
 		</td>
-		<egov:ajaxdropdown fields="['Text', 'Value']" url="common/ajaxCommon!locationFactorsByWard.action" 
+		<egov:ajaxdropdown fields="['Text', 'Value']" url="common/ajaxCommon-locationFactorsByWard.action" 
 			dropdownId="locationFactor" id="locationFactor" afterSuccess="setLocationFactor"/>
 		<td class="greybox">
 			<s:select name="propertyDetail.extra_field6"
@@ -308,9 +268,9 @@
 		<td class="greybox"><s:text name="Usage" /> <span
 			class="mandatory1">*</span><a
 			onclick="openWindow('UsageMaster.jsp');"> <img
-				src="../resources/image/help.gif" style="border: none" /> </a> :</td>
+				src="../resources/image/help.gif" cssStyle="border: none" /> </a> :</td>
 		<egov:ajaxdropdown id="usage" fields="['Text','Value']"
-			dropdownId="usage" url="common/ajaxCommon!usageByPropType.action" />
+			dropdownId="usage" url="common/ajaxCommon-usageByPropType.action" />
 		<td class="greybox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="propUsageId"
 				listKey="id" id="usage" listValue="usageName"
@@ -479,7 +439,7 @@
 			zoneId : document.getElementById("zoneId").value
 		});
 		document.getElementById("areaId").options.length = 0;
-		document.getElementById("areaId").value = "-1";
+		document.getElementById("areaId").value = "select";
 	}
 	function populateArea() {
 		populateareaId({
@@ -491,11 +451,11 @@
 			propTypeId : document.getElementById("propTypeMaster").value
 		});
 	}
-	function populateLocationFactors() {
+ 	function populateLocationFactors() {
 		populatelocationFactor({
 			wardId : document.getElementById("wardId").value
 		});
-	}
+	} 
 	function setLocationFactor() {
 		<s:if test="%{propertyDetail.extra_field6 != null}">
 			document.getElementById('locationFactor').value = <s:property value="%{propertyDetail.extra_field6}"/>;			

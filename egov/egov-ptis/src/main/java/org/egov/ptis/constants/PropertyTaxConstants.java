@@ -185,6 +185,8 @@ public interface PropertyTaxConstants {
 	public static final String WARD_BNDRY_TYPE = "Revenue Ward";
 	public static final String AREA_BNDRY_TYPE = "Revenue Area";
 	public static final String ZONE = "Zone";
+	public static final String WARD = "Ward";
+	public static final String STREET = "Street";
 
 	// Property Types
 	public static final String PROPTYPE_RESD = "RESIDENTIAL";

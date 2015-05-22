@@ -100,7 +100,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ResultPath("/WEB-INF/jsp/common/")
 @Results({
     @Result(name="ward",location="ajaxCommon-ward.jsp") ,
-    @Result(name="street",location="ajaxCommon-street.jsp")  
+    @Result(name="street",location="ajaxCommon-street.jsp")  ,
+    @Result(name="category",location="ajaxCommon-category.jsp")  ,
+    @Result(name="structural",location="ajaxCommon-structural.jsp")  
   })
 public class AjaxCommonAction extends BaseFormAction {
 
@@ -289,6 +291,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		return PROP_TYPE_CATEGORY;
 	}
 
+	@Action(value = "/ajaxCommon-locationFactorsByWard")
 	public String locationFactorsByWard() {
 		LOGGER.debug("Entered into locationFactorsByWard, wardId: " + wardId);
 
@@ -304,6 +307,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		return CATEGORY;
 	}
 
+	@Action(value = "/ajaxCommon-populateStructuralClassifications")
 	public String populateStructuralClassifications() {
 		LOGGER.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
 		structuralClassifications = new ArrayList<StructureClassification>();
