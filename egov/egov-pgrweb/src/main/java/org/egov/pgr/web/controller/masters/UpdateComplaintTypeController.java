@@ -81,7 +81,8 @@ public class UpdateComplaintTypeController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeFormForUpdate() {
+    public String complaintTypeFormForUpdate(Model model) {
+        model.addAttribute("mode", "update");
         return "complaint-type";
     }
 

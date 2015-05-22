@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <script src="<c:url value='/resources/js/app/complaintype.js'/>"></script>
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -145,7 +146,9 @@
 				<div class="form-group">
 					<div class="text-center">
 						<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
-						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+						<c:if test="${mode != 'update'}">
+							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+						</c:if>
 						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
