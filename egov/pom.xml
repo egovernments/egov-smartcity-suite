@@ -42,7 +42,7 @@
 
     <properties>
         <hibernate-version>4.3.7.Final</hibernate-version>
-        <struts2-version>2.3.20</struts2-version>
+        <struts2-version>2.3.24</struts2-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -177,8 +177,13 @@
                         <groupId>javassist</groupId>
                         <artifactId>javassist</artifactId>
                     </exclusion>
-                </exclusions>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions> 
             </dependency>
+            
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-json-plugin</artifactId>
@@ -262,6 +267,10 @@
                     <exclusion>
                         <groupId>commons-digester</groupId>
                         <artifactId>commons-digester</artifactId>
+                    </exclusion>
+                      <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -588,7 +597,18 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>3.1</version>
+                <exclusions>
+	            	<exclusion>
+	            		<groupId>org.ow2.asm</groupId>
+	            		<artifactId>asm</artifactId>
+	            	</exclusion>
+	            </exclusions>
             </dependency>
+            <dependency>
+				<groupId>asm</groupId>
+				<artifactId>asm-all</artifactId>
+				<version>3.3.1</version>
+			</dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
@@ -866,6 +886,10 @@
         <dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-all</artifactId>
 		</dependency>
 		<!-- MISC ENDS -->
 		
