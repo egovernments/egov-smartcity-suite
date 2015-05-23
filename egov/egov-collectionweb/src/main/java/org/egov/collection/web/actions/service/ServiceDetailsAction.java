@@ -88,7 +88,8 @@ import org.springframework.transaction.annotation.Transactional;
     @Result(name=ServiceDetailsAction.NEW,location="service/serviceDetails-new.jsp"),
     @Result(name="list",location="service/serviceDetails-list.jsp"),
     @Result(name=ServiceDetailsAction.BEFORECREATE,location="service/serviceDetails-beforeCreate.jsp"),
-    @Result(name="codeUniqueCheck",location="service/serviceDetails-beforeCreate.jsp")
+    @Result(name="codeUniqueCheck",location="service/serviceDetails-codeUniqueCheck.jsp"),
+    @Result(name=ServiceDetailsAction.MESSAGE,location="service/ serviceDetails-message.jsp"),
   })
 public class ServiceDetailsAction extends BaseFormAction {
 
@@ -115,7 +116,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 		addRelatedEntity("fundSource", Fundsource.class);
 		addRelatedEntity("functionary", Functionary.class);
 		addRelatedEntity("function", CFunction.class);
-		
 	}
 
 	@Override
@@ -163,9 +163,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 		}else{
 			addDropdownData("subschemeList", Collections.EMPTY_LIST);
 		}
-		
-		
-
 	}
 	
 	@Action(value="/serviceDetails-beforeCreate")
@@ -175,8 +172,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return BEFORECREATE;
 	}
 	
-	
 	@ValidationErrorPage(value=BEFORECREATE)
+	@Action(value="serviceDetails-create")
 	public String create(){
 		insertOrUpdateService();
 		if(hasActionErrors()){
@@ -207,11 +204,10 @@ public class ServiceDetailsAction extends BaseFormAction {
 		}
 		return BEFOREMODIFY;
 	}
+	
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value=BEFOREMODIFY)
 	public String modify(){
-		
-		
 		List<ServiceAccountDetails> accountList =(List<ServiceAccountDetails>) getPersistenceService().getSession().
 		createCriteria(ServiceAccountDetails.class).add(Restrictions.eq("serviceDetails.id", serviceDetails.getId())).list();
 		
@@ -260,7 +256,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 			
 			Department dept = (Department) getPersistenceService().find(" from Department where id= ?",deptId);
 			serviceDetails.addServiceDept(dept);
-			
 		}
 		
 		for(ServiceAccountDetails account : accountDetails){
@@ -295,9 +290,6 @@ public class ServiceDetailsAction extends BaseFormAction {
 		
 	    }
 	                       
-	
-	
-	
 	private void removeEmptyRowsAccoutDetail(List<ServiceAccountDetails> list) {
 		for (Iterator<ServiceAccountDetails> detail = list.iterator(); detail.hasNext();) {
 			ServiceAccountDetails next = detail.next();
@@ -408,35 +400,20 @@ public class ServiceDetailsAction extends BaseFormAction {
 	public boolean getCodeCheck(){
 		
 		boolean codeExistsOrNot = false;
-		ServiceDetails service = (ServiceDetails)persistenceService.find("from ServiceDetails where code='"+serviceDetails.getCode()+"'");
+		ServiceDetails service = (ServiceDetails)serviceDetailsService.find("from ServiceDetails where code='"+serviceDetails.getCode()+"'");
 		if(null != service ){
 			codeExistsOrNot = true; 
 		}
 		return codeExistsOrNot;
 	}
 	
-	
-	/**
-	 * @return the serviceDetails
-	 */
 	public ServiceDetails getServiceDetails() {
 		return serviceDetails;
 	}
 
-	/**
-	 * @param serviceDetails the serviceDetails to set
-	 */
 	public void setServiceDetails(ServiceDetails serviceDetails) {
 		this.serviceDetails = serviceDetails;
 	}
-
-	/**
-	 * @param serviceCategoryService the serviceCategoryService to set
-	 *//*
-	public void setServiceCategoryService(
-			PersistenceService<ServiceCategory, Long> serviceCategoryService) {
-		this.serviceCategoryService = serviceCategoryService;
-	}*/
 
 	public List<ServiceAccountDetails> getAccountDetails() {
 		return accountDetails;

@@ -94,12 +94,14 @@ public class ServiceCategoryAction extends BaseFormAction {
 
 	@Action(value="/serviceCategory-save")
 	public String save() {
+		serviceCategoryService.validate(serviceCategoryInstance);
 		serviceCategoryService.update(serviceCategoryInstance);
 		return list();
 	}
 
 	@Action(value="/serviceCategory-create")
 	public String create() {
+		serviceCategoryService.validate(serviceCategoryInstance);
 		serviceCategoryService.create(serviceCategoryInstance);
 		return list();
 	}

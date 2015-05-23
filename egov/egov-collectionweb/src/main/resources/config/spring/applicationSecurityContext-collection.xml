@@ -50,6 +50,7 @@
 		<constructor-arg>
 			<list>
 				<security:filter-chain pattern="/commonjs/**" filters="none" />
+				<security:filter-chain pattern="/js/**" filters="none" />
 				<security:filter-chain pattern="/commonyui/**" filters="none" />
 				<security:filter-chain pattern="/css/**" filters="none" />
 				<security:filter-chain pattern="/images/**" filters="none" />
