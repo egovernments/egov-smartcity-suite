@@ -222,6 +222,8 @@ public class AjaxCommonAction extends BaseFormAction {
 		return "userList";
 	}
 
+	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-categoryByRateUsageAndStructClass")
 	public String categoryByRateUsageAndStructClass() {
 
 		LOGGER.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: "

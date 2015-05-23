@@ -206,6 +206,8 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@ValidationErrorPage(value = "search")
+	@Action(value="/changeStreetRate-showSearchResults" ,results = { @Result(name = RESULTS, location="admin/changeStreetRate-results.jsp") })
 	public String showSearchResults() {
 		return searchForCategories();
 	}
@@ -255,9 +257,9 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	}
 
-	@Action(value="/changeStreetRate-editPage")
+	@Action(value="/changeStreetRate-editPage" ,results = { @Result(name = EDIT, location="admin/changeStreetRate-edit.jsp") })
 	public String editPage() {
-		LOGGER.debug("ChangeStreetRateAction!editPage");
+		LOGGER.debug("ChangeStreetRateAction-editPage");
 		LOGGER.debug("Exit from editPage");
 		return EDIT;
 	}
@@ -265,13 +267,15 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "edit")
 	@Transactional
-	@Action(value="/changeStreetRate-saveData")
+	@Action(value="/changeStreetRate-saveData",results = { @Result(name = ACK, location="admin/changeStreetRate-ack.jsp") })
 	public String saveData() {
 
 		LOGGER.debug("saveData : areaId:" + areaId + ", Current Location Factor:" + currLocFactor + ", Current Rate :"
 				+ currentRate + "Revised Location Factor: " + revisedLocFactor + "Revised Rate : " + revisedRate);
-
-		boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
+	
+		if (areaId != null)
+			boundary = boundaryService.getBoundaryById(areaId.longValue());
+		
 		Category catOld = (Category) getPersistenceService().find(
 				"from Category c where c.categoryName=? and c.categoryAmount=?", currLocFactor, currentRate);
 		LOGGER.debug("saveData : Category for CurrentLocationFactor: " + currLocFactor + "&" + "CurrentRate : "

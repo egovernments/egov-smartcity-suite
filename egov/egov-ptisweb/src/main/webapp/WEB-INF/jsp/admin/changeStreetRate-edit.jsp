@@ -47,7 +47,13 @@
 				populatecategoryList({
 					revisedRate: document.getElementById("revisedRate").value, usageFactor: usage, structFactor: struct  
 				});						
-			}			
+			}		
+			function onSubmit(obj){
+				document.forms[0].action=obj;
+				document.forms[0].submit;
+			   return true;
+			}
+				
 		</script>
 		<style type="text/css">
 			td {
@@ -110,7 +116,7 @@
 						</td>
 						<egov:ajaxdropdown id="categoryList" fields="['Text','Value']"
 							dropdownId="categoryList"
-							url="common/ajaxCommon!categoryByRateUsageAndStructClass.action" />
+							url="common/ajaxCommon-categoryByRateUsageAndStructClass.action" />
 						<td class="blueborderfortd">
 							<s:select id="categoryList" list="dropdownData.categoryList" 
 								name="revisedLocFactor" headerKey="-1"
@@ -124,10 +130,10 @@
 				<div class="buttonsearch" align="center">
 
 					<s:hidden name="saveAction" value="saveData"></s:hidden>
-					<s:submit value="Save" method="saveData" cssClass="button">
+					<s:submit value="Save" onclick="return onSubmit('changeStreetRate-saveData.action');"  cssClass="button">
 					</s:submit>
 					<s:submit value="Search Results" cssClass="button"
-						method="showSearchResults"></s:submit>
+						 onclick="return onSubmit('changeStreetRate-showSearchResults.action');"  ></s:submit>
 					<input type="button" value="Close" class="button"
 						onClick="window.close()" />
 				</div>
