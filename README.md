@@ -33,7 +33,7 @@ $ mkdir egovgithub
 $ cd egovgithub
 $ git clone https://github.com/egovernments/eGov.git
 ```
-2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
+2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
  db.url=jdbc:postgresql://localhost:5432/postgres
