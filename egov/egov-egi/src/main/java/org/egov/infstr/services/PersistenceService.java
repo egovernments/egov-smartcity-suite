@@ -51,8 +51,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
 import javax.validation.Path.Node;
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -75,7 +73,10 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Transactional
 public class PersistenceService<T, ID extends Serializable> implements GenericDAO<T, ID> {
@@ -83,7 +84,10 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     private static final String DEFAULT_FIELD = "_hibernate_class";
     protected org.hibernate.SessionFactory sessionFactory;
     protected Class<T> type;
-    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+    
+    @Autowired
+    @Qualifier("entityValidator") 
+    private LocalValidatorFactoryBean entityValidator;
     
     @PersistenceContext
     EntityManager entityManager;
@@ -113,7 +117,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
             errors.add(new ValidationError("", "model.null"));
             return errors;
         }
-        final Set<ConstraintViolation<T>> constraintViolations = VALIDATOR.validate(model);
+        final Set<ConstraintViolation<T>> constraintViolations = entityValidator.validate(model);
         for (final ConstraintViolation<T> constraintViolation : constraintViolations) {
             final Iterator<Node> nodes = constraintViolation.getPropertyPath().iterator();
             while (nodes.hasNext())

@@ -233,4 +233,6 @@
 		<property name="scriptPersistenceService" ref="scriptPersistenceService"/>
 	</bean>
 	
+	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>
+	
 </beans>
