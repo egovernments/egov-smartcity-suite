@@ -42,7 +42,7 @@ package org.egov.eis.repository;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.pims.model.Assignment;
+import org.egov.eis.entity.Assignment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

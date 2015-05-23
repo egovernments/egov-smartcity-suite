@@ -53,8 +53,8 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.pims.commons.Position;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 

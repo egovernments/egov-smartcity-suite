@@ -48,6 +48,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.HibernateUtil;
@@ -88,7 +90,7 @@ public class PersonalInformation implements java.io.Serializable,EntityType
 
 	private String employeeCode;
 	private String employeeName;
-	private  EmployeeStatusMaster employeeTypeMaster;
+	private  EmployeeType employeeTypeMaster;
 	private EgwStatus StatusMaster;
 	private String employeeFirstName;
 	private String employeeMiddleName;
@@ -191,13 +193,13 @@ public class PersonalInformation implements java.io.Serializable,EntityType
 	}
 
 	private Set<LangKnown> egpimsLangKnowns = new HashSet<LangKnown>(0);//should we keep it now?
-	private Set<org.egov.pims.model.Assignment> egpimsAssignment = new HashSet<org.egov.pims.model.Assignment>(0);
+	private Set<org.egov.eis.entity.Assignment> egpimsAssignment = new HashSet<org.egov.eis.entity.Assignment>(0);
 
-	public Set<org.egov.pims.model.Assignment> getEgpimsAssignment() {
+	public Set<org.egov.eis.entity.Assignment> getEgpimsAssignment() {
 		return egpimsAssignment;
 	}
 	public void setEgpimsAssignment(
-			Set<org.egov.pims.model.Assignment> egpimsAssignment) {
+			Set<org.egov.eis.entity.Assignment> egpimsAssignment) {
 		this.egpimsAssignment = egpimsAssignment;
 	}
 	public PersonalInformation()
@@ -524,10 +526,10 @@ public void setEmployeeName(String employeeName) {
 	this.employeeName = employeeName;
 }
 
-public EmployeeStatusMaster getEmployeeTypeMaster() {
+public EmployeeType getEmployeeTypeMaster() {
 	return employeeTypeMaster;
 }
-public void setEmployeeTypeMaster(EmployeeStatusMaster employeeTypeMaster) {
+public void setEmployeeTypeMaster(EmployeeType employeeTypeMaster) {
 	this.employeeTypeMaster = employeeTypeMaster;
 }
 	public EgwStatus getStatusMaster() {

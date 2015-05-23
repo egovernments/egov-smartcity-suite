@@ -41,6 +41,8 @@ package org.egov.pims.model;
 import java.util.Date;
 
 import org.egov.commons.CFunction;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeType;
 import org.egov.infra.admin.master.entity.User;
 
 // Generated Aug 8, 2007 6:26:41 PM by Hibernate Tools 3.2.0.b9
@@ -68,7 +70,7 @@ public class EmployeeView implements java.io.Serializable
 	private Date dateOfFirstAppointment;
 	private org.egov.commons.EgwStatus employeeStatus;
 	private User userMaster;
-	private EmployeeStatusMaster employeeType;
+	private EmployeeType employeeType;
 	private char isPrimary;
 	private CFunction functionId;
 	private Integer isActive= Integer.valueOf(0);
@@ -99,10 +101,10 @@ public class EmployeeView implements java.io.Serializable
 	public void setIsPrimary(char isPrimary) {
 		this.isPrimary = isPrimary;
 	}
-	public EmployeeStatusMaster getEmployeeType() {
+	public EmployeeType getEmployeeType() {
 		return employeeType;
 	}
-	public void setEmployeeType(EmployeeStatusMaster employeeType) {
+	public void setEmployeeType(EmployeeType employeeType) {
 		this.employeeType = employeeType;
 	}
 	public org.egov.commons.EgwStatus getEmployeeStatus() {

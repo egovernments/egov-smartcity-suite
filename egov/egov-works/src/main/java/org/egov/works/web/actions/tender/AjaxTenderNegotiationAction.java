@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.web.actions.BaseFormAction;

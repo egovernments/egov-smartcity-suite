@@ -39,42 +39,70 @@
  */
 package org.egov.eis.entity;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
-import org.egov.infra.admin.master.entity.Department;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egeis_employee_hod")
-public class HeadOfDepartments extends AbstractAuditable<User, Long> {
+@Table(name = "egeis_employeetype")
+public class EmployeeType extends AbstractAuditable<User, Long> {
 
-    private static final long serialVersionUID = -5048152219787528507L;
+    private static final long serialVersionUID = 747671541670667791L;
+   
+    @SafeHtml
+    @Column(name="name",unique=true)
+    @Pattern(regexp = Constants.ALPHABETS)
+    public String name;
+    @SafeHtml
+    public Date fromDate;
+    @SafeHtml
+    public Date toDate;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hod")
-    private Department hod;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignment")
-    private Assignment assignment;
+    @JoinColumn(name = "chartofaccounts")
+    private CChartOfAccounts chartOfAccounts;
 
-    public Assignment getAssignment() {
-        return assignment;
+    public CChartOfAccounts getChartOfAccounts() {
+        return chartOfAccounts;
     }
 
-    public void setAssignment(final Assignment assignment) {
-        this.assignment = assignment;
+    public void setChartOfAccounts(final CChartOfAccounts chartOfAccounts) {
+        this.chartOfAccounts = chartOfAccounts;
     }
 
-    public Department getHod() {
-        return hod;
+    public String getName() {
+        return name;
     }
 
-    public void setHod(final Department hod) {
-        this.hod = hod;
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
     }
 
 }

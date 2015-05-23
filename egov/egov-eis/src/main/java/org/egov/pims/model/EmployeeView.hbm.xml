@@ -10,7 +10,7 @@
   <property generated="never" lazy="false" name="id">
    <column name="ID"/>
   </property>
-  <many-to-one class="org.egov.pims.model.Assignment" fetch="select" name="assignment">
+  <many-to-one class="org.egov.eis.entity.Assignment" fetch="select" name="assignment">
    <column name="ASS_ID"/>
   </many-to-one>
   <property generated="never" lazy="false" name="employeeCode" type="string">
@@ -19,7 +19,7 @@
   <many-to-one class="org.egov.commons.EgwStatus" fetch="select" name="employeeStatus">
    <column name="STATUS" precision="12" scale="0"/>
   </many-to-one>
-  <many-to-one class="org.egov.pims.model.EmployeeStatusMaster"
+  <many-to-one class="org.egov.eis.entity.EmployeeType"
    fetch="select" name="employeeType">
    <column name="EMPLOYEE_TYPE" precision="12" scale="0"/>
   </many-to-one>

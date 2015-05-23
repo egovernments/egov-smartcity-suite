@@ -42,6 +42,7 @@ package org.egov.eis.service;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -50,7 +51,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -42,7 +42,7 @@ package org.egov.pims.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.pims.model.Assignment;
+import org.egov.eis.entity.Assignment;
 import org.egov.pims.model.EmployeeView;
 
 

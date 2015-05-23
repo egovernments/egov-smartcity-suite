@@ -50,13 +50,13 @@ import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.PersonalInformationService;

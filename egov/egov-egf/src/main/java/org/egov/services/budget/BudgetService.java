@@ -46,6 +46,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -61,7 +62,6 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 

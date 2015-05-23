@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pims.model;
+package org.egov.eis.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,18 +54,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.springframework.context.annotation.Bean;
+import org.egov.pims.model.GradeMaster;
+import org.egov.pims.model.PersonalInformation;
 
 @Entity
 @Table(name = "egeis_assignment")
@@ -72,6 +73,7 @@ public class Assignment extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -2720951718725134740L;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
     private Position position;
@@ -88,37 +90,42 @@ public class Assignment extends AbstractAuditable<User, Long> {
     @JoinColumn(name = "function")
     private CFunction function;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
     private DesignationMaster designation;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     private Department department;
 
-    @Column(name="isprimary")
+    @Column(name = "isprimary")
     private boolean primary;
 
+    @NotNull
     private Date fromDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "oldemployee")
     private PersonalInformation oldEmployee;
 
+    @NotNull
     private Date toDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade")
     private GradeMaster grade;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee")
     private Employee employee;
-    
-    @Transient
-    private List<Long> hodDeptIds = new ArrayList<Long>();
 
-    @OneToMany(mappedBy = "assignment")
+    @Transient
+    private final List<Long> hodDeptIds = new ArrayList<Long>();
+
+    @OneToMany(mappedBy = "assignment",orphanRemoval=true,fetch=FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<HeadOfDepartments> deptSet = new HashSet<HeadOfDepartments>(0);
 
     public List<Long> getHodDeptIds() {

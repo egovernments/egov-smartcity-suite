@@ -15,7 +15,7 @@
    fetch="select" name="langQulMstr">
    <column name="QULIFIED_ID" precision="32" scale="0"/>
   </many-to-one>
-  <many-to-one class="org.egov.pims.model.EmployeeStatusMaster"
+  <many-to-one class="org.egov.eis.entity.EmployeeType"
    fetch="select" name="employeeTypeMaster">
    <column name="EMPLOYMENT_STATUS" precision="10" scale="0"/>
   </many-to-one>
@@ -135,7 +135,7 @@
   <set cascade="all-delete-orphan" inverse="true"
    name="egpimsAssignment" sort="unsorted" table="EG_EMP_ASSIGNMENT">
    <key column="ID_EMPLOYEE" not-null="true"/>
-   <one-to-many class="org.egov.pims.model.Assignment"/>
+   <one-to-many class="org.egov.eis.entity.Assignment"/>
   </set>
   <many-to-one class="org.egov.infra.admin.master.entity.User" fetch="select" name="createdBy">
    <column name="CREATED_BY"/>

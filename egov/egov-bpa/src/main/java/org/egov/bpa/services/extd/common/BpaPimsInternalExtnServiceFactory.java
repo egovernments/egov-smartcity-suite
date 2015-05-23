@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.commons.EgwStatus;
@@ -59,7 +60,6 @@ import org.egov.infra.admin.master.entity.User;
 //import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.Assignment;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 //import org.egov.pims.service.EisManager;
