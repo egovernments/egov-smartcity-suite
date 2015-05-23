@@ -42,7 +42,7 @@
 {
 "ResultSet": {
     "Result":[
-    {"Designation":"<s:property value="%{assignment.desigId.designationName}" />"
+    {"Designation":"<s:property value="%{assignment.designation.name}" />"
     }
     ]
   }

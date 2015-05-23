@@ -146,7 +146,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     public void perform() {
 
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         negoCreatedBy = worksService.getWorksConfigValue("TENDER_NEGOTIATION_CREATED_BY_SELECTION");
         statusReq = worksService.getWorksConfigValue("WorksPackage.laststatus");
         estimateOrWpSearchReq = worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ");

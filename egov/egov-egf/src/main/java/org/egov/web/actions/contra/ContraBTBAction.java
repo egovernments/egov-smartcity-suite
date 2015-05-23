@@ -1912,7 +1912,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	}
 
 	public Integer getUserDepartment() throws ParseException {
-		return paymentService.getAssignment().getDeptId().getId().intValue();
+		return paymentService.getAssignment().getDepartment().getId().intValue();
 	}
 
 	public void setFundFlowService(FundFlowService fundFlowService) {

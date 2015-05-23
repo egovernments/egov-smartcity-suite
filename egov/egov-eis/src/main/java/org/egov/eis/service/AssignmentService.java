@@ -42,10 +42,10 @@ package org.egov.eis.service;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
-import org.egov.eis.repository.EmployeeDepartmentRepository;
+import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.pims.model.Assignment;
-import org.egov.pims.model.EmployeeDepartment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,11 +60,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
-    private final EmployeeDepartmentRepository employeeDepartmentRepository;
+    private final HeadOfDepartmentsRepository employeeDepartmentRepository;
 
     @Autowired
     public AssignmentService(final AssignmentRepository assignmentRepository,
-            final EmployeeDepartmentRepository employeeDepartmentRepository) {
+            final HeadOfDepartmentsRepository employeeDepartmentRepository) {
         this.assignmentRepository = assignmentRepository;
         this.employeeDepartmentRepository = employeeDepartmentRepository;
     }
@@ -179,7 +179,7 @@ public class AssignmentService {
      * @return true if HOD else false
      */
     public Boolean isHod(final Long assignId) {
-        final List<EmployeeDepartment> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
+        final List<HeadOfDepartments> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
         return !hodList.isEmpty();
     }
 

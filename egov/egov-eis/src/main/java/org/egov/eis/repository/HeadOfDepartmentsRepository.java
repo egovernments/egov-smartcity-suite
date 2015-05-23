@@ -41,16 +41,16 @@ package org.egov.eis.repository;
 
 import java.util.List;
 
-import org.egov.pims.model.EmployeeDepartment;
+import org.egov.eis.entity.HeadOfDepartments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeDepartmentRepository extends JpaRepository<EmployeeDepartment, Long> {
+public interface HeadOfDepartmentsRepository extends JpaRepository<HeadOfDepartments, Long> {
     
-    @Query(" from EmployeeDepartment ED where ED.assignment.id=:assignId and  ED.hodept is not null")
-    List<EmployeeDepartment> getAllHodDepartments(@Param("assignId")Long assignId);
+    @Query(" from HeadOfDepartments HOD where HOD.assignment.id=:assignId and  HOD.hod is not null")
+    List<HeadOfDepartments> getAllHodDepartments(@Param("assignId")Long assignId);
 
 }

@@ -61,6 +61,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -74,7 +75,6 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.BloodGroupMaster;
 import org.egov.pims.model.CommunityMaster;
-import org.egov.pims.model.EmployeeDepartment;
 import org.egov.pims.model.EmployeeGroupMaster;
 import org.egov.pims.model.EmployeeStatusMaster;
 import org.egov.pims.model.LangKnown;
@@ -301,16 +301,16 @@ public class EmployeeMasterAction extends BaseFormAction
         @SuppressWarnings("unchecked")
         private void setEmpAssignments()
         {
-                Set<EmployeeDepartment> hodDeptFromDB = new HashSet<EmployeeDepartment>();
+                Set<HeadOfDepartments> hodDeptFromDB = new HashSet<HeadOfDepartments>();
                 
                 for(Assignment empAssign:assignmentList)
                 {
                         
-                        Fund fund =  (Fund)persistenceService.getSession().load(Fund.class, empAssign.getFundId().getId());
-                        empAssign.setFundId(fund);
+                        Fund fund =  (Fund)persistenceService.getSession().load(Fund.class, empAssign.getFund().getId());
+                        empAssign.setFund(fund);
                         
-                        CFunction function = (CFunction)persistenceService.getSession().load(CFunction.class, empAssign.getFunctionId().getId());
-                        empAssign.setFunctionId(function);
+                        CFunction function = (CFunction)persistenceService.getSession().load(CFunction.class, empAssign.getFunction().getId());
+                        empAssign.setFunction(function);
                         
                         Functionary functionary  = (Functionary)persistenceService.getSession().load(Functionary.class, empAssign.getFunctionary().getId());
                         empAssign.setFunctionary(functionary);
@@ -318,11 +318,11 @@ public class EmployeeMasterAction extends BaseFormAction
                         Position position = (Position)persistenceService.getSession().load(Position.class, empAssign.getPosition().getId());
                         empAssign.setPosition(position);
                         
-                        DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesigId().getId());
-                        empAssign.setDesigId(designation);
+                        DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesignation().getId());
+                        empAssign.setDesignation(designation);
                         
-                        Department department = (Department)persistenceService.getSession().load(Department.class, empAssign.getDeptId().getId());
-                        empAssign.setDeptId(department);
+                        Department department = (Department)persistenceService.getSession().load(Department.class, empAssign.getDepartment().getId());
+                        empAssign.setDepartment(department);
                         
                         if(empAssign.getCreatedBy().getId()!=null)
                         {       
@@ -330,24 +330,24 @@ public class EmployeeMasterAction extends BaseFormAction
                                 empAssign.setCreatedBy( createdBy);
                         }       
                         
-                        EmployeeDepartment hodDept;
+                        HeadOfDepartments hodDept;
                         
                         if(empAssign.getId()!=null)
                         {
                                 //get all the hod depts for the current assignment
-                                hodDeptFromDB.addAll((Collection<? extends EmployeeDepartment>)persistenceService.findAllBy("select assign.deptSet from " +
+                                hodDeptFromDB.addAll((Collection<? extends HeadOfDepartments>)persistenceService.findAllBy("select assign.deptSet from " +
                                                                                 "Assignment assign where assign.id=?",empAssign.getId()));
 
                         }
                         if(empAssign.getHodDeptIds().size()>0)
                         {
                                 
-                                for(Integer hodId:empAssign.getHodDeptIds())
+                                for(Long hodId:empAssign.getHodDeptIds())
                                 {
                                         if(employee.getIdPersonalInformation()!=null)
                                         {       
-                                                hodDept = (EmployeeDepartment)persistenceService.find("from EmployeeDepartment where assignment." +
-                                                        "employeeId.idPersonalInformation=? and hodept.id=?",employee.getIdPersonalInformation(),hodId);
+                                                hodDept = (HeadOfDepartments)persistenceService.find("from HeadOfDepartments where assignment." +
+                                                        "oldEmployee.idPersonalInformation=? and hod.id=?",employee.getIdPersonalInformation(),hodId);
                                         }
                                         else
                                                 hodDept = null;
@@ -355,27 +355,19 @@ public class EmployeeMasterAction extends BaseFormAction
                                                 hodDeptFromDB.remove(hodDept);// mark the hod dept for removal
                                         else
                                         {
-                                                hodDept = new EmployeeDepartment();
+                                                hodDept = new HeadOfDepartments();
                                                 Department dept =(Department) persistenceService.getSession().load(Department.class, hodId);
                                                 hodDept.setAssignment(empAssign);
-                                                hodDept.setDept(dept);
-                                                hodDept.setHodept(dept);                                        
+                                                hodDept.setHod(dept);                                        
                                                 empAssign.getDeptSet().add(hodDept);
                                         }
                                                 
                                 }
                         }
-                        for(EmployeeDepartment hodDeptToBeDeleted:hodDeptFromDB)
+                        for(HeadOfDepartments hodDeptToBeDeleted:hodDeptFromDB)
                         {
                                 empAssign.getDeptSet().remove(hodDeptToBeDeleted);// delete marked hod depts
                         }
-                        if(mode.equalsIgnoreCase("create"))
-                        {       
-                                empAssign.setCreatedDate(new Date());
-                                empAssign.setCreatedBy((User) user);
-                        }       
-                        empAssign.setModifiedBy((User) user);
-                        empAssign.setModifiedDate(new Date());
                         persistenceService.getSession().saveOrUpdate(empAssign);
         }
 }               
@@ -534,7 +526,7 @@ public class EmployeeMasterAction extends BaseFormAction
                         boolean isPrimaryExists=false;
                         for(Assignment assignment:assignmentList)
                         {
-                                if(assignment.getIsPrimary()=='Y')
+                                if(assignment.getPrimary())
                                 {
                                         isPrimaryExists=true;
                                         break;

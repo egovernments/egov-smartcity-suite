@@ -2158,7 +2158,7 @@ public class PropertyTaxUtil {
 	 * @return department of the given user
 	 */
 	private Department getDepartmentOfUser(User user) {
-		return getAssignment(user.getId()).getDeptId();
+		return getAssignment(user.getId()).getDepartment();
 	}
 
 	/**
@@ -3945,7 +3945,7 @@ public class PropertyTaxUtil {
 
 	public String getDesignationName(Long userId) {
 		LOGGER.debug("Entered into getDesignationName, userId=" + userId);
-		return getAssignment(userId).getDesigId().getName();
+		return getAssignment(userId).getDesignation().getName();
 	}
 
 	public WorkflowDetails initWorkflowAction(PropertyImpl propertyModel,

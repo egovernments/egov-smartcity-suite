@@ -135,7 +135,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 		Date currDate=new Date();
 		try {
 			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),currDate);
-			dept=empAssignment.getDeptId();
+			dept=empAssignment.getDepartment();
 			return (Department)dept;
 		}catch(NullPointerException ne)
 		{
@@ -314,7 +314,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
 		PersonalInformation pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getName()+")";
+		return pi.getEmployeeFirstName()+" ("+assignment.getDesignation().getName()+")";
 	}
 	
 	public PersonalInformation getEmpForCurrentUser(){

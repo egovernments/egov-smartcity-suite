@@ -427,7 +427,7 @@ public class FinancialDetailAction extends BaseFormAction {
             addFieldError("fundsourceunavailable", "Unable to load fund source information");
         }
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            departmentId = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            departmentId = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         checkMandataryFields();
         if (isSkipBudgetCheck())
             try {

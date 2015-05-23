@@ -42,7 +42,8 @@ package org.egov.eis.service;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.eis.repository.EmployeeDepartmentRepository;
+import org.egov.eis.entity.HeadOfDepartments;
+import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -50,7 +51,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
-import org.egov.pims.model.EmployeeDepartment;
 import org.egov.pims.model.PersonalInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,7 @@ public class EisCommonService {
     private PersonalInformationService personalInformationService;
 
     @Autowired
-    private EmployeeDepartmentRepository employeeDepartmentRepository;
+    private HeadOfDepartmentsRepository employeeDepartmentRepository;
 
     /**
      * Returns the superior employee position
@@ -115,7 +115,7 @@ public class EisCommonService {
      */
     public User getUserForPosition(final Long posId, final Date givenDate) {
         try {
-            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee().getUserMaster();
+            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getOldEmployee().getUserMaster();
         } catch (final NullPointerException e) {
             throw new EGOVRuntimeException("User Not Found");
         } catch (final Exception e) {
@@ -130,7 +130,7 @@ public class EisCommonService {
      * @return Designation object
      */
     public DesignationMaster getEmployeeDesignation(final Long posId) {
-        return assignmentService.getPrimaryAssignmentForPositon(posId).getDesigId();
+        return assignmentService.getPrimaryAssignmentForPositon(posId).getDesignation();
     }
 
     /**
@@ -140,7 +140,7 @@ public class EisCommonService {
      * @return Department object
      */
     public Department getDepartmentForUser(final Long userId) {
-        return assignmentService.getPrimaryAssignmentForUser(userId).getDeptId();
+        return assignmentService.getPrimaryAssignmentForUser(userId).getDepartment();
     }
 
     /**
@@ -192,7 +192,7 @@ public class EisCommonService {
      * @return PersonalInformation object
      */
     public PersonalInformation getPrimaryAssignmentEmployeeForPos(final Long posId) {
-        return assignmentService.getPrimaryAssignmentForPositon(posId).getEmployee();
+        return assignmentService.getPrimaryAssignmentForPositon(posId).getOldEmployee();
     }
 
     /**
@@ -221,7 +221,7 @@ public class EisCommonService {
 
         final List<Assignment> assignList = assignmentService.getAssignmentsForPosition(posId);
         for (final Assignment assign : assignList)
-            empList.add(assign.getEmployee());
+            empList.add(assign.getOldEmployee());
 
         return empList;
     }
@@ -243,7 +243,7 @@ public class EisCommonService {
      * @return true if HOD else false
      */
     public Boolean isHod(final Long assignId) {
-        final List<EmployeeDepartment> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
+        final List<HeadOfDepartments> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
         return !hodList.isEmpty();
     }
 
@@ -255,7 +255,7 @@ public class EisCommonService {
      * @return Employee object
      */
     public PersonalInformation getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
-        return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
+        return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getOldEmployee();
     }
 
 }

@@ -154,7 +154,7 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         addDropdownData("executingDepartmentList", departmentService.getAllDepartments());
         final Assignment loggedInUserAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (loggedInUserAssignment != null)
-            contractorAdvanceRequisition.setWorkflowDepartmentId(loggedInUserAssignment.getDeptId().getId());
+            contractorAdvanceRequisition.setWorkflowDepartmentId(loggedInUserAssignment.getDepartment().getId());
         workflowFunctionaryId = contractorAdvanceService.getFunctionaryForWorkflow(contractorAdvanceRequisition);
     }
 

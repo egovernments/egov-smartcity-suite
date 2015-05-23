@@ -384,7 +384,7 @@ public class SearchEstimateAction extends SearchFormAction {
     @SuppressWarnings(UNCHECKED)
     public void perform() {
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
         negoCreatedBy = worksService.getWorksConfigValue("TENDER_NEGOTIATION_CREATED_BY_SELECTION");
 
         if (SEARCH_ESTIMATE_FOR_WO.equals(source)) {
@@ -1061,7 +1061,7 @@ public class SearchEstimateAction extends SearchFormAction {
                 .getEmpForUserId(worksService.getCurrentLoggedInUserId());
         final Assignment assignment = employeeService.getAssignmentByEmpAndDate(new Date(),
                 LoggedInEmp.getIdPersonalInformation());
-        setLoginUserDeptName(assignment.getDeptId().getName());
+        setLoginUserDeptName(assignment.getDepartment().getName());
     }
 
     // Get the roles for the logged in user

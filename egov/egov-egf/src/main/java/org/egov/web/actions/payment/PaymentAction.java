@@ -283,7 +283,7 @@ public class PaymentAction extends BasePaymentAction{
 		
 		
 		if(validateUser("deptcheck"))
-			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDeptId());
+			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeSearch.");
 		return "search";
 	}
@@ -293,7 +293,7 @@ public class PaymentAction extends BasePaymentAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting beforeTNEBSearch...");
 		setTNEBMandatoryFields();
 		if(validateUser("deptcheck"))
-			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDeptId());
+			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeSearch.");
 		return "tnebSearch";
 	}
@@ -968,7 +968,7 @@ public class PaymentAction extends BasePaymentAction{
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting beforeModify.");
 		if(validateUser("deptcheck"))
-			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDeptId());
+			voucherHeader.getVouchermis().setDepartmentid((Department)paymentService.getAssignment().getDepartment());
 		action="search";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed beforeModify.");
 		return LIST;

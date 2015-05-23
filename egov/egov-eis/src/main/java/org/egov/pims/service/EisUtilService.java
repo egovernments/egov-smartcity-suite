@@ -100,7 +100,7 @@ public class EisUtilService implements EISServeable {
         try {
             String mainStr = "";
 
-            mainStr = "select distinct(a.position) from Assignment a where a.employee.userMaster.id =?";
+            mainStr = "select distinct(a.position) from Assignment a where a.oldEmployee.userMaster.id =?";
 
             if (date == null) {
                 date = new Date();
@@ -125,10 +125,10 @@ public class EisUtilService implements EISServeable {
         try {
             String mainStr = "";
 
-            mainStr = "select a.position from Assignment a where a.isPrimary='Y'";
+            mainStr = "select a.position from Assignment a where a.primary=true";
 
             if (userId != null && userId != 0) {
-                mainStr += " and a.employee.userMaster.id =?";
+                mainStr += " and a.oldEmployee.userMaster.id =?";
 
             }
 
@@ -457,7 +457,7 @@ public class EisUtilService implements EISServeable {
         Criteria criteria = persistenceService
                 .getSession()
                 .createCriteria(EmployeeView.class, "emp")
-                .add(Restrictions.eq("emp.isPrimary", 'Y'))
+                .add(Restrictions.eq("emp.primary", true))
                 .add(Restrictions.eq("emp.id", empId))
                 .add(Restrictions.and(Restrictions.le("emp.fromDate", fromDate),
                         Restrictions.ge("emp.toDate", fromDate)));

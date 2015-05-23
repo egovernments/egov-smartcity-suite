@@ -164,7 +164,7 @@ public class CollectionsUtil {
 	public Department getDepartmentOfUser(User user) {
 		PersonalInformation empForUserId = EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId());
 		Assignment assignmentByEmpAndDate = EisManagersUtill.getEmployeeService().getAssignmentByEmpAndDate(new Date(), empForUserId.getIdPersonalInformation());
-		return assignmentByEmpAndDate.getDeptId();
+		return assignmentByEmpAndDate.getDepartment();
 	}
 
 	/**
@@ -504,8 +504,8 @@ public class CollectionsUtil {
 			List<EmployeeView> employeeViewList = null;//(List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
 			if (!employeeViewList.isEmpty()) {
 				for (EmployeeView employeeView : employeeViewList) {
-					if (employeeView.getAssignment().getIsPrimary() == 'N') {
-						departmentlist.add(employeeView.getAssignment().getDeptId());
+					if (!employeeView.getAssignment().getPrimary()) {
+						departmentlist.add(employeeView.getAssignment().getDepartment());
 					}
 				}
 			}

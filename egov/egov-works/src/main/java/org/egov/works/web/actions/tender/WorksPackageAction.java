@@ -153,14 +153,14 @@ public class WorksPackageAction extends BaseFormAction {
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
             worksPackage.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDeptId().getId());
+                    .getDepartment().getId());
             if (worksPackage.getPreparedBy() == null)
-                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
+                loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
             else
                 loggedInUserEmployeeCode = worksPackage.getPreparedBy().getEmployeeCode();
             if (worksPackage.getDepartment() == null) {
-                worksPackage.setDepartment(latestAssignment.getDeptId());
-                setDesignation(latestAssignment.getDesigId().getName());
+                worksPackage.setDepartment(latestAssignment.getDepartment());
+                setDesignation(latestAssignment.getDesignation().getName());
             }
         }
 
@@ -207,7 +207,7 @@ public class WorksPackageAction extends BaseFormAction {
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
-        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesigId().getName());
+        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesignation().getName());
         setEmpId(worksPackage.getPreparedBy().getIdPersonalInformation());
         abstractEstimateList = workspackageService.getAbStractEstimateListByWorksPackage(worksPackage);
         setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));

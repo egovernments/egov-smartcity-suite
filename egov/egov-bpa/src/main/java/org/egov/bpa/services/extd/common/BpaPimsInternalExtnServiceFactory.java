@@ -263,8 +263,8 @@ public class BpaPimsInternalExtnServiceFactory {
 			List<Assignment> assignmentList=eisService.getPrimartAssignmentForGivenDateRange(employee.getId(), new Date(), null);
 			if(assignmentList!=null&&assignmentList.size()!=0){
 				//Getting the department id from primary assignment of the user
-				if(assignmentList.get(0).getDeptId()!=null){
-					 deptId=assignmentList.get(0).getDeptId().getId();
+				if(assignmentList.get(0).getDepartment()!=null){
+					 deptId=assignmentList.get(0).getDepartment().getId();
 					
 				}
 			}
@@ -284,8 +284,8 @@ public class BpaPimsInternalExtnServiceFactory {
 			List<Assignment> assignmentList=eisService.getPrimartAssignmentForGivenDateRange(employee.getId(), new Date(), null);
 			if(assignmentList!=null&&assignmentList.size()!=0){
 				//Getting the department id from primary assignment of the user
-				if(assignmentList.get(0).getDeptId()!=null){
-					Long deptId=assignmentList.get(0).getDeptId().getId();
+				if(assignmentList.get(0).getDepartment()!=null){
+					Long deptId=assignmentList.get(0).getDepartment().getId();
 					paramMap.put("departmentId", Long.toString(deptId));
 				}
 				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
@@ -363,8 +363,8 @@ public class BpaPimsInternalExtnServiceFactory {
 			
 			if (assignmentList != null && assignmentList.size() != 0) {
 				//Getting the department id from primary assignment of the user
-				if (assignmentList.get(0).getDeptId() != null) {
-					Long deptId = assignmentList.get(0).getDeptId().getId();
+				if (assignmentList.get(0).getDepartment() != null) {
+					Long deptId = assignmentList.get(0).getDepartment().getId();
 					paramMap.put("departmentId", Long.toString(deptId));
 				}
 				DesignationMaster designation =	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.ASSISTANTDESIGNATION);

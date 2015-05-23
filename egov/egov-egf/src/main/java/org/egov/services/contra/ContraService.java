@@ -402,14 +402,14 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	{
 		 PersonalInformation pi =eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate( pi.getIdPersonalInformation(),new Date());
-		 return assignment.getDesigId().getName();
+		 return assignment.getDesignation().getName();
 	}
 	
 	public Department getDepartmentForWfItem(ContraJournalVoucher cjv)
 	{
 		PersonalInformation pi =eisCommonService.getEmployeeByUserId(cjv.getCreatedBy().getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		return assignment.getDeptId();
+		return assignment.getDepartment();
 	}
 	public Boundary getBoundaryForUser(ContraJournalVoucher rv)
 	{

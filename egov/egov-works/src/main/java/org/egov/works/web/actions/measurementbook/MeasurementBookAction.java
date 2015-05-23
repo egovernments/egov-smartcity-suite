@@ -221,7 +221,7 @@ public class MeasurementBookAction extends BaseFormAction {
         setMBPreparedBy(getIdPersonalInformationFromParams());
         addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from DepartmentImpl"));
         if (getLatestAssignmentForCurrentLoginUser() != null)
-            departmentId = getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            departmentId = getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
 
         populateQuantityFactor();
         if ("cancelMB".equals(sourcepage))
@@ -306,7 +306,7 @@ public class MeasurementBookAction extends BaseFormAction {
                 else {
                     final Assignment latestAssignment = getLatestAssignmentForCurrentLoginUser();
                     if (latestAssignment != null)
-                        loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
+                        loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
                 }
                 ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
                 ajaxEstimateAction.usersInExecutingDepartment();

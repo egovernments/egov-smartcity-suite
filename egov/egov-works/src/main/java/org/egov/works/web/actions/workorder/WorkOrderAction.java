@@ -292,12 +292,12 @@ public class WorkOrderAction extends BaseFormAction {
             if (workOrder.getEngineerIncharge() != null && getAssignedTo1() == null)
                 setAssignedTo1(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge().getIdPersonalInformation()).getDesigId()
+                                workOrder.getEngineerIncharge().getIdPersonalInformation()).getDesignation()
                         .getId()));
             if (workOrder.getEngineerIncharge2() != null && getAssignedTo2() == null)
                 setAssignedTo2(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
-                                workOrder.getEngineerIncharge2().getIdPersonalInformation()).getDesigId()
+                                workOrder.getEngineerIncharge2().getIdPersonalInformation()).getDesignation()
                         .getId()));
 
             setWorkOrderActivities(workOrder);
@@ -337,7 +337,7 @@ public class WorkOrderAction extends BaseFormAction {
 
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             workOrder.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDeptId().getId());
+                    .getDepartment().getId());
         addDropdownData("deptListForSearch", departmentService.getAllDepartments());
         getDeptList();
 
@@ -369,7 +369,7 @@ public class WorkOrderAction extends BaseFormAction {
         else {
             final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
             if (latestAssignment != null)
-                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
+                loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
         }
         if (deptId != null)
             ajaxEstimateAction.setExecutingDepartment(deptId);

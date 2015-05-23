@@ -331,8 +331,8 @@ public class AbstractEstimateAction extends BaseFormAction {
 
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
-            departmentId = latestAssignment.getDeptId().getId();
-            loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
+            departmentId = latestAssignment.getDepartment().getId();
+            loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
         }
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
         populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
@@ -358,12 +358,12 @@ public class AbstractEstimateAction extends BaseFormAction {
                     .getCurrentLoggedInUserId());
             final Assignment assignment = employeeService.getAssignmentByEmpAndDate(new Date(),
                     LoggedInEmp.getIdPersonalInformation());
-            abstractEstimate.setExecutingDepartment(assignment.getDeptId());
+            abstractEstimate.setExecutingDepartment(assignment.getDepartment());
             abstractEstimate.setEstimatePreparedBy(LoggedInEmp);
             estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
                     abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
-            if (assignment != null && assignment.getEmployee() != null)
-                loggedInUserEmployeeCode = assignment.getEmployee().getCode();
+            if (assignment != null && assignment.getOldEmployee() != null)
+                loggedInUserEmployeeCode = assignment.getOldEmployee().getCode();
             populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
         }
     }

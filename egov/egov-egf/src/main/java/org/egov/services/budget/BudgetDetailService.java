@@ -400,7 +400,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
         Date currDate=new Date();
         try {
             Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate( emp.getIdPersonalInformation(),currDate);
-            dept=empAssignment.getDeptId();
+            dept=empAssignment.getDepartment();
             return (Department)dept;
         }catch(NullPointerException ne)
         {
@@ -1481,7 +1481,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
         PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
         Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
         Functionary empfunctionary=empAssignment.getFunctionary();
-        DesignationMaster designation = empAssignment.getDesigId();
+        DesignationMaster designation = empAssignment.getDesignation();
         Boolean consolidateBudget=Boolean.FALSE;
         List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
         if(list.isEmpty())

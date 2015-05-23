@@ -90,13 +90,13 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	{
 		 PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		 return assignment.getDesigId().getName();
+		 return assignment.getDesignation().getName();
 	}
 	public Department getDepartmentForWfItem(ReceiptVoucher rv)
 	{
 		PersonalInformation pi = eisCommonService.getEmployeeByUserId(rv.getCreatedBy().getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		return assignment.getDeptId();
+		return assignment.getDepartment();
 	}
 	public Position getPositionForWfItem(ReceiptVoucher rv)
 	{

@@ -398,7 +398,7 @@ public class ContractorBillAction extends BaseFormAction {
         addDropdownData("executingDepartmentList", departmentService.getAllDepartments());
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
             contractorBillRegister.setWorkflowDepartmentId(abstractEstimateService
-                    .getLatestAssignmentForCurrentLoginUser().getDeptId().getId());
+                    .getLatestAssignmentForCurrentLoginUser().getDepartment().getId());
         // Setting the functionary as UAC for the workflow
         if (contractorBillRegister != null
                 && contractorBillRegister.getId() != null

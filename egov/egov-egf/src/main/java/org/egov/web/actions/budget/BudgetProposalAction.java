@@ -1180,7 +1180,7 @@ int i=0;
 	    {
 	    	PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
-			if(empAssignment.getDesigId().getName().equalsIgnoreCase("assistant"))
+			if(empAssignment.getDesignation().getName().equalsIgnoreCase("assistant"))
 			{
 				 asstFMU = true;
 				 BudgetDetail approvedBd=(BudgetDetail) persistenceService.find(" from  BudgetDetail where budget=? and approvedAmount>0 ",this.topBudget);
@@ -1189,7 +1189,7 @@ int i=0;
 				 else
 					 updateApprovedRE = true;
 			}else{
-				if(empAssignment.getDesigId().getName().equalsIgnoreCase("CHIEF ACCOUNTS OFFICER")){
+				if(empAssignment.getDesignation().getName().equalsIgnoreCase("CHIEF ACCOUNTS OFFICER")){
 				asstFMU = true;
 			}
 			}

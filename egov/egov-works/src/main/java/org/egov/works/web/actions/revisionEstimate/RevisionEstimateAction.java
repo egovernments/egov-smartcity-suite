@@ -294,7 +294,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            logedInUserDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            logedInUserDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
     }
 
     @Override

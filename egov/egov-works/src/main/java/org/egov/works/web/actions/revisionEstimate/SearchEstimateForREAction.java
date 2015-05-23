@@ -122,7 +122,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
         addDropdownData("categoryList", Collections.emptyList());
         populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
         if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
     }
 
     @ValidationErrorPage(value = "searchWO")

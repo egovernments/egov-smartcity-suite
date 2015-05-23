@@ -147,19 +147,19 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 	{
 		PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getName()+")";
+		return pi.getEmployeeFirstName()+" ("+assignment.getDesignation().getName()+")";
 	}
 	public Department getCurrentDepartment()
 	{
 		PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		return (Department)assignment.getDeptId();
+		return (Department)assignment.getDepartment();
 	}
 	public Department getDepartmentForWfItem(CVoucherHeader cv)
 	{
 		PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		return assignment.getDeptId();
+		return assignment.getDepartment();
 	}
 	public Department getTempDepartmentForWfItem(CVoucherHeader cv,Position position)
 	{

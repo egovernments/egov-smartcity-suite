@@ -739,7 +739,7 @@ public class DishonoredChequeAction extends DispatchAction {
 		req.setAttribute("departmentList", persistenceService.findAllBy("from Department order by deptName"));
 		PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
-		if(asignment.getDesigId().getName().equalsIgnoreCase("SECTION MANAGER")) {
+		if(asignment.getDesignation().getName().equalsIgnoreCase("SECTION MANAGER")) {
 			;
 		}
 		{

@@ -2274,7 +2274,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     public DesignationMaster getPresentDesignation(Integer idPersonalInformation) {
         Assignment assignment = getLatestAssignmentForEmployee(idPersonalInformation);
-        return assignment.getDesigId();
+        return assignment.getDesignation();
     }
 
     public CommonsService getCommonsService() {
