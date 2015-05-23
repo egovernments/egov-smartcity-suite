@@ -27,23 +27,8 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
         
-         <!-- VIEWS RELATED END -->
+ <!-- VIEWS RELATED END -->
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
@@ -91,5 +76,10 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <!-- HIBERNATE END -->
+        
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+        </dependency>
     </dependencies>
 </project>

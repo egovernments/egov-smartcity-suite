@@ -50,11 +50,12 @@ import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-//@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET_CATEGORY", columnName = { "CODE" }, message = "assetcat.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET_CATEGORY", columnName = { "CODE" }, message = "assetcat.code.isunique")
 public class AssetCategory extends BaseModel {
 
     private static final long serialVersionUID = 4664412673598282808L;
