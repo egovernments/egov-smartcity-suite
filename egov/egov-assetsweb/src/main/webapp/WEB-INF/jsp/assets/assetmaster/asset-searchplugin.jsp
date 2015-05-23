@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <script>
@@ -56,7 +56,7 @@ window.onload = function () {
 </script>
 <html>
 	<head>
-	    <title>- <s:text name="page.title.asset.search" /></title>
+	    <title> <s:text name="page.title.asset.search" /></title>
 	</head>
 	<body>
 
@@ -99,7 +99,7 @@ window.onload = function () {
 								<td colspan="4" class="headingwk">
 									<div class="arrowiconwk">
 										<img
-											src="${pageContext.request.contextPath}/image/arrow.gif" />
+											src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 									</div>
 									<div class="headplacer">
 										<s:text name="search.criteria" />
@@ -124,7 +124,7 @@ window.onload = function () {
 										onChange="setupAjaxAssettype(this);" />
 									<egov:ajaxdropdown id="populateParentcat"
 										fields="['Text','Value']" dropdownId='parentcat'
-										url='assetmaster/ajaxAsset!populateParentCategories.action'
+										url='assetmaster/ajaxAsset-populateParentCategories.action'
 										selectedValue="%{id}" />
 								</td>
 								<td width="15%" class="whiteboxwk">
@@ -214,7 +214,7 @@ window.onload = function () {
 											<td colspan="7" class="headingwk">
 												<div class="arrowiconwk">
 													<img
-														src="${pageContext.request.contextPath}/image/arrow.gif" />
+														src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="search.result" />

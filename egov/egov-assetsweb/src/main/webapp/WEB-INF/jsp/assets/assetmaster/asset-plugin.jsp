@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,11 +36,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/struts-tags"%>
-
-<style type="text/css">
-</style>
+#------------------------------------------------------------------------------- -->
+<%@ taglib prefix="s" uri="/struts-tags"%> 
 
 <script>
 
@@ -48,7 +45,7 @@ function searchAsset(){
 	var a = new Array(2);	
 	document.assetPluginForm.assetname.value='';
 	document.assetPluginForm.asset.value='';
-	window.open("${pageContext.request.contextPath}/assetmaster/asset!showSearchPage.action?assetStatus=revaluated&assetStatus=capitalized","",
+	window.open("${pageContext.request.contextPath}/assetmaster/asset-showSearchPage.action?assetStatus=revaluated&assetStatus=capitalized","",
 	 "height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");	
 }
 
@@ -56,7 +53,7 @@ function createAsset(){
 	var a = new Array(2);	
 	document.assetPluginForm.assetname.value='';
 	document.assetPluginForm.asset.value='';
-	window.open("${pageContext.request.contextPath}/assetmaster/asset!showCreatePage.action?assetStatus=capitalized","",
+	window.open("${pageContext.request.contextPath}/assetmaster/asset-showCreatePage.action?assetStatus=capitalized","",
 	 "height=600,width=600,scrollbars=yes,left=200,top=75,status=yes");	
 }
 
@@ -86,7 +83,7 @@ function update(elemValue) {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='Search PlugIn' />
@@ -102,7 +99,7 @@ function update(elemValue) {
 			        	<input type="text" id="assetname" class="selectboldwk" />
 			        		<s:hidden id="asset" name="asset" value="%{asset.id}"/>
 			       		<a onclick="searchAsset()" href="#">
-			       		<IMG id="img" height=16 src="${pageContext.request.contextPath}/image/magnifier.png" 
+			       		<IMG id="img" height=16 src="${pageContext.request.contextPath}/resources/image/magnifier.png" 
 			       			width=16 alt="Search" border="0" align="absmiddle"></a>
 						<input type="button" class="buttonfinal" value="CREATE ASSET"
 							id="createButton" name="button"

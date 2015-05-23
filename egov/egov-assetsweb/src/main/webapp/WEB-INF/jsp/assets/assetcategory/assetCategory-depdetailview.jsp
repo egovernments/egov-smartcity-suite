@@ -45,7 +45,7 @@
 <tr>
 	<td class="headingwk">
 		<div class="arrowiconwk">
-			<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+			<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 		</div>
 		<div class="headplacer">
 			<s:text name='title.dep.details' />

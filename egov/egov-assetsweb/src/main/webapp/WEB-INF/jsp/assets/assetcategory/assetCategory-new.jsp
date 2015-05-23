@@ -41,13 +41,13 @@
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">
-	    <title>- <s:text name="page.title.asset.cat.create" /></title>
+	    <title> <s:text name="page.title.asset.cat.create" /></title>
 	    </s:if>
 	    <s:elseif test="%{userMode=='view'}">
-	    <title>- <s:text name="page.title.asset.cat.view" /></title>
+	    <title> <s:text name="page.title.asset.cat.view" /></title>
 	    </s:elseif>
 	    <s:elseif test="%{userMode=='edit'}">
-	    <title>- <s:text name="page.title.asset.cat.edit" /></title>
+	    <title> <s:text name="page.title.asset.cat.edit" /></title>
 	    </s:elseif>  
 	</head> 
 	<body id="home">

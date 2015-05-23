@@ -2,7 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="now" value="<%=new java.util.Date()%>" />
-<div class='commontopyellowbg'>Property Tax</div>
+<div class='commontopyellowbg'>Asset Management System</div>
 <div class='commontopbluebg'><div class='commontopdate'>
 Today is: <span class='bold' style='color:black'><fmt:formatDate value="${now}" pattern="dd/MM/yyyy"/></span>
 </div>

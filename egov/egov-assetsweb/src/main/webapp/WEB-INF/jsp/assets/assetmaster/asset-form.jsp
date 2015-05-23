@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <style type="text/css">
@@ -55,11 +55,11 @@ function setupAjaxStreet(elem){
 }
 function goBack()
 {
-	window.location="${pageContext.request.contextPath}/assetmaster/asset!edit.action";	
+	window.location="${pageContext.request.contextPath}/assetmaster/asset-edit.action";	
 }
 function goNewForm()
 {
-	window.location="${pageContext.request.contextPath}/assetmaster/asset!newform.action";	
+	window.location="${pageContext.request.contextPath}/assetmaster/asset-newform.action";	
 }
 
 function trim(str) {
@@ -251,7 +251,7 @@ function showValueSummary()
 function setupAjaxAssetcat(elem){
     category_id=elem.options[elem.selectedIndex].value;
     makeJSONCall(["xCatAttrTemplate"],
-    	'${pageContext.request.contextPath}/assetmaster/ajaxAsset!populateCategoryDetails.action',
+    	'${pageContext.request.contextPath}/assetmaster/ajaxAsset-populateCategoryDetails.action',
     	{categoryId:category_id},mySuccessHandler,myFailureHandler) ;
 }
 
@@ -309,7 +309,7 @@ function openVehicleMaster() {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -394,7 +394,7 @@ function openVehicleMaster() {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.location.details' />
@@ -474,7 +474,7 @@ function openVehicleMaster() {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -514,7 +514,7 @@ function openVehicleMaster() {
 							onkeyup="DateFormat(this,this.value,event,false,'3')"/>
                     	<a href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');" 
                     		onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-                    		<img src="${pageContext.request.contextPath}/image/calendar.png" alt="Calendar" width="16" 
+                    		<img src="${pageContext.request.contextPath}/resources/image/calendar.png" alt="Calendar" width="16" 
                     		height="16" border="0" align="absmiddle" />
                     	</a>
 					</td>
@@ -554,7 +554,7 @@ function openVehicleMaster() {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.value.summary' />

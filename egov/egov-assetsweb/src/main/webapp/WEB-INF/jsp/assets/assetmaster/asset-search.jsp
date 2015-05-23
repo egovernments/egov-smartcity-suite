@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,9 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@page contentType="text/html"%>
-<%@page pageEncoding="UTF-8"%>
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 				
@@ -64,7 +62,7 @@
 <script type="text/javascript" src="/egi/commonyui/build/button/button-beta.js"></script>
 <script type="text/javascript" src="/egi/commonyui/build/treeview/treeview.js"></script>
 <script type="text/javascript" src="/egi/commonjs/ajaxCommonFunctions.js"></script>
-<script src="<egov:url path='js/helper.js'/>"></script>	
+<script src="<egov:url path='/resources/javascript/helper.js'/>"></script>	
 
 <script>
 		  
@@ -108,7 +106,7 @@ function showRow(){
 	}
 }
 function setupAjaxPopup(){
-	window.open("../assetmaster/asset!parentCategoriesForm.action", "height=650,width=480,scrollbars=yes,left=0,top=0,status=yes");
+	window.open("../assetmaster/asset-parentCategoriesForm.action", "height=650,width=480,scrollbars=yes,left=0,top=0,status=yes");
 }
 
 function assignValues(obj){
@@ -152,7 +150,7 @@ function validateInput(){
 <html>
 	<head>
 		<s:if test="%{userMode=='view'}">
-			<title>- <s:text name="page.title.asset.view" />
+			<title> <s:text name="page.title.asset.view" />
 			</title>
 		</s:if>
 		<s:elseif test="%{userMode=='edit'}">
@@ -206,7 +204,7 @@ function validateInput(){
 												<td colspan="3" class="headingwk">
 													<div class="arrowiconwk">
 														<img
-															src="${pageContext.request.contextPath}/image/arrow.gif" />
+															src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 													</div>
 													<div class="headplacer">
 														<s:text name="search.criteria" />
@@ -247,7 +245,7 @@ function validateInput(){
 																	 onchange="setUpSubCategories(this);"/>
 																	<egov:ajaxdropdown id="populateSubcat"
 																	fields="['Text','Value']" dropdownId='subCategoryIds'
-																	url='assetmaster/ajaxAsset!populateSubCategories.action'
+																	url='assetmaster/ajaxAsset-populateSubCategories.action'
 																	selectedValue="%{parentCategoryId}" />
 															</td>
 															<td width="11%" class="whiteboxwk"><s:text name="asset.sub.category" />:</td>
@@ -316,13 +314,13 @@ function validateInput(){
 																				list="dropdownData.zoneList" listKey="id" listValue="name" headerKey="-1"
 																				headerValue="%{getText('list.default.select')}" value="%{zoneId}" onchange="setupAjaxWards(this);" />
 																			<egov:ajaxdropdown id="populateWardId" fields="['Text','Value']" dropdownId='wardId'
-																				url='assetmaster/ajaxAsset!populateWard.action' />
+																				url='assetmaster/ajaxAsset-populateWard.action' />
 																		</td>
 																		<td width="11%" class="whiteboxwk"><s:text name="asset.location.ward" /> :</td>
 																		<td width="21%" class="whiteboxwk">
 																			<s:select id="wardId" name="wardId" cssClass="selectwk" list="dropdownData.wardList"
 																				listKey="id" listValue="name" headerKey="" headerValue="%{getText('list.default.select')}" onchange="setupAjaxStreet(this);"/>
-							 												<egov:ajaxdropdown id="populateStreetId" fields="['Text','Value']" dropdownId='streetId' url='assetmaster/ajaxAsset!populateStreets.action' selectedValue="%{ward.id}" />
+							 												<egov:ajaxdropdown id="populateStreetId" fields="['Text','Value']" dropdownId='streetId' url='assetmaster/ajaxAsset-populateStreets.action' selectedValue="%{ward.id}" />
 																		</td>
 																		<td width="11%" class="whiteboxwk"><s:text name="asset.location.street" /> :</td>
 																		<td width="21%" class="whiteboxwk">
@@ -335,14 +333,14 @@ function validateInput(){
 																		<td width="21%" class="whiteboxwk">
 																			<s:select headerKey="-1" headerValue="%{getText('list.default.select')}" name="areaId" id="areaId" cssClass="selectwk"
 																			list="dropdownData.areaList" listKey="id" listValue='name' onchange="setupAjaxArea(this);"  value="%{areaId}"/>
-																			<egov:ajaxdropdown id="areaId" fields="['Text','Value']" dropdownId="areaId" url="assetmaster/ajaxAsset!populateAreaByLocation.action"  selectedValue="%{area.id}" />
-																			<egov:ajaxdropdown id="locationId" fields="['Text','Value']" dropdownId='locationId' url='assetmaster/ajaxAsset!populateLocationsByArea.action' selectedValue="%{location.id}" />
+																			<egov:ajaxdropdown id="areaId" fields="['Text','Value']" dropdownId="areaId" url="assetmaster/ajaxAsset-populateAreaByLocation.action"  selectedValue="%{area.id}" />
+																			<egov:ajaxdropdown id="locationId" fields="['Text','Value']" dropdownId='locationId' url='assetmaster/ajaxAsset-populateLocationsByArea.action' selectedValue="%{location.id}" />
 																		</td>
 																		<td width="11%" class="whiteboxwk"><s:text name="asset.location" />	:</td>
 																		<td width="21%" class="whiteboxwk">
 																			<s:select headerKey="-1" headerValue="%{getText('list.default.select')}" name="locationId"
 																			id="locationId" cssClass="selectwk" list="dropdownData.locationList" listKey="id" listValue='name' value="%{locationId}" onchange="setupAjaxStreetByLocation(this)"/>
-																			<egov:ajaxdropdown id="populateStreet2Id" fields="['Text','Value']" dropdownId='street2Id' url='assetmaster/ajaxAsset!populateStreetsByLocation.action'/>
+																			<egov:ajaxdropdown id="populateStreet2Id" fields="['Text','Value']" dropdownId='street2Id' url='assetmaster/ajaxAsset-populateStreetsByLocation.action'/>
 																		</td>
 																		<td width="11%" class="whiteboxwk"><s:text name="asset.location.street" /> :</td>
 																		<td width="21%" class="whiteboxwk">
@@ -387,7 +385,7 @@ function validateInput(){
 																<td colspan="7" class="headingwk">
 																	<div class="arrowiconwk">
 																		<img
-																			src="${pageContext.request.contextPath}/image/arrow.gif" />
+																			src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 																	</div>
 																	<div class="headplacer">
 																		<s:text name="search.result" />
@@ -414,7 +412,7 @@ function validateInput(){
 																				class="pagetabletd" title="Code"
 																				style="width:15%;text-align:left">
 																				<a
-																					href="${pageContext.request.contextPath}/assetmaster/asset!showform.action?id=<s:property value='%{#attr.currentRow.id}'/>&userMode=<s:property value='%{userMode}'/>">
+																					href="${pageContext.request.contextPath}/assetmaster/asset-showform.action?id=<s:property value='%{#attr.currentRow.id}'/>&userMode=<s:property value='%{userMode}'/>">
 																					<s:property value="%{#attr.currentRow.code}" /> </a>
 																			</display:column>
 

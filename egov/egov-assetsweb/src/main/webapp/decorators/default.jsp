@@ -40,17 +40,17 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
- <%@ include file="/includes/meta.jsp" %>
+ <%@ include file="/includes/meta.jsp" %> 
 <title>eGov Assets <decorator:title/></title>
 
-<link href="<c:url value='/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css'/>" />
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css" />
 
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script> 
 <script type="text/javascript" src="/egi/commonyui/build/dragdrop/dragdrop.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
@@ -59,20 +59,19 @@
 <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 
-<script type="text/javascript" src="/egi/commonyui/build/animation/animation-min.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/js/helper.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/js/prototype.js'/>"></script>
+<script type="text/javascript" src="/egi/commonyui/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/prototype.js'/>"></script>
 
-<script type="text/javascript" src="<c:url value='/script/calendar.js'/>" ></script>
-<script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></script>
+<script type="text/javascript" src="<c:url value='/commonjs/calendar.js' context='/egi'/>" ></script>
+<script type="text/javascript" src="<c:url value='/javascript/calender.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/javascript/validations.js' context='/egi'/>"></script>
 
-<script type="text/javascript" src="/egassets/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/egassets/js/jquery-ui-1.8.22.custom.min.js"></script>  
-<link rel="stylesheet" type="text/css" href="/egassets/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/egassets/js/ajax-script.js"></script>
+<script type="text/javascript" src="/egassets/resources/javascript/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/egassets/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
+<link rel="stylesheet" type="text/css" href="/egassets/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" src="/egassets/resources/javascript/ajax-script.js"></script>
 
 <script type="text/javascript" >
 window.document.onkeydown = function(event) { 
@@ -93,9 +92,14 @@ window.document.onkeydown = function(event) {
 <decorator:head/>
 </head>
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
+	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="../resources/image/bar_loader.gif"> <span id="message">Please wait....</span></div>
 	    <div id="BreadCrumb">
-	    <egov:breadcrumb/>
+	    	<egov:breadcrumb/>
 	    </div>
+	    <div class="topbar">
+			<div style="margin-top:10px"><decorator:title/> </div>
+		</div>
 	    <decorator:body/>
+	    <div class="urlwk"><div align>Asset Management System Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> All Rights Reserved </div></div>
     </body>
 </html>

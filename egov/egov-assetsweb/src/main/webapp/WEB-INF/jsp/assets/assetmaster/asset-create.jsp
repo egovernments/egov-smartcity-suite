@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,11 +36,11 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <html>
 	<head>  
-	    <title>- <s:text name="page.title.asset.create" /></title>
+	    <title> <s:text name="page.title.asset.create" /></title>
 	</head> 
 	<body id="home">
 
@@ -55,7 +55,6 @@
 				<s:actionmessage theme="simple" />
 			</div>
 		</s:if>
-		<script src="js/helper.js"></script>
 		<script>
 			function enableFields(){
 				for(i=0;i<document.assetForm.elements.length;i++){

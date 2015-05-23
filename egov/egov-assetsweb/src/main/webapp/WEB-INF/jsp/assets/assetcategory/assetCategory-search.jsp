@@ -41,17 +41,17 @@
 <script>
 
 function setupAjaxAssettype(elem){
-    asset_type_id=elem.options[elem.selectedIndex].value;
-    populateparentcat({assetTypeId:asset_type_id});
+    populateparentcat({assetType:elem.value});
 }
 </script>
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
 	<head>
 		<s:if test="%{userMode=='view'}">
-			<title>- <s:text name="page.title.asset.cat.view" /></title>
+			<title> <s:text name="page.title.asset.cat.view" /></title>
 		</s:if>
 		<s:elseif test="%{userMode=='edit'}">
-			<title>- <s:text name="page.title.asset.cat.edit" /></title>
+			<title> <s:text name="page.title.asset.cat.edit" /></title>
 		</s:elseif>
 	</head>
 	<body id=home>
@@ -95,7 +95,7 @@ function setupAjaxAssettype(elem){
 								<td colspan="4" class="headingwk">
 									<div class="arrowiconwk">
 										<img
-											src="${pageContext.request.contextPath}/image/arrow.gif" />
+											src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 									</div>
 									<div class="headplacer">
 										<s:text name="search.criteria" />
@@ -107,15 +107,14 @@ function setupAjaxAssettype(elem){
 									<s:text name="asset.cat.type" />
 								</td>
 								<td width="21%" class="greybox2wk">
-									<s:select headerKey="-1"
+									<s:select headerKey=""
 										headerValue="%{getText('list.default.select')}"
 										name="assetType" id="assettype"
 										cssClass="selectwk" list="dropdownData.assetTypeList"
-										listKey="value" listValue='value' 
 										onChange="setupAjaxAssettype(this);" />
 									<egov:ajaxdropdown id="populateParentcat"
 										fields="['Text','Value']" dropdownId='parentcat'
-										url='assetcategory/ajaxAssetCategory!populateParentCategories.action'
+										url='assetcategory/ajaxAssetCategory-populateParentCategories.action'
 										selectedValue="%{id}" />
 								</td>
 								<td width="15%" class="greyboxwk">
@@ -159,7 +158,7 @@ function setupAjaxAssettype(elem){
 											<td colspan="6" class="headingwk">
 												<div class="arrowiconwk">
 													<img
-														src="${pageContext.request.contextPath}/image/arrow.gif" />
+														src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="search.result" />
@@ -198,7 +197,7 @@ function setupAjaxAssettype(elem){
 															</td>
 															<td width="15%">
 																<a
-																	href="${pageContext.request.contextPath}/assetcategory/assetCategory!showform.action?
+																	href="${pageContext.request.contextPath}/assetcategory/assetCategory-showform.action?
 																	id=<s:property value='%{id}'/>&userMode=<s:property value='%{userMode}'/>">
 																	<s:property value="%{name}" />
 																</a> &nbsp;

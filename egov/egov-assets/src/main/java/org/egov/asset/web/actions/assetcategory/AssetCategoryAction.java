@@ -189,7 +189,8 @@ public class AssetCategoryAction extends BaseFormAction {
         userMode = NEW;
         return showform();
     }
-
+    
+    @Action(value = "/assetCategory-showform")
     public String showform() {
         String result = null;
 
