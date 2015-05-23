@@ -53,7 +53,7 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Entity
-@Unique(id = "id", tableName = "eg_department", columnName = { "name", "code" }, fields = { "name", "code" })
+@Unique(id = "id", tableName = "eg_department", columnName = { "name", "code" }, fields = { "name", "code" },enableDfltMsg=true)
 @Table(name = "eg_department")
 @Searchable
 public class Department extends AbstractAuditable<User, Long> {

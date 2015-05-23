@@ -66,6 +66,8 @@ public @interface Unique {
 
     String message() default "{validator.unique}";
 
+    boolean enableDfltMsg() default false;
+    
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

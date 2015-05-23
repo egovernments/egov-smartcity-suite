@@ -40,9 +40,7 @@
 package org.egov.infra.admin.master.entity;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -63,11 +61,10 @@ import org.egov.search.domain.Searchable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
-import org.json.simple.JSONObject;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Unique(id = "id", tableName = "eg_boundary", fields = { "name" }, columnName = { "name" })
+@Unique(id = "id", tableName = "eg_boundary", fields = { "name" }, columnName = { "name" },enableDfltMsg=true)
 @Table(name = "EG_BOUNDARY")
 @Searchable
 @NamedQuery(name = "Boundary.findBoundariesByBoundaryType", query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")

@@ -49,7 +49,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Unique(id = "id", tableName = "eg_role", fields = { "name" }, columnName = { "name" })
+@Unique(id = "id", tableName = "eg_role", fields = { "name" }, columnName = { "name" },enableDfltMsg=true)
 @Table(name = "eg_role")
 public class Role extends AbstractAuditable<User, Long> {
 

@@ -45,14 +45,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.egov.search.util.Serializer;
@@ -63,7 +60,7 @@ import org.json.simple.JSONObject;
 
 @Entity
 @Unique(id = "id", tableName = "pgr_complainttype", fields = { "name", "code" }, columnName = {
-		"name", "code" })
+		"name", "code" },enableDfltMsg=true)
 @Table(name = "pgr_complainttype")
 @Searchable
 public class ComplaintType extends AbstractAuditable<User, Long> {

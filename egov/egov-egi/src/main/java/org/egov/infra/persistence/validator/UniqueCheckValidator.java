@@ -71,6 +71,9 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
         for (int i = 0; i < unique.fields().length; i++)
             if (!isUnique(arg0, unique.fields()[i], unique.columnName()[i])) {
+                if(unique.enableDfltMsg())
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(unique.message())
+                        .addPropertyNode(unique.fields()[i]).addConstraintViolation();
                 return false;
             }
         return true;

@@ -53,7 +53,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.search.domain.Searchable;
 import org.egov.search.util.Serializer;
-import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
 
 /**

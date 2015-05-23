@@ -54,7 +54,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
         id = "id", 
         tableName = "eg_city_website", 
         fields = { "cityBaseURL" }, 
-        columnName = { "citybaseurl" }
+        columnName = { "citybaseurl" },
+        enableDfltMsg=true
 )
 @Table(name = "eg_city_website")
 @NamedQuery(name="CITY_BY_URL",query="Select cw FROM CityWebsite cw WHERE cw.cityBaseURL=:url")

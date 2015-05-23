@@ -60,7 +60,8 @@ import org.hibernate.validator.constraints.NotBlank;
         id = "id",
         tableName = "eg_hierarchy_type", 
         fields = {"name", "code"}, 
-        columnName = {"name", "code"}
+        columnName = {"name", "code"},
+        enableDfltMsg=true
 )
 @Table(name = "eg_hierarchy_type")
 public class HierarchyType extends AbstractAuditable<User, Long> {
