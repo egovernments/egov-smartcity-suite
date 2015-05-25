@@ -85,6 +85,9 @@
 			<interceptor name="egov-exception" class="org.egov.web.interceptors.ExceptionInterceptor" />
 
 			<interceptor-stack name="egov-interceptors">
+				<interceptor-ref name="token">
+					<param name="includeMethods">saveOrupdate,save,create,approve,forward,moveEstimate,createFile,saveFile,saveAsDraft,createFileNotification</param>
+				</interceptor-ref>
 				<interceptor-ref name="egov-exception">
 					<param name="logEnabled">true</param>
 					<param name="logLevel">ERROR</param>
@@ -112,9 +115,7 @@
 					<param name="excludeMethods">input,back,cancel,browse</param>
 				</interceptor-ref>
 				<interceptor-ref name="egov-validator" />
-				<interceptor-ref name="tokenSession">
-					<param name="includeMethods">saveOrupdate,save,create,approve,forward,moveEstimate,createFile,saveFile,saveAsDraft,createFileNotification</param>
-				</interceptor-ref>
+				
 			</interceptor-stack>
 		</interceptors>
 		<default-interceptor-ref name="egov-interceptors" />
