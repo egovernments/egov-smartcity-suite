@@ -39,7 +39,7 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated 16 Dec, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
 <hibernate-mapping>
     <class name="org.egov.collection.entity.AccountPayeeDetail" table="EGCL_ACCOUNTPAYEEDETAILS">
