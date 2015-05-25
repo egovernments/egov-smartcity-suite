@@ -38,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
 -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.egov.ptis.domain.entity.property">
 	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
 		extends="org.egov.portal.entity.Citizen">
