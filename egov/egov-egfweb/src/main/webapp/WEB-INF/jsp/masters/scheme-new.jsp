@@ -36,7 +36,7 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->  -->
+#-------------------------------------------------------------------------------   -->
 <%@ include file="/includes/taglibs.jsp" %>
 
 <%@ page language="java"%>

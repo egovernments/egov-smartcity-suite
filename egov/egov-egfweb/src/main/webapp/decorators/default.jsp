@@ -38,19 +38,6 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ taglib uri="/egovAuthz" prefix="egov-authz" %> 
-<%@page import="org.egov.infstr.utils.EgovUtils" %>
-
-
-<%@ page import="java.sql.Connection,java.sql.PreparedStatement,
-org.egov.infstr.client.administration.rjbac.user.UserForm,
-org.egov.infstr.utils.HibernateUtil,
-org.egov.infstr.utils.ServiceLocator,
-org.egov.infra.admin.master.entity.User,
-org.egov.lib.rjbac.user.ejb.api.UserManager,
-org.egov.lib.rjbac.user.ejb.api.UserManagerHome,
-org.apache.log4j.Logger;"%>
-
 <html>
     <head>
         <%@ include file="/includes/meta.jsp" %>
@@ -103,23 +90,6 @@ org.apache.log4j.Logger;"%>
 	</div>
 
   <!-- Header Section Ends -->
-<%
-Logger LOGGER = Logger.getLogger("default.jsp");
-boolean admin=false;
-Integer userID= (Integer)request.getSession().getAttribute("com.egov.user.LoginUserId");
- LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Egov Site mesh Header userID "+userID);
- String userName="";
- ServiceLocator serviceloc = ServiceLocator.getInstance();
- UserManagerHome uhome = (UserManagerHome)serviceloc.getLocalHome("UserManagerHome");
-UserManager userManager = uhome.create();
-if(userID !=null)
-{
-User user = userManager.getUserByID(userID);
- userName=user.getUserName();
-
-}
- %> 
-   
  <table align='center' id="table2" width="100%">
   <tr>
   <td>
