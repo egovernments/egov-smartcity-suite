@@ -131,23 +131,18 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<!-- <url-pattern>*.jsp</url-pattern>
-		<url-pattern>*.do</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<!-- <url-pattern>/*</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
-		<!-- <url-pattern>/*</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<!-- <url-pattern>/*</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
@@ -160,8 +155,6 @@
 	
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
-	<!--<url-pattern>*.do</url-pattern>
-		<url-pattern>*.jsp</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
@@ -171,8 +164,6 @@
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
 		<url-pattern>*.action</url-pattern>
-		<!-- <url-pattern>*.do</url-pattern>
-		<url-pattern>*.jsp</url-pattern> -->
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
@@ -189,23 +180,7 @@
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
 	<!-- Listeners Ends Servlet Declaration Starts -->
-	<servlet>
-		<servlet-name>action</servlet-name>
-		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-		<init-param>
-			<param-name>config</param-name>
-			<param-value>/WEB-INF/struts-config.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<init-param>
-			<param-name>detail</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
+	
 	<servlet>
 		<servlet-name>reportViewer</servlet-name>
 		<servlet-class>org.egov.infstr.reporting.viewer.ReportViewer</servlet-class>
