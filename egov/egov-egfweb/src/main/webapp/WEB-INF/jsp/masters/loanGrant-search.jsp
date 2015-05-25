@@ -52,7 +52,7 @@
     <title>
 			<s:text name="masters.loangrant.search.title"/>	    	
 	</title>
-	<script type="text/javascript" src="/EGF/javascript/voucherHelper.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
   <style type="text/css">
 		#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 		#codescontainer .yui-ac-content {position:absolute;width:600px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}

@@ -47,13 +47,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<link rel="stylesheet" href="/EGF/cssnew/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/javascript/voucherHelper.js"></script>
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
   <link href="common/css/budget.css" rel="stylesheet" type="text/css" />
 <link href="common/css/commonegov.css" rel="stylesheet" type="text/css" />
 

@@ -47,7 +47,7 @@
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 <html>
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contra.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 </head>
 <script>

@@ -47,10 +47,10 @@
 <html>  
 <head>  
     <title><s:text name="budgetdetail"/></title>
-    <link rel="stylesheet" href="/EGF/cssnew/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/javascript/tabber2.js"></script>
-	<script type="text/javascript" src="/EGF/javascript/helper.js"></script>
+    <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
     <jsp:include page="budgetHeader.jsp"/>
    
 </head>  

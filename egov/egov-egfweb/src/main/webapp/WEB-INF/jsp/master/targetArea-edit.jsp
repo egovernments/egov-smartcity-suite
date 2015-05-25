@@ -51,8 +51,8 @@
     </title>
     <sx:head/>
   </head>
-  <script type="text/javascript" src="/EGF/javascript/helper.js"></script>
-  <script type="text/javascript" src="/EGF/javascript/targetArea.js"></script>
+  <script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+  <script type="text/javascript" src="/EGF/resources/javascript/targetArea.js"></script>
   <body>
   <s:form name="targetAreaForm" action="targetArea"   theme="css_xhtml" validate="true">
   <s:token />

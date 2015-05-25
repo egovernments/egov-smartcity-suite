@@ -99,4 +99,4 @@
 	</div>
 	</s:push>
   </s:form>
-  <script src="../javascript/bank.js" type="text/javascript"></script>
+  <script src="../resources/javascript/bank.js" type="text/javascript"></script>

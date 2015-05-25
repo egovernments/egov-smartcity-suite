@@ -50,7 +50,7 @@
 </title>
 <sx:head/>
 </head>
-<script type="text/javascript" src="/EGF/javascript/helper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
 <body> 
 	<s:form name="receiptInfoFetchForm" id="receiptInfoFetchForm"
 		action="eBReceiptInfoFetch" theme="css_xhtml"

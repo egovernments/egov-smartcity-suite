@@ -1,0 +1,64 @@
+table.its{
+	width: 100%;
+	}
+
+table.its th {
+   background-color: #999999;
+    background-image: url("../image/tablebg.gif");
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #E9E9E9;
+    border-right: 1px solid #E9E9E9;
+    color: #FFFFFF;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    height: 32px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+}
+
+
+table.its th.sorted a, th.sortable a {
+    background-position: right center;
+    display: block;
+}
+
+table.its th.order1 a {
+	background-image: url(../image/arrow_down.png) !important;
+}
+table.its th.order2 a {
+	background-image: url(../image/arrow_up.png) !important;
+}
+table.its th.sorted a, .table th.sortable a {
+background-position:right center;
+background-repeat:no-repeat;
+display:block;
+}
+table.its tr.even {
+background:none repeat scroll 0 0 #EEEEEE;
+	height: 30px;
+	color: #000000;
+    border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #E9E9E9;
+	border-bottom-color: #E9E9E9;
+}
+table.its tr.odd {
+background:none repeat scroll 0 0 #FFFFFF;
+	height: 30px;
+	color: #000000;
+  	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #E9E9E9;
+	border-bottom-color: #E9E9E9;
+}
+a, a:link a:active {
+color:blue;
+text-decoration:none;
+}
+

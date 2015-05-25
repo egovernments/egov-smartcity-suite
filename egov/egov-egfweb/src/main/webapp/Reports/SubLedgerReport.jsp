@@ -63,8 +63,8 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../script/calendar.js" type="text/javascript" ></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
  <script type="text/javascript" src="../commonyui/build/yahoo/yahoo.js"></script>
 <script type="text/javascript" src="../commonyui/build/dom/dom.js" ></script>
 <script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>
@@ -72,12 +72,12 @@
 <script type="text/javascript" src="../commonyui/build/animation/animation.js"></script>
 <link type="text/css" rel="stylesheet" href="../commonyui/build/reset/reset.css">
 <link type="text/css" rel="stylesheet" href="../commonyui/build/fonts/fonts.css">
-<script type="text/javascript" src="../javascript/contra.js"></script>
-<link href="/EGF/cssnew/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/cssnew/commonegovnew.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../resources/javascript/contra.js"></script>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
-<link href="/EGF/cssnew/error.css" rel="stylesheet" type="text/css"></link>
+<link href="/EGF/resources/css/error.css" rel="stylesheet" type="text/css"></link>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
@@ -85,15 +85,15 @@
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 <script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
-<script type="text/javascript" src="/EGF/javascript/calenderNew.js"></script>
-<script type="text/javascript" src="/EGF/javascript/helper.js"></script>
-<script type="text/javascript" src="/EGF/javascript/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/EGF/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
+<script type="text/javascript" src="/EGF/resources/javascript/calenderNew.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/javascript/ajax-script.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajax-script.js"></script>
 <link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/EGF/javascript/tdsReportHelper.js"></script>
-<script type="text/javascript" src="/EGF/javascript/subLedgerReportHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/subLedgerReportHelper.js"></script>
 
 
 <style type="text/css">

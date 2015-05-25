@@ -55,8 +55,8 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT-->
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
-<SCRIPT type="text/javascript" src="../script/calendar.js" type="text/javascript" ></SCRIPT>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
 <link rel="stylesheet" href="../css/lockRowHead.css" type="text/css" />
 <link rel="stylesheet" href="../exility/screen.css" type="text/css" media="screen, print" />
 <SCRIPT LANGUAGE="javascript">

@@ -48,7 +48,7 @@
     <title>
     	<s:text name="eBConsumer.create.title"/> 
     </title>
-    <script type="text/javascript" src="/EGF/javascript/ebConsumerHelper.js"></script>
+    <script type="text/javascript" src="/EGF/resources/javascript/ebConsumerHelper.js"></script>
     <sx:head/>
   </head>
   <body>

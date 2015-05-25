@@ -50,8 +50,8 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
-<SCRIPT LANGUAGE="javascript" SRC="../script/jsCommonMethods.js"></Script>
-<SCRIPT type="text/javascript" src="../script/calendar.js" type="text/javascript" ></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../resources/javascript/jsCommonMethods.js"></Script>
+<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js" type="text/javascript" ></SCRIPT>
 <SCRIPT LANGUAGE="javascript">
 var cWind;         // temporary window reference
 var count=1;      // Counter which gives number of child windows opened

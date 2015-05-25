@@ -46,7 +46,7 @@
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <html>  
 <head>  
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
     <title>PJV Approval</title>
 </head>
 	<body onload="refreshInbox()">  

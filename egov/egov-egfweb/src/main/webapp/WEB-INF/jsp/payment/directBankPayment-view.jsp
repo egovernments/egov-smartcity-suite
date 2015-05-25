@@ -50,15 +50,15 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/directBankPaymentHelper.js"></script>
-<link href="/EGF/cssnew/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/cssnew/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/cssnew/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/javascript/tabber2.js"></script>
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">

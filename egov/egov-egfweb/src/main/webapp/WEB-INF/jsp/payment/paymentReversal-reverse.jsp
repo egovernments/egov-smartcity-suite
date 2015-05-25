@@ -48,7 +48,7 @@
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 
 </head>

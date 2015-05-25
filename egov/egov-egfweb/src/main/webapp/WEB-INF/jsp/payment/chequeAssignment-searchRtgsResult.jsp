@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<link href="<egov:url path='/cssnew/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />         
+<link href="<egov:url path='/resources/css/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />         
 <html>  
 <head>  
 	<link rel="stylesheet" type="text/css" href="/EGF/css/ccMenu.css"/>

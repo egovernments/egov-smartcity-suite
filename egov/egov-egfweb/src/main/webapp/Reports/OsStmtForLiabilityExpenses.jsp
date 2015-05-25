@@ -62,8 +62,8 @@
 		<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 		<SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
 		<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-		<script LANGUAGE="javascript" src="../script/jsCommonMethods.js"></script>
-		<SCRIPT type="text/javascript" src="../script/calendar.js"></SCRIPT>
+		<script LANGUAGE="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
+		<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js"></SCRIPT>
 		<script type="text/javascript" src="../commonyui/build/yahoo/yahoo.js"></script>
 		<script type="text/javascript" src="../commonyui/build/dom/dom.js" ></script>
 		<script type="text/javascript" src="../commonyui/build/autocomplete/autocomplete-debug.js"></script>

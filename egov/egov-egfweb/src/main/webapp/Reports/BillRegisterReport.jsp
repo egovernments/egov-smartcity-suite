@@ -51,7 +51,7 @@
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <link rel="stylesheet" href="../exility/screen.css" type="text/css" media="screen, print" /> 
 <SCRIPT LANGUAGE="javascript">
 var flag='0', tbNames, tbIds;

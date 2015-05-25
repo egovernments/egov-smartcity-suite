@@ -51,7 +51,7 @@
     </title>
     <sx:head/>
   </head>
-  <script type="text/javascript" src="/EGF/javascript/ebConsumerHelper.js"></script>
+  <script type="text/javascript" src="/EGF/resources/javascript/ebConsumerHelper.js"></script>
   <body onload = "validateCodeAndName('<s:property value="%{hasValidEBDetails}"/>');">
    <s:form name="eBConsumerForm" id="eBConsumerForm" action="eBConsumer" theme="css_xhtml" validate="true" >
    <s:push value="model">

@@ -51,7 +51,7 @@
 
 
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 
 

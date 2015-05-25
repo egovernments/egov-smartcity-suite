@@ -168,9 +168,9 @@
 		<link rel="stylesheet" type="text/css" media="all" href="<c:url value='/css/egov.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" />
-		<script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/calendar.js'/>" ></script>
-		<script type="text/javascript" src="<c:url value='/javascript/validations.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/calender.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/calendar.js'/>" ></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/javascript/SASvalidation.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/javascript/dateValidation.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/yahoo/yahoo.js'/>"></script>
@@ -179,14 +179,14 @@
 		<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js'/>"></script>
-		<SCRIPT type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></SCRIPT>  
+		<SCRIPT type="text/javascript" src="<c:url value='/resources/javascript/jsCommonMethods.js' />"></SCRIPT>  
 		<script type="text/javascript" src="<c:url value='/exility/PageManager.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/PageValidator.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/data.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/ExilityParameters.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/jsCommonMethods.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/predefinedAccCodes.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/rowDetailsNew.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/jsCommonMethods.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/predefinedAccCodes.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/rowDetailsNew.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/CookieManager.js'/>"></SCRIPT>
 		<style type="text/css">
 				#codescontainer {position:absolute;left:11em;width:40%}

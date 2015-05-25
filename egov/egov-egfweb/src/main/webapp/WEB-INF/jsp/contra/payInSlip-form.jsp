@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <script>
 
 path="${pageContext.request.contextPath}";

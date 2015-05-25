@@ -58,10 +58,10 @@
 	#codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 	</style>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/javascript/targetArea.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/targetArea.js"></script>
   </head>
   
   <body >

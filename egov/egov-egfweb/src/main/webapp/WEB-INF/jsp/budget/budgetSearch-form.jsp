@@ -57,7 +57,7 @@
     }
 </script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/calenderNew.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 <div class="formmainbox"><div class="formheading"></div> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>

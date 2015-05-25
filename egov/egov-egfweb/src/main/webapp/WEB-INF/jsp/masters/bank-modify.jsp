@@ -64,8 +64,8 @@
   <body>
     <div class="formmainbox"><div class="subheadnew"><s:text name="bank.modify.new"/></div>
     <jsp:include page="bank-form.jsp"></jsp:include>
-    <script src="../javascript/jquery/grid.locale-en.js" type="text/javascript"></script>
-	<script src="../javascript/jquery/jquery.jqGrid.min.js" type="text/javascript"></script>
+    <script src="../resources/javascript/jquery/grid.locale-en.js" type="text/javascript"></script>
+	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js" type="text/javascript"></script>
     <script>
     existingCode = '${model.code}';
     existingName = '${model.name}';

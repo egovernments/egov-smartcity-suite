@@ -43,10 +43,10 @@
 <html>  
 <head>  
     <title><s:text name="bill.salarybill.register"/></title>
-    <link href="/EGF/cssnew/budget.css" rel="stylesheet" type="text/css" />
+    <link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
 	<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/payment.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 	<script type="text/javascript">
 	var path="${pageContext.request.contextPath}";
 	function disableControls(frmIndex, isDisable){

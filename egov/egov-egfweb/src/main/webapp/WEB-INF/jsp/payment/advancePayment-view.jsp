@@ -43,8 +43,8 @@
 <html>
 <head>
 <title><s:text name="advance.payment.view.title" /></title>
-<script type="text/javascript" src="/EGF/javascript/advancePaymentHelper.js"></script>
-<script type="text/javascript" src="/EGF/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/advancePaymentHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/voucherHelper.js"></script>
 <style>
 @media print {
 	input#printbutton {

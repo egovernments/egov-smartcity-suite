@@ -40,7 +40,7 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contra.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 	<STYLE type="text/css">
 	@media print

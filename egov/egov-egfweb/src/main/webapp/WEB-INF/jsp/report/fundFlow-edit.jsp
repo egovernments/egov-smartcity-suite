@@ -48,7 +48,7 @@
 
 <html>  
 <head> 
- <script type="text/javascript" src="/EGF/javascript/fundFlow.js"></script>
+ <script type="text/javascript" src="/EGF/resources/javascript/fundFlow.js"></script>
     <title><s:text name="fundflowreportmodify"/></title>
     
   

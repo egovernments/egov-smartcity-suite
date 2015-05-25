@@ -49,7 +49,7 @@
    <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
    <head>
       <sx:head />
-      <script type="text/javascript" language="javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+      <script type="text/javascript" language="javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
       <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
       <style type="text/css">
 #codescontainer {

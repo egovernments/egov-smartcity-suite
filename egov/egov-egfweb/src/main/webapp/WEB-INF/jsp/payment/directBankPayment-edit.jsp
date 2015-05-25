@@ -52,11 +52,11 @@
 
 <head>
 <sx:head/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/directBankPaymentHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/directBankPaymentHelper.js"></script>
 
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">

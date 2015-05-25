@@ -46,11 +46,11 @@
 
 <head>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/accountCheque.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/accountCheque.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 
 <title>Account Cheque Create</title>

@@ -43,7 +43,7 @@
 <html>  
 <head>  
     <title><s:text name="bill.salarybill.register"/></title>
-    <link href="/EGF/cssnew/budget.css" rel="stylesheet" type="text/css" />
+    <link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
 	<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
 	<style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
@@ -66,8 +66,8 @@
 </style>
 	
 	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/payment.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 	<SCRIPT type="text/javascript">
 	function onLoadTask(){
 		var close = '<s:property value="close"/>';

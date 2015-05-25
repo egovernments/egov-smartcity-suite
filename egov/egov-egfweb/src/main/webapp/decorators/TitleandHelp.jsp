@@ -156,9 +156,9 @@
 		<link rel="stylesheet" type="text/css" media="all" href="<c:url value='/css/egov.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" />
-		<script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/calendar.js'/>" ></script>
-		<script type="text/javascript" src="<c:url value='/javascript/validations.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/calender.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/calendar.js'/>" ></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/javascript/SASvalidation.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/javascript/dateValidation.js'/>"></script>
 		
@@ -182,17 +182,17 @@
 <script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
 <script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 
-		<script type="text/javascript" src="<c:url value='/javascript/helper.js'/>"></script>
-		<SCRIPT type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></SCRIPT>  
+		<script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
+		<SCRIPT type="text/javascript" src="<c:url value='/resources/javascript/jsCommonMethods.js' />"></SCRIPT>  
 		<script type="text/javascript" src="<c:url value='/exility/PageManager.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/PageValidator.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/data.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/ExilityParameters.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/jsCommonMethods.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/predefinedAccCodes.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/script/rowDetailsNew.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/jsCommonMethods.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/predefinedAccCodes.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/rowDetailsNew.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/exility/CookieManager.js'/>"></SCRIPT>
-		<script type="text/javascript" src="<c:url value='/javascript/helper.js'/>"></SCRIPT>
+		<script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></SCRIPT>
 		<style type="text/css">
 				#codescontainer {position:absolute;left:11em;width:40%}
 				#codescontainer .yui-ac-content {position:absolute;width:100%;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}

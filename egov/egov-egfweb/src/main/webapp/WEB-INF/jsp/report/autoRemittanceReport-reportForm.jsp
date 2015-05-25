@@ -41,8 +41,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
 	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	<script type="text/javascript" src="/EGF/javascript/tdsReportHelper.js"></script>
-	<script type="text/javascript" src="/EGF/javascript/helper.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
 	<style type="text/css">
 	#codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:20000;}

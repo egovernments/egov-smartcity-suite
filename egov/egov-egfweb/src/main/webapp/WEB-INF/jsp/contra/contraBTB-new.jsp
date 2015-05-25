@@ -48,11 +48,11 @@
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contraBTBHelper.js"></script>
-<script type="text/javascript" src="/EGF/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/script/calendar.js" ></script>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">

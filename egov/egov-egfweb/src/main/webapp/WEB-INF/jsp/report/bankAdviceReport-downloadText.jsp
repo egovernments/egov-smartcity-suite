@@ -49,7 +49,7 @@
 <s:text name="tneb.download.text.title"/> 
 </title>
 </head>
-<script type="text/javascript" src="/EGF/javascript/helper.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
 <body> 
 	<s:actionmessage />
 	<s:actionerror/>

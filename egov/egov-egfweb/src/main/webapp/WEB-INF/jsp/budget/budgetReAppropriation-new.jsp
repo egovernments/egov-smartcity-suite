@@ -43,9 +43,9 @@
 <html>  
 <head>  
     <title> <s:text name="budget.reappropriation.title"/></title>
-    <link rel="stylesheet" href="/EGF/cssnew/tabber.css" TYPE="text/css">
-	<script type="text/javascript" src="/EGF/javascript/tabber.js"></script>
-	<script type="text/javascript" src="/EGF/javascript/tabber2.js"></script>
+    <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+	<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+	<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
     <STYLE type="text/css">
 	    .yui-dt-liner { 
 		    text-align: right; 
@@ -89,7 +89,7 @@
 	}
 	</s:if>
 </script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/calenderNew.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		
 		<script>
 			if(opener != null && opener.top != null && opener.top.document.getElementById('inboxframe')!=null){

@@ -45,7 +45,7 @@
 <%@ taglib uri="/tags/struts-logic" prefix="logic"%>
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contra.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 
 <html>  
 <head>  

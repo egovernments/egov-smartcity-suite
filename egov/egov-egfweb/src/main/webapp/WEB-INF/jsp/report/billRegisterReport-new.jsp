@@ -45,7 +45,7 @@
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
-<link href="<egov:url path='/cssnew/displaytag.css'/>" rel="stylesheet" type="text/css" />
+<link href="<egov:url path='/resources/css/displaytag.css'/>" rel="stylesheet" type="text/css" />
 <html>  
 <head>  
     <title><s:text name="bill.register.report" /></title>

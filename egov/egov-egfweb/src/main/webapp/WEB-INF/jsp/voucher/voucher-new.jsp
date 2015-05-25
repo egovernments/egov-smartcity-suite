@@ -48,9 +48,9 @@
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-		<SCRIPT type="text/javascript" src="/EGF/script/jsCommonMethods.js"></SCRIPT>  
+		<SCRIPT type="text/javascript" src="/EGF/resources/javascript/jsCommonMethods.js"></SCRIPT>  
 		<script type="text/javascript" src="/EGF/exility/PageManager.js"></script>
 		<script type="text/javascript" src="/EGF/exility/PageValidator.js"></script>
 		<script type="text/javascript" src="/EGF/exility/data.js"></script>

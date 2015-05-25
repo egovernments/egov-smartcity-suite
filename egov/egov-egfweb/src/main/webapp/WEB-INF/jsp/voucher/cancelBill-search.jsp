@@ -50,7 +50,7 @@
 <head>  
     <title>Cancel Bills - Search</title>
 </head>
-<SCRIPT LANGUAGE="javascript" SRC="../script/jsCommonMethods.js"></Script>
+<SCRIPT LANGUAGE="javascript" SRC="../resources/javascript/jsCommonMethods.js"></Script>
 <script type="text/javascript">
 function validate()
 {

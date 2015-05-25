@@ -45,7 +45,7 @@
 <%@ taglib uri="/tags/struts-logic" prefix="logic"%>
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

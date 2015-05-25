@@ -47,9 +47,9 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="/EGF/cssnew/ccMenu.css"/>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contra.js"></script>
+	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css"/>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 	<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 	<title>Cash Withdrawal</title>

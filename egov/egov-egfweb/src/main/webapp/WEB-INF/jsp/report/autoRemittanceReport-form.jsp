@@ -42,7 +42,7 @@
 <div class="formmainbox">
 <div class="formheading"></div>
 <div class="subheadnew">Auto Remittance Payment Report</div>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/contra.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contra.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 	<style type="text/css">

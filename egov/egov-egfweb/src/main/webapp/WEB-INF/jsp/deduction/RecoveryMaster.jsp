@@ -69,10 +69,10 @@
 	//logger.infor("calculation type : "+rsf.getCalculationType());
 %>
 
-<link href="cssnew/budget.css" rel="stylesheet" type="text/css" />
+<link href="resources/css/budget.css" rel="stylesheet" type="text/css" />
 <link href="css/commonegov.css" rel="stylesheet" type="text/css" />
 <!-- script type="text/javascript" src="common/js/budget.js"></script> -->
-<script type="text/javascript" src="<c:url value='/javascript/recoveryMasterHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/recoveryMasterHelper.js'/>"></script>
 <script language=javascript>
 // ---- Manual Script ---STARTS--
 var myrowId;

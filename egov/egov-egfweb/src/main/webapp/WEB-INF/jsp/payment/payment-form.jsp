@@ -49,11 +49,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-<link href="/EGF/cssnew/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/cssnew/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/cssnew/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/javascript/tabber2.js"></script>
+<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
+<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
 </head>
 <script language="javascript">
 

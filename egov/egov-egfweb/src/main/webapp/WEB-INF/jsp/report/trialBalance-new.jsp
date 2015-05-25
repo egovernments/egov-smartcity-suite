@@ -45,10 +45,10 @@
 <%@ taglib uri="/tags/struts-logic" prefix="logic"%>
 <%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<script language="javascript" src="../script/jsCommonMethods.js"></script>
+<script language="javascript" src="../resources/javascript/jsCommonMethods.js"></script>
 <html>  
 <head>        
-<script type="text/javascript" src="/EGF/javascript/fundFlow.js">
+<script type="text/javascript" src="/EGF/resources/javascript/fundFlow.js">
 </script>
     <title><s:text name="trialbalancereport"/></title>
 <script type="text/javascript">

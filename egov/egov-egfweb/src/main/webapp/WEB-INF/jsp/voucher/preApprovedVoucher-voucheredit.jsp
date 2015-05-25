@@ -48,7 +48,7 @@
 <html>
 
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/voucherHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title><s:property value="type" /> JV-Create</title>
 <style type="text/css">
