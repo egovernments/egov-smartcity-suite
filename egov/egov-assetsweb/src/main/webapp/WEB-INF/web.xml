@@ -120,6 +120,11 @@
 	<filter-mapping>
 		<filter-name>CacheControlFilter</filter-name>
 		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.ico</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>CharacterEncodingFilter</filter-name>
@@ -147,10 +152,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>*.do</url-pattern>
-		<url-pattern>*.jsp</url-pattern>
 		<url-pattern>*.action</url-pattern>
-		<url-pattern>/j_security_check</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -194,18 +196,7 @@
 		<servlet-name>reportViewer</servlet-name>
 		<url-pattern>/reportViewer</url-pattern>
 	</servlet-mapping>
-	<session-config>
-		<cookie-config>
-			<name>test</name>
-			<path>/</path>
-			<http-only>true</http-only>
-			<secure>false</secure>
-		</cookie-config>
-		<tracking-mode>COOKIE</tracking-mode>
-	</session-config>
-	<welcome-file-list>
-		<welcome-file>/index.jsp</welcome-file>
-	</welcome-file-list>
+	
 	<!-- Servlet Declaration Ends -->
 	<jsp-config>
 		<taglib>
@@ -229,4 +220,25 @@
 			<page-encoding>UTF-8</page-encoding>
 		</jsp-property-group>
 	</jsp-config>
+	<welcome-file-list>
+	    <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+	<error-page>
+		<error-code>500</error-code>
+ 		<location>/error/500</location>
+ 	</error-page>
+ 	
+ 	<error-page>
+ 		<error-code>404</error-code>
+ 		<location>/error/404</location>
+ 	</error-page>
+
+	<session-config>
+		<cookie-config>
+			<path>/</path>
+			<http-only>true</http-only>
+			<secure>false</secure>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
+	</session-config>
 </web-app>
