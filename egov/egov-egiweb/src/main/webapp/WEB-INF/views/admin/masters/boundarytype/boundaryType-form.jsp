@@ -52,7 +52,12 @@
                     <div id="message" class="success">${message}</div>
                 </c:if>
                 <c:if test="${empty hierarchyTypes and empty message}">
-                    <div id="message" class="success"><strong><spring:message code="root.boundaryType.exists"/></strong></div>
+                    <div id="message" class="success" align="center"><strong><spring:message code="root.boundaryType.exists"/></strong></div>
+					<div class="row">
+						<div class="text-center">
+							<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
+						</div>
+					</div>
                 </c:if>
             	<c:if test="${not empty hierarchyTypes}">
 				<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" id="boundaryTypeForm" >
@@ -108,4 +113,3 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-

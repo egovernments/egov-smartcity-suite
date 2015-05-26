@@ -130,7 +130,7 @@
 					</div>		
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.boundary.toDate"/>
+								<spring:message code="lbl.boundary.toDate"/>
 						</label>
 						<div class="col-sm-6">
 							<form:input path="toDate" id="boundaryToDate" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
@@ -141,7 +141,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+					<button type="button" class="btn btn-default" onclick="history(0)"><spring:message code="lbl.back"/></button>
 					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
