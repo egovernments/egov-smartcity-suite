@@ -362,7 +362,7 @@
 					  </s:else>
 						<td class="bluebox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
 						<td class="bluebox"><s:textfield name="reversalVoucherDate" value='%{getFormattedNewDate()}' id="reversalVoucherDate" size="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-						<a href="javascript:show_calendar('JVReverseForm.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+						<a href="javascript:show_calendar('JVReverseForm.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					</tr>	
 					</table>
 

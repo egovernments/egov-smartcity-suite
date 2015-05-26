@@ -47,6 +47,6 @@
         <pattern>/*decorate=false*</pattern>
     </excludes>
     <decorator name="default" page="default.jsp">
-      <pattern>*.action</pattern>
+      <pattern>/*</pattern>
     </decorator>
 </decorators>

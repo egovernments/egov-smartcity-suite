@@ -250,7 +250,7 @@
 			
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:text name="masters.finsrc.GovtOrderDate"/></td>
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:textfield name="govtDate" id="govtDate"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-			<a href="javascript:show_calendar('finsrcheaderform.govtDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+			<a href="javascript:show_calendar('finsrcheaderform.govtDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 			</td>
 			
 			
@@ -283,7 +283,7 @@
 			
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:text name="masters.finsrc.finInstLetterDt"/></td>
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:textfield name="finInstLetterDate" id="finInstLetterDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('finsrcheaderform.finInstLetterDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+			<a href="javascript:show_calendar('finsrcheaderform.finInstLetterDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 			</td>
 			
 		</tr>
@@ -301,7 +301,7 @@
 			
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:text name="masters.finsrc.finInstSchDt"/></td>
 			<td class="<c:out value='${tdclass}' />" width="25%"><s:textfield name="finInstSchmDate" id="finInstSchmDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-		<a href="javascript:show_calendar('finsrcheaderform.finInstSchmDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+		<a href="javascript:show_calendar('finsrcheaderform.finInstSchmDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		</td>
 		</tr>
 		<tr>

@@ -125,7 +125,7 @@
 			
 			<td class="bluebox" width="25%">Received Date<span class="mandatory">*</span></td>
 			<td class="bluebox" width="25%"><s:textfield name="receivedDate" id="receivedDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-<a href="javascript:show_calendar('chequeMaster.receivedDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+<a href="javascript:show_calendar('chequeMaster.receivedDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 </td>
 			<td class="bluebox" width="25%">Department<span class="mandatory">*</span></td>
 			<td class="bluebox" width="25%" ><s:select name="departmentList" id="departmentList" list="dropdownData.departmentList" listKey="id" listValue="deptName"  multiple="true" size="6" required="true"/></td>

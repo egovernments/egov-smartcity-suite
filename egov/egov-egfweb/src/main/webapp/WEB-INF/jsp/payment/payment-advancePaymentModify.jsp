@@ -137,7 +137,7 @@
 							</s:else>
 							<td class="bluebox"/>
 							<td class="bluebox"><strong><s:text name="payment.voucherdate"/></strong><span class="mandatory">*</span></td>
-							<td class="bluebox" colspan="2"><s:date name="paymentheader.voucherheader.voucherDate" var="tempDate" format="dd/MM/yyyy"/><s:textfield name="paymentheader.voucherheader.voucherDate" id="voucherDate" maxlength="10" value="%{tempDate}" size="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].voucherDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+							<td class="bluebox" colspan="2"><s:date name="paymentheader.voucherheader.voucherDate" var="tempDate" format="dd/MM/yyyy"/><s:textfield name="paymentheader.voucherheader.voucherDate" id="voucherDate" maxlength="10" value="%{tempDate}" size="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].voucherDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 						</tr>
 						<tr>
 							<td class="greybox">&nbsp;</td>

@@ -74,13 +74,13 @@
 					<td class="greybox" > <s:text name="scheme.startDate" /></td>
 					<td  class="greybox" ><s:date name="validfrom" id="validfromId" format="dd/MM/yyyy" />
 					<s:textfield name="validfrom" id="validfromId" value="%{validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-					<a href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<a href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					
 					<td  class="greybox" ><s:text name="scheme.endDate" /></td>
 					<td  class="greybox">
 					<s:date name="validto" id="validtoId" format="dd/MM/yyyy"/>
 					<s:textfield name="validto" id="validtoId" value="%{validto}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-					<a href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<a href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			        
     	</table>    

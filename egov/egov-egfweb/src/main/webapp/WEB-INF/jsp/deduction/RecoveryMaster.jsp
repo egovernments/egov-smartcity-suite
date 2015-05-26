@@ -1759,7 +1759,7 @@ function validateBankAccount(obj)
 </head>
 <body onload="onBodyLoad();" onKeyDown ="CloseWindow(window.self);" onKeyUp="keyPressed();" >
 <html:form  action="/deduction/recoverySetupMaster.do" >
-<div class="topbar"><div class="egov"><img src="../image/eGov.png" alt="eGov" width="54" height="58" /></div><div class="gov"><img src="../image/india.png" alt="India" width="54" height="58" /></div>
+<div class="topbar"><div class="egov"><img src="/egi/resources/erp2/images/eGov.png" alt="eGov" width="54" height="58" /></div><div class="gov"><img src="/egi/resources/erp2/images/india.png" alt="India" width="54" height="58" /></div>
   <div class="mainheading">Corporation of Chennai <br />
     <!-- Online Cash Collection System  -->   </div>
 </div>
@@ -1770,8 +1770,8 @@ function validateBankAccount(obj)
 <li><a href="collectionSRSHome.html">Home</a></li>
         <li><a href="#" target="_parent">Log out</a></li>
         </ul></div></td>
-           <td width="63" align="right"><img src="common/image/print.gif" alt="Print" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Print</a></td>
-      <td width="63" align="right"><img src="common/image/help.gif" alt="Help" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Help</a></td>
+           <td width="63" align="right"><img src="/egi/resources/erp2/images/print.gif" alt="Print" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Print</a></td>
+      <td width="63" align="right"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Help</a></td>
     </tr>
   </table> 
   </div>
@@ -2043,8 +2043,8 @@ function validateBankAccount(obj)
         </div></td>
         <td class="blueborderfortd">
         	<div align="center">
-        	<a href="#"><img src="../image/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
-        	<a href="#"><img src="../image/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
+        	<a href="#"><img src="/egi/resources/erp2/images/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
+        	<a href="#"><img src="/egi/resources/erp2/images/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
         	</div>
         </td>
 		</tr>
@@ -2103,8 +2103,8 @@ function validateBankAccount(obj)
 				if( ((String)session.getAttribute("mode")).equalsIgnoreCase("modify")) { %>
 			        <td class="blueborderfortd">
 			        	<div align="center">
-			        	<a href="#"><img src="../image/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
-			        	<a href="#"><img src="../image/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
+			        	<a href="#"><img src="/egi/resources/erp2/images/addrow.gif" alt="Add" width="18" height="18" border="0" onclick="javascript:addRow();"/></a> 
+			        	<a href="#"><img src="/egi/resources/erp2/images/removerow.gif" alt="Del" width="18" height="18" border="0" onclick="javascript:return deleteRow(this);"/></a>
 			        	</div>
 			        </td>
 				<% }

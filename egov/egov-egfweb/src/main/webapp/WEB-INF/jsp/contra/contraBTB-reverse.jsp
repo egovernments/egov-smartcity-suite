@@ -79,7 +79,7 @@
 			<s:hidden name="id"/>
 			<td class="bluebox" width="18%" ><s:text name="voucher.date"/><span class="mandatory">*</span></td>
 			<td class="bluebox" width="34%" ><input type:text name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 		</tr>
 	<%@include file="contraBTB-form.jsp"%>
 	<tr>
@@ -90,7 +90,7 @@
 			<td class="bluebox"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
 			<td class="bluebox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
 			<td class="bluebox"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cbtbform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('cbtbform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 		</tr>
 	</table>
 	</div>	

@@ -86,7 +86,7 @@
 		<td  class="bluebox"> <s:text name="lastrundate" /></td>
 		<td  class="bluebox" ><s:date name="lastRunDate" id="lastRunDate" format="dd/MM/yyyy" />
 		<s:textfield name="lastRunDate" id="lastRunDate" value="%{lastRunDate}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>**?
-		<a href="javascript:show_calendar('autoRemittanceForm.lastRunDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)    </td>
+		<a href="javascript:show_calendar('autoRemittanceForm.lastRunDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)    </td>
 	</tr>
 		
 	<tr>

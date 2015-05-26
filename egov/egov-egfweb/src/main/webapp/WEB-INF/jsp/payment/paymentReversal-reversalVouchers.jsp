@@ -72,9 +72,9 @@
 				<jsp:include page="../voucher/voucher-filter.jsp"/>
 				<tr>
 					<td class="bluebox" ><s:text name="voucher.fromdate"/><span class="mandatory">*</span> </td>
-					<td class="bluebox"><input type="text"  id="fromDate" name="fromDate" style="width:100px" value='<s:date name="fromDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><input type="text"  id="fromDate" name="fromDate" style="width:100px" value='<s:date name="fromDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					<td class="bluebox"><s:text name="voucher.todate"/><span class="mandatory">*</span> </td>
-					<td class="bluebox"><input type="text"  id="toDate" name="toDate" style="width:100px" value='<s:date name="toDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><input type="text"  id="toDate" name="toDate" style="width:100px" value='<s:date name="toDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				
 				<tr>

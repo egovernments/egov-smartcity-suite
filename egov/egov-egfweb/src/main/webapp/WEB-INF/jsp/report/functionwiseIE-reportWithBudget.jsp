@@ -93,7 +93,7 @@
 					<td class="greybox" width="30%">Income/ expenditure<span class="mandatory">*</span></td>
 					<td class="greybox"><s:select name="incExp" id="incExp" list="#{'-1':'---Select---','I':'Income','E':'Expenditure'}" /> </td>
 					<td class="greybox" width="30%">As On Date<span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].asOnDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
 				<td class="bluebox"><s:text name="voucher.fund"/><span class="mandatory">*</span>

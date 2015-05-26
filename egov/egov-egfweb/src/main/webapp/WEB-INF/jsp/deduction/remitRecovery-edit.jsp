@@ -327,7 +327,7 @@ function printVoucher(){
 									onkeyup="DateFormat(this,this.value,event,false,'3')" />  
 								<a href="javascript:show_calendar('dbpform.voucherDate');"
 									style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"
+										src="/egi/resources/erp2/images/calendaricon.gif"
 										border="0" />
 								</A>
 							</td>

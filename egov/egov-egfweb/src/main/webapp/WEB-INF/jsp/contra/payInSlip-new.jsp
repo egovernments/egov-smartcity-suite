@@ -86,7 +86,7 @@
 			<td class="bluebox"><s:textfield name="voucherNumber" id="payinNumber" /></td></s:if>
 			<td class="bluebox"><s:text name="payin.date"/><span class="mandatory">*</span></td>
 			<td class="bluebox" width="34%"><input type=text name="voucherDate" id="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('payinform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('payinform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 		</tr>
 	<%@include file="payInSlip-form.jsp"%>
 	</table>

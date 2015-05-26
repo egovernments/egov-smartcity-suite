@@ -98,12 +98,12 @@ function validateDates(){
 				    <td width="18%" class="bluebox"><s:text name="billDate"/></>:<span class="mandatory">*</span></td>
 				    <td width="23%" class="bluebox">
 				    	<input type="text" name="fromDate"  id="fromDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-							<a href="javascript:show_calendar('salaryBillView.fromDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+							<a href="javascript:show_calendar('salaryBillView.fromDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 				    </td>
 				    <td width="18%" class="bluebox"><s:text name="billDate"/></>:<span class="mandatory">*</span></td>
 				    <td width="23%" class="bluebox">
 				    	<input type="text" name="toDate"  id="toDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-							<a href="javascript:show_calendar('salaryBillView.toDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+							<a href="javascript:show_calendar('salaryBillView.toDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 				    </td>
 				  </tr>
 				  <tr>

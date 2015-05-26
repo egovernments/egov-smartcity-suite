@@ -234,7 +234,7 @@ function validateUser(name,value){
     <td class="bluebox">Voucher Date:<span class="mandatory">*</span></td>
     <td class="bluebox" colspan="2">
     	<input type="text" name="voucherDate" id="voucherDate" style="width:100px" value='<s:property value="%{formatDate(voucherDate)}"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-    	<a href="javascript:show_calendar('advanceRequisitionPayment.voucherDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+    	<a href="javascript:show_calendar('advanceRequisitionPayment.voucherDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
     </td>
   </tr>
   <tr>

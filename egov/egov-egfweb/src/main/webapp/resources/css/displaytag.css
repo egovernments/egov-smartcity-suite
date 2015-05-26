@@ -9,10 +9,10 @@ table.its th.sorted a, th.sortable a {
 }
 
 table.its th.order1 a {
-	background-image: url(../image/arrow_down.png) !important;
+	background-image: url(/egi/resources/erp2/images/arrow_down.png) !important;
 }
 table.its th.order2 a {
-	background-image: url(../image/arrow_up.png) !important;
+	background-image: url(/egi/resources/erp2/images/arrow_up.png) !important;
 }
 table.its th.sorted a, .table th.sortable a {
 background-position:right center;

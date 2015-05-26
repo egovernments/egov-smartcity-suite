@@ -111,12 +111,12 @@ function setTotalAmount()
 					<s:if test="%{reassignSurrenderChq && paymentMode=='cheque'}">
       			 <td style="text-align:right" class="blueborderfortdnew"><s:select name="chequeAssignmentList[%{#s.index}].serialNo" id="chequeAssignmentList[%{#s.index}].serialNo" list="chequeSlNoMap"  value='%{chequeAssignmentList[%{#s.index}].serialNo}'  /></td>
       			  	 <td style="text-align:center" class="blueborderfortdnew"><s:textfield id="chequeNumber%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeNumber" value="%{chequeNumber}" onchange="validateReassignSurrenderChequeNumber(this)"  size="10"/></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a></td>
+      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
       			  </s:if>
       			  <s:elseif test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
       			  <td style="text-align:right" class="blueborderfortdnew"><s:select name="chequeAssignmentList[%{#s.index}].serialNo" id="chequeAssignmentList[%{#s.index}].serialNo" list="chequeSlNoMap"  value='%{chequeAssignmentList[%{#s.index}].serialNo}'  /></td>
       			  	 <td style="text-align:center" class="blueborderfortdnew"><s:textfield id="chequeNumber%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeNumber" value="%{chequeNumber}" onchange="validateChequeNumber(this)"  size="10"/></td>
-      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a></td>
+      			  	 <td style="text-align:center" class="blueborderfortdnew"><s:date name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDate%{#s.index}" name="chequeAssignmentList[%{#s.index}].chequeDate" value="%{tempChequeDate}" size="10"/><a href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
       			  </s:elseif>
 				</tr>
 				</s:iterator>
@@ -146,7 +146,7 @@ function setTotalAmount()
 							</td>
 							<td class="greybox">
 								<s:text name="chq.assignment.rtgs.date"/><span class="mandatory">*</span>
-								<s:textfield name="rtgsDate" id="rtgsDate" maxlength="20" value="%{rtgsDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].rtgsDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+								<s:textfield name="rtgsDate" id="rtgsDate" maxlength="20" value="%{rtgsDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].rtgsDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 							</td>
 							
 						</s:if>
@@ -166,7 +166,7 @@ function setTotalAmount()
 								</td>
 								<td class="greybox">
 									<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
-									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
+									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
 								</td>
 							</s:if>
 							
@@ -178,7 +178,7 @@ function setTotalAmount()
 								</td>
 								<td class="greybox">
 									<s:text name="chq.assignment.instrument.date"/><span class="mandatory">*</span>(dd/mm/yyyy)
-									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
+									<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy"/><s:textfield id="chequeDt" name="chequeDt" value="%{tempChequeDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].chequeDt');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)
 								</td>
 							</s:elseif>
 							<s:if  test="%{paymentMode=='cash'}">

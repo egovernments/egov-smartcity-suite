@@ -288,18 +288,18 @@ function doAfterSubmit(){
 			<td class="bluebox">&nbsp;</td>
 			<td class="bluebox">As On Date:<span class="mandatory">*</span></td>
 			<td class="bluebox" colspan="3">
-				<s:textfield name="asOnDate" id="asOnDate" cssStyle="width:100px" value='%{getFormattedAsOnDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.asOnDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+				<s:textfield name="asOnDate" id="asOnDate" cssStyle="width:100px" value='%{getFormattedAsOnDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 	    	</td>
 		</tr>
 		<tr id="dateran">
 			<td class="bluebox">&nbsp;</td>
 			<td class="bluebox">From Date:<span class="mandatory">*</span></td>
 			<td class="bluebox">
-				<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{getFormattedDate(this.value)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.fromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+				<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{getFormattedDate(this.value)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 			</td>
 			<td class="bluebox">To Date:<span class="mandatory">*</span></td>
 			<td class="bluebox">
-				<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{getFormattedDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.toDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+				<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{getFormattedDate()}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('concurrenceReport.toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 			</td>
 		</tr>
 		<tr>

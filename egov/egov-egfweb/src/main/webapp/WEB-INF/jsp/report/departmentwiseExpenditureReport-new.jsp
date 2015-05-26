@@ -208,14 +208,14 @@ function populateAssetCode(obj){
 			<td  class="bluebox" width="6%"> <s:text name="report.fromdate" /><span class="mandatory">*</span></td>
 			<td  class="bluebox" ><s:date name="fromDate" format="dd/MM/yyyy" var="fromDateId"/>
 			<s:textfield name="fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('departmentwiseExpenditureReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+			<a href="javascript:show_calendar('departmentwiseExpenditureReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 			</td>
 			<td  class="bluebox" width="6%">
 			<td class="bluebox"  width="6%"></td>
 			<td class="bluebox"  ><s:text name="report.todate" /><span class="mandatory">*</span></td>
 			<td  class="bluebox" ><s:date name="toDate"  format="dd/MM/yyyy" var ="toDateId"/>
 			<s:textfield name="toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('departmentwiseExpenditureReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+			<a href="javascript:show_calendar('departmentwiseExpenditureReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 			</td>
 			<td class="bluebox"  width="4%">
 			<td class="bluebox"  width="4%">

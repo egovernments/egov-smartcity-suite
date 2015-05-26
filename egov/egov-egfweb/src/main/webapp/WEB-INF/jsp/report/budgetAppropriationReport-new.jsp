@@ -170,13 +170,13 @@ th.bluebgheadtd{
 				<td  class="bluebox" width="8%"> <s:text name="report.fromdate" /><span class="mandatory">*</span></td>
 				<td  class="bluebox" width="8%"><s:date name="fromDate" format="dd/MM/yyyy" var="fromDateId"/>
 				<s:textfield name="budgetAppropriationReport.fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+				<a href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 				</td>
 				<td  class="bluebox" width="8%"><s:text name="report.todate" /><span class="mandatory">*</span></td>
 				<td  class="bluebox">
 				<s:date name="toDate" id="toDateId" format="dd/MM/yyyy"/>
 				<s:textfield name="budgetAppropriationReport.toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+				<a href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 	</table>
 		<div align="left" class="mandatory">* <s:text name="report.mandatory.fields"/></div>

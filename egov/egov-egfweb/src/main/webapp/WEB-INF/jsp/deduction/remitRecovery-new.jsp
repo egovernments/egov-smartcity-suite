@@ -90,13 +90,13 @@ function loadBank(obj)
 		<td  class="bluebox" > <s:text name="remit.recovery.search.fromdate" /></td>
 		<td  class="bluebox" ><s:date name="remittanceBean.fromVhDate" id="fromVhDateId" format="dd/MM/yyyy" />
 		<s:textfield name="remittanceBean.fromVhDate" id="fromVhDate" value="%{remittanceBean.fromVhDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-		<a href="javascript:show_calendar('remitRecoveryForm.fromVhDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+		<a href="javascript:show_calendar('remitRecoveryForm.fromVhDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 		
 		<td  class="bluebox" ><s:text name="remit.recovery.search.todate" /><span class="mandatory">*</span></td>
 		<td  class="bluebox">
 		<s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 		<s:textfield name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-		<a href="javascript:show_calendar('remitRecoveryForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+		<a href="javascript:show_calendar('remitRecoveryForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 	</tr>
 		
 	</tr>

@@ -70,9 +70,9 @@
 				</tr>
 				<tr>
 					<td class="greybox" ><s:text name="bill.search.dateFrom"/> <span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="billDateFrom" id="billDateFrom" cssStyle="width:100px" value='%{billDateFrom}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateFrom');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="billDateFrom" id="billDateFrom" cssStyle="width:100px" value='%{billDateFrom}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateFrom');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					<td class="greybox"><s:text name="bill.search.dateTo"/> <span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="billDateTo" id="billDateTo" cssStyle="width:100px" value='%{billDateTo}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateTo');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="billDateTo" id="billDateTo" cssStyle="width:100px" value='%{billDateTo}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateTo');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp"/>
 				<tr>

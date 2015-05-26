@@ -167,7 +167,7 @@
 		<span class="bluebox"><span class="mandatory">*</span></span></td>
 		<td class="bluebox"><s:textfield name="reconciliationDate" id="reconciliationDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{asOnDate}"/>
 		<a href="javascript:show_calendar('arform.reconciliationDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 	
 		</td>
 </tr>
@@ -177,14 +177,14 @@
 		<span class="greybox"><span class="mandatory">*</span></span></td>
 		<td class="greybox"><s:textfield name="fromDate" id="fromDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{fromDate}"/>
 		<a href="javascript:show_calendar('arform.fromDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 	
 		</td>
 		<td class="greybox"><s:text name="todate"/>
 		<span class="greybox"><span class="mandatory">*</span></span></td>
 		<td class="greybox"><s:textfield name="toDate" id="toDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{toDate}"/>
 		<a href="javascript:show_calendar('arform.toDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 	
 		</td>
 </tr>

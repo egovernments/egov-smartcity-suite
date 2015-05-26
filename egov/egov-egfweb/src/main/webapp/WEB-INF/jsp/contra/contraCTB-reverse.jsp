@@ -97,7 +97,7 @@
 		</s:if>
 			<td class="greybox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
 			<td class="greybox"><s:textfield name="reverseVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('cashDepositForm.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('cashDepositForm.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 		</tr>	
 </table>
 	<div align="center">

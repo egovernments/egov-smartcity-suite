@@ -47,7 +47,7 @@
 		  <td class="bluebox"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
 		  <td class="bluebox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 		  <s:textfield name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-		  <a href="javascript:show_calendar('cashDepositForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+		  <a href="javascript:show_calendar('cashDepositForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		 </td>
 	</tr>
 	<tr>
@@ -75,7 +75,7 @@
 		<td class="greybox" ><span id="mdcDate"><s:text name="contra.refDate" /></span>
 		<span class="greybox"><span class="mandatory">*</span></span></td>
 			<td class="greybox"  ><s:textfield name="contraBean.chequeDate" id="documentDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-					<a href="javascript:show_calendar('cashDepositForm.documentDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<a href="javascript:show_calendar('cashDepositForm.documentDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				
 	</tr>		
 		<tr>

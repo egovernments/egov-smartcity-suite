@@ -93,7 +93,7 @@ var arfNumberSearchSelectionHandler = function(sType, arguments){
 										onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" />
 									<a	href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 										onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> 
-										<img src="${pageContext.request.contextPath}/image/calendaricon.gif"
+										<img src="/egi/resources/erp2/images/calendaricon.gif"
 											alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 									</a>
 								</td>
@@ -104,7 +104,7 @@ var arfNumberSearchSelectionHandler = function(sType, arguments){
 										onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" />
 									<a href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 										onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img
-											src="${pageContext.request.contextPath}/image/calendaricon.gif"
+											src="/egi/resources/erp2/images/calendaricon.gif"
 											alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 									</a>
 								</td>

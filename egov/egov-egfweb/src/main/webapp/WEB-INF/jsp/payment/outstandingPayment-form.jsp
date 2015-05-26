@@ -205,7 +205,7 @@ function exportPdf(){
 		</td>
 		<td class="greybox" width="10%">As On Date:<span class="mandatory">*</span></td>
 		<td class="greybox">
-			<s:textfield name="asOnDate" id="asOnDate" value='%{getFormattedDate(asOnDate)}' cssStyle="width:100px"  onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('outstandingPayment.asOnDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="asOnDate" id="asOnDate" value='%{getFormattedDate(asOnDate)}' cssStyle="width:100px"  onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('outstandingPayment.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	</tr>
 	<tr>

@@ -113,7 +113,7 @@
 							<s:text name="chq.assignment.rtgs.date"/><span class="mandatory">*</span>     
 								<s:textfield id="rtgsdateMap[%{#count}]" name="rtgsdateMap[%{#count}]" value="%{rtgsdateMap[#count]}"   onchange="updateDate(this)" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 								<!-- <a href="javascript:show_calendar('forms[0].rtgsdateMap[%{#count}]');" style="text-decoration:none">&nbsp;
-								<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)  -->
+								<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)  -->
 						</td>                                           
 						</s:if>                                                                  
 				</tr>                   

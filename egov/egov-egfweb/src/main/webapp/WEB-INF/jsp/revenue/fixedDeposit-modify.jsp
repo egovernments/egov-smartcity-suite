@@ -353,7 +353,7 @@
 		var tableIndex=getIndexForTableType(tableType);
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
 		var imgsuffix=suffix+"img";
-		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+tableIndex+"]"+suffix+"' name='"+prefix+"["+tableIndex+"]"+suffix+"' style='width:90px;' /><img src='../image/searchicon.gif' id='"+prefix+"["+tableIndex+"]"+imgsuffix+"' name='"+prefix+"["+tableIndex+"]"+imgsuffix+"' onclick='openViewVouchers(this)'/>";
+		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+tableIndex+"]"+suffix+"' name='"+prefix+"["+tableIndex+"]"+suffix+"' style='width:90px;' /><img src='/egi/resources/erp2/images/searchicon.gif' id='"+prefix+"["+tableIndex+"]"+imgsuffix+"' name='"+prefix+"["+tableIndex+"]"+imgsuffix+"' onclick='openViewVouchers(this)'/>";
 		}    
 	}
 	function createTextFieldFormatterWithStyle(tableType,prefix,suffix,style){
@@ -373,7 +373,7 @@
 			var fieldName = prefix+"[" + index + "]" +  suffix;
 			var idt=oColumn.getKey()+oRecord.getId();
 			var id=idt.replace("-","");
-			var CALENDERURL="${pageContext.request.contextPath}/image/calendaricon.gif";
+			var CALENDERURL="/egi/resources/erp2/images/calendaricon.gif";
 			var HREF='javascript:show_calendar("forms[0].'+id+'")';
 			markup="<input type='text' id='"+id+"' name='"+fieldName+"' value='"+value+"'    maxlength='10' style=\"width:70px\" onkeyup='DateFormat(this,this.value,event,false,3);' onblur='checkDate(this);' /><a href='#' style='text-decoration:none' onclick='"+HREF+"'><img src='"+CALENDERURL+"' border='0'  /></a>";
 	 		el.innerHTML = markup;

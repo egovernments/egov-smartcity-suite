@@ -253,7 +253,7 @@
 										<td class="bluebox"><s:textfield name="dishonorChequeView.transactionDate" id="dishonorChequeView.transactionDate"
 												onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempTransactionDate}" /> 
 								<!-- <a tabindex="-1" href="javascript:show_calendar('dishonorChequeWorkflow.dishonorChequeView.transactionDate');"	style="text-decoration: none">&nbsp;<img 
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></a></td>-->
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></a></td>-->
 									</tr>
 									<tr>
 											<td width="20%" class="bluebox"><strong>Remarks</strong></td>

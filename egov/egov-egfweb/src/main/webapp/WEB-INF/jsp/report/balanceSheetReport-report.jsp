@@ -125,7 +125,7 @@ th.bluebgheadtd{
 	    <td class="greybox">&nbsp;</td>
 	    <td class="greybox"><s:text name="report.asOnDate"/>:</td>
 	    <td class="greybox">
-		<s:textfield name="asOndate" id="asOndate" cssStyle="width:100px"/><a href="javascript:show_calendar('balanceSheetReport.asOndate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+		<s:textfield name="asOndate" id="asOndate" cssStyle="width:100px"/><a href="javascript:show_calendar('balanceSheetReport.asOndate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		</td>
 		<td class="greybox"><s:text name="report.rupees"/>:<span class="mandatory">*</span></td>
 	    <td class="greybox">

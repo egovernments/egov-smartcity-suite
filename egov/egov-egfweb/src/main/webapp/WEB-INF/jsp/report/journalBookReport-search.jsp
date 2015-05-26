@@ -83,9 +83,9 @@
   		<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
   			<tr>
 					<td class="bluebox"><s:text name="journalBook.startDate"/><span class="mandatory">*</span></td>
-					<td class="bluebox"><s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{startDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('journalBookForm.startDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{startDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('journalBookForm.startDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					<td class="bluebox"><s:text name="journalBook.endDate"/><span class="mandatory">*</span></td>
-					<td class="bluebox"><s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{endDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('journalBookForm.endDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{endDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('journalBookForm.endDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
     				<td class="greybox"><s:text name="journalBook.fund"/><span class="mandatory">*</span></td>

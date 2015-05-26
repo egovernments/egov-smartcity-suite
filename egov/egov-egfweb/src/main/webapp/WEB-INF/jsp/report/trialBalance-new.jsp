@@ -173,13 +173,13 @@ var toDateStr="";
 			<span class="greybox"><span class="mandatory">*</span></span></div></td>
 		<td class="greybox"><s:textfield name="fromDate" id="fromDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/>
 			<a href="javascript:show_calendar('forms[0].fromDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 		</td>         
 		<td class="greybox"><div id="toDatelbl"><s:text name="todate"/>
 			<span class="greybox"><span class="mandatory">*</span></span></div></td>
 		<td class="greybox"><s:textfield name="toDate" id="toDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempToDate}"/>         
 			<a href="javascript:show_calendar('forms[0].toDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 		</td>
 	</tr>
 	<tr>

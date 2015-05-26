@@ -124,7 +124,7 @@ return true;
                   <td class="bluebox">
                      <s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{fromDate}" />
                      <a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration: none">&nbsp;<img
-                           src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0" alt="" /> </a>
+                           src="/egi/resources/erp2/images/calendaricon.gif" border="0" alt="" /> </a>
                      <br />
                      (dd/mm/yyyy)
                   </td>
@@ -134,7 +134,7 @@ return true;
                   <td class="bluebox">
                      <s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}" />
                      <a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration: none">&nbsp; <img
-                           src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0" alt="" /> </a>(dd/mm/yyyy)
+                           src="/egi/resources/erp2/images/calendaricon.gif" border="0" alt="" /> </a>(dd/mm/yyyy)
                   </td>
                </tr>
           </table>

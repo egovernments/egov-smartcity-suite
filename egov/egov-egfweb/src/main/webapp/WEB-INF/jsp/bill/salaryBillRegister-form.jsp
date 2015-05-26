@@ -385,7 +385,7 @@ function createDropdownFormatterForAccountCode(prefix){
     <td width="18%" class="bluebox"><s:text name="billDate"/></>:<span class="mandatory">*</span></td>
     <td width="23%" class="bluebox">
     	<input type="text" name="model.billdate" value='<s:property value="model.billdate"/>'  id="billdate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('salaryBill.billdate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('salaryBill.billdate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
     </td>
     <td width="17%" class="bluebox">&nbsp;</td>
     <td width="33%" class="bluebox"></td>

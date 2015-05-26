@@ -114,7 +114,7 @@ function generateReport(){
 	    <td class="greybox"><s:select list="dropdownData.functionList"  listKey="id" listValue="name" name="function.id" headerKey="0" headerValue="--- Select ---"  value="function.id" id="function"></s:select></td>
 		<td class="greybox">As on Date:<span class="mandatory">*</span></td>
 		<td class="greybox">
-			<s:textfield name="asOnDate" id="asOnDate" cssStyle="width:100px" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('budgetAppropriationRegister.asOnDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+			<s:textfield name="asOnDate" id="asOnDate" cssStyle="width:100px" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('budgetAppropriationRegister.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		</td>
 	</tr>
 

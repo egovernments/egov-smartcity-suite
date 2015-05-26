@@ -219,11 +219,11 @@ function validateBank(){
 	<tr>
 	    <td class="greybox"><s:text name="report.paymentvoucherfromdate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="paymentVoucherFromDate" id="paymentVoucherFromDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherFromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="paymentVoucherFromDate" id="paymentVoucherFromDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	       <td class="greybox"><s:text name="report.paymentvouchertodate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="paymentVoucherToDate" id="paymentVoucherToDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherToDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="paymentVoucherToDate" id="paymentVoucherToDate" cssStyle="width:100px" value='%{getFormattedDate(paymentVoucherToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.paymentVoucherToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	</tr>
 	<tr>
@@ -261,11 +261,11 @@ function validateBank(){
 	<tr>
 	    <td class="greybox" ><s:text name="report.rtgsassignedfromdate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedFromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	    <td class="greybox" ><s:text name="report.rtgsassignedtodate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(rtgsAssignedToDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('autoRemittanceReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	</tr>
 	<tr>

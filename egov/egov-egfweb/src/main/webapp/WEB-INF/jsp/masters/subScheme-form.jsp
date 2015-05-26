@@ -54,7 +54,7 @@
 				<td class="greybox"><strong><s:text name="subscheme.form.validfrom" /></strong><span class="mandatory">*</span></td>
 			    <td class="greybox">
 			    	<input type="text"  id="validfrom" name="validfrom" style="width:100px" value='<s:date name="validfrom" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.validfrom');" id="calendar0" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.validfrom');" id="calendar0" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 			</tr>
 			<tr>
@@ -62,7 +62,7 @@
 				<td class="bluebox"><strong><s:text name="subscheme.form.validto" /></strong><span class="mandatory">*</span></td>
 			    <td class="bluebox">
    			    	<input type="text"  id="validto" name="validto" style="width:100px" value='<s:date name="validto" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.validto');" id="calendar1" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.validto');" id="calendar1" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 				<td class="bluebox"><strong><s:text name="subscheme.form.isactive" /></strong></td>
 			    <td class="bluebox"><s:checkbox name="isActive" id="isActive"/></td>
@@ -81,7 +81,7 @@
 				<td class="bluebox"><strong><s:text name="subscheme.form.councilloanproposaldate" /></strong></td>
 			    <td class="bluebox">
    			    	<input type="text"  id="councilLoanProposalDate" name="councilLoanProposalDate" style="width:100px" value='<s:date name="councilLoanProposalDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.councilLoanProposalDate');" id="calendar2" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.councilLoanProposalDate');" id="calendar2" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 			</tr>
 			<tr>
@@ -91,7 +91,7 @@
 				<td class="greybox"><strong><s:text name="subscheme.form.counciladminsanctioneddate" /></strong></td>
 			    <td class="greybox">
    			    	<input type="text"  id="councilAdminSanctionDate" name="councilAdminSanctionDate" style="width:100px" value='<s:date name="councilAdminSanctionDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.councilAdminSanctionDate');" id="calendar3" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.councilAdminSanctionDate');" id="calendar3" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 			</tr>
 			<tr>
@@ -101,7 +101,7 @@
 				<td class="bluebox"><strong><s:text name="subscheme.form.governmentloanproposaldate" /></strong></td>
 			    <td class="bluebox">
    			    	<input type="text"  id="govtLoanProposalDate" name="govtLoanProposalDate" style="width:100px" value='<s:date name="govtLoanProposalDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.govtLoanProposalDate');" id="calendar4" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.govtLoanProposalDate');" id="calendar4" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 			</tr>
 			<tr>
@@ -111,7 +111,7 @@
 				<td class="greybox"><strong><s:text name="subscheme.form.governmentadminsanctiondate" /></strong></td>
 			    <td class="greybox">
    			    	<input type="text"  id="govtAdminSanctionDate" name="govtAdminSanctionDate" style="width:100px" value='<s:date name="govtAdminSanctionDate" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.govtAdminSanctionDate');" id="calendar5" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>
+			    	<a href="javascript:show_calendar('subSchemeForm.govtAdminSanctionDate');" id="calendar5" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
 			    </td>
 			</tr>
 		</table>

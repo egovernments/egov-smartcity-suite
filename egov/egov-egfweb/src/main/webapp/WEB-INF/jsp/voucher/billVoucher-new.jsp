@@ -93,10 +93,10 @@
 			<tr>
 				<td class="greybox">From Date</td>
 				<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('billVoucher.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+				<a href="javascript:show_calendar('billVoucher.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				<td class="greybox">To Date</td>
 				<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateTo" id="voucherDateTo" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('billVoucher.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+				<a href="javascript:show_calendar('billVoucher.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
 					<td class="bluebox" ><s:text name="bill.Number"/> </td>

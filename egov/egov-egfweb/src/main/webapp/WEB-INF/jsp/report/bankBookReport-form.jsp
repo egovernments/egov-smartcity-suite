@@ -206,11 +206,11 @@ function showChequeDetails(voucherId){
 	<tr>
 		<td class="greybox" width="10%">Start Date:<span class="mandatory">*</span></td>
 		<td class="greybox">
-			<s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{getFormattedDate(startDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.startDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{getFormattedDate(startDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.startDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 		<td class="greybox" width="10%">End Date:<span class="mandatory">*</span></td>
 		<td class="greybox">
-			<s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{getFormattedDate(endDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.endDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{getFormattedDate(endDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('bankBookReport.endDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	</tr>
 	

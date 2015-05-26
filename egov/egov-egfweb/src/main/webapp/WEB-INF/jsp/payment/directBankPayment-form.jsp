@@ -73,7 +73,7 @@
 	<tr>
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="link.ref.number"/><span class="bluebox"></td>
-	<td class="bluebox"><s:textfield name="commonBean.linkReferenceNumber" id="commonBean.linkReferenceNumber"  size="25"/> <img src="${pageContext.request.contextPath}/image/searchicon.gif" onclick="openViewVouchers()"/>
+	<td class="bluebox"><s:textfield name="commonBean.linkReferenceNumber" id="commonBean.linkReferenceNumber"  size="25"/> <img src="/egi/resources/erp2/images/searchicon.gif" onclick="openViewVouchers()"/>
 	<s:hidden name="commonBean.documentId" id="commonBean.documentId"/>
 	</td>
 	<TD></TD><TD></TD>
@@ -87,7 +87,7 @@
 	<s:date name='commonBean.documentDate' id="commonBean.documentDateId" format='dd/MM/yyyy'/>
 	<td  class="greybox"><s:textfield name="commonBean.documentDate"  id="documentDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.documentDateId}"/>
 	<a href="javascript:show_calendar('dbpform.documentDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A>
 	</td>
 	</tr>
 	

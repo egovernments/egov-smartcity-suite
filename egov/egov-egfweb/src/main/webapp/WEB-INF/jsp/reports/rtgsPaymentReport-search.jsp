@@ -96,11 +96,11 @@
 			<tr>
 					<td class="greybox"><s:text name="rtgs.fromdate"/> </td>
 					<td class="greybox">
-					<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{fromDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsPaymentReportForm.fromDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+					<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px" value='%{fromDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsPaymentReportForm.fromDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 					</td>
 					<td class="greybox"><s:text name="rtgs.todate"/> </td>
 					<td class="greybox">
-					<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{toDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsPaymentReportForm.toDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+					<s:textfield name="toDate" id="toDate" cssStyle="width:100px" value='%{toDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsPaymentReportForm.toDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 					</td>
 			</tr>
 			<tr>

@@ -258,7 +258,7 @@
 			<s:hidden name="id"/>
 			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
 			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A></td>
+			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
 		</tr>
 						<%@include file="directBankPayment-form.jsp"%>
 		<table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -271,7 +271,7 @@
 			<td class="bluebox" width="22%"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
 			<td class="bluebox" width="18%"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
 			<td class="bluebox" width="38%"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('dbpform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('dbpform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 		</tr>
 	</table>
 	</div>	

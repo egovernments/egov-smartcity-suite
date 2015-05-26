@@ -476,7 +476,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 <s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
 <td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
 	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
-										src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A></td>
+										src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A></td>
 </tr>
 <%@include file="contingentBill-form.jsp"%>
 </table>

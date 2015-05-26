@@ -323,7 +323,7 @@ function printVoucher(){
 			<s:hidden name="id"/>
 			<td class="bluebox" width="18%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
 			<td class="bluebox" width="38%"><input type="text" name="voucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A></td>
+			<a href="javascript:show_calendar('cbtbform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A></td>
 		</tr>
 				<div class="buttonbottom" ></div>
 	

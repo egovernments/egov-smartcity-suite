@@ -112,7 +112,7 @@ Show/Hide Details</a></div>
 			<s:date name='commonBean.partyBillDate' id="commonBean.partyBillDateId" format='dd/MM/yyyy'/>
 			<td class="bluebox"><s:textfield name="commonBean.partyBillDate"  id="partyBillDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.partyBillDateId}"/>
 				<a href="javascript:show_calendar('cbill.partyBillDate');"	style="text-decoration: none">&nbsp;<img tabIndex="-1"
-													src="${pageContext.request.contextPath}/image/calendaricon.gif"		border="0" /></A></td>
+													src="/egi/resources/erp2/images/calendaricon.gif"		border="0" /></A></td>
 			
 			</tr>
 			<tr>

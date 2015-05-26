@@ -160,10 +160,10 @@ function loadSearch(){
 	<td class="greybox"></td>
 		<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory">*</span> </td>
 		<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate"/>
-		<td class="greybox"><s:textfield name="startDate" id="startDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('fundFlowManualEntryReport.startDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a></td>
+		<td class="greybox"><s:textfield name="startDate" id="startDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('fundFlowManualEntryReport.startDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
 		<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory">*</span></td>
 		<s:date name="endDate" format="dd/MM/yyyy" var="tempToDate"/>
-		<td class="greybox"><s:textfield name="endDate" id="endDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempToDate}"/><a href="javascript:show_calendar('fundFlowManualEntryReport.endDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+		<td class="greybox"><s:textfield name="endDate" id="endDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempToDate}"/><a href="javascript:show_calendar('fundFlowManualEntryReport.endDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
  </tr>
 	<s:hidden name="selectedAccountNumber" id="selectedAccountNumber"/>
 </table>

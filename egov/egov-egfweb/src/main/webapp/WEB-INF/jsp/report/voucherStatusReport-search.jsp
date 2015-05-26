@@ -84,9 +84,9 @@
 				<tr>
 					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a></td>
+					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
 					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
 					<td class="bluebox">

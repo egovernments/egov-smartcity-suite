@@ -112,10 +112,10 @@ path="${pageContext.request.contextPath}";
 		<tr id="voucherDateId"> 
 			<td class="greybox"><s:text name="payin.voucherDateFrom"/></td>
 			<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('payinform.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			<td class="greybox"><s:text name="payin.voucherDateTo"/></td>
 			<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateTo" id="voucherDateTo" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('payinform.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 		</tr>
 		<tr>
 			<td class="bluebox"><s:text name="payin.chequeInHand"/></td>
@@ -129,7 +129,7 @@ path="${pageContext.request.contextPath}";
 			<td class="greybox"><s:textfield name="reversalVoucherNumber" id="reversalVoucherNumber" /></td></s:if>
 			<td class="greybox"><s:text name="reversalVoucherDate"/><span class="mandatory">*</span></td>
 			<td class="greybox"><s:textfield name="reversalVoucherDate"  id="reversalVoucherDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('payinform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
+			<a href="javascript:show_calendar('payinform.reversalVoucherDate');" style="text-decoration:none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></A>(dd/mm/yyyy)</td>
 </tr>
 	
 </div>

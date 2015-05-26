@@ -156,7 +156,7 @@ function validateAppoveUser(name,value){
 							<s:date name="voucherDate" var="voucherDateFormat" format="dd/MM/yyyy"/>
 							<s:textfield name="voucherDate" value="%{voucherDateFormat}" id="voucherDate" maxlength="10" size="15" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 							<a href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-							<img id="voucherDateImage" src="${pageContext.request.contextPath}/image/calendaricon.gif" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+							<img id="voucherDateImage" src="/egi/resources/erp2/images/calendaricon.gif" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
 	                 
 						</td>
 						<td class="bluebox"><s:text name="arf.department" /></td>  

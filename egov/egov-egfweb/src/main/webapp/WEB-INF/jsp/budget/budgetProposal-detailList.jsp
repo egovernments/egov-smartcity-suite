@@ -208,7 +208,7 @@
 										<s:if test="%{isConsolidatedScreen()}">
 										<td class="blueborderfortd" width="5%"><b><s:text name="As On Date"/>:</b></td>
 										<td class="blueborderfortd" width="5%">
-											<s:textfield name="asOndate" id="asOndate" cssStyle="width:100px"/><a href="javascript:show_calendar('budgetProposal.asOndate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+											<s:textfield name="asOndate" id="asOndate" cssStyle="width:100px"/><a href="javascript:show_calendar('budgetProposal.asOndate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 										</td>
 										<td width="5%"></td>
 										<td><input type="button" class="buttonsubmit" value="Refresh" id="refresh" name="refresh" onclick="updateNew()" /></td>

@@ -130,11 +130,11 @@
 				<tr>
 	    <td class="greybox" ><s:text name="report.rtgsassignedfromdate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(fromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="rtgsAssignedFromDate" id="rtgsAssignedFromDate" cssStyle="width:100px" value='%{getFormattedDate(fromDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedFromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	    <td class="greybox" ><s:text name="report.rtgsassignedtodate"/>:</td>
 	    <td class="greybox">
-			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(toDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
+			<s:textfield name="rtgsAssignedToDate" id="rtgsAssignedToDate" cssStyle="width:100px" value='%{getFormattedDate(toDate)}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('rtgsIssueRegisterReport.rtgsAssignedToDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)<br/>
 		</td>
 	</tr>
 	<tr>

@@ -154,7 +154,7 @@
 								<td class="greybox"/>
 							</s:else>
 							<td class="greybox"><s:text name="payment.voucherdate"/><span class="mandatory">*</span></td>
-							<td class="greybox" colspan="2"><s:textfield name="voucherdate" id="voucherdate" maxlength="20" value="%{voucherdate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].voucherdate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+							<td class="greybox" colspan="2"><s:textfield name="voucherdate" id="voucherdate" maxlength="20" value="%{voucherdate}" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].voucherdate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 						</tr>
 						<s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'> 
 								<tr>

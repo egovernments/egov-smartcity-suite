@@ -248,7 +248,7 @@ return result;
 								<td width="15%" class="greybox"><s:text name="budgetdetail.budget.asOnDate"/></td>
 								<td class="greybox" width="15%">
 									<input type="text"  id="asOnDate" name="asOnDate" style="width:100px" value='<s:date name="asOnDate" format="dd/MM/yyyy"/>' readonly/>
-								<!--  	<a href="javascript:show_calendar('budgetDetailForm.asOnDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>-->(dd/mm/yyyy)
+								<!--  	<a href="javascript:show_calendar('budgetDetailForm.asOnDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>-->(dd/mm/yyyy)
 								</td>
 							<td  width="15%"  class="greybox"> <s:text name="function"/></td>
 							<egov:ajaxdropdown id="function_filtered" fields="['Text','Value']" dropdownId="budgetDetail_filtered_function" url="budget/budgetProposalDetail!ajaxLoadFunctions.action" />

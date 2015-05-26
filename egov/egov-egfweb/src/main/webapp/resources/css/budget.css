@@ -28,7 +28,7 @@ div.formheading {
 div.blueshadow {
 	width: 100%;
 	height:17px;
-	background-image:url(../image/blueshadow.gif);
+	background-image:url(/egi/resources/erp2/images/blueshadow.gif);
 	background-repeat: repeat-x;
 	margin-bottom: 2px;
 	}
@@ -156,7 +156,7 @@ th.bluebgheadtd {
 	padding-left: 5px;
 	background-color: #999999;
 	text-align: center;
-	background-image: url(../image/tablebg.gif);
+	background-image: url(/egi/resources/erp2/images/tablebg.gif);
 	background-repeat: repeat-x;
 	}
 td.bluebgheadtd {
@@ -175,7 +175,7 @@ td.bluebgheadtd {
 	padding-left: 5px;
 	background-color: #999999;
 	text-align: center;
-	background-image: url(../image/tablebg.gif);
+	background-image: url(/egi/resources/erp2/images/tablebg.gif);
 	background-repeat: repeat-x;
 	}
 	
@@ -306,10 +306,10 @@ td.totalbg {
 	background-image: url(../image/nt.gif);
 	background-repeat: repeat;
 	}
-.rbtop2 div { background: url(../image/tl.gif) no-repeat top left; }
-.rbtop2 { background: url(../image/tr.gif) no-repeat top right; }
-.rbbot2 div { background: url(../image/bl.gif) no-repeat bottom left; }
-.rbbot2 { background: url(../image/br.gif) no-repeat bottom right; }
+.rbtop2 div { background: url(/egi/resources/erp2/images/tl.gif) no-repeat top left; }
+.rbtop2 { background: url(/egi/resources/erp2/images/tr.gif) no-repeat top right; }
+.rbbot2 div { background: url(/egi/resources/erp2/images/bl.gif) no-repeat bottom left; }
+.rbbot2 { background: url(/egi/resources/erp2/images/br.gif) no-repeat bottom right; }
 .rbtop2 div, .rbtop2, .rbbot2 div, .rbbot2 {
 	width: 100%;
 	height: 7px;
@@ -437,7 +437,7 @@ td.totalbg {
 	padding-right: 3px;
 	padding-bottom: 5px;
 	padding-left: 3px;
-	background-image: url(../image/greysmallbg.gif);
+	background-image: url(/egi/resources/erp2/images/greysmallbg.gif);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	text-align: center;
@@ -576,7 +576,7 @@ th.bluebgheadtdnew {
 	padding-left: 2px;
 	background-color: #999999;
 	text-align: center;
-	background-image: url(../image/tablebg.gif);
+	background-image: url(/egi/resources/erp2/images/tablebg.gif);
 	background-repeat: repeat-x;
 	}
 

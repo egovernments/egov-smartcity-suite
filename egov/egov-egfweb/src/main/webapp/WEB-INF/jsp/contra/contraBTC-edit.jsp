@@ -95,7 +95,7 @@
 		  <td class="greybox" width="30%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
 		  <td class="greybox">
 		  	<input type="text"  id="voucherDate" name="voucherHeader.voucherDate" style="width:100px" value='<s:date name="voucherDate" format="dd/MM/yyyy"/>'/>
-		  	<a href="javascript:show_calendar('cashWithDrawalForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+		  	<a href="javascript:show_calendar('cashWithDrawalForm.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		  </td>
 	</tr>
 	<tr>
@@ -117,7 +117,7 @@
 	<tr>
 		  <td class="bluebox"><s:text name="cheque.date"/><span class="mandatory">*</span></td>
 		  <td class="bluebox"><input type="text"  id="chequeDate" name="contraBean.chequeDate" style="width:100px" value='<s:property value="contraBean.chequeDate"/>'/>
-		  <a href="javascript:show_calendar('cashWithDrawalForm.chequeDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+		  <a href="javascript:show_calendar('cashWithDrawalForm.chequeDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		 </td>
 		<s:if test="%{showChequeNumber()}">
 		  <td class="bluebox"><s:text name="cheque.number"/><span class="greybox"><span class="mandatory">*</span></span></td>

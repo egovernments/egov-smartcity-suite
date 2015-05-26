@@ -82,13 +82,13 @@ onsubmit="javascript:doAfterSubmit()">
 				<td  class="greybox"> <s:text name="voucher.fromdate" /></td>
 				<td  class="greybox"><s:date name="fromDate" id="fromDateId" format="dd/MM/yyyy"/>
 				<s:textfield name="fromDate" id="fromDate" value="%{fromDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('billRegisterReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+				<a href="javascript:show_calendar('billRegisterReport.fromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 				</td>
 				<td  class="greybox"><s:text name="voucher.todate" /></td>
 				<td  class="greybox">
 				<s:date name="toDate" id="toDateId" format="dd/MM/yyyy"/>
 				<s:textfield name="toDate" id="toDate" value="%{toDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-				<a href="javascript:show_calendar('billRegisterReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+				<a href="javascript:show_calendar('billRegisterReport.toDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
 				<td class="bluebox" ><s:text name="bill.expenditure.type"/> </td>

@@ -97,9 +97,9 @@
 			</tr>
   			<tr>
 					<td class="bluebox"><s:text name="dishonoredCheque.startDate"/><span class="mandatory">*</span></td>
-					<td class="bluebox"><s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{startDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('dishonoredChequeForm.startDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield name="startDate" id="startDate" cssStyle="width:100px" value='%{startDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('dishonoredChequeForm.startDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					<td class="bluebox"><s:text name="dishonoredCheque.endDate"/></td>
-					<td class="bluebox"><s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{endDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('dishonoredChequeForm.endDate');" style="text-decoration:none"><img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield name="endDate" id="endDate" cssStyle="width:100px" value='%{endDate}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('dishonoredChequeForm.endDate');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			
 			

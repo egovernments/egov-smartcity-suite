@@ -68,9 +68,9 @@
 				</tr>
 				<tr>
 					<td class="greybox" width="30%"><s:text name="report.fromdate"/><span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="startDate" id="startDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].startDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="startDate" id="startDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].startDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
 					<td class="greybox" width="30%"><s:text name="report.todate"/><span class="mandatory">*</span></td>
-					<td class="greybox"><s:textfield name="endDate" id="endDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].endDate');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield name="endDate" id="endDate" maxlength="20"/><a href="javascript:show_calendar('forms[0].endDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<jsp:include page="report-filter.jsp"/>
 				<tr class="buttonbottom" id="buttondiv" style="align:middle" >

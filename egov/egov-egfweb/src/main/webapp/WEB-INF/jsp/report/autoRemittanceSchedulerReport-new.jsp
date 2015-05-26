@@ -84,7 +84,7 @@
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('autoRemittanceSchedulerReport.runDateFrom');"
 						style="text-decoration: none">&nbsp;<img
-							src="${pageContext.request.contextPath}/image/calendaricon.gif"
+							src="/egi/resources/erp2/images/calendaricon.gif"
 							border="0" alt="" /></a>(dd/mm/yyyy)<br /></td>
 					<td class="greybox"><s:text name="report.rundateto" />:</td>
 					<s:date name="runDateTo" var="toDateFormat"
@@ -95,7 +95,7 @@
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('autoRemittanceSchedulerReport.runDateTo');"
 						style="text-decoration: none">&nbsp;<img
-							src="${pageContext.request.contextPath}/image/calendaricon.gif"
+							src="/egi/resources/erp2/images/calendaricon.gif"
 							border="0" alt="" /></a>(dd/mm/yyyy)<br /></td>
 				</tr>
 				<!-- <tr>

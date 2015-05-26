@@ -18,14 +18,14 @@ div.topbar {
 div.formheading {
 	width: 980px;
 	height:23px;
-	background-image:url(../image/gbluebg.gif);
+	background-image:url(/egi/resources/erp2/images/gbluebg.gif);
 	background-repeat: repeat-x;
 	}
 	
 div.blueshadow {
 	width: 100%;
 	height:17px;
-	background-image:url(../image/blueshadow.gif);
+	background-image:url(/egi/resources/erp2/images/blueshadow.gif);
 	background-repeat: repeat-x;
 	margin-bottom: 2px;
 	}
@@ -82,7 +82,7 @@ td.blueborderfortd {
 	}
 	
 th.bluebgheadtd {
-	background-image: url(../image/thbg.gif);
+	background-image: url(/egi/resources/erp2/images/thbg.gif);
 	background-repeat: repeat-x;
 	height: 32px;
 	border-right-width: 1px;
@@ -276,10 +276,10 @@ div.insidecontent {
 	background-image: url(../image/nt.gif);
 	background-repeat: repeat;
 	}
-.rbtop2 div { background: url(../image/tl.gif) no-repeat top left; }
-.rbtop2 { background: url(../image/tr.gif) no-repeat top right; }
-.rbbot2 div { background: url(../image/bl.gif) no-repeat bottom left; }
-.rbbot2 { background: url(../image/br.gif) no-repeat bottom right; }
+.rbtop2 div { background: url(/egi/resources/erp2/images/tl.gif) no-repeat top left; }
+.rbtop2 { background: url(/egi/resources/erp2/images/tr.gif) no-repeat top right; }
+.rbbot2 div { background: url(/egi/resources/erp2/images/bl.gif) no-repeat bottom left; }
+.rbbot2 { background: url(/egi/resources/erp2/images/br.gif) no-repeat bottom right; }
 .rbtop2 div, .rbtop2, .rbbot2 div, .rbbot2 {
 	width: 100%;
 	height: 7px;
