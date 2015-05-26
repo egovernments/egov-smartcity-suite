@@ -60,7 +60,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.PersonalInformationService;
@@ -85,7 +85,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     private static final String WORKORDER_DESIG_LIST = "workOrderDesignations";
     private static final String WORKORDER_USER_LIST = "workOrderUsers";
     private static final String WORKORDER_ASSIGNED_LIST = "workOrderAssignedUsers";
-    private List<DesignationMaster> workOrderDesigList = new ArrayList<DesignationMaster>();
+    private List<Designation> workOrderDesigList = new ArrayList<Designation>();
     private String traIds;
     private List<TenderResponseActivity> tenderResponseActivitylist = new ArrayList<TenderResponseActivity>();
     private PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService;
@@ -335,11 +335,11 @@ public class AjaxWorkOrderAction extends BaseFormAction {
         this.departmentName = departmentName;
     }
 
-    public List<DesignationMaster> getWorkOrderDesigList() {
+    public List<Designation> getWorkOrderDesigList() {
         return workOrderDesigList;
     }
 
-    public void setWorkOrderDesigList(final List<DesignationMaster> workOrderDesigList) {
+    public void setWorkOrderDesigList(final List<Designation> workOrderDesigList) {
         this.workOrderDesigList = workOrderDesigList;
     }
 

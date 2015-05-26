@@ -49,7 +49,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +129,7 @@ public class EisCommonService {
      * @param posId
      * @return Designation object
      */
-    public DesignationMaster getEmployeeDesignation(final Long posId) {
+    public Designation getEmployeeDesignation(final Long posId) {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getDesignation();
     }
 

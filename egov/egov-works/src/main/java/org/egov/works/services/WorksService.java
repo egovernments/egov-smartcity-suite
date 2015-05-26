@@ -71,7 +71,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
 import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
@@ -153,7 +153,7 @@ public class WorksService {
         String empName = "";
         String designationName = "";
         final DeptDesig deptDesig = position.getDeptDesigId();
-        final DesignationMaster designationMaster = deptDesig.getDesignation();
+        final Designation designationMaster = deptDesig.getDesignation();
         designationName = designationMaster.getName();
         PersonalInformation personalInformation = null;
         try {

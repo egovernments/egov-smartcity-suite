@@ -86,7 +86,7 @@ import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.NumberUtil;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
@@ -180,7 +180,7 @@ public class WorkOrderAction extends BaseFormAction {
     private static final String DATE_FORMAT = "dd-MMM-yyyy";
     private static final String SOURCE_INBOX = "inbox";
 
-    private List<DesignationMaster> workOrderDesigList = new ArrayList<DesignationMaster>();
+    private List<Designation> workOrderDesigList = new ArrayList<Designation>();
     private List<WorkOrder> workOrderList = null;
     // private List<String> workOrderActions;
     private Long workOrderId;
@@ -1132,11 +1132,11 @@ public class WorkOrderAction extends BaseFormAction {
         this.tenderRespId = tenderRespId;
     }
 
-    public List<DesignationMaster> getWorkOrderDesigList() {
+    public List<Designation> getWorkOrderDesigList() {
         return workOrderDesigList;
     }
 
-    public void setWorkOrderDesigList(final List<DesignationMaster> workOrderDesigList) {
+    public void setWorkOrderDesigList(final List<Designation> workOrderDesigList) {
         this.workOrderDesigList = workOrderDesigList;
     }
 

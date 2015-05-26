@@ -49,7 +49,7 @@ import java.util.List;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 
 public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix, Long> {
 
@@ -57,7 +57,7 @@ public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix
 	private PersistenceService persistenceService;
 	private WorkflowService<? extends StateAware> workflowService;
 
-	public List<DesignationMaster> getNextDesignations(final String type, final String department, final BigDecimal businessRule, final String additionalRule, final String currentState, final String pendingAction, final Date date) {
+	public List<Designation> getNextDesignations(final String type, final String department, final BigDecimal businessRule, final String additionalRule, final String currentState, final String pendingAction, final Date date) {
 
 		final WorkFlowMatrix wfMatrix = this.workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date);
 		final List<String> designationNames = new ArrayList<String>();
@@ -69,7 +69,7 @@ public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix
 				}
 			}
 		}
-		List<DesignationMaster> designationList = Collections.EMPTY_LIST;
+		List<Designation> designationList = Collections.EMPTY_LIST;
 		if (!designationNames.isEmpty()) {
 			designationList = this.persistenceService.findAllByNamedQuery(DESGQUERY, designationNames);
 		}

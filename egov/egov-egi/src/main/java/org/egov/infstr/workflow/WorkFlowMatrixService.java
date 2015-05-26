@@ -54,7 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
@@ -112,9 +112,9 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 		return crit.list();
 	}
 
-	public List<DesignationMaster> getdesignationList() {
+	public List<Designation> getdesignationList() {
 
-		return this.persistenceService.findAllBy("from DesignationMaster order by designationName asc");
+		return this.persistenceService.findAllBy("from Designation order by name asc");
 	}
 
 	/**

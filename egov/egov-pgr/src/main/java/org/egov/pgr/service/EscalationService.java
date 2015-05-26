@@ -57,7 +57,7 @@ import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pgr.utils.constants.PGRConstants;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +170,7 @@ public class EscalationService {
     protected DateTime getExpiryDate(final Complaint complaint) {
 
         DateTime expiryDate = complaint.getEscalationDate();
-        final DesignationMaster designation = eisCommonService.getEmployeeDesignation(complaint.getAssignee().getId());
+        final Designation designation = eisCommonService.getEmployeeDesignation(complaint.getAssignee().getId());
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;

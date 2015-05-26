@@ -43,7 +43,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 
 public class WorkflowBean {
 	private String actionName;
@@ -54,7 +54,7 @@ public class WorkflowBean {
 	private Integer departmentId;
 	private List<Department> departmentList;
 	private Integer designationId;
-	private List<DesignationMaster> designationList;
+	private List<Designation> designationList;
 
 	public String getActionName() {
 		return actionName;
@@ -76,7 +76,7 @@ public class WorkflowBean {
 		return departmentList;
 	}
 
-	public List<DesignationMaster> getDesignationList() {
+	public List<Designation> getDesignationList() {
 		return designationList;
 	}
 
@@ -124,7 +124,7 @@ public class WorkflowBean {
 		this.designationId = designationId;
 	}
 
-	public void setDesignationList(List<DesignationMaster> designationList) {
+	public void setDesignationList(List<Designation> designationList) {
 		this.designationList = designationList;
 	}
 

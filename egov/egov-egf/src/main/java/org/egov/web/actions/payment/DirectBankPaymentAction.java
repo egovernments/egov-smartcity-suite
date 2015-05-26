@@ -92,7 +92,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.services.contra.ContraService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
@@ -1085,7 +1085,7 @@ public String nonBillPayment()
 		}
 		map.put("designationList", designationList);
 		
-		addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList")); 
+		addDropdownData("designationList", (List<Designation>)map.get("designationList")); 
 		
 		if(bDefaultDeptId && !dName.equals("")) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");

@@ -58,7 +58,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 //import org.egov.lib.rjbac.user.dao.UserDAO;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
@@ -167,9 +167,9 @@ public class BpaPimsInternalExtnServiceFactory {
 	 * @param date
 	 * @return
 	 */
-	public List<DesignationMaster> getAllDesignationByDeptId(Integer deptId,Date date)
+	public List<Designation> getAllDesignationByDeptId(Integer deptId,Date date)
 	{
-		List<DesignationMaster> designationList=new ArrayList<DesignationMaster>();
+		List<Designation> designationList=new ArrayList<Designation>();
 		if(date==null || date.equals(""))
 		{
 			date= new Date();
@@ -288,7 +288,7 @@ public class BpaPimsInternalExtnServiceFactory {
 					Long deptId=assignmentList.get(0).getDepartment().getId();
 					paramMap.put("departmentId", Long.toString(deptId));
 				}
-				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
+				Designation designation=	(Designation) persistenceService.find("from Designation where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
 				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				if(designation!=null){
@@ -367,7 +367,7 @@ public class BpaPimsInternalExtnServiceFactory {
 					Long deptId = assignmentList.get(0).getDepartment().getId();
 					paramMap.put("departmentId", Long.toString(deptId));
 				}
-				DesignationMaster designation =	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
+				Designation designation =	(Designation) persistenceService.find("from Designation where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
 				Functionary functionary = (Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status = (EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				if (designation != null) {
@@ -410,7 +410,7 @@ public class BpaPimsInternalExtnServiceFactory {
 					boundaryId = boundaryImpl.getParent().getId();
 				}
 			}
-				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
+				Designation designation=	(Designation) persistenceService.find("from Designation where designationName=?",BpaConstants.ASSISTANTDESIGNATION);
 				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				
@@ -461,7 +461,7 @@ public class BpaPimsInternalExtnServiceFactory {
 					boundaryId = boundaryImpl.getParent().getId();
 				}
 			}
-				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",BpaConstants.EXECUTIVEENGINEERDESIGNATION);
+				Designation designation=	(Designation) persistenceService.find("from Designation where designationName=?",BpaConstants.EXECUTIVEENGINEERDESIGNATION);
 				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				
@@ -511,7 +511,7 @@ public class BpaPimsInternalExtnServiceFactory {
 					boundaryId = boundaryImpl.getParent().getId();
 				}
 			}
-				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",designationName);
+				Designation designation=	(Designation) persistenceService.find("from Designation where designationName=?",designationName);
 				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				

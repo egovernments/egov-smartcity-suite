@@ -53,7 +53,7 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
@@ -71,7 +71,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 	private Integer designationId;
 	private Integer approverDeptId;
 	private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>();
-	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
+	private List<Designation> designationMasterList = new ArrayList<Designation>();
 	private CollectionsUtil collectionsUtil;
 	
 	/**
@@ -256,7 +256,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 	/**
 	 * @return the designationMasterList
 	 */
-	public List<DesignationMaster> getDesignationMasterList() {
+	public List<Designation> getDesignationMasterList() {
 		return designationMasterList;
 	}
 

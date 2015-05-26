@@ -50,7 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Functionary;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.web.actions.BaseFormAction;
@@ -66,7 +66,7 @@ public class AjaxWorkflowAction extends BaseFormAction {
     private static final String WORKFLOW_DESIG_LIST = "workflowDesignations";
     private Long objectId;
     private String scriptName;
-    private List<DesignationMaster> workflowDesigList = new ArrayList<DesignationMaster>();
+    private List<Designation> workflowDesigList = new ArrayList<Designation>();
     private EisUtilService eisService;
     private WorksService worksService;
     @Autowired
@@ -172,11 +172,11 @@ public class AjaxWorkflowAction extends BaseFormAction {
         this.scriptName = scriptName;
     }
 
-    public List<DesignationMaster> getWorkflowDesigList() {
+    public List<Designation> getWorkflowDesigList() {
         return workflowDesigList;
     }
 
-    public void setWorkflowDesigList(final List<DesignationMaster> workflowDesigList) {
+    public void setWorkflowDesigList(final List<Designation> workflowDesigList) {
         this.workflowDesigList = workflowDesigList;
     }
 

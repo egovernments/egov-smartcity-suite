@@ -60,7 +60,7 @@ public class EmployeeView implements java.io.Serializable
 	private Assignment assignment= null;
 	private String employeeCode;
 	private String employeeName;
-	private org.egov.pims.commons.DesignationMaster desigId;
+	private org.egov.pims.commons.Designation desigId;
 	private Date fromDate;
 	private Date toDate;
 	//private org.egov.pims.model.PersonalInformation reportsTo;
@@ -127,10 +127,10 @@ public class EmployeeView implements java.io.Serializable
 	public void setDateOfFirstAppointment(Date dateOfFirstAppointment) {
 		this.dateOfFirstAppointment = dateOfFirstAppointment;
 	}
-	public org.egov.pims.commons.DesignationMaster getDesigId() {
+	public org.egov.pims.commons.Designation getDesigId() {
 		return desigId;
 	}
-	public void setDesigId(org.egov.pims.commons.DesignationMaster desigId) {
+	public void setDesigId(org.egov.pims.commons.Designation desigId) {
 		this.desigId = desigId;
 	}
 	public String getEmployeeCode() {

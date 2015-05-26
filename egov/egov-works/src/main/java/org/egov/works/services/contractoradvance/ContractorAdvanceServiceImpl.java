@@ -65,7 +65,7 @@ import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
 import org.egov.model.advance.EgAdvanceRequisitionMis;
 import org.egov.model.masters.AccountCodePurpose;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisitionNumberGenerator;
@@ -367,7 +367,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
     public List<HashMap> getDrawingOfficerListForARF(final String query, final Date advanceRequisitionDate) {
         final List<HashMap> drawingOfficers = new ArrayList<HashMap>();
         try {
-            final List<DesignationMaster> designationsList = new LinkedList<DesignationMaster>();
+            final List<Designation> designationsList = new LinkedList<Designation>();
             final List<Long> designationsIdList = new LinkedList<Long>();
             final String drawingOfficerDesignations = worksService
                     .getWorksConfigValue("CONTRACTORADVANCE_DRAWINGOFFICER_DESIGNATIONS");
@@ -378,7 +378,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                 designationsList.addAll(persistenceService.findAllByNamedQuery("getDesignationForListOfDesgNames",
                         desgListUpper));
             }
-            for (final DesignationMaster desigMaster : designationsList)
+            for (final Designation desigMaster : designationsList)
                 designationsIdList.add(desigMaster.getId());
 
             drawingOfficers.addAll(eisService.getListOfDrawingOfficers(designationsIdList, advanceRequisitionDate,

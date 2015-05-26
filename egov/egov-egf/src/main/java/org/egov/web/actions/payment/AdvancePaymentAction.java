@@ -82,7 +82,7 @@ import org.egov.model.advance.EgAdvanceRequisitionMis;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.CommonBean;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
@@ -531,7 +531,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 		}
 		map.put("designationList", designationList);
 		
-		addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList")); 
+		addDropdownData("designationList", (List<Designation>)map.get("designationList")); 
 		
 		if(bDefaultDeptId && !dName.equals("")) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");

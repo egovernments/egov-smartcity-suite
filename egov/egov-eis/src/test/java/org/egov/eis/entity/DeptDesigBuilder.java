@@ -43,7 +43,7 @@ import java.lang.reflect.Field;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.junit.Ignore;
 @Ignore
 public class DeptDesigBuilder {
@@ -76,7 +76,7 @@ public class DeptDesigBuilder {
         return this;
     }
 
-    public DeptDesigBuilder withDesignation(final DesignationMaster designation) {
+    public DeptDesigBuilder withDesignation(final Designation designation) {
         deptDesig.setDesignation(designation);
         return this;
     }

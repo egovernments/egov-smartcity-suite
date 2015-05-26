@@ -86,7 +86,7 @@ import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.PaymentBean;
 import org.egov.model.payment.Paymentheader;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -1365,7 +1365,7 @@ public class PaymentAction extends BasePaymentAction{
                 }
                 map.put("designationList", designationList);
                 
-                addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList")); 
+                addDropdownData("designationList", (List<Designation>)map.get("designationList")); 
                 if(bDefaultDeptId && !dName.equals("")) {
                         Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
                         defaultDept = dept.getId().intValue();

@@ -90,7 +90,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -243,7 +243,7 @@ public class ContingentBillAction extends BaseBillAction {
                 else
                 {
                         Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",null,null);
-                        addDropdownData(DESIGNATION_LIST, (List<DesignationMaster>)map.get(DESIGNATION_LIST)); 
+                        addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST)); 
                         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
                         nextLevel = map.get(WFITEMSTATE)!=null?map.get(WFITEMSTATE).toString():null;
                 }
@@ -376,7 +376,7 @@ public class ContingentBillAction extends BaseBillAction {
                 } catch (ValidationException e) {
                         if(LOGGER.isInfoEnabled())     LOGGER.info("Inside catch block");
                         Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill,null);
-                        addDropdownData(DESIGNATION_LIST, (List<DesignationMaster>)map.get(DESIGNATION_LIST)); 
+                        addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST)); 
                         getValidActions("authentication",cbill);                 
                         if(billDetailsTableSubledger==null)              
                         {             

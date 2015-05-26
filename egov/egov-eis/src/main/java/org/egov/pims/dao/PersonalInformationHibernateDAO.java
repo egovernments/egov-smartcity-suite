@@ -60,7 +60,7 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -479,12 +479,12 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 
 	 public List getAllDesignationByDept(Integer deptId)throws TooManyValuesException, NoSuchObjectException
 		{
-		 	List<DesignationMaster> desgMstr = null;
+		 	List<Designation> desgMstr = null;
 			try
 			{
 				
 				
-					Query qry = getCurrentSession().createQuery("from DesignationMaster dm where dm.deptId =:deptId");
+					Query qry = getCurrentSession().createQuery("from Designation dm where dm.deptId =:deptId");
 					qry.setInteger("deptId",deptId);
 					LOGGER.info("QUERY TEST-----------"+qry.getQueryString());
 					desgMstr = qry.list();

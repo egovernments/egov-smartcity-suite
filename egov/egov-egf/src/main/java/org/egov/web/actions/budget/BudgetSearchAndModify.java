@@ -66,7 +66,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.voucher.VoucherService;
@@ -707,7 +707,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         }
         map.put("designationList", designationList);
 
-        addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
+        addDropdownData("designationList", (List<Designation>)map.get("designationList"));
         if(bDefaultDeptId && !dName.equals("")) {
             Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
             defaultDept = dept.getId().intValue();

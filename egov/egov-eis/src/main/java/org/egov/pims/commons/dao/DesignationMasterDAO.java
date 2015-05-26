@@ -52,7 +52,7 @@ import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -72,7 +72,7 @@ public class DesignationMasterDAO
 		return entityManager.unwrap(Session.class);
 	}
 
-    public void createDesignationMaster(DesignationMaster designation) throws EGOVException
+    public void createDesignationMaster(Designation designation) throws EGOVException
     {
             if(designation==null)
             {
@@ -81,7 +81,7 @@ public class DesignationMasterDAO
             getCurrentSession().saveOrUpdate(designation);
     }
 
-    public void updateDesignationMaster(DesignationMaster designation) throws EGOVException
+    public void updateDesignationMaster(Designation designation) throws EGOVException
     {
             if(designation==null)
             {
@@ -90,7 +90,7 @@ public class DesignationMasterDAO
             getCurrentSession().saveOrUpdate(designation);
     }
 
-    public void removeDesignationMaster(DesignationMaster designation) throws EGOVException
+    public void removeDesignationMaster(Designation designation) throws EGOVException
     {
             if(designation==null)
             {
@@ -100,25 +100,25 @@ public class DesignationMasterDAO
             
     }
 
-    public DesignationMaster getDesignationMaster(int desigID) throws EGOVException
+    public Designation getDesignationMaster(int desigID) throws EGOVException
     {
-        	DesignationMaster desig = null;
+        	Designation desig = null;
             if(Integer.valueOf(desigID)==null)
             {
             	throw new EGOVException("designation.id.null");
             }
-            desig = (DesignationMaster)getCurrentSession().get(DesignationMaster.class, Integer.valueOf(desigID));
+            desig = (Designation)getCurrentSession().get(Designation.class, Integer.valueOf(desigID));
             return desig;
     }
 
     public Map getAllDesignationMaster() throws EGOVException
     {
-            Query qry = getCurrentSession().createQuery("from DesignationMaster DM ");
+            Query qry = getCurrentSession().createQuery("from Designation DM ");
             Map retMap = new LinkedHashMap();
-            DesignationMaster designation=null;
+            Designation designation=null;
             for(Iterator iter = qry.iterate(); iter.hasNext(); retMap.put(designation.getId(), designation.getName()))
             {
-                designation = (DesignationMaster)(DesignationMaster)iter.next();
+                designation = (Designation)(Designation)iter.next();
             }
             if(designation==null)
             {
@@ -164,7 +164,7 @@ public class DesignationMasterDAO
      * @throws NoSuchObjectException ,the input to this exception method is key i.e., defined in application resources
      * please make sure you are using this key and displaying appropriate messages to client. 
      */
-    public DesignationMaster getDesignationByDesignationName(String designationName) throws NoSuchObjectException
+    public Designation getDesignationByDesignationName(String designationName) throws NoSuchObjectException
     {
         
     	if(designationName==null)
@@ -174,9 +174,9 @@ public class DesignationMasterDAO
     	try
         {
             
-        	Query qry = getCurrentSession().createQuery("select d from  DesignationMaster d where trim(upper(d.designationName)) = :designationName ");
+        	Query qry = getCurrentSession().createQuery("select d from  Designation d where trim(upper(d.name)) = :designationName ");
             qry.setString   ("designationName", designationName.toUpperCase());
-            DesignationMaster desig =(DesignationMaster) qry.uniqueResult();
+            Designation desig =(Designation) qry.uniqueResult();
             if (desig == null) {
             	throw new NoSuchObjectException("designation.master.notFound");
             }

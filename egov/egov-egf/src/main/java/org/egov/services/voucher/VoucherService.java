@@ -106,7 +106,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.model.EmployeeView;
@@ -231,7 +231,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 public  Map<String, Object> getDesgByDeptAndTypeAndVoucherDate(String type, String scriptName, Date vouDate, Paymentheader paymentheader) {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
-                 DesignationMaster designation=null;
+                 Designation designation=null;
                  Double grossAmount =  getJVsGrassAmount(paymentheader);
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"grossAmount",grossAmount,"userId",
@@ -812,7 +812,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 public  Map<String, Object> getDesgByDeptAndType(String type, String scriptName) {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
-                 DesignationMaster designation=null;
+                 Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
                                                                 Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type));*/
@@ -844,7 +844,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 public  Map<String, Object> getDesgByDeptAndTypeAndvouDate(String type, String scriptName, Date vouDate) {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
-                 DesignationMaster designation=null;
+                 Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
                                                                 Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
@@ -876,7 +876,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 public  Map<String, Object> getDesgByDeptAndTypeAndVoudate(String type, String scriptName, Date vouDate) {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
-                 DesignationMaster designation=null;
+                 Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list =null;/* (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
                                                                 Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
@@ -908,7 +908,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 public  Map<String, Object> getDesgBYPassingWfItem(String scriptName,Object wfitem , Integer deptId) {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
-                 DesignationMaster designation=null;
+                 Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
                                                                 Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,
@@ -950,8 +950,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherService | getAllDesgByFuncryAndDept | Start");
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("department id = "+ deptId);
                 StringBuffer query = new StringBuffer(200);
-                query.append("select DISTINCT desg.designationName,desg.designationId from DesignationMaster desg , EmployeeView ev where ").
-                append(" desg.designationId=ev.desigId.designationId and ev.deptId.id = ? and ev.userMaster is not null");
+                query.append("select DISTINCT desg.name,desg.id from Designation desg , EmployeeView ev where ").
+                append(" desg.id=ev.desigId.id and ev.deptId.id = ? and ev.userMaster is not null");
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("getAllDesgByFuncryAndDept Query : = "+ query.toString());
                 List<Object[]> list = persistenceService.findAllBy(query.toString(), deptId);
                 for (Object[] objects : list) {

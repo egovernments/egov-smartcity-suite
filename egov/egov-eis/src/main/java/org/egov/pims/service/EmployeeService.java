@@ -52,7 +52,7 @@ import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeNamePoJo;
 import org.egov.pims.model.EmployeeView;
@@ -168,7 +168,7 @@ public interface EmployeeService
 		public List<PersonalInformation> getAllEmployees();
 		public List getListOfUsersNotMappedToEmp() throws Exception;
 		public List <PersonalInformation>getEmpListForPositionAndDate(Date dateEntered,Integer posId)throws Exception;
-		public DesignationMaster getPresentDesignation(Integer  idPersonalInformation);
+		public Designation getPresentDesignation(Integer  idPersonalInformation);
 
 }
 

@@ -85,7 +85,7 @@ public class PositionService extends PersistenceService<Position, Integer> {
 		Criteria criteria=getCurrentSession().createCriteria(Position.class, "position");
 		if(designationMasterId!=null && !designationMasterId.equals("0")) 
 		{
-			criteria.add(Restrictions.eq("position.deptDesigId.desigId.designationId", designationMasterId));
+			criteria.add(Restrictions.eq("position.deptDesig.designation.id", designationMasterId));
 		}
 			
 		criteria.add(Subqueries.propertyNotIn("position.id", detachAssignment));

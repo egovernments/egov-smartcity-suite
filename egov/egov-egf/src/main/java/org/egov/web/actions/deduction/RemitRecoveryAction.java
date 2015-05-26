@@ -96,7 +96,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.recoveries.Recovery;
 import org.egov.model.voucher.CommonBean;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.recoveries.RecoveryService;
@@ -492,7 +492,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		}
 		map.put(DESIGNATION_LIST, designationList);
 		
-		addDropdownData(DESIGNATION_LIST, (List<DesignationMaster>)map.get(DESIGNATION_LIST)); 
+		addDropdownData(DESIGNATION_LIST, (List<Designation>)map.get(DESIGNATION_LIST)); 
 		
 		if(bDefaultDeptId && !"".equals(dName)) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");

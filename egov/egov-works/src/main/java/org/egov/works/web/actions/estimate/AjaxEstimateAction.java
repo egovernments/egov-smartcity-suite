@@ -64,7 +64,7 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.ScriptService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -293,14 +293,14 @@ public class AjaxEstimateAction extends BaseFormAction {
     }
 
     public String getDesgByDeptAndType() {
-        workflowKDesigList = new ArrayList<DesignationMaster>();
+        workflowKDesigList = new ArrayList<Designation>();
         String departmentName = "";
         Department department = null;
         if (departmentId != -1) {
             department = (Department) getPersistenceService().find("from DepartmentImpl where id=?", departmentId);
             departmentName = department.getName();
         }
-        DesignationMaster designation = null;
+        Designation designation = null;
         AbstractEstimate abstractEstimate = null;
         if (estimateId != null)
             abstractEstimate = abstractEstimateService.findById(estimateId, false);

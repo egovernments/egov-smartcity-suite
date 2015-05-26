@@ -89,8 +89,8 @@ public class TargetAreaAction extends BaseFormAction {
 	public void prepareNewForm() {
 		super.prepare();
 		addDropdownData("positionsList",persistenceService.findAllBy("from EmployeeView where position.id in(select id from Position where " +
-				" desigId in(select designationId from DesignationMaster where designationName='ASSISTANT ENGINEER') and deptDesigId " +
-				"in(select id from DeptDesig where deptId in(select id from Department where deptName='L-Electrical')))  " +
+				" deptDesig.designation.id in(select id from Designation where name='ASSISTANT ENGINEER') and deptDesig.id " +
+				"in(select id from DeptDesig where department.id in(select id from Department where name='L-Electrical')))  " +
 				" order by employeeName"));
 	
 	     addDropdownData("wardList",persistenceService.findAllBy("from Boundary where boundaryType.id in(select id from BoundaryType where name='Ward') " +
@@ -109,8 +109,8 @@ public class TargetAreaAction extends BaseFormAction {
 	
 	public void prepareBeforeSearch() {
 		addDropdownData("positionsList",persistenceService.findAllBy("from EmployeeView where position.id in(select id from Position where " +
-				" desigId in(select designationId from DesignationMaster where designationName='ASSISTANT ENGINEER') and deptDesigId " +
-				" in(select id from DeptDesig where deptId in(select id from Department where deptName='L-Electrical'))) " +
+				" deptDesig.designation.id in(select id from Designation where name='ASSISTANT ENGINEER') and deptDesig.id " +
+				" in(select id from DeptDesig where department.id in(select id from Department where name='L-Electrical'))) " +
 				" order by employeeName"));
 		
 		addDropdownData("wardList",persistenceService.findAllBy("from Boundary " +
@@ -157,9 +157,9 @@ public class TargetAreaAction extends BaseFormAction {
 		List<EmployeeView> positions = null;
 		EmployeeView employeeView;
 		positions = persistenceService
-				.findAllBy("from EmployeeView where position.id in(select id from Position where desigId in"
-						+ "(select designationId from DesignationMaster where designationName='ASSISTANT ENGINEER') and deptDesigId in(select id from DeptDesig where"
-						+ " deptId in(select id from Department where deptName='L-Electrical'))) and position.id not in(select position.id from TargetArea)  "
+				.findAllBy("from EmployeeView where position.id in(select id from Position where deptDesig.designation.id in"
+						+ "(select id from Designation where name='ASSISTANT ENGINEER') and deptDesig.id in(select id from DeptDesig where"
+						+ " department.id in(select id from Department where name='L-Electrical'))) and position.id not in(select position.id from TargetArea)  "
 						+ " order by employeeName");
 		employeeView = (EmployeeView) persistenceService.find("from EmployeeView where position = ? ",
 				this.targetArea.getPosition());

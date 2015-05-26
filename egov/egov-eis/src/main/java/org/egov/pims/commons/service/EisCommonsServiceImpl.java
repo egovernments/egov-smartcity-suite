@@ -52,7 +52,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.PositionMasterDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
@@ -366,12 +366,12 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 	 * else based on dept and functionary
 	 * @throws Exception
 	 */
-	 public List<DesignationMaster> getDesigantionBasedOnFuncDept(Integer deptId,Integer functionaryId) throws Exception
+	 public List<Designation> getDesigantionBasedOnFuncDept(Integer deptId,Integer functionaryId) throws Exception
 		{
 		 	
 			
 			List<EmployeeView> employeeList = null;
-			List<DesignationMaster> desgMstr = new ArrayList<DesignationMaster>();
+			List<Designation> desgMstr = new ArrayList<Designation>();
 			try
 			{				
 				String mainStr = "";
@@ -390,7 +390,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 				}
 				
 				subQry=	"select distinct ev.desigId.designationId "+subQry;
-				mainStr ="from DesignationMaster dm   where dm.designationId in( "+subQry+"  ) "; 
+				mainStr ="from Designation dm   where dm.id in( "+subQry+"  ) "; 
 					
 				Query query = getCurrentSession().createQuery(mainStr);
 				if(deptId!=null && deptId!=0)
@@ -403,7 +403,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 					query.setInteger("functionaryId", functionaryId);
 				}
 				
-				desgMstr=(List<DesignationMaster>)query.list();
+				desgMstr=(List<Designation>)query.list();
 				
 			}
 			catch(Exception e){

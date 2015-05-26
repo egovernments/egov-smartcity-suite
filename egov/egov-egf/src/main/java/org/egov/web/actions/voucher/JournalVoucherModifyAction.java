@@ -75,7 +75,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -450,7 +450,7 @@ public Position getPosition()throws EGOVRuntimeException
 			}else{
 				addDropdownData("approvaldepartmentList", masterCache.get("egi-department"));
 			}
-			addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
+			addDropdownData("designationList", (List<Designation>)map.get("designationList"));
 			wfitemstate="";
 		}else{
 			wfitemstate = map.get("wfitemstate").toString();

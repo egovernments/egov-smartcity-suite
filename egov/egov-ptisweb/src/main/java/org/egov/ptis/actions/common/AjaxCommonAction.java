@@ -72,7 +72,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -130,7 +130,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private List<Boundary> areaList;
 	private List<Boundary> streetList;
 	private List<PropertyUsage> propUsageList;
-	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
+	private List<Designation> designationMasterList = new ArrayList<Designation>();
 	private List<User> userList = new ArrayList<User>();
 	private List<Category> categoryList;
 	private List<StructureClassification> structuralClassifications;
@@ -436,11 +436,11 @@ public class AjaxCommonAction extends BaseFormAction {
 		this.departmentId = departmentId;
 	}
 
-	public List<DesignationMaster> getDesignationMasterList() {
+	public List<Designation> getDesignationMasterList() {
 		return designationMasterList;
 	}
 
-	public void setDesignationMasterList(List<DesignationMaster> designationMasterList) {
+	public void setDesignationMasterList(List<Designation> designationMasterList) {
 		this.designationMasterList = designationMasterList;
 	}
 

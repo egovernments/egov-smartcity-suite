@@ -51,7 +51,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "eg_designation")
-public class DesignationMaster extends AbstractAuditable<User, Long> {
+public class Designation extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -3775503109625394145L;
 

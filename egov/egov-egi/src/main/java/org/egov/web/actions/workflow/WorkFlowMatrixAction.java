@@ -56,7 +56,7 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.infstr.workflow.WorkFlowMatrixDetails;
 import org.egov.infstr.workflow.WorkFlowMatrixService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.web.actions.BaseFormAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 	private List additionalRuleList;
 	private List<WorkFlowMatrixDetails> workFlowMatrixDetails = new ArrayList<WorkFlowMatrixDetails>();
 	private List<WorkFlowMatrixDetails> workFlowMatrixRejectDetails = new ArrayList<WorkFlowMatrixDetails>();
-	private List<DesignationMaster> designationList = new ArrayList();
+	private List<Designation> designationList = new ArrayList();
 	private List stateList = new ArrayList();
 	private List statusList = new ArrayList();
 	private List buttonList = new ArrayList();
@@ -607,11 +607,11 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 		this.stateList = stateList;
 	}
 
-	public List<DesignationMaster> getDesignationList() {
+	public List<Designation> getDesignationList() {
 		return this.designationList;
 	}
 
-	public void setDesignationList(final List<DesignationMaster> designationList) {
+	public void setDesignationList(final List<Designation> designationList) {
 		this.designationList = designationList;
 	}
 

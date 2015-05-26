@@ -49,7 +49,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Session;
@@ -1287,7 +1287,7 @@ public class CollectionObjectFactory {
 
 	}*/
 
-	public Position createPosition(DesignationMaster desig) {
+	public Position createPosition(Designation desig) {
 		Position position = new Position();
 		position.setName(desig.getName() + "pos");
 		//position.setDeptDesigId(desig);
@@ -1312,9 +1312,9 @@ public class CollectionObjectFactory {
 		return assignPeriod;
 	}*/
 
-	public DesignationMaster createDesignation(int deptId,
+	public Designation createDesignation(int deptId,
 			String designationName) {
-		DesignationMaster designation = new DesignationMaster();
+		Designation designation = new Designation();
 		//designation.setDeptId(deptId);
 		designation.setName(designationName);
 		designation.setDescription(designationName);

@@ -117,7 +117,7 @@ import org.egov.infstr.utils.StringUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 /*import org.egov.lib.rjbac.user.UserRole;*/
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 /*import org.egov.pims.commons.service.EisCommonsManager;
 import org.egov.pims.empLeave.dao.HolidaysUlbDAO;
@@ -2129,7 +2129,7 @@ return siteInspectionDatesList;
 				
 				if (deptDesig != null) {
 
-					DesignationMaster designationMaster = deptDesig.getDesignation();
+					Designation designationMaster = deptDesig.getDesignation();
 					if(designationMaster!=null)
 						designationName = designationMaster.getName();
 

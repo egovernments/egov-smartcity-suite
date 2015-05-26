@@ -55,7 +55,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.ScriptService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -230,14 +230,14 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
     }
 
     public String getDesgByDeptAndType() {
-        workflowKDesigList = new ArrayList<DesignationMaster>();
+        workflowKDesigList = new ArrayList<Designation>();
         String departmentName = "";
         Department department = null;
         if (departmentId != -1) {
             department = (Department) getPersistenceService().find("from Department where id=?", departmentId);
             departmentName = department.getName();
         }
-        DesignationMaster designation = null;
+        Designation designation = null;
         MBHeader mbHeader = null;
         if (modelId != null)
             mbHeader = (MBHeader) getPersistenceService().find("from MBHeader where id=?", modelId);

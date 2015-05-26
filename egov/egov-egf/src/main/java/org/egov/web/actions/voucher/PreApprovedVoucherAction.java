@@ -91,7 +91,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.model.voucher.PreApprovedVoucher;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
@@ -343,7 +343,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                         }else{
                                 addDropdownData("departmentList", masterCache.get("egi-department"));
                         }
-                        addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
+                        addDropdownData("designationList", (List<Designation>)map.get("designationList"));
                         wfitemstate="";
                 }else{
                         wfitemstate = map.get("wfitemstate").toString();

@@ -46,7 +46,7 @@ import java.util.Map;
 
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 
 public class SearchEmpDTO implements java.io.Serializable
 {
@@ -193,7 +193,7 @@ public class SearchEmpDTO implements java.io.Serializable
 		Map desMap = new HashMap();
 		for(Iterator iter = list.iterator();iter.hasNext();)
 		{
-			DesignationMaster desig = (DesignationMaster)iter.next();
+			Designation desig = (Designation)iter.next();
 			desMap.put(desig.getId(), desig.getName());
 		}
 		return desMap;

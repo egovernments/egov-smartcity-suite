@@ -47,7 +47,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +60,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction{
 	private Integer approverDeptId;
 	private Long receiptheaderId;
 	private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>();
-	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
+	private List<Designation> designationMasterList = new ArrayList<Designation>();
 	private CollectionsUtil collectionsUtil;
 	private ReceiptHeaderService receiptHeaderService;
 	
@@ -138,7 +138,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction{
 	/**
 	 * @return the designationMasterList
 	 */
-	public List<DesignationMaster> getDesignationMasterList() {
+	public List<Designation> getDesignationMasterList() {
 		return designationMasterList;
 	}
 

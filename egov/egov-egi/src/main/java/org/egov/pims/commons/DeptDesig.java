@@ -56,18 +56,18 @@ public class DeptDesig extends AbstractAuditable<User, Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
-    private DesignationMaster designation;
+    private Designation designation;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     private Department department;
     private Integer sanctionedPosts;
     private Integer outsourcedPosts;
 
-    public DesignationMaster getDesignation() {
+    public Designation getDesignation() {
         return designation;
     }
 
-    public void setDesignation(final DesignationMaster designation) {
+    public void setDesignation(final Designation designation) {
         this.designation = designation;
     }
 

@@ -69,7 +69,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.AssignmentDAO;
 import org.egov.pims.dao.GenericMasterDAO;
@@ -1720,7 +1720,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List getAllDesignationByDept(Integer deptId) {
 
         Integer departmentId = deptId;
-        List<DesignationMaster> designationMstrObj = new ArrayList<DesignationMaster>();
+        List<Designation> designationMstrObj = new ArrayList<Designation>();
         /*
          * eisService = new EisUtilService(); persistenceService = new
          * PersistenceService();
@@ -1728,7 +1728,7 @@ public class EmployeeServiceImpl implements EmployeeService {
          * persistenceService.setSessionFactory(new SessionFactory());
          * persistenceService.setType(EmployeeServiceImpl.class);
          */
-        designationMstrObj = (List<DesignationMaster>) eisService.getAllDesignationByDept(departmentId, new Date());
+        designationMstrObj = (List<Designation>) eisService.getAllDesignationByDept(departmentId, new Date());
         return designationMstrObj;
     }
 
@@ -2272,7 +2272,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return empUserMapList;
     }
 
-    public DesignationMaster getPresentDesignation(Integer idPersonalInformation) {
+    public Designation getPresentDesignation(Integer idPersonalInformation) {
         Assignment assignment = getLatestAssignmentForEmployee(idPersonalInformation);
         return assignment.getDesignation();
     }

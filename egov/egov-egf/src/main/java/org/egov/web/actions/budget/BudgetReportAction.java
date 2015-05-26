@@ -83,7 +83,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.budget.BudgetDetailService;
@@ -1128,7 +1128,7 @@ public class BudgetReportAction extends BaseFormAction {
 		String value = list.get(0).getValue();
 		PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
-		DesignationMaster designation = empAssignment.getDesignation();
+		Designation designation = empAssignment.getDesignation();
 		if(designation.getName().equalsIgnoreCase(value))
 		{
 			finalApprover=true;

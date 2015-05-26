@@ -37,77 +37,22 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.entity;
+package org.egov.eis.repository;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
-import org.json.simple.JSONObject;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Vaibhav.K
  *
  */
-@Entity
-@Table(name = "pgr_escalation")
-@Searchable
-public class Escalation extends AbstractAuditable<User,Long> {
+@Repository
+public interface DesignationRepository extends JpaRepository<Designation,Integer>{
+	
+	Designation findByName(String designationName);
+	List<Designation> findByNameContainingIgnoreCase(String designationName);
 
-    private static final long serialVersionUID = -1317277378596990014L;
-    
-    @Valid
-    @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "complaint_type_id")
-    @Searchable
-    private ComplaintType complaintType;
-    
-    @Valid
-    @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "designation_id")
-    @Searchable
-    private Designation designation;    
-    
-    @Column(name = "no_of_hrs")
-    private Integer noOfHrs;
-
-    public ComplaintType getComplaintType() {
-        return complaintType;
-    }
-
-    public void setComplaintType(ComplaintType complaintType) {
-        this.complaintType = complaintType;
-    }
-
-    public Designation getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(Designation designation) {
-        this.designation = designation;
-    }
-
-    public Integer getNoOfHrs() {
-        return noOfHrs;
-    }
-
-    public void setNoOfHrs(Integer noOfHrs) {
-        this.noOfHrs = noOfHrs;
-    }
-
-    public JSONObject toJsonObject() {
-        return Serializer.fromJson(Serializer.toJson(this), JSONObject.class);
-    }
 }

@@ -51,7 +51,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.web.actions.BaseFormAction;
 
 @ParentPackage("egov")
@@ -60,7 +60,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private static final String WF_DESIGNATIONS = "designations";
 	private static final String WF_APPROVERS = "approvers";
-	private List<DesignationMaster> designationList;
+	private List<Designation> designationList;
 	private List<Object> approverList;
 	private Integer designationId;
 	private Integer approverDepartmentId;
@@ -104,7 +104,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	public String getDesignationsByObjectType() {
 		this.designationList = this.customizedWorkFlowService.getNextDesignations(this.type, this.departmentRule, this.amountRule, this.additionalRule, this.currentState, this.pendingAction, this.date);
 		if (this.designationList.isEmpty()) {
-			this.designationList = this.persistenceService.findAllBy("from DesignationMaster");
+			this.designationList = this.persistenceService.findAllBy("from Designation");
 		}
 		return WF_DESIGNATIONS;
 	}
@@ -144,7 +144,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 		return this.customizedWorkFlowService.getWfMatrix(this.type, this.departmentRule, this.amountRule, this.additionalRule, this.currentState, this.pendingAction, this.date);
 	}
 
-	public List<DesignationMaster> getDesignationList() {
+	public List<Designation> getDesignationList() {
 		return this.designationList;
 	}
 

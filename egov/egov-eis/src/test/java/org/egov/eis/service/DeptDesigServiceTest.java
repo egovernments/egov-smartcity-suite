@@ -46,11 +46,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.eis.entity.DeptDesigBuilder;
-import org.egov.eis.entity.DesignationMasterBuilder;
+import org.egov.eis.entity.DesignationBuilder;
 import org.egov.eis.repository.DeptDesigRepository;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class DeptDesigServiceTest {
 
     private DeptDesigService deptDesigService;
 
-    DesignationMaster designation;
+    Designation designation;
     Department department;
     DeptDesig deptDesig;
 
@@ -79,7 +79,7 @@ public class DeptDesigServiceTest {
     }
 
     private void sampleDeptDesig() {
-        designation = new DesignationMasterBuilder().withName("test-desig").withId(1l).build();
+        designation = new DesignationBuilder().withName("test-desig").withId(1l).build();
         department = new DepartmentBuilder().withName("test-dept").withCode("test-code").withId(1l).build();
         deptDesig = new DeptDesigBuilder().withDesignation(designation).withDepartment(department)
                 .withSanctionedPosts(5).withOutsourcedPosts(2).build();

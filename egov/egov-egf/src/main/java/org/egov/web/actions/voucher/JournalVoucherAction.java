@@ -65,7 +65,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
@@ -260,7 +260,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 			}else{
 				addDropdownData("approvaldepartmentList", masterCache.get("egi-department"));
 			}
-			addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
+			addDropdownData("designationList", (List<Designation>)map.get("designationList"));
 			wfitemstate="";
 		}else{
 			wfitemstate = map.get("wfitemstate").toString();

@@ -183,7 +183,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.model.PersonalInformation;
@@ -2325,9 +2325,9 @@ public class PropertyTaxUtil {
 		return departments;
 	}
 
-	public DesignationMaster getDesignationForUser(Long userId) {
+	public Designation getDesignationForUser(Long userId) {
 		Position position = null;
-		DesignationMaster designation = null;
+		Designation designation = null;
 		if (userId != null && userId.intValue() != 0) {
 			position = eisCommonsService.getPositionByUserId(userId);
 			designation = position.getDeptDesigId().getDesignation();

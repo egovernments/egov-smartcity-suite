@@ -52,7 +52,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.infstr.services.EISServeable;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -81,9 +81,9 @@ public class AjaxController {
     }
 
     @RequestMapping(value = "/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<DesignationMaster> getDesignations(
+    public @ResponseBody List<Designation> getDesignations(
             @ModelAttribute("designations") @RequestParam final Integer approvalDepartment) {
-        List<DesignationMaster> designations =  eisService.getAllDesignationByDept(approvalDepartment, new Date());
+        List<Designation> designations =  eisService.getAllDesignationByDept(approvalDepartment, new Date());
         //FIXME this is hack for lazy loaded collection
         designations.forEach(designation -> designation.toString());
         return designations;

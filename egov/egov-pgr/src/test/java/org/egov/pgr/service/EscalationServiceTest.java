@@ -44,13 +44,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import org.egov.eis.entity.DesignationMasterBuilder;
+import org.egov.eis.entity.DesignationBuilder;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.EscalationBuilder;
 import org.egov.pgr.repository.EscalationRepository;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -67,7 +67,7 @@ public class EscalationServiceTest {
     @Mock
     private EscalationRepository escalationRepository;
     
-    DesignationMaster designation;
+    Designation designation;
     ComplaintType compType;
     Escalation escalation;
     
@@ -80,7 +80,7 @@ public class EscalationServiceTest {
     }
     
     private void sampleEscalation() {
-        designation = new DesignationMasterBuilder().withName("test-desig").withId(1l).build();
+        designation = new DesignationBuilder().withName("test-desig").withId(1l).build();
         compType = new ComplaintTypeBuilder().withDefaults().build();
         escalation = new EscalationBuilder().withDesignation(designation).withComplaintType(compType).withHrs(23).build();
         escalationService.create(escalation);

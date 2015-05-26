@@ -43,7 +43,7 @@ import java.util.List;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
@@ -56,8 +56,8 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String mode = "save";
-	DesignationMaster designation = new DesignationMaster();
-	List<DesignationMaster> designations;
+	Designation designation = new Designation();
+	List<Designation> designations;
 	private String desName="";
 	
 	public String getDesName() {
@@ -76,7 +76,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 		this.mode = mode;
 	}
 
-	public List<DesignationMaster> getDesignations() {
+	public List<Designation> getDesignations() {
 		return designations;
 	}
 
@@ -88,7 +88,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 
 	public void prepare()
 	{
-		designations = persistenceService.getSession().createQuery("from DesignationMaster").list();
+		designations = persistenceService.getSession().createQuery("from Designation").list();
 	}
 
 	@SkipValidation
@@ -190,9 +190,9 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 
 	private void getdesignationById()
 	{
-		Query query = persistenceService.getSession().createQuery("from DesignationMaster where designationId=:designationId");
+		Query query = persistenceService.getSession().createQuery("from Designation where id=:designationId");
 		query.setParameter("designationId",designation.getId());
-		DesignationMaster designationToModify = (DesignationMaster)query.uniqueResult();
+		Designation designationToModify = (Designation)query.uniqueResult();
 		designation.setName(designationToModify.getName());
 		designation.setDescription(designationToModify.getDescription());
 		//designation.setDesignationId(designationToModify.getId());
@@ -202,10 +202,10 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	private boolean checkDesignation(String designationName)
 	{
 		boolean found = true;
-		Query query = persistenceService.getSession().createQuery("from DesignationMaster where designationName=:designationName");
+		Query query = persistenceService.getSession().createQuery("from Designation where name=:designationName");
 		query.setParameter("designationName",designationName);
 
-		if (null == (DesignationMaster)query.uniqueResult())
+		if (null == (Designation)query.uniqueResult())
 		{
 			found = false; 
 		}

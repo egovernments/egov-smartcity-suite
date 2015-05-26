@@ -124,7 +124,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.voucher.PreApprovedVoucher;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.PersonalInformation;
@@ -885,7 +885,7 @@ public class CreateVoucher {
                          boundaryForUser = vs.getBoundaryForUser(voucherheader);
                         functionaryName="ZONE";
                 }
-                DesignationMaster next_desig=(DesignationMaster)persistenceService.find("from DesignationMaster  where upper(designationName)=upper(?)",designationName);
+                Designation next_desig=(Designation)persistenceService.find("from Designation  where upper(name)=upper(?)",designationName);
                 Functionary functionary = (Functionary)persistenceService.find("from Functionary where upper(name)=upper(?)",functionaryName);
                    
                 PersonalInformation employeeByFunctionary=null;

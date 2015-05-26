@@ -42,7 +42,7 @@ package org.egov.pgr.entity;
 import java.lang.reflect.Field;
 
 import org.egov.builder.entities.DepartmentBuilder;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 
 /**
  * @author Vaibhav.K
@@ -72,7 +72,7 @@ public class EscalationBuilder {
         return this;
     }
     
-    public EscalationBuilder withDesignation(final DesignationMaster designation) {
+    public EscalationBuilder withDesignation(final Designation designation) {
         escalation.setDesignation(designation);
         return this;
     }

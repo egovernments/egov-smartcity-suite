@@ -72,7 +72,7 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.BloodGroupMaster;
 import org.egov.pims.model.CommunityMaster;
@@ -318,7 +318,7 @@ public class EmployeeMasterAction extends BaseFormAction
                         Position position = (Position)persistenceService.getSession().load(Position.class, empAssign.getPosition().getId());
                         empAssign.setPosition(position);
                         
-                        DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesignation().getId());
+                        Designation designation = (Designation)persistenceService.getSession().load(Designation.class, empAssign.getDesignation().getId());
                         empAssign.setDesignation(designation);
                         
                         Department department = (Department)persistenceService.getSession().load(Department.class, empAssign.getDepartment().getId());

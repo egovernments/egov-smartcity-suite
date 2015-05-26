@@ -51,7 +51,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 
 @Entity
@@ -67,7 +67,7 @@ public class EmpPosition extends StateAware {
     @NotNull(message = "desig.required")
     @ManyToOne(fetch=FetchType.LAZY,optional=false)
     @JoinColumn(name="DESIG_ID")
-    private DesignationMaster desigId;
+    private Designation desigId;
     
     @NotNull(message = "dept.required")
     @ManyToOne(fetch=FetchType.LAZY,optional=false)
@@ -95,11 +95,11 @@ public class EmpPosition extends StateAware {
         this.postName = postName;
     }
 
-    public DesignationMaster getDesigId() {
+    public Designation getDesigId() {
         return desigId;
     }
 
-    public void setDesigId(DesignationMaster desigId) {
+    public void setDesigId(Designation desigId) {
         this.desigId = desigId;
     }
 

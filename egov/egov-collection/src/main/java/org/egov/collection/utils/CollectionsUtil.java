@@ -69,7 +69,7 @@ import org.egov.infstr.models.Script;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.model.EmployeeView;
@@ -527,7 +527,7 @@ public class CollectionsUtil {
 		return (nonPrimaryAssignments.isEmpty()) ? null : nonPrimaryAssignments.get(0);
 	}
 
-	public List<DesignationMaster> getDesignationsAllowedForChallanApproval(Integer departmentId, ReceiptHeader receiptHeaderObj) {
+	public List<Designation> getDesignationsAllowedForChallanApproval(Integer departmentId, ReceiptHeader receiptHeaderObj) {
 		List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_CHALLAN_WORKFLOWDESIGNATIONS);
 		return null ;/* (List<DesignationMaster>) scripts.get(0).eval(
 				Script.createContext("departmentId", departmentId, "collUtil", this, "receiptHeaderObj", receiptHeaderObj, "persistanceService", persistenceService));
@@ -549,7 +549,7 @@ public class CollectionsUtil {
 
 	}
 
-	public List<DesignationMaster> getDesignationsAllowedForBankRemittanceApproval(Integer departmentId) {
+	public List<Designation> getDesignationsAllowedForBankRemittanceApproval(Integer departmentId) {
 		List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.QUERY_BANKREMITTANCE_WORKFLOWDESIGNATIONS);
 		return null;/*(List<DesignationMaster>) scripts.get(0).eval(
 				Script.createContext("departmentId", departmentId, "collUtil", this, "persistanceService", persistenceService, "contraJournalVoucherObj",

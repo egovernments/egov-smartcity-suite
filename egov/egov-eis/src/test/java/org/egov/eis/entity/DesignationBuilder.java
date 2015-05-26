@@ -37,66 +37,87 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.service;
+package org.egov.eis.entity;
 
-import static org.junit.Assert.*;
+import java.lang.reflect.Field;
 
-import java.util.List;
-
-import org.egov.eis.EISAbstractSpringIntegrationTest;
-import org.egov.eis.entity.DesignationMasterBuilder;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.pims.commons.Designation;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Vaibhav.K
  *
  */
 @Ignore
-public class DesignationMasterServiceTest extends EISAbstractSpringIntegrationTest{
-	
-	@Autowired	
-	private DesignationMasterService designationMasterService;
-	
-	private DesignationMaster designation;
-	
-	private void sampleDesignation()	{
-		designation = new DesignationMasterBuilder().withName("ASSISTANT1").withDescription("ASSISTANT1").build();
-		designationMasterService.createDesignation(designation);
-	}
-	
-	@Test
-	public void createDesignation()	{
-		sampleDesignation();		
-		
-		assertEquals("ASSISTANT1",designationMasterService.getDesignationByName("ASSISTANT1").getName());
-	}
-	
-	@Test
-	public void updateDesignation()	{
-		sampleDesignation();
-		designation.setDescription("FORTESTING");
-		designationMasterService.updateDesignation(designation);
-		
-		assertEquals("FORTESTING", designation.getDescription());
-	}
-	
-	@Test
-	public void getDesignationsContainingName()	{
-		sampleDesignation();
-		List<DesignationMaster> desigList = designationMasterService.getAllDesignationsByNameLike("ASSISTANT");
-		
-		assertNotNull(desigList);
-	}
-	
-	@Test
-	public void getAllDesignations() {
-		sampleDesignation();
-		List<DesignationMaster> desigList = designationMasterService.getAllDesignations();
-		
-		assertNotNull(desigList);
-	}
+public class DesignationBuilder {
 
+	private final Designation designation;
+	
+	private static long count=0;
+	
+	public DesignationBuilder(){
+		designation = new Designation();
+		count++;
+	}
+	
+	public Designation build(){
+		return designation;
+	}
+	
+	public DesignationBuilder withName(String designationName){
+		designation.setName(designationName);
+		return this;
+	}
+	
+	public DesignationBuilder withDescription(String designationDescription){
+		designation.setDescription(designationDescription);
+		return this;
+	}
+	
+	public DesignationBuilder withChartOfAccounts(CChartOfAccounts glcode){
+		designation.setChartOfAccounts(glcode);
+		return this;
+	}
+	
+	 public DesignationBuilder withId(final long id) {
+	        try {
+	            final Field idField = designation.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+	            idField.setAccessible(true);
+	            idField.set(designation, id);
+	        } catch (final Exception e) {
+	            throw new RuntimeException(e);
+	        }
+	        return this;
+	    }
+	
+	public DesignationBuilder withDefaults()
+	{
+	    if(null==designation.getId())
+	    {
+	        withId(count);
+	    }
+	    if(null==designation.getName())
+	    {
+	        withName("test-designation-"+count);
+	    }
+//	    if(null==designationMaster.getChartOfAccounts())
+//            {
+//                withChartOfAccounts(new CChar);
+//            }
+	    
+	    return this;
+	}
+	
+	
+	public DesignationBuilder withDbDefaults()
+        {
+          
+            if(null==designation.getName())
+            {
+                withName("test-designation-"+count);
+            }
+            return this;
+        }
+	
 }

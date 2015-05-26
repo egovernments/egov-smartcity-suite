@@ -26,7 +26,7 @@
   <property generated="never" lazy="false" name="employeeName" type="string">
    <column length="256" name="NAME"/>
   </property>
-  <many-to-one class="org.egov.pims.commons.DesignationMaster"
+  <many-to-one class="org.egov.pims.commons.Designation"
    fetch="select" name="desigId">
    <column name="DESIGNATIONID" precision="32" scale="0"/>
   </many-to-one>

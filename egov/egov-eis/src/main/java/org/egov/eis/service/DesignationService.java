@@ -41,8 +41,8 @@ package org.egov.eis.service;
 
 import java.util.List;
 
-import org.egov.eis.repository.DesignationMasterRepository;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.eis.repository.DesignationRepository;
+import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,43 +53,43 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class DesignationMasterService {
+public class DesignationService {
 
-    private final DesignationMasterRepository designationMasterRepository;
+    private final DesignationRepository designationRepository;
 
     @Autowired
-    public DesignationMasterService(final DesignationMasterRepository designationMasterRepository) {
-        this.designationMasterRepository = designationMasterRepository;
+    public DesignationService(final DesignationRepository designationRepository) {
+        this.designationRepository = designationRepository;
     }
 
     @Transactional
-    public void createDesignation(final DesignationMaster designation) {
-        designationMasterRepository.save(designation);
+    public void createDesignation(final Designation designation) {
+        designationRepository.save(designation);
     }
 
     @Transactional
-    public void updateDesignation(final DesignationMaster designation) {
-        designationMasterRepository.save(designation);
+    public void updateDesignation(final Designation designation) {
+        designationRepository.save(designation);
     }
 
     @Transactional
-    public void deleteDesignation(final DesignationMaster designation) {
-        designationMasterRepository.delete(designation);
+    public void deleteDesignation(final Designation designation) {
+        designationRepository.delete(designation);
     }
 
-    public DesignationMaster getDesignationByName(final String desName) {
-        return designationMasterRepository.findByName(desName);
+    public Designation getDesignationByName(final String desName) {
+        return designationRepository.findByName(desName);
     }
 
-    public DesignationMaster getDesignationById(final Integer desigId) {
-        return designationMasterRepository.findOne(desigId);
+    public Designation getDesignationById(final Integer desigId) {
+        return designationRepository.findOne(desigId);
     }
 
-    public List<DesignationMaster> getAllDesignations() {
-        return designationMasterRepository.findAll();
+    public List<Designation> getAllDesignations() {
+        return designationRepository.findAll();
     }
 
-    public List<DesignationMaster> getAllDesignationsByNameLike(final String name) {
-        return designationMasterRepository.findByNameContainingIgnoreCase(name);
+    public List<Designation> getAllDesignationsByNameLike(final String name) {
+        return designationRepository.findByNameContainingIgnoreCase(name);
     }
 }

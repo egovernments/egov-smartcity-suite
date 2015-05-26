@@ -62,7 +62,7 @@ import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.GradeMaster;
 import org.egov.pims.model.PersonalInformation;
@@ -93,7 +93,7 @@ public class Assignment extends AbstractAuditable<User, Long> {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
-    private DesignationMaster designation;
+    private Designation designation;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -134,11 +134,11 @@ public class Assignment extends AbstractAuditable<User, Long> {
         return hodDeptIds;
     }
 
-    public DesignationMaster getDesignation() {
+    public Designation getDesignation() {
         return designation;
     }
 
-    public void setDesignation(final DesignationMaster designation) {
+    public void setDesignation(final Designation designation) {
         this.designation = designation;
     }
 

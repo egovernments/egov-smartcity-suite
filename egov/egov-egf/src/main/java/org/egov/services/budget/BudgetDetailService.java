@@ -80,7 +80,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.utils.Constants;
@@ -1481,7 +1481,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
         PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
         Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
         Functionary empfunctionary=empAssignment.getFunctionary();
-        DesignationMaster designation = empAssignment.getDesignation();
+        Designation designation = empAssignment.getDesignation();
         Boolean consolidateBudget=Boolean.FALSE;
         List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
         if(list.isEmpty())

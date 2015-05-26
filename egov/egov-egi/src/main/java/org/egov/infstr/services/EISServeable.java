@@ -45,7 +45,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 
 /**
@@ -157,7 +157,7 @@ public interface EISServeable {
      * @return DesignationMaster List
      */
 
-    public List<DesignationMaster> getAllDesignationByDept(Integer departmentId, Date givenDate);
+    public List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate);
 
     /**
      * Get all users for the given department and designation id's for the given

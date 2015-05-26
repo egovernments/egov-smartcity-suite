@@ -37,22 +37,66 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.repository;
+package org.egov.eis.service;
+
+import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.egov.pims.commons.DesignationMaster;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.eis.EISAbstractSpringIntegrationTest;
+import org.egov.eis.entity.DesignationBuilder;
+import org.egov.pims.commons.Designation;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Vaibhav.K
  *
  */
-@Repository
-public interface DesignationMasterRepository extends JpaRepository<DesignationMaster,Integer>{
+@Ignore
+public class DesignationServiceTest extends EISAbstractSpringIntegrationTest{
 	
-	DesignationMaster findByName(String designationName);
-	List<DesignationMaster> findByNameContainingIgnoreCase(String designationName);
+	@Autowired	
+	private DesignationService designationService;
+	
+	private Designation designation;
+	
+	private void sampleDesignation()	{
+		designation = new DesignationBuilder().withName("ASSISTANT1").withDescription("ASSISTANT1").build();
+		designationService.createDesignation(designation);
+	}
+	
+	@Test
+	public void createDesignation()	{
+		sampleDesignation();		
+		
+		assertEquals("ASSISTANT1",designationService.getDesignationByName("ASSISTANT1").getName());
+	}
+	
+	@Test
+	public void updateDesignation()	{
+		sampleDesignation();
+		designation.setDescription("FORTESTING");
+		designationService.updateDesignation(designation);
+		
+		assertEquals("FORTESTING", designation.getDescription());
+	}
+	
+	@Test
+	public void getDesignationsContainingName()	{
+		sampleDesignation();
+		List<Designation> desigList = designationService.getAllDesignationsByNameLike("ASSISTANT");
+		
+		assertNotNull(desigList);
+	}
+	
+	@Test
+	public void getAllDesignations() {
+		sampleDesignation();
+		List<Designation> desigList = designationService.getAllDesignations();
+		
+		assertNotNull(desigList);
+	}
 
 }

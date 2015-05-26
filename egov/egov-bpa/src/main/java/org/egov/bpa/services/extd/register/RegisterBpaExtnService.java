@@ -112,7 +112,7 @@ import org.egov.infstr.utils.StringUtils;
 /*import org.egov.infstr.utils.UtilityMethods;phionix todo*/
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 /*import org.egov.pims.commons.service.EisCommonsManager;
 import org.egov.pims.service.EisManager;*/
@@ -838,7 +838,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			
 			if (deptDesig != null) {
 
-				DesignationMaster designationMaster = deptDesig.getDesignation();
+				Designation designationMaster = deptDesig.getDesignation();
 				if(designationMaster!=null)
 					designationName = designationMaster.getName();
 
@@ -873,7 +873,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 				}
 			
 			if (approverDesignation != null) {
-				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationId=?",approverDesignation);
+				Designation designation=	(Designation) persistenceService.find("from Designation where id=?",approverDesignation);
 				if(designation!=null)
 					designationName = designation.getName();
 

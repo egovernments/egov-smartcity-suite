@@ -59,7 +59,7 @@ import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.EmployeeView;
@@ -397,8 +397,8 @@ public class EisUtilService implements EISServeable {
      * @param givenDate
      * @return DesignationMaster List
      */
-    public List<DesignationMaster> getAllDesignationByDept(Integer departmentId, Date givenDate) {
-        List<DesignationMaster> designationMstrObj = new ArrayList<DesignationMaster>();
+    public List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate) {
+        List<Designation> designationMstrObj = new ArrayList<Designation>();
         Date userGivenDate = givenDate == null ? new Date() : givenDate;
         Long deptId = departmentId.longValue();
         Criteria criteria = persistenceService
@@ -413,7 +413,7 @@ public class EisUtilService implements EISServeable {
         criteria.setProjection(projections);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-        designationMstrObj = (List<DesignationMaster>) criteria.list();
+        designationMstrObj = (List<Designation>) criteria.list();
 
         return designationMstrObj;
 

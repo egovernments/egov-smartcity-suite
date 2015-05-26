@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 
@@ -80,7 +80,7 @@ public interface EisCommonsService
 	public abstract Position getCurrentPositionByUser(User user);
 	
 	public abstract  User getUserForPosition(Integer posId, Date date);
-	public abstract List<DesignationMaster> getDesigantionBasedOnFuncDept(Integer deptId,Integer functionaryId) throws Exception;
+	public abstract List<Designation> getDesigantionBasedOnFuncDept(Integer deptId,Integer functionaryId) throws Exception;
 	/**
 	  * Returning temporary  assigned employee object by pepartment,designation,functionary,date 
 	  * @param deptId

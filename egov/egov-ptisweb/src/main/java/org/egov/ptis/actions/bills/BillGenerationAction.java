@@ -96,7 +96,7 @@ import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
@@ -539,7 +539,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			property.transition(true).start().withStateValue(nextStateValue.toString())
 					.withOwner(nextPosition).withComments(workflowBean.getComments());
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
-			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
+			Designation nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
 					.getApproverUserId().longValue());
 			nextStateValue = nextStateValue.append(nextDesn.getName()).append("_")
 					.append(WF_STATE_APPROVAL_PENDING);

@@ -48,7 +48,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmpPosition;
 import org.egov.pims.utils.EisConstants;
@@ -144,7 +144,7 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 				empPosition.setStatus((EgwStatus)commonsService.getStatusByModuleAndCode(EisConstants.EMP_POSITION,EisConstants.EMPPOS_CREATED ));
 			empPosition.setPosition(null);
 		}	
-		empPosition.setDesigId((DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, Long.valueOf(getDesignationId())));
+		empPosition.setDesigId((Designation)persistenceService.getSession().load(Designation.class, Long.valueOf(getDesignationId())));
 		fireWorkFlow();
 		
 		if(empPosition.getStatus().getCode().equalsIgnoreCase("approved"))
@@ -177,7 +177,7 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 				deptDesig.setSanctionedPosts(1);
 				deptDesig.setOutsourcedPosts(0);
 				deptDesig.setDepartment(empPosition.getDeptId());
-				deptDesig.setDesignation((DesignationMaster)getPersistenceService().getSession().load(DesignationMaster.class, Long.valueOf(getDesignationId())));
+				deptDesig.setDesignation((Designation)getPersistenceService().getSession().load(Designation.class, Long.valueOf(getDesignationId())));
 			}
 			Position position = new Position();
 			position.setName(empPosition.getPostName());

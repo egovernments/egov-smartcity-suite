@@ -53,7 +53,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.BillNumberMaster;
 import org.egov.pims.commons.DeptDesig;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
@@ -66,7 +66,7 @@ public class PositionMasterAction extends BaseFormAction {
 	private static final Logger LOGGER = Logger.getLogger(PositionMasterAction.class);
 	
 	private String query ;
-	private List<DesignationMaster> designationList = null;
+	private List<Designation> designationList = null;
 	private List<Department> departmentList = null;
 	//private List<BillNumberMaster> billNumberList = new ArrayList<BillNumberMaster>();
 	private List<BillNumberMaster> billNumberLineList = new ArrayList<BillNumberMaster>();
@@ -211,7 +211,7 @@ public class PositionMasterAction extends BaseFormAction {
 						deptDesig.setSanctionedPosts(getSanctionedPosts());
 						deptDesig.setOutsourcedPosts(getOutsourcedPosts());
 						deptDesig.setDepartment( ( (Department)persistenceService.find("from Department where id=?", getDepartmentId()) ));
-						deptDesig.setDesignation( ((DesignationMaster)persistenceService.find("from DesignationMaster where designationId=?", getDesignationId())));
+						deptDesig.setDesignation( ((Designation)persistenceService.find("from Designation where id=?", getDesignationId())));
 						position.setDeptDesigId(deptDesig);
 					}
 					else{			
@@ -352,7 +352,7 @@ public class PositionMasterAction extends BaseFormAction {
 	public String getDesignations() {
 
 		if (StringUtils.isNotBlank(query)) {
-			Criteria criteria =persistenceService.getSession().createCriteria(DesignationMaster.class, "designation");
+			Criteria criteria =persistenceService.getSession().createCriteria(Designation.class, "designation");
 			criteria.add(Restrictions.ilike("designationName", query, MatchMode.START));
 			designationList= criteria.list();
 		}
@@ -441,12 +441,12 @@ public class PositionMasterAction extends BaseFormAction {
 	}
 
 
-	public List<DesignationMaster> getDesignationList() {
+	public List<Designation> getDesignationList() {
 		return designationList;
 	}
 
 
-	public void setDesignationList(List<DesignationMaster> designationList) {
+	public void setDesignationList(List<Designation> designationList) {
 		this.designationList = designationList;
 	}
 

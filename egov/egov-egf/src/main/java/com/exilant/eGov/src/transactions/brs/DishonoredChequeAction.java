@@ -97,7 +97,7 @@ import org.egov.model.instrument.DishonorChequeDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
-import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
@@ -144,7 +144,7 @@ public class DishonoredChequeAction extends DispatchAction {
         Date dt;
         EGovernCommon cm = new EGovernCommon();
         String alertMessage=null;
-        List<DesignationMaster> designationList=Collections.EMPTY_LIST;
+        List<Designation> designationList=Collections.EMPTY_LIST;
         List<String> dishonorReasonsList = Collections.EMPTY_LIST;
         public ActionForward toLoad(ActionMapping mapping,ActionForm form,HttpServletRequest req,HttpServletResponse res)throws IOException,ServletException{
                 try{
@@ -661,7 +661,7 @@ public class DishonoredChequeAction extends DispatchAction {
                 InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.findAllBy("from InstrumentOtherDetails where instrumentHeaderId=?",instHeader.getId());
                 PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(iob.getCreatedBy().getId());
                 Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
-                designationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
+                designationList=persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
                 }
 
         public ActionForward processInbox(ActionMapping mapping,ActionForm form,HttpServletRequest req,HttpServletResponse res)
@@ -744,7 +744,7 @@ public class DishonoredChequeAction extends DispatchAction {
                         ;
                 }
                 {
-                        designationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
+                        designationList=persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
                 }
                 req.setAttribute("designationList",designationList);
         }
