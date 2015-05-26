@@ -1973,3 +1973,18 @@ height:34px;
 width:20px;
 cursor:pointer;
 }
+
+.table-div-border{
+  border-bottom: 1px solid #ccc;
+border-top: 1px solid #ccc;
+}
+
+.table-div-column{
+  padding: 10px;
+  text-align: center;
+}
+
+.parallel-actions{
+ padding:0 5px;
+ cursor:pointer;
+}
