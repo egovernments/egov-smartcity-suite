@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -48,6 +48,7 @@ package org.egov.masters.services;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.masters.dao.AccountEntityHibernateDAO;
@@ -64,76 +65,76 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class MastersService   
 {
-	private static final Logger LOGGER = Logger.getLogger(MastersService.class);
-	@Autowired
-	private static CommonsService cmnMngr;
-	@Transactional
-	public AccountEntity createAccountEntity(AccountEntity accountEntity)
-	{
-		AccountEntity accEntity=null;
-		Accountdetailkey adk=null;
-		//String[] attrName=null;
-		try
-		{
-		
-			
-			AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
-			if(accountEntity.getAccountDetailKeyId()!=null && (accountEntity.getAccountdetailtype().getName().equalsIgnoreCase("Creditor") || accountEntity.getAccountdetailtype().getName().equalsIgnoreCase("Employee")))
-			{				
-				Accountdetailtype accountdetailtype=this.getAccountdetailtypeByName(accountEntity.getAccountdetailtype().getName());
-				adk=new Accountdetailkey();
-				adk.setGroupid(1);
-				adk.setDetailkey(accountEntity.getAccountDetailKeyId());
-				adk.setDetailname(accountdetailtype.getAttributename());
-				adk.setAccountdetailtype(accountdetailtype);			
-				cmnMngr.createAccountdetailkey(adk);
-				return accountEntity;
-			}
-			else
-			{
-				accEntity=(AccountEntity)accEntDao.create(accountEntity);
-				if(accEntity.getCode()==null)
-					accEntity.setCode(accEntity.getId().toString());
-				Accountdetailtype accountdetailtype=this.getAccountdetailtypeByName(accountEntity.getAccountdetailtype().getName());
-				adk=new Accountdetailkey();
-				adk.setGroupid(1);
-				adk.setDetailkey(accEntity.getId());
-				adk.setDetailname(accountdetailtype.getAttributename());
-				adk.setAccountdetailtype(accountdetailtype);			
-				cmnMngr.createAccountdetailkey(adk);	
-				return accEntity;
-			}
-			
-		}
-		catch (Exception ex)
-		{
-			LOGGER.error("Exp="+ex.getMessage());
-			// 
-			throw new EGOVRuntimeException("Exception: " +ex.getMessage());
-		}		
-	}
-	@Transactional
-	public void updateAccountEntity(AccountEntity accountEntity)
-	{
-		AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
-		accEntDao.update(accountEntity);
-	}
-	
-	public Accountdetailtype getAccountdetailtypeById(Integer id)
-	{
-		AccountdetailtypeHibernateDAO accDtlTypeDao=MastersDAOFactory.getDAOFactory().getAccountdetailtypeDAO();
-		return (Accountdetailtype)accDtlTypeDao.findById(id, false);
-	}
-	
-	public Accountdetailtype getAccountdetailtypeByName(String name)
-	{
-		AccountdetailtypeHibernateDAO accDtlTypeDao=MastersDAOFactory.getDAOFactory().getAccountdetailtypeDAO();
-		return (Accountdetailtype)accDtlTypeDao.getAccountdetailtypeByName(name);
-	}
-	
-	public AccountEntity getAccountEntitybyId(Integer id)
-	{
-		AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
-		return (AccountEntity)accEntDao.findById(id, false);
-	}
+        private static final Logger LOGGER = Logger.getLogger(MastersService.class);
+        @Autowired
+        private static AccountdetailkeyHibernateDAO accntDtlKeyDAO;
+        @Transactional
+        public AccountEntity createAccountEntity(AccountEntity accountEntity)
+        {
+                AccountEntity accEntity=null;
+                Accountdetailkey adk=null;
+                //String[] attrName=null;
+                try
+                {
+                
+                        
+                        AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
+                        if(accountEntity.getAccountDetailKeyId()!=null && (accountEntity.getAccountdetailtype().getName().equalsIgnoreCase("Creditor") || accountEntity.getAccountdetailtype().getName().equalsIgnoreCase("Employee")))
+                        {                               
+                                Accountdetailtype accountdetailtype=this.getAccountdetailtypeByName(accountEntity.getAccountdetailtype().getName());
+                                adk=new Accountdetailkey();
+                                adk.setGroupid(1);
+                                adk.setDetailkey(accountEntity.getAccountDetailKeyId());
+                                adk.setDetailname(accountdetailtype.getAttributename());
+                                adk.setAccountdetailtype(accountdetailtype);                    
+                                accntDtlKeyDAO.create(adk);
+                                return accountEntity;
+                        }
+                        else
+                        {
+                                accEntity=(AccountEntity)accEntDao.create(accountEntity);
+                                if(accEntity.getCode()==null)
+                                        accEntity.setCode(accEntity.getId().toString());
+                                Accountdetailtype accountdetailtype=this.getAccountdetailtypeByName(accountEntity.getAccountdetailtype().getName());
+                                adk=new Accountdetailkey();
+                                adk.setGroupid(1);
+                                adk.setDetailkey(accEntity.getId());
+                                adk.setDetailname(accountdetailtype.getAttributename());
+                                adk.setAccountdetailtype(accountdetailtype);                    
+                                accntDtlKeyDAO.create(adk);     
+                                return accEntity;
+                        }
+                        
+                }
+                catch (Exception ex)
+                {
+                        LOGGER.error("Exp="+ex.getMessage());
+                        // 
+                        throw new EGOVRuntimeException("Exception: " +ex.getMessage());
+                }               
+        }
+        @Transactional
+        public void updateAccountEntity(AccountEntity accountEntity)
+        {
+                AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
+                accEntDao.update(accountEntity);
+        }
+        
+        public Accountdetailtype getAccountdetailtypeById(Integer id)
+        {
+                AccountdetailtypeHibernateDAO accDtlTypeDao=MastersDAOFactory.getDAOFactory().getAccountdetailtypeDAO();
+                return (Accountdetailtype)accDtlTypeDao.findById(id, false);
+        }
+        
+        public Accountdetailtype getAccountdetailtypeByName(String name)
+        {
+                AccountdetailtypeHibernateDAO accDtlTypeDao=MastersDAOFactory.getDAOFactory().getAccountdetailtypeDAO();
+                return (Accountdetailtype)accDtlTypeDao.getAccountdetailtypeByName(name);
+        }
+        
+        public AccountEntity getAccountEntitybyId(Integer id)
+        {
+                AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();
+                return (AccountEntity)accEntDao.findById(id, false);
+        }
 }

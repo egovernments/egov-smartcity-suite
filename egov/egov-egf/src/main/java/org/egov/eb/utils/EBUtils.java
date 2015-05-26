@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.infstr.ValidationError;
@@ -61,111 +62,111 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class EBUtils {
-	
-	private static final Logger LOGGER = Logger.getLogger(EBUtils.class);
-	private static final Integer MONTHS_TOBE_SUBTRACTED = -2;
-	public static final BigDecimal EBBILL_VARIANCE_PERCENTAGE1 = new BigDecimal("-20");
-	public static final BigDecimal EBBILL_VARIANCE_PERCENTAGE2 = new BigDecimal("20");
-	@Autowired
-	private static CommonsService commonsService ;
-	private static EgwStatusHibernateDAO egwStatusHibernateDAO;
-	public static final List<String> TNEB_BILLING_TYPES = new ArrayList<String>() {
-		{
-			add(EBConstants.Billing_Odd_Month);
-			add(EBConstants.Billing_Even_Month);
-		}
-		
-	};
-	
-	public static String getTargetArea(EBDetails ebDetails) {
-		return (String)HibernateUtil.getCurrentSession()
-				.createQuery("select area.name from TargetAreaMappings where boundary = :mappedWard")
-				.setEntity("mappedWard", ebDetails.getEbConsumer().getWard())
-				.list().get(0);
-	}
-	
-	public static Date getBillDate(Date dueDate) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(dueDate);
-		calendar.add(Calendar.MONTH, MONTHS_TOBE_SUBTRACTED);
-		return calendar.getTime();
-	}
-	
-	public static int getYear(Date billDueDate) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(getBillDate(billDueDate));
-		return calendar.get(Calendar.YEAR);
-	}
-	
-	public static final List<ValidationError> genericErrorMessage = Arrays.asList(new ValidationError(
-			EBConstants.ERROR_MESSAGE, EBConstants.ERROR_MESSAGE));
-	
-	
-	/**
-	 * Gives the group string by combining the <code> Month</code>, <code> Year</code>, 
-	 * <code> TargetArea</code> and <code> Region </code>
-	 * 
-	 * @param ebDetails
-	 * @return group string
-	 */
-	public static String getEBBillGroup(EBDetails ebDetails) {
-		return new StringBuilder().append(ebDetails.getMonth()).append("-")
-					.append(EBUtils.getYear(ebDetails.getDueDate())).append("-")
-					.append(ebDetails.getArea().getName()).append("-")
-					.append(ebDetails.getEbConsumer().getRegion()).toString();
-	}
-	
-	/**
-	 * Gives the short month name
-	 * 
-	 * @param month
-	 * @return short month name
-	 */
-	public static String getShortMonthName(int month) {
-		return DateUtils.getAllMonthsWithFullNames().get(month).substring(0, 3);
-	}
-	
-	/**
-	 * Gives the TNEB bill status by code
-	 * 
-	 * @param statusCode
-	 * @return
-	 */
-	public static EgwStatus getBillEgwStatusByCode(String statusCode) {
-		return egwStatusHibernateDAO.getStatusByModuleAndCode(STATUS_TNEB_BILL, statusCode);
-	}
-	
-	/**
-	 * Gives the current financial year
-	 * 
-	 * @return
-	 */
-	public static CFinancialYear getCurrentFinancialYear() {
-		CFinancialYear financialYear;
-		
-		
-		 financialYear = commonsService.getFinancialYearByDate(new Date());
-		return financialYear;
-	}
-	
-	/**
-	 * Gives the current financial year
-	 * 
-	 * @return
-	 */
-	public static CFinancialYear getFinancialYearForGivenDate(Date date) {
-		
-		
-		CFinancialYear financialYear = commonsService.getFinancialYearByDate(date);
-		return financialYear;
-	}
+        
+        private static final Logger LOGGER = Logger.getLogger(EBUtils.class);
+        private static final Integer MONTHS_TOBE_SUBTRACTED = -2;
+        public static final BigDecimal EBBILL_VARIANCE_PERCENTAGE1 = new BigDecimal("-20");
+        public static final BigDecimal EBBILL_VARIANCE_PERCENTAGE2 = new BigDecimal("20");
+        @Autowired
+        private static FinancialYearDAO financialYearDAO;
+        private static EgwStatusHibernateDAO egwStatusHibernateDAO;
+        public static final List<String> TNEB_BILLING_TYPES = new ArrayList<String>() {
+                {
+                        add(EBConstants.Billing_Odd_Month);
+                        add(EBConstants.Billing_Even_Month);
+                }
+                
+        };
+        
+        public static String getTargetArea(EBDetails ebDetails) {
+                return (String)HibernateUtil.getCurrentSession()
+                                .createQuery("select area.name from TargetAreaMappings where boundary = :mappedWard")
+                                .setEntity("mappedWard", ebDetails.getEbConsumer().getWard())
+                                .list().get(0);
+        }
+        
+        public static Date getBillDate(Date dueDate) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(dueDate);
+                calendar.add(Calendar.MONTH, MONTHS_TOBE_SUBTRACTED);
+                return calendar.getTime();
+        }
+        
+        public static int getYear(Date billDueDate) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(getBillDate(billDueDate));
+                return calendar.get(Calendar.YEAR);
+        }
+        
+        public static final List<ValidationError> genericErrorMessage = Arrays.asList(new ValidationError(
+                        EBConstants.ERROR_MESSAGE, EBConstants.ERROR_MESSAGE));
+        
+        
+        /**
+         * Gives the group string by combining the <code> Month</code>, <code> Year</code>, 
+         * <code> TargetArea</code> and <code> Region </code>
+         * 
+         * @param ebDetails
+         * @return group string
+         */
+        public static String getEBBillGroup(EBDetails ebDetails) {
+                return new StringBuilder().append(ebDetails.getMonth()).append("-")
+                                        .append(EBUtils.getYear(ebDetails.getDueDate())).append("-")
+                                        .append(ebDetails.getArea().getName()).append("-")
+                                        .append(ebDetails.getEbConsumer().getRegion()).toString();
+        }
+        
+        /**
+         * Gives the short month name
+         * 
+         * @param month
+         * @return short month name
+         */
+        public static String getShortMonthName(int month) {
+                return DateUtils.getAllMonthsWithFullNames().get(month).substring(0, 3);
+        }
+        
+        /**
+         * Gives the TNEB bill status by code
+         * 
+         * @param statusCode
+         * @return
+         */
+        public static EgwStatus getBillEgwStatusByCode(String statusCode) {
+                return egwStatusHibernateDAO.getStatusByModuleAndCode(STATUS_TNEB_BILL, statusCode);
+        }
+        
+        /**
+         * Gives the current financial year
+         * 
+         * @return
+         */
+        public static CFinancialYear getCurrentFinancialYear() {
+                CFinancialYear financialYear;
+                
+                
+                 financialYear = financialYearDAO.getFinancialYearByDate(new Date());
+                return financialYear;
+        }
+        
+        /**
+         * Gives the current financial year
+         * 
+         * @return
+         */
+        public static CFinancialYear getFinancialYearForGivenDate(Date date) {
+                
+                
+                CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(date);
+                return financialYear;
+        }
 
-	public EgwStatusHibernateDAO getEgwStatusHibernateDAO() {
-		return egwStatusHibernateDAO;
-	}
+        public EgwStatusHibernateDAO getEgwStatusHibernateDAO() {
+                return egwStatusHibernateDAO;
+        }
 
-	public void setEgwStatusHibernateDAO(EgwStatusHibernateDAO egwStatusHibernateDAO) {
-		this.egwStatusHibernateDAO = egwStatusHibernateDAO;
-	}
-	
+        public void setEgwStatusHibernateDAO(EgwStatusHibernateDAO egwStatusHibernateDAO) {
+                this.egwStatusHibernateDAO = egwStatusHibernateDAO;
+        }
+        
 }
