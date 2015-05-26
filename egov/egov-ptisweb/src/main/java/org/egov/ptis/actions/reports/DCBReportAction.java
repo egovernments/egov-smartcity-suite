@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DCBREPORT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,10 +54,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -67,6 +69,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Namespace("/reports")
+@ResultPath("/WEB-INF/jsp/")
+@Results({ @Result(name = "search", location = "reports/dcbReport-search.jsp"),
+		@Result(name = "search", location = "reports/dcbReport-report.jsp") })
+
 public class DCBReportAction extends ReportFormAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -77,7 +83,7 @@ public class DCBReportAction extends ReportFormAction {
 	List<Boundary> zoneList;
 
 	@Autowired
-	private BoundaryDAO boundaryDAO;
+	private BoundaryService boundaryService;
 
 	private void prepareReportInfo() {
 		StringBuffer query = new StringBuffer(1000);
@@ -138,8 +144,9 @@ public class DCBReportAction extends ReportFormAction {
 
 			mvZone = ((Integer) obj[0]).intValue();
 			mvWard = ((Integer) obj[1]).intValue();
-			String strZoneNum = (boundaryDAO.getBoundary(mvZone).getBoundaryNum()).toString();
-			String strWardNum = (boundaryDAO.getBoundary(mvWard).getBoundaryNum()).toString();
+			
+			String strZoneNum = (boundaryService.getActiveBoundaryByIdAsOnCurrentDate(mvZone).getBoundaryNum()).toString();
+			String strWardNum = (boundaryService.getActiveBoundaryByIdAsOnCurrentDate(mvWard).getBoundaryNum()).toString();
 
 			repInfo.setZoneNo(strZoneNum);
 			repInfo.setWardNo(strWardNum);
@@ -181,12 +188,12 @@ public class DCBReportAction extends ReportFormAction {
 		super.report();
 	}
 
-	@Action(value = "/dCBReport-search", results = { @Result(name = SEARCH, location = "/dCBReport-search.jsp") })
+	@Action(value = "/dCBReport-search" )
 	public String search() {
 		return SEARCH;
 	}
 
-	@Action(value = "/dCBReport-searchForm", results = { @Result(name = REPORT, location = "/dCBReport-report.jsp") })
+	@Action(value = "/dCBReport-searchForm" )
 	public String searchForm() {
 		prepareReportInfo();
 		return REPORT;
@@ -194,10 +201,7 @@ public class DCBReportAction extends ReportFormAction {
 
 	@Override
 	public void prepare() {
-		zoneList = persistenceService.findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+		zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,ADMIN_HIERARCHY_TYPE);
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		ZoneBndryMap.put(0l, "All");
 	}

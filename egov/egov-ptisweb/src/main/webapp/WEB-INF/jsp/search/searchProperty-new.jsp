@@ -53,6 +53,13 @@
 					wardId : document.getElementById("wardId").value
 				});
 			}
+			function onSubmit(obj,formId){
+				var formObj = document.getElementById(formId);
+				formObj.action=obj;
+				formObj.submit;
+			   return true;
+			} 
+
 		</script>
 		<title><s:text name="searchProp.title"></s:text></title>
 	</head>
@@ -70,7 +77,7 @@
 			    </div>
 			</s:if>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
-						<s:form action="searchProperty" name="indexform" theme="simple">
+						<s:form action="searchProperty" name="indexform" theme="simple" id="indexform">
 							<div class="formheading"></div>
 							
 							<tr>
@@ -115,7 +122,7 @@
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="index"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" method="srchByIndex"></s:submit>
+										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'indexform');"></s:submit>
 									</div>
 								</td>
 								<td class="greybox">&nbsp;</td>
@@ -126,7 +133,7 @@
 					<br>
 			
 					<table border="0" cellspacing="0" cellpadding="0" width="100%">
-					<s:form name="zoneform" theme="simple">
+					<s:form name="zoneform" theme="simple" id="zoneform">
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					
@@ -196,7 +203,7 @@
 							<td class="greybox" colspan="2">
 								<div class="greybox" style="text-align:center">		
 									<s:hidden id="mode" name="mode" value="bndry"></s:hidden>
-									<s:submit name="search" value="Search" cssClass="buttonsubmit" method="srchByBndry"></s:submit>
+									<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByBndry.action', 'zoneform');" ></s:submit>
 								</div>
 							</td>						
 							<td class="greybox">&nbsp;</td>
@@ -205,7 +212,7 @@
 				</table>
 				<br>
 				<table  border="0" cellspacing="0" cellpadding="0" width="100%">
-				<s:form name="areaform" theme="simple">
+				<s:form name="areaform" theme="simple" id="areaform">
 					<tr>
 						<td width="100%" colspan="4" class="headingbg">												
 							<div class="headingbg">					
@@ -272,7 +279,7 @@
 						<td class="greybox" colspan="2">
 							<div class="greybox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="area"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" method="srchByArea"></s:submit>
+								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'srchByArea');"></s:submit>
 							</div>
 						</td>
 						<td class="greybox">&nbsp;</td>
@@ -281,7 +288,7 @@
 			</table>
 			<!-- objection search details -->
 			<table  border="0" cellspacing="0" cellpadding="0" width="100%">
-				<s:form name="objectionForm"  theme="simple">
+				<s:form name="objectionForm"  theme="simple" id="objectionForm">
 					<tr>
 						<td width="100%" colspan="4" class="headingbg">												
 							<div class="headingbg">					
@@ -343,7 +350,7 @@
 						<td class="greybox" colspan="2">
 							<div class="greybox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="objection"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" method="searchByObjection"></s:submit>
+								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByObjection.action', 'objectionForm');"></s:submit>
 							</div>
 						</td>
 						<td class="greybox">&nbsp;</td>

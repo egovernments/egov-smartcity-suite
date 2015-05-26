@@ -395,7 +395,7 @@ function finishAllChangesMsg(button) {
 		    <div class="buttonbottom" align="center">		   
 		    	<td><s:submit value="Approve" name="Approve"
 						id='Create:Save' cssClass="buttonsubmit" method="create"
-						onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>				
+						/></td>				
 				<td><s:submit value="Data Entry" name="Save"
 						id="Create:Save" method="create" cssClass="buttonsubmit"
 						onclick="setWorkFlowInfo(this);return submitMsg(this);doLoadingMask();" /></td>

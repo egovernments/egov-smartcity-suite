@@ -104,7 +104,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Transactional(readOnly = true)
 @Namespace("/search")
 @ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = NEW, location = "search/searchProperty-new.jsp") })
+@Results({ @Result(name = NEW, location = "search/searchProperty-new.jsp") ,
+	@Result(name = "result", location = "/searchProperty-result.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	public static final String TARGET = "result";
@@ -158,7 +159,7 @@ public class SearchPropertyAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/searchProperty-srchByIndex", results = { @Result(name = TARGET, location = "/searchProperty-result.jsp") })
+	@Action(value = "/searchProperty-srchByIndex" )
 	public String srchByIndex() {
 		LOGGER.debug("Entered into srchByIndex  method");
 		LOGGER.debug("Index Number : " + indexNum + ", " + " parcelId :" + gisId);
@@ -193,7 +194,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/searchProperty-srchByBndry", results = { @Result(name = TARGET, location = "/searchProperty-result.jsp") })
+	@Action(value = "/searchProperty-srchByBndry")
 	public String srchByBndry() {
 		LOGGER.debug("Entered into srchByBndry method");
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
@@ -229,7 +230,7 @@ public class SearchPropertyAction extends BaseFormAction {
 					LOGGER.debug("srchByBndry : Property : " + propMatview);
 					setSearchResultList(getResultsFromMv(propMatview));
 				}
-				setSearchUri("../search/searchProperty!srchByBndryForm.action");
+				setSearchUri("../search/searchProperty-srchByBndryForm.action");
 				setSearchCreteria("Search By Zone, Ward, Plot No/House No");
 				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
 						+ ", Plot No/House No: " + houseNumBndry);
@@ -245,7 +246,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/searchProperty-srchByArea", results = { @Result(name = TARGET, location = "/searchProperty-result.jsp") })
+	@Action(value = "/searchProperty-srchByArea")
 	public String srchByArea() {
 
 		LOGGER.debug("Entered into srchByArea  method");
@@ -266,7 +267,7 @@ public class SearchPropertyAction extends BaseFormAction {
 					checkIsMarkForDeactive(basicProperty);
 				}
 				// Boundary boundary = boundaryDAO.getBoundary(areaId);
-				setSearchUri("../search/searchProperty!srchByArea.action");
+				setSearchUri("../search/searchProperty-srchByArea.action");
 				setSearchCreteria("Search By Owner Name");
 				setSearchValue("Owner Name : " + ownerName);
 				// target = "result";
@@ -325,10 +326,11 @@ public class SearchPropertyAction extends BaseFormAction {
 						+ "and BI.isHistory='N' order by BI.id", "Zone",
 				 ADMIN_HIERARCHY_TYPE);
 		LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
-		List<Boundary> streetList = getPersistenceService()
+		List<Boundary> streetList = new ArrayList<Boundary>(0);
+		/*List<Boundary> streetList = getPersistenceService()
 				.findAllBy("from Boundary BI where BI.boundaryType.name=? and BI.isHistory='N' order by BI.name ",
 						"Street");
-		LOGGER.debug("Area List : " + (streetList != null ? streetList : ZERO));
+		LOGGER.debug("Area List : " + (streetList != null ? streetList : ZERO));*/
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		prepareWardDropDownData(zoneId != null, wardId != null);
 		addDropdownData("Street", streetList);
