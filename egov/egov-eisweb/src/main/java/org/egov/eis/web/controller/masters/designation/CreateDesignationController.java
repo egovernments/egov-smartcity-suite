@@ -37,8 +37,46 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.web.controller.masters;
+package org.egov.eis.web.controller.masters.designation;
 
+import javax.validation.Valid;
+
+import org.egov.eis.service.DesignationService;
+import org.egov.pims.commons.Designation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/designation/create")
 public class CreateDesignationController {
+
+	private DesignationService designationService;
+
+	@Autowired
+	public CreateDesignationController(DesignationService designationService) {
+		this.designationService = designationService;
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public String createForm(Model model) {
+		model.addAttribute("designation", new Designation());
+		return "designation-form";
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String createDesignation(@Valid @ModelAttribute Designation designation, BindingResult errors,
+			RedirectAttributes redirectAttrs, Model model) {
+		if (errors.hasErrors()) {
+			return "designation-form";
+		}
+		designationService.createDesignation(designation);
+		return "create-designation";
+	}
 
 }
