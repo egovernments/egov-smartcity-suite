@@ -903,7 +903,8 @@ public class CreateVoucher {
                          errors.add(new ValidationError("No  Employee Exists","No  Employee Exists"));
                          throw new ValidationException(errors);
                 }
-                nextPosition=vs.getPositionForEmployee(employeeByFunctionary) ;
+                //TODO: Get employee instead of personalinformation and fix the issue
+                //nextPosition=vs.getPositionForEmployee(employeeByFunctionary) ;
                 if(nextPosition!=null)
                 {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Returning next Position for WorkFlow"+nextPosition.getName());

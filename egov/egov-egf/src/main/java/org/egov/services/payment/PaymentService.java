@@ -67,11 +67,11 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -2808,13 +2808,13 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public Assignment getAssignment()
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getAssignment...");
-                PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-                return eisCommonService.getLatestAssignmentForEmployeeByToDate( pi.getIdPersonalInformation(),new Date());
+                //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+                return eisCommonService.getLatestAssignmentForEmployeeByToDate( EGOVThreadLocals.getUserId(),new Date());
         }
-        public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
+        public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPositionForEmployee...");
-                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
         }
         public PersonalInformation getEmpForCurrentUser()
         {
@@ -2824,9 +2824,9 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmployeeNameForPositionId...");
-                PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
-                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-                return pi.getEmployeeFirstName()+" ("+assignment.getFunctionary().getName()+"-"+assignment.getDesignation().getName()+")";
+                Employee pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getId(),new Date());
+                return pi.getName()+" ("+assignment.getFunctionary().getName()+"-"+assignment.getDesignation().getName()+")";
         }
         public void finalApproval(Long voucherid)
         {

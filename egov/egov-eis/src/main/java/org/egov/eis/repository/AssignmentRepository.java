@@ -57,14 +57,14 @@ import org.springframework.stereotype.Repository;
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     /* Get all assignments for an employee by emp id */
-    @Query(" from Assignment A where A.oldEmployee.idPersonalInformation =:idPersonalInformation order by A.fromDate")
-    public List<Assignment> getAllAssignmentsByEmpId(@Param("idPersonalInformation") Integer idPersonalInformation);
+    @Query(" from Assignment A where A.employee.id =:empId order by A.fromDate")
+    public List<Assignment> getAllAssignmentsByEmpId(@Param("empId") Long empId);
 
     /*
      * Get all active assignments for an employee as on sysdate
      */
-    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.oldEmployee.idPersonalInformation =:idPersonalInformation order by A.fromDate")
-    public List<Assignment> getAllActiveAssignmentsByEmpId(@Param("idPersonalInformation") Integer idPersonalInformation);
+    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.employee.id =:empId order by A.fromDate")
+    public List<Assignment> getAllActiveAssignmentsByEmpId(@Param("empId") Long empId);
 
     @Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.position.id=:posId order by A.fromDate")
     public List<Assignment> getAssignmentsForPosition(@Param("posId") Long posId, @Param("givenDate") Date givenDate);
@@ -72,14 +72,14 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.position.id=:posId")
     public Assignment getPrimaryAssignmentForPosition(@Param("posId") Long posId);
 
-    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.primary=true and A.oldEmployee.userMaster.id=:userId ")
+    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.primary=true and A.employee.id=:userId ")
     public Assignment getPrimaryAssignmentForUser(@Param("userId") Long userId);
 
-    @Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.primary=true and A.oldEmployee.idPersonalInformation=:empId ")
-    public Assignment getAssignmentByEmpAndDate(@Param("empId") Integer empId, @Param("givenDate") Date givenDate);
+    @Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.primary=true and A.employee.id=:empId ")
+    public Assignment getAssignmentByEmpAndDate(@Param("empId") Long empId, @Param("givenDate") Date givenDate);
 
-    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.primary=true and A.oldEmployee.idPersonalInformation=:empId")
-    public Assignment getPrimaryAssignmentForEmployee(@Param("empId") Integer empId);
+    @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.primary=true and A.employee.id=:empId")
+    public Assignment getPrimaryAssignmentForEmployee(@Param("empId") Long empId);
 
     @Query(" from Assignment A where A.position.id=:posId and A.fromDate<=:current_date and A.toDate>=:current_date order by A.fromDate")
     public List<Assignment> getAssignmentsForPosition(@Param("posId") Long posId);
@@ -88,8 +88,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     public Assignment getPrimaryAssignmentForPositionAndDate(@Param("posId") Long posId,
             @Param("givenDate") Date givenDate);
 
-    @Query(" from Assignment A where A.oldEmployee.idPersonalInformation=:empId and A.primary=true and A.fromDate<=:fromDate and A.toDate<=:toDate")
-    public Assignment getPrimaryAssignmentForGivenRange(@Param("empId") Integer idPersonalInformation,
+    @Query(" from Assignment A where A.employee.id=:empId and A.primary=true and A.fromDate<=:fromDate and A.toDate<=:toDate")
+    public Assignment getPrimaryAssignmentForGivenRange(@Param("empId") Long empId,
             @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
 }

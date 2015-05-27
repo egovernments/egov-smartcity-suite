@@ -1178,8 +1178,8 @@ int i=0;
 	    
 	   private boolean isHOD()
 	    {
-	    	PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
+		    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
+			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
 			if(empAssignment.getDesignation().getName().equalsIgnoreCase("assistant"))
 			{
 				 asstFMU = true;
@@ -1200,15 +1200,14 @@ int i=0;
 		public Position getPosition()throws EGOVRuntimeException
 		{
 			Position pos;
-			PersonalInformation emp=eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+		    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
+			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
 			return pos;
 		}
 	   
 	   private boolean isNextUserHOD(Integer approverUserId)
 	    {
-	    	PersonalInformation emp = eisCommonService.getEmployeeByUserId(approverUserId.longValue());
-			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
+			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(approverUserId.longValue(),new Date());
 			return eisCommonService.isHod(empAssignment.getId());
 	    }
 	   

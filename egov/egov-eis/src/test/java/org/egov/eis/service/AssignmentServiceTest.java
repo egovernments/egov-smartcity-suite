@@ -68,14 +68,14 @@ public class AssignmentServiceTest extends EISAbstractSpringIntegrationTest {
     
     @Test
     public void getListOfAssignments() {
-        List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(1);
+        List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(1l);
         
         assertNotEquals(0,assignList.size());
     }
     
     @Test 
     public void getListOfActiveAssignments() {
-        List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(1);
+        List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(1l);
         
         assertNotEquals(0,assignList.size());
     }

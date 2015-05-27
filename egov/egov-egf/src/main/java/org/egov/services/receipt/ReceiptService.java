@@ -43,6 +43,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -53,9 +56,6 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.pims.commons.Position;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.EisCommonService;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 
 public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
@@ -63,9 +63,9 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	private GenericHibernateDaoFactory genericDao;
 	private EisUtilService eisService;
 	private  PersistenceService persistenceService;
-	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
+	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
 	{
-		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
 	}
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
@@ -88,14 +88,14 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	}
 	public String getDesginationName()
 	{
-		 PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
+		 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
 		 return assignment.getDesignation().getName();
 	}
 	public Department getDepartmentForWfItem(ReceiptVoucher rv)
 	{
-		PersonalInformation pi = eisCommonService.getEmployeeByUserId(rv.getCreatedBy().getId());
-		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
+		//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(rv.getCreatedBy().getId(),new Date());
 		return assignment.getDepartment();
 	}
 	public Position getPositionForWfItem(ReceiptVoucher rv)

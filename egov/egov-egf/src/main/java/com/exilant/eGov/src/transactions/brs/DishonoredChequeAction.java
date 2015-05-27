@@ -659,8 +659,8 @@ public class DishonoredChequeAction extends DispatchAction {
         private void populateReceiptCreatorAndForward(HttpServletRequest req, InstrumentHeader instHeader)
                         throws Exception {
                 InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.findAllBy("from InstrumentOtherDetails where instrumentHeaderId=?",instHeader.getId());
-                PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(iob.getCreatedBy().getId());
-                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
+                //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(iob.getCreatedBy().getId(), DateUtils.today());
                 designationList=persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
                 }
 
@@ -738,8 +738,8 @@ public class DishonoredChequeAction extends DispatchAction {
         private void populateWorkflowEntities(HttpServletRequest req)
                         throws Exception {
                 req.setAttribute("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-                PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(EGOVThreadLocals.getUserId());
-                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
+                //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(), DateUtils.today());
                 if(asignment.getDesignation().getName().equalsIgnoreCase("SECTION MANAGER")) {
                         ;
                 }

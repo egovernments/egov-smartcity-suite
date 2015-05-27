@@ -504,8 +504,8 @@ public class BudgetSearchAction extends BaseFormAction{
 	{
 		Position pos;
 		try {
-			PersonalInformation emp=eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+			//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}

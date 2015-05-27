@@ -47,6 +47,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -90,9 +91,9 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 		return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
 	}
 	
-	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
+	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
 	{   
-		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
 	}
 	
 	/**
@@ -129,12 +130,12 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	 * @param emp
 	 * @return department
 	 */
-	public Department depertmentForEmployee(PersonalInformation emp)
+	public Department depertmentForEmployee(Employee emp)
 	{
 		Department dept=null;
 		Date currDate=new Date();
 		try {
-			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),currDate);
+			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getId(),currDate);
 			dept=empAssignment.getDepartment();
 			return (Department)dept;
 		}catch(NullPointerException ne)
@@ -142,7 +143,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 			throw new EGOVRuntimeException(ne.getMessage());
 		}
 		catch (Exception e) {
-			throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getEmployeeFirstName());
+			throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getName());
 		}
 	}
 	
@@ -312,9 +313,9 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	
 	
 	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
-		PersonalInformation pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
-		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-		return pi.getEmployeeFirstName()+" ("+assignment.getDesignation().getName()+")";
+		Employee pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getId());
+		return pi.getName()+" ("+assignment.getDesignation().getName()+")";
 	}
 	
 	public PersonalInformation getEmpForCurrentUser(){

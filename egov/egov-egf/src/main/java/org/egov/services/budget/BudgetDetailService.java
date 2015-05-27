@@ -61,6 +61,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -76,7 +77,6 @@ import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -364,8 +364,8 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
         return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
     }
 
-    public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException{
-        return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+    public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException{
+        return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
     public void setEisCommonService(EisCommonService eisCommonService) {
@@ -394,12 +394,12 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
      * @param emp
      * @return
      */
-    public Department depertmentForEmployee(PersonalInformation emp)
+    public Department depertmentForEmployee(Employee emp)
     {
         Department dept=null;
         Date currDate=new Date();
         try {
-            Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate( emp.getIdPersonalInformation(),currDate);
+            Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate( emp.getId(),currDate);
             dept=empAssignment.getDepartment();
             return (Department)dept;
         }catch(NullPointerException ne)
@@ -407,7 +407,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
             throw new EGOVRuntimeException(ne.getMessage());
         }
         catch (Exception e) {
-            throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getEmployeeFirstName());
+            throw new EGOVRuntimeException("Error while getting Department fort the employee"+emp.getName());
         }
 
 
@@ -1478,8 +1478,8 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
     }
     public boolean toBeConsolidated()
     {
-        PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
+    	//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
         Functionary empfunctionary=empAssignment.getFunctionary();
         Designation designation = empAssignment.getDesignation();
         Boolean consolidateBudget=Boolean.FALSE;

@@ -85,7 +85,7 @@ public class AssignmentService {
      * @param empId
      * @return List of assignment objects
      */
-    public List<Assignment> getAllAssignmentsByEmpId(final Integer empId) {
+    public List<Assignment> getAllAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getAllAssignmentsByEmpId(empId);
     }
 
@@ -95,7 +95,7 @@ public class AssignmentService {
      * @param empId
      * @return List of assignment objects
      */
-    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Integer empId) {
+    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getAllActiveAssignmentsByEmpId(empId);
     }
 
@@ -147,7 +147,7 @@ public class AssignmentService {
      * @param empId
      * @return Assignment object
      */
-    public Assignment getPriamryAssignmentForEmployee(final Integer empId) {
+    public Assignment getPriamryAssignmentForEmployee(final Long empId) {
         return assignmentRepository.getPrimaryAssignmentForEmployee(empId);
     }
 
@@ -158,7 +158,7 @@ public class AssignmentService {
      * @param toDate
      * @return Assignment object
      */
-    public Assignment getPrimaryAssignmentForEmployeeByToDate(final Integer empId, final Date toDate) {
+    public Assignment getPrimaryAssignmentForEmployeeByToDate(final Long empId, final Date toDate) {
         return assignmentRepository.getAssignmentByEmpAndDate(empId, toDate);
     }
 
@@ -202,7 +202,7 @@ public class AssignmentService {
      * @param toDate
      * @return Assignment object
      */
-    public Assignment getPrimaryAssignmentForGivenRange(final Integer empId, final Date fromDate, final Date toDate) {
+    public Assignment getPrimaryAssignmentForGivenRange(final Long empId, final Date fromDate, final Date toDate) {
         return assignmentRepository.getPrimaryAssignmentForGivenRange(empId, fromDate, toDate);
     }
 }

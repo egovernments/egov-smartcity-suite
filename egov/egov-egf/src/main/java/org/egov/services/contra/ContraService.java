@@ -59,9 +59,9 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.VoucherDetail;
 import org.egov.commons.dao.BankaccountDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -80,7 +80,6 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.PayInBean;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.Constants;
@@ -406,24 +405,24 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         }
         public String getDesginationName()
         {
-                 PersonalInformation pi =eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-                 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate( pi.getIdPersonalInformation(),new Date());
+                 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
+                 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate( EGOVThreadLocals.getUserId(),new Date());
                  return assignment.getDesignation().getName();
         }
         
         public Department getDepartmentForWfItem(ContraJournalVoucher cjv)
         {
-                PersonalInformation pi =eisCommonService.getEmployeeByUserId(cjv.getCreatedBy().getId());
-                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
+                //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(cjv.getCreatedBy().getId(),new Date());
                 return assignment.getDepartment();
         }
         public Boundary getBoundaryForUser(ContraJournalVoucher rv)
         {
                 return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
         }
-        public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
+        public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
         {
-                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
         }
         private void addToBankRecon(CVoucherHeader payIn,InstrumentHeader instrumentHeader,EgwStatus instrumentReconciledStatus) {
                 instrumentService.addToBankReconcilationWithLoop(payIn, instrumentHeader,instrumentReconciledStatus);

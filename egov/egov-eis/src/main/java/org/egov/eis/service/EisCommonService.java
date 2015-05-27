@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -159,7 +160,7 @@ public class EisCommonService {
      * @param empId
      * @return Assignment object
      */
-    public Assignment getLatestAssignmentForEmployee(final Integer empId) {
+    public Assignment getLatestAssignmentForEmployee(final Long empId) {
         return assignmentService.getPriamryAssignmentForEmployee(empId);
     }
 
@@ -171,7 +172,7 @@ public class EisCommonService {
      * @param toDate
      * @return Assignment object
      */
-    public Assignment getLatestAssignmentForEmployeeByToDate(final Integer empId, final Date toDate) {
+    public Assignment getLatestAssignmentForEmployeeByToDate(final Long empId, final Date toDate) {
         return assignmentService.getPrimaryAssignmentForEmployeeByToDate(empId, toDate);
     }
 
@@ -181,7 +182,7 @@ public class EisCommonService {
      * @param empId
      * @return Position object
      */
-    public Position getPrimaryAssignmentPositionForEmp(final Integer empId) {
+    public Position getPrimaryAssignmentPositionForEmp(final Long empId) {
         return assignmentService.getPriamryAssignmentForEmployee(empId).getPosition();
     }
 
@@ -189,10 +190,10 @@ public class EisCommonService {
      * Returns primary assignment's employee for position
      *
      * @param posId
-     * @return PersonalInformation object
+     * @return Employee object
      */
-    public PersonalInformation getPrimaryAssignmentEmployeeForPos(final Long posId) {
-        return assignmentService.getPrimaryAssignmentForPositon(posId).getOldEmployee();
+    public Employee getPrimaryAssignmentEmployeeForPos(final Long posId) {
+        return assignmentService.getPrimaryAssignmentForPositon(posId).getEmployee();
     }
 
     /**
@@ -201,7 +202,7 @@ public class EisCommonService {
      * @param empId
      * @return List of position objects
      */
-    public List<Position> getPositionsForEmployee(final Integer empId) {
+    public List<Position> getPositionsForEmployee(final Long empId) {
         final List<Position> posList = null;
         final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(empId);
         for (final Assignment assign : assignList)

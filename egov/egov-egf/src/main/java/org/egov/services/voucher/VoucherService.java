@@ -69,15 +69,14 @@ import org.egov.commons.VoucherDetail;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
-import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -155,27 +154,27 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         }
         public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
         {
-                PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
-                Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-                return pi.getEmployeeFirstName()+" ("+assignment.getDesignation().getName()+")";
+                Employee pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+                Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getId());
+                return pi.getId()+" ("+assignment.getDesignation().getName()+")";
         }
         public Department getCurrentDepartment()
         {
-                PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-                Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
+                //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+        		Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
                 return (Department)assignment.getDepartment();
         }
         public Department getDepartmentForWfItem(CVoucherHeader cv)
         {
-                PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
-                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
+        	    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
+                Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(cv.getCreatedBy().getId(),new Date());
                 return assignment.getDepartment();
         }
         public Department getTempDepartmentForWfItem(CVoucherHeader cv,Position position)
         {
                 Department d=null;
                 PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
-           d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary='N' and user.id=?",EGOVThreadLocals.getUserId());
+           d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary=true and user.id=?",EGOVThreadLocals.getUserId());
         return d;
         }
         
@@ -1250,9 +1249,9 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
                 this.genericDao = genericDao; 
         }
-        public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
+        public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
         {
-                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+                return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
         }
         public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
                 this.sequenceGenerator = sequenceGenerator;

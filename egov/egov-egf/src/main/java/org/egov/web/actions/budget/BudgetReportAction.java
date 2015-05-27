@@ -686,8 +686,8 @@ public class BudgetReportAction extends BaseFormAction {
 	private Position getPosition() {
 		Position pos;
 		try {
-			PersonalInformation emp=eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-			pos= eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
+			//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
+			pos= eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
@@ -1126,8 +1126,8 @@ public class BudgetReportAction extends BaseFormAction {
 		}
 		List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
 		String value = list.get(0).getValue();
-		PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
-		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
+		//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
+		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
 		Designation designation = empAssignment.getDesignation();
 		if(designation.getName().equalsIgnoreCase(value))
 		{
