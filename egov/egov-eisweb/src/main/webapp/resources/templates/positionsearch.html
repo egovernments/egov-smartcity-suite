@@ -1,0 +1,299 @@
+<!-- #-------------------------------------------------------------------------------
+# eGov suite of products aim to improve the internal efficiency,transparency, 
+#    accountability and the service delivery of the government  organizations.
+# 
+#     Copyright (C) <2015>  eGovernments Foundation
+# 
+#     The updated version of eGov suite of products as by eGovernments Foundation 
+#     is available at http://www.egovernments.org
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program. If not, see http://www.gnu.org/licenses/ or 
+#     http://www.gnu.org/licenses/gpl.html .
+# 
+#     In addition to the terms of the GPL license to be adhered to in using this
+#     program, the following additional terms are to be complied with:
+# 
+# 	1) All versions of this program, verbatim or modified must carry this 
+# 	   Legal Notice.
+# 
+# 	2) Any misrepresentation of the origin of the material is prohibited. It 
+# 	   is required that all modified versions of this material be marked in 
+# 	   reasonable ways as different from the original version.
+# 
+# 	3) This license does not grant any rights to any user of the program 
+# 	   with regards to rights under trademark law for use of the trade names 
+# 	   or trademarks of eGovernments Foundation.
+# 
+#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#------------------------------------------------------------------------------- -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	<body class="page-body">
+		
+		<div class="page-container">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-md-10 col-xs-10">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
+								<div>
+									
+									<span class="title2">Search Position</span>
+								</div>
+							</a>
+						</div>
+						
+						<div class="nav-right-menu col-md-2 col-xs-2">
+							<ul class="hr-menu text-right">
+								<li class="ico-menu">
+									<a href="javascript:void(0);">
+										<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+									</a>
+								</li>
+								
+							</ul>
+						</div>
+						
+					</div>
+				</nav>
+				
+			</header>
+			
+			<div class="main-content">
+			
+				
+				<div class="row">
+					<div class="col-md-12">
+						
+						<div class="" data-collapsed="0">
+							
+							<div class="panel-body">
+								
+								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input id="com_type" type="text" class="form-control typeahead" placeholder=""/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input id="com_type" type="text" class="form-control typeahead" placeholder=""/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="text-center">
+											<button type="submit" class="btn btn-primary">Search Position</button>
+											<a href="javascript:void(0);" class="btn btn-default">Cancel</a>
+										</div>
+									</div>
+									
+								</form>
+								
+							</div>
+							
+						</div>
+						
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body">
+								<div class="row add-border">
+									<div class="col-md-3 col-xs-6 add-margin">
+										Department
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
+										Software
+									</div>
+								
+									<div class="col-md-3 col-xs-6 add-margin">
+										Designation
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
+										Software Engineer
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-3 col-xs-6 add-margin">
+										Outsourced Posts
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
+										14
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										Sanctioned Posts
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
+										14
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>	
+
+				<div class="row">
+					<div class="col-md-6 col-xs-6 table-header">List of Positions</div>
+					<div class="col-md-6 col-xs-6 add-margin text-right">
+						<span class="inline-elem">Search</span>
+						<span class="inline-elem"><input type="text" id="searchposition" class="form-control input-sm"></span>
+					</div>
+					<div class="col-md-12">
+						<table class="table table-bordered datatable" id="position-table">
+							<thead>
+								<tr>
+									<th>S.no</th>
+									<th>Position</th>
+									<th>Outsourced Posts</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+								</tr>
+								<tr>
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+								</tr>
+								<tr>
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+								</tr>
+							</tbody>
+						</table>					
+					</div>
+				</div>			
+				
+			</div>
+			
+			<footer class="main">
+					
+					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+			
+			
+		</div>
+
+		<!--edit position-->
+		<div class="modal fade position-modal" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Edit Position</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Department</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<input type="text" class="form-control" placeholder="">
+								</div>	
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Designation</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<input type="text" class="form-control" placeholder="">
+								</div>	
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Position</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<input type="text" class="form-control" placeholder="">
+								</div>	
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary add-fav">Edit Position</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/typeahead.bundle.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/JS/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+		<script src="../js/app/positionsearch.js"></script>
+	</body>
+</html>
