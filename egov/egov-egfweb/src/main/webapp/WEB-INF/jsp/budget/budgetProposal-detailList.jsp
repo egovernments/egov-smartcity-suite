@@ -53,8 +53,8 @@
 	<script type="text/javascript" src="/EGF/resources/javascript/helper.js"></script>
 	<script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/EGF/resources/javascript/jquery/jquery.fixheadertable.js"></script>
-	<link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery/base.css" />
-	<link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
+	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery/base.css" />
+	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/redmond/jquery-ui-1.8.4.custom.css" />
 
     <jsp:include page="budgetHeader.jsp"/>
     <SCRIPT type="text/javascript">

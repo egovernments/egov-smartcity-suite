@@ -45,7 +45,7 @@
     <title>
     	<s:text name="bank.search.new"/>
     </title>
-    <link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+    <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
    <style>
    .autoComContainer {
 		width: auto;

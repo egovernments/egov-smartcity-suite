@@ -53,7 +53,7 @@
 
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 </head>

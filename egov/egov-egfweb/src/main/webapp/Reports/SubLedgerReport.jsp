@@ -91,7 +91,7 @@
 <script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/ajax-script.js"></script>
-<link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
+<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
 <script type="text/javascript" src="/EGF/resources/javascript/tdsReportHelper.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/subLedgerReportHelper.js"></script>
 

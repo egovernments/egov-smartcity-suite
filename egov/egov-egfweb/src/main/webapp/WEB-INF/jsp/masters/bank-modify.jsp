@@ -47,8 +47,8 @@
     <title>
     	<s:text name="bank.modify.new"/>
     </title>
-    <link rel="stylesheet" type="text/css" href="/EGF/cssnew/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="../cssnew/jquery/ui.jqgrid.css" />
+    <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="../resources/css/jquery/ui.jqgrid.css" />
 	<script>
     var fundJson = "<s:property value='getFundsJSON()'/>";
     var accTypeJson = <s:property value='getAccountTypesJSON()' escape='false'/>;

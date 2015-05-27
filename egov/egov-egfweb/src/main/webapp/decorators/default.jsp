@@ -59,7 +59,7 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
-		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/resources/javascript/ajax-script.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
 		
 		<decorator:head/>

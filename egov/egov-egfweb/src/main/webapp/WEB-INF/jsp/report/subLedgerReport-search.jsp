@@ -60,7 +60,7 @@
 <script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/javascript/dateValidation.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/jsCommonMethods.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/subLedgerHelper.js"></script>
 <link rel="stylesheet" href="/EGF/struts/xhtml/styles.css" type="text/css"/>
