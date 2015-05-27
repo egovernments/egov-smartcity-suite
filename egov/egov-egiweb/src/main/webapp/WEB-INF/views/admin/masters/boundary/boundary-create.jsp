@@ -70,7 +70,7 @@
 							<strong><spring:message code="lbl.hdr.updateBoundary"/>  <c:out value="${boundary.name}"/></strong>
 						</c:when>
 						<c:otherwise>
-							<strong><spring:message code="lbl.hdr.updateBoundary"/></strong>
+							<strong><spring:message code="lbl.hdr.createBoundary"/></strong>
 						</c:otherwise>
 					</c:choose>
 					</div>
@@ -141,7 +141,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-default" onclick="history(0)"><spring:message code="lbl.back"/></button>
+					<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
 					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>

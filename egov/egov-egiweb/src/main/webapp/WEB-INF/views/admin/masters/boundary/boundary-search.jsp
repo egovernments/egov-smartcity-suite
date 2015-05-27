@@ -54,7 +54,9 @@
                 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-
+				<c:if test="${not empty warning}">
+                    <div id="warning" class="success">${warning}</div>
+                </c:if>
                 <form:form id="boundarySearchForm" method="post" 
                            modelAttribute="boundary" class="form-horizontal form-groups-bordered">
 					<div class="panel panel-primary" data-collapsed="0">

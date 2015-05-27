@@ -44,7 +44,8 @@ $(document).ready(function() {
 	        serverSide: true,
 	        sort:false,
 	        filter:true,
-	        responsive:true,        
+	        responsive:true,      
+	        "autoWidth": false,
 	        ajax: {
 	        	url : "/egi/list-boundaries",
 	        	data : {

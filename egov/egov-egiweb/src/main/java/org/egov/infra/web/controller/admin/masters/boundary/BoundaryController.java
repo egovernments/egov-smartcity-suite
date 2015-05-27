@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -59,32 +59,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BoundaryController {
 
     private static final String REDIRECT_URL_VIEW = "redirect:/view-boundary/";
-    
-    private BoundaryService boundaryService;
-    private BoundaryTypeService boundaryTypeService;
+
+    private final BoundaryService boundaryService;
+    private final BoundaryTypeService boundaryTypeService;
 
     @Autowired
-    public BoundaryController(BoundaryService boundaryService, BoundaryTypeService boundaryTypeService) {
+    public BoundaryController(final BoundaryService boundaryService, final BoundaryTypeService boundaryTypeService) {
         this.boundaryService = boundaryService;
         this.boundaryTypeService = boundaryTypeService;
     }
 
     @ModelAttribute
-    public void getBoundary(@PathVariable Long[] ids, Model model) {
-        int paramLength = ids.length;
+    public void getBoundary(@PathVariable final Long[] ids, final Model model) {
+        final int paramLength = ids.length;
         Long boundaryId = null;
 
         if (paramLength > 2 && ids[2] != null) {
             boundaryId = ids[2];
             model.addAttribute("boundary", boundaryService.getBoundaryById(boundaryId));
-        } else {
-            if (model.asMap().get("boundary") == null) {
-                model.addAttribute("boundary", new Boundary());
-            }
-        }
+        } else if (model.asMap().get("boundary") == null)
+            model.addAttribute("boundary", new Boundary());
 
-        Long boundaryTypeId = ids[1];
-        BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
+        final Long boundaryTypeId = ids[1];
+        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
         model.addAttribute("boundaryType", boundaryType);
         model.addAttribute("hierarchyType", boundaryType.getHierarchyType());
     }
@@ -95,41 +92,46 @@ public class BoundaryController {
     }
 
     @RequestMapping(value = "/create-boundary/{ids}", method = RequestMethod.POST)
-    public String showCreateBoundaryForm(Model model) {
+    public String showCreateBoundaryForm(final Model model, final RedirectAttributes redirectAttributes) {
         model.addAttribute("isUpdate", false);
-        return "boundary-create";
+        final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
+
+        if (boundaryService.validateBoundary(boundaryType)) {
+            redirectAttributes.addFlashAttribute("warning", "Root Boundary already exists");
+            return "redirect:/search-boundary";
+        } else
+            return "boundary-create";
     }
 
     @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.GET)
-    public String showUpdateBoundaryForm(Model model) {
+    public String showUpdateBoundaryForm(final Model model) {
         model.addAttribute("isUpdate", true);
         return "boundary-create";
     }
-    
+
     @RequestMapping(value = "/list-boundaries/{ids}", method = RequestMethod.POST)
-    public String showPaginationForm(Model model) {
+    public String showPaginationForm(final Model model) {
         return "view-boundaries";
     }
-    
+
     @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.POST)
-    public String UpdateBoundary(@Valid @ModelAttribute Boundary boundary, Model model,
-            BindingResult errors, RedirectAttributes redirectAttributes) {
+    public String UpdateBoundary(@Valid @ModelAttribute final Boundary boundary, final Model model,
+            final BindingResult errors, final RedirectAttributes redirectAttributes) {
 
-        if (errors.hasErrors()) {
+        if (errors.hasErrors())
             return "boundary-create";
-        }
 
-        BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
+        final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
 
         boundary.setBoundaryType(boundaryTypeObj);
         boundary.setHistory(false);
-        
+
         boundaryService.updateBoundary(boundary);
-        
+
         redirectAttributes.addFlashAttribute("boundary", boundary);
         redirectAttributes.addFlashAttribute("message", "Boundary successfully updated !");
-        
-        String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
+
+        final String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
 
         return REDIRECT_URL_VIEW + pathVars;
     }

@@ -102,9 +102,14 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
     @Query("select b from Boundary b where upper(b.boundaryType.name) = :boundaryTypeName AND upper(b.boundaryType.hierarchyType.name) = :hierarchyTypeName order by b.id")
-    List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(
-            @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
+    List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
+            @Param("hierarchyTypeName") String hierarchyTypeName);
 
     @Query("select b from Boundary b where b.isHistory='N' and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
-    List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,@Param("boundaryTypeId")Long boundaryTypeId);
+    List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,
+            @Param("boundaryTypeId") Long boundaryTypeId);
+
+    @Query("select b from Boundary b where b.boundaryType.name=:boundaryType and b.boundaryType.hierarchyType.name=:hierarchyType and b.boundaryType.hierarchy=:hierarchyLevel")
+    Boundary findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(@Param("boundaryType") String boundaryType,
+            @Param("hierarchyType") String hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel);
 }
