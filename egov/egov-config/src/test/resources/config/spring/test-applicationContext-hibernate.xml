@@ -47,8 +47,7 @@
           class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
             <list>
-                <value>classpath*:config/application-config.properties</value>
-                <value>classpath*:config/egov-erp-override.properties</value>
+                <value>classpath*:config/persistence-config.properties</value>
                 <value>classpath*:config/egov-erp-${user.name}.properties</value>
             </list>
         </property>
