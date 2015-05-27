@@ -203,7 +203,7 @@ mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear a
 mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars approproiately
 ```
 
-#
+#  
 Note: This system is supported only on Linux environment. Supported browser are-
 * Chrome
 * Firefox
