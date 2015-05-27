@@ -56,7 +56,7 @@ $ git clone https://github.com/egovernments/eGov.git
  sms.sender=
 
  ```
-Apparently you can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding entry in `egov-erp-<username>.properties`.
+One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding entry in `egov-erp-<username>.properties`.
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
@@ -68,7 +68,7 @@ Apparently you can override any default settings available in `/egov/egov-egi/sr
 
 ##### Configuring JBoss Wildfly
 
-1. Download and install customized JBoss Wildfly Server from [here][Wildfly Customized]
+1. Download and install customized JBoss Wildfly Server from [here][Wildfly Customized]. This server contains some additional jars that are required for the ERP.
 2. In case properties needs to be overridden, edit the below file (This is only required if `egov-erp-<username>.properties` is not present)
 
   ```
@@ -119,7 +119,7 @@ $ ./deploy-local.sh
 6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/egi` in your favorite browser.
 7. Login using username as `egovernments` and password `demo`
 
-#### Configuring the application to run using IP address/domain name
+#### Accessing the application using IP address and domain name
 
 This section is to be referred only if you want the application to run using any ip address or domain name.
 
@@ -197,6 +197,11 @@ mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear a
 ```bash
 mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars approproiately
 ```
+
+
+Note: This system is supported only on Linux environment. Supported browser are-
+* Chrome
+* Mozilla
 
 
 [Git]: http://help.github.com/set-up-git-redirect
