@@ -395,7 +395,7 @@
 													<tr id="conSupNameRow" style="display:none">
 														<td align="right"><div  valign="center" class="labelcell"><span id="codeLabel"  class="labelcell"></span></div> </td>
 														<td><input type="hidden" id="divId" name="divId" value="" size=10/></td>
-														<td class="smallfieldcell"><input class="fieldinput" name="code" id="code" autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'conSupName');setNameOnCodeChange()" ><IMG id=IMG1 onclick="openSearch(this);" height=22 src="../images/plus1.gif" width=25 align=top border=0></td>
+														<td class="smallfieldcell"><input class="fieldinput" name="code" id="code" autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'conSupName');setNameOnCodeChange()" ><IMG id=IMG1 onclick="openSearch(this);" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0></td>
 														<div id="codescontainer"></div>
 														<td align="right"><div  valign="center" class="labelcell"><span id="conSupNameLabel"  class="labelcell"></span></div> </td>
 														<td/>

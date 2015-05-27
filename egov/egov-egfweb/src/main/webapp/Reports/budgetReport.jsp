@@ -331,17 +331,17 @@ function buttonPrint()
 		<td colspan="2" align="middle" valign="center">
 			<!--table border="0" cellpadding="0" cellspacing="0" width="178">
 				<tr class="button">
-					<td align="right"><IMG height=18 src="../images/Button_leftside.gif" width=7></td>
+					<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=7></td>
 					<td bgcolor="#fe0000" valign="center" nowrap><A class=buttonprimary    onmouseout="alertNoColor()" onmouseup="alertNoColor()" onmousedown="alertRedColor()" onclick="getDataList()" href="#">Search</A></td>
-					<td><IMG height=18 src="../images/Button_rightside.gif" width=7></td>
-					<td><IMG src="../images/spacer.gif" width=8></td>	
-					<td align="right"><IMG height=18 src="../images/Button_second_leftside.gif" width=6></td>
-					<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick=buttonFlush(); href="#">Cancel</A></td>
-					<td><IMG height=18 src="../images/Button_second_rightside.gif" width=6></td>						
-					<td><IMG src="../images/spacer.gif" width=8></td>								
-					<td align="right"><IMG height=18 src="../images/Button_second_leftside.gif" width=6></td>
-					<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick=window.close() href="#">Close</A></td>
-					<td><IMG height=18 src="../images/Button_second_rightside.gif" width=6></td>
+					<td><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=7></td>
+					<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>	
+					<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=6></td>
+					<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick=buttonFlush(); href="#">Cancel</A></td>
+					<td><IMG height=18 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=6></td>						
+					<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>								
+					<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=6></td>
+					<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick=window.close() href="#">Close</A></td>
+					<td><IMG height=18 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=6></td>
 				</tr>
 			</table -->
 			<div></div>

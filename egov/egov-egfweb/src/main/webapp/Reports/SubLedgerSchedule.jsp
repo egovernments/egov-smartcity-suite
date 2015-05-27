@@ -397,7 +397,7 @@ function afterRefreshPage(dc)
 			<td class="smallfieldcell">
 				<input type="hidden" name="chartOfAccounts_id" id="chartOfAccounts_id">
 				<input class="fieldinput" type="hidden" name="accEntityText" id="accEntityText">
-				<input class="fieldinput" name="accCode" id="accCode"  exilMustEnter="true" autocomplete="off" onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id')"><IMG id=IMG1 onclick="openSearch(this);" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+				<input class="fieldinput" name="accCode" id="accCode"  exilMustEnter="true" autocomplete="off" onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id')"><IMG id=IMG1 onclick="openSearch(this);" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 			</td>
 			<td align="right"><div  valign="center" class="labelcell">Fund<span class=leadon>* &nbsp;</span></div></td>
 			<td align="left" class="smallfieldcell"><input type="hidden" name="fund_name" id="fund_name">

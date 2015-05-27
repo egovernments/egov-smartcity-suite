@@ -446,7 +446,7 @@ function buttonPrint()
 
 		<td class="smallfieldcell">
 						<input type="hidden" name="chartOfAccounts_id1" id="chartOfAccounts_id1">
-						<input class="fieldinput" name="glCode1" id="glCode1" autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id1');" ><IMG id=IMG1 onclick="openSearch('chartofaccounts',1);" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+						<input class="fieldinput" name="glCode1" id="glCode1" autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id1');" ><IMG id=IMG1 onclick="openSearch('chartofaccounts',1);" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 					</td>
 		<td colspan="2">&nbsp;</td>
 		<div id="codescontainer"></div>

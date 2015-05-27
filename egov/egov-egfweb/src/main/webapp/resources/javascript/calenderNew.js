@@ -233,12 +233,12 @@
 	    		"javascript:window.opener.Build(" +
 	    		"'" + this.gReturnItem + "', '" + this.gMonth + "', '" + (parseInt(this.gYear)-1) + "', '" + this.gFormat + "'" +
 	    		");" +
-	    		"\"> <img src='../images/nav-left-x2.gif' border='0'> <\/A></TD><TD align=center width='12%'>");
+	    		"\"> <img src='/egi/resources/erp2/images/nav-left-x2.gif' border='0'> <\/A></TD><TD align=center width='12%'>");
 	    	this.wwrite("<A style='text-decoration:none;font-size:10px;' HREF=\"" +
 	    		"javascript:window.opener.Build(" +
 	    		"'" + this.gReturnItem + "', '" + prevMM + "', '" + prevYYYY + "', '" + this.gFormat + "'" +
 	    		");" +
-	    		"\"> <img src='../images/nav-left.gif' border=0> <\/A></TD><TD align=center width='50%'>");
+	    		"\"> <img src='/egi/resources/erp2/images/nav-left.gif' border=0> <\/A></TD><TD align=center width='50%'>");
 	    	<!--this.wwrite("<a style='text-decoration:none;font-size:12px;color:#444444;font-weight:bold;font-family:tahoma,verdana,sans-serif' \href=\"javascript:window.print();\">Print</a></TD><TD ALIGN=center>");-->
 this.wwriteA("<FONT FACE='" + fontface + "' style='font-size:12px;color:#444444;text-align:center;font-weight:bold;padding-bottom:0px;height:5px'>");
 	    	this.wwriteA(this.gMonthName + " " + this.gYear);
@@ -248,12 +248,12 @@ this.wwriteA("<FONT FACE='" + fontface + "' style='font-size:12px;color:#444444;
 	    		"javascript:window.opener.Build(" +
 	    		"'" + this.gReturnItem + "', '" + nextMM + "', '" + nextYYYY + "', '" + this.gFormat + "'" +
 	    		");" +
-	    		"\"><img src='../images/nav-right.gif' border='0'><\/A></TD><TD ALIGN=center width='15%'>");
+	    		"\"><img src='/egi/resources/erp2/images/nav-right.gif' border='0'><\/A></TD><TD ALIGN=center width='15%'>");
 	    	this.wwrite("<A style='text-decoration:none;font-size:10px;' HREF=\"" +
 	    		"javascript:window.opener.Build(" +
 	    		"'" + this.gReturnItem + "', '" + this.gMonth + "', '" + (parseInt(this.gYear)+1) + "', '" + this.gFormat + "'" +
 	    		");" +
-	    		"\"> <img src='../images/nav-right-x2.gif' border='0'> <\/A></TD></TR></TABLE>");
+	    		"\"> <img src='/egi/resources/erp2/images/nav-right-x2.gif' border='0'> <\/A></TD></TR></TABLE>");
 
 	    	// Get the complete calendar code for the month..
 	    	vCode = this.getMonthlyCalendarCode();

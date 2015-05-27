@@ -70,7 +70,7 @@
 
 
 // string constants used		
-var dirImg			= '../images/';  //directory images
+var dirImg			= '/egi/resources/erp2/images/';  //directory images
 var cRootGif		= dirImg + 'root.gif';
 var cCollapsedGif	= dirImg + 'plus.gif'; //gifs before the node name
 var cExpandedGif	= dirImg + 'minus.gif';

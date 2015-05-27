@@ -440,7 +440,7 @@ function openSearch1(obj, tableName){
                        
                         <td class=fieldcelldesc >
                         <input type="hidden" name="functionCodeId" id="functionCodeId" >
-                        <input type="text" styleClass="fieldinputlarge"  id="functionCode" name="functionCode"  value="<%=ieBean.getFunctionCode()%>"  onkeyup="autocompletecodeFunction(this);"   onblur="fillNeibrAfterSplitFunction(this,'functionCodeId')" /><IMG   id=IMG1 onclick=openSearch1(this,'functionCodeId') src="../images/plus1.gif"  >
+                        <input type="text" styleClass="fieldinputlarge"  id="functionCode" name="functionCode"  value="<%=ieBean.getFunctionCode()%>"  onkeyup="autocompletecodeFunction(this);"   onblur="fillNeibrAfterSplitFunction(this,'functionCodeId')" /><IMG   id=IMG1 onclick=openSearch1(this,'functionCodeId') src="/egi/resources/erp2/images/plus1.gif"  >
 						</td><div id="codescontainer"></div>
 	
 	</tr>

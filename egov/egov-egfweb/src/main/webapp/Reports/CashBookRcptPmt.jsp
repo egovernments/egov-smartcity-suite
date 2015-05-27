@@ -301,7 +301,7 @@ function afterRefreshPage(dc)
 		<td align="right"><div  valign="center" class="labelcell"  >Boundary <span class="leadon">* &nbsp;</span></div></td>
 		<td class="smallfieldcell">
 
-		<!-- 	<input class="fieldinput" name="glCode1" id="glCode1" exilMustEnter="true" ><IMG id=IMG1 onclick="openSearch('chartofaccounts');" height=22 src="../images/plus1.gif" width=25 align=top border=0> -->
+		<!-- 	<input class="fieldinput" name="glCode1" id="glCode1" exilMustEnter="true" ><IMG id=IMG1 onclick="openSearch('chartofaccounts');" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0> -->
 			<SELECT class="combowidth1" id="boundary_id" name="boundary_id" exilMustEnter="true" ></SELECT>
 
 		</td>

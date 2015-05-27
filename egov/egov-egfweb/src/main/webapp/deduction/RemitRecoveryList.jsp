@@ -197,11 +197,11 @@ function getDetails(obj)
 <tr>
 	<td class="labelcell" align="right" width="35%">From Date&nbsp;&nbsp;</td> 
 		<td   class="smallfieldcell" width="35%" align="middle"><html:text property="fromDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-		<a href="javascript:show_calendar('RemitRecoveryForm.fromDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif" width=24 height=22 border=0></a>
+		<a href="javascript:show_calendar('RemitRecoveryForm.fromDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 	</td> 
 	<td class="labelcell" align="right" width="35%">To Date&nbsp;&nbsp;</td> 
 		<td   class="smallfieldcell" width="35%" align="middle"><html:text property="toDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-		<a href="javascript:show_calendar('RemitRecoveryForm.toDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif" width=24 height=22 border=0></a>
+		<a href="javascript:show_calendar('RemitRecoveryForm.toDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 	</td> 
 </tr>-->
 <tr><td class="labelcell5" colspan=4>&nbsp;</td></tr> 

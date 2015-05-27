@@ -70,7 +70,7 @@
    <s:form name="rtgsPaymentReportForm" action="rtgsPaymentReport" theme="css_xhtml" id ="rtgsPaymentReportForm" validate="true">
    <div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
     <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
-        <img src="/EGF/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
+        <img src="/egi/resources/erp2/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
     </div>
 </div>
     <div class="formmainbox"><div class="subheadnew"><s:text name="rtgs.payment.search.title"/></div>

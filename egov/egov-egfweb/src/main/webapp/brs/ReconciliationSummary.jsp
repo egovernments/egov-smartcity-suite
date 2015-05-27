@@ -256,7 +256,7 @@ function printPage()
 <td class="fieldcell" align="center"><html:text  style=";text-align:right;padding-right:2px;" property="balAsPerStatement"/> </td>
 <td class="labelcell" align="right">Bank&nbsp;Statement&nbsp;date<SPAN class="leadon">*</SPAN></td>
 <td class="smallfieldcell" align="center"><html:text  property="bankStatementDate"  onkeyup="DateFormat(this,this.value,event,false,'3')" />
-<a href="javascript:show_calendar('reconciliationSummaryForm.bankStatementDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif" width=24 height=22 border=0></a>
+<a href="javascript:show_calendar('reconciliationSummaryForm.bankStatementDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 </td>
 </tr>
 </table>

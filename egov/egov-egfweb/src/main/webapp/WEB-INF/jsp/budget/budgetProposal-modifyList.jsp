@@ -267,7 +267,7 @@ function alertTimeOut()
     
                     <td><input type="button" class="buttonsubmit" value="Edit" id="budgetDocUploadButton" onclick='showDocumentManager(<s:property value="#stat.index"/>);' /></td>
                     <s:if test="%{isAsstFMU()}">
-                    <td><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(<s:property value='id'/>, <s:property value='nextYrId'/>,this,'bpBeanList[<s:property value="#stat.index"/>].approvedBE','bpBeanList[<s:property value="#stat.index"/>].approvedRE');"><img src="${pageContext.request.contextPath}/images/cancel.png" border="0"/></a></td>
+                    <td><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(<s:property value='id'/>, <s:property value='nextYrId'/>,this,'bpBeanList[<s:property value="#stat.index"/>].approvedBE','bpBeanList[<s:property value="#stat.index"/>].approvedRE');"><img src="/egi/resources/erp2/images/cancel.png" border="0"/></a></td>
                     </s:if>
 		</s:else>
         </tr>

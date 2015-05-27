@@ -46,7 +46,7 @@
 			<tr>
 				<!-- MSCellFormattingType="content" -->
 				<td width="755" height="40" align="left" valign="bottom" bgcolor="#FFFFFF">
-                <font face="Arial, Helvetica"><img height="20" alt="" src="../images/UI_05_top.gif" width="754" align="top"></font> </td>
+                <font face="Arial, Helvetica"><img height="20" alt="" src="/egi/resources/erp2/images/UI_05_top.gif" width="754" align="top"></font> </td>
 
 			</tr>
 		</table>
@@ -76,7 +76,7 @@
 				<!-- MSCellFormattingType="content" -->
 				<td width="756" height="25" align="left" vAlign="top" bgcolor="#FFFFFF">
         <font face="Arial, Helvetica">
-          <img height="20" alt="" src="../images/UI_05.gif" width="754" align="absmiddle">
+          <img height="20" alt="" src="/egi/resources/erp2/images/UI_05.gif" width="754" align="absmiddle">
         </font>
       			</td>
 			</tr>
@@ -109,7 +109,7 @@
       <!--#include file="../publicGrievance/egovhead.html" -->
     </td></tr>
   <tr>
-    <td width="746"><font face="Arial, Helvetica"><img height=18 alt="" src="../images/UI_05_top.gif" width=750></fontT></td>
+    <td width="746"><font face="Arial, Helvetica"><img height=18 alt="" src="/egi/resources/erp2/images/UI_05_top.gif" width=750></fontT></td>
   </tr>
   </tbody>
 </table>

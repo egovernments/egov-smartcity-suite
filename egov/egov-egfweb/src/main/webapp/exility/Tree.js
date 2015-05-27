@@ -51,7 +51,7 @@ if (typeof(window.exilWindow) == 'undefined')window.exilWindow = window;
 
 function ExilTree(div){ //div is the <div> DOM element where this tree is to be displayed
 	//standard/default iamges
-	this.imagesDir		= '../images/';
+	this.imagesDir		= '/egi/resources/erp2/images/';
 	this.collapsedGif	= this.imagesDir + 'plus.gif';
 	this.expandedGif	= this.imagesDir + 'minus.gif';
 	this.spaceGif		= this.imagesDir + 'space.gif';

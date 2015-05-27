@@ -818,7 +818,7 @@ function print()
 	 		</tr></table></td>
 			<td class="labelcell" align="right" height="35" >Voucher Date<SPAN class="leadon">*</SPAN>&nbsp;</td>				
 			<td class="smallfieldcell" align="center" ><html:text property= "pymntVhDate" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('RemitRecoveryForm.pymntVhDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img id="img1" src="../images/calendar.gif" width=24 height=22 border=0></a>
+			<a href="javascript:show_calendar('RemitRecoveryForm.pymntVhDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img id="img1" src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 			</td>
 				 		
 		</tr>	
@@ -845,12 +845,12 @@ function print()
 	 	<tr id="chqRow" name="chqRow">
 	 		<td class="labelcell" align="right" height="35" >Cheque Number<SPAN id="c1" class="leadon">*</SPAN>&nbsp;</td>
 	 		<td class="fieldcell"><html:text property="chequeNo" /></td>
-	 		<td valign="center" style="width:100px" title="Show Next Cheque Number" nowrap id="chqAvail"><A onclick=nextChqNo() href="#"><IMG id="img" height=22 src="../images/arrowright.gif" width=22 ></A></td>
+	 		<td valign="center" style="width:100px" title="Show Next Cheque Number" nowrap id="chqAvail"><A onclick=nextChqNo() href="#"><IMG id="img" height=22 src="/egi/resources/erp2/images/arrowright.gif" width=22 ></A></td>
 	 		<td class="labelcell" valign="center" style="width:100px" id="srndrChk"><html:checkbox property="isChqSurrendered" styleId="isChqSurrendered" onclick="disableNextCheque(this)"/>Is&nbsp;Surrendered&nbsp;(Y/N) </td>
 	 		<td class="labelcell" align="right" height="35" >Cheque Date<SPAN id="c2" class="leadon">*</SPAN>&nbsp;</td>
 	 		<td><table><tr>		
 			<td class="smallfieldcell" align="center" nowrap ><html:text property="chequeDate" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="DateFormat(this,this.value,event,true,'3');"/>
-			</td><td><a href="javascript:show_calendar('RemitRecoveryForm.chequeDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img nowrap id="img2" src="../images/calendar.gif" width=24 height=22 border=0></a>
+			</td><td><a href="javascript:show_calendar('RemitRecoveryForm.chequeDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img nowrap id="img2" src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 			</td>
 			</tr></table></td>
 	 	</tr>
@@ -858,11 +858,11 @@ function print()
 	 	<tr id="newChqRow" name="newChqRow" style="display:none">
 	 		<td class="labelcell" align="right" height="35" >New Cheque Number<SPAN class="leadon">*</SPAN>&nbsp;</td>
 	 		<td class="fieldcell"><html:text property="newChequeNo"/></td>
-	 		<td valign="center" style="width:100px" title="Show Next Cheque Number" nowrap id="chqAvail1"><A onclick=nextNewChqNo() href="#"><IMG height=22 src="../images/arrowright.gif" width=22 ></A></td>
+	 		<td valign="center" style="width:100px" title="Show Next Cheque Number" nowrap id="chqAvail1"><A onclick=nextNewChqNo() href="#"><IMG height=22 src="/egi/resources/erp2/images/arrowright.gif" width=22 ></A></td>
 	 		<td class="labelcell" align="right" height="35" >Cheque Date<SPAN class="leadon">*</SPAN>&nbsp;</td>
 			<td><table><tr>		
 			<td class="smallfieldcell" align="center" nowrap ><html:text property="newChequeDate" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="DateFormat(this,this.value,event,true,'3');" />
-			</td><td><a href="javascript:show_calendar('RemitRecoveryForm.newChequeDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img nowrap id="img3" src="../images/calendar.gif" width=24 height=22 border=0></a>
+			</td><td><a href="javascript:show_calendar('RemitRecoveryForm.newChequeDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img nowrap id="img3" src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 			</td>
 			</tr></table></td>
 		</tr>

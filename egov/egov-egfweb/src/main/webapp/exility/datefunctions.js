@@ -260,7 +260,7 @@ Calendar.prototype.show = function() {
 		"javascript:window.opener.Build(" +
 		"'" + this.gReturnItem + "', '" + prevMM + "', '" + prevYYYY + "', '" + this.gFormat + "'" +
 		");" +
-		"\"><img src='" + imgPath + "arrowleft.gif' border=0><\/A></TD>");
+		"\"><img src='/egi/resources/erp2/images/arrowleft.gif' border=0><\/A></TD>");
 		
 		
 	/*	<TD ALIGN=center class='normaltext'>");
@@ -271,7 +271,7 @@ Calendar.prototype.show = function() {
 		"javascript:window.opener.Build(" +
 		"'" + this.gReturnItem + "', '" + nextMM + "', '" + nextYYYY + "', '" + this.gFormat + "'" +
 		");" +
-		"\"><img src='" + imgPath + "arrowright.gif' border=0><\/A></TD>");
+		"\"><img src='/egi/resources/erp2/images/arrowright.gif' border=0><\/A></TD>");
 	/*<TD ALIGN=center>");
 	this.wwrite("[<A HREF=\"" +
 		"javascript:window.opener.Build(" +

@@ -174,17 +174,17 @@ function buttonFlush1()
 		<td colspan="6" align="middle">
 		<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td align="right"><IMG height=18 src="../images/Button_leftside.gif" width=7></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=7></td>
 			<td bgcolor="#fe0000" valign="center" nowrap><A class=buttonprimary onclick=display() href="#">Submit</A></td>
-			<td><IMG height=18 src="../images/Button_rightside.gif" width=7></td>
-			<td><IMG src="../images/spacer.gif" width=8></td>
-			<td align="right"><IMG height=18 src="../images/Button_second_leftside.gif" width=6></td>
-			<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick=buttonFlush1(); href="#">Cancel</A></td>
-			<td><IMG height=18 src="../images/Button_second_rightside.gif" width=6></td>
-			<td><IMG src="../images/spacer.gif" width=8></td>
-			<td align="right"><IMG height=18 src="../images/Button_second_leftside.gif" width=6></td>
-			<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick=window.close() href="#">Close</A></td>
-			<td><IMG height=18 src="../images/Button_second_rightside.gif" width=6></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=7></td>
+			<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=6></td>
+			<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick=buttonFlush1(); href="#">Cancel</A></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=6></td>
+			<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=6></td>
+			<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick=window.close() href="#">Close</A></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=6></td>
 		</tr>
 		</table>
 		</td>

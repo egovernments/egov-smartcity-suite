@@ -198,7 +198,7 @@
 				<span class="link">Add Account Code</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
 				<span  align="centre"></span></a>
 				<a id="helphref" name="helphref" href="#" onclick="javascript:window.open('/EGF/<%=helpUrl%>')">
-				<IMG height=20 src="<%=request.getContextPath()%>/images/help.gif" width=30></a>
+				<IMG height=20 src="/egi/resources/erp2/images/help.gif" width=30></a>
 			</td>
 			</tr>
 			</table>

@@ -2465,7 +2465,7 @@ function calculateNet(tabId)
 							href="javascript:show_calendar('DishonoredChequeForm.bankFromDate');"
 							onmouseover="window.status='Date Picker';return true;"
 							onmouseout="window.status='';return true;"><img
-								src="../images/calendar.gif" border=0>
+								src="/egi/resources/erp2/images/calendar.gif" border=0>
 						</a>
 					</td>
 				</tr>
@@ -2482,7 +2482,7 @@ function calculateNet(tabId)
 							href="javascript:show_calendar('DishonoredChequeForm.bankToDate');"
 							onmouseover="window.status='Date Picker';return true;"
 							onmouseout="window.status='';return true;"><img
-								src="../images/calendar.gif" width=24 height=22 border=0>
+								src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0>
 						</a>
 					</td>
 					<td class="labelcell">
@@ -2923,7 +2923,7 @@ function calculateNet(tabId)
 										href="javascript:show_calendar('DishonoredChequeForm.paramTxnDate');"
 										onmouseover="window.status='Date Picker';return true;"
 										onmouseout="window.status='';return true;"><img id="IMG1"
-											src="../images/calendar.gif" width=24 height=22 border=0>
+											src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0>
 									</a>
 								</td>
 								

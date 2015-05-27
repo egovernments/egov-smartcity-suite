@@ -299,7 +299,7 @@ function PageValidatorObject(){
 		var frm =  exilWindow.document.forms[0];
 		var ele;
 		var htm1 = '<a onclick="PageValidator.showCalendar(\'';
-		var htm2 = '\');" tabindex="-1" href="#"><img tabindex="-1" src="../images/calendar.gif" ></a>';
+		var htm2 = '\');" tabindex="-1" href="#"><img tabindex="-1" src="/egi/resources/erp2/images/calendar.gif" ></a>';
 		//netscape 6.2 acts crazy when we change some elements inside form.
 		//store all controls before adding calendars;
 		var eles = new Array();

@@ -200,10 +200,10 @@ t.fontSize="8pt";
 t.indent="20";
 t.searchIsRequired="true";
 
-t.addImg("main" , "main.gif");
-t.addImg("sub" , "sub.gif");
-t.addImg("accounthead","head.gif");
-t.addImg("account","account.gif");
+t.addImg("main" , "/egi/resources/erp2/images/main.gif");
+t.addImg("sub" , "/egi/resources/erp2/images/sub.gif");
+t.addImg("accounthead","/egi/resources/erp2/images/head.gif");
+t.addImg("account","/egi/resources/erp2/images/account.gif");
 //alert ('completed');
 t.display();
 window.status = 'completed';

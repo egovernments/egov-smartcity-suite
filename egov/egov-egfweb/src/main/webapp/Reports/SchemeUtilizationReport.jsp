@@ -175,12 +175,12 @@ function fillDate1(objName)
 	<td align="right" ><div align="right" class="labelCell">Date From<span class="leadon">*</span></div></td>
 	<td class=smallfieldcell >
 	<input class="datefieldinput"  name="voucherDateFrom"  id="voucherDateFrom" onkeyup="DateFormat(this,this.value,event,false,'3')"  exilMustEnter="true">
-	<A onclick="fillDate1('voucherDateFrom')" tabIndex=-1 href=#><IMG tabIndex=-1 src="../images/calendar.gif"></A>
+	<A onclick="fillDate1('voucherDateFrom')" tabIndex=-1 href=#><IMG tabIndex=-1 src="/egi/resources/erp2/images/calendar.gif"></A>
 	</td>
 	<td align="right" ><div align="right" class="labelcell">To<span class="leadon">*</span></div></td>
 	<td class=smallfieldcell>
 	<input class="datefieldinput" name="voucherDateTo"  id="voucherDateTo" onkeyup="DateFormat(this,this.value,event,false,'3')" exilMustEnter="true">
-	<A onclick="fillDate1('voucherDateTo')" tabIndex=-1 href=#><IMG tabIndex=-1 src="../images/calendar.gif"></A>
+	<A onclick="fillDate1('voucherDateTo')" tabIndex=-1 href=#><IMG tabIndex=-1 src="/egi/resources/erp2/images/calendar.gif"></A>
 	</td>
 	</tr>
 	<tr><td>&nbsp;</td></tr>

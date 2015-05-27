@@ -158,7 +158,7 @@ function createSLTextFieldFormatterForFunctionJV(prefix,suffix){
 function createSLTextFieldwithSearchBtnFormatterJV(prefix,suffix,onblurfunction, suffix2, onClickForSearch) {
 	return function(el, oRecord, oColumn, oData) {
 		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onblur='"+onblurfunction+"'/>"
-					  +" <img src='../images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' style='width:18px;'  onClick='"+onClickForSearch+"'/>";	
+					  +" <img src='/egi/resources/erp2/images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' style='width:18px;'  onClick='"+onClickForSearch+"'/>";	
 	}
 }
 
@@ -191,7 +191,7 @@ function createSLTextFieldFormatterJV(prefix,suffix,onblurfunction){
 function createSLDetailCodeTextFieldFormatterJV(prefix,suffix,onblurfunction, suffix2, onClickForSearch){
     return function(el, oRecord, oColumn, oData) {
 		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;'  autocomplete='off'  onfocus='onFocusDetailCode(this);autocompleteEntities1By20(this);' onblur='"+onblurfunction+"'/>"
-		+" <img src='../images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' style='width:15px;'  onClick='"+onClickForSearch+"'/>";
+		+" <img src='/egi/resources/erp2/images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix2+"' style='width:15px;'  onClick='"+onClickForSearch+"'/>";
 		
 	}
 }
@@ -369,7 +369,7 @@ function createcheckbox(prefix,suffix,onclickfunction){
 function createSearchImageFormatterJV(prefix, suffix, onblurfunction) {
 	return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = " <img src='../images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:20px;'  onblur='fillNeibrAfterSplitGlcode(this)'/>";
+		el.innerHTML = " <img src='/egi/resources/erp2/images/plus1.gif' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:20px;'  onblur='fillNeibrAfterSplitGlcode(this)'/>";
 	}
 }
 

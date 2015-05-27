@@ -2331,7 +2331,7 @@ function calculateNet(tabId)
 										href="javascript:show_calendar('DishonoredChequeForm.paramTxnDate');"
 										onmouseover="window.status='Date Picker';return true;"
 										onmouseout="window.status='';return true;"><img id="IMG1"
-											src="../images/calendar.gif" width=24 height=22 border=0>
+											src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0>
 									</a>
 								</td>
 								

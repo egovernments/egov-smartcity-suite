@@ -84,7 +84,7 @@ window.document.onkeydown = function(event) {
 </script>	
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
 	
-	<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="../images/bar_loader.gif"> <span id="message">Please wait....</span></div>
+	<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
 		<egovtags:breadcrumb/> 
 		<decorator:body/>
 	</body>

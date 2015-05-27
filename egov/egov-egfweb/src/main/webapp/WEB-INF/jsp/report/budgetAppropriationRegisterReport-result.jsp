@@ -155,8 +155,8 @@ function disableTheFiels() {
 	  <tr>
 		<td>
 		<div class="excelpdf">
-			<a href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generatePdf.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>PDF</a> <img align="absmiddle" src="${pageContext.request.contextPath}/images/pdf.png">
-			<a href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generateXls.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>Excel</a> <img align="absmiddle" src="${pageContext.request.contextPath}/images/excel.png">
+			<a href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generatePdf.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>PDF</a> <img align="absmiddle" src="/egi/resources/erp2/images/pdf.png">
+			<a href='${pageContext.request.contextPath}/report/budgetAppropriationRegisterReport!generateXls.action?asOnDate=<s:property value="strAsOnDate"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&budgetGroup.id=<s:property value="budgetGroup.id"/>&fund.id=<s:property value="fund.id"/>'>Excel</a> <img align="absmiddle" src="/egi/resources/erp2/images/excel.png">
 		</div>		
 		</td>
 	  </tr>

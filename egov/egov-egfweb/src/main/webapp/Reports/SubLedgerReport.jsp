@@ -299,7 +299,7 @@ function ButtonPress()
 			<td align="right"><div  valign="center" class="labelcell" >Account Code<span class="leadon">* &nbsp;</span></div></td>
 			<td class="smallfieldcell">
 				<input type="hidden" name="chartOfAccounts_id" id="chartOfAccounts_id" value="">
-				<input class="fieldinput" name="glCode1" id="glCode1" exilMustEnter="true" autocomplete="off" onkeyup="autocompletecode(this,event);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id')" ><IMG id=IMG1 onclick="openAccountCodeSearch()" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+				<input class="fieldinput" name="glCode1" id="glCode1" exilMustEnter="true" autocomplete="off" onkeyup="autocompletecode(this,event);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id')" ><IMG id=IMG1 onclick="openAccountCodeSearch()" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 			</td>
 			<td align="right"><div  valign="center" class="labelcell">Fund<span class="leadon">* &nbsp;</span></div></td>
 			<td align="left" class="smallfieldcell"> 
@@ -333,7 +333,7 @@ function ButtonPress()
 			<input class="fieldinput" type="hidden" name="accEntityText" id="accEntityText"> 
 			<input class="fieldinput" type="hidden" name="accEntityKey" id="accEntityKey">			
 			<input class="fieldinput" name="accEntityList" id="accEntityList" autocomplete="off" onblur="splitEntitiesDetailCode(this)" onfocus="onFocusDetailCode();" onkeyup="autocompleteEntities1(this,event)"/>
-			<IMG id=IMG1 onclick="openEntitySearch()" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+			<IMG id=IMG1 onclick="openEntitySearch()" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 			<input class="fieldinput"  name="entityName" id="entityName"    readonly tabIndex=-1>
 			</td>
 			
@@ -650,7 +650,7 @@ function ButtonPress()
 <div id="codescontainer"/>
 <div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
     <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
-        <img src="/EGF/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
+        <img src="/egi/resources/erp2/images/loading.gif" width="32" height="32" style="margin-right:8px;vertical-align:top;"/> Loading...
     </div>
 </div>
 </form>

@@ -182,7 +182,7 @@
                         <td class="blueborderfortd"><textarea cols="50" rows="1" style="size:50px" name='savedbudgetDetailList[<s:property value="#stat.index"/>].state.text1' ><s:property value="state.text1"/></textarea></td>
                     </s:if>
                     <s:else>
-                        <td class="blueborderfortd"><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(this);"><img src="${pageContext.request.contextPath}/images/cancel.png" border="0"/></a></td>
+                        <td class="blueborderfortd"><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(this);"><img src="/egi/resources/erp2/images/cancel.png" border="0"/></a></td>
                     </s:else>
                     <td><input type="submit" class="buttonsubmit" value="Edit" id="budgetDocUploadButton" onclick='showDocumentManager(<s:property value="#stat.index"/>);return false;' /></td>
                 </s:if>
@@ -209,7 +209,7 @@
                         <td class="blueborderfortd"><textarea cols="50" rows="1" style="size:50px" name='savedbudgetDetailList[<s:property value="#stat.index"/>].state.text1' ><s:property value="state.text1"/></textarea></td>
                     </s:if>
                     <s:else>
-                        <td class="blueborderfortd"><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(this);"><img src="${pageContext.request.contextPath}/images/cancel.png" border="0"/></a></td>
+                        <td class="blueborderfortd"><a href="#" id="<s:property value='id'/>" onclick="return deleteBudgetDetail(this);"><img src="/egi/resources/erp2/images/cancel.png" border="0"/></a></td>
                     </s:else>
                     
                     

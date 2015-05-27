@@ -2140,7 +2140,7 @@ function loadDedGlcode(obj){
 					<td >
                    <!-- <select name="contractor_name" class="combowidth2 id="contractor_name" maxlength="50" onChange="displayCode()"  exilMustEnter="true"  ></select>-->
 					<span  class=fieldcell><input class="fieldinput-left" id="contractor_name" name="contractor_name"  autocomplete="off"  onkeyup="autocompleteConList(this);" maxlength="20" style="WIDTH: 300; HEIGHT: 22" size="19"   onBlur="getRelationId()" ></span>
-					<IMG id=IMG2  onclick="openSearch(this, 'relation','')" height=22 src="../images/plus1.gif" width=25 align=top border=0 >
+					<IMG id=IMG2  onclick="openSearch(this, 'relation','')" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 >
 					<span class=smallfieldcell>
 					<input  name="contractor_code" id="contractor_code" class="accfieldinput"   readOnly  tabindex=-1></span>
                     </td>
@@ -2158,7 +2158,7 @@ function loadDedGlcode(obj){
 								<td rowspan=2><span  class=fieldcell><TEXTAREA class=narrationfieldinput
 									id=worksDetail_name name=worksDetail_name rows=1 cols=20 maxlength=250
 									exilDataType="exilAnyChar" readonly exilMustEnter="true" tabindex=-1></TEXTAREA></span></td>
-								<td><IMG id=IMG1  onclick="openSearch2(this, 'WorksDetail')" height=22  src="../images/plus1.gif" width=25 align=top border=0 tabindex=0>
+								<td><IMG id=IMG1  onclick="openSearch2(this, 'WorksDetail')" height=22  src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 tabindex=0>
 								<div  class=fieldcell><input  name="worksDetail_code" id="worksDetail_code" tabindex=-1   readOnly size="18" ></input></div>
 								<input type='hidden'  name="worksDetail_id" id="worksDetail_id"  ></input>
 								</td>
@@ -2267,7 +2267,7 @@ function loadDedGlcode(obj){
 					<td width="274" >
 						<input class="fieldinput" name="contractor_tds" id="contractor_tds" readOnly exilDataType="exilUnsignedInt">
 
-						<IMG id=IMG1 onclick=openSearch2(this) height=22 src="../images/plus1.gif" width=25 align=top border=0 >
+						<IMG id=IMG1 onclick=openSearch2(this) height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 >
 					</td>
 					<td align="right" valign="center" class="labelcell"><span align="right">TDS Amount</span>
 					</td>
@@ -2319,14 +2319,14 @@ function loadDedGlcode(obj){
                                        <input type="hidden" name="cv_fromFunctionCodeId" id="cv_fromFunctionCodeId">
                                        <input class="labelcell" size=10 name="function_code" id="function_code"  style="WIDTH: 186; HEIGHT:
                   19" value="" autocomplete="off" onkeyup="autocompletefuncName(this);"  exilDescField="cv_fromFunctionCodeId" exilDataSource="functionIdKey" onBlur="splitCoaName(this,'cv_fromFunctionCodeId');funClear(this, 'chartOfAccounts')" exilInGrid="true"><IMG   id=IMG1 onclick=openSearch1(this,'function')
-                  height=22 src="../images/plus1.gif" width=25 align=top border=0 >
+                  height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 >
 										</td>
                                         <td>
 
 
 
 
-					<input class="fieldinput-right" id="chartOfAccounts_glCode" name="chartOfAccounts_glCode"  autocomplete="off" onkeyup="autocompletecode(this);" exilDataSource="" exilDescField="chartOfAccounts_name" onBlur="splitCoaName(this,'chartOfAccounts_name')" maxlength="20" style="WIDTH: 55px; HEIGHT: 19px" size="19" exilDataType="exilAlphaNumeric" exilInGrid="true" ><IMG id=IMG1 onclick="openSearch(this, 'chartOfAccounts','')" height=22 src="../images/plus1.gif" width=25 align=top border=0  >
+					<input class="fieldinput-right" id="chartOfAccounts_glCode" name="chartOfAccounts_glCode"  autocomplete="off" onkeyup="autocompletecode(this);" exilDataSource="" exilDescField="chartOfAccounts_name" onBlur="splitCoaName(this,'chartOfAccounts_name')" maxlength="20" style="WIDTH: 55px; HEIGHT: 19px" size="19" exilDataType="exilAlphaNumeric" exilInGrid="true" ><IMG id=IMG1 onclick="openSearch(this, 'chartOfAccounts','')" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0  >
                                         </td>
         <!--(NORMAL FUNCTION and ACCOUNT CODE END)-->
 
@@ -2439,7 +2439,7 @@ function loadDedGlcode(obj){
 <!--
 <input class="fieldinput-right" id="DedchartOfAccounts_glCode" name="DedchartOfAccounts_glCode" TABINDEX="" autocomplete="off"  onkeyup="autoCompletion3(this);"  onBlur="ClearType(this);getAccName(event);"  " maxlength="20" style="WIDTH: 55px; HEIGHT: 19px" size    ="19" exilDataType="exilAlphaNumeric" exilInGrid="true"
 -->
-						<input class="fieldinput-right" id="DedchartOfAccounts_glCode" name="DedchartOfAccounts_glCode"   autocomplete="off"  exilDataSource="" exilDescField="coa_name" onkeyup="autocompleteDedCode(this);"  onBlur="splitCoaName(this,'coa_name');getNetamt();loadDedGlcode(this);" maxlength="20" style="WIDTH: 55; HEIGHT: 19" size    ="19" exilDataType="exilAlphaNumeric" exilInGrid="true"><IMG id=IMG1 onclick="openSearch(this, 'chartOfAccounts','Deduction')" height=22 src="../images/plus1.gif" width=25 align=top border=0  >
+						<input class="fieldinput-right" id="DedchartOfAccounts_glCode" name="DedchartOfAccounts_glCode"   autocomplete="off"  exilDataSource="" exilDescField="coa_name" onkeyup="autocompleteDedCode(this);"  onBlur="splitCoaName(this,'coa_name');getNetamt();loadDedGlcode(this);" maxlength="20" style="WIDTH: 55; HEIGHT: 19" size    ="19" exilDataType="exilAlphaNumeric" exilInGrid="true"><IMG id=IMG1 onclick="openSearch(this, 'chartOfAccounts','Deduction')" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0  >
                                         </td>
             <!--(FUNCTION and ACCOUNT CODE FOR DEDUCTION END)-->
 

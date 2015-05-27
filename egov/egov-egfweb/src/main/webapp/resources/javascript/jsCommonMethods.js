@@ -56,7 +56,7 @@ function topmenu(){
 	document.write("<td width='30%' height=52 valign='bottom' nowrap class='banner'><a class='footerlocallink'  onClick='gotoHomePage()' href='#'>Home</a>&nbsp;&nbsp;");
 	<!--document.write("<a  class='footerlocallink' href='#'>My Preferences</a>&nbsp; <a class='footerlocallink' href='#'>Administration</a>&nbsp;<span class='footerlocalseperator'>|</span>");-->
 	document.write("<a class='footerlocallink' href='#'>Help</a>&nbsp; <a class='footerlocallink' onClick='changePassword()' href='#'>ChangePassword</a>&nbsp;<a class='footerlocallink' onClick='logOut()' href='#'>Logout</a>");
-	document.write("<td width='9%'><div align='right'><input name='imageField2' type='image' src='../images/eGovLogo.jpg' align='top' width='80' height='60' border='0'></div></td></tr>");
+	document.write("<td width='9%'><div align='right'><input name='imageField2' type='image' src='/egi/resources/erp2/images/eGovLogo.jpg' align='top' width='80' height='60' border='0'></div></td></tr>");
 	document.write("</table>");
 	
 }
@@ -74,10 +74,10 @@ function leftmenu(){
 function bottommenu()
 {
 	document.write("<table cellspacing=0 cellpadding=0 width='100%' border=0>");
-	document.write("<tr><td background='../images/box_02.gif' colspan='3'><img src='../images/spacer.gif'></td></tr>");
-	document.write("<tr><td width='1%' rowspan='2'><img src='../images/spacer.gif' border='0'></td><td width='84%' height=22 rowspan='2'>");
+	document.write("<tr><td background='/egi/resources/erp2/images/box_02.gif' colspan='3'><img src='/egi/resources/erp2/images/spacer.gif'></td></tr>");
+	document.write("<tr><td width='1%' rowspan='2'><img src='/egi/resources/erp2/images/spacer.gif' border='0'></td><td width='84%' height=22 rowspan='2'>");
 	document.write("&nbsp;&nbsp;<span class='footerglobaltext'>&copy; Copyright 2004. All rights reserved.</span></td>");
-	document.write("<td width='15%' height=40><input name='imageField' type='image' src='../images/Exilant.jpg' width='113' height='18' border='0'></td>");
+	document.write("<td width='15%' height=40><input name='imageField' type='image' src='/egi/resources/erp2/images/Exilant.jpg' width='113' height='18' border='0'></td>");
 	document.write("</tr>");
 	document.write("</table>");
 }
@@ -261,7 +261,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(2);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Journal Voucher</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(2);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Journal Voucher</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 				y.id = 'menutabsback';
 			
@@ -277,7 +277,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(3);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bank Receipt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(3);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bank Receipt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 			
 			
@@ -304,7 +304,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(4);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bank</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(4);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bank</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 			
 			
@@ -319,7 +319,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(5);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(5);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 				
 			
@@ -334,7 +334,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(6);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Role</a>&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(6);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Role</a>&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 			
 
@@ -361,7 +361,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(7);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(7);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 			
 			//y.innerHTML='<a href="301 Employee Search.htm" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search</a>';
@@ -377,7 +377,7 @@ function navigateMenu(chkFlag) {
 				}
 			else
 				{
-					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(8);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resume Upload</a>&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="../images/check.gif" width="12" height="12" border="0">';
+					y.innerHTML=y.innerHTML='<a onClick="navigateMenu(8);" href="#" class="tablink">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resume Upload</a>&nbsp;&nbsp;&nbsp;<input name="imageField" type="image" src="/egi/resources/erp2/images/check.gif" width="12" height="12" border="0">';
 				}
 
 

@@ -83,14 +83,14 @@ LOGGER.info("userName"+userName);
       <td vAlign="center"  align="left" width="107">
           <p align="center">
           <a  id="imaID" name="imaID" href="//www.egovernments.org">
-          <img src="<c:url value='/images/egov-logo.gif'/>" width="97" height="97" >
+          <img src="<c:url value='/egi/resources/erp2/images/egov-logo.gif'/>" width="97" height="97" >
           </a>
       </td>
       <td  width="520" id="cityID" align="center">
         <font size="6" id="cityFontID" >City Administration </font>
       </td>
       <td align="middle"  width="124">
-         <a id="orgID" name="orgID"href="//www.egovernments.org"><img src="<c:url value='/images/egov-logo.gif'/>"  width="97" height="97"  id="logoID"> </a></td>
+         <a id="orgID" name="orgID"href="//www.egovernments.org"><img src="<c:url value='/egi/resources/erp2/images/egov-logo.gif'/>"  width="97" height="97"  id="logoID"> </a></td>
 <td  height="102" width="1"> </td>
     </tr>
 	

@@ -66,7 +66,7 @@
 			    <td class="bluebox">
 			    	<s:hidden name="chartofaccountsByPayglcodeid.id" id="chartofaccountsByPayglcodeid.id"/>
 			    	<s:textfield id="chartofaccountsByPayglcodeid.name" name="chartofaccountsByPayglcodeid.name" value="%{chartofaccountsByPayglcodeid.name}"/>
-			    	<IMG id=IMG1 onclick="openSearch(this,'12')" height=22 src="../images/plus1.gif" width=25 align=top border=0 >
+			    	<IMG id=IMG1 onclick="openSearch(this,'12')" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0 >
 			    </td>
 				<td class="bluebox" width="20%"><strong><s:text name="fund.active"/></strong></td>
 			    <td class="bluebox">

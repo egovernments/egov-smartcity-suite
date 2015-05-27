@@ -367,7 +367,7 @@ function createHeader(userName) {
 		document.write("<a href='userpreferences.htm'>");
 	}
 
-	document.write("<img src='images/preferences.gif' border='0' alt='User Preferences'></a><a href=javascript:helpWindow('demo-script.htm')><img src='images/help.gif' width='41' height='25' border='0' alt='Online Services'></a><a href=\"javascript:resetState();window.location.href='../logout.jsp';\"><img src='images/logout.gif' width='54' height='25' border='0' alt='Logout'></a></td>");
+	document.write("<img src='images/preferences.gif' border='0' alt='User Preferences'></a><a href=javascript:helpWindow('demo-script.htm')><img src='/egi/resources/erp2/images/help.gif' width='41' height='25' border='0' alt='Online Services'></a><a href=\"javascript:resetState();window.location.href='../logout.jsp';\"><img src='images/logout.gif' width='54' height='25' border='0' alt='Logout'></a></td>");
 
 	document.write("    		</tr>");
 	document.write("    	</table>");

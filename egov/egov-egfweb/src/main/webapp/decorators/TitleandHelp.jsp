@@ -241,7 +241,7 @@ window.document.onkeydown = function(event) {
 			<td class="tableHeader" valign="center" colspan="3"><span ><%=name%></span></td>
 			<td class="tableHeader" valign="center" align="right" >
 				<a id="helphref" name="helphref" href="#" onclick="javascript:window.open('/EGF/<%=helpUrl%>')">
-				<IMG height=20 src="<%=request.getContextPath()%>/images/help.gif" width=30></a>
+				<IMG height=20 src="/egi/resources/erp2/images/help.gif" width=30></a>
 			</td>
 			</tr>
 			</table>

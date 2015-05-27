@@ -566,17 +566,17 @@
 <td class="fieldcell" align="left"><html:text  style=";text-align:right;padding-right:2px;" property="balAsPerStatement"  /> </td>
 <td class="labelcell" align="right">Bank&nbsp;Statement&nbsp;date<SPAN class="leadon">*</SPAN></td>
 <td class="smallfieldcell" align="left"><html:text  property="bankStatementDate" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-<a href="javascript:show_calendar('bankReconciliationForm.bankStatementDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif"  border=0></a>
+<a href="javascript:show_calendar('bankReconciliationForm.bankStatementDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif"  border=0></a>
 </td>
 </tr>
 <tr >
 <td class="labelcell" align="right">Reconciliation&nbsp;From&nbsp;Date</td>
 <td class="smallfieldcell" align="left"><html:text  property="recFromDate"  onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	<a href="javascript:show_calendar('bankReconciliationForm.recFromDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif" width=24 height=22 border=0></a>
+	<a href="javascript:show_calendar('bankReconciliationForm.recFromDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 </td>
 <td class="labelcell" align="right">Reconciliation&nbsp;To&nbsp;Date<SPAN class="leadon">*</SPAN></td>
 <td class="smallfieldcell" align="left"><html:text  property="recToDate"  onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-<a href="javascript:show_calendar('bankReconciliationForm.recToDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="../images/calendar.gif" width=24 height=22 border=0></a>
+<a href="javascript:show_calendar('bankReconciliationForm.recToDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.gif" width=24 height=22 border=0></a>
 </td>
 </tr>
 <tr>

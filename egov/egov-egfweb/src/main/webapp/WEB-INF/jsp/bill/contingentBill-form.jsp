@@ -98,7 +98,7 @@ Show/Hide Details</a></div>
 				<div  id="entitycode">Entity Code:</div> </td>
 							<td class="greybox" ><span class="greybox"> <input type="text" name="detailCode"  id="detailCode"  autocomplete='off' onblur="splitEntities(this)">
 							</span>
-							<span id="genricimage"><img src="../images/plus1.gif"   onclick="openSearchWindow(this, 'subledger');" ></span>&nbsp;&nbsp;
+							<span id="genricimage"><img src="/egi/resources/erp2/images/plus1.gif"   onclick="openSearchWindow(this, 'subledger');" ></span>&nbsp;&nbsp;
 							</td>
 							<td colspan="2" class="greybox"><input type="text"  id="detailName" name="detailName" size="45"  />
 							<input type="hidden" id="detailKey" name="detailKey"/>

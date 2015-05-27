@@ -52,7 +52,7 @@
                        
                         <td class=fieldcelldesc >
                         <input type="hidden" name="functionCodeId" id="functionCodeId" >
-                        <input type="text" styleClass="fieldinputlarge"  id="functionCode" name="functionCode"  value=""  onkeyup="autocompletecodeFunction(this);"   onblur="fillNeibrAfterSplitFunction(this,'functionCodeId')" /><IMG   id=IMG1 onclick=openSearch1(this,'functionCodeId') src="../images/plus1.gif"  >
+                        <input type="text" styleClass="fieldinputlarge"  id="functionCode" name="functionCode"  value=""  onkeyup="autocompletecodeFunction(this);"   onblur="fillNeibrAfterSplitFunction(this,'functionCodeId')" /><IMG   id=IMG1 onclick=openSearch1(this,'functionCodeId') src="/egi/resources/erp2/images/plus1.gif"  >
 						</td><div id="codescontainer"></div>
 	<td align="right"><div align="right" valign="center" class="labelcell" id="filedLevel">Field &nbsp;</div></td>
 		<td align="left" width="260" class="smallfieldcell">

@@ -76,7 +76,7 @@ System.out.println("citynamelocal"+citynamelocal);
         <font size="6" id="cityFontID" >City Administration </font>
       </td>
       <td align="middle"  width="124">
-         <a id="orgID" name="orgID"href="//www.egovernments.org"><img src="<c:url value='/images/egov-logo.gif'/>"  width="97" height="97"  id="logoID"> </a></td>
+         <a id="orgID" name="orgID"href="//www.egovernments.org"><img src="<c:url value='/egi/resources/erp2/images/egov-logo.gif'/>"  width="97" height="97"  id="logoID"> </a></td>
 <td  height="102" width="1"> </td>
     </tr>
 	

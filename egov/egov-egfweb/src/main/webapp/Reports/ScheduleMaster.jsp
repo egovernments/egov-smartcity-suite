@@ -590,25 +590,25 @@ function getAllAcctCodes(obj)
 		<!-- Button Starts-->
 		<table border="0" cellpadding="0" cellspacing="0" name="editable" id="editable">
 		<!--<tr>
-			<td align="right" id="savnewI1"><IMG height=18 src="../images/Button_leftside.gif" width=7></td>
+			<td align="right" id="savnewI1"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=7></td>
 			<td bgcolor="#fe0000" valign="center" nowrap id="savnewI2"><A class=buttonprimary onclick="ButtonPress('savenew')" href="#">Save & New</A></td>
-			<td id="savnewI3"><IMG height=18 src="../images/Button_rightside.gif" width=7></td>
-			<td id="savnewI4"><IMG src="../images/spacer.gif" width=8></td>
+			<td id="savnewI3"><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=7></td>
+			<td id="savnewI4"><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 			
-			<td align="right"><IMG height=18 src="../images/Button_leftside.gif" width=6></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=6></td>
 			<td bgcolor="#fe0000" valign="center" nowrap ><A class=buttonprimary onclick="ButtonPress('saveclose');" href="#">Save & Close</A></td>
-			<td><IMG height=18 src="../images/Button_rightside.gif" width=6></td>						
-			<td><IMG src="../images/spacer.gif" width=8></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=6></td>						
+			<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 			
-			<td align="right" id="cancelI1"><IMG height=18 src="../images/Button_leftside.gif" width=6></td>
+			<td align="right" id="cancelI1"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=6></td>
 			<td bgcolor="#fe0000" valign="center" nowrap id="cancelI2" ><A class=buttonprimary onclick=onClickCancel() href="#">Cancel</A></td>
-			<td id="cancelI3"><IMG height=18 src="../images/Button_rightside.gif" width=6></td>
-			<td id="cancelI4"><IMG src="../images/spacer.gif" width=8></td>
+			<td id="cancelI3"><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=6></td>
+			<td id="cancelI4"><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 			
-			<td align="right"><IMG height=18 src="../images/Button_leftside.gif" width=8></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=8></td>
 			<td bgcolor="#fe0000" valign="center" nowrap ><A class=buttonprimary onclick=window.close() href="#">Close</A></td>
-			<td><IMG height=18 src="../images/Button_rightside.gif" width=8></td>
-			<td><IMG src="../images/spacer.gif" width=8></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=8></td>
+			<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 		</tr>-->
 		<tr>
 				<td width=100% align=center>
@@ -622,10 +622,10 @@ function getAllAcctCodes(obj)
 		 </table>  
 		 <table border="0" cellpadding="0" cellspacing="0" name="view" id="view" style="Display:none">
 		 <!-- <tr>
-			<td align="right"><IMG height=18 src="../images/Button_leftside.gif" width=8></td>
+			<td align="right"><IMG height=18 src="/egi/resources/erp2/images/Button_leftside.gif" width=8></td>
 			<td bgcolor="#fe0000" valign="center" nowrap ><A class=buttonprimary onclick=window.close() href="#">Close</A></td>
-			<td><IMG height=18 src="../images/Button_rightside.gif" width=8></td>
-			<td><IMG src="../images/spacer.gif" width=8></td>
+			<td><IMG height=18 src="/egi/resources/erp2/images/Button_rightside.gif" width=8></td>
+			<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 		 </tr>-->
 		 <tr>
 				<td width=100% align=center>

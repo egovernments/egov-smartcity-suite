@@ -449,12 +449,12 @@ function buttonPrint()
 					<td><div align="right" valign="center" class="normaltext" >From Account Code</div></td>
 					<td>
 						<input type="hidden" name="chartOfAccounts_id1" id="chartOfAccounts_id1">
-						<input class="fieldinput" name="glCode1" id="glCode1"  autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id1');"><IMG id=IMG1 onclick="openSearch('chartofaccounts',1);" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+						<input class="fieldinput" name="glCode1" id="glCode1"  autocomplete="off"   onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id1');"><IMG id=IMG1 onclick="openSearch('chartofaccounts',1);" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 					</td>
 					<td><div align="right" valign="center" class="normaltext" >To Account Code</div></td>
 					<td>
 						<input type="hidden" name="chartOfAccounts_id2" id="chartOfAccounts_id2">
-						<input class="fieldinput" name="glCode2" id="glCode2"  onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id2');"><IMG id=IMG1 onclick="openSearch('chartofaccounts',2);" height=22 src="../images/plus1.gif" width=25 align=top border=0>
+						<input class="fieldinput" name="glCode2" id="glCode2"  onkeyup="autocompletecode(this);" onblur="fillNeibrAfterSplit(this,'chartOfAccounts_id2');"><IMG id=IMG1 onclick="openSearch('chartofaccounts',2);" height=22 src="/egi/resources/erp2/images/plus1.gif" width=25 align=top border=0>
 					</td>
 
 		</tr>
@@ -514,10 +514,10 @@ function buttonPrint()
 						<td ><div align="left" valign="center" class="normaltext" ><input type="submit" value = "Print Preview" name = "print" class="normaltext" onclick=buttonPrintPreview()></td>				
 					
 					<!-- Print Button start 
-						<td align="right"><IMG height=16 src="../images/Button_second_leftside.gif" width=8></td>
-						<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick="pageSetup();buttonPrint()" href="#">Print</A></td>
-						<td><IMG height=16 src="../images/Button_second_rightside.gif" width=8></td>
-						<td><IMG src="../images/spacer.gif" width=8></td>
+						<td align="right"><IMG height=16 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=8></td>
+						<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick="pageSetup();buttonPrint()" href="#">Print</A></td>
+						<td><IMG height=16 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=8></td>
+						<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 					 Print end-->					
 					
 						<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td ></td><td></td><td></td><td ></td><td></td><td></td>
@@ -537,10 +537,10 @@ function buttonPrint()
 						<td ><div align="left" valign="center" class="normaltext" ><input type="submit" value = "Print" name = "print"class="normaltext" onclick=pageSetup();buttonPrint()></td>				
 					
 					<!-- Print Button start 
-						<td align="right"><IMG height=16 src="../images/Button_second_leftside.gif" width=8></td>
-						<td bgcolor="#ffffff" valign="center" nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick="pageSetup();buttonPrint()" href="#">Print</A></td>
-						<td><IMG height=16 src="../images/Button_second_rightside.gif" width=8></td>
-						<td><IMG src="../images/spacer.gif" width=8></td>
+						<td align="right"><IMG height=16 src="/egi/resources/erp2/images/Button_second_leftside.gif" width=8></td>
+						<td bgcolor="#ffffff" valign="center" nowrap background="/egi/resources/erp2/images/Button_second_middle.gif"><A class=buttonsecondary onclick="pageSetup();buttonPrint()" href="#">Print</A></td>
+						<td><IMG height=16 src="/egi/resources/erp2/images/Button_second_rightside.gif" width=8></td>
+						<td><IMG src="/egi/resources/erp2/images/spacer.gif" width=8></td>
 					 Print end-->					
 					
 						<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td ></td><td></td><td></td><td ></td><td></td><td></td>

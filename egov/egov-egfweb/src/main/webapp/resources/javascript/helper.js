@@ -128,7 +128,7 @@ function computeAvailable(prefix,index){
 
 function createDeleteImageFormatter(baseURL,delteRowFunction){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/images/cancel.png";
+	    var imageURL="/egi/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" name="egov_yui_delete_image" id="egov_yui_delete_image" alt="Delete" onclick="'+delteRowFunction+'"  src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -137,7 +137,7 @@ function createDeleteImageFormatter(baseURL,delteRowFunction){
 
 function createAddImageFormatter(baseURL,addRowFunction){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/images/add.png";
+	    var imageURL="/egi/resources/erp2/images/add.png";
 	    markup='<img height="16" border="0" width="16" alt="Add" name="egov_yui_add_image" id="egov_yui_add_image" onclick="'+addRowFunction+'" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}
@@ -146,7 +146,7 @@ function createAddImageFormatter(baseURL,addRowFunction){
 
 function createDeleteImageFormatterEmpty(baseURL,delteRowFunction){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/images/cancel.png";
+	    var imageURL="/egi/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" name="egov_yui_delete_image" id="egov_yui_delete_image" alt="Delete"   src="'+imageURL+'" disabled/>';
 	    el.innerHTML = markup;
 	}
@@ -155,7 +155,7 @@ function createDeleteImageFormatterEmpty(baseURL,delteRowFunction){
 
 function createAddImageFormatterEmpty(baseURL,addRowFunction){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL=baseURL+"/images/add.png";
+	    var imageURL="/egi/resources/erp2/images/add.png";
 	    markup='<img height="16" border="0" width="16" alt="Add" name="egov_yui_add_image" id="egov_yui_add_image" src="'+imageURL+'" disabled/>'
 	    el.innerHTML = markup;
 	}
