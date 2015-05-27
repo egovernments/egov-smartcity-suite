@@ -74,7 +74,7 @@
 	<bean id="collectionCommon" class="org.egov.collection.utils.CollectionCommon" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl" /> -->
-		<property name="boundaryDAO" ref="boundaryDAO" />
+		<!-- <property name="boundaryDAO" ref="boundaryDAO" />-->
 		<property name="reportService" ref="reportService" />
 		<property name="receiptHeaderService" ref="receiptHeaderService" />
 		<property name="collectionsUtil" ref="collectionsUtil" />

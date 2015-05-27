@@ -85,14 +85,15 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class CollectionCommon {
@@ -103,18 +104,11 @@ public class CollectionCommon {
     private ReceiptHeaderService receiptHeaderService;
 
     private CommonsServiceImpl commonsServiceImpl;
-    private BoundaryDAO boundaryDAO;
+    @Autowired
+    private BoundaryService boundaryService; 
     private EgovCommon egovCommon;
     private CollectionsUtil collectionsUtil;
     private FinancialsUtil financialsUtil;
-
-    /**
-     * @param boundaryDao
-     *            the boundaryDao to set
-     */
-    public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-        this.boundaryDAO = boundaryDAO;
-    }
 
     /**
      * 
@@ -327,7 +321,7 @@ public class CollectionCommon {
                                 .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),billPayee.getPayeeName(),billPayee.getPayeeAddress());
 
-                Boundary boundary = boundaryDAO.getBoundary(Long.valueOf(billDetail.getBoundaryNum()), billDetail
+                Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(Long.valueOf(billDetail.getBoundaryNum()), billDetail
                         .getBoundaryType(), CollectionConstants.BOUNDARY_HIER_CODE_ADMIN);
 
                 Functionary functionary = (Functionary) persistenceService.findByNamedQuery(
