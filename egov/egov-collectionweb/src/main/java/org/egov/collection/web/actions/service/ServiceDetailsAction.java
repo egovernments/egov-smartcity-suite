@@ -67,6 +67,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.models.ServiceAccountDetails;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
@@ -106,6 +107,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 	private List<Long> departmentList = new ArrayList<Long>(); 
 	private List<ServiceDetails> serviceList;
 	private Boolean isVoucherApproved = Boolean.FALSE;
+	@Autowired
+	private DepartmentService departmentService;
 	
 	public ServiceDetailsAction(){
 		
@@ -146,20 +149,18 @@ public class ServiceDetailsAction extends BaseFormAction {
 			ServiceCategory category = serviceCategoryService.findByCode(serviceDetails.getServiceCategory().getCode());
 			serviceDetails.setServiceCategory(category);
 		} 
-		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-		
-		addDropdownData("departmentList", masterCache.get("egi-department"));
-		addDropdownData("functionaryList", masterCache.get("egi-functionary"));
-		addDropdownData("fundList",  masterCache.get("egi-fund"));
-		addDropdownData("fundsourceList", masterCache.get("egi-fundSource"));
-		addDropdownData("functionList", masterCache.get("egi-function"));
+		addDropdownData("departmentList", departmentService.getAllDepartments());
+		addDropdownData("functionaryList", getPersistenceService().findAllBy("from Functionary where isactive=1 order by upper(name)"));
+		addDropdownData("fundList", getPersistenceService().findAllBy("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)"));
+		addDropdownData("fundsourceList", getPersistenceService().findAllBy("from Fundsource where isActive='1' order by upper(name)"));
+		addDropdownData("functionList", getPersistenceService().findAllBy("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)"));
 		if( null != serviceDetails.getFund() && serviceDetails.getFund().getId() != -1){
 			addDropdownData("schemeList", getPersistenceService().findAllBy(" from Scheme where fund.id=?", serviceDetails.getFund().getId()));
 		}else{
 			addDropdownData("schemeList",  Collections.EMPTY_LIST );
 		}
 		if(null != serviceDetails.getScheme() && serviceDetails.getScheme().getId() != -1 ){
-			addDropdownData("subschemeList", getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", serviceDetails.getScheme().getId()));
+			addDropdownData("subschemeList", getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1'order by name", serviceDetails.getScheme().getId()));
 		}else{
 			addDropdownData("subschemeList", Collections.EMPTY_LIST);
 		}

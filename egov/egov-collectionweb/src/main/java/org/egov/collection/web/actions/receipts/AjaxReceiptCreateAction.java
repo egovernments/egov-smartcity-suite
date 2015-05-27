@@ -83,6 +83,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction{
 	private String value;
 	private List<EntityType> entityList;
 	private static final String accountDetailTypeQuery= " from Accountdetailtype where id=?";
+	private List<Scheme>  schemeList;
     private List<SubScheme> subSchemes;
     private List<ServiceDetails> serviceList;
     private List<ServiceAccountDetails> accountDetails;
@@ -380,16 +381,17 @@ public class AjaxReceiptCreateAction extends BaseFormAction{
 
 	
 
+	@SuppressWarnings("unchecked")
 	@Action(value = "/ajaxReceiptCreate-ajaxLoadSchemes")
 	public String ajaxLoadSchemes()
 	{
 		
 		Integer fundId = Integer.valueOf(parameters.get("fundId")[0]);
 		if (null == fundId || fundId == -1) {
-			getPersistenceService().findAllBy(
+			schemeList = getPersistenceService().findAllBy(
 					" from Scheme where fund.id=? and isActive=1 order by name", -1);
 		} else {
-			getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=1 order by name",fundId);
+			schemeList= getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive='1' order by name",fundId);
 		}
 		
 		return "schemeList";
@@ -400,7 +402,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction{
 	{
 		Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
 		if(null != schemeId && schemeId !=-1){
-			subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", schemeId);
+			subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name", schemeId);
 			
 		}else{
 			subSchemes = Collections.EMPTY_LIST;
@@ -515,7 +517,12 @@ public class AjaxReceiptCreateAction extends BaseFormAction{
 		this.value = value;
 	}
 
-    public void setSchemeList(List<Scheme> schemeList) {
+	public List<Scheme> getSchemeList() {
+		return schemeList;
+	}
+
+	public void setSchemeList(List<Scheme> schemeList) {
+		this.schemeList = schemeList;
 	}
 
 	public List<SubScheme> getSubSchemes() {

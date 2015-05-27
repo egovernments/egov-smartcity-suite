@@ -47,11 +47,11 @@
         <%@ include file="/includes/meta.jsp" %>
         <title>eGov  - <decorator:title/> </title>
 
-        <!-- <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/css/egov.css'/>" />
-      	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
-	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" /> -->
-	<link rel="stylesheet" type="text/css" href="/collection/css/commonegov.css"/>
-	<link rel="stylesheet" type="text/css" href="/collection/css/collections.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="/egi/css/egov.css" />
+   	<link rel="stylesheet" type="text/css" href="/egi/commonyui/build/reset/reset.css" />
+	<link rel="stylesheet" type="text/css" href="/egi/commonyui/build/fonts/fonts.css" />
+	<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 	
@@ -69,12 +69,11 @@
 	<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/js/helper.js' context='/collection'/>"></script>
-	
-	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.4.custom.css' context='/egi'/>" />
-    <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-1.7.2.min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="/egi/javascript/jquery/jquery-1.7.2.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
     <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
-    <script type="text/javascript" src="<c:url value='/javascript/jquery/ajax-script.js' context='/egi'/>"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js"></script>
     
     <decorator:head/>
     </head>

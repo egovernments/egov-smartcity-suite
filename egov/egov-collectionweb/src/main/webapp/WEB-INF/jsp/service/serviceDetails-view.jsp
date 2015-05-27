@@ -40,7 +40,7 @@
 <html>
 <head>
  <meta http-equiv="Pragma" content="no-cache"/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/finAccountsTable.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/finAccountsTable.js"></script>
 <script type="text/javascript">
 function onBodyLoad(){
 if(document.getElementById('voucherCreation').checked==false){
