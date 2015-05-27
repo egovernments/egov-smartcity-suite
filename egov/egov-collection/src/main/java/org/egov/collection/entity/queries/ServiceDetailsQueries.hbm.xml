@@ -61,7 +61,7 @@
 	<![CDATA[select a from Accountdetailkey a where a.detailkey=? and a.accountdetailtype.id=?]]></query>
 	
 	<query name="getallDepartment">
-	<![CDATA[select d from  Department d order by deptName]]></query>
+	<![CDATA[select d from  Department d order by name]]></query>
 	
 	<query name="getallFunction">
 	<![CDATA[select f from  CFunction f where f.isActive=1 and f.isNotLeaf=0  order by f.name]]></query>

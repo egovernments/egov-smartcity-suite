@@ -230,9 +230,9 @@ public class ChallanAction extends BaseFormAction {
 	@Action(value="/receipts/challan-newform",results = { @Result(name = NEW,type="redirect") })
 	public String newform(){
 		//addDropdownData("designationMasterList",collectionsUtil.
-				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
 		addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-				collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				collectionsUtil.getLoggedInUser(),receiptHeader));
 		return NEW;
 	}
 	
@@ -250,7 +250,7 @@ public class ChallanAction extends BaseFormAction {
 		if(!actionName.equals(CollectionConstants.WF_ACTION_NAME_REJECT_CHALLAN)){
 			if(getPositionUser()==null || getPositionUser()==-1) {
 				position=collectionsUtil.getPositionOfUser(
-						collectionsUtil.getLoggedInUser(getSession()));
+						collectionsUtil.getLoggedInUser());
 			} else {
 				position=collectionsUtil.getPositionById(positionUser);
 			}
@@ -319,9 +319,9 @@ public class ChallanAction extends BaseFormAction {
 		errors.clear();
 		
 		//addDropdownData("designationMasterList",collectionsUtil.
-				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
 		addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-				collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				collectionsUtil.getLoggedInUser(),receiptHeader));
 		
 		populateAndPersistChallanReceipt();
 		
@@ -355,9 +355,9 @@ public class ChallanAction extends BaseFormAction {
 					Long.valueOf(challanId));
 		}
 		//addDropdownData("designationMasterList",collectionsUtil.
-				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
 		addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-				collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
+				collectionsUtil.getLoggedInUser(),receiptHeader));
 		loadReceiptDetails();
 		return VIEW;
 	}
@@ -390,7 +390,7 @@ public class ChallanAction extends BaseFormAction {
 		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
-		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser(getSession()));
+		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
 		receiptHeader.setCreatedDate(new DateTime());
 		
 		if(setInstrument){
@@ -782,7 +782,7 @@ public class ChallanAction extends BaseFormAction {
 			
 		if(receiptHeader.getChallan().getCreatedBy()==null){
 			receiptHeader.getChallan().setCreatedBy(
-					collectionsUtil.getLoggedInUser(getSession()));
+					collectionsUtil.getLoggedInUser());
 		}
 			
 		receiptHeader.getChallan().setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
@@ -1000,7 +1000,7 @@ public class ChallanAction extends BaseFormAction {
 	 */
 	private void setCollectionModesNotAllowed() {
 		List<String> modesNotAllowed = collectionsUtil.getCollectionModesNotAllowed(
-				collectionsUtil.getLoggedInUser(getSession()));
+				collectionsUtil.getLoggedInUser());
 		
 		if(modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH)){
 			setCashAllowed(Boolean.FALSE);

@@ -48,7 +48,6 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
 		<property name="scriptService" ref="scriptService" />
-		<property name="genericDao" ref="genericDao" />
 		<property name="beanProvider" ref="beanProvider" />
 		<property name="eisCommonsService" ref="eisCommonsService" />
 		<!-- <property name="searchPositionService" ref="searchPositionService" /> -->

@@ -766,7 +766,7 @@ public class FileUploadAction extends BaseFormAction{
 		ReceiptHeader receiptHeader = populateAndPersistChallanReceipt(receipt,
 				functionName);
 		Position position = collectionsUtil.getPositionOfUser(collectionsUtil
-				.getLoggedInUser(getSession()));
+				.getLoggedInUser());
 		challanService.workflowtransition(receiptHeader.getChallan(), position,
 				CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN,
 				"Challan Upload-Phase1");
@@ -849,7 +849,7 @@ public class FileUploadAction extends BaseFormAction{
 			
 		if(receiptHeader.getChallan().getCreatedBy()==null){
 			receiptHeader.getChallan().setCreatedBy(
-					collectionsUtil.getLoggedInUser(getSession()));
+					collectionsUtil.getLoggedInUser());
 		}
 			
 		receiptHeader.getChallan().setStatus(collectionsUtil.getEgwStatusForModuleAndCode(
@@ -919,7 +919,7 @@ public class FileUploadAction extends BaseFormAction{
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 		
-		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser(getSession()));
+		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
 		receiptHeader.setCreatedDate(receiptHeader.getManualreceiptdate());
 		if(setInstrument){
 			receiptInstrList=populateInstrumentDetails(input,nextRecords);
@@ -1281,7 +1281,7 @@ public class FileUploadAction extends BaseFormAction{
 		challan.setChallanDate( new DateTime(date));
 		challan.setChallanNumber(inputArray[0]);
 		challan.setReceiptHeader(header);
-		challan.setLastModifiedBy(collectionsUtil.getLoggedInUser(getSession()));
+		challan.setLastModifiedBy(collectionsUtil.getLoggedInUser());
 		challan.setLastModifiedDate(new DateTime());
 		
 		return challan;

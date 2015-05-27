@@ -39,9 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import static org.egov.collection.constants.CollectionConstants.RCPT_CANCEL;
-import static org.egov.collection.constants.CollectionConstants.RCPT_CREATE;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,8 +54,11 @@ import java.util.Set;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
@@ -69,6 +69,7 @@ import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.ServiceCategoryService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -90,6 +91,7 @@ import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
@@ -100,12 +102,20 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Namespace("/receipts")
+@ResultPath("/WEB-INF/jsp/")
+@Results({
+    @Result(name=ReceiptAction.NEW,location="receipts/receipt-new.jsp")  ,
+    @Result(name=ReceiptAction.EDIT,location="receipts/receipt-edit.jsp"),
+    @Result(name=ReceiptAction.INDEX, location="receipts/receipt-index.jsp")
+  })
 public class ReceiptAction extends BaseFormAction {
 	private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
 	private static final Logger LOGGER = Logger.getLogger(ReceiptAction.class);
@@ -244,8 +254,9 @@ public class ReceiptAction extends BaseFormAction {
 	private Boolean manualReceiptNumberAndDateReq = Boolean.FALSE;
 
 	private Boolean receiptBulkUpload = Boolean.FALSE;
-
-	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
+	
+	@Autowired
+	private ServiceCategoryService serviceCategoryService;
 
 	private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
@@ -256,8 +267,7 @@ public class ReceiptAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		super.prepare();
-
-		setReceiptCreatedByCounterOperator(collectionsUtil.getLoggedInUser(getSession()));
+		setReceiptCreatedByCounterOperator(collectionsUtil.getLoggedInUser());
 		// populates model when request is from the billing system
 		if (getCollectXML() != null && !getCollectXML().equals("")) {
 			String decodedCollectXML = java.net.URLDecoder.decode(getCollectXML());
@@ -317,7 +327,7 @@ public class ReceiptAction extends BaseFormAction {
 				addActionError(getText("billreceipt.error.improperbilldata"));
 			}
 		}
-		addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+		addDropdownData("serviceCategoryList", serviceCategoryService.getAllServiceCategoriesOrderByCode());
 		if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1) {
 			addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
 					service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
@@ -569,7 +579,7 @@ public class ReceiptAction extends BaseFormAction {
 		return receiptDetail;
 	}
 
-	@Action(value="/receipts/receipt-newform",results = { @Result(name = NEW,type="redirect")})
+	@Action(value="/receipts/receipt-newform")
 	public String newform() {
 		String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MANUALRECEIPTINFOREQUIRED);
@@ -822,7 +832,7 @@ public class ReceiptAction extends BaseFormAction {
 						// it set both createdBy and createdDate with
 						// currentDate.
 						// Thus overridding the manualReceiptDate set above
-						receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser(getSession()));
+						receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
 						receiptHeader.setManualreceiptdate(manualReceiptDate);
 						receiptHeader.setVoucherDate(manualReceiptDate);
 					}
@@ -1946,14 +1956,6 @@ public class ReceiptAction extends BaseFormAction {
 
 	public void setInstrumenttotal(BigDecimal instrumenttotal) {
 		this.instrumenttotal = instrumenttotal;
-	}
-
-	public PersistenceService<ServiceCategory, Long> getServiceCategoryService() {
-		return serviceCategoryService;
-	}
-
-	public void setServiceCategoryService(PersistenceService<ServiceCategory, Long> serviceCategoryService) {
-		this.serviceCategoryService = serviceCategoryService;
 	}
 
 	public void setServiceDetailsService(PersistenceService<ServiceDetails, Long> serviceDetailsService) {

@@ -236,7 +236,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 */
 	public String submissionReport() {
 		Map<String, Object> session = getSession();
-		User user = collectionsUtil.getLoggedInUser(getSession());
+		User user = collectionsUtil.getLoggedInUser();
 
 		Date today = ReportUtil.today();
 		critParams.put(EGOV_FROM_DATE, today);

@@ -100,7 +100,7 @@ public class BankRemittanceAction extends BaseFormAction{
 	@Action(value="/receipts/bankRemittance-list", results = { @Result(name = NEW,type="redirect") })
 	public String list() {
 		long startTimeMillis = System.currentTimeMillis();
-		User user=collectionsUtil.getLoggedInUser(getSession());
+		User user=collectionsUtil.getLoggedInUser();
 		
 		StringBuilder jurValuesId = new StringBuilder();
 		/* TODO: Uncomment after the getting all jurisdictions
@@ -114,7 +114,7 @@ public class BankRemittanceAction extends BaseFormAction{
 			
 		paramList= receiptHeaderService.findAllRemitanceDetails(jurValuesId.toString());
 		addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(
-				collectionsUtil.getLoggedInUser(getSession())));
+				collectionsUtil.getLoggedInUser()));
 		addDropdownData("designationMasterList", new ArrayList());
 		addDropdownData("postionUserList", new ArrayList());
 		

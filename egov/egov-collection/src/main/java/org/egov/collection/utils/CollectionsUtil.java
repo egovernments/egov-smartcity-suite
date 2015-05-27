@@ -54,17 +54,18 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
-import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.commons.service.GenericCommonsService;
+import org.egov.infstr.commons.dao.ModuleHibDao;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -77,6 +78,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
@@ -84,15 +86,21 @@ public class CollectionsUtil {
 	private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
 	private PersistenceService persistenceService;
 	private EisCommonsServiceImpl eisCommonsService;
-	private GenericCommonsService genericCommonsService;
 	private UserService userService;
 	private CommonsService commonsService;
 	private PersistenceService<Script, Long> scriptService;
-	private GenericHibernateDaoFactory genericDao;
+	@Autowired
+	private ModuleHibDao moduleDAO;
+	@Autowired
+	private AppConfigValuesHibernateDAO appConfigValuesDAO;
+	@Autowired
+	private EisCommonService eisCommonService;
 	private EISServeable eisService;
 	private SearchPositionService searchPositionService;
 	private ApplicationContextBeanProvider beanProvider;
 	private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
+	@Autowired
+    private SecurityUtils securityUtils;
 
 	/**
 	 * Returns the Status object for given status code for a receipt
@@ -152,8 +160,8 @@ public class CollectionsUtil {
 	 *            Map of session variables
 	 * @return the logged in user
 	 */
-	public User getLoggedInUser(Map<String, Object> sessionMap) {
-		return userService.getUserByUsername((String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME));
+	public User getLoggedInUser() {
+		return securityUtils.getCurrentUser();
 	}
 
 	/**
@@ -162,9 +170,7 @@ public class CollectionsUtil {
 	 * @return department of the given user
 	 */
 	public Department getDepartmentOfUser(User user) {
-		PersonalInformation empForUserId = EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId());
-		Assignment assignmentByEmpAndDate = EisManagersUtill.getEmployeeService().getAssignmentByEmpAndDate(new Date(), empForUserId.getIdPersonalInformation());
-		return assignmentByEmpAndDate.getDepartment();
+		return eisCommonService.getDepartmentForUser(user.getId());
 	}
 
 	/**
@@ -173,7 +179,8 @@ public class CollectionsUtil {
 	 * @return department of currently logged in user
 	 */
 	public Department getDepartmentOfLoggedInUser(Map<String, Object> sessionMap) {
-		return getDepartmentOfUser(getLoggedInUser(sessionMap));
+		final User user = securityUtils.getCurrentUser();
+		return getDepartmentOfUser(user);
 	}
 
 	/**
@@ -393,7 +400,7 @@ public class CollectionsUtil {
 	 * @return <code>String</code> representing the configuration value
 	 */
 	public String getAppConfigValue(String moduleName, String key, String defaultValue) {
-		AppConfigValues configVal = genericDao.getAppConfigValuesDAO().getAppConfigValueByDate(moduleName, key, new Date());
+		AppConfigValues configVal = appConfigValuesDAO.getAppConfigValueByDate(moduleName, key, new Date());
 		return configVal == null ? defaultValue : configVal.getValue();
 	}
 
@@ -409,7 +416,7 @@ public class CollectionsUtil {
 	 * @return <code>String</code> representing the configuration value
 	 */
 	public String getAppConfigValue(String moduleName, String key) {
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
 	}
 
 	/**
@@ -426,7 +433,7 @@ public class CollectionsUtil {
 	 *         configuration values
 	 */
 	public List<AppConfigValues> getAppConfigValues(String moduleName, String key) {
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(moduleName, key);
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
 	}
 
 	/**
@@ -487,8 +494,8 @@ public class CollectionsUtil {
 	 * @return
 	 */
 
-	public List<Department> getAllNonPrimaryAssignmentsOfLoggedInUser(Map<String, Object> sessionMap) {
-		return getAllNonPrimaryAssignmentsOfUser(getLoggedInUser(sessionMap));
+	public List<Department> getAllNonPrimaryAssignmentsOfLoggedInUser() {
+		return getAllNonPrimaryAssignmentsOfUser(getLoggedInUser());
 	}
 
 	/**
@@ -501,7 +508,7 @@ public class CollectionsUtil {
 		try {
 			HashMap<String, String> paramMap = new HashMap<String, String>();
 			paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-			List<EmployeeView> employeeViewList = null;//(List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+			List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
 			if (!employeeViewList.isEmpty()) {
 				for (EmployeeView employeeView : employeeViewList) {
 					if (!employeeView.getAssignment().getPrimary()) {
@@ -573,12 +580,12 @@ public class CollectionsUtil {
 	 * 
 	 */
 	public boolean isPropertyTaxArrearAccountHead(String glcode, String description) {
-		List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-		AppConfigValues penaltyGlCode = genericDao.getAppConfigValuesDAO().getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+		List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+		AppConfigValues penaltyGlCode = appConfigValuesDAO.getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
 		boolean retValue = false;
 		LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
 		if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
-			Module module = genericCommonsService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
+			Module module = moduleDAO.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
 			String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date()).getDescription();
 			if (currInst.equals(description.substring(16, description.length()))) {
 				retValue = false;
@@ -625,10 +632,6 @@ public class CollectionsUtil {
 		this.eisCommonsService = eisCommonsService;
 	}
 
-	public void setGenericCommonsService(GenericCommonsService genericCommonsService) {
-		this.genericCommonsService = genericCommonsService;
-	}
-
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -641,15 +644,8 @@ public class CollectionsUtil {
 		this.beanProvider = beanProvider;
 	}
 	
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
 
-	public void setEisService(EISServeable eisService) {
-		this.eisService = eisService;
-	}
 }
