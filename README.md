@@ -36,10 +36,6 @@ $ git clone https://github.com/egovernments/eGov.git
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
- db.url=jdbc:postgresql://localhost:5432/postgres
- db.username=erp_owner
- db.password=erp_owner
-
  search.hosts=localhost
  search.port=9300
  search.clusterName=elasticsearch-<username>
@@ -56,7 +52,15 @@ $ git clone https://github.com/egovernments/eGov.git
  sms.sender=
 
  ```
-One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding entry in `egov-erp-<username>.properties`.
+One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` other than the database properties by adding an entry in `egov-erp-<username>.properties`.
+Database properties needs to be defined in the application-config.properties.
+
+```properties
+db.url=jdbc:postgresql://localhost:5432/postgres
+db.username=erp_owner
+db.password=erp_owner
+```
+
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
