@@ -48,7 +48,7 @@
  
       <import resource="applicationSecurityContext-egi.xml"/>
     
-      <context:component-scan base-package="org.egov.egi.web">
+      <context:component-scan base-package="org.egov.infra.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
       </context:component-scan>
 	
