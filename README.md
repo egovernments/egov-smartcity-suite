@@ -12,7 +12,7 @@ This section contains steps that are involved in build and deploy the applicatio
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
 * Install [Elastic Search >= v1.4.2][Elastic Search]
-* Install [Jboss Wildfly v8.2.x][Wildfly Customized]
+* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
 * [Git][] and [JDK 8 update 20 or later][JDK8 build]
 
 #### Database Setup
@@ -151,7 +151,7 @@ This section gives more details regarding developing and contributing to eGov su
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
 * Install [Elastic Search >= v1.4.2][Elastic Search]
-* Install [Jboss Wildfly v8.2.x][Wildfly Customized]
+* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
 * [Git][] and [JDK 8 update 20 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
@@ -159,10 +159,11 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 1. Eclipse Deployment
 
+* Install [Eclipse Mars] [Eclipse Mars]
 * Import the cloned git repo using maven Import Existing Project.
 * Install Jboss Tools and configure Wildfly Server.
 * Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
-* Double click on wildfly8.x --> open launch configurations --> edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
+* Double click on wildfly9.x --> open launch configurations --> edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
 * Now add your EAR project into the configured Wildfly server.
 * Start Wildfly in debug mode, this will enable hot deployment.
 
@@ -201,7 +202,8 @@ mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database 
 [Git]: http://help.github.com/set-up-git-redirect
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-8.2.0.Final-v1.tar.gz
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.0.CR1.zip
+[Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Liquibase]: http://www.liquibase.org/documentation/index.html
