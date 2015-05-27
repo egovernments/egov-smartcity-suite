@@ -52,14 +52,15 @@ $ git clone https://github.com/egovernments/eGov.git
  sms.sender=
 
  ```
-One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` other than the database properties by adding an entry in `egov-erp-<username>.properties`.
-Database properties needs to be defined in the application-config.properties.
+One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
 
-```properties
-db.url=jdbc:postgresql://localhost:5432/postgres
-db.username=erp_owner
-db.password=erp_owner
-```
+  Database properties are defined in the `persistence-config.properties`.
+
+  ```properties
+  db.url=jdbc:postgresql://localhost:5432/postgres
+  db.username=erp_owner
+  db.password=erp_owner
+  ```
 
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
@@ -202,10 +203,10 @@ mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear a
 mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars approproiately
 ```
 
-
+#
 Note: This system is supported only on Linux environment. Supported browser are-
 * Chrome
-* Mozilla
+* Firefox
 
 
 [Git]: http://help.github.com/set-up-git-redirect
