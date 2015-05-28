@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -141,6 +142,9 @@ public class ComplaintService {
 
     @Autowired
     private EscalationService escalationService;
+    
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
@@ -173,7 +177,7 @@ public class ComplaintService {
         }
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
-        //sendEmailandSms(complaint);
+        sendEmailandSms(complaint);
         return savedComplaint;
     }
 
@@ -256,7 +260,7 @@ public class ComplaintService {
     private void pushMessage(final Complaint savedComplaint) {
 
         final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
-                null, getDetailedMessage(savedComplaint),
+                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
                 savedComplaint.getLastModifiedDate(), savedComplaint.getCreatedBy(), Priority.High);
         final String strQuery = "select md from Module md where md.moduleName=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
@@ -362,9 +366,9 @@ public class ComplaintService {
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
                 .append(", Thank you for registering a complaint (").append(complaint.getCRN())
                 .append("). Please use this number for all future references.");
-        if (complaint.getComplainant().getEmail() != null)
+        if (applicationProperties.emailEnabled() && complaint.getComplainant().getEmail() != null)
             emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
-        if (complaint.getComplainant().getMobile() != null)
+        if (applicationProperties.smsEnabled() && complaint.getComplainant().getMobile() != null)
             httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
 
     }

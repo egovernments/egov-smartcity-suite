@@ -123,4 +123,12 @@ public class ApplicationProperties {
 	public boolean devMode() {
 		return environment.getProperty("dev.mode",Boolean.class);
 	}
+	
+	public boolean emailEnabled() {
+            return environment.getProperty("email.enabled",Boolean.class);
+        }
+	
+	public boolean smsEnabled() {
+            return environment.getProperty("email.enabled",Boolean.class);
+        }
 }
