@@ -50,18 +50,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.eviction.EvictionStrategy;
+import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.infinispan.transaction.lookup.GenericTransactionManagerLookup;
+import org.infinispan.util.concurrent.IsolationLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class EgovMasterDataCaching {
 
 	private static final String SQL_QUERY_TYPE = "sql";
@@ -78,12 +81,19 @@ public class EgovMasterDataCaching {
 	}
 	
 	private EgovMasterDataCaching() {
-		try {
-			final Context context = new InitialContext();
-			CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
-		} catch (NamingException e) {
-			throw new EGOVRuntimeException("Error occurred while getting Cache Manager",e);
-		}
+		
+		    Configuration config = new ConfigurationBuilder().eviction()
+		             .maxEntries(20000).strategy(EvictionStrategy.LIRS).expiration()
+		             .wakeUpInterval(5000L)
+		             .maxIdle(120000L)
+		            .locking()
+		              .concurrencyLevel(10000).isolationLevel(IsolationLevel.REPEATABLE_READ)
+		              .lockAcquisitionTimeout(12000L).useLockStriping(false)
+		            .transaction()
+		              .transactionManagerLookup(new GenericTransactionManagerLookup()).recovery()
+		            .build();
+		    CACHE_MANAGER = new DefaultCacheManager(config);
+		
 	}
 	
 	/**
