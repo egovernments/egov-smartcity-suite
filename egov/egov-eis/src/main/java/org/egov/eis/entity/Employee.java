@@ -39,7 +39,7 @@
  */
 package org.egov.eis.entity;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,12 +47,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -61,6 +64,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
@@ -68,27 +72,22 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class Employee extends User {
 
     private static final long serialVersionUID = -1105585841211211215L;
-    
+
     @NotNull
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
     private String code;
-    
+
     @NotNull
-    @SafeHtml
-    private LocalDate dateOfAppointment;
-    
+    @Temporal(value=TemporalType.DATE)
+    private Date dateOfAppointment;
+
     @NotNull
-    @SafeHtml
-    private LocalDate dateOfRetirement;
-    
-    @SafeHtml
-    @Column(name = "pannumber", unique = true)
-    @Pattern(regexp = Constants.ALPHANUMERIC)
-    private String panNumber;
-    
-    @Enumerated
+    @Temporal(value=TemporalType.DATE)
+    private Date dateOfRetirement;
+
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(group = Searchable.Group.CLAUSES)
     private EmployeeStatus employeeStatus;
@@ -97,8 +96,8 @@ public class Employee extends User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
     private EmployeeType employeeType;
-    
-    @OneToMany(mappedBy = "employee",orphanRemoval=true,fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Assignment> assignments = new HashSet<Assignment>(0);
 
     public String getCode() {
@@ -109,20 +108,20 @@ public class Employee extends User {
         this.code = code;
     }
 
-    public LocalDate getDateOfAppointment() {
-        return dateOfAppointment;
+    public DateTime getDateOfAppointment() {
+        return null == dateOfAppointment ? null : new DateTime(dateOfAppointment);
     }
 
-    public void setDateOfAppointment(final LocalDate dateOfAppointment) {
-        this.dateOfAppointment = dateOfAppointment;
+    public void setDateOfAppointment(final DateTime dateOfAppointment) {
+        this.dateOfAppointment = null == dateOfAppointment ? null : dateOfAppointment.toDate();
     }
 
-    public LocalDate getDateOfRetirement() {
-        return dateOfRetirement;
+    public DateTime getDateOfRetirement() {
+        return null == dateOfRetirement ? null : new DateTime(dateOfRetirement);
     }
 
-    public void setDateOfRetirement(final LocalDate dateOfRetirement) {
-        this.dateOfRetirement = dateOfRetirement;
+    public void setDateOfRetirement(final DateTime dateOfRetirement) {
+        this.dateOfRetirement = null == dateOfRetirement ? null : dateOfRetirement.toDate();
     }
 
 }
