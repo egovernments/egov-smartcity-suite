@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.eis.repository.DesignationRepository;
 import org.egov.pims.commons.Designation;
+import org.egov.search.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,14 +82,17 @@ public class DesignationService {
         return designationRepository.findByName(desName);
     }
 
-    public Designation getDesignationById(final Integer desigId) {
+    public Designation getDesignationById(final Long desigId) {
         return designationRepository.findOne(desigId);
     }
 
     public List<Designation> getAllDesignations() {
         return designationRepository.findAll();
     }
-
+    public List<Designation> getAllDesignationsSortByNameAsc() {
+        return designationRepository.findAllByOrderByNameAsc();
+    }
+   
     public List<Designation> getAllDesignationsByNameLike(final String name) {
         return designationRepository.findByNameContainingIgnoreCase(name);
     }

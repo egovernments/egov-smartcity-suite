@@ -212,11 +212,11 @@ public class PositionMasterAction extends BaseFormAction {
 						deptDesig.setOutsourcedPosts(getOutsourcedPosts());
 						deptDesig.setDepartment( ( (Department)persistenceService.find("from Department where id=?", getDepartmentId()) ));
 						deptDesig.setDesignation( ((Designation)persistenceService.find("from Designation where id=?", getDesignationId())));
-						position.setDeptDesigId(deptDesig);
+						position.setDeptDesig(deptDesig);
 					}
 					else{			
 						
-						position.setDeptDesigId(deptDesig);//update existing position
+						position.setDeptDesig(deptDesig);//update existing position
 						
 					}
 					persistenceService.getSession().saveOrUpdate(deptDesig);

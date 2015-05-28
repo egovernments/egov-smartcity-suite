@@ -822,7 +822,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		String designationName = "";
 
 		if (position != null) {
-			DeptDesig deptDesig = position.getDeptDesigId();
+			DeptDesig deptDesig = position.getDeptDesig();
 			PersonalInformation personalInformation = null;
 			try {
 				/*personalInformation = eisMgr.getEmpForPositionAndDate(date,

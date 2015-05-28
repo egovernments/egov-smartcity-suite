@@ -92,5 +92,15 @@ public class PositionMasterService {
 	public List<Position> getAllPositionsByNameLike(String name){
 		return positionMasterRepository.findByNameContainingIgnoreCase(name);
 	}
+
+	public boolean validatePosition(Position position) {
+		if (position != null && position.getName() != null) {
+			List<Position> positionList = positionMasterRepository
+					.findByNameContainingIgnoreCase(position.getName());
+			if (positionList.size() > 0)
+				return false;
+		}
+		return true;
+	}
 	
 }

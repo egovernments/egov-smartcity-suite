@@ -2113,7 +2113,7 @@ return siteInspectionDatesList;
 			String designationName = "";
 
 			if (position != null) {
-				DeptDesig deptDesig = position.getDeptDesigId();
+				DeptDesig deptDesig = position.getDeptDesig();
 				PersonalInformation personalInformation = null;
 				try {
 					//phionix TODO:added getEmpForPositionAndDate in eisCommonsManager

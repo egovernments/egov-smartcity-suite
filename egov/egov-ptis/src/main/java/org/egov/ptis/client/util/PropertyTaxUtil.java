@@ -2330,7 +2330,7 @@ public class PropertyTaxUtil {
 		Designation designation = null;
 		if (userId != null && userId.intValue() != 0) {
 			position = eisCommonsService.getPositionByUserId(userId);
-			designation = position.getDeptDesigId().getDesignation();
+			designation = position.getDeptDesig().getDesignation();
 		}
 		return designation;
 	}

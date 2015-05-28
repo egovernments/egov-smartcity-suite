@@ -61,7 +61,10 @@
         <put-attribute name="page-title" value="title.createdesignation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/designation/designation-form.jsp"/>
     </definition>
-    
+     <definition name="position-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.createposition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/position/position-form.jsp"/>
+    </definition>
     <definition name="position-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchposition" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/position/position-search.jsp"/>

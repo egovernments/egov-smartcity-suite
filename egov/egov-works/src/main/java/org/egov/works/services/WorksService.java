@@ -152,7 +152,7 @@ public class WorksService {
     public String getEmpNameDesignation(final Position position, final Date date) {
         String empName = "";
         String designationName = "";
-        final DeptDesig deptDesig = position.getDeptDesigId();
+        final DeptDesig deptDesig = position.getDeptDesig();
         final Designation designationMaster = deptDesig.getDesignation();
         designationName = designationMaster.getName();
         PersonalInformation personalInformation = null;

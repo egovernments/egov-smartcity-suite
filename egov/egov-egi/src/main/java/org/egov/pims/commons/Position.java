@@ -39,6 +39,7 @@
  */
 package org.egov.pims.commons;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -56,7 +57,7 @@ public class Position extends AbstractAuditable<User, Long> {
 
     @Column(name="name",unique=true)
     private String name;
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name="deptDesig")
     private DeptDesig deptDesig;
     private boolean isPostOutsourced;
@@ -69,14 +70,6 @@ public class Position extends AbstractAuditable<User, Long> {
         this.name = name;
     }
 
-    public DeptDesig getDeptDesigId() {
-        return deptDesig;
-    }
-
-    public void setDeptDesigId(final DeptDesig deptDesigId) {
-        deptDesig = deptDesigId;
-    }
-
     public boolean isPostOutsourced() {
         return isPostOutsourced;
     }
@@ -84,5 +77,19 @@ public class Position extends AbstractAuditable<User, Long> {
     public void setPostOutsourced(final boolean isPostOutsourced) {
         this.isPostOutsourced = isPostOutsourced;
     }
+    public boolean getIsPostOutsourced() {
+        return isPostOutsourced;
+    }
+    public void setIsPostOutsourced(final boolean isPostOutsourced) {
+        this.isPostOutsourced = isPostOutsourced;
+    }
+
+	public DeptDesig getDeptDesig() {
+		return deptDesig;
+	}
+
+	public void setDeptDesig(DeptDesig deptDesig) {
+		this.deptDesig = deptDesig;
+	}
 
 }

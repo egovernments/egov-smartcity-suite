@@ -310,10 +310,10 @@ public class ComplaintService {
             map.put("user", user.getUsername());
             map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                     .getDepartmentForUser(user.getId()).getName() : "");
-        } else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
+        } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
             user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
             map.put("user", null != user.getUsername() ? user.getUsername() : "");
-            map.put("department", null != ownerPosition.getDeptDesigId().getDepartment() ? ownerPosition.getDeptDesigId()
+            map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition.getDeptDesig()
                     .getDepartment().getName() : "");
         }
         historyTable.add(map);
@@ -332,10 +332,10 @@ public class ComplaintService {
                 HistoryMap.put("department",
                         null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                 .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != owner && null != owner.getDeptDesigId()) {
+            } else if (null != owner && null != owner.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                 HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
-                HistoryMap.put("department", null != owner.getDeptDesigId().getDepartment() ? owner.getDeptDesigId()
+                HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                         .getDepartment().getName() : "");
             }
             historyTable.add(HistoryMap);
