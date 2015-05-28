@@ -53,7 +53,7 @@
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
-		
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootbox.min.js"></script>
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -77,7 +77,7 @@
 								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
 									
-									<span class="title2">Search Position</span>
+									<span class="title2">Search Position Hierarchy</span>
 								</div>
 							</a>
 						</div>
@@ -111,22 +111,42 @@
 								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
 									
 									<div class="form-group">
-										<label class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
+										<label class="col-sm-3 control-label">Object Type<span class="mandatory"></span></label>
 										<div class="col-sm-6">
-											<input id="com_type" type="text" class="form-control typeahead" placeholder=""/>
+											<select class="form-control">
+												<option>Complaint Cell</option>
+												<option>Mayor</option>
+												<option>Zone Office</option>
+												<option>Commissioner Office</option>
+												<option>CM Office</option>
+											</select>
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
+										<label class="col-sm-3 control-label">Object Subtype</label>
 										<div class="col-sm-6">
-											<input id="com_type" type="text" class="form-control typeahead" placeholder=""/>
+											<input id="com_type" type="text" class="form-control" placeholder=""/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Position From<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control typeahead" placeholder="Search name, code or position">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Position To<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control typeahead" placeholder="Search name, code or position">
 										</div>
 									</div>
 
 									<div class="form-group">
 										<div class="text-center">
-											<button type="submit" class="btn btn-primary">Search Position</button>
+											<button type="submit" class="btn btn-primary">Search Position Hierarchy</button>
 											<a href="javascript:void(0);" class="btn btn-default">Cancel</a>
 										</div>
 									</div>
@@ -141,62 +161,39 @@
 				</div>
 
 				<div class="row">
-					<div class="col-md-12">
-						<div class="panel panel-primary" data-collapsed="0">
-							<div class="panel-body">
-								<div class="row">
-									<div class="col-md-3 col-xs-6 add-margin">
-										Outsourced Posts
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin view-content">
-										14
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
-										Sanctioned Posts
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin view-content">
-										14
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>	
-
-				<div class="row">
-					<div class="col-md-6 col-xs-6 table-header">List of Positions</div>
+					<div class="col-md-6 col-xs-6 table-header">List of Position Hierarchy</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
-						<span class="inline-elem"><input type="text" id="searchposition" class="form-control input-sm"></span>
+						<span class="inline-elem"><input type="text" id="searchpositionhierarchy" class="form-control input-sm"></span>
 					</div>
 					<div class="col-md-12">
-						<table class="table table-bordered datatable" id="position-table">
+						<table class="table table-bordered datatable" id="positionhierarchy-table">
 							<thead>
 								<tr>
 									<th>S.no</th>
-									<th>Position</th>
-									<th>Outsourced Posts</th>
+									<th>Position From</th>
+									<th>Position To</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>1</td>
-									<td>BA-01</td>
-									<td>yes</td>
-									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td><span class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary edit-positionhierarchy"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></span><span  class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary delete-positionhierarchy"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></span></td>
 								</tr>
 								<tr>
 									<td>2</td>
-									<td>BA-03</td>
-									<td>No</td>
-									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td><span class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary edit-positionhierarchy"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></span><span  class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary delete-positionhierarchy"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></span></td>
 								</tr>
 								<tr>
 									<td>3</td>
-									<td>BA-04</td>
-									<td>Yes</td>
-									<td><button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td>111 - Mohammed Aslam- A01</td>
+									<td><span class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary edit-positionhierarchy"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button></span><span  class="parallel-actions"><button type="button" class="btn btn-xs btn-secondary delete-positionhierarchy"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></span></td>
 								</tr>
 							</tbody>
 						</table>					
@@ -215,19 +212,37 @@
 		</div>
 
 		<!--edit position-->
-		<div class="modal fade position-modal" data-backdrop="static">
+		<div class="modal fade positionhierarchy-modal" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Edit Position</h4>
+						<h4 class="modal-title">Edit Position Hierarchy</h4>
 					</div>
 					
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-md-4">
-								<label class="control-label">Department</label>
+								<label class="control-label">Object Type</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<select class="form-control">
+										<option>Complaint Cell</option>
+										<option>Mayor</option>
+										<option>Zone Office</option>
+										<option>Commissioner Office</option>
+										<option>CM Office</option>
+									</select>
+								</div>	
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Object subtype</label>
 							</div>
 							<div class="col-md-8">
 								
@@ -239,7 +254,7 @@
 
 						<div class="row">
 							<div class="col-md-4">
-								<label class="control-label">Designation</label>
+								<label class="control-label">Position From</label>
 							</div>
 							<div class="col-md-8">
 								
@@ -251,39 +266,20 @@
 
 						<div class="row">
 							<div class="col-md-4">
-								<label class="control-label">Position</label>
+								<label class="control-label">Position To</label>
 							</div>
 							<div class="col-md-8">
 								
 								<div class="form-group">
 									<input type="text" class="form-control" placeholder="">
 								</div>	
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-4">
-								<label class="control-label">Outsourced Posts</label>
-							</div>
-							<div class="col-md-8">
-								
-								<div class="col-sm-6 col-xs-6 add-margin">
-									<input type="radio" name="posts" value="Yes">
-									<label>Yes</label>
-								</div>
-								
-								<div class="col-sm-6 col-xs-6 add-margin">
-									<input type="radio" name="posts" value="No">
-									<label>No</label>
-								</div>
-											
 							</div>
 						</div>
 
 					</div>
 					
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary add-fav">Save Position</button>
+						<button type="button" class="btn btn-primary add-fav">Save Position Hierarchy</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
 					
@@ -299,6 +295,6 @@
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
-		<script src="../js/app/positionsearch.js"></script>
+		<script src="../js/app/positionhierarchysearch.js"></script>
 	</body>
 </html>

@@ -77,7 +77,7 @@
 								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
 									
-									<span class="title2">Create Position</span>
+									<span class="title2">Create Position Hierarchy</span>
 								</div>
 							</a>
 						</div>
@@ -107,7 +107,7 @@
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-heading">
 								<div class="panel-title view-content">
-									Create Position or Position created successfully
+									Create Position Hierarchy or Position Hierarchy created successfully
 								</div>
 								
 							</div>
@@ -117,43 +117,42 @@
 								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
 									
 									<div class="form-group">
-										<label class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
+										<label class="col-sm-3 control-label">Choose Object Type<span class="mandatory"></span></label>
 										<div class="col-sm-6">
-											<input type="text" class="form-control typeahead" autocomplete="off" placeholder=""/>
+											<select class="form-control">
+												<option>Complaint Cell</option>
+												<option>Mayor</option>
+												<option>Zone Office</option>
+												<option>Commissioner Office</option>
+												<option>CM Office</option>
+											</select>
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control typeahead" autocomplete="off" placeholder=""/>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Position<span class="mandatory"></span></label>
+										<label class="col-sm-3 control-label">Object Subtype<span class="mandatory"></span></label>
 										<div class="col-sm-6">
 											<input type="text" class="form-control" placeholder=""/>
 										</div>
 									</div>
 
 									<div class="form-group">
-											
-											<label for="field-1" class="col-sm-3 control-label">Outsourced Posts<span class="mandatory"></span></label>
-											
-											<div class="col-sm-1 col-xs-12 add-margin">
-												<input type="radio" name="posts" value="Yes">
-												<label>Yes</label>
-											</div>
-											<div class="col-sm-1 col-xs-12 add-margin">
-												<input type="radio" name="posts" value="No">
-												<label>No</label>
-											</div>
+										<label class="col-sm-3 control-label">Position From<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control"/>
 										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Position To<span class="mandatory"></span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" />
+										</div>
+									</div>
 
 									<div class="form-group">
 										<div class="text-center">
-											<button type="submit" class="btn btn-primary">Create Position</button>
+											<button type="submit" class="btn btn-primary">Create Position Hierarchy</button>
 											<a href="javascript:void(0);" class="btn btn-default">Cancel</a>
 										</div>
 									</div>
@@ -174,15 +173,13 @@
 					
 					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
 					
-				</footer>
+			</footer>
 			
 			
 		</div>
 		
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/typeahead.bundle.js"></script>
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
-		
-		<script src="../js/app/positioncreate.js"></script>
+		<script src="../js/app/positionhierarchycreate.js"></script>
 	</body>
 </html>
