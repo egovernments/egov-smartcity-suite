@@ -403,13 +403,13 @@ public class EisUtilService implements EISServeable {
         Long deptId = departmentId.longValue();
         Criteria criteria = persistenceService
                 .getSession()
-                .createCriteria(EmployeeView.class, "ev")
-                .createAlias("deptId", "department")
-                .add(Restrictions.eq("department.id", deptId))
-                .add(Restrictions.and(Restrictions.le("ev.fromDate", userGivenDate),
-                        Restrictions.ge("ev.toDate", userGivenDate)));
+                .createCriteria(Assignment.class, "assign")
+                .createAlias("assign.department", "department")
+                .add(Restrictions.eq("department.id", deptId.longValue()))
+                .add(Restrictions.and(Restrictions.le("assign.fromDate", userGivenDate),
+                        Restrictions.ge("assign.toDate", userGivenDate)));
 
-        ProjectionList projections = Projections.projectionList().add(Projections.property("ev.desigId"));
+        ProjectionList projections = Projections.projectionList().add(Projections.property("assign.designation"));
         criteria.setProjection(projections);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
