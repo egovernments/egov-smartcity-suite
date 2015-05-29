@@ -44,7 +44,6 @@ body
 }
 
 a:hover, a:focus, a:active {
-    border: 0;
     outline : 0;
 }
 

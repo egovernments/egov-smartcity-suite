@@ -1076,7 +1076,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .table-header{
 	/* line-height: 1.8; */
 	font-size: 20px;
-	font-family: semibold;
+	/*font-family: semibold;*/
 }
 
 .dynamic-span span , .dynamic-span span label{
