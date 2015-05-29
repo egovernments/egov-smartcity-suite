@@ -41,27 +41,42 @@ package org.egov.infra.web.support.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.exceptions.EGOVRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    public static final String DEFAULT_ERROR_VIEW = "redirect:/error/500";
+    public static final String DEFAULT_ERROR_VIEW = "error/500";
 
     @ExceptionHandler(Exception.class)
-    public String defaultErrorHandler(final HttpServletRequest req, final Exception e) throws Exception {
+    public ModelAndView defaultErrorHandler(final HttpServletRequest req, final Exception e) throws Exception {
         // If the exception is annotated with @ResponseStatus rethrow it and let
         // the framework handle it.
         LOG.error("An error occurred while processing the request", e);
         if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null)
             throw e;
-        return DEFAULT_ERROR_VIEW;
+        return createErrorMV(req, e);
+    }
+    
+    @ExceptionHandler(value = EGOVRuntimeException.class)
+    public ModelAndView egovErrorHandler(HttpServletRequest req, EGOVRuntimeException e) throws Exception {
+       return createErrorMV(req, e);
+    }
+
+    private ModelAndView createErrorMV(HttpServletRequest req, Exception e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("error",e.getMessage());
+        mav.addObject("url", req.getRequestURL());
+        mav.setViewName(DEFAULT_ERROR_VIEW);
+        return mav;
     }
 
 }

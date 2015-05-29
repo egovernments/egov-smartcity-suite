@@ -69,8 +69,6 @@
 		<div class="page-container">	
 			<div class="main-content">
 				<div class="page-error-404">
-					
-					
 					<div class="error-symbol">
 						<i class="entypo-attention"></i>
 					</div>
@@ -78,9 +76,6 @@
 					<div class="error-text">
 						<tiles:insertAttribute name="body" />
 					</div>
-				
-				<hr />
-				
 			</div>
 		</div>
 	</div>

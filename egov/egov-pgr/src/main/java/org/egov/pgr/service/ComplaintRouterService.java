@@ -109,7 +109,7 @@ public class ComplaintRouterService {
         if (complaintRouter != null)
             position = complaintRouter.getPosition();
         else
-            throw new EGOVRuntimeException("Grievance officer is not configured for the default routing");
+            throw new EGOVRuntimeException("PGR.001");
 
         return position;
     }
