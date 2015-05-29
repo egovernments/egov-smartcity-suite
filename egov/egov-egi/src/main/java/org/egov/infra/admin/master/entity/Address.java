@@ -39,22 +39,20 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import javax.persistence.Entity;
+import java.io.Serializable;
+
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.enums.AddressType;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.SafeHtml;
 
-@Entity
 @Table(name="eg_address")
-public class Address extends AbstractPersistable<Long> {
+@Embeddable
+public class Address implements Serializable {
 
     private static final long serialVersionUID = 4842889134725565148L;
     
@@ -97,10 +95,6 @@ public class Address extends AbstractPersistable<Long> {
     @SafeHtml
     private String pinCode;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
-    private User user;
-
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     private AddressType type;
@@ -207,14 +201,6 @@ public class Address extends AbstractPersistable<Long> {
 
     public void setPinCode(final String pinCode) {
         this.pinCode = pinCode;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(final User user) {
-        this.user = user;
     }
 
     public AddressType getType() {

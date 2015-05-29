@@ -1,5 +1,6 @@
-package org.egov.infra.admin.master.entity;
+package org.egov.infra.persistence.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,12 +9,18 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -21,21 +28,41 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infra.admin.master.entity.enums.UserType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
+import org.egov.search.domain.Searchable;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.Expose;
 
 @MappedSuperclass
-public abstract class AbstractUser extends AbstractAuditable<User, Long> {
+@EntityListeners(AuditingEntityListener.class)
+@Searchable
+public abstract class AbstractUser implements Serializable {
     private static final long serialVersionUID = -2415368058955783970L;
 
+    @Expose
+    @Id
+    @GenericGenerator(name = "seq_id", strategy = "org.egov.infra.persistence.utils.PrimaryKeyIDGenerator")
+    @GeneratedValue(generator = "seq_id")
+    @DocumentId
+    private Long id;
+    
     @NotNull
     @Column(name = "username", unique = true, table = "eg_user")
     @Length(min = 2, max = 64)
@@ -85,9 +112,11 @@ public abstract class AbstractUser extends AbstractAuditable<User, Long> {
     @Column(table = "eg_user")
     private String aadhaarNumber;
 
-    // TODO Make Embedded
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Column(table = "eg_user")
+    @ElementCollection
+    @CollectionTable(
+          name="eg_address",
+          joinColumns=@JoinColumn(name="userid")
+    )
     private List<Address> address = new ArrayList<>();
 
     @Column(table = "eg_user")
@@ -112,6 +141,35 @@ public abstract class AbstractUser extends AbstractAuditable<User, Long> {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", table = "eg_user")
     protected UserType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdBy",table="eg_user")
+    @CreatedBy
+    private User createdBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate    
+    @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
+    @Column(table = "eg_user")
+    private Date createdDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lastModifiedBy",table="eg_user")
+    @LastModifiedBy
+    private User lastModifiedBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    @Column(table = "eg_user")
+    private Date lastModifiedDate;
+
+    public Long getId() {
+        return id;
+    }
+
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
     @JsonIgnore
     public String getUsername() {
@@ -269,5 +327,69 @@ public abstract class AbstractUser extends AbstractAuditable<User, Long> {
 
     public void setType(final UserType type) {
         this.type = type;
+    }
+    
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(final User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public DateTime getCreatedDate() {
+        return null == createdDate ? null : new DateTime(createdDate);
+    }
+
+    public void setCreatedDate(final DateTime createdDate) {
+        this.createdDate = null == createdDate ? null : createdDate.toDate();
+    }
+
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(final User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public DateTime getLastModifiedDate() {
+        return null == lastModifiedDate ? null : new DateTime(lastModifiedDate);
+    }
+
+    public void setLastModifiedDate(final DateTime lastModifiedDate) {
+        this.lastModifiedDate = null == lastModifiedDate ? null : lastModifiedDate.toDate();
+    }
+    
+    public boolean isNew() {
+        return null == getId();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (null == obj)
+            return false;
+
+        if (this == obj)
+            return true;
+
+        if (!getClass().equals(obj.getClass()))
+            return false;
+
+        final AbstractUser that = (AbstractUser) obj;
+
+        return null == this.getId() ? false : this.getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 17;
+        hashCode += null == getId() ? 0 : getId().hashCode() * 31;
+        return hashCode;
     }
 }

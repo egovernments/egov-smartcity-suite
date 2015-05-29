@@ -60,8 +60,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.infra.admin.master.entity.AbstractUser;
 import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.SafeHtml;

@@ -44,9 +44,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.persistence.entity.AbstractUser;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "eg_user")
+@DynamicInsert
+@DynamicUpdate
 @Cacheable
 public class User extends AbstractUser {
     private static final long serialVersionUID = -2415368058955783970L;
