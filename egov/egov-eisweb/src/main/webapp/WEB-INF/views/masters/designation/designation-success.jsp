@@ -22,17 +22,21 @@
 							<c:out value="${designation.name }"></c:out>
 							<input id="desigName" type="hidden"	value="<c:out value="${designation.name }" />" />
 						</div>
+						</div>
+						<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.designation.description" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-code">
-							<c:out value="${designation.description}"></c:out>
+							<c:choose>
+								<c:when test="${designation.description != null}">${designation.description}</c:when>
+								<c:otherwise>N/A</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
-
+                   
 					<div class="row text-center">
 						<div class="row">
-							<div class="text-center">
 								<button type="submit" id="buttonCreate" class="btn btn-success">
 									<spring:message code="lbl.create" />
 								</button>
@@ -41,7 +45,6 @@
 								</button>
 								<a href="javascript:void(0)" class="btn btn-default"
 									onclick="self.close()"><spring:message code="lbl.close" /></a>
-							</div>
 						</div>
 					</div>
 				</div>

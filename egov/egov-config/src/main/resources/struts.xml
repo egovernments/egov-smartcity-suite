@@ -44,7 +44,7 @@
 
 <struts>
 	<!-- Production Performance Environment Setting, Change to inverse value of the same in Development Environment -->
-	<constant name="struts.devMode" value="false" />
+	<constant name="struts.devMode" value="true" />
 	<constant name="struts.freemarker.templatesCache" value="true" />
 	<constant name="struts.xslt.nocache" value="false" />
 	<constant name="struts.ognl.logMissingProperties" value="false" />
