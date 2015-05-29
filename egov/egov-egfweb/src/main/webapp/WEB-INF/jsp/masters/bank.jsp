@@ -50,6 +50,13 @@
     <link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
   </head>
   <body>
+  <script>
+  function validateFormAndSubmit(){
+	document.bankForm.action='${pageContext.request.contextPath}/masters/bank-save.action';
+	document.bankForm.submit();
+}
+  </script>
+  
     <div class="formmainbox"><div class="subheadnew"><s:text name="bank.create.new"/></div>
     <jsp:include page="bank-form.jsp"></jsp:include>    	
   </body>

@@ -78,8 +78,8 @@
 	    	<br/>
 	    	<div class="buttonbottom" style="padding-bottom:10px;">
 	    		<s:hidden name="mode"></s:hidden> 
-				<s:submit name="Save" value="Modify" method="execute"  cssClass="buttonsubmit" />
-				<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+		<input type="submit" class="button" value="Modify" id="modifyButton" name="Modify" onclick="validateAndSubmit();" />
+		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 			</div>
     </s:form>   
     <script>
@@ -87,6 +87,12 @@
         source: "bank.action?mode=AUTO_COMP_BANK_NAME",
         minLength: 2
       });
+
+  function validateAndSubmit(){
+	document.bankForm.action='${pageContext.request.contextPath}/masters/bank-execute.action';
+	document.bankForm.submit();
+}
+
     </script> 
   </body>
    

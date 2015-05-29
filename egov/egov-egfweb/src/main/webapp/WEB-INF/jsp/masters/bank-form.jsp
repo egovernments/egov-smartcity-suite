@@ -75,7 +75,7 @@
 	 <tr>
 	 	 <td class="bluebox"></td>
 	 	<td class="bluebox"><s:text name="bank.create.isactive"/></td>
-		<td class="bluebox" colspan="2"><s:checkbox id="isactive" name="isactive" /> </td>
+		<td class="bluebox" colspan="2"><s:checkbox id="isActive" name="isActive" /> </td>
 	 </tr>
 	
   		 <tr>
@@ -94,7 +94,11 @@
   	<br/>
   	<div class="buttonbottom" > 
   	<input type="button" id="Search" value="Search" onclick="javascript:window.location.href='bank.action?mode=MODIFY'" class="button"/>
-	<s:submit name="Save" value="Save" method="save"  cssClass="buttonsubmit" />
+	
+	<input type="submit" class="button" value="Save"
+							id="saveButton" name="button"
+							onclick="validateFormAndSubmit();" />
+	
 	<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 	</div>
 	</s:push>

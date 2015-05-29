@@ -38,16 +38,20 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
-       default-lazy-init="true">
+	<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
+       
+       <context:component-scan base-package="org.egov.services"/>
+       
 	<!--<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /-->
 	<!--<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="egovSessionFactory" />
 	</bean>-->
-	
+
 	 <bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService" parent="persistenceService">
 	 	<property name="genericDao" ref="genericDao"/>
 	 	<property name="financialYearDAO" ref="financialYearDAO"/>
@@ -83,7 +87,7 @@
 	<bean id="finYearService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.CFinancialYear" />
 	</bean>
-	<bean id="budgetDetailWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="budgetDetailWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
        <constructor-arg ref="budgetDetailService"/>
        <constructor-arg value="org.egov.model.budget.BudgetDetail"/>
     </bean>
@@ -98,7 +102,7 @@
 	<bean id="budgetWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"  scope="prototype">
        <constructor-arg ref="budgetService"/>
        <constructor-arg value="org.egov.model.budget.Budget"/>
-    </bean><!--
+    </bean> --><!--
     <bean id="sequenceGenerator" class="org.egov.infstr.utils.SequenceGenerator">
     	<constructor-arg ref="egovSessionFactory"/>
     </bean>-->
@@ -158,10 +162,10 @@
 		<property name="commonsService" ref="commonsService"/>
 	</bean>
 	
-	 <bean id="dishonorChequeWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">			
+	 <!-- <bean id="dishonorChequeWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">			
 			<constructor-arg ref="dishonorChequeService"/>
 			<constructor-arg value="org.egov.model.instrument.DishonorCheque" />					
-	</bean>
+	</bean> -->
 	<bean id="dishonorChequeService" class="org.egov.services.instrument.DishonorChequeService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.instrument.DishonorCheque"/>
 		<property name="eisService" ref="eisService"/>
@@ -169,10 +173,10 @@
 		
 	</bean>
 	
-	<bean id="paymentWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="paymentWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="paymentService"/>
          <constructor-arg value="org.egov.model.payment.Paymentheader"/>
-    </bean>
+    </bean> -->
     <bean id="receiptService" class="org.egov.services.receipt.ReceiptService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.receipt.ReceiptVoucher" />
 		<property name="genericDao" ref="genericDao"/>
@@ -180,17 +184,17 @@
 		<property name="eisService" ref="eisService" />
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
-    <bean id="receiptWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+    <!-- <bean id="receiptWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="receiptService"/>
          <constructor-arg value="org.egov.model.receipt.ReceiptVoucher"/>
-    </bean>
+    </bean> -->
 	<bean id="chequeService" class="org.egov.services.cheque.ChequeService" parent="persistenceService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
-    <bean id="voucherWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+    <!-- <bean id="voucherWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="voucherService"/>
          <constructor-arg value="org.egov.commons.CVoucherHeader"/>
-    </bean>
+    </bean> -->
 
 	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.recoveries.Recovery" />
@@ -277,10 +281,10 @@
 		<property name="type" value="org.egov.commons.CChartOfAccountDetail" />
 	</bean>
 	
-	<bean id="contraWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="contraWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="contraService"/>
          <constructor-arg value="org.egov.model.contra.ContraJournalVoucher"/>
-    </bean>
+    </bean> -->
 	<bean id="contraBean" class="org.egov.model.contra.ContraBean" scope="prototype" />
 	<bean id="voucherTypeBean" class="org.egov.model.voucher.VoucherTypeBean" scope="prototype" />
 	<bean id="contraVoucher" class="org.egov.model.contra.ContraJournalVoucher" scope="prototype" />
@@ -297,11 +301,11 @@
 		<property name="sessionFactory" ref="egovSessionFactory" />
 		<property name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
-	<bean id="inboxService" class="org.egov.infstr.workflow.inbox.InboxService">
+	<!-- <bean id="inboxService" class="org.egov.infstr.workflow.inbox.InboxService">
     	<property name="statePersistenceService" ref="stateService" />
     	<property name="workflowTypeService" ref="workflowTypeService" />
     	<property name="eisService" ref="eisService" />
-    </bean>
+    </bean> -->
     <!-- <bean id="stateService" parent="persistenceService" >
 			<property name="type" value="org.egov.infra.workflow.entity.State"/>
 	</bean>-->
@@ -342,10 +346,10 @@
 		<property name="type" value="org.egov.model.cheque.ChequeDeptMapping" />
 	</bean>
 
-	<bean id="billRegisterWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="billRegisterWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 	 <constructor-arg ref="cbillService"/>
      <constructor-arg value="org.egov.egf.bills.model.Cbill"/>
-	</bean>
+	</bean> -->
 	<bean id="remitRecoveryService" class="org.egov.services.deduction.RemitRecoveryService" scope="prototype" >
 		<property name="persistenceService"  ref="persistenceService" />
 		<property name="voucherHibDAO" ref="voucherHibDAO"/>
@@ -368,9 +372,11 @@
        <property name="genericDao" ref="genericDao"/>
        <property name="financialYearDAO" ref="financialYearDAO"/>
       </bean>
-      <bean id="bankPersistenceService" parent="persistenceService" scope="prototype">
-      	<property name="type" value="org.egov.commons.Bank" />
-      </bean>
+      
+       <bean id="bankService" class="org.egov.services.masters.BankService"  scope="prototype">
+	 	<property name="type" value="org.egov.commons.Bank" />
+      </bean>        
+      
       <bean id="bankBranchPersistenceService" parent="persistenceService" scope="prototype">
       	<property name="type" value="org.egov.commons.Bankbranch" />
       </bean>
@@ -405,7 +411,7 @@
      <constructor-arg index="1" ><null/></constructor-arg>	
 	 </bean>
 	 
-     <bean id="schemeService" class="org.egov.services.masters.SchemeService" parent="persistenceService" scope="prototype">
+     <bean id="schemeService" class="org.egov.services.masters.SchemeService"  scope="prototype">
       <property name="type" value="org.egov.commons.Scheme" />
      </bean>
      <bean id="eBConsumerService" class="org.egov.eb.service.master.EBConsumerService" parent="persistenceService" scope="prototype">
@@ -434,10 +440,10 @@
           <property name="ebSchedulerLogService" ref="ebSchedulerLogService" />
      </bean>
      
-     <bean id="ebDetailsWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+    <!--  <bean id="ebDetailsWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
        <constructor-arg ref="ebDetailsService"/>       
     </bean>
-
+ -->
      <bean id="receiptInfoService" class="org.egov.eb.service.receipt.EBReceiptInfoService"  scope="prototype" />         
       
      <bean id="ebSchedulerLogService" class="org.egov.eb.service.transaction.EbSchedulerLogService" parent="persistenceService" >

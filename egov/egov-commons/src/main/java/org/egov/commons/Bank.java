@@ -56,7 +56,7 @@ public class Bank implements java.io.Serializable {
 
 	private String narration;
 
-	private boolean isactive;
+	private int isactive;
 
 	private Date lastmodified;
 
@@ -72,7 +72,7 @@ public class Bank implements java.io.Serializable {
 		//For hibernate to work
 	}
 
-	public Bank(String code, String name, boolean isactive, Date lastmodified, Date created, BigDecimal modifiedby) {
+	public Bank(String code, String name, int isactive, Date lastmodified, Date created, BigDecimal modifiedby) {
 		this.code = code;
 		this.name = name;
 		this.isactive = isactive;
@@ -81,7 +81,7 @@ public class Bank implements java.io.Serializable {
 		this.modifiedby = modifiedby;
 	}
 
-	public Bank(String code, String name, String narration, boolean isactive, Date lastmodified, Date created, BigDecimal modifiedby, String type, Set<Bankbranch> bankbranchs) {
+	public Bank(String code, String name, String narration, int isactive, Date lastmodified, Date created, BigDecimal modifiedby, String type, Set<Bankbranch> bankbranchs) {
 		this.code = code;
 		this.name = name;
 		this.narration = narration;
@@ -125,14 +125,6 @@ public class Bank implements java.io.Serializable {
 		this.narration = narration;
 	}
 
-	public boolean isIsactive() {
-		return this.isactive;
-	}
-
-	public void setIsactive(boolean isactive) {
-		this.isactive = isactive;
-	}
-
 	public Date getLastmodified() {
 		return this.lastmodified;
 	}
@@ -172,5 +164,13 @@ public class Bank implements java.io.Serializable {
 	public void setBankbranchs(Set<Bankbranch> bankbranchs) {
 		this.bankbranchs = bankbranchs;
 	}
+
+    public int getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(int isactive) {
+        this.isactive = isactive;
+    }
 
 }

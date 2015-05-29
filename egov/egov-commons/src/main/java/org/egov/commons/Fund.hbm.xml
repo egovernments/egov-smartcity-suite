@@ -45,7 +45,7 @@
         <property name="transactioncreditamount" type="big_decimal">
             <column name="TRANSACTIONCREDITAMOUNT" precision="15" />
         </property>
-        <property name="isactive" type="boolean">
+        <property name="isactive" type="integer">
             <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
         </property>       
         <property name="created" type="date">

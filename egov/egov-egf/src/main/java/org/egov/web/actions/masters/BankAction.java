@@ -51,43 +51,70 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Actions;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.services.masters.BankService;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Namespace("/masters")
+@Results({
+    @Result(name = BankAction.MODIFY, location = "/WEB-INF/jsp/masters/bank-modify.jsp"),
+    @Result(name = BankAction.SUCCESS, location = "/WEB-INF/jsp/masters/bank.jsp"),
+    @Result(name = BankAction.SEARCH, location = "/WEB-INF/jsp//masters/bank-search.jsp") })
 public class BankAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private Bank bank = new Bank();
-	private PersistenceService<Bank, Integer> bankPersistenceService;
+	private boolean isActive;
+	public static final String MODIFY = "modify";
+	public static final String SEARCH = "search";
 	private String mode;
 	// For jquery BankName auto complete
 	private String term;
-
-	@Override
+	
+	@Qualifier("bankService")
+        private BankService bankService;
+   
+    @Override
 	public void prepare() {
 		// DO NOTHING
+            if(bank.getId()!=null){
+                if(bank.getIsactive()!=0){
+                    isActive=true;
+                }
+                else
+                    isActive=false;
+            }
 	}
 
 	@Override
 	@SkipValidation
+	@Actions({
+	    @Action(value="/masters/bank"), 
+	    @Action(value="/masters/bank-execute")
+	    })
 	public String execute() {
 		if ("MODIFY".equals(mode)) {
 			if (StringUtils.isBlank(bank.getName())) {
 				return "search";
 			}
 			else {
-				bank = bankPersistenceService.find("FROM Bank WHERE name = ?", bank.getName());
+				bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
 				if(bank==null)
 				{
 					return "search";
@@ -110,19 +137,26 @@ public class BankAction extends BaseFormAction {
 		return bank;
 	}
 
-	public String save() {
+	@Transactional
+        @Action(value="/masters/bank-save")
+	public String save() { 
 		try {
+		       if(getIsActive()){
+		           bank.setIsactive(1);
+		       }
+		       else
+		           bank.setIsactive(0);
 			if (bank.getId() == null) {
 				// TODO Dirty Code can be avoided by extending BaseModel for Bank
 				final Date currentDate = new Date();
 				bank.setCreated(currentDate);
 				bank.setLastmodified(currentDate);
 				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EGOVThreadLocals.getUserId())));
-				bankPersistenceService.persist(bank);
+				bankService.persist(bank);
 			} else {
 				bank.setLastmodified(new Date());
 				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EGOVThreadLocals.getUserId())));
-				bankPersistenceService.update(bank);
+				bankService.update(bank);
 			}
 			addActionMessage(getText("Bank Saved Successfully"));
 		} catch (final ConstraintViolationException e) {
@@ -134,16 +168,19 @@ public class BankAction extends BaseFormAction {
 		return "modify";
 	}
 
+	 @Transactional
 	private void checkUniqueBankCode() {
-		final Bank bank = bankPersistenceService.find("from Bank where code=?", this.bank.getCode());
+		final Bank bank = bankService.find("from Bank where code=?", this.bank.getCode());
 		writeToAjaxResponse(String.valueOf(bank == null));
 	}
 
+	 @Transactional
 	private void checkUniqueBankName() {
-		final Bank bank = bankPersistenceService.find("from Bank where name=?", this.bank.getName());
+		final Bank bank = bankService.find("from Bank where name=?", this.bank.getName());
 		writeToAjaxResponse(String.valueOf(bank == null));
 	}
 
+	 @Transactional
 	private void populateBankNames() {
 		final JSONArray jsonArray = new JSONArray(persistenceService.findAllBy("select name FROM Bank WHERE lower(name) like ?", StringUtils.lowerCase(term + "%")));
 		writeToAjaxResponse(jsonArray.toString());
@@ -158,8 +195,9 @@ public class BankAction extends BaseFormAction {
 		return bankAcTypesJson.toString();
 	}
 
-	public String getFundsJSON() {
-		final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", Boolean.TRUE);
+	 @Transactional
+	public String getFundsJSON() { 
+		final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", 1);
 		final StringBuilder fundJson = new StringBuilder(":;");
 		for (final Object [] fund : funds) {
 			fundJson.append((Integer)fund[0]).append(":").append(fund[1]).append(";");
@@ -168,6 +206,7 @@ public class BankAction extends BaseFormAction {
 		return fundJson.toString();
 	}
 
+	 @Transactional
 	public String getAccountTypesJSON() {
 		final List<Object[]> accounttypes = persistenceService.findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=3 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
 		final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
@@ -205,9 +244,7 @@ public class BankAction extends BaseFormAction {
 		this.term = term;
 	}
 
-	public void setBankPersistenceService(final PersistenceService<Bank, Integer> bankPersistenceService) {
-		this.bankPersistenceService = bankPersistenceService;
-	}
+	
 
 	public String getMode() {
 		return mode;
@@ -216,4 +253,16 @@ public class BankAction extends BaseFormAction {
 	public void setMode(final String mode) {
 		this.mode = mode;
 	}
+
+    public void setBankService(BankService bankService) {
+        this.bankService = bankService;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

@@ -78,7 +78,8 @@ public class Fund implements java.io.Serializable {
 
 	private BigDecimal transactioncreditamount;
 
-	private boolean isactive;
+	
+	private int isactive;
 
 	private Date lastmodified;
 
@@ -102,7 +103,7 @@ public class Fund implements java.io.Serializable {
 	public Fund(Integer id, String code, String name, String fundNameActual, BigDecimal llevel,
 			BigDecimal openingdebitbalance, BigDecimal openingcreditbalance,
 			BigDecimal transactiondebitamount,
-			BigDecimal transactioncreditamount, boolean isactive, Date created) {
+			BigDecimal transactioncreditamount, int isactive, Date created) {
 		this.id = id;
 		this.code = code;
 		this.name = name;
@@ -122,7 +123,7 @@ public class Fund implements java.io.Serializable {
 			CChartOfAccounts chartofaccountsByPayglcodeid, String code,
 			String name, String FundNameCode, BigDecimal llevel, BigDecimal openingdebitbalance,
 			BigDecimal openingcreditbalance, BigDecimal transactiondebitamount,
-			BigDecimal transactioncreditamount, boolean isactive,
+			BigDecimal transactioncreditamount, int isactive,
 			Date lastmodified, Date created, BigDecimal modifiedby, BigDecimal createdby, 
 			Boolean isnotleaf, Character identifier, Set voucherheaders,
 			Set funds) {
@@ -256,15 +257,7 @@ public class Fund implements java.io.Serializable {
 		this.transactioncreditamount = transactioncreditamount;
 	}
 
-	public boolean isIsactive() {
-		return this.isactive;
-	}
-
-	public void setIsactive(boolean isactive) {
-		this.isactive = isactive;
-	}
-
-	public Date getLastmodified() {
+		public Date getLastmodified() {
 		return this.lastmodified;
 	}
 
@@ -327,5 +320,13 @@ public class Fund implements java.io.Serializable {
 	public void setCreatedby(BigDecimal createdby) {
 		this.createdby = createdby;
 	}
+
+    public int getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(int isactive) {
+        this.isactive = isactive;
+    }
 
 }
