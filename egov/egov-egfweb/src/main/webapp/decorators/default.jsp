@@ -87,5 +87,6 @@ window.document.onkeydown = function(event) {
 	<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
 		<egovtags:breadcrumb/> 
 		<decorator:body/>
+		<div class="urlwk"><div align>Financial Management System Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> All Rights Reserved </div></div>
 	</body>
 </html>
