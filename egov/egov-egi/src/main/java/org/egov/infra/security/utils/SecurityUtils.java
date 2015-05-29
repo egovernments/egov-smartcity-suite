@@ -42,9 +42,9 @@ package org.egov.infra.security.utils;
 import java.util.Optional;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,7 +59,7 @@ public class SecurityUtils {
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
             if (isCurrentUserAnonymous())
-                return userService.getUserById(1l);//TODO should be replaced with anonymous user
+                return userService.getUserById(1l);
             else 
                 return userService.getUserById(((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserId());
         } else

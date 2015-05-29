@@ -43,8 +43,8 @@ import javax.persistence.Entity;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 
-import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.persistence.entity.AbstractUser;
+import org.egov.infra.persistence.entity.enums.UserType;
 
 @Entity
 @Table(name = "eg_citizen")

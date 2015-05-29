@@ -47,7 +47,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.enums.AddressType;
+import org.egov.infra.persistence.entity.enums.AddressType;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Table(name="eg_address")

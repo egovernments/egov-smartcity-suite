@@ -45,9 +45,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;

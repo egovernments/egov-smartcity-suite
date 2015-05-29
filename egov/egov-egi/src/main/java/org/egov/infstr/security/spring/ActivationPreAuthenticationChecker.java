@@ -40,8 +40,8 @@
 package org.egov.infstr.security.spring;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.DisabledException;

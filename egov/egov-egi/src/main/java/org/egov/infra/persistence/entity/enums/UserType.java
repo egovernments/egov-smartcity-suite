@@ -37,8 +37,9 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.entity.enums;
+package org.egov.infra.persistence.entity.enums;
 
-public enum Gender {
-    FEMALE, MALE, TRANSGENDER
+public enum UserType {
+    //This order should not be interrupted
+    SYSTEM, CITIZEN, EMPLOYEE;
 }
