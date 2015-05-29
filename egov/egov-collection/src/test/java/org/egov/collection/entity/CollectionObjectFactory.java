@@ -152,7 +152,7 @@ public class CollectionObjectFactory {
 		Bank bank = new Bank();
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
-		bank.setIsactive(true);
+		bank.setIsactive(1);
 		bank.setCreated(new Date());
 		bank.setLastmodified(new Date());
 		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
@@ -1089,7 +1089,7 @@ public class CollectionObjectFactory {
 		fund.setOpeningcreditbalance(BigDecimal.valueOf(0));
 		fund.setTransactiondebitamount(BigDecimal.valueOf(0));
 		fund.setTransactioncreditamount(BigDecimal.valueOf(0));
-		fund.setIsactive(true);
+		fund.setIsactive(1);
 		fund.setCreated(new Date());
 		session.saveOrUpdate(fund);
 		return fund;
