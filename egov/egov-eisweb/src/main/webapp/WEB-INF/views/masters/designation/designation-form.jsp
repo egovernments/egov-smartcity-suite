@@ -42,15 +42,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" >
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
-                </c:if>
+		<div class="panel-body">
 		<form:form  method ="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="designation" id="designationForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -65,16 +63,16 @@
 							<spring:message code="lbl.designation.name"/><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabetWithsplchar" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.designation.description"/><span class="mandatory"></span>
+							<spring:message code="lbl.designation.description"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="description" id="description" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="description" id="description" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off"/>
 						</div>
 					</div>	
 				</div>
@@ -92,9 +90,7 @@
     </div>
 </div>
 
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-
-<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
-<%-- <script src="<c:url value='/resources/js/app/hierarchytype.js'/>"></script> --%>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>

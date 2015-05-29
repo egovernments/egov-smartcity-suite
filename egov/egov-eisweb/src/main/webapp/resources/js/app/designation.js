@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,21 +36,53 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------*/
+$(document).ready(function(){
+	
+	$("#buttonCreate").click(function() {
+		$('#designationForm').attr('method', 'get');
+		$('#designationForm').attr('action', '/eis/designation/create');
+	});
+	
+	$('#buttonEdit').click(function() {
+		var url = '/eis/designation/update/'+ $('#desigName').val();
+		$('#designationForm').attr('method', 'get');
+		$('#designationForm').attr('action', url);
+	});
+	
+	$('#view-designation')
+	.dataTable(
+			{
+				processing : true,
+				serverSide : true,
+				sort : false,
+				filter : true,
+				responsive : true,
+				"autoWidth": false,
+				ajax : "/eis/designation/ajax/result",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+						[ 10, 25, 50, "All" ] ],
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				columns : [ {
+					"mData" : "name",
+					"sTitle" : "Name",
+				}, {
+					"mData" : "description",
+					"sTitle" : "Description"
+				} ],
+			});
 
-###Designation
-title.createdesignation = Designation
-title.searchdesignation = Search Designation
-lbl.hdr.createDesignation=Create Designation
-lbl.designation.name=Name
-lbl.designation.description=Description
+$('#view-designation tbody').on(
+	'click',
+	'tr',
+	function() {
+		if ($(this).hasClass('apply-background')) {
+			$(this).removeClass('apply-background');
+		} else {
+			$('#view-designation tbody tr')
+					.removeClass('apply-background');
+			$(this).addClass('apply-background');
+		}
 
-### Position
-title.searchposition=Search position
-title.createposition=Create position
-lbl.position.submit= Create Position
-lbl.createPosition=Create Position
-lbl.department=Department
-lbl.designation=Designation
-lbl.position=Position name
-lbl.outsourcePost=Outsourced Post
+	});
+});

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation
+    The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
+	1) All versions of this program, verbatim or modified must carry this 
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -48,35 +48,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/designation/create")
-public class CreateDesignationController {
+@RequestMapping(value="/designation/update/{name}")
+public class UpdateDesignationController {
 
 	private DesignationService designationService;
 
 	@Autowired
-	public CreateDesignationController(DesignationService designationService) {
+	public UpdateDesignationController(DesignationService designationService) {
 		this.designationService = designationService;
 	}
-
+	
+	@ModelAttribute
+    public Designation designationModel(@PathVariable String name) {
+        return designationService.getDesignationByName(name);
+    }
+	
 	@RequestMapping(method = RequestMethod.GET)
-	public String createForm(Model model) {
-		model.addAttribute("designation", new Designation());
+	public String updateForm() {
 		return "designation-form";
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public String createDesignation(@Valid @ModelAttribute Designation designation, BindingResult errors,
+	public String updateDesignation(@Valid @ModelAttribute Designation designation, BindingResult errors,
 			RedirectAttributes redirectAttrs, Model model) {
 		if (errors.hasErrors()) {
 			return "designation-form";
 		}
-		designationService.createDesignation(designation);
-		return "create-designation";
+		designationService.updateDesignation(designation);;
+		redirectAttrs.addFlashAttribute("designation", designation);
+		model.addAttribute("message","Designation updated successfully");
+		return "success-designation";
 	}
-
 }

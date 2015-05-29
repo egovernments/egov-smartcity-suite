@@ -39,7 +39,6 @@
  */
 package org.egov.pims.commons;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -50,20 +49,21 @@ import javax.validation.constraints.Pattern;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_designation")
+@Unique(id = "id", tableName = "eg_designation", fields = { "name"}, columnName = {"name"},enableDfltMsg=true)
 public class Designation extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -3775503109625394145L;
 
     @NotBlank
     @SafeHtml
-    @Column(name = "name", unique = true)
-    @Pattern(regexp = Constants.ALPHANUMERIC)
+    @Pattern(regexp = Constants.ALPHABETS_WITHMIXEDCHAR,message="Name should contain capital letters with space and (-,_)")
     private String name;
     
     @SafeHtml

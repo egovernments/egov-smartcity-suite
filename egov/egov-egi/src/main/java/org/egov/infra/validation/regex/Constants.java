@@ -59,4 +59,5 @@ public class Constants {
     /** Matches any floating point number/NUMERIC, including optional sign character (-). Also matches empty strings. */
     public static final String SIGNED_NUMERIC = "^(\\-)?\\d*(\\.\\d+)?$";
     public static final String SIGNED_NUMBER = "^(\\-)?\\d*$";
+    public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
 }

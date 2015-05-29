@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,21 +36,25 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
-###Designation
-title.createdesignation = Designation
-title.searchdesignation = Search Designation
-lbl.hdr.createDesignation=Create Designation
-lbl.designation.name=Name
-lbl.designation.description=Description
+<link rel="stylesheet"	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+<link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 
-### Position
-title.searchposition=Search position
-title.createposition=Create position
-lbl.position.submit= Create Position
-lbl.createPosition=Create Position
-lbl.department=Department
-lbl.designation=Designation
-lbl.position=Position name
-lbl.outsourcePost=Outsourced Post
+<script src="<c:url value='/resources/js/app/designation.js'/>"></script>
+
+<table class="table table-bordered datatable" id="view-designation">
+</table>
+<div class="form-group">
+<div class="text-center">
+<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+</div>
+</div>
+<link rel="stylesheet"	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+

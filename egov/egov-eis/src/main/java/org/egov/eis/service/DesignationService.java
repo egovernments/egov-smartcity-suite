@@ -43,8 +43,11 @@ import java.util.List;
 
 import org.egov.eis.repository.DesignationRepository;
 import org.egov.pims.commons.Designation;
-import org.egov.search.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,5 +98,10 @@ public class DesignationService {
    
     public List<Designation> getAllDesignationsByNameLike(final String name) {
         return designationRepository.findByNameContainingIgnoreCase(name);
+    }
+    
+    public Page<Designation> getListOfDesignation(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
+        return designationRepository.findAll(pageable);
     }
 }
