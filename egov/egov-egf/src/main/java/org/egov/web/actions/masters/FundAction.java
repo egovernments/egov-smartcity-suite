@@ -189,7 +189,7 @@ public class FundAction extends BaseFormAction{
 			fundOld.setName(fundNameStr.toString());
 			fundOld.setCode(fund.getCode());
 			fundOld.setIdentifier(fund.getIdentifier());
-			fundOld.setIsactive(fund.isIsactive());
+			fundOld.setIsactive(fund.getIsactive());
 			fundOld.setLlevel(parentLevel);
 			fundOld.setLastmodified(new Date());
 			fundOld.setModifiedby(getLoggedInUser());
