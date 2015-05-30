@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
@@ -69,12 +70,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+@ParentPackage("egov")
 @Transactional(readOnly=true)
 @Namespace("/receipts")
 @ResultPath("/WEB-INF/jsp/receipts/")
 @Results({
-    @Result(name="schemeList",location="ajaxReceiptCreate-schemeList.jsp") ,
-    @Result(name="subSchemeList",location="ajaxReceiptCreate-subSchemeList.jsp")  
+    @Result(name="schemeList", location="ajaxReceiptCreate-schemeList.jsp") ,
+    @Result(name="subSchemeList",location="ajaxReceiptCreate-subSchemeList.jsp")
   })
 public class AjaxReceiptCreateAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;

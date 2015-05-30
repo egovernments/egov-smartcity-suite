@@ -37,39 +37,39 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <html>
     <head>
-        <%@ include file="/includes/taglibs.jsp" %>
         <%@ include file="/includes/meta.jsp" %>
+
         <title>eGov  - <decorator:title/> </title>
 
 	<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
-	
+	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element.js"></script>
+	<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
 	<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-debug.js"></script>
-	
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/yahoo/yahoo.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/dom/dom.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/autocomplete/autocomplete-debug.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/event/event-debug.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/animation/animation.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/yahoo/yahoo-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/dom/dom-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/autocomplete/autocomplete-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/event/event-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/animation/animation-min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="/egi/javascript/jquery/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
-    <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js"></script>
     
     <decorator:head/>

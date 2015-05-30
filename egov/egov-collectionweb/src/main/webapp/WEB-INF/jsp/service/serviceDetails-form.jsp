@@ -38,6 +38,50 @@
 --> 
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<script>
+function populateSchemes(fund){
+	
+	if(null != document.getElementById("schemeId")){
+		populateschemeId({fundId:fund.options[fund.selectedIndex].value});
+		populatesubschemeId({schemeId:-1});
+	}
+		
+}
+function populatesubSchemes(scheme){
+	
+	populatesubschemeId({schemeId:scheme.options[scheme.selectedIndex].value});	
+	
+}
+
+function validate(){
+	dom.get('error_area').innerHTML = '';
+	dom.get("error_area").style.display="none"
+	if(dom.get('serviceCode').value.trim().length == 0){
+		dom.get("error_area").innerHTML = '<s:text name="service.code.null" />';
+		dom.get("error_area").style.display="block";
+		return false;
+	}
+	else if(dom.get('serviceName').value.trim().length == 0){
+		dom.get("error_area").innerHTML = '<s:text name="service.name.null" />';
+		dom.get("error_area").style.display="block";
+		return false;
+	}
+	return true;
+}
+function uniqueCheckCode(){
+	var serviceCode = dom.get("serviceCode").value.trim();
+	var serviceCodeInitVal ='<s:property value="%{code}" />';
+    if(serviceCode !="" && serviceCodeInitVal.trim() != serviceCode){
+		populateCodeUnique({code:dom.get('serviceCode').value});
+   }	
+}
+
+function clearCodeIfExists(){
+	 if(dom.get("CodeUnique").style.display =="" ){
+		 document.getElementById('serviceCode').value="";
+	 }	
+}
+</script>
 <div class="formmainbox">
 	 <div class="errorstyle" id="error_area" style="display:none;"></div>
 	 <span align="center" style="display:none" id="CodeUnique">
@@ -112,17 +156,17 @@
 				<td width="25%" class="bluebox2"><s:text name="service.master.create.fundsource"></s:text>  </td>
 				<td width="25%" class="bluebox2">
 				<s:select headerKey="-1" headerValue="----Choose----" name="fundSource" id="fundSourceId" cssClass="selectwk"
-					list="dropdownData.fundsourceList" listKey="id" listValue="name" value="%{fundSource.id}" /> </td>
+					list="dropdownData.fundsourceList" listKey="id" listValue="name" value="%{fundSource.id}" /></td>
 			
 		</tr>
 		
 		<tr>
-		<egov:ajaxdropdown id="scheme"fields="['Text','Value']" dropdownId="schemeId" url="/receipts/ajaxReceiptCreate-ajaxLoadSchemes.action" />
+		<egov:ajaxdropdown id="schemeId" fields="['Text','Value']" dropdownId="schemeId" url="receipts/ajaxReceiptCreate-ajaxLoadSchemes.action" />
 			<td width="25%" class="bluebox"> <s:text name="service.master.create.scheme"></s:text> </td>
 				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="scheme" id="schemeId" cssClass="selectwk"
 					list="dropdownData.schemeList" listKey="id" listValue="name" value="%{scheme.id}"  onChange= "populatesubSchemes(this)" /></td>
-		<egov:ajaxdropdown id="subscheme"fields="['Text','Value']" dropdownId="subschemeId" url="/receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action" />
+		<egov:ajaxdropdown id="subschemeId" fields="['Text','Value']" dropdownId="subschemeId" url="receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action" />
 				<td width="25%" class="bluebox"><s:text name="service.master.create.subscheme"></s:text>  </td>
 				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="subscheme" id="subschemeId" cssClass="selectwk"
@@ -179,48 +223,4 @@
 	
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 </div>
-<script>
-function populateSchemes(fund){
-	
-	if(null != document.getElementById("schemeId")){
-		
-		populateschemeId({fundId:fund.options[fund.selectedIndex].value});
-		populatesubschemeId({schemeId:-1});
-	}
-		
-}
-function populatesubSchemes(scheme){
-	
-	populatesubschemeId({schemeId:scheme.options[scheme.selectedIndex].value});	
-	
-}
 
-function validate(){
-	dom.get('error_area').innerHTML = '';
-	dom.get("error_area").style.display="none"
-	if(dom.get('serviceCode').value.trim().length == 0){
-		dom.get("error_area").innerHTML = '<s:text name="service.code.null" />';
-		dom.get("error_area").style.display="block";
-		return false;
-	}
-	else if(dom.get('serviceName').value.trim().length == 0){
-		dom.get("error_area").innerHTML = '<s:text name="service.name.null" />';
-		dom.get("error_area").style.display="block";
-		return false;
-	}
-	return true;
-}
-function uniqueCheckCode(){
-	var serviceCode = dom.get("serviceCode").value.trim();
-	var serviceCodeInitVal ='<s:property value="%{code}" />';
-    if(serviceCode !="" && serviceCodeInitVal.trim() != serviceCode){
-		populateCodeUnique({code:dom.get('serviceCode').value});
-   }	
-}
-
-function clearCodeIfExists(){
-	 if(dom.get("CodeUnique").style.display =="" ){
-		 document.getElementById('serviceCode').value="";
-	 }	
-}
-</script>
