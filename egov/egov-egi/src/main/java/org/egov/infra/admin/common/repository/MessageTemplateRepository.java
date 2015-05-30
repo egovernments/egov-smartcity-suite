@@ -37,35 +37,18 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.repository;
-
-import java.util.Set;
+package org.egov.infra.admin.common.repository;
 
 import javax.persistence.QueryHint;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.common.entity.MessageTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    Set<User> findByUsernameContainingIgnoreCase(String userName);
+public interface MessageTemplateRepository extends JpaRepository<MessageTemplate, Long> {
 
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true")})
-    User findByUsername(String userName);
-
-    User findByEmailId(String emailId);
-
-    @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
-    Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
-
-    Set<User> findByActiveTrue();
-    
-    @Query("select u from User u where u.username = :identity or u.mobileNumber = :identity or u.emailId = :identity")
-    User findByEmailIdOrMobileNumberOrUsername(@Param("identity") String identity);
+    MessageTemplate findByTemplateName(String templateName);
 }

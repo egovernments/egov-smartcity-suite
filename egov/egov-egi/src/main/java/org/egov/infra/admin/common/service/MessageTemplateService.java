@@ -37,35 +37,33 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.repository;
+package org.egov.infra.admin.common.service;
 
-import java.util.Set;
+import java.text.MessageFormat;
 
-import javax.persistence.QueryHint;
+import org.egov.infra.admin.common.entity.MessageTemplate;
+import org.egov.infra.admin.common.repository.MessageTemplateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    Set<User> findByUsernameContainingIgnoreCase(String userName);
-
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true")})
-    User findByUsername(String userName);
-
-    User findByEmailId(String emailId);
-
-    @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
-    Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
-
-    Set<User> findByActiveTrue();
+@Service
+@Transactional(readOnly = true)
+public class MessageTemplateService {
     
-    @Query("select u from User u where u.username = :identity or u.mobileNumber = :identity or u.emailId = :identity")
-    User findByEmailIdOrMobileNumberOrUsername(@Param("identity") String identity);
+    @Autowired
+    private MessageTemplateRepository messageTemplateRepository;
+
+    public MessageTemplate getByTemplateName(final String templateName) {
+        return messageTemplateRepository.findByTemplateName(templateName);
+    }
+
+    public String realizeMessage(final MessageTemplate messageTemplate, final Object... values) {
+        return new MessageFormat(messageTemplate.getTemplate(), messageTemplate.getLocale()).format(values);
+    }
+
+    public String realizeMessage(final String templateName, final Object... values) {
+        return realizeMessage(getByTemplateName(templateName), values);
+    }
+
 }

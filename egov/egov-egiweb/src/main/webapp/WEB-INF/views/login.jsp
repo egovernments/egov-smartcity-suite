@@ -113,6 +113,26 @@
 	
 						</div>
 					</c:if>
+					<c:if test="${not empty param.recovered}">
+					<c:choose>
+						<c:when test="${param.recovered}">
+							<div class="text-center  error-msg">Please check your registered email to continue with password recovery.</div>
+						</c:when>
+						<c:otherwise>
+							<div class="text-center  error-msg">Could not recover password, please try again.</div>
+						</c:otherwise>
+					</c:choose>
+					</c:if>
+					<c:if test="${not empty param.reset}">
+					<c:choose>
+						<c:when test="${param.reset}">
+							<div class="text-center  error-msg">We have sent the new password to your registered email.</div>
+						</c:when>
+						<c:otherwise>
+							<div class="text-center  error-msg">Could not reset password, either your password recovery request was not successful or your request has been expired.</div>
+						</c:otherwise>
+					</c:choose>
+					</c:if>
 					<c:if test="${param.citizenActivationSuccess}">
 						<div class="text-center  error-msg">Activation Successful,
 							Please login using your credentials.</div>
@@ -143,15 +163,6 @@
 						<input type="hidden" name="citizenActivation"
 							id="citizenActivation" value="true" />
 					</c:if>
-					<c:if test="${param.passwordSendingSuccess}">
-						<div class="text-center  error-msg">Your recovered password
-							has been sent to registered mobile and email.</div>
-					</c:if>
-					<c:if test="${param.passwordSendingFailed}">
-						<div class="text-center  error-msg">Your password recovery
-							request failed.</div>
-					</c:if>
-	
 					<div class="login-content login-content-margin signup-section">
 	
 						<div class="login-header">
@@ -338,7 +349,7 @@
 									</button>
 								</div>
 	
-								<!--div class="form-group">
+								<div class="form-group">
 										<div class="row">
 											<div class="col-md-12 col-xs-12 text-right">
 												<a href="javascript:void(0)" data-toggle="modal"
@@ -346,7 +357,7 @@
 													Password?</a>
 											</div>
 										</div>
-									</div-->
+									</div>
 							</form>
 						</div>
 					</div>
@@ -429,13 +440,14 @@
 									</div>
 	
 									<input type="text" class="form-control style-form"
-										name="emailOrMobileNum" id="emailOrMobileNum"
-										required="required" placeholder="Email or Mobile number"
+										name="identity" id="emailOrMobileNum"
+										required="required" placeholder="Email or Mobile or Username"
 										autocomplete="off" />
+										<input type="hidden" name="originURL" id="originURL">
 								</div>
-								<div id="emailOrMobileNoReq" class="error-msg"
-									style="display: none">Email or Mobile number is required</div>
-	
+								<div id="emailOrMobileNoReq" class="error-msg display-hide"
+									>Email or Mobile or Username is required</div>
+								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;">Recovery link will be sent to your registered mobile and email</div>
 							</div>
 							<div class="form-group text-right">
 								<button type="submit" id="recovrbtn" class="btn btn-primary">Recover</button>

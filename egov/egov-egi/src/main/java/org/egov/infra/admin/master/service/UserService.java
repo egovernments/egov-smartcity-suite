@@ -40,13 +40,12 @@
 package org.egov.infra.admin.master.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
-import org.egov.infra.utils.EmailUtils;
-import org.egov.infstr.notification.HTTPSMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,12 +56,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private HTTPSMS httpSMS;
-
-    @Autowired
-    private EmailUtils emailUtils;
 
     @Transactional
     public User updateUser(final User user) {
@@ -97,28 +90,12 @@ public class UserService {
         return userRepository.findByEmailId(emailId);
     }
 
-    // TODO This is to be changed like eg:facebook forget password
-    public boolean sentPasswordRecovery(final String emailOrMobNum) {
-        User user;
-        boolean hasSent = false;
-        if (emailOrMobNum.indexOf('@') != -1)
-            user = getUserByEmailId(emailOrMobNum);
-        else
-            user = getUserByUsername(emailOrMobNum);
-        if (user != null) {
-            final String pwd = "nopassword";// CryptoHelper.decrypt(user.getPassword());
-            if (user.getEmailId() != null && !user.getEmailId().isEmpty())
-                hasSent = emailUtils.sendMail(user.getEmailId(),
-                        new StringBuilder("Hello,\r\n Your login credential is given below \r\n User Name : ")
-                                .append(user.getUsername()).append("\r\n Password : ").append(pwd).toString(),
-                        "Password Recovery");
-
-            hasSent = httpSMS.sendSMS("Your login credential, User Name : " + user.getUsername() + " and Password : " + pwd,
-                    "91" + user.getMobileNumber()) || hasSent;
-
-        } else
-            hasSent = false;
-        return hasSent;
+    public User getUserByUsernameOrEmailorMobileNumber(String identity) {
+        return userRepository.findByEmailIdOrMobileNumberOrUsername(identity);
     }
-
+    
+    public Optional<User> checkUserWithIdentity(final String identity) {
+        return Optional.ofNullable(getUserByUsernameOrEmailorMobileNumber(identity));
+    }
+    
 }

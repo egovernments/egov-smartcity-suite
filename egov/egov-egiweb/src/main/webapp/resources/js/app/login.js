@@ -129,7 +129,8 @@ $(document).ready(function()
 		if($('#emailOrMobileNum').val()===""){
 			$('#emailOrMobileNoReq').show();
 		}else{
-		$('#forgotPasswordForm').attr('action', '/egi/login/send-pwd').trigger('submit');
+			$('#originURL').val(location.origin);
+			$('#forgotPasswordForm').attr('action', '/egi/login/password/recover').trigger('submit');
 		}
 		return false;
 	});
