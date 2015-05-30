@@ -72,10 +72,10 @@ public class HTTPSMS {
 	 **/
 	public boolean sendSMS(final String message, final String mobileNumber) throws EGOVRuntimeException {
 		try {
-			return sendSMS(StringUtils.EMPTY, StringUtils.EMPTY, message, mobileNumber, StringUtils.EMPTY);
+			return applicationProperties.smsEnabled() && sendSMS(StringUtils.EMPTY, StringUtils.EMPTY, message, mobileNumber, StringUtils.EMPTY);
 		} catch (final EGOVException e) {
-			LOGGER.error(e.getMessage(),e);
-			throw new EGOVRuntimeException(e.getMessage(), e);
+			LOGGER.error(e);
+			throw new EGOVRuntimeException("SMS sending failed", e);
 		}
 	}
 

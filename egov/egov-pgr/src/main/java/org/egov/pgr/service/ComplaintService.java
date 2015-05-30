@@ -66,7 +66,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -143,9 +142,6 @@ public class ComplaintService {
     @Autowired
     private EscalationService escalationService;
     
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) {
@@ -366,9 +362,9 @@ public class ComplaintService {
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
                 .append(", Thank you for registering a complaint (").append(complaint.getCRN())
                 .append("). Please use this number for all future references.");
-        if (applicationProperties.emailEnabled() && complaint.getComplainant().getEmail() != null)
+        if (complaint.getComplainant().getEmail() != null)
             emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
-        if (applicationProperties.smsEnabled() && complaint.getComplainant().getMobile() != null)
+        if (complaint.getComplainant().getMobile() != null)
             httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
 
     }
