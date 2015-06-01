@@ -40,12 +40,14 @@ $ git clone https://github.com/egovernments/eGov.git
  search.port=9300
  search.clusterName=elasticsearch-<username>
 
+ email.enabled=false ##Enables or disabled email sending, this is enabled (true) by default
  mail.port=465
  mail.host=smtp.gmail.com
  mail.protocol=smtps
  mail.sender.username=abc123@gmail.com
  mail.sender.password=12345
 
+ sms.enabled=false  ##Enables or disables SMS sending, this is enabled (true) by default
  sms.provider.url=
  sms.sender.username=
  sms.sender.password=
