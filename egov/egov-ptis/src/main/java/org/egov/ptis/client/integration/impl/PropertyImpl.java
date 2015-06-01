@@ -45,7 +45,7 @@ import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.bean.Property;
@@ -103,7 +103,7 @@ public class PropertyImpl extends Property {
 
 	@Override
 	protected void checkAuthorization() {
-		Long userId = EGOVThreadLocals.getUserId();
+		Long userId = EgovThreadLocals.getUserId();
 		if (userId == null) {
 			throw new EGOVRuntimeException(" User is null.Please check ");
 		}

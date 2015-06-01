@@ -71,9 +71,9 @@ import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results({ @Result(name = "NOACCESS", type = "stream", location = "returnStream", params = {
@@ -582,9 +582,9 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 	@Action(value = "/feeDetailsExtn-showFeeDetailsinRegistration", results = { @Result(name = "feeDetailsRegistration",type = "dispatcher") })
 	public String showFeeDetailsinRegistration() {
 		LOGGER.debug("Start showFeeDetailsinRegistration");
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			List<String> roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 			if (!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,
 					BpaConstants.FEEDETAILS)) {
 				returnStream = returnStream.concat(" Fee Details");

@@ -48,7 +48,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -116,7 +116,7 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = UserService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId);
+			EgovThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		}
 		

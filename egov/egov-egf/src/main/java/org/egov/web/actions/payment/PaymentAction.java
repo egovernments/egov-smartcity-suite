@@ -70,11 +70,11 @@ import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
@@ -792,7 +792,7 @@ public class PaymentAction extends BasePaymentAction{
                 else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
                         userId = Integer.valueOf(parameters.get("approverUserId")[0]);
                 }else {
-                        userId = EGOVThreadLocals.getUserId().intValue();
+                        userId = EgovThreadLocals.getUserId().intValue();
                 }
                 
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Paymentheader=="+paymentheader.getStateType());
@@ -1163,7 +1163,7 @@ public class PaymentAction extends BasePaymentAction{
                                 if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
                                         userId = Integer.valueOf(parameters.get("approverUserId")[0]);
                                 }else {
-                                        userId = EGOVThreadLocals.getUserId().intValue();
+                                        userId = EgovThreadLocals.getUserId().intValue();
                                 }
                                 paymentWorkflowService.transition(( getValidActions().get(0)).getName()+"|"+userId, paymentheader, paymentheader.getVoucherheader().getDescription());
                                 addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));

@@ -67,10 +67,10 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
@@ -103,7 +103,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long>{
 
     public boolean canViewApprovedAmount(PersistenceService persistenceService, Budget budget){
         Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
-        ScriptContext context = ScriptService.createContext("wfItem",budget,"eisCommonServiceBean", eisCommonService,"userId",EGOVThreadLocals.getUserId().intValue());
+        ScriptContext context = ScriptService.createContext("wfItem",budget,"eisCommonServiceBean", eisCommonService,"userId",EgovThreadLocals.getUserId().intValue());
         Integer result = (Integer)scriptExecutionService.executeScript(script, context);
         if(result == 1)
             return true;
@@ -361,7 +361,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
     }
 
     protected User getUser() {
-        return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
+        return (User) ((PersistenceService)this).find(" from User where id=?",EgovThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException{
@@ -1461,7 +1461,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
     }
     public PersonalInformation getEmpForCurrentUser()
     {
-        return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+        return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
     }
     public void setBudgetDetailWorkflowService(WorkflowService<BudgetDetail> budgetDetailWorkflowService) {
         this.budgetDetailWorkflowService = budgetDetailWorkflowService;
@@ -1479,7 +1479,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
     public boolean toBeConsolidated()
     {
     	//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
+        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
         Functionary empfunctionary=empAssignment.getFunctionary();
         Designation designation = empAssignment.getDesignation();
         Boolean consolidateBudget=Boolean.FALSE;

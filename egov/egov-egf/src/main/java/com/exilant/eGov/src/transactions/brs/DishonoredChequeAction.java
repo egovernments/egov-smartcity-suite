@@ -84,9 +84,9 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -610,7 +610,7 @@ public class DishonoredChequeAction extends DispatchAction {
                                 populateWorkflowEntities(req);
                                 getValidActions(dishonorChq,req);
                                 getNextAction(dishonorChq,req)  ;
-                                User logginUser=(User)persistenceService.find("from User where id=?", EGOVThreadLocals.getUserId());
+                                User logginUser=(User)persistenceService.find("from User where id=?", EgovThreadLocals.getUserId());
                                 dishonorChq.setCreatedBy(nextUser);   
                                 dishonorChq.setCreatedDate(new DateTime());
                                 dishonorChq.setLastModifiedBy(logginUser);
@@ -739,7 +739,7 @@ public class DishonoredChequeAction extends DispatchAction {
                         throws Exception {
                 req.setAttribute("departmentList", persistenceService.findAllBy("from Department order by deptName"));
                 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(), DateUtils.today());
+                Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(), DateUtils.today());
                 if(asignment.getDesignation().getName().equalsIgnoreCase("SECTION MANAGER")) {
                         ;
                 }

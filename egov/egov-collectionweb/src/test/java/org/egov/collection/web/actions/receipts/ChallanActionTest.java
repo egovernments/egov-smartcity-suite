@@ -117,7 +117,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		egovCommon = createMock(EgovCommon.class);
 		eisCommonsManagerMock = createMock(EisCommonsManager.class);
 		auditEventService =  new AuditEventService();
-		EGOVThreadLocals.setUserId("1");
+		EgovThreadLocals.setUserId("1");
 		genericService.setType(AuditEvent.class);
 		auditEventService.setAuditEventPersistenceService(genericService);
 		

@@ -53,8 +53,8 @@ import org.egov.bpa.models.extd.RegnAutoDcrExtn;
 import org.egov.bpa.services.extd.autoDcr.AutoDcrExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.bpa.utils.ServiceType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
@@ -143,12 +143,12 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	@Action(value = "/buildingPlanCitizenRequestExtn-validateForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String validateForm(Boolean autoDcrCheckRequired){
 		
-		LOGGER.info("   userid "+(EGOVThreadLocals.getUserId()));
+		LOGGER.info("   userid "+(EgovThreadLocals.getUserId()));
 		// Get citizen details, by passing login user id.
 	/*	EPortalUser citizen= null;
 		if(portalIntegrationService!=null){
 			portalIntegrationService.initServicePack();
-			citizen=getPortalIntegrationService().getPortalUserByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			citizen=getPortalIntegrationService().getPortalUserByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 			}*/
 		//TODO PHionix
 		/*if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()!=null)

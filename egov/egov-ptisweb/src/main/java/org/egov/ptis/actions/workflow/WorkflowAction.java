@@ -52,8 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENER
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.workflow.WorkflowDetails;
@@ -173,11 +173,11 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	}
 
 	public void startWorkFlow() {
-		LOGGER.debug("Entered into startWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
+		LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("startWorkFlow: Workflow is starting for Property: "
 				+ workflowAction.getPropertyModel());
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		// propertyWorkflowService.start(workflowAction.getPropertyModel(),
 		// position, "Property Workflow Started");
@@ -191,11 +191,11 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	 * This method ends the workflow. The Property is transitioned to END state.
 	 */
 	public void endWorkFlow() {
-		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
+		LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: "
 				+ workflowAction.getPropertyModel());
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		// propertyWorkflowService.end(workflowAction.getPropertyModel(),
 		// position, "Property Workflow End");

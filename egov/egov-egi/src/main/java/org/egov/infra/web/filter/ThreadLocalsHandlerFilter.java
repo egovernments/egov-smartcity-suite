@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.filter;
 
 import java.io.IOException;
 
@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,13 +71,13 @@ public class ThreadLocalsHandlerFilter implements Filter {
         try {
 
             final String domainName = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
-            EGOVThreadLocals.setDomainName(domainName);
-            EGOVThreadLocals.setServletContext(((HttpServletRequest) request).getServletContext());
-            EGOVThreadLocals.setTenantID(environment.getProperty("tenant." + domainName));
+            EgovThreadLocals.setDomainName(domainName);
+            EgovThreadLocals.setServletContext(((HttpServletRequest) request).getServletContext());
+            EgovThreadLocals.setTenantID(environment.getProperty("tenant." + domainName));
 
             chain.doFilter(request, response);
 
-            EGOVThreadLocals.clearValues();
+            EgovThreadLocals.clearValues();
 
         } catch (final AuthorizationException e) {
             throw e;

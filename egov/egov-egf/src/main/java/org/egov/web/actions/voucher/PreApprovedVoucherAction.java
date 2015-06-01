@@ -72,12 +72,12 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
@@ -573,7 +573,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 Integer userId = null;
                 if(parameters.get("actionName")[0].contains("approve")){
                          userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
-                                                                                                                        EGOVThreadLocals.getUserId().intValue();
+                                                                                                                        EgovThreadLocals.getUserId().intValue();
                 }
                 else{
                         userId = voucherHeader.getCreatedBy().getId().intValue();
@@ -957,15 +957,15 @@ public class PreApprovedVoucherAction extends BaseFormAction
         public Position getPosition()throws EGOVRuntimeException
         {
                 Position pos;
-                        if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
-                        pos =eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+                        if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EgovThreadLocals.getUserId());
+                        pos =eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
                 return pos;
         }
 
         public List<Action> getValidActions(String purpose){
                 List<Action> validButtons = new ArrayList<Action>();
-                List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EGOVThreadLocals.getUserId().intValue(),"date",new Date(),"purpose",purpose));
+                List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EgovThreadLocals.getUserId().intValue(),"date",new Date(),"purpose",purpose));
                 for(Object s:list)
                 {
                         if("invalid".equals(s))
@@ -1014,9 +1014,9 @@ public class PreApprovedVoucherAction extends BaseFormAction
         }
         protected Boolean validateOwner(State state)
         {
-                if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
+                if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EgovThreadLocals.getUserId());
                 List<Position> positionsForUser=null;
-                positionsForUser = null;//eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+                positionsForUser = null;//eisService.getPositionsForUser(Integer.valueOf(EgovThreadLocals.getUserId()), new Date());
                 if(positionsForUser.contains(state.getOwnerPosition()))      
                 {
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");

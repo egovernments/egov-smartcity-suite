@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.filter;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -58,6 +58,7 @@ import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,11 +112,11 @@ public class SessionAttributeHandlerFilter implements Filter {
             }
             if (httpSession.getAttribute("userid") != null) {
                 LOGGER.info("Setting User Id to EgovThreadLocal");
-                EGOVThreadLocals.setUserId((Long) httpSession.getAttribute("userid"));
+                EgovThreadLocals.setUserId((Long) httpSession.getAttribute("userid"));
             }
 
         } else
-            EGOVThreadLocals.setUserId(null);
+            EgovThreadLocals.setUserId(null);
 
         chain.doFilter(request, response);
 

@@ -42,7 +42,7 @@ package org.egov.services.deduction;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
@@ -63,7 +63,7 @@ public class RemittanceJob extends AbstractQuartzJob implements StatefulJob{
  		LOGGER.info("Inside RemittanceJob"); 
 		RemittanceSchedulerLog remittanceScheduler = new RemittanceSchedulerLog();
 		remittanceScheduler = buildRemittanceScheduler(remittanceScheduler);
-		remittanceScheduler.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
+		remittanceScheduler.setCreatedBy(EgovThreadLocals.getUserId().intValue());
 		scheduledRemittanceService.getRemittanceSchedulerLogService().persist(remittanceScheduler);
 		
 		schedularLogId=remittanceScheduler.getId();
@@ -77,7 +77,7 @@ public class RemittanceJob extends AbstractQuartzJob implements StatefulJob{
 		remittanceScheduler.setSchJobName(getJobName());
 		remittanceScheduler.setLastRunDate(new Date());
 		remittanceScheduler.setCreatedDate(new Date());
-		remittanceScheduler.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
+		remittanceScheduler.setCreatedBy(EgovThreadLocals.getUserId().intValue());
 		remittanceScheduler.setStatus("Started");      
 		return remittanceScheduler;      
 	}

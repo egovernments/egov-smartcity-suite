@@ -73,10 +73,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -687,7 +687,7 @@ public class BudgetReportAction extends BaseFormAction {
 		Position pos;
 		try {
 			//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
-			pos= eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
+			pos= eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
@@ -1127,7 +1127,7 @@ public class BudgetReportAction extends BaseFormAction {
 		List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
 		String value = list.get(0).getValue();
 		//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
-		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
+		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
 		Designation designation = empAssignment.getDesignation();
 		if(designation.getName().equalsIgnoreCase(value))
 		{

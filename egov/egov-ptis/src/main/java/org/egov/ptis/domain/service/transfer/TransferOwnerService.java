@@ -60,7 +60,7 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
@@ -258,7 +258,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		billable.setMutationFee(amount);
 		billable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
 		billable.setCallbackForApportion(Boolean.FALSE);
-		billable.setUserId(Long.valueOf(EGOVThreadLocals.getUserId()));
+		billable.setUserId(Long.valueOf(EgovThreadLocals.getUserId()));
 		billable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
 				.getWard().getBoundaryNum().toString()));
 		property.setBillable(billable);

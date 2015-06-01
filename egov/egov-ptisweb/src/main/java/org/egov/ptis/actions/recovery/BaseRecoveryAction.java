@@ -308,7 +308,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 			return Boolean.FALSE;
 		//FIX ME
 		//User authorisedUser = (User)eisCommonService.getUserforPosition(state.getOwnerUser());
-		//User loggedInUser =(User) new UserDAO().getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		//User loggedInUser =(User) new UserDAO().getUserByID(Integer.valueOf(EgovThreadLocals.getUserId()));
 		User authorisedUser = null;
 		User loggedInUser = null;
 		return authorisedUser.equals(loggedInUser);

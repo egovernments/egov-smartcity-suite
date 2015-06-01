@@ -51,7 +51,7 @@ import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.context.ApplicationContext;
@@ -119,7 +119,7 @@ public class BpaAutoGenSiteInspectionDateExtn  extends AbstractQuartzJob{
 						inspection.setInspectionDate(nextInspectionDate);
 						inspection.setRegistration(regnObject);
 						inspectionList.add(inspection);
-						inspectionExtnService.save(inspection, bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()))
+						inspectionExtnService.save(inspection, bpaCommonExtnService.getUserbyId((EgovThreadLocals.getUserId()))
 							, null, Boolean.FALSE, bpaCommonExtnService.getstatusbyCode(BpaConstants.INSPECTIONSCHEDULED));
 					 bpaCommonExtnService.createStatusChange(regnObject,regnObject.getEgwStatus());
 				}

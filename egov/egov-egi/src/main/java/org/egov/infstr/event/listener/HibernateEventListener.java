@@ -42,7 +42,7 @@ package org.egov.infstr.event.listener;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -95,7 +95,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 		// get the user object from a different session
 		final SessionFactory factory = session.getFactory();
 		final Session session2 = factory.openSession();
-		final User usr = (User) session2.load(User.class, EGOVThreadLocals.getUserId());
+		final User usr = (User) session2.load(User.class, EgovThreadLocals.getUserId());
 		session2.flush();
 		session2.close();
 		return usr;
@@ -126,7 +126,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 		if (object instanceof BaseModel && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
 			// only update the entity if it has been changed
 			final Date currentDate = new Date();
-			final User usr = (User) session.load(User.class, EGOVThreadLocals.getUserId());
+			final User usr = (User) session.load(User.class, EgovThreadLocals.getUserId());
 
 			final BaseModel entity = (BaseModel) session.getPersistenceContext().unproxyAndReassociate(object);
 			if (entity.getCreatedBy() == null) {

@@ -53,9 +53,9 @@ import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.eb.domain.master.entity.TargetAreaMappings;
 import org.egov.eb.service.master.TargetAreaService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.pims.commons.Position;
@@ -308,7 +308,7 @@ public class TargetAreaAction extends BaseFormAction {
 	}
 
 	private User getLoggedInUser() {
-		return (User) persistenceService.getSession().load(User.class, Long.valueOf(EGOVThreadLocals.getUserId()));
+		return (User) persistenceService.getSession().load(User.class, Long.valueOf(EgovThreadLocals.getUserId()));
 	}
 
 	public TargetAreaService getTargetAreaService() {

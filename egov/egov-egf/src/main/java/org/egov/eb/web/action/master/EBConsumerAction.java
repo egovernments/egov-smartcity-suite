@@ -59,12 +59,12 @@ import org.egov.eb.service.master.TargetAreaService;
 import org.egov.eb.utils.EBUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.services.masters.AccountdetailkeyService;
@@ -395,7 +395,7 @@ public class EBConsumerAction extends SearchFormAction{
 	}
 	
 	private User getLoggedInUser() {
-		 return (User)persistenceService.getSession().load(User.class, Long.valueOf(EGOVThreadLocals.getUserId()));
+		 return (User)persistenceService.getSession().load(User.class, Long.valueOf(EgovThreadLocals.getUserId()));
 	}
 	
 	public String getMode() {

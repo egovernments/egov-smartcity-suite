@@ -74,9 +74,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
@@ -192,7 +192,7 @@ public class BndCommonService {
 
     @Transactional
     public Registrar getRegistrarByLoggedInUser() {
-        final Long userId = EGOVThreadLocals.getUserId();
+        final Long userId = EgovThreadLocals.getUserId();
         return (Registrar) persistenceService.find(REGISTRARQUERY, userId);
     }
 
@@ -439,7 +439,7 @@ public class BndCommonService {
 
     @Transactional
     public ObjectHistory saveHistory(final Registration registration, final String objectType, final String remarks) {
-        final User user = getUserByPassingUserId(EGOVThreadLocals.getUserId());
+        final User user = getUserByPassingUserId(EgovThreadLocals.getUserId());
         return objectHistoryService.save(objectTypeService.getObjectTypebyType(objectType), registration.getId()
                 .intValue(), remarks, user);
     }
@@ -525,7 +525,7 @@ public class BndCommonService {
      */
 
     public Boolean isCreatedByLoggedInUser(final StateAware wfObj) {
-        if (wfObj.getCreatedBy() != null && wfObj.getCreatedBy().getId().equals(EGOVThreadLocals.getUserId()))
+        if (wfObj.getCreatedBy() != null && wfObj.getCreatedBy().getId().equals(EgovThreadLocals.getUserId()))
             return Boolean.TRUE;
         return Boolean.FALSE;
     }

@@ -70,10 +70,10 @@ import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -962,7 +962,7 @@ private Map<Integer, String> getDepartments() {
        record.setRemarks(message);
        record.setSchJobName(jobName);
        record.setCreatedDate(new Date());
-       record.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
+       record.setCreatedBy(EgovThreadLocals.getUserId().intValue());
        remittanceSchedulerLogService.persist(record);
        
  	}
@@ -977,8 +977,8 @@ private Map<Integer, String> getDepartments() {
 		CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(voucherHeader.getVoucherDate());  
 		remit.setFinancialyear(financialYearByDate);
 		remit.setCreateddate(today);
-		remit.setCreatedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
-		remit.setLastmodifiedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
+		remit.setCreatedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+		remit.setLastmodifiedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
 		remit.setLastmodifieddate(today);
 		remit.setMonth(BigDecimal.valueOf(today.getMonth()));
 		remit.setVoucherheader(voucherHeader);

@@ -131,13 +131,13 @@ import org.egov.demand.model.EgDemand;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 /*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -386,7 +386,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		if (userRole.contains(BpaConstants.PORTALUSERSURVEYORROLE)) {
 			userRole = BpaConstants.PORTALUSERSURVEYORROLE;
 		}
-		User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals
+		User user = bpaCommonExtnService.getUserbyId((EgovThreadLocals
 				.getUserId()));
 		if (workFlowAction == null && user != null) {// &&
 														// user.getIsPortalUser()==Boolean.TRUE))
@@ -735,7 +735,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 			docHistory.setRegistrationId(registration);
 
 			User LoggedInuser = bpaCommonExtnService
-					.getUserbyId((EGOVThreadLocals.getUserId()));
+					.getUserbyId((EgovThreadLocals.getUserId()));
 
 			if (LoggedInuser != null) {
 				// docHistory.setCreatedUser(LoggedInuser);//Phionix TODO
@@ -1331,10 +1331,10 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		 * registration.getCurrentState
 		 * ().getValue().equalsIgnoreCase(BpaConstants.APPLICATIONREGISTERED)){
 		 * List<Position> pos =
-		 * eisService.getPositionsForUser((EGOVThreadLocals.getUserId()), new
+		 * eisService.getPositionsForUser((EgovThreadLocals.getUserId()), new
 		 * Date()); RegistrationExtn firstInboxItem = (RegistrationExtn)
 		 * bpaCommonExtnService
-		 * .getFirstWorkflowItemForType(pos,(EGOVThreadLocals
+		 * .getFirstWorkflowItemForType(pos,(EgovThreadLocals
 		 * .getUserId()),RegistrationExtn.class.getSimpleName(),
 		 * BpaConstants.APPLICATIONREGISTERED
 		 * +","+registration.getServiceType().getId()); if
@@ -1412,9 +1412,9 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 				&& !"".equals(registration.getRequest_number())) {
 			setMode(BpaConstants.MODENOEDIT);
 		}
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			List<String> roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 			if (!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,
 					"registrationdetails")) {
 				setMode(BpaConstants.MODENOEDIT);
@@ -2347,9 +2347,9 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 
 	public void loggedInUserActions() {
 		List<String> roleList = new ArrayList<String>();
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 		}
 
 		registration = registerBpaExtnService
@@ -2362,7 +2362,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 							.getEgwStatus().getCode()
 							.equals(BpaConstants.CMDACREATEDLETTERTOPARTY))) {
 				// roleList =
-				// bpaCommonService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+				// bpaCommonService.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 				showActions = BpaExtnRuleBook.getInstance().getActionsByRoles(
 						roleList, registration.getEgwStatus());
 			} else if (registration.getEgwStatus() != null
@@ -3025,9 +3025,9 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	@Action(value = "/registerBpaExtn-showExistingLetterToPartyDetails", results = { @Result(name = "existingLetterToPartyDtls",type = "dispatcher") })
 	public String showExistingLetterToPartyDetails() {
 
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			List<String> roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 			if (!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,
 					"lettertoparty")) {
 				returnStream = returnStream.concat(" Letter To Party Details");
@@ -3049,9 +3049,9 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	@Action(value = "/registerBpaExtn-showExistingLetterToPartyCMDADetails", results = { @Result(name = "existingCmdaLetterToPartyDtls",type = "dispatcher") })
 	public String showExistingLetterToPartyCMDADetails() {
 
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			List<String> roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 			if (!BpaRuleBook.getInstance().checkViewsforRoles(roleList,
 					"lettertoparty")) {
 				returnStream = returnStream.concat(" Letter To Party Details");
@@ -3396,7 +3396,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		setAdditionalRule(BpaConstants.ADDITONALRULEREJECTBPA);
 		registration.setAdditionalRule(BpaConstants.ADDITONALRULEREJECTBPA);
 		List<String> roleList = bpaCommonExtnService
-				.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+				.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 		if (getRejectionMode() == null
 				|| (getRejectionMode() != null && !getRejectionMode().equals(
 						BpaConstants.MODEFROMMODIFY))) {
@@ -3426,7 +3426,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		 * To validate For this registration site inspection is added by
 		 * official users..Before Proceeding Create LetterToParty
 		 */
-		User LoggedInuser = bpaCommonExtnService.getUserbyId((EGOVThreadLocals
+		User LoggedInuser = bpaCommonExtnService.getUserbyId((EgovThreadLocals
 				.getUserId()));
 		String UserRole = bpaCommonExtnService.getUserRolesForLoggedInUser();
 		if (!UserRole.contains(BpaConstants.PORTALUSERSURVEYORROLE)

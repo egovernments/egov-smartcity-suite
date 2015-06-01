@@ -74,8 +74,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.springframework.transaction.annotation.Transactional;
@@ -494,7 +494,7 @@ public class BirthRegistrationAction extends RegistrationAction {
              * .getCitizen().getLastName());
              */
             birthRegistration.getNameChange().setLastModifiedBy(
-                    bndCommonService.getUserByPassingUserId(EGOVThreadLocals.getUserId()));
+                    bndCommonService.getUserByPassingUserId(EgovThreadLocals.getUserId()));
             birthRegistration.getNameChange().setLastUpatedTimestamp(new Date());
             // TODO egifix
             /*
@@ -558,7 +558,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     @Override
     @Transactional
     public String getAdditionalRule() {
-        final Long userId = birthRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
+        final Long userId = birthRegistration.getCreatedBy() == null ? Long.valueOf(EgovThreadLocals.getUserId())
                 : birthRegistration.getCreatedBy().getId();
         final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(userId);
         return BndRuleBook.HOSPITALUSER.equalsIgnoreCase(BndRuleBook.getInstance().getHighestPrivilegedRole(roleList)) ? BndRuleBook.HOSPITALUSER
@@ -619,7 +619,7 @@ public class BirthRegistrationAction extends RegistrationAction {
          * birthRegistrationService.getBirthRegistrationById(idTemp);
          * list.add(birthRegistration); Integer userId =
          * birthRegistration.getCreatedBy
-         * ()==null?Integer.valueOf(EGOVThreadLocals
+         * ()==null?Integer.valueOf(EgovThreadLocals
          * .getUserId()):birthRegistration.getCreatedBy().getId(); List<String>
          * roleList=bndCommonService.getRoleNamesByPassingUserId(userId); String
          * roleName

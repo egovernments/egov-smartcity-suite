@@ -57,7 +57,7 @@ import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -98,7 +98,7 @@ public class RuleInterceptorFilter implements Filter {
 			final List<AuthorizationRule> authRuleList = this.authRuleService.findAllByNamedQuery("authRulesByAction", action);
 			for (final AuthorizationRule authRule : authRuleList) {
 				final Object object = this.getEntity(httpRequest, authRule);
-				final List authResList = this.getRuleAuthentication(this.getCurrentUser(Long.valueOf(EGOVThreadLocals.getUserId())), authRule, object);
+				final List authResList = this.getRuleAuthentication(this.getCurrentUser(Long.valueOf(EgovThreadLocals.getUserId())), authRule, object);
 				final boolean authorized = Boolean.valueOf(authResList.get(0).toString());
 				if (!authorized) {
 					// if authorization fails throwing AuthorizationException

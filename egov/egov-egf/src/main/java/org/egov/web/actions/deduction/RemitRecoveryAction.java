@@ -82,11 +82,11 @@ import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -296,8 +296,8 @@ public class RemitRecoveryAction extends BasePaymentAction{
 		CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(vh.getVoucherDate());
 		remit.setFinancialyear(financialYearByDate);
 		remit.setCreateddate(new Date());
-		remit.setCreatedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
-		remit.setLastmodifiedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
+		remit.setCreatedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+		remit.setLastmodifiedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
 		remit.setLastmodifieddate(new Date());
 		remit.setMonth(BigDecimal.valueOf(new Date().getMonth()));
 		remit.setVoucherheader(vh);
@@ -517,10 +517,10 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 			userId = paymentheader.getCreatedBy().getId().intValue();
 		}
 		else if(null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])==-1  ){
-			userId = EGOVThreadLocals.getUserId().intValue();
+			userId = EgovThreadLocals.getUserId().intValue();
 		}
 		else if(null == parameters.get("approverUserId")) {
-				userId = EGOVThreadLocals.getUserId().intValue();
+				userId = EgovThreadLocals.getUserId().intValue();
 		}else {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 			

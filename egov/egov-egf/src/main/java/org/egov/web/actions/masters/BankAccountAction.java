@@ -57,7 +57,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
@@ -144,7 +144,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 
 	private void populateBankAccountDetail(final Bankaccount bankAccount) {
 		final HttpServletRequest request = ServletActionContext.getRequest();
-		bankAccount.setModifiedby(BigDecimal.valueOf(Long.valueOf(EGOVThreadLocals.getUserId())));
+		bankAccount.setModifiedby(BigDecimal.valueOf(Long.valueOf(EgovThreadLocals.getUserId())));
 		bankAccount.setLastmodified(new Date());
 		bankAccount.setAccountnumber(request.getParameter("accountnumber"));
 		bankAccount.setAccounttype(request.getParameter("accounttype").split("#")[1]);

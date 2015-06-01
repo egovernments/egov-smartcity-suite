@@ -52,11 +52,11 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.model.budget.Budget;
@@ -88,7 +88,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	}
 	
 	public User getUser(){
-		return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
+		return (User) ((PersistenceService)this).find(" from User where id=?",EgovThreadLocals.getUserId());
 	}
 	
 	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
@@ -319,7 +319,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	}
 	
 	public PersonalInformation getEmpForCurrentUser(){
-		return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
 	}
 
 	public Budget getReferenceBudgetFor(Budget budget) {

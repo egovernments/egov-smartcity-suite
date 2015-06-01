@@ -164,7 +164,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		objectionService.persist(objection);
 		// FIX ME
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		// objectionWorkflowService.start(objection, position);
 		objection.transition(true).start().withOwner(position);
@@ -360,7 +360,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			// Position position =
-			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 			Position position = null;
 			objection.transition(true).start().withNextAction(actionToPerform)
 					.withStateValue(status).withOwner(position)

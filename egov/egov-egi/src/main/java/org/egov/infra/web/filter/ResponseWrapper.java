@@ -37,51 +37,54 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.filter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.log4j.NDC;
 
-/**
- * Filter use to sent NDC out put to the written log without user intervention
- * 
- * @IMP : This Filter must be applied after SetThreadLocals Filter
- * @IMP : In <filter-mapping> the <url-pattern> must match exactly as SetThreadLocals's <filter-mapping> <url-pattern>
- */
-public class LoggingFilter implements Filter {
-    
-    private FilterConfig config;
-    
-    @Override
-    public void destroy() {
-	config = null;
-	
-    }
-    
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-	try {
-	    NDC.push(EGOVThreadLocals.getDomainName());
-	    chain.doFilter(request, response);
-	} finally {
-	    NDC.pop();
-	    NDC.remove();
+public class ResponseWrapper extends HttpServletResponseWrapper {
+	StringWriter strout;
+	PrintWriter writer;
+	//ServletOutputStream sout;
+	//private CharArrayWriter charWriter;
+
+	ResponseWrapper(HttpServletResponse aResponse) {
+		super(aResponse);
+		strout = new StringWriter();
+		//sout = new ServletOutputStreamWrapper(strout);
+		writer = new PrintWriter(strout);
+	}
+
+	public String getData() {
+		//writer.flush();
+
+		return strout.toString();
+	}
+
+	/*public ServletOutputStream getOutputStream() {
+		return sout;
+	}*/
+
+	public PrintWriter getWriter() throws IOException {
+		return writer;
+	}
+}
+
+	/*class ServletOutputStreamWrapper extends ServletOutputStream {
+	StringWriter writer;
+
+	ServletOutputStreamWrapper(StringWriter aWriter) {
+		writer = aWriter;
+	}
+
+	public void write(int aByte) {
+		writer.write(aByte);
 	}
 	
-    }
-    
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-	this.config = filterConfig;
-	
-    }
-    
-}
+}*/

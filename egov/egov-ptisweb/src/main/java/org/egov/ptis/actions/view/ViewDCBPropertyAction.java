@@ -74,9 +74,9 @@ import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.util.DCBUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -164,14 +164,14 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = userService.getUserByUsername(CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId);
+			EgovThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 
 			if (user != null) {
 				setCitizen(Boolean.TRUE);
 			}
 
-			EGOVThreadLocals.setUserId(27613l);
+			EgovThreadLocals.setUserId(27613l);
 			session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
 			setCitizen(Boolean.TRUE);
 
@@ -256,7 +256,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = userService.getUserByUsername(CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId);
+			EgovThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 			if (user != null) {
 				setCitizen(Boolean.TRUE);

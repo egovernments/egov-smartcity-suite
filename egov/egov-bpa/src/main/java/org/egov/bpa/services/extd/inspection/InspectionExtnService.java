@@ -56,10 +56,10 @@ import org.egov.bpa.models.extd.masters.LayoutMasterExtn;
 import org.egov.bpa.models.extd.masters.RoadWidthMasterExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -85,14 +85,14 @@ public class InspectionExtnService extends PersistenceService<InspectionExtn, Lo
 	
 	public List<InspectionExtn> getInspectionListforRegistrationObject(RegistrationExtn registrationObj) {
 		if(isUserMappedToAeOrAeeRole())
-			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE,(EGOVThreadLocals.getUserId()));
+			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE,(EgovThreadLocals.getUserId()));
 		else
 			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE);
 	}
 		
 	public Boolean isUserMappedToAeOrAeeRole() {
-		if(EGOVThreadLocals.getUserId()!=null){
-			User user = getUserbyId((EGOVThreadLocals.getUserId()));
+		if(EgovThreadLocals.getUserId()!=null){
+			User user = getUserbyId((EgovThreadLocals.getUserId()));
 			for(Role role : user.getRoles())
 				if(role.getName()!=null && (role.getName().equalsIgnoreCase(BpaConstants.BPAAEROLE) || 
 						role.getName().equalsIgnoreCase(BpaConstants.BPAAEEROLE)))
@@ -212,7 +212,7 @@ public List<CheckListDetailsExtn> getCheckListByServiceAndType(Long serviceTypeI
 	
 	public List<InspectionExtn> getSiteInspectionListforRegistrationObject(RegistrationExtn registrationObj) {
 		if(isUserMappedToAeOrAeeRole())
-			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE,(EGOVThreadLocals.getUserId()));
+			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE,(EgovThreadLocals.getUserId()));
 		else
 			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE);
 	}

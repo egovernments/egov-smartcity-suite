@@ -81,8 +81,8 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.DateUtils;
@@ -263,7 +263,7 @@ public class DeathRegistrationAction extends RegistrationAction {
                     BndConstants.LOCK).getId());
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
-            // change.setCreatedby(EGOVThreadLocals.getUserId());
+            // change.setCreatedby(EgovThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -280,7 +280,7 @@ public class DeathRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
-            // change.setCreatedby(EGOVThreadLocals.getUserId());
+            // change.setCreatedby(EgovThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -403,7 +403,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     protected void setDifferentActionsForRole() {
         LOGGER.debug("Started setDifferentActionsForRole method");
         final BndRuleBook ruleBook = BndRuleBook.getInstance();
-        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
+        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals
                 .getUserId()));
         actionList = ruleBook.getDeathActionsByRoles(roleList);
         deathStatusFlag = actionList.contains(BndRuleBook.DEATHSTATUSAPPROVED) ? 1 : 0;
@@ -818,7 +818,7 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     @Override
     public String getAdditionalRule() {
-        final Long userId = deathRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
+        final Long userId = deathRegistration.getCreatedBy() == null ? Long.valueOf(EgovThreadLocals.getUserId())
                 : deathRegistration.getCreatedBy().getId();
         final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(userId);
         return BndRuleBook.HOSPITALUSER.equalsIgnoreCase(BndRuleBook.getInstance().getHighestPrivilegedRole(roleList)) ? BndRuleBook.HOSPITALUSER
@@ -955,7 +955,7 @@ public class DeathRegistrationAction extends RegistrationAction {
          * deathRegistrationService.getDeathRegistrationById(idTemp);
          * list.add(deathRegistration); Integer userId =
          * deathRegistration.getCreatedBy
-         * ()==null?Integer.valueOf(EGOVThreadLocals
+         * ()==null?Integer.valueOf(EgovThreadLocals
          * .getUserId()):deathRegistration.getCreatedBy().getId(); List<String>
          * roleList=bndCommonService.getRoleNamesByPassingUserId(userId); String
          * roleName

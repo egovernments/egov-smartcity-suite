@@ -79,12 +79,12 @@ import org.egov.eb.utils.EBUtils;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
@@ -271,7 +271,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                         /*JobDetail jobDetail = new JobDetail(jobName, groupName, EBBillInfoFetchJob.class);
 
                         jobDetail.getJobDataMap().put("billingCycle", billingCycle);
-                        jobDetail.getJobDataMap().put("loggedInUserId", EGOVThreadLocals.getUserId());
+                        jobDetail.getJobDataMap().put("loggedInUserId", EgovThreadLocals.getUserId());
                         jobDetail.getJobDataMap().put("ebLogId", ebLog.getId().toString());
                         jobDetail.setRequestsRecovery(false);*/
 
@@ -350,7 +350,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 this.addDropdownData("approverDepartmentList",
                                 this.persistenceService.findAllBy("from Department where deptCode='L' order by deptName"));
                 
-                ebDetailsList = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EGOVThreadLocals.getUserId());
+                ebDetailsList = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EgovThreadLocals.getUserId());
                 
                 for (EBDetails ebDtls : ebDetailsList) {
                         if (ebDtls.getVariance() != null && ebDtls.getVariance().compareTo(BigDecimal.ZERO) != 0) {
@@ -375,7 +375,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 String anyRowSelection = "N";
                 List<EBDetails> ebDetailsListFromDB = new ArrayList<EBDetails>();
                 if(eBBillGroup!=null){
-                ebDetailsListFromDB = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EGOVThreadLocals.getUserId());
+                ebDetailsListFromDB = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EgovThreadLocals.getUserId());
                 }
                 //server side validation for user selected atleast on object or not 
                 for (EBDetails ebDtls : ebDetailsList) {
@@ -740,7 +740,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 
                 checkBudget(egBillRegister);
 
-                List<EBDetails> ebDetailsListFromDB = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EGOVThreadLocals.getUserId());
+                List<EBDetails> ebDetailsListFromDB = ebDetailsService.getEBDetialsByGroup(eBBillGroup, EgovThreadLocals.getUserId());
 
                 for (EBDetails ebDtlsDb : ebDetailsListFromDB) {
                         for (EBDetails ebDtls : ebDetailsList) {

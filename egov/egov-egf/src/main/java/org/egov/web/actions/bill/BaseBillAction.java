@@ -57,10 +57,10 @@ import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -162,7 +162,7 @@ public class BaseBillAction extends BaseVoucherAction {
         }
         public Position getPosition()throws EGOVRuntimeException
         {
-                return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+                return  eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
         }
         public CommonBean getCommonBean() {
                 return commonBean;

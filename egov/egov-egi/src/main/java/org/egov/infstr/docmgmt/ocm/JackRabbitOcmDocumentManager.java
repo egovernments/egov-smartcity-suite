@@ -66,9 +66,9 @@ import org.apache.jackrabbit.ocm.version.VersionIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.annotation.Search;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.docmgmt.AbstractDocumentManagerService;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentObject;
@@ -123,9 +123,9 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	@Override
 	public T addDocumentObject(final T docObject) {
 		try {
-			docObject.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
-			docObject.setModifiedBy(EGOVThreadLocals.getUserId().intValue());
-			docObject.setDomainName(DocumentObject.escapeSpecialChars(ipSwitchs.containsKey(EGOVThreadLocals.getDomainName()) ? ipSwitchs.get(EGOVThreadLocals.getDomainName()) : EGOVThreadLocals.getDomainName()));
+			docObject.setCreatedBy(EgovThreadLocals.getUserId().intValue());
+			docObject.setModifiedBy(EgovThreadLocals.getUserId().intValue());
+			docObject.setDomainName(DocumentObject.escapeSpecialChars(ipSwitchs.containsKey(EgovThreadLocals.getDomainName()) ? ipSwitchs.get(EgovThreadLocals.getDomainName()) : EgovThreadLocals.getDomainName()));
 			final Date currentDate = new Date();
 			docObject.setCreatedDate(currentDate);
 			docObject.setModifiedDate(currentDate);
@@ -151,7 +151,7 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	public T updateDocumentObject(final T docObject) {
 		try {
 			this.objContentManager.checkout(docObject.getPath());
-			docObject.setModifiedBy(EGOVThreadLocals.getUserId().intValue());
+			docObject.setModifiedBy(EgovThreadLocals.getUserId().intValue());
 			docObject.setModifiedDate(new Date());
 			this.checkMandatoryProperty(docObject);
 			this.objContentManager.update(docObject);
@@ -168,7 +168,7 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	 */
 	@Override
 	public T getDocumentObject(final String docNumber) {
-		T document = this.getDocumentObjectFromDomain(docNumber, DocumentObject.escapeSpecialChars(EGOVThreadLocals.getDomainName()));
+		T document = this.getDocumentObjectFromDomain(docNumber, DocumentObject.escapeSpecialChars(EgovThreadLocals.getDomainName()));
 		if (document == null) {
 			for (final String failPoofIP : failProofIPAdrresses) {
 				document = this.getDocumentObjectFromDomain(docNumber,DocumentObject.escapeSpecialChars(failPoofIP));
@@ -194,7 +194,7 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	 */
 	@Override
 	public T getDocumentObject(final String docNumber, final String moduleName) {
-		T document = this.getDocumentObjectFromDomain(docNumber, moduleName, DocumentObject.escapeSpecialChars(EGOVThreadLocals.getDomainName()));
+		T document = this.getDocumentObjectFromDomain(docNumber, moduleName, DocumentObject.escapeSpecialChars(EgovThreadLocals.getDomainName()));
 		if (document == null) {
 			for (final String failPoofIP : failProofIPAdrresses) {
 				document = this.getDocumentObjectFromDomain(docNumber, moduleName, DocumentObject.escapeSpecialChars(failPoofIP));
@@ -268,7 +268,7 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	 */
 	@Override
 	public List<T> searchDocumentObject(final Class<?> searchClass, final Map<String, String> searchArgs) {
-		List<T> documents = this.searchDocumentObject(searchClass, searchArgs,EGOVThreadLocals.getDomainName());		
+		List<T> documents = this.searchDocumentObject(searchClass, searchArgs,EgovThreadLocals.getDomainName());		
 		if (documents.isEmpty()) {
 			for(String failPoofIP : failProofIPAdrresses) {
 				documents = this.searchDocumentObject(searchClass, searchArgs,failPoofIP);

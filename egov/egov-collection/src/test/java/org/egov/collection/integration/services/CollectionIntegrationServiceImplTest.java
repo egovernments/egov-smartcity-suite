@@ -82,7 +82,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 
 		objectFactory = new CollectionObjectFactory(session,genericService);
 		user=objectFactory.createUser("testUser");
-		EGOVThreadLocals.setUserId(user.getId().toString());
+		EgovThreadLocals.setUserId(user.getId().toString());
 		userManager = createMock(UserManager.class);
 
 		// Receipt with cash as instrument

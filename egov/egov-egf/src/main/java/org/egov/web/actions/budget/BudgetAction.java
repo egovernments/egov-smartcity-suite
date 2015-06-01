@@ -55,10 +55,10 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -134,7 +134,7 @@ public class BudgetAction extends BaseFormAction{
 		}
 		if(budget.getParent()!=null && budget.getParent().getIsPrimaryBudget() == true)
 			budget.setIsPrimaryBudget(true);
-		Position p = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		Position p = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 		budget.start().withOwner(p);
 		addActionMessage(getMessage("budget.create")); 
 		target="SUCCESS";

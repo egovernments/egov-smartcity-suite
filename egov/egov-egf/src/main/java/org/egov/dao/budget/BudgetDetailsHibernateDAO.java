@@ -71,9 +71,9 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.dao.GenericHibernateDAO;
@@ -350,7 +350,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
+				budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return BigDecimal.ONE;
@@ -432,7 +432,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
+				budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return BigDecimal.ONE;
@@ -514,7 +514,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
+				budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return budgetUsage;

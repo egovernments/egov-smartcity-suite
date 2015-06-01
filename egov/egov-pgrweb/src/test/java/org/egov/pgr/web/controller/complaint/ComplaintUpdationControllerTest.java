@@ -63,7 +63,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -159,7 +159,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         final Role r = new Role();
         final Set<Role> roleList = new HashSet<Role>();
         roleList.add(r);
-        EGOVThreadLocals.setUserId(1l);
+        EgovThreadLocals.setUserId(1l);
         when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
         when(user.getRoles()).thenReturn(roleList);
         csList.add(cs);

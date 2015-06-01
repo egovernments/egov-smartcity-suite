@@ -70,13 +70,13 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.bills.EgBillregistermis;
@@ -137,7 +137,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	public void prepare()
 	{
 		
-		loggedInUser= EGOVThreadLocals.getUserId().intValue();
+		loggedInUser= EgovThreadLocals.getUserId().intValue();
 		super.prepare();
 		getHeaderFields();
 		loadDropDowns();

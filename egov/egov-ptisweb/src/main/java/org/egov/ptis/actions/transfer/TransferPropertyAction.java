@@ -74,8 +74,8 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -640,7 +640,7 @@ public class TransferPropertyAction extends WorkflowAction {
 		}
 
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				EGOVThreadLocals.getUserId(), eisCommonService);
+				EgovThreadLocals.getUserId(), eisCommonService);
 
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

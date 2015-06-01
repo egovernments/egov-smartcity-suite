@@ -63,9 +63,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -122,7 +122,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		session = request.getSession();
 		User user = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
 		userId = user.getId();
-		EGOVThreadLocals.setUserId(userId);
+		EgovThreadLocals.setUserId(userId);
 		session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		LOGGER.debug("Exit from prepare method");
 	}

@@ -77,11 +77,11 @@ import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.transaction.annotation.Transactional;
@@ -642,7 +642,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         session = request.getSession();
 		
 		User user = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
-		EGOVThreadLocals.setUserId(user.getId());
+		EgovThreadLocals.setUserId(user.getId());
 		session.setAttribute(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME, user.getUsername());
 		
 		// populates model when request is from the billing system

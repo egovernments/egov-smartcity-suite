@@ -18,7 +18,7 @@ A tag library from Core Servlets and JavaServer Pages,
 
 <tag>
 	<name>select</name>
-	<tagclass>org.egov.infstr.client.taglib.BoundryTag</tagclass>
+	<tagclass>org.egov.infra.web.taglib.BoundryTag</tagclass>
 	<bodycontent>empty</bodycontent>
 	<info>info</info>
 	<attribute>
@@ -30,7 +30,7 @@ A tag library from Core Servlets and JavaServer Pages,
 </tag>
 <tag>
 	<name>selectgreview</name>
-	<tagclass>org.egov.infstr.client.taglib.BndryTagForGreView</tagclass>
+	<tagclass>org.egov.infra.web.taglib.BndryTagForGreView</tagclass>
 	<bodycontent>empty</bodycontent>
 	<info>info</info>
 	<attribute>
@@ -43,7 +43,7 @@ A tag library from Core Servlets and JavaServer Pages,
 </tag>
 <tag>
 	<name>extraFiels</name>
-	<tagclass>org.egov.infstr.client.taglib.ExtraFieldTag</tagclass>
+	<tagclass>org.egov.infra.web.taglib.ExtraFieldTag</tagclass>
 	<bodycontent>empty</bodycontent>
 	<info>info</info>
 	<attribute>
@@ -56,7 +56,7 @@ A tag library from Core Servlets and JavaServer Pages,
 </tag>
 <tag>
 	<name>selectgreviewreports</name>
-	<tagclass>org.egov.infstr.client.taglib.TagGreViewReports</tagclass>
+	<tagclass>org.egov.infra.web.taglib.TagGreViewReports</tagclass>
 	<bodycontent>empty</bodycontent>
 	<info>info</info>
 	

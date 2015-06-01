@@ -628,7 +628,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 		State prevState = property.getCurrentState();
 		//FIX ME
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		//State stateEnd = new State("PropertyImpl", State.DEFAULT_STATE_VALUE_CLOSED, position, "Property Workflow Ended");
 		property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED).withOwner(position).withComments("Property Workflow Ended");

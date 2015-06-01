@@ -85,8 +85,8 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
@@ -187,7 +187,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
 		if (egBill == null) {
 			reportOutput = getBillService().generateBill(basicProperty,
-					EGOVThreadLocals.getUserId().intValue());
+					EgovThreadLocals.getUserId().intValue());
 			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
 		} else {
@@ -427,10 +427,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	}
 
 	private void startWorkFlow() {
-		LOGGER.debug("Entered into startWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
+		LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
 		// Position position =
-		// eisCommonsManager.(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.(Integer.valueOf(EgovThreadLocals.getUserId()));
 		// FIX ME
 		Position position = null;
 		// propertyWorkflowService.start(property, position,
@@ -445,11 +445,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	 * This method ends the workflow. The Property is transitioned to END state.
 	 */
 	private void endWorkFlow() {
-		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
+		LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
 		// FIX ME
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		/*
 		 * propertyWorkflowService .end(property, position,

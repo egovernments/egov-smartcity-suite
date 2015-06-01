@@ -64,10 +64,10 @@ import org.egov.bnd.model.Religion;
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.services.common.GenerateCertificateService;
 import org.egov.bnd.services.masters.RegKeyService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 //import org.egov.mdm.masters.administration.State;
@@ -119,8 +119,8 @@ public class BndCommonAction extends GenericWorkFlowAction {
     
     @Transactional
     public String getRoleNameByLoginUserId() {
-        if (EGOVThreadLocals.getUserId() != null) {
-            final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
+        if (EgovThreadLocals.getUserId() != null) {
+            final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals
                     .getUserId()));
 
             if (!roleList.isEmpty())
@@ -247,7 +247,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     @Transactional
     @Action(value = "bndCommon-inbox", results = {@Result(name = NEW, type = "dispatcher")} )
     public String inbox() {
-        if (!validateInboxItemForUser(getModel(), EGOVThreadLocals.getUserId()))
+        if (!validateInboxItemForUser(getModel(), EgovThreadLocals.getUserId()))
             return WORKFLOWERROR;
         mode = bndCommonService.isCreatedByLoggedInUser(getModel()) ? MODIFY : NOTMODIFY;
         return NEW;

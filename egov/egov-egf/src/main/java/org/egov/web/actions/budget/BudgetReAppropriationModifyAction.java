@@ -60,10 +60,10 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
@@ -310,7 +310,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		savedBudgetReAppropriationList.clear();
 		
 		budgetDetail =budgetReAppropriationService.setRelatedValues(budgetDetail);
-		List<BudgetReAppropriation> results = budgetReAppropriationService.getNonApprovedReAppByUser(EGOVThreadLocals.getUserId(),budgetDetail,financialYear);
+		List<BudgetReAppropriation> results = budgetReAppropriationService.getNonApprovedReAppByUser(EgovThreadLocals.getUserId(),budgetDetail,financialYear);
 		for (BudgetReAppropriation row : results) {
 			BudgetReAppropriationView budgetReAppropriationView = new BudgetReAppropriationView();
 			budgetReAppropriationView.setBudgetDetail(row.getBudgetDetail());
@@ -538,7 +538,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = EGOVThreadLocals.getUserId().intValue();
+			userId = EgovThreadLocals.getUserId().intValue();
 		}
 		return userId;
 	}
@@ -588,9 +588,9 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	}
 	protected Boolean validateOwner(State state)
 	{
-		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EgovThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = eisService.getPositionsForUser(EGOVThreadLocals.getUserId(), new Date());
+		positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
 		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");

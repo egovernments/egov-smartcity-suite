@@ -54,7 +54,7 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
@@ -485,7 +485,7 @@ public class EisUtilService implements EISServeable {
         List<Department> deptlist = null;
         if (filterByDept != null && filterByDept.toUpperCase().equals("YES")) {
             List<BigDecimal> deptList = getPersistenceService().findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,
-                    null, EGOVThreadLocals.getUserId().intValue(), EGOVThreadLocals.getUserId().intValue())
+                    null, EgovThreadLocals.getUserId().intValue(), EgovThreadLocals.getUserId().intValue())
                     .getList();
             if (deptList.isEmpty())
                 return Collections.emptyList();
@@ -507,7 +507,7 @@ public class EisUtilService implements EISServeable {
 
     public boolean isValidWorkflowUser(Position owner) {
         boolean validuser = false;
-        List<Position> positions = getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
+        List<Position> positions = getPositionsForUser(Long.valueOf(EgovThreadLocals.getUserId()), new Date());
         if (positions.contains(owner)) {
             validuser = true;
         }

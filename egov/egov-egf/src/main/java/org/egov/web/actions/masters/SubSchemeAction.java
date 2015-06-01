@@ -50,11 +50,11 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
@@ -244,7 +244,7 @@ public class SubSchemeAction extends BaseFormAction{
 	} 
 
 	private User getLoggedInUser() {
-		return (User) persistenceService.getSession().load(User.class,EGOVThreadLocals.getUserId());
+		return (User) persistenceService.getSession().load(User.class,EgovThreadLocals.getUserId());
 	}
 	
 	public void setFundId(int fundId) {

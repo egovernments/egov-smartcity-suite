@@ -43,7 +43,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.scheduler.GenericJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -115,10 +115,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 	}
 
 	protected void setTractionalSupport(final String city) {
-		EGOVThreadLocals.setTenantID(environment.getProperty("tenant."+city));
+		EgovThreadLocals.setTenantID(environment.getProperty("tenant."+city));
 	}
 
 	protected void setUserInThreadLocal() {
-		EGOVThreadLocals.setUserId(userService.getUserByUsername(this.userName).getId());
+		EgovThreadLocals.setUserId(userService.getUserByUsername(this.userName).getId());
 	}
 }

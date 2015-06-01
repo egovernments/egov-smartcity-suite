@@ -64,7 +64,7 @@
 	<!-- Filter Declaration Starts -->
 	<filter>
 		<filter-name>CacheControlFilter</filter-name>
-		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
+		<filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
 	</filter>
 	
 	<filter>

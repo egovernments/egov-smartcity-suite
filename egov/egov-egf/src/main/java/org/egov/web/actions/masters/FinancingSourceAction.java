@@ -55,11 +55,11 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.SharedFundSource;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,7 +175,7 @@ public boolean getNameCheck(){
     public String save(){
     	if(LOGGER.isDebugEnabled())     LOGGER.debug("FinancingSourceAction | save | start");
     	if(LOGGER.isDebugEnabled())     LOGGER.debug("financial source list size "+ fundSourceList.size());
-    	User user =(User)persistenceService.find("from User where id="+EGOVThreadLocals.getUserId());
+    	User user =(User)persistenceService.find("from User where id="+EgovThreadLocals.getUserId());
     	SharedFundSource sharedFundSource;
     	try {
     			for (Fundsource fundsource : fundSourceList) {

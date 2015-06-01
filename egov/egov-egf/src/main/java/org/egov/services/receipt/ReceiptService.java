@@ -50,7 +50,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -89,7 +89,7 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	public String getDesginationName()
 	{
 		 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
+		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
 		 return assignment.getDesignation().getName();
 	}
 	public Department getDepartmentForWfItem(ReceiptVoucher rv)

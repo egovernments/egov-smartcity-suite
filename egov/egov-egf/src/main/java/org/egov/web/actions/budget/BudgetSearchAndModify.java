@@ -54,11 +54,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -291,7 +291,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
         }else {
-            userId = EGOVThreadLocals.getUserId().intValue();
+            userId = EgovThreadLocals.getUserId().intValue();
         }
 
         Position positionByUserId =eisCommonService.getPositionByUserId(userId.longValue());

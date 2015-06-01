@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.filter;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,6 +55,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.documents.Notice;
@@ -86,7 +87,7 @@ public class NoticeSaveFilter implements Filter {
 		final String output = responseWrapper.getData();
 
 		if (request.getAttribute(NOTICE_OBJECT) != null) {
-			final Integer userId = EGOVThreadLocals.getUserId().intValue();
+			final Integer userId = EgovThreadLocals.getUserId().intValue();
 			final Date now = new Date();
 			final InputStream inputStream = new ByteArrayInputStream(output.getBytes());
 			final Notice notice = (Notice) request.getAttribute(NOTICE_OBJECT);

@@ -27,8 +27,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.joda.time.DateTime;
@@ -221,9 +221,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
 		receiptHeader.setPaidBy(bill.getPaidBy());
 
-		if (EGOVThreadLocals.getUserId() != null) {
-			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EGOVThreadLocals.getUserId()));
-			Location location = collectionsUtil.getLocationByUser(EGOVThreadLocals.getUserId());
+		if (EgovThreadLocals.getUserId() != null) {
+			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
+			Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
 			if (location != null) {
 				receiptHeader.setLocation(location);
 			}
@@ -386,9 +386,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
 		receiptHeader.setPaidBy(bill.getPaidBy());
 
-		if (EGOVThreadLocals.getUserId() != null) {
-			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EGOVThreadLocals.getUserId()));
-			Location location = collectionsUtil.getLocationByUser(EGOVThreadLocals.getUserId());
+		if (EgovThreadLocals.getUserId() != null) {
+			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
+			Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
 			if (location != null) {
 				receiptHeader.setLocation(location);
 			}

@@ -55,7 +55,7 @@ import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
@@ -236,7 +236,7 @@ public class BpaBillableExtn  extends AbstractBillable  {
 	@Override
 	public Long getUserId() {
 		
-		return (EGOVThreadLocals.getUserId()==null?null:Long.valueOf(EGOVThreadLocals.getUserId()));
+		return (EgovThreadLocals.getUserId()==null?null:Long.valueOf(EgovThreadLocals.getUserId()));
 	}
 
 	@Override

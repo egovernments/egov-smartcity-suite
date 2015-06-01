@@ -95,8 +95,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -276,7 +276,7 @@ public class InspectionExtnAction extends BaseFormAction {
 			}
 			inspection.setRegistration(registrationObj);
 		}
-		loginUser = inspectionExtnService.getUserbyId((EGOVThreadLocals
+		loginUser = inspectionExtnService.getUserbyId((EgovThreadLocals
 				.getUserId()));
 		addDropdownData("servicetypeList",
 				bpaCommonExtnService.getAllActiveServiceTypeList());
@@ -547,8 +547,8 @@ public class InspectionExtnAction extends BaseFormAction {
 	}
 
 	public Boolean isUserMappedToSurveyorRole() {
-		if (EGOVThreadLocals.getUserId() != null) {
-			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals
+		if (EgovThreadLocals.getUserId() != null) {
+			User user = bpaCommonExtnService.getUserbyId((EgovThreadLocals
 					.getUserId()));
 			/*
 			 * for(Role role : user.getRoles()) if(role.getRoleName()!=null &&
@@ -562,8 +562,8 @@ public class InspectionExtnAction extends BaseFormAction {
 	}
 
 	public Boolean isUserMappedToSelectedRole(String userRole) {
-		if (EGOVThreadLocals.getUserId() != null) {
-			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals
+		if (EgovThreadLocals.getUserId() != null) {
+			User user = bpaCommonExtnService.getUserbyId((EgovThreadLocals
 					.getUserId()));
 			/*
 			 * for(Role role : user.getRoles()) if(role.getRoleName()!=null &&
@@ -1248,9 +1248,9 @@ public class InspectionExtnAction extends BaseFormAction {
 	@Action(value = "/inspectionExtn-showExistingInspectionMeasurementDetails", results = { @Result(name = "existingmeasurement",type = "dispatcher") })
 	public String showExistingInspectionMeasurementDetails() {
 
-		if (EGOVThreadLocals.getUserId() != null) {
+		if (EgovThreadLocals.getUserId() != null) {
 			List<String> roleList = bpaCommonExtnService
-					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+					.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 			if (!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,
 					BpaConstants.INSPECTIONDETAILS)) {
 				returnStream = returnStream

@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.infra.config.persistence.multitenancy;
 
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
 	@Override
 	public String resolveCurrentTenantIdentifier() {
-		return EGOVThreadLocals.getTenantID() == null ? "public" : EGOVThreadLocals.getTenantID();
+		return EgovThreadLocals.getTenantID() == null ? "public" : EgovThreadLocals.getTenantID();
 	}
 
 	@Override

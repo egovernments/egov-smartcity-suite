@@ -53,7 +53,7 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
 <info>A DepartmentRole tag</info>
 <tag>
 	<name>selection</name>
-	<tagclass>org.egov.infstr.client.taglib.DeptRoleTag</tagclass>
+	<tagclass>org.egov.infra.web.taglib.DeptRoleTag</tagclass>
 	<bodycontent>empty</bodycontent>
 	<info>Populate Roles on selection of a department</info>
 	<attribute>

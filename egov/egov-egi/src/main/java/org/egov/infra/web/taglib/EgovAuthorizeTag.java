@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.taglib;
+package org.egov.infra.web.taglib;
 
 import java.util.Collections;
 import java.util.HashSet;

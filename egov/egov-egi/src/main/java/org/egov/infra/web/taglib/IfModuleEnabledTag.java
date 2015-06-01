@@ -37,54 +37,58 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.taglib;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import org.egov.infra.web.utils.ERPWebApplicationContext;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
+import org.egov.infstr.commons.Module;
+import org.egov.infstr.commons.service.GenericCommonsService;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+public class IfModuleEnabledTag extends BodyTagSupport {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-public class ResponseWrapper extends HttpServletResponseWrapper {
-	StringWriter strout;
-	PrintWriter writer;
-	//ServletOutputStream sout;
-	//private CharArrayWriter charWriter;
+	private String moduleName = null;
 
-	ResponseWrapper(HttpServletResponse aResponse) {
-		super(aResponse);
-		strout = new StringWriter();
-		//sout = new ServletOutputStreamWrapper(strout);
-		writer = new PrintWriter(strout);
+	public String getModuleName() {
+		return this.moduleName;
 	}
 
-	public String getData() {
-		//writer.flush();
-
-		return strout.toString();
+	public void setModuleName(final String moduleName) {
+		this.moduleName = moduleName;
 	}
 
-	/*public ServletOutputStream getOutputStream() {
-		return sout;
-	}*/
+	@Override
+	public int doStartTag() throws JspTagException {
+		Module module = null;
 
-	public PrintWriter getWriter() throws IOException {
-		return writer;
+		// no params specified
+		if (null == this.moduleName || "".equals(this.moduleName)) {
+			return Tag.SKIP_BODY;
+		}
+
+		if (this.moduleName != null) {
+			final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
+			provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
+			final GenericCommonsService genericCommonService = (GenericCommonsService) provider.getBean("genericCommonService");
+			module = genericCommonService.getModuleByName(this.moduleName);
+		}
+
+		if (module != null) {
+			// if module set as enabled display content of tag
+			if (module.getIsEnabled()) {
+				return Tag.EVAL_BODY_INCLUDE;
+			}
+
+		}
+
+		return Tag.SKIP_BODY;
 	}
 }
-
-	/*class ServletOutputStreamWrapper extends ServletOutputStream {
-	StringWriter writer;
-
-	ServletOutputStreamWrapper(StringWriter aWriter) {
-		writer = aWriter;
-	}
-
-	public void write(int aByte) {
-		writer.write(aByte);
-	}
-	
-}*/

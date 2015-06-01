@@ -82,12 +82,12 @@ public class CodeValidator {
 
    public static  CodeValidator getInstance()throws TaskFailedException{
 	 //This fix is for Phoenix Migration.
-	  /* if(LOGGER.isInfoEnabled())     LOGGER.info("CodeValidator getInstance() called for "+EGOVThreadLocals.getDomainName()+"and singletonInstance == null"+singletonInstance == null);
+	  /* if(LOGGER.isInfoEnabled())     LOGGER.info("CodeValidator getInstance() called for "+EgovThreadLocals.getDomainName()+"and singletonInstance == null"+singletonInstance == null);
 		try {
-		//if(LOGGER.isInfoEnabled())     LOGGER.info("cache.get(rootNode/"+EGOVThreadLocals.getDomainName()+"/"+gLFilterCode+"::::::"+cache.get(rootNode+"/"+EGOVThreadLocals.getDomainName(),gLFilterCode));
-		if(cache.get(ROOTNODE+"/"+EGOVThreadLocals.getDomainName(),GLFILTERCODE) == null)
+		//if(LOGGER.isInfoEnabled())     LOGGER.info("cache.get(rootNode/"+EgovThreadLocals.getDomainName()+"/"+gLFilterCode+"::::::"+cache.get(rootNode+"/"+EgovThreadLocals.getDomainName(),gLFilterCode));
+		if(cache.get(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),GLFILTERCODE) == null)
 		{
-			if(LOGGER.isInfoEnabled())     LOGGER.info("calling loadFilterData::for "+EGOVThreadLocals.getDomainName());
+			if(LOGGER.isInfoEnabled())     LOGGER.info("calling loadFilterData::for "+EgovThreadLocals.getDomainName());
 			loadFilterData();
 		}
 	} catch (Exception e) {
@@ -110,7 +110,7 @@ public class CodeValidator {
 		//if(LOGGER.isInfoEnabled())     LOGGER.info("Cache put called for:"+rootNode+"/"+FilterName.get()+"/"+gLFilterCode);
 		HashMap hmap = de.extractIntoMap(sql,"ID",FilterCodeList.class);
 		//if(LOGGER.isInfoEnabled())     LOGGER.info("hash map inserted is:"+hmap);
-		cache.put(ROOTNODE+"/"+EGOVThreadLocals.getDomainName(),GLFILTERCODE,hmap);
+		cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),GLFILTERCODE,hmap);
 
 
 		//sql="select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ," +
@@ -141,7 +141,7 @@ public class CodeValidator {
    	 HashMap hm;
 	/*try
 	{
-		hm = (HashMap)cache.get(ROOTNODE+"/"+EGOVThreadLocals.getDomainName(),GLFILTERCODE);
+		hm = (HashMap)cache.get(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),GLFILTERCODE);
 	} catch (Exception e)
 	{
 		// TODO Auto-generated catch block

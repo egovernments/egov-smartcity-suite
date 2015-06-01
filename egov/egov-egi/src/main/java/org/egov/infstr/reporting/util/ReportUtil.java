@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.reporting.engine.ReportConstants;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -129,7 +129,7 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream(final Connection connection) {
 		try {
-			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EGOVThreadLocals.getDomainName() + "'"));
+			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'"));
 		} catch (final SQLException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
@@ -141,7 +141,7 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream() {
 		try {
-			return getImageAsStream((String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EGOVThreadLocals.getDomainName() + "'").list().get(0));
+			return getImageAsStream((String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0));
 		} catch (final HibernateException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}

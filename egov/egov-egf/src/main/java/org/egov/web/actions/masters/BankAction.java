@@ -60,10 +60,10 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.services.masters.BankService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
@@ -151,11 +151,11 @@ public class BankAction extends BaseFormAction {
 				final Date currentDate = new Date();
 				bank.setCreated(currentDate);
 				bank.setLastmodified(currentDate);
-				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EGOVThreadLocals.getUserId())));
+				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
 				bankService.persist(bank);
 			} else {
 				bank.setLastmodified(new Date());
-				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EGOVThreadLocals.getUserId())));
+				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
 				bankService.update(bank);
 			}
 			addActionMessage(getText("Bank Saved Successfully"));

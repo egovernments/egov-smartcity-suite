@@ -41,7 +41,7 @@
 #-------------------------------------------------------------------------------
 <%@ tag body-content="empty"  isELIgnored="false" pageEncoding="UTF-8" description="To show Bread Crumb for each and every Screen" %>
 <%@tag import="org.egov.infstr.commons.Module"%>
-<%@tag import="org.egov.infstr.client.filter.EGOVThreadLocals" %>
+<%@tag import="org.egov.infra.utils.EgovThreadLocals" %>
 <%@tag import="org.egov.lib.rrbac.model.Action"%>
 <%@tag import="java.util.Date"%>
 <%@tag import="org.egov.lib.rrbac.dao.ActionHibernateDAO"%>

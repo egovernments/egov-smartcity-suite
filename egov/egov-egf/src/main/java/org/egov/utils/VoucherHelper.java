@@ -62,7 +62,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -329,7 +329,7 @@ public class VoucherHelper {
 
 	public  List<Department> getAllAssgnDeptforUser(){
 		// load the  primary and secondary assignment departments of the logged in user 
-		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
 		HashMap<String,String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", employee.getCode());
 		List<EmployeeView> listEmployeeView = eisUtilService.getEmployeeInfoList(paramMap);

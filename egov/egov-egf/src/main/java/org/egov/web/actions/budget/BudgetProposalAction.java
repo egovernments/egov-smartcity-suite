@@ -65,11 +65,11 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
@@ -344,7 +344,7 @@ public class BudgetProposalAction extends BaseFormAction {
     	.setBigDecimal("amount", amount)
     	.setLong("detailId", detailId)	
     	.setDate("modifiedate", new java.sql.Date(new Date().getTime()))
-    	.setInteger("modifiedby",EGOVThreadLocals.getUserId().intValue());
+    	.setInteger("modifiedby",EgovThreadLocals.getUserId().intValue());
     	  	int executeUpdate = updateQuery.executeUpdate();
           if(executeUpdate==1)  
           {
@@ -994,7 +994,7 @@ int i=0;
 	    	if (approverUserId!=null && approverUserId!=-1 ) {
 	            userId = approverUserId;
 	        }else {
-	            userId = EGOVThreadLocals.getUserId().intValue();
+	            userId = EgovThreadLocals.getUserId().intValue();
 	        }
 
 	    	topBudget=budgetService.find("from Budget where id=?",topBudget.getId());
@@ -1179,7 +1179,7 @@ int i=0;
 	   private boolean isHOD()
 	    {
 		    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
-			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
+			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
 			if(empAssignment.getDesignation().getName().equalsIgnoreCase("assistant"))
 			{
 				 asstFMU = true;
@@ -1201,7 +1201,7 @@ int i=0;
 		{
 			Position pos;
 		    //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
-			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
+			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
 			return pos;
 		}
 	   
@@ -1360,9 +1360,9 @@ int i=0;
 	    
 	    protected Boolean validateOwner()
 		{
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
+			if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EgovThreadLocals.getUserId());
 			List<Position> positionsForUser=null;
-			positionsForUser = eisService.getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
+			positionsForUser = eisService.getPositionsForUser(Long.valueOf(EgovThreadLocals.getUserId()), new Date());
 			State state=null;
 			if(factor.equalsIgnoreCase("thousand"))
 			{

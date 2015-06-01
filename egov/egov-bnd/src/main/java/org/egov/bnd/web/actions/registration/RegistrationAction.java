@@ -69,7 +69,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -179,7 +179,7 @@ public class RegistrationAction extends BndCommonAction {
     @Transactional
     protected void setDifferentActionsForRole() {
         final BndRuleBook ruleBook = BndRuleBook.getInstance();
-        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
+        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals
                 .getUserId()));
         final Registrar registrar = bndCommonService.getRegistrarByLoggedInUser();
         final String role = ruleBook.getHighestPrivilegedRole(roleList);

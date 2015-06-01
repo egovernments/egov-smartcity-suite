@@ -71,8 +71,8 @@ import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results({ @Result(name = AjaxCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = {
@@ -587,7 +587,7 @@ public class AjaxCommonAction extends BaseFormAction {
         final Registrar registrar = bndCommonService.getRegistrarByLoggedInUser();
         final BndRuleBook ruleBook = BndRuleBook.getInstance();
         final List<String> actionList = ruleBook.getSearchActionsByRoles(
-                bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals.getUserId())), registrar,
+                bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals.getUserId())), registrar,
                 reg);
 
         if (!lockStatusFlag)

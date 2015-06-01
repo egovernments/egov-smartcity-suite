@@ -56,8 +56,8 @@ import org.egov.bnd.services.registration.DeathRegistrationService;
 import org.egov.bnd.services.registration.NonAvailabilityRegistrationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -267,7 +267,7 @@ public class GenerateCertificateService {
                 && birthRegistration.getIsCertIssued().equals("N"))
             birthRegistration.setIsCertIssued("Y");
 
-        final Long userId = birthRegistration.getCreatedBy() == null ? EGOVThreadLocals.getUserId()
+        final Long userId = birthRegistration.getCreatedBy() == null ? EgovThreadLocals.getUserId()
                 : birthRegistration.getCreatedBy().getId();
 
         bndCommonService.getRoleNamesByPassingUserId(userId);

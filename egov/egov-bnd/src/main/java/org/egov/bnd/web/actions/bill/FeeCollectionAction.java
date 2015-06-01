@@ -193,9 +193,9 @@ public void prepare() {
 			BndConstants.BNDFEECOLLECTIONCREATEDSTATUS));
 	// feeCollection.setAddTypeMaster(bndCommonService.getAddressType(BndConstants.PERMANENTADDRESS));
 	// feeCollection.setFeeTypeList(bndCommonService.getBndFeeTypes());
-	if (EGOVThreadLocals.getUserId() != null)
+	if (EgovThreadLocals.getUserId() != null)
 		feeCollection.setCreatedBy(bndCommonService
-				.getUserByPassingUserId(Integer.valueOf(EGOVThreadLocals
+				.getUserByPassingUserId(Integer.valueOf(EgovThreadLocals
 						.getUserId())));
 
 }
@@ -330,10 +330,10 @@ public String create() {
 }
 
 public String getRoleNameByLoginUserId() {
-	if (EGOVThreadLocals.getUserId() != null) {
+	if (EgovThreadLocals.getUserId() != null) {
 		List<String> roleList = bndCommonService
 				.getRoleNamesByPassingUserId(Integer
-						.valueOf(EGOVThreadLocals.getUserId()));
+						.valueOf(EgovThreadLocals.getUserId()));
 
 		if (!roleList.isEmpty())
 			return BndRuleBook.getInstance().getHighestPrivilegedRole(

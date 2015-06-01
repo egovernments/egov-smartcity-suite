@@ -64,11 +64,11 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -222,7 +222,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 		else if(null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1  ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = EGOVThreadLocals.getUserId().intValue();
+			userId = EgovThreadLocals.getUserId().intValue();
 		}
 		
 		paymentWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, paymentheader, parameters.get("comments")[0]);

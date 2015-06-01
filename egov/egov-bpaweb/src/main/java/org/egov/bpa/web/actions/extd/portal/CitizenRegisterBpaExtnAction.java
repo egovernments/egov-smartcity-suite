@@ -89,10 +89,10 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
@@ -763,7 +763,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				{	
 					String fileLocationName=bpaCommonExtnService.getAppconfigValueResult(BpaConstants.BPAMODULENAME,BpaConstants.BPA_FILE_UPLOAD_LOCATION,null);
 					File mainDir=new File(fileLocationName);
-					 User usr = (User) getPersistenceService().getSession().load(User.class, (EGOVThreadLocals.getUserId()));
+					 User usr = (User) getPersistenceService().getSession().load(User.class, (EgovThreadLocals.getUserId()));
 						
 					for(RegistrationChecklistExtn checklistObj:registration.getRegistrationChecklistSet()){
 						
@@ -938,7 +938,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	
 	public void getMobileNumberForLoggedInUserId (){
 		
-	User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
+	User user = bpaCommonExtnService.getUserbyId((EgovThreadLocals.getUserId()));
 		if (user != null) {
 			mobileNumber=user.getMobileNumber();
 			emailId=user.getEmailId();
@@ -1080,8 +1080,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	}
 
 	public Boolean isUserMappedToSurveyorRole() {
-		if(EGOVThreadLocals.getUserId()!=null){
-			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
+		if(EgovThreadLocals.getUserId()!=null){
+			User user = bpaCommonExtnService.getUserbyId((EgovThreadLocals.getUserId()));
 			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
@@ -1146,8 +1146,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			}
  		}
  		List<String> roleList = new ArrayList<String>();
-		if(EGOVThreadLocals.getUserId()!=null){
-			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));				
+		if(EgovThreadLocals.getUserId()!=null){
+			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));				
 		}
 		showActions=  BpaExtnRuleBook.getInstance().getActionsByRoles(roleList,registration.getEgwStatus());
 		

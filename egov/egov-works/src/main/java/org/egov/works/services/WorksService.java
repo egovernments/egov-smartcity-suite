@@ -63,8 +63,8 @@ import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -284,7 +284,7 @@ public class WorksService {
     }
 
     public Long getCurrentLoggedInUserId() {
-        return EGOVThreadLocals.getUserId();
+        return EgovThreadLocals.getUserId();
     }
 
     public Map<String, Integer> getExceptionSOR() {

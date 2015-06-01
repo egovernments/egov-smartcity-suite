@@ -71,8 +71,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -282,11 +282,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	 * This method ends the workflow. The Property is transitioned to END state.
 	 */
 	private void endWorkFlow() {
-		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
+		LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
 		// FIX ME
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		property.transition(true).start().withOwner(position).withComments("Property Workflow End");
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");

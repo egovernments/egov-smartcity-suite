@@ -602,7 +602,7 @@ String[] inputArrayCheque = new String[21];
 		
 		egovEJBTest=new EGovEJBTest();
 		egovEJBTest.setUp();
-		EGOVThreadLocals.setUserId(user.getId().toString());
+		EgovThreadLocals.setUserId(user.getId().toString());
 		egovEJBTest.registerEJB("CommonsManagerHome", CommonsManagerHome.class, CommonsManager.class, CommonsManagerBean.class);
 		egovEJBTest.registerEJB("EmpLeaveManagerHome", EmpLeaveManagerHome.class, EmpLeaveManager.class, EmpLeaveManagerBean.class);
 		egovEJBTest.registerEJB("UserManagerHome", UserManagerHome.class, UserManager.class, UserManagerBean.class);

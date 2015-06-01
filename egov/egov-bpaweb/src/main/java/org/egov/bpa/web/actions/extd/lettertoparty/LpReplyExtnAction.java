@@ -67,9 +67,9 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -109,7 +109,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 	private Long letterToPartyId;
 	public void prepare() {
 		super.prepare();
-		loginUser=inspectionExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
+		loginUser=inspectionExtnService.getUserbyId((EgovThreadLocals.getUserId()));
 		
 		if(registration!=null && registration.getRequest_number()!=null) {
 			registration=registerBpaExtnService.getRegistrationByPassingRequestNumber(registration.getRequest_number());

@@ -43,8 +43,8 @@ import java.util.Date;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.annotation.Search;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.docmgmt.DocumentObject;
 
 @Node(extend = DocumentObject.class)
@@ -76,7 +76,7 @@ public class Notice extends DocumentObject {
 		this.moduleName = moduleName;
 		this.noticeType = noticeType;
 		this.noticeDate = noticeDate;
-		this.domainName = escapeSpecialChars(EGOVThreadLocals.getDomainName());
+		this.domainName = escapeSpecialChars(EgovThreadLocals.getDomainName());
 	}
 	
 	@Override

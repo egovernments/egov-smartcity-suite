@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.web.filter;
 
 import java.io.IOException;
 
@@ -47,44 +47,42 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.NDC;
+import org.egov.infra.utils.EgovThreadLocals;
 
 /**
- * This Filter is used to improve ui performance by setting Cache-Control header 
- * to static resources like js,css,jpg,gif,etc.
+ * Filter use to sent NDC out put to the written log without user intervention
+ * 
+ * @IMP : This Filter must be applied after SetThreadLocals Filter
+ * @IMP : In <filter-mapping> the <url-pattern> must match exactly as SetThreadLocals's <filter-mapping> <url-pattern>
  */
-public class CacheControlFilter implements Filter {
-
-	private static final String EXPIRE_HEADER = "Expires";
-	private static final String ETAG_HEADER = "ETag";
-	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
-	private static final String PRAGMA_HEADER = "Pragma";
-	public static final long DEFAULT_EXPIRES_SECONDS = 30 * 24 * 60 * 60;
-
-	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-
-		final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-		httpServletResponse.setHeader(CACHE_CONTROL_HEADER, "private,max-age=" + this.expireInSeconds);
-		httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + this.expireInSeconds * 1000L);
-		httpServletResponse.setHeader(PRAGMA_HEADER, null);
-		httpServletResponse.setHeader(ETAG_HEADER, null);
-		chain.doFilter(request, httpServletResponse);
+public class LoggingFilter implements Filter {
+    
+    private FilterConfig config;
+    
+    @Override
+    public void destroy() {
+	config = null;
+	
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	try {
+	    NDC.push(EgovThreadLocals.getDomainName());
+	    chain.doFilter(request, response);
+	} finally {
+	    NDC.pop();
+	    NDC.remove();
 	}
-
-	@Override
-	public void destroy() {
-	}
-
-	private long expireInSeconds = 0;
-
-	@Override
-	public void init(final FilterConfig filterConfig) throws ServletException {
-		if (filterConfig.getInitParameter("expireInSeconds") == null) {
-			this.expireInSeconds = DEFAULT_EXPIRES_SECONDS;
-		} else {
-			this.expireInSeconds = Long.valueOf(filterConfig.getInitParameter("expireInSeconds"));
-		}
-	}
-
+	
+    }
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+	this.config = filterConfig;
+	
+    }
+    
 }

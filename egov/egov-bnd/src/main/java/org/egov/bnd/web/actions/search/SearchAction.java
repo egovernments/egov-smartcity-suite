@@ -54,7 +54,7 @@ import org.egov.bnd.services.search.SearchService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.SexType;
 import org.egov.bnd.web.actions.common.BndCommonAction;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,7 +94,7 @@ public class SearchAction extends BndCommonAction {
         super.prepare();
         addDropdownData("sexTypeList", Arrays.asList(SexType.values()));
         addDropdownData("registrationList", bndCommonService.findAllBy("from RegistrationUnit order by id"));
-        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
+        final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals
                 .getUserId()));
         if ("".equals(roleList) || roleList == null
                 || BndRuleBook.CITIZEN.equalsIgnoreCase(BndRuleBook.getInstance().getHighestPrivilegedRole(roleList)))

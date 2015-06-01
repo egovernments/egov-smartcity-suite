@@ -61,8 +61,8 @@ import org.egov.bnd.utils.BndDateUtils;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -153,7 +153,7 @@ public class SideLetterAction extends BndCommonAction {
 
         if (birthreg != null && birthreg.getStatus().getCode().equals(BndConstants.APPROVED)) {
             sideLetter.setBirthReportId(birthreg);
-            final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
+            final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EgovThreadLocals
                     .getUserId()));
             if (roleList != null)
                 if (roleList.contains(BndRuleBook.SUPERUSER) || regUnit != null

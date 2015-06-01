@@ -65,9 +65,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -505,14 +505,14 @@ public class BudgetSearchAction extends BaseFormAction{
 		Position pos;
 		try {
 			//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EGOVThreadLocals.getUserId());
+			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
 		return pos;
 	}
 	protected User getUser() {
-		User user = (User) persistenceService.find("from User where id_user=?",EGOVThreadLocals.getUserId());
+		User user = (User) persistenceService.find("from User where id_user=?",EgovThreadLocals.getUserId());
 		return user;
 	}
 	

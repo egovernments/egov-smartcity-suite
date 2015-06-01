@@ -41,7 +41,7 @@ package org.egov.infra.web.utils;
 
 import javax.servlet.ServletContext;
 
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 
 
 public final class ERPWebApplicationContext {
@@ -49,10 +49,10 @@ public final class ERPWebApplicationContext {
 	private ERPWebApplicationContext() {}
 	
 	public static ServletContext getServletContext() {
-		return EGOVThreadLocals.getServletContext();
+		return EgovThreadLocals.getServletContext();
 	}
 	
 	public static ServletContext getServletContext(final ERPWebApplicationContext.ContextName webappCtxtName) {
-		return EGOVThreadLocals.getServletContext().getContext("/"+webappCtxtName);
+		return EgovThreadLocals.getServletContext().getContext("/"+webappCtxtName);
 	}
 }

@@ -77,9 +77,9 @@ import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
@@ -210,7 +210,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         CreateVoucher createVoucher = new CreateVoucher();
                         HashMap<String, Object>  headerdetails = new HashMap<String, Object>();
                         
-                        user = (User)persistenceService.find(" from User where id = ?", EGOVThreadLocals.getUserId());
+                        user = (User)persistenceService.find(" from User where id = ?", EgovThreadLocals.getUserId());
                         if(billList!=null && billList.size()>0 && "salary".equalsIgnoreCase(billList.get(0).getExpType()))
                                 headerdetails.put(VoucherConstant.VOUCHERNAME, "Salary Bill Payment");
                         else if(billList!=null && billList.size()>0 && "pension".equalsIgnoreCase(billList.get(0).getExpType()))
@@ -504,7 +504,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 try
                 {
                         miscBillList = new ArrayList<Miscbilldetail>();
-                        user = (User)persistenceService.find(" from User where id = ?", EGOVThreadLocals.getUserId());
+                        user = (User)persistenceService.find(" from User where id = ?", EgovThreadLocals.getUserId());
                         Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount where id=?",payheader.getBankaccount().getId());
                         paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ",payheader.getId());
                         deleteMiscBill(paymentheader.getVoucherheader().getId());
@@ -2797,7 +2797,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public Position getPosition()throws EGOVRuntimeException
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPosition...");
-                return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+                return  eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
         }
         public String getFunctionaryAndDesignation()
         {
@@ -2809,7 +2809,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getAssignment...");
                 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-                return eisCommonService.getLatestAssignmentForEmployeeByToDate( EGOVThreadLocals.getUserId(),new Date());
+                return eisCommonService.getLatestAssignmentForEmployeeByToDate( EgovThreadLocals.getUserId(),new Date());
         }
         public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
         {
@@ -2819,7 +2819,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public PersonalInformation getEmpForCurrentUser()
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmpForCurrentUser...");
-                return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+                return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
         }
         public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
         {

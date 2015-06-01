@@ -70,9 +70,9 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -199,7 +199,7 @@ public class EmployeeMasterAction extends BaseFormAction
         @SuppressWarnings("unchecked")
         public String save()
         {
-                user = eisUserMgr.getUserById(Long.valueOf(EGOVThreadLocals.getUserId()));
+                user = eisUserMgr.getUserById(Long.valueOf(EgovThreadLocals.getUserId()));
                 
                 if(mode.equalsIgnoreCase("create"))
                 {

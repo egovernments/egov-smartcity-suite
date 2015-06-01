@@ -64,9 +64,9 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -171,7 +171,7 @@ public class ChartOfAccounts {
 			//cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
 			//cache.put(ROOTNODE+"/"+FilterName.get(),gLAccCodeNode,glAccountCodes);
 			//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-			//cache.put(ROOTNODE+"/"+EGOVThreadLocals.getDomainName() ,hm);
+			//cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName() ,hm);
 		} catch (Exception e)
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(EXP+e.getMessage(),e);
@@ -214,7 +214,7 @@ public class ChartOfAccounts {
 				//cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
 				//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCCODENODE,glAccountCodes);
 				//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-				//cache.put(ROOTNODE+"/"+EGOVThreadLocals.getDomainName(),hm);
+				//cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),hm);
 			} catch (Exception e)
 			{
 				LOGGER.error(EXP+e.getMessage(),e);
@@ -1195,12 +1195,12 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
  */
 public static HashMap getAccountDetailType()
 {
-	LOGGER.debug("in getAccountDetailType():jndi name is :"+EGOVThreadLocals.getDomainName());
+	LOGGER.debug("in getAccountDetailType():jndi name is :"+EgovThreadLocals.getDomainName());
 	HashMap retMap = null;
 	try
 	{
 		HashMap cacheValuesHashMap=new HashMap<Object, Object>();
-		cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EGOVThreadLocals.getDomainName());
+		cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EgovThreadLocals.getDomainName());
 		if(cacheValuesHashMap!=null && !cacheValuesHashMap.isEmpty())
 		{
 			retMap = (HashMap) cacheValuesHashMap.get(ACCOUNTDETAILTYPENODE);
@@ -1217,12 +1217,12 @@ public static HashMap getAccountDetailType()
 	 * @return Returns the getGlAccountCodes().
 	 */
 	public static HashMap getGlAccountCodes()
-	{LOGGER.debug("in getGlAccountCodes():jndi name is :"+EGOVThreadLocals.getDomainName());
+	{LOGGER.debug("in getGlAccountCodes():jndi name is :"+EgovThreadLocals.getDomainName());
 	HashMap retMap = null;
 	try
 	{
 		HashMap cacheValuesHashMap=new HashMap<Object, Object>();
-		cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EGOVThreadLocals.getDomainName());
+		cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EgovThreadLocals.getDomainName());
 		if(cacheValuesHashMap!=null && !cacheValuesHashMap.isEmpty())
 		{
 			retMap = (HashMap) cacheValuesHashMap.get(GLACCCODENODE);
@@ -1244,12 +1244,12 @@ public static HashMap getAccountDetailType()
 	 */
 	public static HashMap getGlAccountIds()
 	{
-		LOGGER.debug("in getGlAccountIds():jndi name is :"+EGOVThreadLocals.getDomainName());
+		LOGGER.debug("in getGlAccountIds():jndi name is :"+EgovThreadLocals.getDomainName());
 		HashMap retMap = null;
 		try
 		{
 			HashMap cacheValuesHashMap=new HashMap<Object, Object>();
-			cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EGOVThreadLocals.getDomainName());
+			cacheValuesHashMap=(HashMap)cache.get(ROOTNODE + "/" + (String)EgovThreadLocals.getDomainName());
 			if(cacheValuesHashMap!=null && !cacheValuesHashMap.isEmpty())
 			{
 				retMap = (HashMap) cacheValuesHashMap.get(GLACCIDNODE);

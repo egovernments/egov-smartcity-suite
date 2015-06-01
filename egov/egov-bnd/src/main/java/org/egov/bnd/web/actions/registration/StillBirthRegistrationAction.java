@@ -75,8 +75,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.springframework.transaction.annotation.Transactional;
@@ -299,7 +299,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.LOCK).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            // change.setCreatedby(EGOVThreadLocals.getUserId());
+            // change.setCreatedby(EgovThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -317,7 +317,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-//             change.setCreatedby(EGOVThreadLocals.getUserId());
+//             change.setCreatedby(EgovThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -465,7 +465,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     @Transactional
     public String getAdditionalRule() {
 
-        final Long userId = stillBirthRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
+        final Long userId = stillBirthRegistration.getCreatedBy() == null ? Long.valueOf(EgovThreadLocals.getUserId())
                 : stillBirthRegistration.getCreatedBy().getId();
         final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(userId);
         return BndRuleBook.HOSPITALUSER.equalsIgnoreCase(BndRuleBook.getInstance().getHighestPrivilegedRole(roleList)) ? BndRuleBook.HOSPITALUSER

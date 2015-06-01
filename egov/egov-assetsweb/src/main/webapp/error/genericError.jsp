@@ -1,5 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.egov.infstr.client.filter.EGOVThreadLocals"%>
+<%@ page import="org.egov.infra.utils.EgovThreadLocals"%>
 <%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
 <html>
 <head>

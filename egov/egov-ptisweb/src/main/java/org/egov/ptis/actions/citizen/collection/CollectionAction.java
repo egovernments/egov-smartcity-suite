@@ -56,8 +56,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
@@ -92,7 +92,7 @@ public class CollectionAction extends BaseFormAction {
 		LOGGER.debug("Entered into prepare method");
 		User usr = (User)userService.getUserByUsername("citizenUser");
 		setUserId(usr.getId().longValue());
-		EGOVThreadLocals.setUserId(usr.getId());
+		EgovThreadLocals.setUserId(usr.getId());
 		LOGGER.debug("Exit from prepare method");
 	}
 

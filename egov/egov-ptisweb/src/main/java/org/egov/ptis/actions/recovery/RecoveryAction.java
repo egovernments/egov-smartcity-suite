@@ -187,7 +187,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		intimationNotice.setRecovery(recovery);
 		recoveryService.persist(recovery);
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		recovery.transition(true).start().withOwner(position);
 		updateWfstate("Notice 155");
@@ -436,7 +436,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 				PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
 		// FIX ME
 		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		recovery.transition(true).transition().withNextAction("END").withStateValue("END")
 				.withOwner(position).withComments(workflowBean.getComments());
@@ -486,7 +486,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			// FIX ME
 			// Position position =
-			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 			Position position = null;
 			recovery.transition(true).transition().withNextAction("Saved : " + value)
 					.withOwner(position).withComments(workflowBean.getComments());

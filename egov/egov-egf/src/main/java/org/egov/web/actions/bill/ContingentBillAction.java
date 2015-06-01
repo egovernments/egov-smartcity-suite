@@ -73,10 +73,10 @@ import org.egov.egf.bills.model.Cbill;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.models.Script;
@@ -253,7 +253,7 @@ public class ContingentBillAction extends BaseBillAction {
         private  List<Action> getValidActions(String purpose , EgBillregister cbill) {
                 validButtons = new ArrayList<Action>();
                 Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"cbill.validation").get(0);
-                List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),
+                List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EgovThreadLocals.getUserId().trim()),
                                                                         "date",new Date(),"purpose",purpose,"wfitem",cbill));*///This fix is for Phoenix Migration.
                 for(Object s:list) 
                 {
@@ -284,7 +284,7 @@ public class ContingentBillAction extends BaseBillAction {
                 {
                            if(nextLevel.equalsIgnoreCase(END))
                            {
-                                   userId =EGOVThreadLocals.getUserId().intValue();
+                                   userId =EgovThreadLocals.getUserId().intValue();
                            }else
                            {
                                    userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
@@ -639,7 +639,7 @@ public class ContingentBillAction extends BaseBillAction {
                         userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
                 }else 
                 {
-                        userId = EGOVThreadLocals.getUserId().intValue();
+                        userId = EgovThreadLocals.getUserId().intValue();
                 }
                 
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);

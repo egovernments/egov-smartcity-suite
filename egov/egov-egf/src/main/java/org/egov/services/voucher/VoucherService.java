@@ -85,9 +85,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
@@ -161,7 +161,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         public Department getCurrentDepartment()
         {
                 //TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        		Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(EGOVThreadLocals.getUserId(),new Date());
+        		Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
                 return (Department)assignment.getDepartment();
         }
         public Department getDepartmentForWfItem(CVoucherHeader cv)
@@ -174,7 +174,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         {
                 Department d=null;
                 PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
-           d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary=true and user.id=?",EGOVThreadLocals.getUserId());
+           d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary=true and user.id=?",EgovThreadLocals.getUserId());
         return d;
         }
         
@@ -186,7 +186,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     }
         public PersonalInformation getEmpForCurrentUser()
         {
-                return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+                return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
         }
         public Position getPositionForWfItem(CVoucherHeader rv)
         {
@@ -234,7 +234,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Double grossAmount =  getJVsGrassAmount(paymentheader);
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"grossAmount",grossAmount,"userId",
-                                                                Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime(),
+                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime(),
                                                                 "paymentheader" , paymentheader));*///This fix is for Phoenix Migration.
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
@@ -434,7 +434,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                 }
                         existingVH = getUpdatedVNumCGVN(existingVH,voucherHeader,voucherNumType);
                         //existingVH.setModifiedDate(new Date());
-                        //existingVH.setModifiedBy(userMngr.getUserById(Integer.valueOf(EGOVThreadLocals.getUserId())));
+                        //existingVH.setModifiedBy(userMngr.getUserById(Integer.valueOf(EgovThreadLocals.getUserId())));
                         existingVH.setFundId(voucherHeader.getFundId());
                         existingVH.getVouchermis().setDepartmentid(voucherHeader.getVouchermis().getDepartmentid());
                         existingVH.getVouchermis().setFunction(voucherHeader.getVouchermis().getFunction());
@@ -720,7 +720,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          voucherHeader.setEffectiveDate(new Date());
                          if(!cm.isUniqueVN(voucherHeader.getVoucherNumber(),vdt)) 
                                         throw new EGOVRuntimeException("Duplicate Voucher Number"); 
-                        // vh.setCreatedBy(userMngr.getUserById(Integer.valueOf(EGOVThreadLocals.getUserId())));
+                        // vh.setCreatedBy(userMngr.getUserById(Integer.valueOf(EgovThreadLocals.getUserId())));
                          voucherHeader.getVouchermis().setVoucherheaderid(voucherHeader);
                          voucherHeader.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
                          AppConfig appConfig= (AppConfig) persistenceService.find("from AppConfig where key_name =?", "JournalVoucher_ConfirmonCreate");
@@ -795,7 +795,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          recordStatus.setUpdatedtime(new Date());
                          recordStatus.setVoucherheader(voucherHeader);
                          recordStatus.setRecordType(voucherHeader.getType());
-                         recordStatus.setUserid(EGOVThreadLocals.getUserId().intValue());
+                         recordStatus.setUserid(EgovThreadLocals.getUserId().intValue());
                          recordStatusSer.persist(recordStatus);
                 } catch (HibernateException he) {
                         LOGGER.error(he.getMessage());
@@ -814,7 +814,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type));*/
+                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type));*/
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
                         for (String desgFuncryName : list) {
@@ -846,7 +846,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
+                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
                         for (String desgFuncryName : list) {
@@ -878,7 +878,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list =null;/* (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
+                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,"vouDate",vouDate.getTime()));*/
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
                         for (String desgFuncryName : list) {
@@ -910,7 +910,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
                         List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,
+                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,
                                                                 "wfitem",wfitem,"deptId",deptId,"persistenceService",persistenceService));*/
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
@@ -1266,7 +1266,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public Integer getDefaultDepartment() {
                 Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.get.default.department").get(0);
                 String defaultDepartmentName = null;/* (String) script.eval(Script.createContext("eisCommonServiceBean", eisCommonService,
-                                "userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim())));*/
+                                "userId",Integer.valueOf(EgovThreadLocals.getUserId().trim())));*/
                 if(!"".equalsIgnoreCase(defaultDepartmentName)) {
                         Department dept = (Department) persistenceService.find("from Department where deptName=?",defaultDepartmentName);
                         if(dept!=null)

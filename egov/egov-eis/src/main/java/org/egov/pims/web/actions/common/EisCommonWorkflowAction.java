@@ -48,10 +48,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.service.CommonsService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.StringUtils;
@@ -150,7 +150,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	
 
 	private Position getCurrentUserPosition() {
-		pos = eisCommonsService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		pos = eisCommonsService.getPositionByUserId(EgovThreadLocals.getUserId());
 		return pos;
 	}
 
@@ -160,7 +160,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		
 		if(null != getModel())
 		{
-			if(!validateInboxItemForUser(getModel(),EGOVThreadLocals.getUserId()))
+			if(!validateInboxItemForUser(getModel(),EgovThreadLocals.getUserId()))
 				return WORKFLOWERROR;
 		}
 		return EDIT;

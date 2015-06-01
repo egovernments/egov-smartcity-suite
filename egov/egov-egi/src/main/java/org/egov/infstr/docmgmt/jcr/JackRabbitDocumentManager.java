@@ -88,10 +88,10 @@ public class JackRabbitDocumentManager<T extends DocumentObject> extends Abstrac
 	    
 	    Node root = getTemplate().getRootNode();
 	    Node domain = null;
-	    if (root.hasNode(EGOVThreadLocals.getDomainName())) {
-		domain = root.getNode(EGOVThreadLocals.getDomainName());
+	    if (root.hasNode(EgovThreadLocals.getDomainName())) {
+		domain = root.getNode(EgovThreadLocals.getDomainName());
 	    } else {
-		domain = root.addNode(EGOVThreadLocals.getDomainName());
+		domain = root.addNode(EgovThreadLocals.getDomainName());
 	    }
 	    
 	    Node docNode = domain.addNode(NODE_DOC_OBJECT);

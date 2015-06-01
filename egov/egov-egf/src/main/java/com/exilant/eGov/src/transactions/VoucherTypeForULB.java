@@ -40,7 +40,7 @@
 package com.exilant.eGov.src.transactions;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.EGovConfig;
 public class VoucherTypeForULB {
 
@@ -48,7 +48,7 @@ public class VoucherTypeForULB {
 
 	    public String readVoucherTypes(String vType)
 	    {
-	        String cityName = EGOVThreadLocals.getDomainName();
+	        String cityName = EgovThreadLocals.getDomainName();
 	        if(LOGGER.isInfoEnabled())     LOGGER.info("ULB Name is-->"+cityName);
 	        String VoucherType = EGovConfig.getProperty("egf_config.xml", vType, "Manual", (new StringBuilder(String.valueOf(cityName))).append(".VoucherTypes").toString());
 	        if(LOGGER.isInfoEnabled())     LOGGER.info("VoucherType is-->"+VoucherType);

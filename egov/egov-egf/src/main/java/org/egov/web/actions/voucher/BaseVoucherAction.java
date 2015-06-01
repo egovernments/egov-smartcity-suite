@@ -74,11 +74,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -784,9 +784,9 @@ public void loadBankBranchForFund(){
 	}
 	protected Boolean validateOwner(State state)
 	{
-		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EgovThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = eisService.getPositionsForUser(EGOVThreadLocals.getUserId(), new Date());
+		positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
 		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");

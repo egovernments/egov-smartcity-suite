@@ -47,7 +47,7 @@ import java.util.List;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.config.AppConfigValues;
@@ -121,7 +121,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 						.createQuery(
 								"from BasicPropertyImpl bp WHERE bp.upicNo = ?")
 						.setString(0, indexNumber).uniqueResult();
-				billService.generateBill(basicProperty,EGOVThreadLocals.getUserId().intValue());
+				billService.generateBill(basicProperty,EgovThreadLocals.getUserId().intValue());
 				basicProperty.setIsBillCreated('Y');
 				noOfBillsGenerated++;
 			} catch (Exception e) {

@@ -63,12 +63,12 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -756,11 +756,11 @@ int i=0;
 	protected abstract void saveAndStartWorkFlowForRe(BudgetDetail detail,int index, CFinancialYear finYear,Budget refBudget) ;
 	protected abstract void approve();
 	protected User getUser() {
-		return (User) persistenceService.find("from User where id_user=?",EGOVThreadLocals.getUserId());
+		return (User) persistenceService.find("from User where id_user=?",EgovThreadLocals.getUserId());
 	}
 	
 	protected Position getPosition() {
-		return eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 	}
 	
 	protected Position getPositionByUserId(Integer userId){

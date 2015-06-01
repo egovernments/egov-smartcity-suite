@@ -52,11 +52,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 //import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -205,7 +205,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	}
 	
 	public Long getCurrentUserId() {
-		return (EGOVThreadLocals.getUserId());
+		return (EgovThreadLocals.getUserId());
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	//TODO Pionix changed from Intiger into Long
 	public Long getPrimaryDepartmentforLoggedinUser(){
 		Long deptId=null;
-		Long userId=(EGOVThreadLocals.getUserId());		
+		Long userId=(EgovThreadLocals.getUserId());		
 		PersonalInformation employee= (PersonalInformation) persistenceService.find("from PersonalInformation where userMaster.id=?",userId);
 		if(employee!=null){
 			List<Assignment> assignmentList=eisService.getPrimartAssignmentForGivenDateRange(employee.getId(), new Date(), null);
@@ -276,7 +276,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	public List<EmployeeView> getEmployeeInfoList() {
 		List<EmployeeView>  empList=new ArrayList();
 		HashMap paramMap=new HashMap();
-		Long userId=(EGOVThreadLocals.getUserId());
+		Long userId=(EgovThreadLocals.getUserId());
 		
 		//Getting the employee Id from personal information to get primary assignments by passing user id
 		PersonalInformation employee= (PersonalInformation) persistenceService.find("from PersonalInformation where userMaster.id=?",userId);
@@ -313,7 +313,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	public Position getEmployeeInfoList(Boundary boundaryImpl) { 
 		List<EmployeeView>  empList=new ArrayList();
 		Long boundaryId=null;
-		Long userId=(EGOVThreadLocals.getUserId());
+		Long userId=(EgovThreadLocals.getUserId());
 		//PHIONIX TODO
 		if (boundaryImpl.getBoundaryType() != null) {
 			if (boundaryImpl.getBoundaryType().getName().equalsIgnoreCase("zone")) {

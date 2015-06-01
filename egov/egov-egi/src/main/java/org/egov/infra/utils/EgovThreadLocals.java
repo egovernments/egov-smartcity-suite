@@ -37,11 +37,11 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.client.filter;
+package org.egov.infra.utils;
 
 import javax.servlet.ServletContext;
 
-public class EGOVThreadLocals {
+public class EgovThreadLocals {
 
 	private static ThreadLocal<String> domainName = new ThreadLocal<>();
 	private static ThreadLocal<Long> userId = new ThreadLocal<>();

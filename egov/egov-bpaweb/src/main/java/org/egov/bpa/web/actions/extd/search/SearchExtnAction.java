@@ -60,9 +60,9 @@ import org.egov.bpa.utils.ApplicationMode;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
@@ -124,7 +124,7 @@ public class SearchExtnAction extends SearchFormAction{
 
 	private void setActionsByRoles(List<RegistrationExtn>  registrationSearchList) {
 	
-		List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+		List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EgovThreadLocals.getUserId()));
 		
 		prepareActionList(registrationSearchList, roleList);
 	}

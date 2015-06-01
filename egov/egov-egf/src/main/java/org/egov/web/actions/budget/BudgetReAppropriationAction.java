@@ -62,11 +62,11 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -278,7 +278,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 	@Transactional
 	public String create() {
-		save(EGOVThreadLocals.getUserId().intValue());
+		save(EgovThreadLocals.getUserId().intValue());
 		return NEW;
 	}
 	@Transactional
@@ -341,7 +341,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = EGOVThreadLocals.getUserId().intValue();
+			userId = EgovThreadLocals.getUserId().intValue();
 		}
 		return userId;
 	}
@@ -366,7 +366,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 
 	protected Position getPosition() {
-		return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		return  eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 	}
 	
 	public void removeEmptyReAppropriation(List<BudgetReAppropriationView> reAppropriationList) {

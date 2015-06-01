@@ -48,7 +48,7 @@ import java.util.Date;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
@@ -84,7 +84,7 @@ public class NoticeService {
 		ptNotice.setNoticeDate(new Date());
 		ptNotice.setNoticeNo(noticeNo);
 		ptNotice.setNoticeType(noticeType);
-		ptNotice.setUserId(EGOVThreadLocals.getUserId().intValue());
+		ptNotice.setUserId(EgovThreadLocals.getUserId().intValue());
 		ptNotice.setBasicProperty(basicProperty);
 		ptNotice.setIsBlob('Y');
 		try {

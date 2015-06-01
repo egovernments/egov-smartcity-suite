@@ -69,7 +69,7 @@ public class EBBillInfoFetchJob implements Job {
 			setTractionalSupport();
 			
 			
-			//EGOVThreadLocals.setUserId((Long) jobExeContext.getJobDetail().getJobDataMap().get("loggedInUserId"));
+			//EgovThreadLocals.setUserId((Long) jobExeContext.getJobDetail().getJobDataMap().get("loggedInUserId"));
 			//TODO use new quartz class from egi		
 			executeJob(jobExeContext);
 			
@@ -112,13 +112,13 @@ public class EBBillInfoFetchJob implements Job {
 		String jndiName = EGovConfig.getProperty(URL, "","JNDIURL");
 		
 	/*	if (StringUtils.isNotBlank(jndiName)) {
-			EGOVThreadLocals.setJndiName(jndiName);
+			EgovThreadLocals.setJndiName(jndiName);
 		}
 		
 		String factoryName = EGovConfig.getProperty(URL, "","HibernateFactory");
 		
 		if (StringUtils.isNotBlank(factoryName)) {
-			EGOVThreadLocals.setHibFactName(factoryName);
+			EgovThreadLocals.setHibFactName(factoryName);
 		}*/
 	}
 

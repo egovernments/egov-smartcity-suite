@@ -48,7 +48,7 @@ package com.exilant.eGov.src.transactions;
 
 import java.sql.Connection;
 import org.apache.log4j.Logger;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.EGovConfig;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
@@ -68,7 +68,7 @@ public class PayrollCode extends AbstractTask
 	public void execute(String taskName,String gridName,DataCollection dCon,Connection cn,boolean errorOnNoData,boolean gridHasColumnHeading,String prefix)throws TaskFailedException
 	{
 		dc=dCon;
-		String cityName=EGOVThreadLocals.getDomainName();
+		String cityName=EgovThreadLocals.getDomainName();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(cityName);
 		String payrollCode=EGovConfig.getProperty("egf_config.xml",cityName,"0","PayRollCodes.PayRoll");
 		dc.addValue("payrollCode",payrollCode);

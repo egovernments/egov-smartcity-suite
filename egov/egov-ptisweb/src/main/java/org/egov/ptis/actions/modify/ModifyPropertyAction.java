@@ -114,9 +114,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
@@ -2015,7 +2015,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		workflowAction = propertyTaxUtil.initWorkflowAction(propertyModel, workflowBean,
-				EGOVThreadLocals.getUserId(), eisCommonService);
+				EgovThreadLocals.getUserId(), eisCommonService);
 
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

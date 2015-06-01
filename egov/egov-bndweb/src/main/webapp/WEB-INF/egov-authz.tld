@@ -55,7 +55,7 @@
 
 	<tag>
 		<name>authorize</name>
-		<tag-class>org.egov.infstr.client.taglib.EgovAuthorizeTag</tag-class>
+		<tag-class>org.egov.infra.web.taglib.EgovAuthorizeTag</tag-class>
 		<description>
             A simple tag to output or not the body of the tag if the principal
             has or doesn't have roles as per action or as per the ruleObject

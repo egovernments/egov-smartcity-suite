@@ -53,9 +53,9 @@ import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
@@ -245,7 +245,7 @@ public class MilestoneTemplateAction extends SearchFormAction{
 							&& !template.getEgwStatus().getCode().equals(MilestoneTemplate.MilestoneTemplateStatus.CANCELLED)))) 
 			|| (template.getEgwStatus()!=null &&
 						template.getEgwStatus().getCode().equals(WorksConstants.NEW))){
-			User user=userService.getUserById(Long.valueOf(EGOVThreadLocals.getUserId()));
+			User user=userService.getUserById(Long.valueOf(EgovThreadLocals.getUserId()));
 			boolean isValidUser=worksService.validateWorkflowForUser(template,user);
 			if(isValidUser){
 					throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");

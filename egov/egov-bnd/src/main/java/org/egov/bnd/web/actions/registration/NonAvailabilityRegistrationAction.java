@@ -222,9 +222,9 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
      * feeCollection.setApplicantAddress(nonAvailableReg.getTalukName() + " " +
      * nonAvailableReg.getDistrictName());
      * feeCollection.setApplicantName(nonAvailableReg.getApplicantName()); if
-     * (EGOVThreadLocals.getUserId() != null)
+     * (EgovThreadLocals.getUserId() != null)
      * feeCollection.setCreatedBy(bndCommonService
-     * .getUserByPassingUserId(Integer.valueOf(EGOVThreadLocals .getUserId())));
+     * .getUserByPassingUserId(Integer.valueOf(EgovThreadLocals .getUserId())));
      * feeCollection.setCollectionDate(DateUtils.today());
      * feeCollection.setNo_Of_copies(nonAvailableReg.getNo_Of_copies());
      * feeCollection.setRemarks(nonAvailableReg.getRemarks());

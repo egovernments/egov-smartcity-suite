@@ -57,10 +57,10 @@ import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -339,7 +339,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) 
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		else 
-			userId = EGOVThreadLocals.getUserId().intValue();
+			userId = EgovThreadLocals.getUserId().intValue();
 		
 		for (BudgetDetail detail : savedbudgetDetailList) {
 			//budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, detail.getComment());

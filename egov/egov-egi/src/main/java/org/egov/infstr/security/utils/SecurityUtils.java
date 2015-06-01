@@ -48,7 +48,7 @@ import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class SecurityUtils implements SecurityConstants {
 		if (isNotBlank(input)) {
 			try {
 				feedSQLWhiteList(SQL_WHITE_LST_PROP_FILE);
-				final Properties whiteList = SQL_INJ_WHITE_LIST.get(EGOVThreadLocals.getServletContext().getServletContextName());
+				final Properties whiteList = SQL_INJ_WHITE_LIST.get(EgovThreadLocals.getServletContext().getServletContextName());
 				if (whiteList.containsValue(input)) {
 					return input;
 				}
@@ -73,7 +73,7 @@ public class SecurityUtils implements SecurityConstants {
 				final StringTokenizer tokenValue = new StringTokenizer(input, " ");
 				while (tokenValue.hasMoreTokens()) {
 					if (tokenValue.nextToken().toLowerCase().equals(blkVal)) {
-						LOG.error("Found SQL Injection attack, Domain Name : {} User ID : {}", EGOVThreadLocals.getDomainName(), EGOVThreadLocals.getUserId());
+						LOG.error("Found SQL Injection attack, Domain Name : {} User ID : {}", EgovThreadLocals.getDomainName(), EgovThreadLocals.getUserId());
 						throw new EGOVRuntimeException("Invalid user input found, possible SQL Injection!");
 					}
 				}
@@ -87,10 +87,10 @@ public class SecurityUtils implements SecurityConstants {
 	}
 
 	private static void feedSQLWhiteList(final String fileLocation) throws FileNotFoundException, IOException {
-		if (!SQL_INJ_WHITE_LIST.containsKey(EGOVThreadLocals.getServletContext().getServletContextName())) {
+		if (!SQL_INJ_WHITE_LIST.containsKey(EgovThreadLocals.getServletContext().getServletContextName())) {
 			final Properties property = new Properties();
-			property.load(EGOVThreadLocals.getServletContext().getResourceAsStream(fileLocation));
-			SQL_INJ_WHITE_LIST.put(EGOVThreadLocals.getServletContext().getServletContextName(), property);
+			property.load(EgovThreadLocals.getServletContext().getResourceAsStream(fileLocation));
+			SQL_INJ_WHITE_LIST.put(EgovThreadLocals.getServletContext().getServletContextName(), property);
 		}
 	}
 }

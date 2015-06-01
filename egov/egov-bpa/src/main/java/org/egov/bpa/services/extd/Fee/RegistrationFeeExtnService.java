@@ -59,8 +59,8 @@ import org.egov.commons.EgwSatuschange;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 /*import org.egov.infstr.workflow.WorkflowService;*/
@@ -319,7 +319,7 @@ public class RegistrationFeeExtnService extends
 		try {
 			if (registrationFee.getState() == null) {
 				Position pos = bpaPimsExtnFactory
-						.getPositionByUserId((EGOVThreadLocals.getUserId()));
+						.getPositionByUserId((EgovThreadLocals.getUserId()));
 				// registrationFee = (RegistrationFeeExtn)
 				// registrationFeeWorkflowExtnService.start(registrationFee,
 				// pos, "Revised Fee created.");

@@ -51,10 +51,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.utils.Constants;
@@ -77,7 +77,7 @@ public class CancelBillAction extends BaseFormAction  {
 	private String expType;
 	private List<BillRegisterBean> billListDisplay= new ArrayList<BillRegisterBean>();
 	private boolean afterSearch=false;
-	Integer loggedInUser = EGOVThreadLocals.getUserId().intValue();
+	Integer loggedInUser = EgovThreadLocals.getUserId().intValue();
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
 
 	
@@ -353,7 +353,7 @@ public class CancelBillAction extends BaseFormAction  {
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(" Cancel Query - "+cancelQuery.toString());
 				Query query = session.createQuery(cancelQuery.toString());
 				query.setLong("statusId", status.getId());
-				/*query.setInteger("modifiedby",Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+				/*query.setInteger("modifiedby",Integer.valueOf(EgovThreadLocals.getUserId().trim()));
 				query.setDate("modifiedDate",modifiedDate);*/
 				int executeUpdate = query.executeUpdate();
 		}

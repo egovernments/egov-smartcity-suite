@@ -51,11 +51,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
@@ -241,7 +241,7 @@ public class SchemeAction extends BaseFormAction{
 	}
 	
 	private User getLoggedInUser() {
-		 return (User)persistenceService.getSession().load(User.class, EGOVThreadLocals.getUserId());
+		 return (User)persistenceService.getSession().load(User.class, EgovThreadLocals.getUserId());
 	}
 	
 	public Scheme getScheme() {
