@@ -76,9 +76,9 @@ $(document).ready(function(){
 			}
 			/*$("#outSourcedPost").val(tableContainer1.fnGetData(this,4)); 
 			$("#sanctionedPost").val(tableContainer1.fnGetData(this,5)); */
-	    }
-		$('.position-modal').modal('show');
-		
+			$('.position-modal').modal('show');
+		}
+			
 	});
 	
 	
