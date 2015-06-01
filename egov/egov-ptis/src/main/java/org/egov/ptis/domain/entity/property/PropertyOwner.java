@@ -50,7 +50,7 @@ import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
-import org.egov.infra.admin.master.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.portal.entity.Citizen;
 
 /**

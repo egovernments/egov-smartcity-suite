@@ -50,12 +50,12 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.Fund;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 

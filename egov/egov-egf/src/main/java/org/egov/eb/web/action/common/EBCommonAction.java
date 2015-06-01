@@ -54,8 +54,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.domain.master.entity.TargetArea;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 @Results({ @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType",

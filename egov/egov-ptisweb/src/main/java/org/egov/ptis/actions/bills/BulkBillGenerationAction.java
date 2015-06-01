@@ -53,11 +53,11 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

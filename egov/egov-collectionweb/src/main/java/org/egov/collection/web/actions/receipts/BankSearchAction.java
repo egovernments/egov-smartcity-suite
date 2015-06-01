@@ -47,8 +47,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Bank;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.Action;

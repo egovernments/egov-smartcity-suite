@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -77,7 +78,6 @@ import org.egov.ptis.domain.entity.property.PropertyOwner;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

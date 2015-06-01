@@ -97,8 +97,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-//import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infra.admin.master.entity.enums.AddressType;
+import org.egov.infra.persistence.entity.enums.AddressType;
 /*import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
@@ -117,7 +116,6 @@ import org.egov.pims.commons.Position;
 /*import org.egov.pims.commons.service.EisCommonsManager;
 import org.egov.pims.service.EisManager;*/
 import org.egov.pims.model.PersonalInformation;
-import org.geotools.resources.Utilities;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;

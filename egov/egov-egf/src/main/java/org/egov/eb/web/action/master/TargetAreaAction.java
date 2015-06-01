@@ -56,10 +56,10 @@ import org.egov.eb.service.master.TargetAreaService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 

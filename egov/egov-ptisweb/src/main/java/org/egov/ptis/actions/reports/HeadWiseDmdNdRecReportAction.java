@@ -52,13 +52,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 
 @ParentPackage("egov")

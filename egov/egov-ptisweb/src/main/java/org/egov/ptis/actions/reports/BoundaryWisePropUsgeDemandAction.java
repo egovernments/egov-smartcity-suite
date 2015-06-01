@@ -52,10 +52,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

@@ -50,10 +50,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov") 

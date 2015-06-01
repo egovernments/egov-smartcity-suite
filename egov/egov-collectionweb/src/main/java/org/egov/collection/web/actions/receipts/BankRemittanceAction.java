@@ -52,7 +52,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
   
 @Result(name="success", type="redirect", location = "bankRemittance")  

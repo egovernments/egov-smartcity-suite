@@ -53,10 +53,10 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxAssetAction extends BaseFormAction {

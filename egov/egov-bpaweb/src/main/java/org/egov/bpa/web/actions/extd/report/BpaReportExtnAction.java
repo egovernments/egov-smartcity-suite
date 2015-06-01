@@ -63,12 +63,12 @@ import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.common.FeeExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.bpa.services.extd.report.BpaReportExtnService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.web.actions.BaseFormAction;
 
 public class BpaReportExtnAction extends BaseFormAction{
 

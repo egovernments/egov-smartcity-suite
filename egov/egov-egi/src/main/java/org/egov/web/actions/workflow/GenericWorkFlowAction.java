@@ -44,12 +44,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.web.actions.SearchFormAction;
 
 /**
  * Generic WorkFlow Action. Can be extended by any action class that intends to provide 

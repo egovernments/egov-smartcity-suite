@@ -47,7 +47,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.utils.BndConstants;
-import org.egov.infra.admin.master.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 

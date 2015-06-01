@@ -49,11 +49,11 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 

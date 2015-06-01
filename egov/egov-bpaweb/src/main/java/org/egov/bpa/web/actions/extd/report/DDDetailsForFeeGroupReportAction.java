@@ -67,7 +67,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;

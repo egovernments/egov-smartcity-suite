@@ -53,8 +53,8 @@ import org.egov.bpa.models.extd.RegnAutoDcrExtn;
 import org.egov.bpa.services.extd.autoDcr.AutoDcrExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.bpa.utils.ServiceType;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.web.actions.BaseFormAction;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {

@@ -74,6 +74,7 @@ import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.util.DCBUtils;
@@ -89,7 +90,6 @@ import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
 

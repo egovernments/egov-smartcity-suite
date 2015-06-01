@@ -45,9 +45,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.web.actions.SearchFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponseActivity;

@@ -50,8 +50,8 @@ import org.egov.asset.util.AssetCommonUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.web.actions.SearchFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AssetBaseSearchAction extends SearchFormAction {

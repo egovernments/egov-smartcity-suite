@@ -67,13 +67,13 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 

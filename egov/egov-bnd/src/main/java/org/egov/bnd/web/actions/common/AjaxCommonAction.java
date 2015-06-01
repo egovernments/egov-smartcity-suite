@@ -71,8 +71,8 @@ import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results({ @Result(name = AjaxCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = {
@@ -373,7 +373,7 @@ public class AjaxCommonAction extends BaseFormAction {
     public void populateAddressString(final Address address) {
         StringBuffer addressString = new StringBuffer(EMPTYSTRING);
         if (address != null) {
-            addressString = addressString.append(address.getId());
+            //addressString = addressString.append(address.getId());
             addressString = addressString.append(ADDSTRING);
             // TODO egifix
             /*

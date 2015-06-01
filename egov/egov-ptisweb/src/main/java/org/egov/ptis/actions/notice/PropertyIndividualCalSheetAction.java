@@ -68,6 +68,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
@@ -87,7 +88,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
@@ -76,7 +77,6 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.PersonalInformationService;
-import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -897,7 +897,7 @@ public class SearchEstimateAction extends SearchFormAction {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.web.actions.SearchFormAction#search()
+     * @see org.egov.infra.web.struts.actions.SearchFormAction#search()
      */
     @Override
     public String search() {

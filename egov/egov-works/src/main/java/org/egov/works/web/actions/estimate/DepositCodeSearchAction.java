@@ -43,8 +43,8 @@ import java.util.Collection;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.masters.DepositCode;
 
 import com.opensymphony.xwork2.Action;

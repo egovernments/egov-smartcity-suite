@@ -55,6 +55,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -62,7 +63,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -67,8 +67,8 @@ import org.egov.bnd.utils.SexType;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
-import org.egov.infra.admin.master.entity.enums.AddressType;
-import org.egov.infra.admin.master.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.springframework.transaction.annotation.Transactional;
@@ -229,11 +229,13 @@ public class RegistrationAction extends BndCommonAction {
     }
 
     protected void buildNewAddressFromOldAddress(final Set<Address> addressSet, final Address newAddress) {
-        if (addressSet.isEmpty() || newAddress.getId() == null)
+        if (addressSet.isEmpty())
             addressSet.add(newAddress);
-        else
-            for (final Address address : addressSet)
-                if (address.getId().equals(newAddress.getId())) {
+        /*else
+           for (final Address address : addressSet)
+               
+                 * TODO PHOENIX
+                 * if (address.getId().equals(newAddress.getId())) {
                   
                       address.setStreetRoadLine(newAddress.getStreetRoadLine());
                       address.setSubdistrict(newAddress.getSubdistrict());
@@ -244,7 +246,7 @@ public class RegistrationAction extends BndCommonAction {
                     address.setState(newAddress.getState());
                     address.setType(newAddress.getType());
                     break;
-                }
+                }*/
     }
 
     /**

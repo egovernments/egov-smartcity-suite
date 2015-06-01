@@ -47,7 +47,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -71,11 +70,10 @@ import org.egov.bnd.services.reports.PaymentReportService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.bnd.utils.BndUtils;
-import org.egov.commons.EgwSatuschange;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.enums.AddressType;
+import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
@@ -285,7 +283,7 @@ public class BirthRegistrationAction extends RegistrationAction {
             birthRegistration.setEventAddress(null);
         else
             
-            birthRegistration.getEventAddress().setType(eventAddressType);
+            birthRegistration.getEventAddress().setType(AddressType.EVENTADDRESS);
 
             if (parentAddressFlag != null && parentAddressFlag == 1) {
                 birthRegistration.getParentAddress().setType(AddressType.CORRESPONDENCE);
@@ -295,9 +293,9 @@ public class BirthRegistrationAction extends RegistrationAction {
                 birthRegistration.setParentAddress(null);
 
        
-         birthRegistration.getMotherResidenceAddress().setType(usualAddressType);
+         birthRegistration.getMotherResidenceAddress().setType(AddressType.USUALADDRESS);
         buildNewAddressFromOldAddress(motherAddressSet, birthRegistration.getMotherResidenceAddress());
-        birthRegistration.getInformantAddress().setType(presentAddressType);
+        birthRegistration.getInformantAddress().setType(AddressType.PRESENTADDRESS);
         LOGGER.debug("End Build citizen Address");
     }
 

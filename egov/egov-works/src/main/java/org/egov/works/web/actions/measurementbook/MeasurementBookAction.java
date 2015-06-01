@@ -60,6 +60,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -70,7 +71,6 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.PersonalInformationService;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.utils.EgovPaginatedList;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -526,10 +526,10 @@ public class MeasurementBookAction extends BaseFormAction {
         String currentDesgination = null;
         if (mbHeader.getCurrentState() != null
                 && mbHeader.getCurrentState().getOwnerPosition() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation().getName() != null)
-            currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation()
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesig() != null
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation() != null
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() != null)
+            currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation()
             .getName();
         if (designWhoCanModify != null && currentDesgination != null
                 && designWhoCanModify.equalsIgnoreCase(currentDesgination))

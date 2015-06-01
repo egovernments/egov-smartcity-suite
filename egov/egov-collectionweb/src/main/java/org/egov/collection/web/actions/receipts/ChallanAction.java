@@ -81,6 +81,7 @@ import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -91,7 +92,6 @@ import org.egov.infstr.utils.NumberUtil;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.StaleObjectStateException;
 import org.joda.time.DateTime;
@@ -1017,7 +1017,7 @@ public class ChallanAction extends BaseFormAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.egov.web.actions.BaseFormAction#prepare()
+	 * @see org.egov.infra.web.struts.actions.BaseFormAction#prepare()
 	 */
 	@Override
 	public void prepare() {

@@ -63,11 +63,11 @@ import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.service.master.EBDetailsService;
 import org.egov.eb.service.receipt.EBReceiptInfoService;
 import org.egov.eb.utils.EBConstants;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;

@@ -59,11 +59,11 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.web.actions.ReportFormAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 

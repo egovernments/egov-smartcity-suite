@@ -67,7 +67,7 @@
  import org.egov.infstr.client.filter.EGOVThreadLocals;
  import org.egov.infstr.utils.DateUtils;
  import org.egov.infra.admin.master.entity.User;
- import org.egov.web.actions.BaseFormAction;
+ import org.egov.infra.web.struts.actions.BaseFormAction;
 
  *//**
  *

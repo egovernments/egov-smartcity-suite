@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -60,7 +61,6 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeService;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.measurementbook.ApprovalDetails;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -268,7 +268,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                         DeptDesig deptdesig = null;
                         // if(state.getPrevious()==null){
                         positionId = state.getOwnerPosition().getId();
-                        deptdesig = state.getOwnerPosition().getDeptDesigId();
+                        deptdesig = state.getOwnerPosition().getDeptDesig();
                         desgName = deptdesig.getDesignation().getName();
                         // }
                         /*

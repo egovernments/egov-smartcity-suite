@@ -63,7 +63,7 @@ import org.hibernate.criterion.Restrictions;
  * 
  * <pre>
  *      &lt;bean id="myStateAwarePersistenceService" parent="persistenceService"&gt;
- *                 &lt;property name="type" value="org.egov.web.actions.common.MyStateAware" /&gt;
+ *                 &lt;property name="type" value="org.egov.infra.web.struts.actions.common.MyStateAware" /&gt;
  *         &lt;/bean>
  *         
  *         &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;

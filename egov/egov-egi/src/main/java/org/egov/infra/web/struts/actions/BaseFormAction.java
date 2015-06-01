@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.actions;
+package org.egov.infra.web.struts.actions;
 
 import java.util.ArrayList;
 import java.util.HashMap;

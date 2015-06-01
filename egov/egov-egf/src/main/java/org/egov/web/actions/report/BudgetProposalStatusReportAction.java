@@ -51,10 +51,10 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.utils.BudgetDetailHelper;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)

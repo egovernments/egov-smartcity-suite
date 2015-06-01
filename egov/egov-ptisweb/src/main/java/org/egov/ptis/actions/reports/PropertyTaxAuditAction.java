@@ -42,7 +42,7 @@ package org.egov.ptis.actions.reports;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 
 @ParentPackage("egov")
 @Result(name = "auditReport", location = "auditReport", params = { "moduleName", "PROPERTYTAX",

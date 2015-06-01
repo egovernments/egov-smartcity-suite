@@ -56,12 +56,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.SearchFormAction;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -46,8 +46,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class BaseRevenueAction extends BaseFormAction {

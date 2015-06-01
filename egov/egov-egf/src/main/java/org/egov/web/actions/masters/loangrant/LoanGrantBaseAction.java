@@ -44,11 +44,11 @@ import java.util.List;
 
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
-import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class LoanGrantBaseAction extends BaseFormAction {

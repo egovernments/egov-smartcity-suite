@@ -75,8 +75,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.web.actions.BaseFormAction;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 

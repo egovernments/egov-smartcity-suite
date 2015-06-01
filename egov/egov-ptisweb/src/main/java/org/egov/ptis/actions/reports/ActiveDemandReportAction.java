@@ -50,9 +50,9 @@ import java.util.Map;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.ActiveDemandInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;

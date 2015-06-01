@@ -46,8 +46,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.estimate.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 

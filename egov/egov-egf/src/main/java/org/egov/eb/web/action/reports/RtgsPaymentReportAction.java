@@ -55,12 +55,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eb.domain.master.bean.RtgsPaymentReportBean;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.actions.SearchFormAction;
 import org.egov.web.utils.EgovPaginatedList;
 import org.springframework.transaction.annotation.Transactional;
 

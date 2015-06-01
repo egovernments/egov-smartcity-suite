@@ -55,13 +55,13 @@ import org.egov.commons.CFunction;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.Constants;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)

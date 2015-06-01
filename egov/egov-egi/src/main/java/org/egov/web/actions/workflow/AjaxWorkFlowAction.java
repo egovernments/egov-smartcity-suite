@@ -48,11 +48,11 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
-import org.egov.web.actions.BaseFormAction;
 
 @ParentPackage("egov")
 public class AjaxWorkFlowAction extends BaseFormAction {

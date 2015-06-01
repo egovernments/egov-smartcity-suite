@@ -192,7 +192,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                         DeptDesig deptdesig = null;
                         // if(ad.getPrevious()==null){
                         positionId = ad.getOwnerPosition().getId();
-                        deptdesig = ad.getOwnerPosition().getDeptDesigId();
+                        deptdesig = ad.getOwnerPosition().getDeptDesig();
                         desgName = deptdesig.getDesignation().getName();
                         /*
                          * } else{ positionId

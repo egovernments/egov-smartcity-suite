@@ -47,7 +47,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -81,7 +80,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.enums.AddressType;
+import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;

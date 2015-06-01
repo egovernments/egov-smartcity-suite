@@ -47,7 +47,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.EstimatePhotographs;
 import org.egov.works.services.AbstractEstimateService;

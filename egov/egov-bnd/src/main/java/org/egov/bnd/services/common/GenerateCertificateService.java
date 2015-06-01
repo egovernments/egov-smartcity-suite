@@ -56,6 +56,7 @@ import org.egov.bnd.services.registration.DeathRegistrationService;
 import org.egov.bnd.services.registration.NonAvailabilityRegistrationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -63,7 +64,6 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EgovUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -391,8 +391,7 @@ public class GenerateCertificateService {
         // urlPatter.append("http://");
         String urlStr = HttpUtils.getRequestURL(request).toString();
 
-        urlStr = EgovUtils.getDomainName(urlStr);
-
+        urlStr = WebUtils.extractRequestedDomainName(request);
         urlPatter.append("http://");
         // domain name
         urlPatter.append(urlStr);
@@ -502,7 +501,7 @@ public class GenerateCertificateService {
 
         String urlStr = request.getRequestURI();
 
-        urlStr = EgovUtils.getDomainName(urlStr);
+        urlStr = WebUtils.extractRequestedDomainName(request);
 
         urlPatter.append("http://");
         // domain name

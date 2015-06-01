@@ -40,14 +40,13 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
-import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,6 +70,7 @@ import org.egov.commons.Functionary;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.EmployeeView;
@@ -81,7 +81,6 @@ import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;

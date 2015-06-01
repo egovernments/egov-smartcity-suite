@@ -322,10 +322,10 @@
         <property name="financialYearDAO" ref="financialYearDAO"/>
 	</bean>
    <bean id="commonMethodsImpl" class="com.exilant.eGov.src.transactions.CommonMethodsImpl" scope="prototype" />
-	<bean id="baseForm" class="org.egov.web.actions.BaseFormAction">
+	<bean id="baseForm" class="org.egov.infra.web.struts.actions.BaseFormAction">
 		<property name="persistenceService"  ref="persistenceService" />
 	</bean>
-	<bean id="common" class="org.egov.web.actions.voucher.CommonAction" parent="baseForm" scope="prototype" >
+	<bean id="common" class="org.egov.infra.web.struts.actions.voucher.CommonAction" parent="baseForm" scope="prototype" >
 		<property name="persistenceService"  ref="persistenceService" />
 	</bean>
 	

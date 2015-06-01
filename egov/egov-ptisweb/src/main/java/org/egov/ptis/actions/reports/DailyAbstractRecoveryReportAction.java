@@ -66,11 +66,11 @@ import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.ptis.bean.RecoveryInfo;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 

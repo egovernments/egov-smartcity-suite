@@ -56,8 +56,8 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.utils.Constants;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)

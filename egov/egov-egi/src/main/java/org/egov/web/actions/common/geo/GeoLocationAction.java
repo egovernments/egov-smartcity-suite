@@ -52,12 +52,12 @@ import org.slf4j.LoggerFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.GeoKmlInfo;
 import org.egov.infstr.services.GeoLocationConstants;
 import org.egov.infstr.services.GeoLocationService;
-import org.egov.web.actions.BaseFormAction;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.URLTemplateLoader;

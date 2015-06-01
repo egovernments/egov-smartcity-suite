@@ -43,10 +43,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.displaytag.pagination.PaginatedList;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.SearchFormAction;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class EBScheduledJobsReportAction extends SearchFormAction {

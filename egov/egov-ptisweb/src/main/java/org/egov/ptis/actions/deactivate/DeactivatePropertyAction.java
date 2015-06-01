@@ -226,7 +226,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	 * Prepares drop down data for de activation Reason from Property Mutation
 	 * Master
 	 * 
-	 * @see org.egov.web.actions.BaseFormAction#prepare()
+	 * @see org.egov.infra.web.struts.actions.BaseFormAction#prepare()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

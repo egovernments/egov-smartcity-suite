@@ -42,7 +42,7 @@ package org.egov.works.web.actions.estimate;
 import java.util.Collection;
 import java.util.Date;
 
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.masters.SORRate;
 

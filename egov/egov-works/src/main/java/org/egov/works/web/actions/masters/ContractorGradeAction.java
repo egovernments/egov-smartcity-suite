@@ -48,10 +48,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.web.actions.SearchFormAction;
 import org.egov.works.utils.WorksConstants;
 
 import com.opensymphony.xwork2.Action;

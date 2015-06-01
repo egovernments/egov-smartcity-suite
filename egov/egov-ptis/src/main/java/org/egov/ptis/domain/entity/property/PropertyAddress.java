@@ -120,8 +120,8 @@ public class PropertyAddress extends Address {
 	public String toString() {
 
 		StringBuilder objStr = new StringBuilder();
-
-		objStr.append("Id: ").append(getId()).append("|").append("SubNumber: ").append(getSubNumber()).append(
+		//TODO PHOENIX remove this,  address.getId is no more available
+		objStr.append("Id: ").append("").append("|").append("SubNumber: ").append(getSubNumber()).append(
 				"|DoorNumOld: ").append(getDoorNumOld()).append("|EmailAddress : ").append(getEmailAddress()).append(
 				"|MobileNo: ").append(getMobileNo());
 

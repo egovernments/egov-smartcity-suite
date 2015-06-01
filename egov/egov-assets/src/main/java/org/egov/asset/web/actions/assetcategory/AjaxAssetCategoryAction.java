@@ -50,7 +50,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
 import org.egov.asset.service.AssetCategoryService;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")

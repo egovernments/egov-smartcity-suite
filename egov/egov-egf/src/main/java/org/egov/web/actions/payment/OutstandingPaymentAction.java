@@ -59,6 +59,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
@@ -68,7 +69,6 @@ import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -61,10 +61,10 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CVoucherHeader;
 import org.egov.egf.revenue.FixedDeposit;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.ReportHelper;
-import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 

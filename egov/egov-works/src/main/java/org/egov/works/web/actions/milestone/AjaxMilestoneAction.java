@@ -45,7 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.web.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.MilestoneTemplate;

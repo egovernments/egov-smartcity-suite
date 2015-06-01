@@ -56,6 +56,7 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
@@ -63,7 +64,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.objection.Objection;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
-import org.egov.web.actions.BaseFormAction;
 
 /**
  * when the objection is accepted this will get invoke to show memo PDF
