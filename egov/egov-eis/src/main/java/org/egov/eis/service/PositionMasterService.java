@@ -44,6 +44,10 @@ import java.util.List;
 import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +97,10 @@ public class PositionMasterService {
 		return positionMasterRepository.findByNameContainingIgnoreCase(name);
 	}
 
+	public List<Position> getAllPositionsByDeptDesigId(Long deptDesigId){
+		return positionMasterRepository.findAllByDeptDesig_Id(deptDesigId);
+	}
+	
 	public boolean validatePosition(Position position) {
 		if (position != null && position.getName() != null) {
 			List<Position> positionList = positionMasterRepository
@@ -101,6 +109,23 @@ public class PositionMasterService {
 				return false;
 		}
 		return true;
+	}
+
+	public Page<Position> getPageOfPositions(Integer pageNumber,
+			Integer pageSize, Long departmentId, Long designationId) {
+		final Pageable pageable = new PageRequest(pageNumber - 1, pageSize,
+				Sort.Direction.ASC, "name");
+		if (departmentId != 0 && designationId != 0)
+			return positionMasterRepository
+					.findPositionBydepartmentAndDesignation(departmentId,
+							designationId, pageable);
+		else
+			return positionMasterRepository.findPositionByAll(pageable);
+	}
+
+	public List<Position> findByNameContainingIgnoreCase(String positionName) {
+		return positionMasterRepository
+				.findByNameContainingIgnoreCase(positionName);
 	}
 	
 }

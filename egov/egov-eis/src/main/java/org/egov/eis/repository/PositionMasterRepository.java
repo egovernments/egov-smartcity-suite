@@ -42,7 +42,11 @@ package org.egov.eis.repository;
 import java.util.List;
 
 import org.egov.pims.commons.Position;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -54,5 +58,12 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long>{
 	
 	Position findByName(String name);
 	List<Position> findByNameContainingIgnoreCase(String name);
+	List<Position> findAllByDeptDesig_Id(Long id);
+	  @Query("select cr from Position cr ")
+    Page<Position> findPositionByAll(Pageable page);
+	@Query("select cr from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId")
+	Page<Position> findPositionBydepartmentAndDesignation(
+			@Param("departmentId") Long departmentId,
+			@Param("designationId") Long designationId, Pageable page);
 
 }
