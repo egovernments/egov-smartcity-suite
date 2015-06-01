@@ -46,7 +46,7 @@ import java.util.Date;
 
 import org.egov.bnd.utils.BndConstants;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class Registration extends StateAware {

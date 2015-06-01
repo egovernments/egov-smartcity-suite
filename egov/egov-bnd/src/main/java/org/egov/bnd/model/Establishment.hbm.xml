@@ -78,7 +78,7 @@
 			access="property" column="REGUNITID" unique="false" />
 
 		<many-to-one name="address"
-			class="org.egov.infra.admin.master.entity.Address" cascade="save-update,persist"
+			class="org.egov.infra.persistence.entity.Address" cascade="save-update,persist"
 			outer-join="auto" update="true" insert="true" access="property"
 			column="ESTABLISHMENTADDRESSID" unique="false" />
 

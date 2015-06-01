@@ -55,7 +55,7 @@ import org.egov.bnd.services.registration.BirthRegistrationService;
 import org.egov.bnd.services.registration.DeathRegistrationService;
 import org.egov.bnd.services.registration.NonAvailabilityRegistrationService;
 import org.egov.bnd.utils.BndConstants;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;

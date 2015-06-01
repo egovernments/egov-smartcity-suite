@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.ConstructionTypeImpl;
 import org.egov.ptis.domain.entity.property.PropertyCreationReason;

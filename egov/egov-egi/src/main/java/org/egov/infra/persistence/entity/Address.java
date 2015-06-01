@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.entity;
+package org.egov.infra.persistence.entity;
 
 import java.io.Serializable;
 

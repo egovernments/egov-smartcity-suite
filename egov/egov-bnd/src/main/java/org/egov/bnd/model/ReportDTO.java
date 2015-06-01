@@ -47,7 +47,7 @@ package org.egov.bnd.model;
 
 import java.util.Date;
 
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 
 /**
  * @author Administrator TODO To change the template for this generated type

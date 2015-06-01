@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 
 public class PropertyAddress extends Address {
 	private String subNumber;

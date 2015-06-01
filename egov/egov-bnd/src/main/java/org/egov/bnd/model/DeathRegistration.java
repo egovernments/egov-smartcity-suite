@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.egov.bnd.utils.BndConstants;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 
 public class DeathRegistration extends Registration implements Cloneable {
 

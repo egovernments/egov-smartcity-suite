@@ -52,7 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class RegistrationUnit extends StateAware {

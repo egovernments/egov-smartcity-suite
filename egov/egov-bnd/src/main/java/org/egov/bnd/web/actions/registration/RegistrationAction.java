@@ -66,7 +66,7 @@ import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.SexType;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infstr.client.filter.EGOVThreadLocals;

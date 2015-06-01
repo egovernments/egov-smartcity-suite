@@ -44,7 +44,7 @@
 
 <hibernate-mapping package="org.egov.ptis.domain.entity.property">
 	<joined-subclass name="PropertyAddress" table="EGPT_ADDRESS"
-		extends="org.egov.infra.admin.master.entity.Address">
+		extends="org.egov.infra.persistence.entity.Address">
 		<key column="ID" />
 		<property name="subNumber" column="SUBNUMBER" />
 		<property name="doorNumOld" column="DOORNUMOLD" />

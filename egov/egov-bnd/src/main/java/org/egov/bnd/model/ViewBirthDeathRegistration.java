@@ -48,7 +48,7 @@ import org.egov.bnd.services.registration.DeathRegistrationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;

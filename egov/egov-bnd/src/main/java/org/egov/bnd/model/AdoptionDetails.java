@@ -41,7 +41,7 @@ package org.egov.bnd.model;
 
 import java.util.Date;
 
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.models.BaseModel;
 
 public class AdoptionDetails extends BaseModel {

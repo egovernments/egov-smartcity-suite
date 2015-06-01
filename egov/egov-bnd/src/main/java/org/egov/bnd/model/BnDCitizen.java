@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.portal.entity.Citizen;
 
 public class BnDCitizen extends Citizen {

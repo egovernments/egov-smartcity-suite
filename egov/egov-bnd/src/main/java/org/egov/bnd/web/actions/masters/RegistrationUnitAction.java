@@ -50,12 +50,7 @@ import org.egov.bnd.model.RegistrationUnit;
 import org.egov.bnd.services.masters.RegistrationUnitService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
-import org.egov.infra.admin.master.entity.Address;
-/*import org.egov.mdm.masters.administration.District;
- import org.egov.mdm.masters.administration.State;*/
-
-
-
+import org.egov.infra.persistence.entity.Address;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;

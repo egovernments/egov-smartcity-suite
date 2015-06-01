@@ -52,9 +52,9 @@ import java.util.Set;
 
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
-import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 import org.egov.portal.entity.Citizen;

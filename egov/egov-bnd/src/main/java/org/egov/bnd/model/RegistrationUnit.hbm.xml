@@ -89,7 +89,7 @@
 		</property>
 
 		<many-to-one name="regUnitAddress"
-			class="org.egov.infra.admin.master.entity.Address" column="REGUNITADDRESSID"
+			class="org.egov.infra.persistence.entity.Address" column="REGUNITADDRESSID"
 			unique="true" cascade="save-update,persist" />
 
 		<bag name="districtChangeDetails" table="EGBD_DISTRICTCHANGEDEATILS"

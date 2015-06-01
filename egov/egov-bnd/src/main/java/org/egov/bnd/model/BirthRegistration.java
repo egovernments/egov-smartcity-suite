@@ -46,7 +46,7 @@ import java.util.Set;
 
 import org.egov.bnd.utils.BndConstants;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.persistence.entity.Address;
 
 public class BirthRegistration extends Registration implements Cloneable {
     private static final long serialVersionUID = -8427361865321338155L;

@@ -83,7 +83,7 @@
 		
         <many-to-one name="adopteeFather" class="org.egov.bnd.model.BnDCitizen" column="ADOPTEEFATHERID"  unique="true" cascade="all"/>
         <many-to-one name="adopteeMother" class="org.egov.bnd.model.BnDCitizen" column="ADOPTEEMOTHERID"  unique="true" cascade="all"/>
-		<many-to-one name="adopteeAddress" class="org.egov.infra.admin.master.entity.Address" column="ADOPTEEADDRESSID"  unique="true" cascade="all"/>
+		<many-to-one name="adopteeAddress" class="org.egov.infra.persistence.entity.Address" column="ADOPTEEADDRESSID"  unique="true" cascade="all"/>
 		<many-to-one name="adoptionInstitute" class="org.egov.bnd.model.AdoptionInstitute" column="ADOPTIONINSTITUTEID"  cascade="all"/>
 	
     </class>
