@@ -388,6 +388,8 @@ public class EisUtilService implements EISServeable {
     }
 
     /**
+     * Use the API getAllDesignationsByDepartment in DesignationService.java
+     * 
      * return all distinct Designations to which employees are assigned in the
      * given department for given date. This list includes primary as well as
      * secondary assignments. If there is No Designation for the given
@@ -397,6 +399,7 @@ public class EisUtilService implements EISServeable {
      * @param givenDate
      * @return DesignationMaster List
      */
+    @Deprecated
     public List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate) {
         List<Designation> designationMstrObj = new ArrayList<Designation>();
         Date userGivenDate = givenDate == null ? new Date() : givenDate;

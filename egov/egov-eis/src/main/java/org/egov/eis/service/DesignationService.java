@@ -39,6 +39,7 @@
  */
 package org.egov.eis.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.repository.DesignationRepository;
@@ -59,12 +60,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class DesignationService {
 
-    private final DesignationRepository designationRepository;
-
     @Autowired
-    public DesignationService(final DesignationRepository designationRepository) {
-        this.designationRepository = designationRepository;
-    }
+    private DesignationRepository designationRepository;
 
     @Transactional
     public void createDesignation(final Designation designation) {
@@ -92,16 +89,21 @@ public class DesignationService {
     public List<Designation> getAllDesignations() {
         return designationRepository.findAll();
     }
+
     public List<Designation> getAllDesignationsSortByNameAsc() {
         return designationRepository.findAllByOrderByNameAsc();
     }
-   
+
     public List<Designation> getAllDesignationsByNameLike(final String name) {
         return designationRepository.findByNameContainingIgnoreCase(name);
     }
-    
+
     public Page<Designation> getListOfDesignation(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return designationRepository.findAll(pageable);
+    }
+
+    public List<Designation> getAllDesignationByDepartment(final Long id, final Date givenDate) {
+        return designationRepository.getAllDesignationsByDepartment(id, givenDate);
     }
 }

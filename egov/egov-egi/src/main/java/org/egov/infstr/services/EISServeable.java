@@ -147,16 +147,10 @@ public interface EISServeable {
     public List<Position> getUniquePositionList(HashMap<String, String> paramMap, Date date);
 
     /**
-     * return all distinct Designations to which employees are assigned in the
-     * given department for given date. This list includes primary as well as
-     * secondary assignments. If there is No Designation for the given
-     * department then returns the empty list
+     * Use the API getAllDesignationsByDepartment in DesignationService.java<br>
      * 
-     * @param departmentId
-     * @param givenDate
-     * @return DesignationMaster List
      */
-
+    @Deprecated
     public List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate);
 
     /**
