@@ -94,7 +94,7 @@
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><small><i
 									class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6">
-									<input id="com_position" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+									<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
 									<form:hidden path="position" id="positionId"/>
 									<form:errors path="position" cssClass="error-msg" />
 									<div class="error-msg positionerror all-errors display-hide"></div>
