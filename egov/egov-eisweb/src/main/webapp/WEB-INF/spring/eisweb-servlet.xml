@@ -54,7 +54,7 @@
             <!-- Use the HibernateAware mapper instead of the default -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper">
-                    <bean class="org.egov.infra.support.spring.HibernateAwareObjectMapper" />
+                    <bean class="org.egov.infra.web.support.json.mapper.HibernateAwareObjectMapper" />
                 </property>
             </bean>
         </mvc:message-converters>                  
