@@ -39,8 +39,6 @@
  */
 package org.egov.eis.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -65,10 +63,6 @@ public class EmployeeType extends AbstractAuditable<User, Long> {
     @Column(name="name",unique=true)
     @Pattern(regexp = Constants.ALPHABETS)
     public String name;
-    @SafeHtml
-    public Date fromDate;
-    @SafeHtml
-    public Date toDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")
     private CChartOfAccounts chartOfAccounts;
@@ -88,21 +82,4 @@ public class EmployeeType extends AbstractAuditable<User, Long> {
     public void setName(final String name) {
         this.name = name;
     }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
 }

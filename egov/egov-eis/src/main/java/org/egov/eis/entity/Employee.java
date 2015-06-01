@@ -103,7 +103,7 @@ public class Employee extends AbstractUser {
     private EmployeeType employeeType;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private final Set<Assignment> assignments = new HashSet<Assignment>(0);
+    private Set<Assignment> assignments = new HashSet<Assignment>(0);
 
     public String getCode() {
         return code;
@@ -127,6 +127,30 @@ public class Employee extends AbstractUser {
 
     public void setDateOfRetirement(final DateTime dateOfRetirement) {
         this.dateOfRetirement = null == dateOfRetirement ? null : dateOfRetirement.toDate();
+    }
+
+    public EmployeeStatus getEmployeeStatus() {
+        return employeeStatus;
+    }
+
+    public void setEmployeeStatus(EmployeeStatus employeeStatus) {
+        this.employeeStatus = employeeStatus;
+    }
+
+    public EmployeeType getEmployeeType() {
+        return employeeType;
+    }
+
+    public void setEmployeeType(EmployeeType employeeType) {
+        this.employeeType = employeeType;
+    }
+
+    public Set<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(Set<Assignment> assignments) {
+        this.assignments = assignments;
     }
 
 }
