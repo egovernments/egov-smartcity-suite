@@ -37,15 +37,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.engine;
+package org.egov.infra.reporting.engine;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.reporting.util.ReportUtil;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.util.ReportUtil;
 
 /**
  * Class representing the input passed for report generation.
@@ -159,7 +159,7 @@ public class ReportRequest {
 
 	/**
 	 * @return the Report Format
-	 * @see org.egov.infstr.reporting.engine.ReportConstants.FileFormat
+	 * @see org.egov.infra.reporting.engine.ReportConstants.FileFormat
 	 */
 	public FileFormat getReportFormat() {
 		return this.reportFormat;
@@ -167,7 +167,7 @@ public class ReportRequest {
 
 	/**
 	 * @param reportFormat the Report Format to set
-	 * @see org.egov.infstr.reporting.engine.ReportConstants.FileFormat
+	 * @see org.egov.infra.reporting.engine.ReportConstants.FileFormat
 	 */
 	public void setReportFormat(final FileFormat reportFormat) {
 		this.reportFormat = reportFormat;

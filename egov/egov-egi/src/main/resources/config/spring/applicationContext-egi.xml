@@ -88,7 +88,7 @@
 
 	<!-- Bean for report service. constructor arguments: arg0 => Report Template 
 		Cache minimum size arg1 => Report Template Cache maximum size -->
-	<bean id="reportService" class="org.egov.infstr.reporting.engine.jasper.JasperReportService" lazy-init="false">
+	<bean id="reportService" class="org.egov.infra.reporting.engine.jasper.JasperReportService" lazy-init="false">
 		<constructor-arg value="10" />
 		<constructor-arg value="30" />
 	</bean>

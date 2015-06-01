@@ -44,7 +44,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.model.MiscellaneousTax;
 import org.egov.ptis.client.model.MiscellaneousTaxDetail;

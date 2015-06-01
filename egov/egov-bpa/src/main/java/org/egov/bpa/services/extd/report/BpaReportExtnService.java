@@ -71,9 +71,9 @@ import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infstr.reporting.engine.ReportOutput;
-import org.egov.infstr.reporting.engine.ReportRequest;
-import org.egov.infstr.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.utils.DateUtils;
 
 public class BpaReportExtnService  {

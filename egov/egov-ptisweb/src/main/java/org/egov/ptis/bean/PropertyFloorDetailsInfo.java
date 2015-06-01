@@ -52,7 +52,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.reporting.util.ReportUtil;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;

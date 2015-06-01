@@ -44,7 +44,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 
 public class OnlinePaymentUnknownStatusTrackerJob  extends AbstractQuartzJob {

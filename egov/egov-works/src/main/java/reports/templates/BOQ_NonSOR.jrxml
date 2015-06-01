@@ -39,7 +39,7 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BOQ_NonSOR" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10">
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<queryString>
 		<![CDATA[]]>

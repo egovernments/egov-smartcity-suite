@@ -691,7 +691,7 @@
 					<subreportParameterExpression><![CDATA[$F{dept}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(java.util.Collections.emptyList(), false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport1.jasper")]]></subreportExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport1.jasper")]]></subreportExpression>
 			</subreport>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="152" y="0" width="114" height="90" isPrintWhenDetailOverflows="true"/>
@@ -722,7 +722,7 @@
 					<subreportParameterExpression><![CDATA[$F{apprDetails}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(java.util.Collections.emptyList(), false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport3.jasper")]]></subreportExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport3.jasper")]]></subreportExpression>
 			</subreport>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="266" y="0" width="36" height="90" isPrintWhenDetailOverflows="true"/>
@@ -858,7 +858,7 @@
 						<subreportParameterExpression><![CDATA[$F{totalOutstandingAmt}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{paymentDetails}, false)]]></dataSourceExpression>
-					<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport6.jasper")]]></subreportExpression>
+					<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport6.jasper")]]></subreportExpression>
 				</subreport>
 			</frame>
 			<frame>
@@ -877,7 +877,7 @@
 						<printWhenExpression><![CDATA[$F{trackMilestoneActivities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{trackMilestoneActivities}, false)]]></dataSourceExpression>
-					<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport5.jasper")]]></subreportExpression>
+					<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("workProgressRegister_subreport5.jasper")]]></subreportExpression>
 				</subreport>
 			</frame>
 			<frame>

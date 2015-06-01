@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.util;
+package org.egov.infra.reporting.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +51,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.reporting.engine.ReportConstants;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberUtil;

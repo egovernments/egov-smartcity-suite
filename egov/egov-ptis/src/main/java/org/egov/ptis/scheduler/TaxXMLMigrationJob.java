@@ -44,9 +44,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_KEY_WARDSFO
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.service.TaxXMLToDBCoverterService;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;

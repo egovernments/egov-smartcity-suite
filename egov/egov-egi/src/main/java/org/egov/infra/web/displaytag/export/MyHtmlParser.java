@@ -37,60 +37,83 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.engine;
+package org.egov.infra.web.displaytag.export;
 
-import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
+import java.io.IOException;
+import java.io.Reader;
 
-/**
- * Class to represent a generated report
- */
-public class ReportOutput {
-	private byte[] reportOutputData;
-	private FileFormat reportFormat;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.parser.ParserDelegator;
 
-	/**
-	 * Default constructor
-	 */
-	public ReportOutput() {
+public class MyHtmlParser {
+	Reader inReader;
+	String outText;
+	Boolean bRemoveSpaces = true;
+
+	public Reader getInReader() {
+		return this.inReader;
+	}
+
+	public void setInReader(final Reader inReader) {
+		this.inReader = inReader;
+	}
+
+	public String getOutText() {
+		return this.outText;
+	}
+
+	public void setOutText(final String outText) {
+		this.outText = outText;
+	}
+
+	public String parseMyHtml(final Reader r, final boolean removeSpaces) {
+		HTMLEditorKit.Parser parser;
+		// System.out.println("About to parse ");
+		parser = new ParserDelegator();
+		setBRemoveSpaces(removeSpaces);
+		// Reader r = getInReader();
+		try {
+			parser.parse(r, new HTMLParseLister(), true);
+			r.close();
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getOutText();
 
 	}
 
 	/**
-	 * Constructor
-	 * @param reportOutputData The report output data as byte array
-	 * @param reportInput The report input object
-	 * @see ReportRequest
+	 * HTML parsing proceeds by calling a callback for each and every piece of the HTML.
 	 */
-	public ReportOutput(final byte[] reportOutputData, final ReportRequest reportInput) {
-		this.reportOutputData = reportOutputData;
-		this.reportFormat = reportInput.getReportFormat();
+	class HTMLParseLister extends HTMLEditorKit.ParserCallback {
+
+		/** Takes care of the text after striping out the HTML tags */
+		@Override
+		public void handleText(final char[] data, final int pos) {
+			String TrimText = new String(data);
+			TrimText = TrimText.replace((char) 160, ' '); // &nbsp character
+			if (MyHtmlParser.this.bRemoveSpaces) {
+				TrimText = TrimText.replace('�', ' ');
+				setOutText(TrimText);
+			}
+
+		}
+
 	}
 
-	/**
-	 * @return the Report Data
-	 */
-	public byte[] getReportOutputData() {
-		return this.reportOutputData;
+	public MyHtmlParser() {
+		super();
+		// TODO Auto-generated constructor stub
+
 	}
 
-	/**
-	 * @param reportOutputData the Report Output Data to set
-	 */
-	public void setReportOutputData(final byte[] reportOutputData) {
-		this.reportOutputData = reportOutputData;
+	public Boolean getBRemoveSpaces() {
+		return this.bRemoveSpaces;
 	}
 
-	/**
-	 * @return the Report Format
-	 */
-	public FileFormat getReportFormat() {
-		return this.reportFormat;
+	public void setBRemoveSpaces(final Boolean removeSpaces) {
+		this.bRemoveSpaces = removeSpaces;
 	}
 
-	/**
-	 * @param reportFormat the Report Format to set
-	 */
-	public void setReportFormat(final FileFormat reportFormat) {
-		this.reportFormat = reportFormat;
-	}
 }

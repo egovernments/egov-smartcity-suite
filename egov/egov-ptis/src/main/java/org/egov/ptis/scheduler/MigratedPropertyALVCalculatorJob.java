@@ -41,7 +41,7 @@ package org.egov.ptis.scheduler;
 
 import java.util.List;
 
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.adapter.TaxCalculatorAdapter;

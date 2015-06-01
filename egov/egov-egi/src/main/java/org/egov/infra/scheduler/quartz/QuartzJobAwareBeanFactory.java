@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.scheduler.quartz;
+package org.egov.infra.scheduler.quartz;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

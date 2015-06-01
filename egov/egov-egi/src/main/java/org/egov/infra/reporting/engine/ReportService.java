@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.engine;
+package org.egov.infra.reporting.engine;
 
 /**
  * Interface for report service. The code for report generation should use this interface.

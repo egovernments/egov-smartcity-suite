@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.engine;
+package org.egov.infra.reporting.engine;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -47,9 +47,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.reporting.engine.jasper.JasperReportService;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infstr.cache.LRUCache;
-import org.egov.infstr.reporting.engine.jasper.JasperReportService;
-import org.egov.infstr.reporting.util.ReportUtil;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
@@ -122,7 +122,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.ReportService#createReport(org.egov. infstr.reporting.engine.ReportInput)
+	 * @see org.egov.infra.reporting.engine.ReportService#createReport(org.egov. infstr.reporting.engine.ReportInput)
 	 */
 	@Override
 	public ReportOutput createReport(final ReportRequest reportInput) {
@@ -186,7 +186,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.ReportService#isValidTemplate(java.lang .String)
+	 * @see org.egov.infra.reporting.engine.ReportService#isValidTemplate(java.lang .String)
 	 */
 	@Override
 	public boolean isValidTemplate(final String templateName) {

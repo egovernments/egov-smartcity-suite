@@ -13,9 +13,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

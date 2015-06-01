@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.viewer;
+package org.egov.infra.reporting.viewer;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -51,10 +51,10 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.cache.LRUCache;
-import org.egov.infstr.reporting.engine.ReportConstants;
-import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.reporting.engine.ReportOutput;
 
 /**
  * Report viewer servlet - displays a report in the browser setting appropriate content type

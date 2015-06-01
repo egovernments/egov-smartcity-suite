@@ -39,7 +39,7 @@
  */
 package org.egov.pgr.service.scheduler.jobs;
 
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.service.EscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

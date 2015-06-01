@@ -42,7 +42,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/gauthami/ERP-1.0_INDIGO_JBOSS4/workspace/BillPlanningWorkspace/bpajava/src/reports/templates/"]]></defaultValueExpression>

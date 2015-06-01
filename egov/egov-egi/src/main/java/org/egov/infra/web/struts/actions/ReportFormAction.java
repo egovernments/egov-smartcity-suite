@@ -43,12 +43,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infstr.reporting.engine.ReportOutput;
-import org.egov.infstr.reporting.engine.ReportRequest;
-import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
-import org.egov.infstr.reporting.engine.ReportService;
-import org.egov.infstr.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 
 /**
  * Infrastructure class that provides generic reporting functionality. Can be

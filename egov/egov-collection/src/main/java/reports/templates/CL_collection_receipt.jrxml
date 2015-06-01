@@ -39,7 +39,7 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="580" pageHeight="842" columnWidth="540" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom">
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.erpcollection.web.constants.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -492,7 +492,7 @@
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="540" height="20" forecolor="#000000"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("CL_collection_receipt_accounts.jasper")]]></subreportExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("CL_collection_receipt_accounts.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="20">
@@ -502,7 +502,7 @@
 					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("collection_receipt_instruments.jasper")]]></subreportExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("collection_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="20">

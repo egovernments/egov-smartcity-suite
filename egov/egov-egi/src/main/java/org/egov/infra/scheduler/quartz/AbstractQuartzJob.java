@@ -37,14 +37,14 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.scheduler.quartz;
+package org.egov.infra.scheduler.quartz;
 
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.scheduler.GenericJob;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.scheduler.GenericJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;

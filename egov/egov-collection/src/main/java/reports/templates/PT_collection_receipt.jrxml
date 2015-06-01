@@ -42,7 +42,7 @@
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="127"/>
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.lib.address.model.*"/>
 	<import value="org.egov.lib.citizen.model.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -333,7 +333,7 @@
 					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("PT_collection_receipt_instruments.jasper")]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("PT_collection_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 			<textField>
 				<reportElement mode="Transparent" x="38" y="54" width="268" height="15">

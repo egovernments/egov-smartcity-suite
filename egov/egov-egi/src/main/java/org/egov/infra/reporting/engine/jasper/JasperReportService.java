@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.reporting.engine.jasper;
+package org.egov.infra.reporting.engine.jasper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,10 +75,10 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.reporting.engine.AbstractReportService;
-import org.egov.infstr.reporting.engine.ReportConstants;
-import org.egov.infstr.reporting.engine.ReportOutput;
-import org.egov.infstr.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.AbstractReportService;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infstr.utils.HibernateUtil;
 
 /**
@@ -104,7 +104,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.AbstractReportService#getTemplateExtension ()
+	 * @see org.egov.infra.reporting.engine.AbstractReportService#getTemplateExtension ()
 	 */
 	@Override
 	protected String getTemplateExtension() {
@@ -193,7 +193,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.AbstractReportService#createReportFromSql (org.egov.infstr.reporting.engine.ReportRequest, java.sql.Connection)
+	 * @see org.egov.infra.reporting.engine.AbstractReportService#createReportFromSql (org.egov.infra.reporting.engine.ReportRequest, java.sql.Connection)
 	 */
 	@Override
 	protected ReportOutput createReportFromSql(final ReportRequest reportInput, final Connection connection) {
@@ -236,7 +236,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	/*
 	 * (non-Javadoc)
-	 * @seeorg.egov.infstr.reporting.engine.AbstractReportService# createReportFromJavaBean(org.egov.infstr.reporting.engine.ReportRequest)
+	 * @seeorg.egov.infstr.reporting.engine.AbstractReportService# createReportFromJavaBean(org.egov.infra.reporting.engine.ReportRequest)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -261,7 +261,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.AbstractReportService#createReportFromHql (org.egov.infstr.reporting.engine.ReportRequest)
+	 * @see org.egov.infra.reporting.engine.AbstractReportService#createReportFromHql (org.egov.infra.reporting.engine.ReportRequest)
 	 */
 	@Override
 	protected ReportOutput createReportFromHql(final ReportRequest reportInput) {
@@ -285,7 +285,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.egov.infstr.reporting.engine.AbstractReportService#loadTemplate(java .io.InputStream)
+	 * @see org.egov.infra.reporting.engine.AbstractReportService#loadTemplate(java .io.InputStream)
 	 */
 	@Override
 	protected JasperReport loadTemplate(final InputStream templateInputStream) {

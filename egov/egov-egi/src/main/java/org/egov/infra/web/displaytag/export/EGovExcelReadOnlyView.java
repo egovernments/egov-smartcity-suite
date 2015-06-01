@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.displaytag.export;
+package org.egov.infra.web.displaytag.export;
 
 import java.io.OutputStream;
 import java.io.Reader;

@@ -42,7 +42,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="28"/>
 	<property name="ireport.y" value="0"/>
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<parameter name="departmentName" class="java.lang.String"/>
 	<parameter name="total" class="java.lang.Double"/>
 	<parameter name="cityName" class="java.lang.String"/>

@@ -37,17 +37,60 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.scheduler;
+package org.egov.infra.reporting.engine;
 
-import java.io.Serializable;
-
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 
 /**
- * This interface basically servers as a generic Interface for egov scheduler job 
- * to wrap any kind of scheduler framework like quartz
- * see {@link AbstractQuartzJob}. 
- **/
-public interface GenericJob extends Serializable {
-	void executeJob();
+ * Class to represent a generated report
+ */
+public class ReportOutput {
+	private byte[] reportOutputData;
+	private FileFormat reportFormat;
+
+	/**
+	 * Default constructor
+	 */
+	public ReportOutput() {
+
+	}
+
+	/**
+	 * Constructor
+	 * @param reportOutputData The report output data as byte array
+	 * @param reportInput The report input object
+	 * @see ReportRequest
+	 */
+	public ReportOutput(final byte[] reportOutputData, final ReportRequest reportInput) {
+		this.reportOutputData = reportOutputData;
+		this.reportFormat = reportInput.getReportFormat();
+	}
+
+	/**
+	 * @return the Report Data
+	 */
+	public byte[] getReportOutputData() {
+		return this.reportOutputData;
+	}
+
+	/**
+	 * @param reportOutputData the Report Output Data to set
+	 */
+	public void setReportOutputData(final byte[] reportOutputData) {
+		this.reportOutputData = reportOutputData;
+	}
+
+	/**
+	 * @return the Report Format
+	 */
+	public FileFormat getReportFormat() {
+		return this.reportFormat;
+	}
+
+	/**
+	 * @param reportFormat the Report Format to set
+	 */
+	public void setReportFormat(final FileFormat reportFormat) {
+		this.reportFormat = reportFormat;
+	}
 }

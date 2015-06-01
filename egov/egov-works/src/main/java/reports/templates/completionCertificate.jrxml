@@ -43,7 +43,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.works.models.contractorBill.*"/>
-	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -634,7 +634,7 @@ $F{workOrderActivity}.getActivity().getRate().getValue(): $F{workOrderActivity}.
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="802" height="20" forecolor="#000000"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workCompletionInfo}.getWorkflowHistory(), false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("Completion_Certificate_Workflow.jasper")]]></subreportExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("Completion_Certificate_Workflow.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>

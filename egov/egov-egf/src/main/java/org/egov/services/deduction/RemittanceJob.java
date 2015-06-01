@@ -42,8 +42,8 @@ package org.egov.services.deduction;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
 import org.egov.utils.FinancialConstants;

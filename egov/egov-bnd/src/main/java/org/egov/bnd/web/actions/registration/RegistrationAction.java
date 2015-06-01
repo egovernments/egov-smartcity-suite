@@ -69,8 +69,8 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.reporting.engine.ReportService;
 import org.springframework.transaction.annotation.Transactional;
 
 

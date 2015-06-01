@@ -54,7 +54,7 @@
         </constructor-arg>
 	</bean>
 		    
-   	<bean id="jobFactory" class="org.egov.infstr.scheduler.quartz.QuartzJobAwareBeanFactory" scope="prototype"/>
+   	<bean id="jobFactory" class="org.egov.infra.scheduler.quartz.QuartzJobAwareBeanFactory" scope="prototype"/>
 
 	<bean id="taskExecutor" class="org.springframework.scheduling.quartz.SimpleThreadPoolTaskExecutor" destroy-method="destroy" scope="prototype">
 		<property name="instanceId" value="AUTO"/>
