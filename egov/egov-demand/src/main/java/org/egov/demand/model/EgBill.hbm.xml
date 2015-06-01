@@ -25,7 +25,7 @@
 			<column name="ID_BILL_TYPE" not-null="true" />
 		</many-to-one>
 
-		<many-to-one name="module" class="org.egov.infstr.commons.Module">
+		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module">
 			<column name="MODULE_ID" not-null="true" />
 		</many-to-one>
 

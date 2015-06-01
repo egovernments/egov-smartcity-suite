@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 
 /**
  * EgBill entity.

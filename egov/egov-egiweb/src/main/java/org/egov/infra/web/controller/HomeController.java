@@ -48,12 +48,12 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.service.FavouritesService;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
-import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

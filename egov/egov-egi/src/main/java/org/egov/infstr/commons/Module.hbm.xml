@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.infstr.commons.Module" table="EG_MODULE">
+	<class name="org.egov.infra.admin.master.entity.Module" table="EG_MODULE">
 		<id name="id" column="ID_MODULE">
 			<generator class="native">
 				<param name="sequence">SEQ_MODULEMASTER</param>
@@ -15,7 +15,7 @@
 		</property>
 		<property name="moduleNameLocal" column="MODULE_NAMELOCAL" />
 		<property name="baseUrl" column="BASEURL" />
-		<many-to-one name="parent" class="org.egov.infstr.commons.Module">
+		<many-to-one name="parent" class="org.egov.infra.admin.master.entity.Module">
 			<column name="PARENTID" />
 		</many-to-one>
 		<property name="moduleDescription" column="MODULE_DESC" />

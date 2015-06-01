@@ -28,7 +28,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 //import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;

@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;

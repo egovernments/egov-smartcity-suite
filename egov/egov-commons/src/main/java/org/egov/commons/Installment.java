@@ -42,7 +42,7 @@ package org.egov.commons;
 import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 
 /**
  * This class represents an Installment. Every installment has an year, 

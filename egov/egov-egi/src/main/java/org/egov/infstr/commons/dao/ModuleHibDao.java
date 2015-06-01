@@ -47,8 +47,8 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infstr.commons.Module;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;

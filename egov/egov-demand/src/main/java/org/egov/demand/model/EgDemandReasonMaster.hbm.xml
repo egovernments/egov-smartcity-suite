@@ -20,7 +20,7 @@
 		unsaved-value="null"
 	   />
         
-        <many-to-one name="egModule" class="org.egov.infstr.commons.Module" >
+        <many-to-one name="egModule" class="org.egov.infra.admin.master.entity.Module" >
             <column name="MODULE"  not-null="true" />
         </many-to-one>
         <many-to-one name="egReasonCategory" class="org.egov.demand.model.EgReasonCategory" >

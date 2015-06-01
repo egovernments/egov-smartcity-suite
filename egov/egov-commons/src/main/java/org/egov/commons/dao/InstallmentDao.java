@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.Installment;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.dao.GenericDAO;
 
 public interface InstallmentDao extends GenericDAO {

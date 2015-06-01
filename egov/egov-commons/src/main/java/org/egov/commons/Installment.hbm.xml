@@ -17,7 +17,7 @@
 		<property name="installmentYear" column="INSTALLMENT_YEAR" />
 		<property name="fromDate" column="START_DATE" />
 		<property name="toDate" column="END_DATE" />
-		<many-to-one name="module" class="org.egov.infstr.commons.Module"
+		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module"
 			column="ID_MODULE" />
 	</class>
 	<query name="INSTALLMENTLISTBY_MODULE_AND_STARTYEAR">

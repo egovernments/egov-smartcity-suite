@@ -67,7 +67,7 @@ import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 /*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.services.PersistenceService;

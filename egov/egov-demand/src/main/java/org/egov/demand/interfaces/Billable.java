@@ -50,7 +50,7 @@ import java.util.List;
 
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 
 /**
  * Any class that needs to generate a Bill must implement the Billable

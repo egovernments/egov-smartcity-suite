@@ -43,9 +43,9 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.web.utils.ERPWebApplicationContext;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.service.GenericCommonsService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

@@ -77,8 +77,8 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.FinancialYear;
 
 public interface CommonsService {

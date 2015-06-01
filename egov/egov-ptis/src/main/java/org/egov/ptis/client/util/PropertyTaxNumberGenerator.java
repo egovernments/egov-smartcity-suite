@@ -50,7 +50,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.egov.infstr.utils.StringUtils;

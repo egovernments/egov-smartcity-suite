@@ -42,8 +42,8 @@ package org.egov.infstr.commons.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infstr.commons.Module;
 
 public interface ModuleDao {
 	Module getModuleByName(String moduleName);

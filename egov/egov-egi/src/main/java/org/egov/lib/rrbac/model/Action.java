@@ -43,8 +43,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infstr.commons.Module;
 
 public class Action implements Comparable<Action> {
 

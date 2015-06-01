@@ -57,7 +57,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;

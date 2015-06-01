@@ -83,7 +83,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;

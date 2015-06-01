@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.demand.model.DepreciationMaster;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DCBMasterService {

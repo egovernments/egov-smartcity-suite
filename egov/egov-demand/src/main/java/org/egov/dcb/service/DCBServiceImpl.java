@@ -65,7 +65,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DCBServiceImpl implements DCBService {

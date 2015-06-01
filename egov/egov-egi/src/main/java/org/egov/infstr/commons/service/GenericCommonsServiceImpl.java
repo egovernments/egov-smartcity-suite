@@ -41,7 +41,7 @@ package org.egov.infstr.commons.service;
 
 import java.util.List;
 
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 
 @Deprecated

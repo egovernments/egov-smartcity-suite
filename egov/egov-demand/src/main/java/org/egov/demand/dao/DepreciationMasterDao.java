@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.DepreciationMaster;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 
 public interface DepreciationMasterDao {
 	public DepreciationMaster getDepreciationMaster(Module mod, Integer year);

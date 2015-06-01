@@ -99,7 +99,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;

@@ -42,7 +42,7 @@ package org.egov.infstr.commons.service;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 
 @Deprecated
 public interface GenericCommonsService {

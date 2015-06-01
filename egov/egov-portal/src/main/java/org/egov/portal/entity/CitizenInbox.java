@@ -54,10 +54,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.commons.Module;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.hibernate.validator.constraints.Length;

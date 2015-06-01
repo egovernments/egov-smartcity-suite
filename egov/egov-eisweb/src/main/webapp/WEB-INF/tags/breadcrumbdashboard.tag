@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ tag body-content="empty"  isELIgnored="false" pageEncoding="UTF-8" description="To show Bread Crumb for each and every Screen" %>
-<%@tag import="org.egov.infstr.commons.Module"%>
+<%@tag import="org.egov.infra.admin.master.entity.Module"%>
 <%@tag import="org.egov.infra.utils.EgovThreadLocals" %>
 <%@tag import="org.egov.lib.rrbac.model.Action"%>
 <%@tag import="java.util.Date"%>

@@ -17,7 +17,7 @@
 			<key column="ACTIONID" />
 			<many-to-many class="org.egov.infra.admin.master.entity.Role" column="ROLEID" />
 		</set>
-		<many-to-one name="module" class="org.egov.infstr.commons.Module" column="MODULE_ID" />
+		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module" column="MODULE_ID" />
 		<property name="orderNumber" column="ORDER_NUMBER" type="integer" />
 		<property name="displayName" column="DISPLAY_NAME" type="string" />
 		<property name="helpURL" column="ACTION_HELP_URL" type="string" />

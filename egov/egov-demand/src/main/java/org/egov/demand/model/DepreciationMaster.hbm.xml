@@ -42,7 +42,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<property name="fromDate" column="FROM_DATE"/>
 		<property name="toDate" column="TO_DATE"/>
 				
-		<many-to-one name="module" class="org.egov.infstr.commons.Module" column="ID_MODULE"/>
+		<many-to-one name="module" class="org.egov.infra.admin.master.entity.Module" column="ID_MODULE"/>
 		<many-to-one name="startInstallment" class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
 		
 		<many-to-one name="userId" class="org.egov.infra.admin.master.entity.User" column="USERID"/>

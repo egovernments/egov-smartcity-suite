@@ -47,7 +47,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.DepreciationMaster;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;

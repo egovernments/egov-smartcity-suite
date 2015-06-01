@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.egov.commons.Installment;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 
 /**

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.commons;
+package org.egov.infra.admin.master.entity;
 
 import java.util.Date;
 import java.util.Set;

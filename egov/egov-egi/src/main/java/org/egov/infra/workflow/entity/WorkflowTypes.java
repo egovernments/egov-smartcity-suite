@@ -47,9 +47,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infstr.commons.Module;
 
 @Entity
 @Table(name="EG_WF_TYPES")

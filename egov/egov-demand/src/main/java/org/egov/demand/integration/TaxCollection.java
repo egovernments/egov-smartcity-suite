@@ -71,7 +71,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.Module;
+import org.egov.infra.admin.master.entity.Module;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
