@@ -61,11 +61,11 @@ import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)

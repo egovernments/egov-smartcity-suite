@@ -54,7 +54,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.web.utils.ERPWebApplicationContext;
+import org.egov.infra.web.utils.ERPWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**

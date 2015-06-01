@@ -65,6 +65,7 @@ import org.egov.commons.dao.BankaccountDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
@@ -78,7 +79,6 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

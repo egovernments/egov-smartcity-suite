@@ -44,8 +44,8 @@ import java.util.List;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.pims.commons.Designation;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 
 @ParentPackage("egov") 

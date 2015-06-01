@@ -46,11 +46,11 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eb.domain.master.bean.EBBillReportBean;
 import org.egov.eb.utils.EBUtils;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.utils.EgovPaginatedList;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;

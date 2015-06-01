@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -60,7 +61,6 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class JournalVoucherReverseAction extends BaseVoucherAction {

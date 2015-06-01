@@ -56,12 +56,12 @@ import org.egov.commons.SharedFundSource;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.financingsource.FinancingSourceService;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

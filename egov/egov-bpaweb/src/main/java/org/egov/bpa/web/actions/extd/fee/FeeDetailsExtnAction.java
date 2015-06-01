@@ -71,9 +71,9 @@ import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.web.actions.workflow.GenericWorkFlowAction;
 import org.springframework.transaction.annotation.Transactional;
 
 @Results({ @Result(name = "NOACCESS", type = "stream", location = "returnStream", params = {

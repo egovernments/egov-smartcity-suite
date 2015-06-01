@@ -80,9 +80,9 @@
 
 	<package name="egov" extends="struts-default">
 		<interceptors>
-			<interceptor name="egov-validator" class="org.egov.web.interceptors.ValidationInterceptor" />
-			<interceptor name="egov-trim" class="org.egov.web.interceptors.TrimInterceptor" />
-			<interceptor name="egov-exception" class="org.egov.web.interceptors.ExceptionInterceptor" />
+			<interceptor name="egov-validator" class="org.egov.infra.web.struts.interceptors.ValidationInterceptor" />
+			<interceptor name="egov-trim" class="org.egov.infra.web.struts.interceptors.TrimInterceptor" />
+			<interceptor name="egov-exception" class="org.egov.infra.web.struts.interceptors.ExceptionInterceptor" />
 
 			<interceptor-stack name="egov-interceptors">
 				<interceptor-ref name="token">

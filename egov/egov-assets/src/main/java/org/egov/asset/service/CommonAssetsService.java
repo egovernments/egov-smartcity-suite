@@ -54,12 +54,12 @@ import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.security.utils.SecurityUtils;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
 

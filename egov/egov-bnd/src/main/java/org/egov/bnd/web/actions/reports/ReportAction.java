@@ -66,8 +66,8 @@ import org.egov.bnd.services.reports.ReportService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.bnd.web.actions.common.BndCommonAction;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.utils.EgovPaginatedList;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.springframework.transaction.annotation.Transactional;
 
 @Namespace("/reports")

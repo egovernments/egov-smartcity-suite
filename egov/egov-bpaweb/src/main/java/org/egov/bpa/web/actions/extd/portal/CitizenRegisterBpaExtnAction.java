@@ -89,13 +89,13 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 

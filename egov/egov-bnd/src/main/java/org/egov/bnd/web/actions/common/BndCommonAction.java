@@ -64,14 +64,14 @@ import org.egov.bnd.model.Religion;
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.services.common.GenerateCertificateService;
 import org.egov.bnd.services.masters.RegKeyService;
+import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 //import org.egov.mdm.masters.administration.State;
 import org.egov.pims.commons.Position;
-import org.egov.web.actions.workflow.GenericWorkFlowAction;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

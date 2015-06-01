@@ -37,19 +37,19 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.interceptors;
+package org.egov.infra.web.struts.interceptors;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.annotation.ValidationErrorPageExt;
-import org.egov.web.annotation.ValidationErrorPageForward;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ValidationAware;

@@ -55,7 +55,7 @@ import org.egov.bpa.services.extd.masters.CheckListExtnSevice;
 import org.egov.bpa.utils.CheckList;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.web.annotation.ValidationErrorPage;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)

@@ -68,6 +68,7 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -85,7 +86,6 @@ import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 

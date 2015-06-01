@@ -58,13 +58,13 @@ import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.eb.service.master.TargetAreaService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 

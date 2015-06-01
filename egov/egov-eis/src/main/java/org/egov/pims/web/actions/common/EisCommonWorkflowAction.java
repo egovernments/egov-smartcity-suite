@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.service.CommonsService;
+import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -58,7 +59,6 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.EisUtilService;
-import org.egov.web.actions.workflow.GenericWorkFlowAction;
 
 
 /**

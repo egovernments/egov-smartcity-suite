@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.utils;
+package org.egov.infra.web.utils;
 
 import java.util.List;
 

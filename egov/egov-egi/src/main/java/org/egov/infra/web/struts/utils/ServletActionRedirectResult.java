@@ -37,16 +37,22 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.annotation;
+package org.egov.infra.web.struts.utils;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ValidationErrorPage {
-	String value();
+/**
+ * Extension for {@link org.apache.struts2.dispatcher.ServletActionRedirectResult}<br/>
+ * adding extra functionality to include model id, module name with request parameter.
+ **/
+public class ServletActionRedirectResult extends org.apache.struts2.dispatcher.ServletActionRedirectResult {
+	
+	private static final long serialVersionUID = 1L;
+	
+	public void setModelId(String id) {
+		this.addParameter("model.id", id);
+	}
+	
+	public void setModuleName(String moduleName) {
+		this.addParameter("moduleName", moduleName);
+	}
 	
 }

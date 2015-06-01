@@ -56,8 +56,8 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -37,50 +37,30 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.interceptors;
+package org.egov.infra.web.struts.annotation;
 
-import static org.egov.infstr.security.utils.VirtualSanitizer.sanitize;
+import static com.opensymphony.xwork2.Action.SUCCESS;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.StrutsStatics;
-
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
-
-public class TrimInterceptor extends AbstractInterceptor implements StrutsStatics {
-
-	private static final long serialVersionUID = 1L;
-
-	@Override
-	public String intercept(final ActionInvocation invocation) throws Exception {
-		// Get the action context from the invocation so we can access the
-		// HttpServletRequest and HttpSession objects.
-		final HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(HTTP_REQUEST);
-		Map parameters = invocation.getInvocationContext().getParameters();
-		parameters = this.getTrimmedParameters(request, parameters);
-		invocation.getInvocationContext().setParameters(parameters);
-		return invocation.invoke();
-	}
-
-	/**
-	 * @param request
-	 * @param parameters
-	 */
-	public Map getTrimmedParameters(final HttpServletRequest request, final Map parameters) {
-		for (final Iterator paramIter = parameters.entrySet().iterator(); paramIter.hasNext();) {
-			final Map.Entry entry = (Map.Entry) paramIter.next();
-			final String[] values = request.getParameterValues(entry.getKey().toString());
-			if (values != null) {
-				for (int i = 0; i < values.length; i++) {
-					values[i] = sanitize(values[i].trim());
-				}
-			}
-			parameters.put(entry.getKey(), values);
-		}
-		return parameters;
-	}
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+/**
+ * Purpose of this annotation is same as {@link ValidationErrorPage}, In addition to 
+ * main functionality, this annotation also provide two more annotation parameter<br/>
+ * toMethod:methodName<br/>
+ * makeCall:boolean<br/>
+ * Setting makeCall to true and mentioning methodName (any method name in the same action)
+ * will cause the action to invoke the given method after ValidationException is processed.
+ * 
+ * This is useful incase of re populating dropdowns and other dynamic field in the page after 
+ * if there is a ValidationException is thrown from an Action method.
+ **/
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ValidationErrorPageExt {
+	String action() default SUCCESS;
+	String toMethod() default "";
+	
+	boolean makeCall() default false;
 }

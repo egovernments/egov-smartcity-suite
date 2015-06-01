@@ -66,7 +66,7 @@ import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.masters.BuildingUsageExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.web.annotation.ValidationErrorPage;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)

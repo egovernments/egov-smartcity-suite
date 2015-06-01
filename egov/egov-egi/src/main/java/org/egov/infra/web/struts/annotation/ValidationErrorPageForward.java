@@ -37,41 +37,46 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.interceptors;
+package org.egov.infra.web.struts.annotation;
 
-import org.egov.infstr.utils.HibernateUtil;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.ExceptionHolder;
-import com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor;
+import org.egov.infstr.ValidationException;
+
+import com.opensymphony.xwork2.validator.ValidationInterceptor;
 
 /**
- * This class overrides the default behaviour for transaction management. The transaction is marked for rollback, so that the HibSessionServletFilter further down the filter stack will rollback the
- * current transaction. For this to work, an exception mapping for the exception thrown needs to be defined in the struts.xml:
+ * This annotation is used to annotate, action's method which possibly 
+ * throws a {@link ValidationException}. {@link ValidationInterceptor}
+ * will invoke the {@link ValidationErrorPageForward#forwarderMethod()}
+ * and the returned result name will be used forward the request.
+ * The value for {@link ValidationErrorPageForward#forwarderMethod()}
+ * must follow certain rules as follows
+ * (a) It must be a valid method name 
+ * (b) Method must exist in the same or parent class.
+ * (c) Method should be public
+ * (d) Method should always return a String value
+ * (e) The returning string value must be a valid result name
+ * (f) Method signature should not contain parameter.
+ * e.g.
+ * <code>
+ * @ValidationErrorPageForward(forwarderMethod="getResult")
+ * public String save() {
+ * 		//.......
+ * 		//do your code
+ * }
  * 
- * <pre>
- *       &lt;global-results&gt;
- *           &lt;result name=&quot;genericError&quot;&gt;/error/error.jsp&lt;/result&gt;
- *      &lt;/global-results&gt;
- * 
- *      &lt;global-exception-mappings&gt;
- *           &lt;exception-mapping exception=&quot;java.lang.Exception&quot; result=&quot;genericError&quot;/&gt;
- *      &lt;/global-exception-mappings&gt;
- * 
- * 
- * </pre>
- * 
- * @author Sahina Bose
- * 
+ * public String getResult() {
+ * 		//.... do your code
+ * 		return your result name;
+ * }
+ * </code>  
  */
-public class ExceptionInterceptor extends ExceptionMappingInterceptor {
-	
-	private static final long serialVersionUID = 0L;
-	
-	@Override
-	protected void publishException(ActionInvocation invocation, ExceptionHolder exceptionHolder) {
-		//HibernateUtil.markForRollback();
-		super.publishException(invocation, exceptionHolder);
-	}
-	
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ValidationErrorPageForward {
+	String forwarderMethod();
 }

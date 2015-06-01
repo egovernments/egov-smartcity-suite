@@ -47,13 +47,13 @@ import org.egov.commons.service.CommonsService;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmpPosition;
 import org.egov.pims.utils.EisConstants;
 import org.egov.pims.web.actions.common.EisCommonWorkflowAction;
-import org.egov.web.annotation.ValidationErrorPage;
 
 /**
  * 

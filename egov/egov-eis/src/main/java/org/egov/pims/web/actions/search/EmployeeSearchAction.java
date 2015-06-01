@@ -47,13 +47,13 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.displaytag.pagination.PaginatedList;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.EisUtilService;
-import org.egov.web.annotation.ValidationErrorPage;
 
 /**
  * 

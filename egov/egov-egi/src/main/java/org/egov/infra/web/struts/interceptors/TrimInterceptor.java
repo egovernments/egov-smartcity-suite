@@ -37,26 +37,50 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.converters;
+package org.egov.infra.web.struts.interceptors;
 
+import static org.egov.infstr.security.utils.VirtualSanitizer.sanitize;
+
+import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.struts2.util.StrutsTypeConverter;
-import org.egov.infstr.models.Money;
+import javax.servlet.http.HttpServletRequest;
 
-public class MoneyConverter extends StrutsTypeConverter {
+import org.apache.struts2.StrutsStatics;
+
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+
+public class TrimInterceptor extends AbstractInterceptor implements StrutsStatics {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Object convertFromString(final Map context, final String[] value, final Class toClass) {
-		if (value == null || value.length == 0 || value[0] == null || "".equals(value[0].trim())) {
-			return new Money(0.0);
+	public String intercept(final ActionInvocation invocation) throws Exception {
+		// Get the action context from the invocation so we can access the
+		// HttpServletRequest and HttpSession objects.
+		final HttpServletRequest request = (HttpServletRequest) invocation.getInvocationContext().get(HTTP_REQUEST);
+		Map parameters = invocation.getInvocationContext().getParameters();
+		parameters = this.getTrimmedParameters(request, parameters);
+		invocation.getInvocationContext().setParameters(parameters);
+		return invocation.invoke();
+	}
+
+	/**
+	 * @param request
+	 * @param parameters
+	 */
+	public Map getTrimmedParameters(final HttpServletRequest request, final Map parameters) {
+		for (final Iterator paramIter = parameters.entrySet().iterator(); paramIter.hasNext();) {
+			final Map.Entry entry = (Map.Entry) paramIter.next();
+			final String[] values = request.getParameterValues(entry.getKey().toString());
+			if (values != null) {
+				for (int i = 0; i < values.length; i++) {
+					values[i] = sanitize(values[i].trim());
+				}
+			}
+			parameters.put(entry.getKey(), values);
 		}
-		return new Money(Double.parseDouble(value[0]));
+		return parameters;
 	}
-
-	@Override
-	public String convertToString(final Map context, final Object money) {
-		return money.toString();
-	}
-
 }

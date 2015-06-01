@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Designation;
@@ -86,7 +87,6 @@ import org.egov.pims.model.ReligionMaster;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.pims.utils.EisConstants;
 import org.egov.pims.utils.EisManagersUtill;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 

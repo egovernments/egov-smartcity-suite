@@ -37,30 +37,22 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.annotation;
+package org.egov.infra.web.utils;
 
-import static com.opensymphony.xwork2.Action.SUCCESS;
+import javax.servlet.ServletContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-/**
- * Purpose of this annotation is same as {@link ValidationErrorPage}, In addition to 
- * main functionality, this annotation also provide two more annotation parameter<br/>
- * toMethod:methodName<br/>
- * makeCall:boolean<br/>
- * Setting makeCall to true and mentioning methodName (any method name in the same action)
- * will cause the action to invoke the given method after ValidationException is processed.
- * 
- * This is useful incase of re populating dropdowns and other dynamic field in the page after 
- * if there is a ValidationException is thrown from an Action method.
- **/
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ValidationErrorPageExt {
-	String action() default SUCCESS;
-	String toMethod() default "";
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+
+
+public final class ERPWebApplicationContext {
+	public static enum ContextName{egi,eis,EGF,payroll,erpcollections,works,ptis,assets,lcms,pgr,dms}
+	private ERPWebApplicationContext() {}
 	
-	boolean makeCall() default false;
+	public static ServletContext getServletContext() {
+		return EGOVThreadLocals.getServletContext();
+	}
+	
+	public static ServletContext getServletContext(final ERPWebApplicationContext.ContextName webappCtxtName) {
+		return EGOVThreadLocals.getServletContext().getContext("/"+webappCtxtName);
+	}
 }

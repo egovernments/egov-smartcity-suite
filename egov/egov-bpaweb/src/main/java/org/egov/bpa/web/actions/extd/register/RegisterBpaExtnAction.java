@@ -131,6 +131,8 @@ import org.egov.demand.model.EgDemand;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 /*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationError;
@@ -148,10 +150,6 @@ import org.egov.pims.model.EmployeeView;
 /*import org.egov.pims.service.EisManager;*/
 import org.egov.pims.service.EisUtilService;
 import org.egov.portal.entity.Citizen;
-/*import org.egov.portal.surveyor.model.Surveyor;
- import org.egov.portal.surveyor.model.SurveyorDetail;*/
-import org.egov.web.actions.workflow.GenericWorkFlowAction;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 

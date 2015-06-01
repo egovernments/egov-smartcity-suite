@@ -70,6 +70,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
@@ -87,7 +88,6 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 

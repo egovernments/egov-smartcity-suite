@@ -47,11 +47,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.exceptions.EGOVException;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.billsaccounting.services.BillsAccountingService;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.VoucherDetail;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.web.annotation.ValidationErrorPage;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 

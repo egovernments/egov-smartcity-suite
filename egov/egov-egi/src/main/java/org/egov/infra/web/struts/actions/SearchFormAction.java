@@ -43,10 +43,10 @@ import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
 
 /**

@@ -60,6 +60,8 @@ import org.egov.eb.utils.EBUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -68,8 +70,6 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.services.masters.AccountdetailkeyService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.annotation.ValidationErrorPage;
-import org.egov.web.utils.EgovPaginatedList;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;

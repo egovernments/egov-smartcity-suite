@@ -37,22 +37,16 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.utils;
+package org.egov.infra.web.struts.annotation;
 
-import javax.servlet.ServletContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-
-
-public final class ERPWebApplicationContext {
-	public static enum ContextName{egi,eis,EGF,payroll,erpcollections,works,ptis,assets,lcms,pgr,dms}
-	private ERPWebApplicationContext() {}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ValidationErrorPage {
+	String value();
 	
-	public static ServletContext getServletContext() {
-		return EGOVThreadLocals.getServletContext();
-	}
-	
-	public static ServletContext getServletContext(final ERPWebApplicationContext.ContextName webappCtxtName) {
-		return EGOVThreadLocals.getServletContext().getContext("/"+webappCtxtName);
-	}
 }

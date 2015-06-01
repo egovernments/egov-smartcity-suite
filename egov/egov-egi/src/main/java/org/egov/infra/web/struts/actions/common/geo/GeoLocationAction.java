@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.actions.common.geo;
+package org.egov.infra.web.struts.actions.common.geo;
 
 import java.net.MalformedURLException;
 import java.net.URL;

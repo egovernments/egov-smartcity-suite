@@ -45,10 +45,10 @@ import java.util.List;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.egov.infra.web.utils.ERPWebApplicationContext;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.service.GenericCommonsService;
-import org.egov.web.utils.ERPWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**

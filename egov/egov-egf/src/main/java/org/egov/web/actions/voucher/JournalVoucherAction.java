@@ -54,6 +54,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -70,7 +71,6 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")

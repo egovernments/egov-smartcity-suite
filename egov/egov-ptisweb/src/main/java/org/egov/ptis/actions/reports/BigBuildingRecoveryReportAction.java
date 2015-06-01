@@ -53,11 +53,11 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 

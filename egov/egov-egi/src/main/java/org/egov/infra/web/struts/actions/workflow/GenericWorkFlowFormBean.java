@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.web.actions.workflow;
+package org.egov.infra.web.struts.actions.workflow;
 
 import java.math.BigDecimal;
 

@@ -70,6 +70,7 @@ import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -80,7 +81,6 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
