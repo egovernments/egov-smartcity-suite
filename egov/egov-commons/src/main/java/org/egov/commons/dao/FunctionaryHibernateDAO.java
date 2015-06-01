@@ -42,11 +42,24 @@ package org.egov.commons.dao;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Functionary;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class FunctionaryHibernateDAO extends FunctionaryDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 
 	public FunctionaryHibernateDAO() {
 		super(Functionary.class,null);

@@ -46,6 +46,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -53,13 +56,24 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
 
 /**
  * @author Administrator
  *
  */
+@Repository
 public class FinancialYearHibernateDAO extends GenericHibernateDAO implements FinancialYearDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
+    
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	public FinancialYearHibernateDAO(Class persistentClass, Session session)
 	{

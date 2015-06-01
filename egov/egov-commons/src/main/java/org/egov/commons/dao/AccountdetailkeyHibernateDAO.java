@@ -39,11 +39,24 @@
  */
 package org.egov.commons.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class AccountdetailkeyHibernateDAO extends GenericHibernateDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 
 	public AccountdetailkeyHibernateDAO() {
 		super(Accountdetailkey.class,null);

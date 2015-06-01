@@ -39,13 +39,26 @@
  */
 package org.egov.commons.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Bank;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class BankHibernateDAO extends GenericHibernateDAO {
 
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
+    
 	public BankHibernateDAO() {
 		super(Bank.class, null);
 	}

@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this 
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It 
+           is required that all modified versions of this material be marked in 
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program 
+           with regards to rights under trademark law for use of the trade names 
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -41,21 +41,34 @@ package org.egov.commons.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Bankbranch;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+import org.hibernate.Session; 
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class BankBranchHibernateDAO extends GenericHibernateDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 
-	public BankBranchHibernateDAO() {
-		super(Bankbranch.class, null);
-	}
+        public BankBranchHibernateDAO() {
+                super(Bankbranch.class, null);
+        }
 
-	public BankBranchHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+        public BankBranchHibernateDAO(final Class persistentClass, final Session session) {
+                super(persistentClass, session);
+        }
 
-	public List<Bankbranch> getAllBankBranchs() {
-		return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
-	}
+        public List<Bankbranch> getAllBankBranchs() {
+                return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
+        }
 }

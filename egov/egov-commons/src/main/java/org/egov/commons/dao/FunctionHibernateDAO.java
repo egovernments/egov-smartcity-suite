@@ -41,13 +41,26 @@ package org.egov.commons.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFunction;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class FunctionHibernateDAO extends GenericHibernateDAO implements FunctionDAO {
 
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
+        
 	public FunctionHibernateDAO() {
 		super(CFunction.class,null);
 	}

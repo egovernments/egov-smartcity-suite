@@ -39,13 +39,26 @@
  */
 package org.egov.commons.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Scheme;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class SchemeHibernateDAO extends GenericHibernateDAO implements SchemeDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 
 	public SchemeHibernateDAO() {
 		super(Scheme.class, null);

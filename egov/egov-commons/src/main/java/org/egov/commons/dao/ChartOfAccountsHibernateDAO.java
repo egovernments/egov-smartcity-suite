@@ -47,6 +47,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -60,8 +63,18 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements ChartOfAccountsDAO {
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    @Override
+    public Session  getCurrentSession() {
+            return entityManager.unwrap(Session.class);
+    }
     
     private final static Logger LOG = Logger.getLogger(ChartOfAccountsHibernateDAO.class);
     

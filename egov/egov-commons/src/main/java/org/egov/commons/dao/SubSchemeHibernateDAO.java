@@ -39,14 +39,26 @@
  */
 package org.egov.commons.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.SubScheme;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class SubSchemeHibernateDAO extends GenericHibernateDAO implements SubSchemeDAO {
 
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 	public SubSchemeHibernateDAO() {
 		super(SubScheme.class, null);
 	}

@@ -42,12 +42,25 @@ package org.egov.commons.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class EgwStatusHibernateDAO extends GenericHibernateDAO {
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 	
 	public EgwStatusHibernateDAO() {
 		super(EgwStatus.class,null);

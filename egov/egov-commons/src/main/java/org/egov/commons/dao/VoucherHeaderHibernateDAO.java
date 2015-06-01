@@ -41,13 +41,27 @@ package org.egov.commons.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class VoucherHeaderHibernateDAO extends GenericHibernateDAO implements VoucherHeaderDAO {
-	public VoucherHeaderHibernateDAO() {
+	
+        @PersistenceContext
+        private EntityManager entityManager;
+        
+        @Override
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
+        
+        public VoucherHeaderHibernateDAO() {
 		super(CVoucherHeader.class, null);
 
 	}
