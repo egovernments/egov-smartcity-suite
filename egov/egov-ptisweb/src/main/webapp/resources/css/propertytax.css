@@ -82,25 +82,13 @@ h1.subhead {
 	margin-top: 8px;
 	}
 
-table.tablebottom {
-	border-top-width: 1px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-left-style: solid;
-	border-top-color: #F8E2C9;
-	border-left-color: #F8E2C9;
-	}
-
 td.bluebox {
 	width:150px;
-	background-color: #FDF7F0;
+	background-color: #fff;
 	border-bottom: 1px solid white;
 	border-top: 1px solid white;
-	font-size: 11px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	padding-right: 5px;
-	padding-left: 5px;
+	font-size: 12px;
+	padding:8px 5px;
 	color: #000000;
 	text-align: left;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -108,7 +96,7 @@ td.bluebox {
 
 td.bluebox2 {
 	width:25px;
-	background-color: #FDF7F0;
+	background-color: #fff;
 	border-bottom: 1px solid white;
 	border-top: 1px solid white;
 	font-size: 11px;
@@ -150,10 +138,20 @@ th.bluebgheadtd {
 	font-size: 10px;
 	font-weight: bold;
 	color: #333333;
-	padding-right: 2px;
-	padding-left: 2px;
-	background-color: #FBEBD7;
+	padding: 4px;
+	background-color: #f8f8f8;
 	}
+
+#floorDetails th.bluebgheadtd
+{
+	max-width:108px;
+} 	
+
+#floorDetails .selectnew
+{
+    max-width:108px;
+}
+	
 td.totalbg {
 	background-color: #E4E4E4;
 	font-size: 11px;
@@ -404,38 +402,26 @@ td.totalbg {
 	}
 div.headingbg {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	color: #000000;
-	background-color: #DADADA;
+	font-size: 14px;
+	color: #fff;
 	text-align: center;
-	padding-top: 5px;
-	padding-right: 2px;
-	padding-bottom: 5px;
-	padding-left: 2px;
-	border-bottom-width: thin;
-	border-bottom-style: double;
-	border-bottom-color: #CCCCCC;
+	padding: 10px 15px;
+	background-color: #F2851F;
+    border-color: #F2851F;
 	font-weight: bold;
 }
+
 div.headingsmallbg {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	color: #333333;
-	background-color: #EFEFEF;
+	font-size: 12px;
+	color: #fff;
+	background-color: #F2851F;
+	padding:10px 15px;
 	text-align: center;
-	padding-top: 5px;
-	padding-right: 2px;
-	padding-bottom: 5px;
-	padding-left: 2px;
-	border-top-width: 1px;
-	border-top-style: double;
-	border-top-color: #CCCCCC;
 	font-weight: bold;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: #CCCCCC;
-	margin-top: 1px;
+	margin: 10px 0;
 }
+
 div.headingsmallbg1 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -602,7 +588,7 @@ padding-left: 4px;
 }
 
 td.bluebox1{
-	background-color: #FDF7F0;
+	background-color: #fff;
 	font-size: 11px;
 	padding-top: 3px;
 	padding-bottom: 3px;
@@ -754,3 +740,17 @@ th.bluebgheadtdTamilFont {
 	mso-fareast-language:AR-SA;
 	mso-bidi-language:AR-SA;
 	}
+
+td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
+{
+	min-width:180px;
+    height: 30px;
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
+	background-color: #FFF;
+	background-image: none;
+	border: 1px solid #CCC;
+}
+	

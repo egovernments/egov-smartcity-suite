@@ -78,8 +78,6 @@
 			</s:if>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 						<s:form action="searchProperty" name="indexform" theme="simple" id="indexform">
-							<div class="formheading"></div>
-							
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
@@ -92,7 +90,7 @@
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
 									<s:text name="prop.Id" />
-									<span class="mandatory">*</span> :
+									<span class="mandatory1">*</span> :
 								</td>
 								
 								<td class="bluebox">
@@ -145,7 +143,7 @@
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">
 								<s:text name="Zone" />
-								<span class="mandatory">*</span> :
+								<span class="mandatory1">*</span> :
 							</td>
 							<td class="bluebox">
 								<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
@@ -161,7 +159,7 @@
 							<td class="greybox">&nbsp;</td>
 							<td class="greybox">
 								<s:text name="Ward" />
-								<span class="mandatory">*</span> :
+								<span class="mandatory1">*</span> :
 							</td>
 							<td class="greybox">
 								<s:select name="wardId" id="wardId" list="dropdownData.wardList"
@@ -208,9 +206,10 @@
 							</td>						
 							<td class="greybox">&nbsp;</td>
 						</tr>
+						<br/>
 					</s:form>
 				</table>
-				<br>
+				
 				<table  border="0" cellspacing="0" cellpadding="0" width="100%">
 				<s:form name="areaform" theme="simple" id="areaform">
 					<tr>
@@ -238,7 +237,7 @@
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox">
 							<s:text name="OwnerName" />
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
 							<s:textfield name="ownerName" />
@@ -284,6 +283,7 @@
 						</td>
 						<td class="greybox">&nbsp;</td>
 					</tr>
+					<br/>
 				</s:form>
 			</table>
 			<!-- objection search details -->
@@ -355,11 +355,12 @@
 						</td>
 						<td class="greybox">&nbsp;</td>
 					</tr>
+					<br/>
 					</s:form>
 					</table>
 		
-			<div align="left" class="mandatory" style="font-size: 11px">
-			* <s:text name="mandtryFlds"></s:text>
+			<div align="left" class="mandatory1" style="font-size: 11px">
+			  &nbsp;&nbsp;<s:text name="mandtryFlds"></s:text>
 			</div>
 					
 		</div>

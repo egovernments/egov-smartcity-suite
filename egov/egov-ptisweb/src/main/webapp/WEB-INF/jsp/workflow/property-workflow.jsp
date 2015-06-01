@@ -39,7 +39,7 @@
 -->
 <%@ include file="/includes/taglibs.jsp"%>
 <div align="center">
-	<br>
+	
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td colspan="5" width="5%">
@@ -55,7 +55,7 @@
 			</td>
 			<td class="bluebox" width="10%">
 				<s:text name='approver.department' />
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="bluebox" width="8%">
 				<s:select name="workflowBean.departmentId" id="departmentId"
@@ -69,7 +69,7 @@
 				url="common/ajaxCommon!populateDesignationsByDept.action" />
 			<td class="bluebox" width="8%">
 				<s:text name='approver.designation' />
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="bluebox" width="15%">
 				<s:select name="workflowBean.designationId" id="designationId"
@@ -85,7 +85,7 @@
 			</td>
 			<td class="greybox" width="10%">
 				<s:text name='approver.position' />
-				<span class="mandatory">*</span>
+				<span class="mandatory1">*</span>
 			</td>
 			<td class="greybox" width="15%">
 				<s:select id="approverUserId" name="workflowBean.approverUserId"
@@ -113,7 +113,7 @@
 			</td>
 			<td class="bluebox" width="15%" colspan="2"></td>
 		</tr> 
-		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" /> --%>
+		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" /> 
 	</table>
 </div>
 

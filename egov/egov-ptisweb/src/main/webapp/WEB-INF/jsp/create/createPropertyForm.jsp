@@ -1,9 +1,24 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+   <tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Application No <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="applicationno"
+				id="applicationno" size="12" maxlength="12"></s:textfield>
+		</td>
+		<td class="greybox" width="25%">Application Date
+			<span class="mandatory1" id="prntMandatory">*</span> :</td>
+		<td class="greybox"><s:textfield name="applicationdt"
+				id="applicationdt" size="10" maxlength="10"></s:textfield>
+		</td>
+	</tr>
+
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width=""><s:text name="rsnForCreatin" /> <span
+		<td class="greybox" width="25%"><s:text name="rsnForCreatin" /> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="mutationId"
@@ -11,48 +26,83 @@
 				list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
-		<td class="greybox" width=""><s:text name="prntPropIndexNum" />
+		<td class="greybox" width="25%"><s:text name="prntPropIndexNum" />
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox"><s:textfield name="parentIndex"
 				id="parentIndex" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
+	
 	<tr>
-		<td class="bluebox2" width="5%">&nbsp;</td>
-		<td class="bluebox" width=""><s:text name="Zone" /> <span
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Extent of Site <span
 			class="mandatory1">*</span> :</td>
-		<td class="bluebox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="zoneId" id="zoneId"
-				listKey="key" listValue="value" list="ZoneBndryMap"
-				cssClass="selectnew" onchange="return populateWard();"
-				value="%{zoneId}" />
+		<td class="greybox" width="">
+		   <s:textfield name="extstate" id="extstate" size="12" maxlength="12"></s:textfield>
 		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td class="greybox" width="5%">&nbsp;&nbsp;&nbsp;</td>
+		<td class="greybox" width="25%">Vaccant Land Asmt No
+			<span class="mandatory1" id="prntMandatory">*</span> :</td>
+		<td class="greybox">
+		  <s:textfield name="vaccantasmtno" id="vaccantasmtno" size="12" maxlength="12"></s:textfield>
+		</td>
 
-		<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-			dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
-		<td class="greybox" width=""><s:text name="Ward" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select name="wardId" id="wardId"
-				list="dropdownData.wardList" listKey="id" listValue="name"
-				headerKey="-1" headerValue="%{getText('default.select')}"
-				onchange="populateArea(); populateLocationFactors();" value="%{wardId}" />
-		</td>
-		<td class="greybox" colspan="2">&nbsp;</td>
 	</tr>
+	
 	<tr>
-		<td class="bluebox2" width="5%">&nbsp;&nbsp;&nbsp;</td>
-		<td class="bluebox" width=""><s:text name="partNo" /> <span
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Extend of Appurtenant Land <span
 			class="mandatory1">*</span> :</td>
-		<td class="bluebox" width="">
-			<s:textfield id="partNo" name="partNo" value="%{partNo}" maxlength="12"/>
+		<td class="greybox" width="">
+		   <s:textfield name="extapptland" id="extapptland" size="12" maxlength="12"></s:textfield>
 		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
+		<td class="greybox" width="25%">Building plan Approval :</td>
+		<td class="greybox">
+		  <s:checkbox name="cbbuildplanapr" id="cbbuildplanapr" />
+		</td>
+
 	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Building Permission no :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="buildpermno" id="buildpermno" size="12" maxlength="12"></s:textfield>
+		</td>
+		<td class="greybox" width="25%">Building Permission Date :</td>
+		<td class="greybox">
+		  <s:textfield name="buildpermdate" id="buildpermdate" size="12" maxlength="12"></s:textfield>
+		</td>
+
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Regd.Doc No :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="regdocno" id="regdocno" size="12" maxlength="12"></s:textfield>
+		</td>
+		<td class="greybox" width="25%">Regd.Doc Date :</td>
+		<td class="greybox">
+		  <s:textfield name="regdocdate" id="regdocdate" size="12" maxlength="12"></s:textfield>
+		</td>
+	</tr>
+	
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Construction Completed Date :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="concompletedt" id="concompletedt" size="10" maxlength="10"></s:textfield>
+		</td>
+	</tr>
+	
+	<!-- Owner details section -->
+	
+	<tr>
+		<td colspan="5"><div class="headingsmallbg"><span class="bold">Owner Details</span></div></td>
+	</tr>
+	
 	<tr>
 		<td colspan="5">
 			<div id="OwnerNameDiv">
@@ -60,21 +110,37 @@
 			</div>
 		</td>
 	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Aadhar No :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="aadharno" id="aadharno" size="12" maxlength="12"></s:textfield>
+		</td>
+		<td class="greybox" width="25%">Father/Husband Name :</td>
+		<td class="greybox">
+		  <s:textfield name="guardname" id="guardname" maxlength="30"></s:textfield>
+		</td>
+	</tr>
+	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="MobileNumber" /> :</td>
+		<td class="bluebox"><s:text name="MobileNumber" /> : <span style="
+    float: right;
+">+91</span></td>
 		<td class="bluebox">
-			<div>
-				+91
 				<s:textfield name="mobileNo" maxlength="10"
 					onblur="validNumber(this);checkZero(this,'Mobile Number');" />
-			</div>
 		</td>
 		<td class="bluebox"><s:text name="EmailAddress" /> :</td>
 		<td class="bluebox"><s:textfield name="email" maxlength="64"
 				onblur="trim(this,this.value);validateEmail(this);" />
 		</td>
 	</tr>
+	
+	
+	<!-- property address section -->
+	
 	<tr>
 		<td>
 			<div id="PropAddrDiv">
@@ -82,15 +148,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="ParcelID" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox"><s:textfield name="parcelID" maxlength="50"/>
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
+	
 	<tr>
 		<td>
 			<div id="CorrAddrDiv">
@@ -98,35 +156,155 @@
 			</div>
 		</td>
 	</tr>
+	
+	
+	<!-- Amenities section -->
+	
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"><s:text name="PropBoundedBy" /> </span>
+				<span class="bold"> Amenities </span>
 			</div>
 		</td>
 	</tr>
+	
 	<tr>
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="NorthWard" /> :</td>
-		<td class="greybox"><s:textfield name="northBound"
-				value="%{northBound}" maxlength="126"></s:textfield>
-		</td>
-		<td class="greybox"><s:text name="SouthWard" /> :</td>
-		<td class="greybox"><s:textfield name="southBound"
-				value="%{southBound}" maxlength="126"></s:textfield>
+		<td colspan="5">
+		  <table width="100%">
+	        <tr>
+	            <td width="10%"></td>
+				<td width="20%" align="right">
+				  <label> Lift <s:checkbox name="cblift" id="cblift"/></label>
+				  <br/> <label> Drainage <s:checkbox name="cbdrainage" id="cbdrainage"/></label>
+				  <br/> <label>Cable Connection <s:checkbox name="cbcablecon" id="cbcablecon"/></label> 
+				</td>
+				<td width="20%" align="right">
+				  <label>Toilets <s:checkbox name="cbtoilet" id="cbtoilet"/> </label>
+				  <br/> <label>Electricity <s:checkbox name="cbelectric" id="cbelectric"/> </label>
+				</td>
+				<td width="20%" align="right">
+				  <label>Water Tap <s:checkbox name="cbwtap" id="cbwtap"/></label> 
+				   <br/> <label>Attached Bathroom <s:checkbox name="cbattachbath" id="cbattachbath"/> </label>
+			    </td>
+			    <td width="20%" align="right">
+				  <label>Super Structure <s:checkbox name="cbsupstru" id="cbsupstru"/></label>
+				  <br/>  <label>Water Harvesting <s:checkbox name="cbwaterharve" id="cbwaterharve"/></label>
+			    </td>
+			    <td width="10%"></td>
+			</tr>
+			
+		   </table>
 		</td>
 	</tr>
+	
+	<!-- Floor type details -->
+	
 	<tr>
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="EastWard" /> :</td>
-		<td class="bluebox"><s:textfield name="eastBound"
-				value="%{eastBound}" maxlength="126"></s:textfield>
-		</td>
-		<td class="bluebox"><s:text name="WestWard" /> :</td>
-		<td class="bluebox"><s:textfield name="westBound"
-				value="%{westBound}" maxlength="126"></s:textfield>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold">Floor Type Details</span>
+			</div>
 		</td>
 	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Floor Type <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="floortype"
+				id="floortype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+		<td class="greybox" width="25%">Roof Type <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="rooftype"
+				id="rooftype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Wall Type <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="walltype"
+				id="walltype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+		<td class="greybox" width="25%">Wood Type <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="woodtype"
+				id="woodtype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+	</tr>
+	
+	
+	<!-- Ownership section -->
+	
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold">Ownership Details</span>
+			</div>
+		</td>
+	</tr>
+	
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Ownership Type <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="sbownershiptype"
+				id="sbownershiptype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+		
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Service Charges :</td>
+		<td class="greybox" width="">
+		  <s:checkbox name="cbservicecharge" id="cbservicecharge"/> 
+		</td>
+		<td class="greybox" width="25%">Service Charges Category :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="sbservchargetype"
+				id="sbservchargetype" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%">Apartment/Complex :</td>
+		<td class="greybox" width="">
+		  <s:checkbox name="cbapartcomplex" id="cbapartcomplex"/> 
+		</td>
+		<td class="greybox" width="25%">Apartment/Complex Name :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="sbapartcomplex"
+				id="sbapartcomplex" listKey="idMutation" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{mutationId}"
+				cssClass="selectnew" onchange="makeMandatory();" />
+		</td>
+	</tr>
+	
+	
+	<!-- property type section -->
+	
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -147,43 +325,7 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox">&nbsp;</td>
 	</tr>
-	<tr id="propTypeCategoryRow">
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="PropertyTypeCategory" /> <span
-			class="mandatory1">*</span> :</td>
-		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']"
-			dropdownId="propTypeCategoryId"
-			url="common/ajaxCommon!propTypeCategoryByPropType.action" />
-		<td class="greybox"><s:select name="propertyDetail.extra_field5"
-				id="propTypeCategoryId" list="propTypeCategoryMap" listKey="key"
-				listValue="value" headerKey="-1"
-				headerValue="%{getText('default.select')}"
-				value="%{propertyDetail.extra_field5}"
-				onchange="hideAddRmvBtnForResidFlats(); toggleForResNonRes();" />
-		</td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
-	<tr id="floorDetailsConfirm">
-		<td class="bluebox2" width="8%">&nbsp;</td>
-      	<td class="bluebox" colspan="3"><span class="bold"><s:text name="floorDetailsConfirm"/></span>
-			<s:checkbox name="isfloorDetailsRequired" id="isfloorDetailsRequired" onclick="toggleFloorDetails();resetGovtFloorDtls();"/>
-		</td>
-      	<td class="bluebox" width="20%">&nbsp;</td>	
-	</tr>
-	<tr id="docRow">
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="OccupationDate" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox"><s:date name="dateOfCompletion"
-				var="docFormat" format="dd/MM/yyyy" /> <s:textfield
-				name="dateOfCompletion" id="dateOfCompletion" maxlength="10"
-				value="%{dateOfCompletion}"
-				onkeyup="DateFormat(this,this.value,event,false,'3')"
-				onfocus="waterMarkTextIn('dateOfCompletion','DD/MM/YYYY');"
-				onblur="validateDateFormat(this);waterMarkTextOut('dateOfCompletion','DD/MM/YYYY');" />
-		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
+	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 		<td class="bluebox">
@@ -204,206 +346,18 @@
 		</td>
 		<td class="bluebox">&nbsp;</td>
 	</tr>
-	<tr id="nonResPlotAreaRow">
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox">
-				<s:text name="nonResPlotArea"/>
-				<span class="mandatory1">*</span> :
-		</td>
-		<td class="greybox" colspan="2"><s:textfield name="nonResPlotArea"
-				id="nonResPlotArea" maxlength="15"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'Commercial Area Of Plot');checkZero(this,'Commercial Area Of Plot');" />
-		</td>
-		<td class="greybox">&nbsp;</td>
-	</tr>
-	<tr id="taxExemptRow">
-		<td class="greybox2">&nbsp;</td>		
-		<td class="greybox"><s:text name="ExemptedFromTax" /> :</td>
-		<td class="greybox">
-			<s:checkbox name="isExemptedFromTax"
-				id="chkIsTaxExempted" onclick="enableTaxExemptReason()"></s:checkbox>
-		</td>
-		<td class="greybox"><s:text name="TaxExmRsn" /> :</td>
-		<td class="greybox">
-			<s:select
-				headerValue="%{getText('default.select')}" headerKey="-1"
-				name="taxExemptReason" id="taxExemptReason"
-				list="dropdownData.taxExemptedList" cssClass="selectnew" />
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox">
-			<s:text name="locationFactor" /> 
-			<span class="mandatory1">*</span> :
-		</td>
-		<egov:ajaxdropdown fields="['Text', 'Value']" url="common/ajaxCommon-locationFactorsByWard.action" 
-			dropdownId="locationFactor" id="locationFactor" afterSuccess="setLocationFactor"/>
-		<td class="greybox">
-			<s:select name="propertyDetail.extra_field6"
-				id="locationFactor" list="dropdownData.LocationFactorList" listKey="key"
-				listValue="value" headerKey="-1"
-				headerValue="%{getText('default.select')}"
-				value="%{propertyDetail.extra_field6}" />
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-	</tr>	
-	<tr id="waterRate">
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="GenWaterRate" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox" width="3%">
-			<s:select name="propertyDetail.extra_field1"
-				id="genWaterRate" list="waterMeterMap" listKey="key"
-				listValue="value" headerKey="-1"
-				headerValue="%{getText('default.select')}"
-				value="%{propertyDetail.extra_field1}" 
-				cssStyle="width:120px" />
-		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
-	<tr id="usageRow">
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="Usage" /> <span
-			class="mandatory1">*</span><a
-			onclick="openWindow('UsageMaster.jsp');"> <img
-				src="../resources/image/help.gif" cssStyle="border: none" /> </a> :</td>
-		<egov:ajaxdropdown id="usage" fields="['Text','Value']"
-			dropdownId="usage" url="common/ajaxCommon-usageByPropType.action" />
-		<td class="greybox"><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propUsageId"
-				listKey="id" id="usage" listValue="usageName"
-				list="dropdownData.UsageList" cssClass="selectnew"
-				value="%{propUsageId}" />
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-	</tr>
-	<tr id="occupancyRow">
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="Occupancy" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propOccId"
-				listKey="id" id="occupation" onchange="enableRentBox();"
-				listValue="occupation" list="dropdownData.OccupancyList"
-				cssClass="selectnew" value="%{propOccId}" />
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
-	<tr id="rentRow">
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="rent" /> <span
-			class="mandatory1" id="rentBoxMandatory">*</span>:</td>
-		<td class="greybox"><s:textfield id="rentBox"
-				name="propertyDetail.extra_field2" size="10"
-				value="%{propertyDetail.extra_field2}">
-			</s:textfield>
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-	</tr>
-
-	<tr id="buildingcostRow">
-		<td class="greybox2" width="5%">&nbsp;</td>
-		<td class="greybox"><s:text name="bldngCost" /> <span
-			class="mandatory1" id="bldngCostMandatory">*</span> :</td>
-		<td class="greybox"><s:textfield id="bldngCostId"
-				name="propertyDetail.extra_field3"
-				value="%{propertyDetail.extra_field3}" size="10" maxlength="10"
-				onblur="validateInteger(this);">
-			</s:textfield>
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-
-	</tr>
-	<tr id="amenitiesRow">
-		<td class="bluebox2" width="5%">&nbsp;</td>
-		<td class="bluebox"><s:text name="amenities" /> :</td>
-		<td class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" id="amenitiesId"
-				name="propertyDetail.extra_field4" listKey="key" listValue="value"
-				list="amenitiesMap" cssClass="selectnew"
-				value="%{propertyDetail.extra_field4}" />
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-
-	</tr>
-	<tr id="openPlotALV">
-		<td class="bluebox2" width="5%">&nbsp;</td>
-		<td class="bluebox"><s:text name="openPLotManualAlv" />  :</td>
-		<td class="bluebox"><s:textfield id="opAlvId"
-				name="propertyDetail.manualAlv"
-				value="%{propertyDetail.manualAlv}" size="10" maxlength="10"
-				onblur="validateInteger(this);">
-			</s:textfield>
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-
-	</tr>
-	<tr id="nameOfOccupier">
-		<td class="greybox2" width="5%">&nbsp;</td>
-		<td class="greybox"><s:text name="OccupierName" />  :</td>
-		<td class="greybox"><s:textfield id="occId"
-				name="propertyDetail.occupierName"
-				value="%{propertyDetail.occupierName}" size="15" maxlength="32">
-			</s:textfield>
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-
-	</tr>
-	<tr>
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox"><s:text name="AuthProp" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox"><s:radio name="isAuthProp"
-				list="dropdownData.AuthPropList" />
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
-	<tr>
-		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="NoticeGenConfirm" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:radio name="extra_field2"
-				list="dropdownData.NoticeTypeList" />
-		</td>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox">&nbsp;</td>
-	</tr>
-	<tr>
-		<td class="bluebox2">&nbsp;</td>
-		<td class="bluebox">Upload Document</td>
-		<td class="bluebox"><input type="button" class="button"
-			value="Upload Document" id="docUploadButton"
-			onclick="showDocumentManager();" /> <s:hidden name="docNumber"
-				id="docNumber" /></td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
-	</tr>
+	
 	<tr id="floorHeaderRow">
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<table width="50%" border="0" align="center" cellpadding="0"
-					cellspacing="0">
-					<tr id="floorHeader">
-						<td colspan="5" width="40%">
-							<div class="headingsmallbg">
-								<span class="bold"><s:text name="FloorDetailsHeader" />
-								</span>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-	</tr>	
+			<td colspan="5" width="5%">
+				<div class="headingsmallbg">
+					<span class="bold"><s:text name="FloorDetailsHeader" />
+					</span>
+				</div>
+			</td>
+	 </tr>
+	
+	<!-- Floor Details Section -->
+		
 	<tr>
 		<td colspan="5">
 			<div align="center">
@@ -411,14 +365,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox" colspan="2">
-			<span class="bold"><s:text name="allChangesDone"/></span>
-			<s:checkbox id="allChngsCmpltd" name="allChangesCompleted"/>
-		</td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
+	
 
 </table>
 <script type="text/javascript">

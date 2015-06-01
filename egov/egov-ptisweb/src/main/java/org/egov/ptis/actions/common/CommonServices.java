@@ -204,8 +204,8 @@ public class CommonServices {
 		Map<Long, String> zoneMap = new TreeMap<Long, String>();
 		for (Boundary boundary : zoneList) {
 			zoneMap.put(boundary.getId(),
-					StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
-							+ boundary.getLocalName());
+					/*StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
+							+*/ boundary.getLocalName());
 		}
 		return zoneMap;
 	}

@@ -50,7 +50,7 @@
 	<!-- <sx:head/>	 -->
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script type="text/javascript">
-
+/*
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
 function loadOnStartUp() {
@@ -118,7 +118,7 @@ function doOnValidationErrors() {
 	/* if (!areUnitTypeCatsAndUsagePopulated && isCategoriesPrepared && isUsagesPrepared) {
 		populateUnitTypeCatAndUsageOnValidationErrors();	
 	}  */
-}
+/*}
 
 function resetFloorDetailsForResdAndNonResd(obj) {
 	var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
@@ -350,7 +350,7 @@ function finishAllChangesMsg(button) {
 		alert("Please check the '" + allChngsCmpltdLabel.slice(0, allChngsCmpltdLabel.length-1) + "' to proceed with " + action);
 		return false;
 	}
-}
+}*/
 
 </script>
 </head>
@@ -371,7 +371,6 @@ function finishAllChangesMsg(button) {
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
   <s:hidden name="mode" value="form" />
   <div class="formmainbox">
-  <div class="formheading"></div>
 		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
@@ -389,7 +388,7 @@ function finishAllChangesMsg(button) {
         		</span>
         	</p>
         	</div>
-        	<font size="2"><div align="left" class="mandatory"><s:text name="mandtryFlds"/></div></font>
+        	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>
 		    <div class="buttonbottom" align="center">		   
@@ -403,7 +402,7 @@ function finishAllChangesMsg(button) {
 						id="Create:Forward" method="forward" cssClass="buttonsubmit"
 						onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 				<td><input type="button" name="button2" id="button2"
-						value="Close" class="buttonsubmit" onclick="return confirmClose();"></td>				
+						value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td>				
 			</div>
 		</tr> 
 		</table>
