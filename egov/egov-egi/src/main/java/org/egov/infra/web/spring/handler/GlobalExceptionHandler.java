@@ -37,35 +37,46 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.support.tags;
+package org.egov.infra.web.spring.handler;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.http.HttpServletRequest;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
-public class DuplicateFormSubmissionTokenTag extends BodyTagSupport {
+@ControllerAdvice
+public class GlobalExceptionHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    private static final long serialVersionUID = 1L;
+    public static final String DEFAULT_ERROR_VIEW = "error/500";
 
-    @Override
-    public int doStartTag() throws JspException {
-        try {
-            final String tokenName = (String) pageContext.getRequest().getAttribute("tokenName");
-            if (tokenName != null) {
-                final String tokenValue = (String) pageContext.getRequest().getAttribute(tokenName);
-                final JspWriter out = pageContext.getOut();
-                out.println("<input type='hidden' name='tokenName' value='" + tokenName + "'/>");
-                out.println("<input type='hidden' name='" + tokenName + "' value='" + tokenValue + "'/>");
-            }
-        } catch (final IOException e) {
-            throw new EGOVRuntimeException("Error occurred while adding submission token",e);
-        }
+    @ExceptionHandler(Exception.class)
+    public ModelAndView defaultErrorHandler(final HttpServletRequest req, final Exception e) throws Exception {
+        // If the exception is annotated with @ResponseStatus rethrow it and let
+        // the framework handle it.
+        LOG.error("An error occurred while processing the request", e);
+        if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null)
+            throw e;
+        return createErrorMV(req, e);
+    }
+    
+    @ExceptionHandler(value = EGOVRuntimeException.class)
+    public ModelAndView egovErrorHandler(HttpServletRequest req, EGOVRuntimeException e) throws Exception {
+       return createErrorMV(req, e);
+    }
 
-        return SKIP_BODY;
+    private ModelAndView createErrorMV(HttpServletRequest req, Exception e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("error",e.getMessage());
+        mav.addObject("url", req.getRequestURL());
+        mav.setViewName(DEFAULT_ERROR_VIEW);
+        return mav;
     }
 
 }

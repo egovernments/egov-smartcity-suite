@@ -37,15 +37,33 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.support.annotation;
+package org.egov.infra.web.spring.handler;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value={ElementType.METHOD})
-public @interface DuplicateRequestToken {
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.web.support.propertyeditor.JodaDateTimeEditor;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.InitBinder;
+
+@ControllerAdvice
+public class GlobalInitBinderHandler {
     
+    @Autowired
+    private ApplicationProperties applicationProperties;
+    
+    @InitBinder
+    public void initBinder(final WebDataBinder binder) {
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(applicationProperties.defaultDatePattern()), true));
+        binder.registerCustomEditor(DateTime.class, new JodaDateTimeEditor(applicationProperties.defaultDatePattern(), true));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.setDisallowedFields("id");
+    }
+
 }

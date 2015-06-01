@@ -37,33 +37,35 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.support.handler;
+package org.egov.infra.web.spring.tags;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
 
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.web.support.propertyeditor.JodaDateTimeEditor;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.InitBinder;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 
-@ControllerAdvice
-public class GlobalInitBinderHandler {
-    
-    @Autowired
-    private ApplicationProperties applicationProperties;
-    
-    @InitBinder
-    public void initBinder(final WebDataBinder binder) {
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(applicationProperties.defaultDatePattern()), true));
-        binder.registerCustomEditor(DateTime.class, new JodaDateTimeEditor(applicationProperties.defaultDatePattern(), true));
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.setDisallowedFields("id");
+import org.egov.exceptions.EGOVRuntimeException;
+
+public class DuplicateFormSubmissionTokenTag extends BodyTagSupport {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public int doStartTag() throws JspException {
+        try {
+            final String tokenName = (String) pageContext.getRequest().getAttribute("tokenName");
+            if (tokenName != null) {
+                final String tokenValue = (String) pageContext.getRequest().getAttribute(tokenName);
+                final JspWriter out = pageContext.getOut();
+                out.println("<input type='hidden' name='tokenName' value='" + tokenName + "'/>");
+                out.println("<input type='hidden' name='" + tokenName + "' value='" + tokenValue + "'/>");
+            }
+        } catch (final IOException e) {
+            throw new EGOVRuntimeException("Error occurred while adding submission token",e);
+        }
+
+        return SKIP_BODY;
     }
 
 }

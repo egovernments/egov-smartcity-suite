@@ -37,46 +37,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.support.handler;
+package org.egov.infra.web.spring.annotation;
 
-import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
-
-@ControllerAdvice
-public class GlobalExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    public static final String DEFAULT_ERROR_VIEW = "error/500";
-
-    @ExceptionHandler(Exception.class)
-    public ModelAndView defaultErrorHandler(final HttpServletRequest req, final Exception e) throws Exception {
-        // If the exception is annotated with @ResponseStatus rethrow it and let
-        // the framework handle it.
-        LOG.error("An error occurred while processing the request", e);
-        if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null)
-            throw e;
-        return createErrorMV(req, e);
-    }
-    
-    @ExceptionHandler(value = EGOVRuntimeException.class)
-    public ModelAndView egovErrorHandler(HttpServletRequest req, EGOVRuntimeException e) throws Exception {
-       return createErrorMV(req, e);
-    }
-
-    private ModelAndView createErrorMV(HttpServletRequest req, Exception e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("error",e.getMessage());
-        mav.addObject("url", req.getRequestURL());
-        mav.setViewName(DEFAULT_ERROR_VIEW);
-        return mav;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value={ElementType.METHOD})
+public @interface ValidateToken {
 
 }

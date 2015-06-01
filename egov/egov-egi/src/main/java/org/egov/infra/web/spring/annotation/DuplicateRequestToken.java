@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.support.annotation;
+package org.egov.infra.web.spring.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -46,6 +46,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value={ElementType.METHOD})
-public @interface ValidateToken {
-
+public @interface DuplicateRequestToken {
+    
 }
