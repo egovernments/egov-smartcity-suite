@@ -41,7 +41,6 @@ package org.egov.infra.utils;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -53,8 +52,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EmailUtils {
-
-    private static Logger LOG = Logger.getLogger(EmailUtils.class);
 
     public static final String MAILSENDER = "mailSender";
 
@@ -69,28 +66,26 @@ public class EmailUtils {
 
     public boolean sendMail(final String toEmail, final String mailBody, final String subject) {
         boolean isSent = false;
-        if (applicationProperties.emailEnabled())
-            try {
-                mailSender.setPort(applicationProperties.mailPort());
-                mailSender.setHost(applicationProperties.mailHost());
-                mailSender.setProtocol(applicationProperties.mailProtocol());
+        if (applicationProperties.emailEnabled()) {
 
-                mailSender.setUsername(applicationProperties.mailSenderUsername());
-                mailSender.setPassword(applicationProperties.mailSenderPassword());
+            mailSender.setPort(applicationProperties.mailPort());
+            mailSender.setHost(applicationProperties.mailHost());
+            mailSender.setProtocol(applicationProperties.mailProtocol());
 
-                final Properties mailProperties = new Properties();
-                mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
-                mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
-                mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
-                mailSender.setJavaMailProperties(mailProperties);
-                mailMessage.setTo(toEmail);
-                mailMessage.setSubject(subject);
-                mailMessage.setText(mailBody);
-                mailSender.send(mailMessage);
-                isSent = true;
-            } catch (final Exception e) {
-                LOG.error("Error occurred while trying to send mail", e);
-            }
+            mailSender.setUsername(applicationProperties.mailSenderUsername());
+            mailSender.setPassword(applicationProperties.mailSenderPassword());
+
+            final Properties mailProperties = new Properties();
+            mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
+            mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
+            mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
+            mailSender.setJavaMailProperties(mailProperties);
+            mailMessage.setTo(toEmail);
+            mailMessage.setSubject(subject);
+            mailMessage.setText(mailBody);
+            mailSender.send(mailMessage);
+            isSent = true;
+        }
         return isSent;
     }
 }

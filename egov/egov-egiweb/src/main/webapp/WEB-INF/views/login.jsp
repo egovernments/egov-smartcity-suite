@@ -447,7 +447,7 @@
 								</div>
 								<div id="emailOrMobileNoReq" class="error-msg display-hide"
 									>Email or Mobile or Username is required</div>
-								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;">Recovery link will be sent to your registered mobile and email</div>
+								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;">Recovery link will be sent to your registered email</div>
 							</div>
 							<div class="form-group text-right">
 								<button type="submit" id="recovrbtn" class="btn btn-primary">Recover</button>

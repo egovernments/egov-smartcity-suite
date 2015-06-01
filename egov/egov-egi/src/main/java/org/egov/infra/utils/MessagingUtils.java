@@ -58,9 +58,8 @@ public class MessagingUtils {
     @Autowired
     private MessageTemplateService messageTemplateService;
 
-    public boolean sendEmailAndSMS(final User user, final String subject, final String emailTemplateName,
-            final String mobileTemplate, final Object... messageValues) {
-        return sendEmail(user, subject, emailTemplateName, messageValues) || sendSMS(user, mobileTemplate, messageValues);
+    public boolean sendEmailAndSMS(final User user, final String subject, final String templateName, final Object... messageValues) {
+        return sendEmail(user, subject, templateName, messageValues) || sendSMS(user, templateName, messageValues);
     }
 
     public boolean sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
