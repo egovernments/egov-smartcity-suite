@@ -309,48 +309,48 @@ public class CollectionCommon {
             }
         }
 
-        for (BillPayeeDetails billPayee : collDetails.getPayees()) {
-        	receiptHeader = new ReceiptHeader();
-            for (BillDetails billDetail : billPayee.getBillDetails()) {
-                ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
+  
+    	BillPayeeDetails billPayee = collDetails.getPayee();
+    	receiptHeader = new ReceiptHeader();
+        for (BillDetails billDetail : billPayee.getBillDetails()) {
+            ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
 
-                receiptHeader = new ReceiptHeader(billDetail.getRefNo(), billDetail.getBilldate(),
-                        billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
-                        billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(), collDetails
-                                .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
-                        collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),billPayee.getPayeeName(),billPayee.getPayeeAddress());
+            receiptHeader = new ReceiptHeader(billDetail.getRefNo(), billDetail.getBilldate(),
+                    billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
+                    billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(), collDetails
+                            .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
+                    collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),billPayee.getPayeeName(),billPayee.getPayeeAddress());
 
-                Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(Long.valueOf(billDetail.getBoundaryNum()), billDetail
-                        .getBoundaryType(), CollectionConstants.BOUNDARY_HIER_CODE_ADMIN);
+            Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(Long.valueOf(billDetail.getBoundaryNum()), billDetail
+                    .getBoundaryType(), CollectionConstants.BOUNDARY_HIER_CODE_ADMIN);
 
-                Functionary functionary = (Functionary) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_FUNCTIONARY_BY_CODE, collDetails.getFunctionaryCode());
-                Fundsource fundSource = commonsServiceImpl.getFundSourceByCode(collDetails.getFundSourceCode());
+            Functionary functionary = (Functionary) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_FUNCTIONARY_BY_CODE, collDetails.getFunctionaryCode());
+            Fundsource fundSource = commonsServiceImpl.getFundSourceByCode(collDetails.getFundSourceCode());
 
-                ReceiptMisc receiptMisc = new ReceiptMisc(boundary, fund, functionary, fundSource, dept, receiptHeader,
-                        null, null,null);
-                receiptHeader.setReceiptMisc(receiptMisc);
+            ReceiptMisc receiptMisc = new ReceiptMisc(boundary, fund, functionary, fundSource, dept, receiptHeader,
+                    null, null,null);
+            receiptHeader.setReceiptMisc(receiptMisc);
 
-                BigDecimal totalAmountToBeCollected = BigDecimal.valueOf(0);
+            BigDecimal totalAmountToBeCollected = BigDecimal.valueOf(0);
 
-                Collections.sort(billDetail.getAccounts());
+            Collections.sort(billDetail.getAccounts());
 
-                for (BillAccountDetails billAccount : billDetail.getAccounts()) {
-                    CChartOfAccounts account = null ;//= common.getCChartOfAccountsByGlCode(billAccount.getGlCode());
-                    CFunction function = commonsServiceImpl.getFunctionByCode(billAccount.getFunctionCode());
-                    if (billAccount.getIsActualDemand()) {
-						totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
-					}
-                    ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
-                            .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
-                            Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
-                    receiptHeader.addReceiptDetail(receiptDetail);
-                }
-                receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
+            for (BillAccountDetails billAccount : billDetail.getAccounts()) {
+                CChartOfAccounts account = null ;//= common.getCChartOfAccountsByGlCode(billAccount.getGlCode());
+                CFunction function = commonsServiceImpl.getFunctionByCode(billAccount.getFunctionCode());
+                if (billAccount.getIsActualDemand()) {
+					totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
+				}
+                ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
+                        .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
+                        Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
+                receiptHeader.addReceiptDetail(receiptDetail);
             }
-            
+            receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
         }
+
         return receiptHeader;
     }
 

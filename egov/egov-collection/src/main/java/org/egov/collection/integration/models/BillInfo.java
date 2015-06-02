@@ -147,25 +147,19 @@ public interface BillInfo {
 	List<String> getCollectionModesNotAllowed() ;
 
 	/**
-	 * This method return list of bill payee details where in each can have multiple bills associated.  
+	 * This method return bill payee details where in it has bills associated.  
 	 * 
-	 * @return List of Bill Payee Details
+	 * @return Bill Payee Details
 	 */
-	List<BillPayeeDetails> getPayees() ;
+	BillPayeeDetails getPayee() ;
 
 	/**
-	 * This method sets the given list of Bill Payees
+	 * This method sets the given Bill Payee
 	 * 
-	 * @param List containing Bill Payee Details
+	 * @param Bill Payee Details
 	 * 				 
 	 */
-	void setPayees(List<BillPayeeDetails> payees) ;
+	void setPayee(BillPayeeDetails payee) ;
 
-	/**
-	 * This method adds the given bill payee to the list of payees.
-	 * 
-	 * @param Bill Payee object
-	 */
-	void addPayees(BillPayeeDetails payee) ;
-	
+
 }

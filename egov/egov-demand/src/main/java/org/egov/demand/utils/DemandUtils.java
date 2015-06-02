@@ -84,7 +84,7 @@ public class DemandUtils {
 	}
 	
 	public BillInfoImpl prepareBillInfoXml(EgBill bill, String displayMsg) {
-		List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
+		
 		BillDetails billDetails = null;
 		BillAccountDetails billAccDetails = null;
 		List<String> collModesList = new ArrayList<String>();
@@ -107,8 +107,7 @@ public class DemandUtils {
 						bill.getConsumerId(), bill.getBoundaryNum().toString(), bill
 								.getBoundaryType(), bill.getDescription(), bill.getTotalAmount(),
 						bill.getMinAmtPayable());
-				billPayeeDetList.add(billPayeeDet);
-				billInfoImpl.setPayees(billPayeeDetList);
+				billInfoImpl.setPayee(billPayeeDet);
 				billInfoImpl.setCallbackForApportioning(bill.getCallBackForApportion());
 
 				//FIX ME
