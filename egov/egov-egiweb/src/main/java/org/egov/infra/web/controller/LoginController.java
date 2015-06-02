@@ -45,6 +45,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/login")
@@ -60,7 +61,17 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/password/reset", params = "token", method = RequestMethod.GET)
-    public String validateAndSendNewPassword(@RequestParam final String token) {
-        return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token);
+    public String viewPasswordReset(@RequestParam final String token) {
+        return "password/reset";
+    }
+
+    @RequestMapping(value = "/password/reset", method = RequestMethod.POST)
+    public String validateAndSendNewPassword(@RequestParam final String token, @RequestParam final String newPassword,
+            @RequestParam final String confirmPwd, final RedirectAttributes redirectAttrib) {
+        if (!newPassword.equals(confirmPwd)) {
+            redirectAttrib.addAttribute("error", "Password entered is mismatching");
+            return "redirect:/login/password/reset?token=" + token;
+        }
+        return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
     }
 }

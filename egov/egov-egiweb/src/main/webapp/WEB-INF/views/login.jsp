@@ -126,7 +126,7 @@
 					<c:if test="${not empty param.reset}">
 					<c:choose>
 						<c:when test="${param.reset}">
-							<div class="text-center  error-msg">We have sent the new password to your registered email.</div>
+							<div class="text-center  error-msg">Please use your new password to login to your account.</div>
 						</c:when>
 						<c:otherwise>
 							<div class="text-center  error-msg">Could not reset password, either your password recovery request was not successful or your request has been expired.</div>

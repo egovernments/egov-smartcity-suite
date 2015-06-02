@@ -62,6 +62,11 @@
         <put-attribute name="title" value="eGov Urban Portal Help"/>
     </definition>
     
+    <definition name="password/reset" extends="base_layout">
+        <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/home/password-reset.jsp"/>
+    </definition>
+    
     <definition name="profile-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.edit.profile" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/home/profile-edit.jsp"/>

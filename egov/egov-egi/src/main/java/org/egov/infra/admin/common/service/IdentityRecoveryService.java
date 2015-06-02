@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
@@ -98,18 +97,16 @@ public class IdentityRecoveryService {
     }
 
     @Transactional
-    public boolean validateAndResetPassword(final String token) {
+    public boolean validateAndResetPassword(final String token, final String newPassword) {
         boolean recoverd = false;
         final Optional<IdentityRecovery> identityRecovery = getByToken(token);
         if (identityRecovery.isPresent()) {
             final IdentityRecovery idRecovery = identityRecovery.get();
             if (idRecovery.getExpiry().isAfterNow()) {
                 final User user = idRecovery.getUser();
-                final String newPassword = RandomStringUtils.randomAlphanumeric(6).toUpperCase();
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userService.updateUser(user);
-                recoverd = messagingUtils.sendEmail(idRecovery.getUser(), "Password Reset", USER_PWD_RESET_TMPLTE,
-                        idRecovery.getUser().getName(), newPassword, System.getProperty("line.separator"));
+                recoverd = true;
             }
             identityRecoveryRepository.delete(idRecovery);
         }
