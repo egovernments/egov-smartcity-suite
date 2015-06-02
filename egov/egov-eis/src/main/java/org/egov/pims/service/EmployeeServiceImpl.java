@@ -60,6 +60,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -75,7 +76,6 @@ import org.egov.pims.dao.AssignmentDAO;
 import org.egov.pims.dao.GenericMasterDAO;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.EmployeeNamePoJo;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.GenericMaster;
 import org.egov.pims.model.LangKnown;
 import org.egov.pims.model.PersonalInformation;
@@ -421,7 +421,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 PersonalInformation emp = null;
                 while (itr.hasNext()) {
                     ev = (EmployeeView) itr.next();
-                    emp = getEmloyeeById(ev.getId());
+                    emp = getEmloyeeById(ev.getId().intValue());
                     break;
                 }
                 if (emp != null)
@@ -435,8 +435,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                     if (ass != null && ev1.getAssignment().equals(ass)) {
                         logger.info("ev.assId=" + ev1.getAssignment().getId());
                         logger.info("ass.assId=" + ass.getId());
-                        logger.info("emp " + ev1.getEmployeeName() + " : " + ev1.getPosition().getName() + " : "
-                                + ev1.getIsPrimary());
+                        logger.info("emp " + ev1.getName() + " : " + ev1.getPosition().getName() + " : "
+                                + ev1.getPrimary());
                         break;
                     }
                 }
@@ -1179,7 +1179,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 Iterator iter = employeeList.iterator();
                 while (iter.hasNext()) {
                     EmployeeView cataEl = (EmployeeView) iter.next();
-                    personalInformation = (PersonalInformation) getEmloyeeById(cataEl.getId());
+                    personalInformation = (PersonalInformation) getEmloyeeById(cataEl.getId().intValue());
                     listOfEmpOfSameDept.add(personalInformation);
 
                 }
@@ -1204,7 +1204,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 Iterator iter = employeeList.iterator();
                 while (iter.hasNext()) {
                     EmployeeView cataEl = (EmployeeView) iter.next();
-                    personalInformation = (PersonalInformation) getEmloyeeById(cataEl.getId());
+                    personalInformation = (PersonalInformation) getEmloyeeById(cataEl.getId().intValue());
                     listOfEmpOfSameDesig.add(personalInformation);
 
                 }

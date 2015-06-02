@@ -48,11 +48,11 @@ import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Functionary;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Designation;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.works.models.workflow.WorkFlow;
 import org.egov.works.services.WorksService;

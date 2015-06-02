@@ -69,6 +69,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -90,7 +91,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.pims.commons.Designation;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -317,7 +317,7 @@ public class WorkOrderAction extends BaseFormAction {
             final List<EmployeeView> empViewList = getUsersInDepartment();
             empId = getEmployee().getId();
             if (empViewList != null && empViewList.size() == 1)
-                defaultPreparedBy = empViewList.get(0).getId();
+                defaultPreparedBy = empViewList.get(0).getId().intValue();
             addDropdownData(PREPARED_BY_LIST, empViewList);
             defaultDepartmentId = deptId;
             if (tenderResponse != null && tenderResponse.getTenderEstimate() != null

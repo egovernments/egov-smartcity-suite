@@ -86,8 +86,10 @@ import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.eis.entity.DrawingOfficer;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -98,9 +100,7 @@ import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.voucher.CommonBean;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EisUtilService;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
@@ -157,7 +157,7 @@ public class CommonAction extends BaseFormAction{
 	private ArrayList<Map<String, String>> nameList;
 	private InstrumentService instrumentService;
 	private List<String> detailCodes = new ArrayList<String>();
-	private  List<User> userList;
+	private  List<AbstractUser> userList;
 	private Integer  designationId;
 	private VoucherService voucherService;
 	private String functionaryName;
@@ -1058,7 +1058,7 @@ public class CommonAction extends BaseFormAction{
 	public String ajaxLoadUser()throws Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadUser...");
-		userList = new ArrayList<User>();
+		userList = new ArrayList<AbstractUser>();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("CommonAction | ajaxLoadUserByDesg | Start");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Functionar received : = "+ functionaryName);
 		String functionaryId = null;
@@ -1070,7 +1070,7 @@ public class CommonAction extends BaseFormAction{
 			List<EmployeeView>   empInfoList = voucherService.getUserByDeptAndDesgName(departmentId.toString(),
 					designationId.toString(),functionaryId);
 			 for (EmployeeView employeeView : empInfoList) {
-					userList.add(employeeView.getUserMaster());
+					userList.add((AbstractUser)employeeView.getEmployee());
 				}
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadUser.");
@@ -1079,7 +1079,7 @@ public class CommonAction extends BaseFormAction{
 
 	public String ajaxHodForDept() throws Exception{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxHodForDept...");
-		userList = new ArrayList<User>();
+		userList = new ArrayList<AbstractUser>();
 		
 		List<PersonalInformation> listOfPI = null;//new EisUtilService().getAllHodEmpByDept(departmentId);
 		for (PersonalInformation personalInformation : listOfPI) {
@@ -1493,10 +1493,10 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	public List<String> getDetailCodes() {
 		return detailCodes;
 	}
-	public List<User> getUserList() {
+	public List<AbstractUser> getUserList() {
 		return userList;
 	}
-	public void setUserList(List<User> userList) {
+	public void setUserList(List<AbstractUser> userList) {
 		this.userList = userList;
 	}
 	public void setDesignationId(Integer designationId) {

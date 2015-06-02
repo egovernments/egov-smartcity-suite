@@ -86,6 +86,7 @@ import org.egov.bpa.utils.ApplicationMode;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.bpa.web.actions.extd.register.RegisterBpaExtnAction;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
@@ -95,7 +96,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -571,11 +571,11 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				empViewList_AEE=getZonalLevelDesignatedUser(BpaConstants.ASSISTANTEXECUTIVEENGINEERDESIGNATION);
 				if (empViewList_AE != null && empViewList_AE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AE);
-					 designationId.add(empViewList_AE.get(0).getDesigId()!=null?(long)empViewList_AE.get(0).getDesigId().getId():null);
+					 designationId.add(empViewList_AE.get(0).getDepartment()!=null?(long)empViewList_AE.get(0).getDepartment().getId():null);
 				}
 				if (empViewList_AEE != null && empViewList_AEE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AEE);
-					 designationId.add(empViewList_AEE.get(0).getDesigId()!=null?(long)empViewList_AEE.get(0).getDesigId().getId():null);
+					 designationId.add(empViewList_AEE.get(0).getDepartment()!=null?(long)empViewList_AEE.get(0).getDepartment().getId():null);
 				}
 				return autoSelectApproverPosition(employeeViewList,designationId);
 			 }else if(registration.getServiceType().getCode().equals(BpaConstants.APPLICATIONFORDEMOLITIONCODE)) {
@@ -588,7 +588,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		}
 		employeeViewList=getZonalLevelDesignatedUser(designationName);
 		if (employeeViewList != null && employeeViewList.size() != 0) {
-			 designationId.add(employeeViewList.get(0).getDesigId()!=null?(long)employeeViewList.get(0).getDesigId().getId():null);
+			 designationId.add(employeeViewList.get(0).getDepartment()!=null?(long)employeeViewList.get(0).getDepartment().getId():null);
 		}
 		return autoSelectApproverPosition(employeeViewList,designationId);
 	

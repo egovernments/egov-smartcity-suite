@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -67,7 +68,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -312,10 +312,11 @@ public class MeasurementBookAction extends BaseFormAction {
                 ajaxEstimateAction.usersInExecutingDepartment();
                 if (ajaxEstimateAction.getUsersInExecutingDepartment() != null
                         && ajaxEstimateAction.getUsersInExecutingDepartment().size() == 1) {
+                    //TODO: Please check the below 2 lines -- edited by Vaibhav
                     defaultPreparedById = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
-                            .get(0).getId();
+                            .get(0).getId().intValue();
                     defaultDesgination = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
-                            .get(0).getDesigId().getName();
+                            .get(0).getDepartment().getName();
                 }
                 addDropdownData("preparedByList", ajaxEstimateAction.getUsersInExecutingDepartment());
             } else {

@@ -49,6 +49,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -62,7 +63,6 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
-import org.egov.pims.model.EmployeeView;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.ProjectionList;

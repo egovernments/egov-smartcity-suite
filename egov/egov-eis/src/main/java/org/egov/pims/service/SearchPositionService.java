@@ -47,12 +47,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
-import org.egov.pims.model.EmployeeView;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;

@@ -59,6 +59,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.FiscalPeriodDAO;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -69,7 +70,6 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 
@@ -335,11 +335,11 @@ public class VoucherHelper {
 		List<EmployeeView> listEmployeeView = eisUtilService.getEmployeeInfoList(paramMap);
 		List<Department> departmentList = new ArrayList<Department> ();
 		for (EmployeeView employeeView : listEmployeeView) {
-			employeeView.getDeptId().getName();
-			if(employeeView.getIsPrimary() == 'Y')
-				departmentList.add(0, employeeView.getDeptId());
+			employeeView.getDepartment().getName();
+			if(employeeView.getPrimary())
+				departmentList.add(0, employeeView.getDepartment());
 			else
-				departmentList.add(employeeView.getDeptId());
+				departmentList.add(employeeView.getDepartment());
 		}
 		return departmentList;
 	}

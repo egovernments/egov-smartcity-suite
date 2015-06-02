@@ -128,6 +128,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.ObjectHistory;
 /*import org.egov.commons.service.CommonsManager;*/
 import org.egov.demand.model.EgDemand;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
@@ -146,7 +147,6 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 /*import org.egov.pims.service.EisManager;*/
 import org.egov.pims.service.EisUtilService;
 import org.egov.portal.entity.Citizen;
@@ -532,8 +532,8 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 					List<Long> designationId = new ArrayList<Long>();
 					if (employeeList != null && employeeList.size() != 0) {
 						designationId
-								.add(employeeList.get(0).getDesigId() != null ? (long) employeeList
-										.get(0).getDesigId().getId()
+								.add(employeeList.get(0).getDepartment() != null ? (long) employeeList
+										.get(0).getDepartment().getId()
 										: null);
 					}// Phionix TODO
 					registration

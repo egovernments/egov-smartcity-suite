@@ -67,6 +67,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -87,7 +88,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.DishonorChequeService;
@@ -357,7 +357,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                                         EgovThreadLocals.getUserId().intValue();
                          startChequeWorkflow(dishonorChequeView,actionNm,null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
                          EmployeeView nextUser=(EmployeeView)persistenceService.find("from EmployeeView where position.id=?",null/* phoenix dishonorChequeView.getApproverPositionId()*/);
-                         addActionMessage(" Cheque is forwared successfully  "+nextUser.getUserMaster().getName());
+                         addActionMessage(" Cheque is forwared successfully  "+nextUser.getName());
                          returnValue="viewMessage";
                         
                 }else if(actionNm.equalsIgnoreCase("cancel")){

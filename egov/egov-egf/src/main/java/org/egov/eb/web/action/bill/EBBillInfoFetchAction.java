@@ -76,6 +76,7 @@ import org.egov.eb.service.master.EBDetailsService;
 import org.egov.eb.service.transaction.EbSchedulerLogService;
 import org.egov.eb.utils.EBConstants;
 import org.egov.eb.utils.EBUtils;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -98,7 +99,6 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
@@ -442,7 +442,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                         }
 
                         if (nextUser != null) {
-                                addActionMessage(" File is forwared successfully  " + nextUser.getUserMaster().getUsername());
+                                addActionMessage(" File is forwared successfully  " + nextUser.getUserName());
                         }
 
                 } else if (actionNm.equalsIgnoreCase("cancel")) {

@@ -72,6 +72,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.service.CommonsService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -88,7 +89,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -576,7 +576,7 @@ public class AbstractEstimateAction extends BaseFormAction {
                             .getEgwStatus().getCode().equals("NEW")))
                 if (StringUtils.isNotBlank(loggedInUserEmployeeCode)
                         && (estimatePreparedByView == null || loggedInUserEmployeeCode
-                        .equalsIgnoreCase(estimatePreparedByView.getEmployeeCode())))
+                        .equalsIgnoreCase(estimatePreparedByView.getCode())))
                     // Extra condition is added since estimate can be rejected
                     // in 2 usecases
                     ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);

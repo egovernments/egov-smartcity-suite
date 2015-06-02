@@ -47,20 +47,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eis.entity.Assignment;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.services.PersistenceService;
 //import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 //import org.egov.pims.service.EisManager;
 import org.egov.pims.service.EisUtilService;
@@ -142,7 +143,7 @@ public class BpaPimsInternalExtnServiceFactory {
 		return empList;
 	}
 	
-	public List<User> getApproverListByPassingDeptAndDesignationId(String departmentId,String desgId) 
+	public List<AbstractUser> getApproverListByPassingDeptAndDesignationId(String departmentId,String desgId) 
 	{
 		logger.info("...inside getApproverListByPassingDeptAndDesignationId....");
 		HashMap<String,String> paramMap = new HashMap<String, String>();
@@ -151,11 +152,11 @@ public class BpaPimsInternalExtnServiceFactory {
 		if(desgId!=null && !desgId.equals(""))			
 			paramMap.put("designationId", desgId);
 		List<EmployeeView> empList;
-		List<User> approverList = new ArrayList<User>();
+		List<AbstractUser> approverList = new ArrayList<AbstractUser>();
 		empList = eisService.getEmployeeInfoList(paramMap);
 		for (EmployeeView emp : empList) {
-			if (emp.getUserMaster() != null)
-				approverList.add(emp.getUserMaster());
+			if (emp.getEmployee() != null)
+				approverList.add((AbstractUser)emp.getEmployee());
 
 		}
 		return approverList;

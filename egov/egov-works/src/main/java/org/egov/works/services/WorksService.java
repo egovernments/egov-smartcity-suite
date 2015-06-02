@@ -59,6 +59,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -73,7 +74,6 @@ import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -1181,11 +1181,11 @@ public class WorksService {
         final List<Department> departmentList = new ArrayList<Department>();
         if (listEmployeeView != null)
             for (final EmployeeView employeeView : listEmployeeView) {
-                employeeView.getDeptId().getName();
-                if (employeeView.getIsPrimary() == 'Y')
-                    departmentList.add(0, employeeView.getDeptId());
+                employeeView.getDepartment().getName();
+                if (employeeView.getPrimary())
+                    departmentList.add(0, employeeView.getDepartment());
                 else
-                    departmentList.add(employeeView.getDeptId());
+                    departmentList.add(employeeView.getDepartment());
             }
         return departmentList;
     }

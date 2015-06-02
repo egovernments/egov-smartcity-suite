@@ -42,13 +42,13 @@ package org.egov.ptis.domain.entity.property;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.pims.commons.Designation;
 
 public class WorkflowBean {
 	private String actionName;
 	private String actionState;
-	private List<User> appoverUserList;
+	private List<AbstractUser> appoverUserList;
 	private Integer approverUserId;
 	private String comments;
 	private Integer departmentId;
@@ -88,11 +88,11 @@ public class WorkflowBean {
 		this.actionState = actionState;
 	}
 
-	public List<User> getAppoverUserList() {
+	public List<AbstractUser> getAppoverUserList() {
 		return appoverUserList;
 	}
 
-	public void setAppoverUserList(List<User> appoverUserList) {
+	public void setAppoverUserList(List<AbstractUser> appoverUserList) {
 		this.appoverUserList = appoverUserList;
 	}
 

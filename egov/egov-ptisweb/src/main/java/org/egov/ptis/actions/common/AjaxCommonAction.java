@@ -67,13 +67,14 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Functionary;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
@@ -130,7 +131,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private List<Boundary> streetList;
 	private List<PropertyUsage> propUsageList;
 	private List<Designation> designationMasterList = new ArrayList<Designation>();
-	private List<User> userList = new ArrayList<User>();
+	private List<AbstractUser> userList = new ArrayList<AbstractUser>();
 	private List<Category> categoryList;
 	private List<StructureClassification> structuralClassifications;
 	private String returnStream = "";
@@ -213,7 +214,7 @@ public class AjaxCommonAction extends BaseFormAction {
 			eisService.setPersistenceService(persistenceService);
 			List<EmployeeView> empInfoList = eisService.getEmployeeInfoList(paramMap);
 			for (EmployeeView employeeView : empInfoList) {
-				userList.add(employeeView.getUserMaster());
+				userList.add((AbstractUser)employeeView.getEmployee());
 			}
 		}
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : "
@@ -451,7 +452,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		this.designationId = designationId;
 	}
 
-	public List<User> getUserList() {
+	public List<AbstractUser> getUserList() {
 		return userList;
 	}
 

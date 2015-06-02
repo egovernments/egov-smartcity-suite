@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
@@ -55,7 +56,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeNamePoJo;
-import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.GenericMaster;
 import org.egov.pims.model.GradeMaster;
 import org.egov.pims.model.LangKnown;
