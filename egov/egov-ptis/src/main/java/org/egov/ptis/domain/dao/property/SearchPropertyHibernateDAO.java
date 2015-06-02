@@ -69,9 +69,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.objection.Objection;
@@ -116,7 +116,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	private BoundaryService boundaryService;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 

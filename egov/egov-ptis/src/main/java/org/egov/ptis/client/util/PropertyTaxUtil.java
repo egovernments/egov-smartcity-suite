@@ -174,9 +174,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
@@ -248,7 +248,7 @@ public class PropertyTaxUtil {
 	private AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private static ModuleDao moduleDao;
+	private static ModuleService moduleDao;
 	@Autowired
 	private static InstallmentDao installmentDao;
 	@Autowired

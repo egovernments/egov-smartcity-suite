@@ -196,7 +196,7 @@ public class Installment implements Comparable<Installment> {
 		if (installmentNumber == 0)
 			throw new EGOVRuntimeException("Installment Number cannot be zero in a installemnt.");
 
-		return module.validate();
+		return true;
 	}
 
 	public boolean equals(Object obj) {

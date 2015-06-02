@@ -84,7 +84,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
@@ -111,7 +111,7 @@ public class PropertyInfo {
 	private final PropertyImpl property;
 	private TaxCalculationInfo taxCalInfo;
 	private String noticeNo;
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	// Total Tax payable for Current Installment
 	// private BigDecimal totalTax;
 
@@ -170,7 +170,7 @@ public class PropertyInfo {
 								+ "WHERE drd.ID_DEMAND_REASON=dr.ID "
 								+ "AND dr.ID_DEMAND_REASON_MASTER=drm.ID " + "AND drm.code = ? "
 								+ "AND drm.module_id = ?").setString(0, demandReasonCode)
-				.setInteger(1, ptModule.getId()).list();
+				.setLong(1, ptModule.getId()).list();
 		String dateString = minEffDate.get(0).toString();
 		int len = dateString.length();
 		String dateInmmDDyyyy = dateString.substring(len - 2, len).concat("/")

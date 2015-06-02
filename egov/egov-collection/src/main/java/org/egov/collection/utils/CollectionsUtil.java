@@ -60,10 +60,10 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.infstr.commons.dao.ModuleHibDao;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.models.Script;
@@ -90,7 +90,7 @@ public class CollectionsUtil {
 	private CommonsService commonsService;
 	private PersistenceService<Script, Long> scriptService;
 	@Autowired
-	private ModuleHibDao moduleDAO;
+	private ModuleService moduleService;
 	@Autowired
 	private AppConfigValuesHibernateDAO appConfigValuesDAO;
 	@Autowired
@@ -585,7 +585,7 @@ public class CollectionsUtil {
 		boolean retValue = false;
 		LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
 		if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
-			Module module = moduleDAO.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
+			Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
 			String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date()).getDescription();
 			if (currInst.equals(description.substring(16, description.length()))) {
 				retValue = false;

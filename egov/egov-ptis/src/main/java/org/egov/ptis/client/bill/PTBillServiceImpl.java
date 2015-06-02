@@ -71,7 +71,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -90,7 +90,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 	DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private PtDemandDao PtDemandDAO;
 

@@ -29,8 +29,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-//import org.egov.infstr.commons.dao.GenericDaoFactory;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class BpaDmdCollExtnService {
 	// private PersistenceService persistenceService;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 
@@ -333,7 +332,7 @@ public class BpaDmdCollExtnService {
 	}
 
 	/**
-	 * @return Installment..added ModuleDao changes
+	 * @return Installment..added ModuleService changes
 	 */
 	public Installment getCurrentInstallment() {
 		Installment installment = null;
@@ -350,7 +349,7 @@ public class BpaDmdCollExtnService {
 	 *         does not exist, its generated dynamically and then returned)
 	 */
 	public EgDemandReason getEgDemandReason(BpaFeeExtn bpaFee) {
-		ModuleDao moduleDao = null;
+		ModuleService moduleDao = null;
 		// GenericDaoFactory.getDAOFactory().getModuleDao();
 		Module module = null;
 		// moduleDao.getModuleByName(BPAMODULENAME);
@@ -392,7 +391,7 @@ public class BpaDmdCollExtnService {
 	 */
 	public EgDemandReasonMaster createEgDemandReasonMaster(BpaFeeExtn bpaFee) {
 		EgDemandReasonMaster egDmdRsnMstr = null;
-		ModuleDao moduleDao = null;
+		ModuleService moduleDao = null;
 		// GenericDaoFactory.getDAOFactory().getModuleDao();
 		Module module = null;
 		// moduleDao.getModuleByName(BPAMODULENAME);

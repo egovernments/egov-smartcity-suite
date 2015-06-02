@@ -74,9 +74,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
@@ -110,7 +110,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	private EgDemandDao demandDao;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	@Qualifier(value = "propertyDAO")
 	private PropertyDAO propertyDao;

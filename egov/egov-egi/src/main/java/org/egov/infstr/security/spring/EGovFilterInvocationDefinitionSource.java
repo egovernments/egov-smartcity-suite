@@ -47,7 +47,7 @@ import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.lib.rrbac.dao.ActionHibernateDAO;
+import org.egov.lib.rrbac.dao.ActionDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +70,10 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 	private static final Logger LOG = LoggerFactory.getLogger(EGovFilterInvocationDefinitionSource.class);
 	private List<String> excludePatterns = new ArrayList<String>();
 	
-	private ActionHibernateDAO actionDao;
+	private ActionDAO actionDao;
 	
 
-	public void setActionDao(ActionHibernateDAO actionDao) {
+	public void setActionDao(ActionDAO actionDao) {
 		this.actionDao = actionDao;
 	}
 

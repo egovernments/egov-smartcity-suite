@@ -105,8 +105,8 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -156,7 +156,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	protected EisCommonsService eisCommonsService;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

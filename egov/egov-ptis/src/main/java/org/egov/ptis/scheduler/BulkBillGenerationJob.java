@@ -48,9 +48,9 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
@@ -81,7 +81,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 	protected PersistenceService persistenceService;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDao;
 

@@ -56,8 +56,8 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class BpaBillableExtn  extends AbstractBillable  {
 	private RegistrationExtn registration;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	private BpaCommonExtnService bpaCommonExtnService;	
 	@Autowired
 	@Qualifier(value = "egBillDAO")

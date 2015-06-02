@@ -65,10 +65,10 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.PropertyBillInfo;
@@ -103,7 +103,7 @@ public class BillService {
 	InputStream billPDF;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 	@Autowired

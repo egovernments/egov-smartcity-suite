@@ -45,7 +45,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 
 public class PtNotice implements java.io.Serializable {
 	private Long id;
-	private Integer moduleId;
+	private Long moduleId;
 	private String noticeType;
 	private String noticeNo;
 	private Date noticeDate;
@@ -53,7 +53,7 @@ public class PtNotice implements java.io.Serializable {
 	// private String objectNo;
 	// private String addressTo;
 	// private String address;
-	private Integer userId;
+	private Long userId;
 	// private File document;
 	private byte[] noticeFile;
 	private Character isBlob;
@@ -76,7 +76,7 @@ public class PtNotice implements java.io.Serializable {
 	/**
 	 * @return the moduleId
 	 */
-	public Integer getModuleId() {
+	public Long getModuleId() {
 		return moduleId;
 	}
 
@@ -84,7 +84,7 @@ public class PtNotice implements java.io.Serializable {
 	 * @param moduleId
 	 *            the moduleId to set
 	 */
-	public void setModuleId(Integer moduleId) {
+	public void setModuleId(Long moduleId) {
 		this.moduleId = moduleId;
 	}
 
@@ -136,7 +136,7 @@ public class PtNotice implements java.io.Serializable {
 	/**
 	 * @return the userId
 	 */
-	public Integer getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
@@ -144,7 +144,7 @@ public class PtNotice implements java.io.Serializable {
 	 * @param userId
 	 *            the userId to set
 	 */
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 

@@ -156,7 +156,7 @@ public class RuleInterceptorFilter implements Filter {
 			final String requestURI = StringUtils.remove(request.getRequestURI(), contextPath);
 			action = this.actionDao.findActionByURL(StringUtils.remove(contextPath, '/'), requestURI);
 		} else {
-			action = (Action) this.actionDao.findById(Integer.getInteger(actionId), false);
+			action = (Action) this.actionDao.findById(Integer.getInteger(actionId));
 		}
 		return action;
 	}

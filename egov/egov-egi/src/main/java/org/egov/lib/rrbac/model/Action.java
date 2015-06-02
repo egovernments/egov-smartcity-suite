@@ -58,7 +58,7 @@ public class Action implements Comparable<Action> {
 	private Module module;
 	private Integer orderNumber;
 	private String displayName;
-	private Integer isEnabled;
+	private boolean isEnabled;
 	private String helpURL;
 	private String contextRoot;
 
@@ -242,14 +242,14 @@ public class Action implements Comparable<Action> {
 	/**
 	 * @return Returns the isEnabled.
 	 */
-	public Integer getIsEnabled() {
+	public boolean getIsEnabled() {
 		return isEnabled;
 	}
 
 	/**
 	 * @param isEnabled The isEnabled to set.
 	 */
-	public void setIsEnabled(Integer isEnabled) {
+	public void setIsEnabled(boolean isEnabled) {
 		this.isEnabled = isEnabled;
 	}
 

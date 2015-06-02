@@ -48,13 +48,13 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.service.FavouritesService;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.MenuLink;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -76,7 +76,7 @@ public class HomeController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ModuleDao moduleDAO;
+    private ModuleService moduleService;
 
     @Autowired
     private FavouritesService favouritesService;
@@ -149,99 +149,99 @@ public class HomeController {
     }
 
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
-        modelData.addAttribute("menu", prepareApplicationMenu(moduleDAO.getModuleInfoForRoleIds(user.getRoles()), user));
+        modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
         modelData.addAttribute("cityName", session.getAttribute("cityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         return "home";
     }
 
-    private List<Module> getEmployeeSelfService(final List<Module> modules, final User user) {
-        return modules.parallelStream().filter(module -> module.getModuleName().equals("EmployeeSelfService"))
-                .findFirst().map(module -> moduleDAO.getApplicationModuleByParentId(module.getId(), user.getId()))
+    private List<MenuLink> getEmployeeSelfService(final List<MenuLink> menuLinks, final User user) {
+        return menuLinks.parallelStream().filter(menuLink -> menuLink.getName().equals("EmployeeSelfService"))
+                .findFirst().map(menuLink -> moduleService.getMenuLinksByParentModuleId(menuLink.getId(), user.getId()))
                 .orElse(Collections.emptyList());
 
     }
 
-    private String prepareApplicationMenu(final List<Module> modules, final User user) {
+    private String prepareApplicationMenu(final List<MenuLink> menuLinks, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
         menu.setTitle("Hi, " + user.getName());
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
-        final List<Module> favourites = moduleDAO.getUserFavourites(user.getId());
-        createApplicationMenu(modules, favourites, user, menu);
-        createSelfServiceMenu(getEmployeeSelfService(modules, user), menu);
+        final List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());
+        createApplicationMenu(menuLinks, favourites, user, menu);
+        createSelfServiceMenu(getEmployeeSelfService(menuLinks, user), menu);
         createFavouritesMenu(favourites, menu);
 
         return "[" + new GsonBuilder().create().toJson(menu) + "]";
     }
 
-    private void createApplicationMenu(final List<Module> modules, final List<Module> favourites, final User user,
+    private void createApplicationMenu(final List<MenuLink> menuLinks, final List<MenuLink> favourites, final User user,
             final Menu menu) {
         final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);", "fa fa-th floatLeft",
                 menu);
-        modules.stream()
-                .filter(module -> !module.getModuleName().equals("EmployeeSelfService"))
+        menuLinks.stream()
+                .filter(menuLink -> !menuLink.getName().equals("EmployeeSelfService"))
                 .forEach(
-                        module -> {
+                        menuLink -> {
                             createSubmenuRoot(
-                                    module,
+                                    menuLink,
                                     favourites,
                                     user,
-                                    createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
-                                            module.getModuleDescription(), "javascript:void(0);", "", applicationMenu));
+                                    createSubmenu(String.valueOf(menuLink.getId()), menuLink.getDisplayName(),
+                                            menuLink.getDisplayName(), "javascript:void(0);", "", applicationMenu));
                         });
     }
 
-    private void createFavouritesMenu(final List<Module> favourites, final Menu menu) {
+    private void createFavouritesMenu(final List<MenuLink> favourites, final Menu menu) {
         final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "javascript:void(0);",
                 "fa fa-briefcase floatLeft", menu);
         favourites.stream().forEach(favourite -> {
             final Menu appLinks = new Menu();
             appLinks.setId("fav-"+favourite.getId());
-            appLinks.setName(favourite.getModuleName());
-            appLinks.setLink("/" + favourite.getBaseUrl());
+            appLinks.setName(favourite.getName());
+            appLinks.setLink("/" + favourite.getUrl());
             appLinks.setIcon("fa fa-times-circle remove-favourite");
             favouritesMenu.getItems().add(appLinks);
         });
     }
 
-    private void createSelfServiceMenu(final List<Module> selfServices, final Menu menu) {
+    private void createSelfServiceMenu(final List<MenuLink> selfServices, final Menu menu) {
         final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "javascript:void(0);",
                 "fa fa-ellipsis-h floatLeft", menu);
         selfServices.stream().forEach(selfService -> {
             final Menu appLinks = new Menu();
-            appLinks.setName(selfService.getModuleName());
-            appLinks.setLink("/" + selfService.getContextRoot() + selfService.getBaseUrl());
+            appLinks.setName(selfService.getName());
+            appLinks.setLink("/" + selfService.getContextRoot() + selfService.getUrl());
             selfServiceMenu.getItems().add(appLinks);
 
         });
     }
 
-    private void createSubmenuRoot(final Module parentModule, final List<Module> favourites, final User user,
+    private void createSubmenuRoot(final MenuLink parentMenuLink, final List<MenuLink> favourites, final User user,
             final Menu submenu) {
-        final List<Module> submodules = moduleDAO.getApplicationModuleByParentId(parentModule.getId(), user.getId());
+        final List<MenuLink> submodules = moduleService.getMenuLinksByParentModuleId(parentMenuLink.getId(), user.getId());
         submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
     }
 
-    private void createApplicationLink(final Module submodule, final List<Module> favourites, final User user,
+    private void createApplicationLink(final MenuLink childMenuLink, final List<MenuLink> favourites, final User user,
             final Menu parent) {
-        if (submodule.getIsEnabled()) {
+        if (childMenuLink.isEnabled()) {
             final Menu appLink = new Menu();
-            appLink.setId(submodule.getId().toString());
+            appLink.setId(childMenuLink.getId().toString());
             appLink.setIcon("fa fa-star floatLeft "
-                    + (favourites.contains(submodule) ? "added-as-fav" : "add-to-favourites"));
-            appLink.setName(submodule.getModuleName());
-            appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
+                    + (favourites.contains(childMenuLink) ? "added-as-fav" : "add-to-favourites"));
+            appLink.setName(childMenuLink.getName());
+            appLink.setLink("/" + childMenuLink.getContextRoot() + childMenuLink.getUrl());
             parent.getItems().add(appLink);
         } else
             createSubmenuRoot(
-                    submodule,
+                    childMenuLink,
                     favourites,
                     user,
-                    createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
-                            submodule.getModuleName(), "javascript:void(0);", "", parent));
+                    createSubmenu(String.valueOf(childMenuLink.getId()), childMenuLink.getName(),
+                            childMenuLink.getName(), "javascript:void(0);", "", parent));
     }
 
     private Menu createSubmenu(final String id, final String name, final String title, final String link,

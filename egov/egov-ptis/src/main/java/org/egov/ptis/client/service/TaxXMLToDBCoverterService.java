@@ -100,7 +100,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
@@ -160,7 +160,7 @@ public class TaxXMLToDBCoverterService {
 			PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 

@@ -51,7 +51,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -63,7 +63,7 @@ public class PropertyTaxNumberGenerator {
 	private SequenceNumberGenerator sequenceNumberGenerator;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 

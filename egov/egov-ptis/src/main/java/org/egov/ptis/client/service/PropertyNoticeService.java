@@ -85,7 +85,7 @@ import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
 import org.egov.ptis.client.model.MiscellaneousTax;
@@ -120,7 +120,7 @@ public class PropertyNoticeService {
 	private Map<Date, String> occupancyAndPropertyType = new TreeMap<Date, String>();
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
 

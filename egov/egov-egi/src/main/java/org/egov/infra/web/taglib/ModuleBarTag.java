@@ -80,11 +80,11 @@ public class ModuleBarTag extends BodyTagSupport {
 			if (modules != null && modules.size() > 0) {
 				strBuf.append("<ul id=\"navmenu\" >");
 				for (final Module module : modules) {
-					if (module.getIsEnabled()) {
+					if (module.isEnabled()) {
 						strBuf.append("<li>");
 						// get module's base url
 						strBuf.append("<a href=\"").append("url").append("\" >");
-						strBuf.append(module.getModuleName()).append("</a>");
+						strBuf.append(module.getName()).append("</a>");
 						strBuf.append("</li>");
 					}
 				}

@@ -68,7 +68,7 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infra.admin.master.service.ModuleService;
 /*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.services.PersistenceService;
 /*import org.egov.infstr.workflow.WorkflowService;*/
@@ -94,7 +94,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 	private EgBillDao egBillDao;
 	@Autowired
 	@Qualifier(value = "moduleDAO")
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Override
 	public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);

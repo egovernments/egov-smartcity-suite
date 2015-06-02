@@ -122,7 +122,7 @@ public class ActionsBasedOnWorkFlowFilter implements Filter {
 			requestURI = StringUtils.remove(requestURI, contextPath);
 			action = actionDao.findActionByURL(StringUtils.remove(contextPath, '/'), requestURI);
 		} else {
-			action = (Action) actionDao.findById(Integer.getInteger(actionId), false);
+			action = (Action) actionDao.findById(Integer.getInteger(actionId));
 		}
 		return action;
 	}

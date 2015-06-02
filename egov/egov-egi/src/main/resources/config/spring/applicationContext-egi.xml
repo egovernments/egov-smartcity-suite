@@ -157,7 +157,7 @@
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
-	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" autowire="default">
+	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionDAO" scope="prototype" autowire="default">
 	</bean>
 
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">

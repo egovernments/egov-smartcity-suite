@@ -49,8 +49,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.notice.PtNotice;
@@ -63,7 +63,7 @@ public class NoticeService {
 	PersistenceService<BasicProperty, Long> basicPrpertyService;
 	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	@Autowired
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 
 	/**
 	 * This method populates the <code>PtNotice</code> object along with notice
@@ -84,7 +84,7 @@ public class NoticeService {
 		ptNotice.setNoticeDate(new Date());
 		ptNotice.setNoticeNo(noticeNo);
 		ptNotice.setNoticeType(noticeType);
-		ptNotice.setUserId(EgovThreadLocals.getUserId().intValue());
+		ptNotice.setUserId(EgovThreadLocals.getUserId());
 		ptNotice.setBasicProperty(basicProperty);
 		ptNotice.setIsBlob('Y');
 		try {

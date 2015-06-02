@@ -83,7 +83,7 @@ public class IfModuleEnabledTag extends BodyTagSupport {
 
 		if (module != null) {
 			// if module set as enabled display content of tag
-			if (module.getIsEnabled()) {
+			if (module.isEnabled()) {
 				return Tag.EVAL_BODY_INCLUDE;
 			}
 

@@ -64,6 +64,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
@@ -71,8 +72,6 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.commons.dao.ModuleHibDao;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.services.PersistenceService;
@@ -107,7 +106,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected EisCommonService eisCommonService;
 	protected ReportService reportService;
 	protected Integer reportId = -1;
-    protected ModuleHibDao moduleDAO;
+        protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	protected PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
@@ -115,7 +114,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected FinancialUtil financialUtil;
 	protected NoticeService noticeService;
 	private InstallmentDao instalDao;
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;
 	
@@ -344,8 +343,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.reportId = reportId;
 	}
 
-	public void setModuleDAO(ModuleHibDao moduleDAO) {
-		this.moduleDAO = moduleDAO;
+	public void setModuleService(ModuleService moduleService) {
+		this.moduleService = moduleService;
 	}
 
 	public void setPropertyTaxNumberGenerator(

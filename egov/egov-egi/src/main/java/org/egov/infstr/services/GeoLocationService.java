@@ -47,18 +47,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.management.MalformedObjectNameException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts2.ServletActionContext;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.GeoKmlInfo;
 import org.egov.infstr.models.GeoLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GeoLocationService {
 	

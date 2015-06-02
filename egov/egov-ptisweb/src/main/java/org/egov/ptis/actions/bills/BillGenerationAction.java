@@ -85,13 +85,13 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
@@ -149,7 +149,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private String wardNum;
 
 	@Autowired
-	private ModuleDao moduleDao;
+	private ModuleService moduleDao;
 
 	@Autowired
 	private InstallmentDao isntalDao;

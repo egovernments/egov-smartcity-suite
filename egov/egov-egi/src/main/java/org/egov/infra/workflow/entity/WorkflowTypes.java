@@ -54,7 +54,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Entity
 @Table(name="EG_WF_TYPES")
 @NamedQueries({
-    @NamedQuery(name="MODULE_FOR_TYPE",query="select wt.module.moduleName from WorkflowTypes wt where wt.type=?"),
+    @NamedQuery(name="MODULE_FOR_TYPE",query="select wt.module.name from WorkflowTypes wt where wt.type=?"),
     @NamedQuery(name="TYPE_FOR_NAME",query="select wt from WorkflowTypes wt where wt.displayName = ?"),
     @NamedQuery(name="TYPE_LIKE_NAME",query="select wt from WorkflowTypes wt where lower(wt.displayName) like ?")
 })

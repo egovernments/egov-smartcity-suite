@@ -72,7 +72,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.lib.rrbac.dao.ActionHibernateDAO;
+import org.egov.lib.rrbac.dao.ActionDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
@@ -156,7 +156,7 @@ public class SearchEstimateAction extends SearchFormAction {
     private String ward = "";
     private String loginUserDeptName = "";
     @Autowired
-    private ActionHibernateDAO rbacService;
+    private ActionDAO actionDao;
     private List<Role> roles = new ArrayList<Role>();
     private String milestoneStatus;
     private String status2;
@@ -606,7 +606,7 @@ public class SearchEstimateAction extends SearchFormAction {
             copyEstActionName = actionList.get(actionList.size() - 1);
 
             // get the roles for the Copy Estimate action
-            final Action copyEstaction = rbacService.findActionByName(copyEstActionName);
+            final Action copyEstaction = actionDao.findActionByName(copyEstActionName);
             copyEstActionRoles.addAll(copyEstaction.getRoles());
 
             // check if the userroles contains the copy estimate action roles

@@ -21,7 +21,7 @@
 		<property name="orderNumber" column="ORDER_NUMBER" type="integer" />
 		<property name="displayName" column="DISPLAY_NAME" type="string" />
 		<property name="helpURL" column="ACTION_HELP_URL" type="string" />
-		<property name="isEnabled" column="IS_ENABLED" type="integer" />
+		<property name="isEnabled" column="IS_ENABLED" type="boolean" />
 		<property name="contextRoot" column="CONTEXT_ROOT" type="string" />
 	</class>
 </hibernate-mapping>
