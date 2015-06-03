@@ -25,7 +25,6 @@ ALTER SEQUENCE SEQ_PGR_ESCALATION RENAME TO SEQ_EGPGR_ESCALATION;
 ALTER TABLE PGR_RECEIVING_CENTER RENAME TO EGPGR_RECEIVING_CENTER;
 ALTER SEQUENCE SEQ_PGR_RECEIVING_CENTER RENAME TO SEQ_EGPGR_RECEIVING_CENTER;
 
-ALTER TABLE EG_USER ADD COLUMN "version" numeric;
 alter table eg_user alter column "type" type varchar(50) USING ("type"::varchar);
 update eg_user set "type"='CITIZEN' where "type"='1';
 update eg_user set "type"='EMPLOYEE' where "type"='2';
