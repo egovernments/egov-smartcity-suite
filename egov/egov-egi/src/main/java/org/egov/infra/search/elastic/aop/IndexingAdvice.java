@@ -42,7 +42,7 @@ package org.egov.infra.search.elastic.aop;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.Persistable;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.search.domain.Document;
 import org.egov.search.service.IndexService;
@@ -66,7 +66,7 @@ public class IndexingAdvice {
     public void indexForSearch(final Indexing indexing, final Object retVal) {
         final JSONObject resourceJSON = new ResourceGenerator<>(retVal.getClass(), retVal).generate();
         final Document document = new Document(indexing.name().toString(), indexing.type().toString(),
-                ((AbstractPersistable<Long>) retVal).getId().toString(), resourceJSON);
+                ((Persistable<Long>) retVal).getId().toString(), resourceJSON);
         indexService.index(document);
     }
 

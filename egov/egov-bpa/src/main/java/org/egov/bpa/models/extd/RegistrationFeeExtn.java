@@ -53,6 +53,7 @@ public class RegistrationFeeExtn extends StateAware {
 	 * Serial version uid
 	 */
 	private static final long serialVersionUID = 1L;
+	private Long id;
 	private EgwStatus egwStatus;
 	private Boolean isRevised;
 	private Date feeDate;
@@ -172,5 +173,15 @@ public class RegistrationFeeExtn extends StateAware {
 
 		return this.registration.getStateDetails();
 	}
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

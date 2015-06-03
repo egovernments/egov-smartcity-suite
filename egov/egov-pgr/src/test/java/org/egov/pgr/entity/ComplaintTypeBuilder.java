@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 
@@ -84,13 +82,7 @@ public class ComplaintTypeBuilder {
     }
 
     public ComplaintTypeBuilder withId(final long id) {
-        try {
-            final Field idField = complaintType.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complaintType, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        complaintType.setId(id);
         return this;
     }
 

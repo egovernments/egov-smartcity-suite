@@ -57,7 +57,7 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class RegistrationUnit extends StateAware {
     private static final long serialVersionUID = 2095268643402349855L;
-    // private Long id;
+    private Long id;
     private String regUnitConst;
     private String regUnitDesc;
     private String regUnitDescLocal;
@@ -291,7 +291,16 @@ public class RegistrationUnit extends StateAware {
 
     @Override
     public String getStateDetails() {
-        // TODO Auto-generated method stub
-        return null;
+        return "TODO";
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }

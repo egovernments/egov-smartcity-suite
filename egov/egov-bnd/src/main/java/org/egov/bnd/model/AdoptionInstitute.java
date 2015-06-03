@@ -43,10 +43,8 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class AdoptionInstitute extends StateAware {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 4524895852946661475L;
+    private Long id;
     private String institutionName;
     private String institutionCode;
     private String remarks;
@@ -86,8 +84,17 @@ public class AdoptionInstitute extends StateAware {
 
     @Override
     public String getStateDetails() {
-        // TODO Auto-generated method stub
-        return null;
+        return "TODO";
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+       this.id = id;        
     }
 
 }

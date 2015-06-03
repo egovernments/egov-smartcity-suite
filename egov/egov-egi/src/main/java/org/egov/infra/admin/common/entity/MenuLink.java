@@ -1,4 +1,4 @@
-package org.egov.infra.admin.master.entity;
+package org.egov.infra.admin.common.entity;
 
 public class MenuLink {
     private Long id;

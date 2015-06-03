@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,100 +18,128 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.pgr.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Version;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-
 @Entity
-@Table(name = "pgr_complainant")
+@Table(name = "egpgr_complainant")
 @Searchable
-public class Complainant extends AbstractPersistable<Long> {
+@SequenceGenerator(name = Complainant.SEQ_COMPLAINANT, sequenceName = Complainant.SEQ_COMPLAINANT, allocationSize = 1)
+public class Complainant implements Serializable {
 
     private static final long serialVersionUID = 5691022600220045218L;
+    public static final String SEQ_COMPLAINANT = "SEQ_EGPGR_COMPLAINANT";
 
-    @Length(max=150)
+    @Id
+    @GeneratedValue(generator = SEQ_COMPLAINANT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Length(max = 150)
     @SafeHtml
     @Searchable
     private String name;
 
-    @Length(max=20)
+    @Length(max = 20)
     @SafeHtml
     @Pattern(regexp = Constants.MOBILE_NUM)
     @Searchable
     private String mobile;
 
-    @Length(max=100)
+    @Length(max = 100)
     @SafeHtml
-    @Email(regexp=Constants.EMAIL)
+    @Email(regexp = Constants.EMAIL)
     @Searchable
     private String email;
 
     @ManyToOne
     @Valid
-    @JoinColumn(name="userDetail",nullable = true)
+    @JoinColumn(name = "userDetail", nullable = true)
     private User userDetail;
 
+    @Version
+    private Long version;
+
+    public Long getId() {
+        return id;
+    }
+
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(final String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getMobile() {
-	return mobile;
+        return mobile;
     }
 
     public void setMobile(final String mobile) {
-	this.mobile = mobile;
+        this.mobile = mobile;
     }
 
     public String getEmail() {
-	return email;
+        return email;
     }
 
     public void setEmail(final String email) {
-	this.email = email;
+        this.email = email;
     }
 
     public User getUserDetail() {
-	return userDetail;
+        return userDetail;
     }
 
     public void setUserDetail(final User userDetail) {
-	this.userDetail = userDetail;
+        this.userDetail = userDetail;
     }
+
+    public Long getVersion() {
+        return version;
+    }
+
 }

@@ -45,6 +45,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,7 +53,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,8 +60,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.infra.persistence.entity.AbstractUser;
-import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -69,14 +68,10 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
-@SecondaryTable(name = "eg_user")
-public class Employee extends AbstractUser {
+@DiscriminatorValue("EMPLOYEE")
+public class Employee extends User {
 
     private static final long serialVersionUID = -1105585841211211215L;
-
-    public Employee() {
-        setType(UserType.EMPLOYEE);
-    }
 
     @NotNull
     @SafeHtml

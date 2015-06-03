@@ -48,6 +48,7 @@ import org.egov.infra.workflow.entity.StateAware;
 public class Registrar extends StateAware {
 
     private static final long serialVersionUID = 7499978741774084925L;
+    private Long id;
     private RegistrationUnit regUnitId;
     private Date startDate;
     private Date endDate;
@@ -114,6 +115,16 @@ public class Registrar extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return null;
+        return "TODO";
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }

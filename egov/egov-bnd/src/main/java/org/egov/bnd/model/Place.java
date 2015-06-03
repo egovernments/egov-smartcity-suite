@@ -48,6 +48,8 @@ public class Place extends StateAware {
     private PlaceType placeType; /* Can be either hospital, home or other */
     protected Address address = null;
 
+    private Long id;
+    
     public Place() {
         super();
         address = new Address();
@@ -85,7 +87,16 @@ public class Place extends StateAware {
 
     @Override
     public String getStateDetails() {
-        // TODO Auto-generated method stub
-        return null;
+        return "TODO";
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }

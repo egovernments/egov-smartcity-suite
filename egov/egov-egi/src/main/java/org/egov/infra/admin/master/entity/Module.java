@@ -39,44 +39,63 @@
  */
 package org.egov.infra.admin.master.entity;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.lib.rrbac.model.Action;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name="eg_module")
-public class Module extends AbstractPersistable<Long> {
+@Table(name = "eg_module")
+@SequenceGenerator(name = Module.SEQ_MODULE, sequenceName = Module.SEQ_MODULE, allocationSize = 1)
+public class Module implements Serializable {
 
     private static final long serialVersionUID = -632195454827894969L;
+    public static final String SEQ_MODULE = "SEQ_EG_MODULE";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_MODULE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String name;
+
     private boolean enabled;
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="parentModule")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentModule")
     private Module parentModule;
+
     private String displayName;
+
     private Integer orderNumber;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_action", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "module_id") )
     private Set<Action> actions = Collections.emptySet();
+
     private String contextRoot;
 
-    public String getContextRoot() {
-        return contextRoot;
+    public Long getId() {
+        return id;
     }
 
-    public void setContextRoot(final String contextRoot) {
-        this.contextRoot = contextRoot;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -91,7 +110,7 @@ public class Module extends AbstractPersistable<Long> {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -116,7 +135,7 @@ public class Module extends AbstractPersistable<Long> {
     }
 
     public void setOrderNumber(final Integer displayOrder) {
-        this.orderNumber = displayOrder;
+        orderNumber = displayOrder;
     }
 
     public Set<Action> getActions() {
@@ -125,5 +144,44 @@ public class Module extends AbstractPersistable<Long> {
 
     public void setActions(final Set<Action> actions) {
         this.actions = actions;
+    }
+
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
+    public void setContextRoot(final String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Module other = (Module) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 }

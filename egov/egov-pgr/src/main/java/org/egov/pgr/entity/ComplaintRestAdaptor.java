@@ -40,7 +40,6 @@
 package org.egov.pgr.entity;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

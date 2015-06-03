@@ -49,10 +49,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -69,196 +73,210 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name = "pgr_complaint")
+@Table(name = "egpgr_complaint")
+@SequenceGenerator(name = Complaint.SEQ_COMPLAINT, sequenceName = Complaint.SEQ_COMPLAINT, allocationSize = 1)
 public class Complaint extends StateAware {
 
-	private static final long serialVersionUID = 4020616083055647372L;
+    private static final long serialVersionUID = 4020616083055647372L;
+    public static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
 
-	@NotNull
-	@Column(name = "crn", unique = true)
-	@Searchable(name = "crn")
-	private String CRN = "";
+    @Id
+    @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne
-	@NotNull
-	@JoinColumn(name = "complaintType", nullable = false)
-	@Searchable
-	private ComplaintType complaintType;
+    @NotNull
+    @Column(name = "crn", unique = true)
+    @Searchable(name = "crn")
+    private String CRN = "";
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "complainant", nullable = false)
-	@Searchable(name = "citizen", group = Searchable.Group.COMMON)
-	private Complainant complainant = new Complainant();
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "complaintType", nullable = false)
+    @Searchable
+    private ComplaintType complaintType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "assignee")
-	private Position assignee;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "complainant", nullable = false)
+    @Searchable(name = "citizen", group = Searchable.Group.COMMON)
+    private Complainant complainant = new Complainant();
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "location", nullable = true)
-	@Searchable(name = "boundary", group = Searchable.Group.COMMON)
-	private Boundary location;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee")
+    private Position assignee;
 
-	@ManyToOne
-	@NotNull
-	@JoinColumn(name = "status")
-	@Searchable(group = Searchable.Group.CLAUSES)
-	private ComplaintStatus status = new ComplaintStatus();
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "location", nullable = true)
+    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
+    private Boundary location;
 
-	@Length(min = 10, max = 500)
-	@SafeHtml
-	@Searchable
-	private String details;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "status")
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private ComplaintStatus status = new ComplaintStatus();
 
-	@Length(max = 200)
-	@SafeHtml
-	@Searchable
-	private String landmarkDetails;
+    @Length(min = 10, max = 500)
+    @SafeHtml
+    @Searchable
+    private String details;
 
-	@Enumerated(EnumType.ORDINAL)
-	@NotNull
-	@Searchable(group = Searchable.Group.CLAUSES)
-	private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
+    @Length(max = 200)
+    @SafeHtml
+    @Searchable
+    private String landmarkDetails;
 
-	@ManyToOne
-	@JoinColumn(name = "receivingCenter", nullable = true)
-	private ReceivingCenter receivingCenter;
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-	@JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
-	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+    @ManyToOne
+    @JoinColumn(name = "receivingCenter", nullable = true)
+    private ReceivingCenter receivingCenter;
 
-	private double lng;
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid") , inverseJoinColumns = @JoinColumn(name = "complaintid") )
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
-	private double lat;
+    private double lng;
 
-	@Column(name = "escalation_date", nullable = false)
-	private Date escalationDate;
+    private double lat;
 
-	public DateTime getEscalationDate() {
-		return null == escalationDate ? null : new DateTime(escalationDate);
-	}
+    @Column(name = "escalation_date", nullable = false)
+    private Date escalationDate;
 
-	public void setEscalationDate(final DateTime escalationDate) {
-		this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getCRN() {
-		return CRN;
-	}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setCRN(final String cRN) {
-		CRN = cRN;
-	}
+    public String getCRN() {
+        return CRN;
+    }
 
-	@Override
-	public String myLinkId() {
-	  return CRN;	
-	
-	}
+    public void setCRN(final String cRN) {
+        CRN = cRN;
+    }
 
-	public ComplaintType getComplaintType() {
-		return complaintType;
-	}
+    @Override
+    public String myLinkId() {
+        return CRN;
 
-	public void setComplaintType(final ComplaintType complaintType) {
-		this.complaintType = complaintType;
-	}
+    }
 
-	public Complainant getComplainant() {
-		return complainant;
-	}
+    public ComplaintType getComplaintType() {
+        return complaintType;
+    }
 
-	public void setComplainant(final Complainant complainant) {
-		this.complainant = complainant;
-	}
+    public void setComplaintType(final ComplaintType complaintType) {
+        this.complaintType = complaintType;
+    }
 
-	public Position getAssignee() {
-		return assignee;
-	}
+    public Complainant getComplainant() {
+        return complainant;
+    }
 
-	public void setAssignee(final Position assignee) {
-		this.assignee = assignee;
-	}
+    public void setComplainant(final Complainant complainant) {
+        this.complainant = complainant;
+    }
 
-	public ComplaintStatus getStatus() {
-		return status;
-	}
+    public Position getAssignee() {
+        return assignee;
+    }
 
-	public void setStatus(final ComplaintStatus status) {
-		this.status = status;
-	}
+    public void setAssignee(final Position assignee) {
+        this.assignee = assignee;
+    }
 
-	public String getDetails() {
-		return details;
-	}
+    public ComplaintStatus getStatus() {
+        return status;
+    }
 
-	public void setDetails(final String details) {
-		this.details = details;
-	}
+    public void setStatus(final ComplaintStatus status) {
+        this.status = status;
+    }
 
-	public ReceivingMode getReceivingMode() {
-		return receivingMode;
-	}
+    public String getDetails() {
+        return details;
+    }
 
-	public void setReceivingMode(final ReceivingMode receivingMode) {
-		this.receivingMode = receivingMode;
-	}
+    public void setDetails(final String details) {
+        this.details = details;
+    }
 
-	public ReceivingCenter getReceivingCenter() {
-		return receivingCenter;
-	}
+    public ReceivingMode getReceivingMode() {
+        return receivingMode;
+    }
 
-	public void setReceivingCenter(final ReceivingCenter receivingCenter) {
-		this.receivingCenter = receivingCenter;
-	}
+    public void setReceivingMode(final ReceivingMode receivingMode) {
+        this.receivingMode = receivingMode;
+    }
 
-	public Set<FileStoreMapper> getSupportDocs() {
-		return supportDocs;
-	}
+    public ReceivingCenter getReceivingCenter() {
+        return receivingCenter;
+    }
 
-	public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
-		this.supportDocs = supportDocs;
-	}
+    public void setReceivingCenter(final ReceivingCenter receivingCenter) {
+        this.receivingCenter = receivingCenter;
+    }
 
-	public Boundary getLocation() {
-		return location;
-	}
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
+    }
 
-	public void setLocation(final Boundary location) {
-		this.location = location;
-	}
+    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
+    }
 
-	public String getLandmarkDetails() {
-		return landmarkDetails;
-	}
+    public Boundary getLocation() {
+        return location;
+    }
 
-	public void setLandmarkDetails(final String landmarkDetails) {
-		this.landmarkDetails = landmarkDetails;
-	}
+    public void setLocation(final Boundary location) {
+        this.location = location;
+    }
 
-	public double getLat() {
-		return lat;
-	}
+    public String getLandmarkDetails() {
+        return landmarkDetails;
+    }
 
-	public void setLat(final double lat) {
-		this.lat = lat;
-	}
+    public void setLandmarkDetails(final String landmarkDetails) {
+        this.landmarkDetails = landmarkDetails;
+    }
 
-	public double getLng() {
-		return lng;
-	}
+    public double getLat() {
+        return lat;
+    }
 
-	public void setLng(final double lng) {
-		this.lng = lng;
-	}
+    public void setLat(final double lat) {
+        this.lat = lat;
+    }
 
-	@Override
-	public String getStateDetails() {
-		final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
-		return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCRN(),
-				getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
-	}
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(final double lng) {
+        this.lng = lng;
+    }
+
+    public DateTime getEscalationDate() {
+        return null == escalationDate ? null : new DateTime(escalationDate);
+    }
+
+    public void setEscalationDate(final DateTime escalationDate) {
+        this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
+    }
+
+    @Override
+    public String getStateDetails() {
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCRN(),
+                getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
+    }
 
 }

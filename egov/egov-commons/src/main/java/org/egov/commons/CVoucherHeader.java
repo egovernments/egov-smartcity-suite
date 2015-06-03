@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -46,392 +46,435 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.annotation.Search;
+import org.hibernate.search.annotations.DocumentId;
+
 @Entity
-@Table(name="VOUCHERHEADER")
+@Table(name = "VOUCHERHEADER")
+@SequenceGenerator(name = CVoucherHeader.SEQ_VOUCHERHEADER, sequenceName = CVoucherHeader.SEQ_VOUCHERHEADER, allocationSize = 1)
 public class CVoucherHeader extends StateAware {
-	private static final long serialVersionUID = 1L;
 
-	private String cgn;
-	private Date cgDate;
-	private String name;
-	private String type;
-	private String description;
-	@NotNull
-	private Date effectiveDate;
-	private String voucherNumber;
-	private Date voucherDate;
-	private Integer departmentId;
-	@ManyToOne
-	private Fund fundId;
-	private Integer fiscalPeriodId;
-	private Integer status;
-	private Long originalvcId;
-	@ManyToOne
-	private Fundsource fundsourceId;
-	private Integer isConfirmed;
-	private Integer functionId;
-	private String refcgNo;
-	private String cgvn;
-	private Integer moduleId;
-	private String voucherSubType;
-	private Boolean isRestrictedtoOneFunctionCenter;
-	@OneToMany(cascade=CascadeType.ALL,orphanRemoval = true)
-	private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(referencedColumnName="voucherheaderid")
-	private Vouchermis vouchermis;
+    private static final long serialVersionUID = -1950866465902911747L;
+    public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";
 
-	/**
-	 * @return Returns the cgn.
-	 */
-	public String getCgn() {
-		return cgn;
-	}
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_VOUCHERHEADER, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	/**
-	 * @param cgn The cgn to set.
-	 */
-	public void setCgn(String cgn) {
-		this.cgn = cgn;
-	}
+    private String cgn;
+    private Date cgDate;
+    private String name;
+    private String type;
+    private String description;
+    @NotNull
+    private Date effectiveDate;
+    private String voucherNumber;
+    private Date voucherDate;
+    private Integer departmentId;
+    @ManyToOne
+    private Fund fundId;
+    private Integer fiscalPeriodId;
+    private Integer status;
+    private Long originalvcId;
+    @ManyToOne
+    private Fundsource fundsourceId;
+    private Integer isConfirmed;
+    private Integer functionId;
+    private String refcgNo;
+    private String cgvn;
+    private Integer moduleId;
+    private String voucherSubType;
+    private Boolean isRestrictedtoOneFunctionCenter;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "voucherheaderid")
+    private Vouchermis vouchermis;
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName() {
-		return name;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return Returns the cgDate.
-	 */
-	public Date getCgDate() {
-		return cgDate;
-	}
+    /**
+     * @return Returns the cgn.
+     */
+    public String getCgn() {
+        return cgn;
+    }
 
-	/**
-	 * @param cgDate The cgDate to set.
-	 */
-	public void setCgDate(Date cgDate) {
-		this.cgDate = cgDate;
-	}
+    /**
+     * @param cgn
+     *            The cgn to set.
+     */
+    public void setCgn(final String cgn) {
+        this.cgn = cgn;
+    }
 
-	/**
-	 * @return Returns the Type.
-	 */
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
 
-	public String getType() {
-		return type;
-	}
+    /**
+     * @param name
+     *            The name to set.
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param type The type to set.
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * @return Returns the cgDate.
+     */
+    public Date getCgDate() {
+        return cgDate;
+    }
 
-	/**
-	 * @return Returns the Description.
-	 */
+    /**
+     * @param cgDate
+     *            The cgDate to set.
+     */
+    public void setCgDate(final Date cgDate) {
+        this.cgDate = cgDate;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * @return Returns the Type.
+     */
 
-	/**
-	 * @param Description The Description to set.
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * @return Returns the effectiveDate.
-	 */
+    /**
+     * @param type
+     *            The type to set.
+     */
+    public void setType(final String type) {
+        this.type = type;
+    }
 
-	public Date getEffectiveDate() {
-		return effectiveDate;
-	}
+    /**
+     * @return Returns the Description.
+     */
 
-	/**
-	 * @param effectiveDate The effectiveDate to set.
-	 */
-	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * @return Returns the voucherDate.
-	 */
-	@Search(searchOp = Search.Operator.between)
-	public Date getVoucherDate() {
-		return voucherDate;
-	}
+    /**
+     * @param Description
+     *            The Description to set.
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	/**
-	 * @param voucherDate The voucherDate to set.
-	 */
-	public void setVoucherDate(Date voucherDate) {
-		this.voucherDate = voucherDate;
-	}
+    /**
+     * @return Returns the effectiveDate.
+     */
 
-	/**
-	 * @return Returns the voucherNumber.
-	 */
-	@Search(searchOp = Search.Operator.contains)
-	public String getVoucherNumber() {
-		return voucherNumber;
-	}
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
 
-	/**
-	 * @param voucherNumber The voucherNumber to set.
-	 */
-	public void setVoucherNumber(String voucherNumber) {
-		this.voucherNumber = voucherNumber;
-	}
+    /**
+     * @param effectiveDate
+     *            The effectiveDate to set.
+     */
+    public void setEffectiveDate(final Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
 
-	/**
-	 * @return Returns the departmentId.
-	 */
+    /**
+     * @return Returns the voucherDate.
+     */
+    @Search(searchOp = Search.Operator.between)
+    public Date getVoucherDate() {
+        return voucherDate;
+    }
 
-	public Integer getDepartmentId() {
-		return departmentId;
-	}
+    /**
+     * @param voucherDate
+     *            The voucherDate to set.
+     */
+    public void setVoucherDate(final Date voucherDate) {
+        this.voucherDate = voucherDate;
+    }
 
-	/**
-	 * @param departmentId The departmentId to set.
-	 */
-	public void setDepartmentId(Integer departmentId) {
-		this.departmentId = departmentId;
-	}
+    /**
+     * @return Returns the voucherNumber.
+     */
+    @Search(searchOp = Search.Operator.contains)
+    public String getVoucherNumber() {
+        return voucherNumber;
+    }
 
-	/**
-	 * @return Returns the fundId.
-	 */
+    /**
+     * @param voucherNumber
+     *            The voucherNumber to set.
+     */
+    public void setVoucherNumber(final String voucherNumber) {
+        this.voucherNumber = voucherNumber;
+    }
 
-	public Fund getFundId() {
-		return fundId;
-	}
+    /**
+     * @return Returns the departmentId.
+     */
 
-	/**
-	 * @param fundId The fundId to set.
-	 */
-	public void setFundId(Fund fundId) {
-		this.fundId = fundId;
-	}
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
 
-	/**
-	 * @return Returns the fiscalPeriodId.
-	 */
+    /**
+     * @param departmentId
+     *            The departmentId to set.
+     */
+    public void setDepartmentId(final Integer departmentId) {
+        this.departmentId = departmentId;
+    }
 
-	public Integer getFiscalPeriodId() {
-		return fiscalPeriodId;
-	}
+    /**
+     * @return Returns the fundId.
+     */
 
-	/**
-	 * @param fiscalPeriodId The fiscalPeriodId to set.
-	 */
-	public void setFiscalPeriodId(Integer fiscalPeriodId) {
-		this.fiscalPeriodId = fiscalPeriodId;
-	}
+    public Fund getFundId() {
+        return fundId;
+    }
 
-	/**
-	 * @return Returns the status.
-	 */
+    /**
+     * @param fundId
+     *            The fundId to set.
+     */
+    public void setFundId(final Fund fundId) {
+        this.fundId = fundId;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    /**
+     * @return Returns the fiscalPeriodId.
+     */
 
-	/**
-	 * @param status The status to set.
-	 */
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public Integer getFiscalPeriodId() {
+        return fiscalPeriodId;
+    }
 
-	/**
-	 * @return Returns the originalvcId.
-	 */
-	public Long getOriginalvcId() {
-		return originalvcId;
-	}
+    /**
+     * @param fiscalPeriodId
+     *            The fiscalPeriodId to set.
+     */
+    public void setFiscalPeriodId(final Integer fiscalPeriodId) {
+        this.fiscalPeriodId = fiscalPeriodId;
+    }
 
-	/**
-	 * @param originalvcId The originalvcId to set.
-	 */
-	public void setOriginalvcId(Long originalvcId) {
-		this.originalvcId = originalvcId;
-	}
+    /**
+     * @return Returns the status.
+     */
 
-	/**
-	 * @return Returns the fundsourceId.
-	 */
+    public Integer getStatus() {
+        return status;
+    }
 
-	public Fundsource getFundsourceId() {
-		return fundsourceId;
-	}
+    /**
+     * @param status
+     *            The status to set.
+     */
+    public void setStatus(final Integer status) {
+        this.status = status;
+    }
 
-	/**
-	 * @param fundsourceId The fundsourceId to set.
-	 */
-	public void setFundsourceId(Fundsource fundsourceId) {
-		this.fundsourceId = fundsourceId;
-	}
+    /**
+     * @return Returns the originalvcId.
+     */
+    public Long getOriginalvcId() {
+        return originalvcId;
+    }
 
-	/**
-	 * @return Returns the isConfirmed.
-	 */
+    /**
+     * @param originalvcId
+     *            The originalvcId to set.
+     */
+    public void setOriginalvcId(final Long originalvcId) {
+        this.originalvcId = originalvcId;
+    }
 
-	public Integer getIsConfirmed() {
-		return isConfirmed;
-	}
+    /**
+     * @return Returns the fundsourceId.
+     */
 
-	/**
-	 * @param isConfirmed The isConfirmed to set.
-	 */
-	public void setIsConfirmed(Integer isConfirmed) {
-		this.isConfirmed = isConfirmed;
-	}
+    public Fundsource getFundsourceId() {
+        return fundsourceId;
+    }
 
-	/**
-	 * @return Returns the functionId.
-	 */
+    /**
+     * @param fundsourceId
+     *            The fundsourceId to set.
+     */
+    public void setFundsourceId(final Fundsource fundsourceId) {
+        this.fundsourceId = fundsourceId;
+    }
 
-	public Integer getFunctionId() {
-		return functionId;
-	}
+    /**
+     * @return Returns the isConfirmed.
+     */
 
-	/**
-	 * @param functionId The functionId to set.
-	 */
-	public void setFunctionId(Integer functionId) {
-		this.functionId = functionId;
-	}
+    public Integer getIsConfirmed() {
+        return isConfirmed;
+    }
 
-	/**
-	 * @return Returns the refcgNo.
-	 */
+    /**
+     * @param isConfirmed
+     *            The isConfirmed to set.
+     */
+    public void setIsConfirmed(final Integer isConfirmed) {
+        this.isConfirmed = isConfirmed;
+    }
 
-	public String getRefcgNo() {
-		return refcgNo;
-	}
+    /**
+     * @return Returns the functionId.
+     */
 
-	/**
-	 * @param refcgNo The refcgNo to set.
-	 */
-	public void setRefcgNo(String refcgNo) {
-		this.refcgNo = refcgNo;
-	}
+    public Integer getFunctionId() {
+        return functionId;
+    }
 
-	/**
-	 * @return Returns the cgvn.
-	 */
+    /**
+     * @param functionId
+     *            The functionId to set.
+     */
+    public void setFunctionId(final Integer functionId) {
+        this.functionId = functionId;
+    }
 
-	public String getCgvn() {
-		return cgvn;
-	}
+    /**
+     * @return Returns the refcgNo.
+     */
 
-	/**
-	 * @param cgvn The cgvn to set.
-	 */
-	public void setCgvn(String cgvn) {
-		this.cgvn = cgvn;
-	}
+    public String getRefcgNo() {
+        return refcgNo;
+    }
 
-	public Integer getModuleId() {
-		return moduleId;
-	}
+    /**
+     * @param refcgNo
+     *            The refcgNo to set.
+     */
+    public void setRefcgNo(final String refcgNo) {
+        this.refcgNo = refcgNo;
+    }
 
-	public void setModuleId(Integer moduleId) {
-		this.moduleId = moduleId;
-	}
+    /**
+     * @return Returns the cgvn.
+     */
 
-	@Override
-	public String getStateDetails() {
-		return voucherNumber;
-	}
+    public String getCgvn() {
+        return cgvn;
+    }
 
-	public Set<VoucherDetail> getVoucherDetail() {
-		return voucherDetail;
-	}
+    /**
+     * @param cgvn
+     *            The cgvn to set.
+     */
+    public void setCgvn(final String cgvn) {
+        this.cgvn = cgvn;
+    }
 
-	public void setVoucherDetail(Set<VoucherDetail> voucherDetail) {
-		this.voucherDetail = voucherDetail;
-	}
+    public Integer getModuleId() {
+        return moduleId;
+    }
 
-	public void addVoucherDetail(VoucherDetail voucherdetail) {
-		getVoucherDetail().add(voucherdetail);
-	}
+    public void setModuleId(final Integer moduleId) {
+        this.moduleId = moduleId;
+    }
 
-	public Vouchermis getVouchermis() {
-		return vouchermis;
-	}
+    @Override
+    public String getStateDetails() {
+        return voucherNumber;
+    }
 
-	public void setVouchermis(Vouchermis vouchermis) {
-		this.vouchermis = vouchermis;
-	}
+    public Set<VoucherDetail> getVoucherDetail() {
+        return voucherDetail;
+    }
 
-	public void reset() {
+    public void setVoucherDetail(final Set<VoucherDetail> voucherDetail) {
+        this.voucherDetail = voucherDetail;
+    }
 
-		this.cgn = null;
-		this.cgDate = null;
-		this.name = null;
-		this.type = null;
-		this.description = null;
-		this.effectiveDate = null;
-		this.voucherNumber = null;
-		this.voucherDate = null;
-		this.departmentId = null;
-		this.fundId = null;
-		this.fiscalPeriodId = null;
-		this.status = null;
-		this.originalvcId = null;
-		this.fundsourceId = null;
-		this.isConfirmed = null;
-		this.functionId = null;
-		this.refcgNo = null;
-		this.cgvn = null;
-		this.moduleId = null;
-		this.vouchermis = null;
+    public void addVoucherDetail(final VoucherDetail voucherdetail) {
+        getVoucherDetail().add(voucherdetail);
+    }
 
-	}
+    public Vouchermis getVouchermis() {
+        return vouchermis;
+    }
 
-	public BigDecimal getTotalAmount() {
-		BigDecimal amount = BigDecimal.ZERO;
-		for (VoucherDetail detail : voucherDetail) {
-			amount = amount.add(detail.getDebitAmount());
-		}
-		return amount;
-	}
-	public Boolean getIsRestrictedtoOneFunctionCenter() {
-		return isRestrictedtoOneFunctionCenter;
-	}
-	public void setIsRestrictedtoOneFunctionCenter(
-			Boolean isRestrictedtoOneFunctionCenter) {
-		this.isRestrictedtoOneFunctionCenter = isRestrictedtoOneFunctionCenter;
-	}
-	public String getVoucherSubType() {
-		return voucherSubType;
-	}
-	public void setVoucherSubType(String voucherSubType) {
-		this.voucherSubType = voucherSubType;
-	}
+    public void setVouchermis(final Vouchermis vouchermis) {
+        this.vouchermis = vouchermis;
+    }
+
+    public void reset() {
+
+        cgn = null;
+        cgDate = null;
+        name = null;
+        type = null;
+        description = null;
+        effectiveDate = null;
+        voucherNumber = null;
+        voucherDate = null;
+        departmentId = null;
+        fundId = null;
+        fiscalPeriodId = null;
+        status = null;
+        originalvcId = null;
+        fundsourceId = null;
+        isConfirmed = null;
+        functionId = null;
+        refcgNo = null;
+        cgvn = null;
+        moduleId = null;
+        vouchermis = null;
+
+    }
+
+    public BigDecimal getTotalAmount() {
+        BigDecimal amount = BigDecimal.ZERO;
+        for (final VoucherDetail detail : voucherDetail)
+            amount = amount.add(detail.getDebitAmount());
+        return amount;
+    }
+
+    public Boolean getIsRestrictedtoOneFunctionCenter() {
+        return isRestrictedtoOneFunctionCenter;
+    }
+
+    public void setIsRestrictedtoOneFunctionCenter(final Boolean isRestrictedtoOneFunctionCenter) {
+        this.isRestrictedtoOneFunctionCenter = isRestrictedtoOneFunctionCenter;
+    }
+
+    public String getVoucherSubType() {
+        return voucherSubType;
+    }
+
+    public void setVoucherSubType(final String voucherSubType) {
+        this.voucherSubType = voucherSubType;
+    }
+
 }

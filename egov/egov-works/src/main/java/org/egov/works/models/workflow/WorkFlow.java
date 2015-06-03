@@ -44,6 +44,7 @@ import org.egov.infra.workflow.entity.StateAware;
 public class WorkFlow extends StateAware {
 
     private static final long serialVersionUID = 4799841800672396517L;
+    private Long id;
     private Long workflowDepartmentId;
     private Integer workflowDesignationId;
     private Integer workflowApproverUserId;
@@ -102,5 +103,15 @@ public class WorkFlow extends StateAware {
 
     public void setWorkflowFunctionaryId(final Integer workflowFunctionaryId) {
         this.workflowFunctionaryId = workflowFunctionaryId;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }

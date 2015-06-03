@@ -71,6 +71,7 @@ public class RegistrationExtn extends StateAware {
 	 * Serial version uid
 	 */
 	private static final long serialVersionUID = 1L;
+	private Long id;
 	//private Surveyor surveyorName;
 	private String baNum;
 	private Date baOrderDate;
@@ -804,5 +805,15 @@ private Long ApproverPositionId;
 	public void removeDocumenthistorySet(DocumentHistoryExtn documenthistory) {
 		this.getDocumenthistorySet().remove(documenthistory);
 	}
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 	
 }

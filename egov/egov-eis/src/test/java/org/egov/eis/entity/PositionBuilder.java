@@ -39,8 +39,6 @@
  */
 package org.egov.eis.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.pims.commons.Position;
 import org.junit.Ignore;
 
@@ -66,13 +64,7 @@ public class PositionBuilder {
     }
 
     public PositionBuilder withId(final Long id) {
-        try {
-            final Field idField = position.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(position, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        position.setId(id);
         return this;
     }
 }

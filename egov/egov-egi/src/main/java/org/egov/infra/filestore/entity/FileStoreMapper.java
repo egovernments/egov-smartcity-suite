@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,55 +18,81 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.infra.filestore.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Version;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.Persistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
 
 @Table(name = "eg_filestoremap")
 @Entity
-public class FileStoreMapper extends AbstractPersistable<Long> {
+@SequenceGenerator(name = FileStoreMapper.SEQ_FILESTOREMAPPER, sequenceName = FileStoreMapper.SEQ_FILESTOREMAPPER, allocationSize = 1)
+public class FileStoreMapper implements Persistable<Long> {
     private static final long serialVersionUID = -2997164207274266823L;
+    public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
 
-    @NotNull
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_FILESTOREMAPPER, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotBlank
     @Column(length = 36, unique = true, nullable = false)
     private String fileStoreId;
 
-    @NotNull
+    @NotBlank
     private String fileName;
 
     private String contentType;
-    
+
+    @Version
+    private Long version;
+
     protected FileStoreMapper() {
-        // For Hibernate
+        // For JPA
     }
 
     public FileStoreMapper(final String fileStoreId, final String fileName) {
         this.fileStoreId = fileStoreId;
         this.fileName = fileName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getFileStoreId() {
@@ -92,4 +118,9 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     public void setContentType(final String contentType) {
         this.contentType = contentType;
     }
+
+    public Long getVersion() {
+        return version;
+    }
+
 }

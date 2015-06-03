@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 public class ReceivingCenterBuilder {
 
     private final ReceivingCenter receivingCenter;
@@ -62,13 +60,7 @@ public class ReceivingCenterBuilder {
     }
 
     public ReceivingCenterBuilder withId(final long id) {
-        try {
-            final Field idField = receivingCenter.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(receivingCenter, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        receivingCenter.setId(id);
         return this;
     }
 

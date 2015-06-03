@@ -49,9 +49,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -60,18 +64,26 @@ import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.GradeMaster;
 import org.egov.pims.model.PersonalInformation;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egeis_assignment")
-public class Assignment extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = Assignment.SEQ_ASSIGNMENT, sequenceName = Assignment.SEQ_ASSIGNMENT, allocationSize = 1)
+public class Assignment extends AbstractAuditable {
 
     private static final long serialVersionUID = -2720951718725134740L;
+
+    public static final String SEQ_ASSIGNMENT = "SEQ_EGEIS_ASSIGNMENT";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_ASSIGNMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -125,8 +137,16 @@ public class Assignment extends AbstractAuditable<User, Long> {
     @Transient
     private final List<Long> hodDeptIds = new ArrayList<Long>();
 
-    @OneToMany(mappedBy = "assignment",orphanRemoval=true,fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<HeadOfDepartments> deptSet = new HashSet<HeadOfDepartments>(0);
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public List<Long> getHodDeptIds() {
         for (final HeadOfDepartments dep : deptSet)

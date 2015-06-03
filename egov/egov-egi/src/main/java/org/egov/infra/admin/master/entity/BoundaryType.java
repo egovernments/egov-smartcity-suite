@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -42,8 +42,12 @@ package org.egov.infra.admin.master.entity;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
@@ -51,17 +55,30 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
 @Searchable
-public class BoundaryType extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = BoundaryType.SEQ_BOUNDARY_TYPE, sequenceName = BoundaryType.SEQ_BOUNDARY_TYPE, allocationSize = 1)
+public class BoundaryType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7034114743461088247L;
+    private static final long serialVersionUID = 859229842367886336L;
+    public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
+
+    @Expose
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_BOUNDARY_TYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @NotBlank
-    @Searchable(name="name")
+    @Searchable(name = "name")
+    @SafeHtml
     private String name;
 
     @ManyToOne
@@ -76,15 +93,23 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     private BoundaryType parent;
 
     private Long hierarchy;
-    
+
+    @SafeHtml
     private String localName;
 
     @Transient
     private String parentName;
 
     @Transient
-    private Set childBoundaryTypes;
-    
+    private Set<BoundaryType> childBoundaryTypes;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -125,12 +150,12 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     public void setParentName(final String parentName) {
         this.parentName = parentName;
     }
-    
-    public Set getChildBoundaryTypes() {
+
+    public Set<BoundaryType> getChildBoundaryTypes() {
         return childBoundaryTypes;
     }
 
-    public void setChildBoundaryTypes(final Set childBoundaryTypes) {
+    public void setChildBoundaryTypes(final Set<BoundaryType> childBoundaryTypes) {
         this.childBoundaryTypes = childBoundaryTypes;
     }
 
@@ -138,12 +163,43 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
         boundaryType.setParent(this);
         childBoundaryTypes.add(boundaryType);
     }
-    
+
     public String getLocalName() {
         return localName;
     }
 
-    public void setLocalName(String localName) {
+    public void setLocalName(final String localName) {
         this.localName = localName;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final BoundaryType other = (BoundaryType) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 }

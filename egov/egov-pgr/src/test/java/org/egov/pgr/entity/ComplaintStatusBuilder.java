@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 public class ComplaintStatusBuilder {
 
     private final ComplaintStatus complaintStatus;
@@ -55,13 +53,7 @@ public class ComplaintStatusBuilder {
     }
 
     public ComplaintStatusBuilder withId(final long id) {
-        try {
-            final Field idField = complaintStatus.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complaintStatus, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        complaintStatus.setId(id);
         return this;
     }
 

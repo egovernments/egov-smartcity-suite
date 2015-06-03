@@ -40,6 +40,5 @@
 package org.egov.infra.persistence.entity.enums;
 
 public enum UserType {
-    //This order should not be interrupted
-    SYSTEM, CITIZEN, EMPLOYEE;
+    CITIZEN, EMPLOYEE;
 }

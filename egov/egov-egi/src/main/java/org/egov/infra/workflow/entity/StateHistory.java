@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -61,14 +61,16 @@ import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
-@Table(name="eg_wf_state_history")
+@Table(name = "eg_wf_state_history")
+@SequenceGenerator(name = StateHistory.SEQ_STATEHISTORY, sequenceName = StateHistory.SEQ_STATEHISTORY, allocationSize = 1)
 public class StateHistory implements Serializable {
     private static final long serialVersionUID = -2286621991905578107L;
-    @Id
-    @SequenceGenerator(name="wf_state_his_seq", sequenceName="eg_wf_state_history_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="wf_state_his_seq")
-    private Long id;
+    public static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy")
     private User createdBy;
@@ -82,49 +84,49 @@ public class StateHistory implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
-    
-    @ManyToOne(fetch=FetchType.LAZY,optional=false)
-    @JoinColumn(name="state_id")
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "state_id")
     private State state;
-    
+
     @NotNull
     private String value;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="OWNER_POS")
+    @JoinColumn(name = "OWNER_POS")
     private Position ownerPosition;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="OWNER_USER")
+    @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
-    
+
     private String senderName;
     private String nextAction;
     private String comments;
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
-    
+
     StateHistory() {
     }
-       
-    public StateHistory(State state) {
+
+    public StateHistory(final State state) {
         this.state = state;
-        this.createdBy = state.getCreatedBy();
-        this.createdDate = state.getCreatedDate().toDate();
-        this.lastModifiedBy = state.getLastModifiedBy();
-        this.lastModifiedDate = state.getLastModifiedDate().toDate();
-        this.value = state.getValue();
-        this.ownerPosition = state.getOwnerPosition();
-        this.ownerUser = state.getOwnerUser();
-        this.senderName = state.getSenderName();
-        this.nextAction = state.getNextAction();
-        this.comments = state.getComments();
-        this.extraInfo = state.getExtraInfo();
-        this.dateInfo = state.getDateInfo();
-        this.extraDateInfo = state.getExtraDateInfo();
+        createdBy = state.getCreatedBy();
+        createdDate = state.getCreatedDate().toDate();
+        lastModifiedBy = state.getLastModifiedBy();
+        lastModifiedDate = state.getLastModifiedDate().toDate();
+        value = state.getValue();
+        ownerPosition = state.getOwnerPosition();
+        ownerUser = state.getOwnerUser();
+        senderName = state.getSenderName();
+        nextAction = state.getNextAction();
+        comments = state.getComments();
+        extraInfo = state.getExtraInfo();
+        dateInfo = state.getDateInfo();
+        extraDateInfo = state.getExtraDateInfo();
     }
-    
+
     public State getState() {
         return state;
     }
@@ -145,7 +147,7 @@ public class StateHistory implements Serializable {
         return ownerPosition;
     }
 
-    public void setOwnerPosition(Position ownerPosition) {
+    public void setOwnerPosition(final Position ownerPosition) {
         this.ownerPosition = ownerPosition;
     }
 
@@ -153,7 +155,7 @@ public class StateHistory implements Serializable {
         return ownerUser;
     }
 
-    public void setOwnerUser(User ownerUser) {
+    public void setOwnerUser(final User ownerUser) {
         this.ownerUser = ownerUser;
     }
 
@@ -161,7 +163,7 @@ public class StateHistory implements Serializable {
         return senderName;
     }
 
-    public void setSenderName(String senderName) {
+    public void setSenderName(final String senderName) {
         this.senderName = senderName;
     }
 
@@ -173,12 +175,11 @@ public class StateHistory implements Serializable {
         this.nextAction = nextAction;
     }
 
-
     public String getComments() {
         return comments;
     }
 
-    public void setComments(String comments) {
+    public void setComments(final String comments) {
         this.comments = comments;
     }
 
@@ -186,7 +187,7 @@ public class StateHistory implements Serializable {
         return extraInfo;
     }
 
-    public void setExtraInfo(String extraInfo) {
+    public void setExtraInfo(final String extraInfo) {
         this.extraInfo = extraInfo;
     }
 
@@ -194,7 +195,7 @@ public class StateHistory implements Serializable {
         return dateInfo;
     }
 
-    public void setDateInfo(Date dateInfo) {
+    public void setDateInfo(final Date dateInfo) {
         this.dateInfo = dateInfo;
     }
 
@@ -202,7 +203,7 @@ public class StateHistory implements Serializable {
         return extraDateInfo;
     }
 
-    public void setExtraDateInfo(Date extraDateInfo) {
+    public void setExtraDateInfo(final Date extraDateInfo) {
         this.extraDateInfo = extraDateInfo;
     }
 
@@ -210,7 +211,7 @@ public class StateHistory implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -218,7 +219,7 @@ public class StateHistory implements Serializable {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(final User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -226,7 +227,7 @@ public class StateHistory implements Serializable {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -234,7 +235,7 @@ public class StateHistory implements Serializable {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(User lastModifiedBy) {
+    public void setLastModifiedBy(final User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
@@ -242,7 +243,7 @@ public class StateHistory implements Serializable {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(final Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 

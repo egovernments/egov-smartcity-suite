@@ -47,8 +47,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.egov.infra.admin.common.entity.Favourites;
+import org.egov.infra.admin.common.entity.MenuLink;
 import org.egov.infra.admin.common.service.FavouritesService;
-import org.egov.infra.admin.master.entity.MenuLink;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;

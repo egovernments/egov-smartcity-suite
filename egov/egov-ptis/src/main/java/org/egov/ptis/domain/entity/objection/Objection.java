@@ -68,6 +68,8 @@ public class Objection extends StateAware {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
+	
 	private EgwStatus egwStatus;
 
 	private BasicProperty basicProperty;
@@ -236,5 +238,15 @@ public class Objection extends StateAware {
 		
 		return sb.toString();
 	}
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+       this.id= id;
+    }
 
 }

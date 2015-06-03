@@ -47,7 +47,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,11 +96,8 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void shouldGetDepartmentById() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-            IllegalAccessException {
-        final Field idField = department.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(department, 1l);
+    public void shouldGetDepartmentById()  {
+        department.setId(1l);
         when(departmentService.getDepartmentById(anyLong())).thenReturn(department);
         Department expectedDepartment = departmentService.getDepartmentById(1l);
         verify(departmentRepository).findOne(1l);

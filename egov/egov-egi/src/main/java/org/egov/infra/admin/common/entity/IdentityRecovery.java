@@ -3,30 +3,56 @@ package org.egov.infra.admin.common.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.Persistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "eg_identityrecovery")
-public class IdentityRecovery extends AbstractPersistable<Long> {
+@SequenceGenerator(name = IdentityRecovery.SEQ_IDENTITYRECOVERY, sequenceName = IdentityRecovery.SEQ_IDENTITYRECOVERY, allocationSize = 1)
+public class IdentityRecovery implements Persistable<Long> {
 
     private static final long serialVersionUID = -1636403427637104041L;
+    public static final String SEQ_IDENTITYRECOVERY = "SEQ_EG_IDENTITYRECOVERY";
 
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_IDENTITYRECOVERY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotBlank
     private String token;
-    
-    @ManyToOne(optional=false) 
-    @JoinColumn(name="userid", nullable=false, updatable=false)
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userid", nullable = false, updatable = false)
     private User user;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiry;
+
+    @Version
+    private Long version;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getToken() {
         return token;
@@ -50,6 +76,10 @@ public class IdentityRecovery extends AbstractPersistable<Long> {
 
     public void setExpiry(final Date expiry) {
         this.expiry = expiry;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
 }

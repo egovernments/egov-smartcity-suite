@@ -39,8 +39,6 @@
  */
 package org.egov.builder.entities;
 
-import java.lang.reflect.Field;
-
 import org.egov.infra.admin.master.entity.Department;
 
 public class DepartmentBuilder {
@@ -73,13 +71,7 @@ public class DepartmentBuilder {
     }
     
     public DepartmentBuilder withId(final Long id) {
-        try {
-            final Field idField = department.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(department, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        department.setId(id);
         return this;
     }
 

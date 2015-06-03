@@ -39,7 +39,6 @@
  */
 package org.egov.infra.persistence.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.EntityListeners;
@@ -49,26 +48,28 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.search.domain.Searchable;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.egov.search.domain.Searchable;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Searchable
-public abstract class AbstractAuditable<U, PK extends Serializable> extends AbstractPersistable<PK> {
+public abstract class AbstractAuditable implements Persistable<Long> {
 
-    private static final long serialVersionUID = 8330295040331880486L;
+    private static final long serialVersionUID = 7138056997693406739L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy")
     @CreatedBy
-    private U createdBy;
+    private User createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate    
@@ -78,17 +79,24 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
     @LastModifiedBy
-    private U lastModifiedBy;
+    private User lastModifiedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date lastModifiedDate;
+    
+    @Version
+    private Long version;
 
-    public U getCreatedBy() {
+    public Long getVersion() {
+        return version;
+    }
+    
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(final U createdBy) {
+    public void setCreatedBy(final User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -100,11 +108,11 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
         this.createdDate = null == createdDate ? null : createdDate.toDate();
     }
 
-    public U getLastModifiedBy() {
+    public User getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(final U lastModifiedBy) {
+    public void setLastModifiedBy(final User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 

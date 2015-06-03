@@ -52,7 +52,7 @@ import org.egov.infra.workflow.entity.StateAware;
 public class Registration extends StateAware {
 
     private static final long serialVersionUID = -419639557628367259L;
-    // private Long id = null;
+    private Long id;
     private BnDCitizen citizen = null;
     private Date dateOfEvent;
     private char sex;
@@ -624,6 +624,16 @@ public class Registration extends StateAware {
 
     public void setStateName(final String stateName) {
         this.stateName = stateName;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

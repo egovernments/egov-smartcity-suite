@@ -76,6 +76,9 @@ import org.joda.time.DateTime;
  */
 public class PropertyImpl extends StateAware implements Property {
 	private static final Logger LOGGER = Logger.getLogger(PropertyImpl.class);
+	
+	private Long id;
+	
 	private Set<PropertyOwner> propertyOwnerSet = new HashSet<PropertyOwner>();
 
 	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
@@ -814,5 +817,15 @@ public class PropertyImpl extends StateAware implements Property {
 			this.addUnitCalculationDetails(unitCalcDetail);
 		}
 	}
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

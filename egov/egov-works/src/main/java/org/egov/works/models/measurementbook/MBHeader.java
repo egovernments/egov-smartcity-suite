@@ -78,6 +78,8 @@ public class MBHeader extends StateAware {
         }
     }
 
+    private Long id;
+    
     @Required(message = "mbheader.workorder.null")
     private WorkOrder workOrder;
     @Required(message = "mbheader.mbrefno.null")
@@ -309,6 +311,16 @@ public class MBHeader extends StateAware {
 
     public void setApprovedDate(Date approvedDate) {
         this.approvedDate = approvedDate;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

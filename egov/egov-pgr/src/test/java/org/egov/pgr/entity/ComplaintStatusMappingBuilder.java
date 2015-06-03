@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.infra.admin.master.entity.Role;
 
 public class ComplaintStatusMappingBuilder {
@@ -72,13 +70,7 @@ public class ComplaintStatusMappingBuilder {
     }
 
     public ComplaintStatusMappingBuilder withId(final long id) {
-        try {
-            final Field idField = complaintStatusMapping.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complaintStatusMapping, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+       complaintStatusMapping.setId(id);
         return this;
     }
 

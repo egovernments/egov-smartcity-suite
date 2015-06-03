@@ -39,7 +39,6 @@
  */
 package org.egov.builder.entities;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.Boundary;
@@ -51,7 +50,7 @@ public class BoundaryBuilder {
     private final Boundary boundary;
 
     // use this count where unique names,descriptions etc required
-    private static int count;
+    private static long count;
 
     public BoundaryBuilder() {
         boundary = new Boundary();
@@ -63,14 +62,8 @@ public class BoundaryBuilder {
         return this;
     }
 
-    public BoundaryBuilder withId(final Integer id) {
-        try {
-            final Field idField = boundary.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(boundary, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+    public BoundaryBuilder withId(final Long id) {
+        boundary.setId(id);
         return this;
     }
 

@@ -39,7 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
 import java.util.Set;
 
 import org.egov.builder.entities.BoundaryBuilder;
@@ -125,14 +124,7 @@ public class ComplaintBuilder {
     }
 
     public ComplaintBuilder withId(final long id) {
-        try {
-            final Field idField = complaint.getClass().getSuperclass().getSuperclass().getSuperclass()
-                    .getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complaint, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        complaint.setId(id);
         return this;
     }
 

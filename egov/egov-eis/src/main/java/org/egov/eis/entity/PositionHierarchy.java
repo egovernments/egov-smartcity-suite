@@ -42,16 +42,20 @@ package org.egov.eis.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.ObjectType;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
 
 /**
  * @author Vaibhav.K
@@ -60,9 +64,17 @@ import org.egov.search.domain.Searchable;
 @Entity
 @Table(name = "egeis_position_hierarchy")
 @Searchable
-public class PositionHierarchy extends AbstractAuditable<User,Long>{
+@SequenceGenerator(name = PositionHierarchy.SEQ_POSITIONHIERARCHY, sequenceName = PositionHierarchy.SEQ_POSITIONHIERARCHY, allocationSize = 1)
+public class PositionHierarchy extends AbstractAuditable{
 
     private static final long serialVersionUID = 8666462146278384384L;
+    public static final String SEQ_POSITIONHIERARCHY = "SEQ_EGEIS_POSITION_HIERARCHY";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_POSITIONHIERARCHY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     
     @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
@@ -112,6 +124,16 @@ public class PositionHierarchy extends AbstractAuditable<User,Long>{
 
     public void setObjectSubType(String objectSubType) {
         this.objectSubType = objectSubType;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
     
 }

@@ -46,7 +46,7 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class NonAvailability extends StateAware {
     private static final long serialVersionUID = 4204662679487898122L;
-    private final Long id = null;
+    private Long id;
     private String registrationNo;
     private String eventType;
     // private Transaction transaction ;
@@ -253,6 +253,16 @@ public class NonAvailability extends StateAware {
         obj.append("stateName=" + stateName);
 
         return obj.toString();
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+       this.id = id;  
     }
 
 }

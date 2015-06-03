@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pims.commons.Position;
 
@@ -68,13 +66,7 @@ public class ComplaintRouterBuilder {
     }
 
     public ComplaintRouterBuilder withId(final long id) {
-        try {
-            final Field idField = complaintRouter.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complaintRouter, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        complaintRouter.setId(id);
         return this;
     }
 

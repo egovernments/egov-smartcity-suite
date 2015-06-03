@@ -41,19 +41,31 @@ package org.egov.eis.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egeis_employee_hod")
-public class HeadOfDepartments extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = HeadOfDepartments.SEQ_HOD, sequenceName = HeadOfDepartments.SEQ_HOD, allocationSize = 1)
+public class HeadOfDepartments extends AbstractAuditable {
 
     private static final long serialVersionUID = -5048152219787528507L;
+    public static final String SEQ_HOD = "SEQ_EGEIS_EMPLOYEE_HOD";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_HOD, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hod")
     private Department hod;
@@ -75,6 +87,16 @@ public class HeadOfDepartments extends AbstractAuditable<User, Long> {
 
     public void setHod(final Department hod) {
         this.hod = hod;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

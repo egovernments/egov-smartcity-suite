@@ -56,6 +56,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class ViewBirthDeathRegistration extends StateAware {
 
     private static final long serialVersionUID = -8111538102356349677L;
+    private Long id;
     private String type;
     private Long registrationid;
     private String registrationno;
@@ -405,6 +406,16 @@ public class ViewBirthDeathRegistration extends StateAware {
         else
             return "NA";
 
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

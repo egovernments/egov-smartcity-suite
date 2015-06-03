@@ -258,7 +258,7 @@ public class ComplaintService {
         final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
                 getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
                 savedComplaint.getLastModifiedDate(), savedComplaint.getCreatedBy(), Priority.High);
-        final String strQuery = "select md from Module md where md.moduleName=:name";
+        final String strQuery = "select md from Module md where md.name=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
         hql.setParameter("name", "PGR");
 

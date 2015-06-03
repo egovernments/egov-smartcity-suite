@@ -39,12 +39,11 @@
  */
 package org.egov.eis.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.junit.Ignore;
+
 @Ignore
 public class DeptDesigBuilder {
 
@@ -82,13 +81,7 @@ public class DeptDesigBuilder {
     }
 
     public DeptDesigBuilder withId(final long id) {
-        try {
-            final Field idField = deptDesig.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(deptDesig, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        deptDesig.setId(id);
         return this;
     }
 

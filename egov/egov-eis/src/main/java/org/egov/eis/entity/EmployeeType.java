@@ -42,22 +42,33 @@ package org.egov.eis.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egeis_employeetype")
-public class EmployeeType extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = EmployeeType.SEQ_EMPLOYEETYPE, sequenceName = EmployeeType.SEQ_EMPLOYEETYPE, allocationSize = 1)
+public class EmployeeType extends AbstractAuditable {
 
     private static final long serialVersionUID = 747671541670667791L;
+    public static final String SEQ_EMPLOYEETYPE = "SEQ_EGEIS_EMPLOYEETYPE";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_EMPLOYEETYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
    
     @SafeHtml
     @Column(name="name",unique=true)
@@ -81,5 +92,15 @@ public class EmployeeType extends AbstractAuditable<User, Long> {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }

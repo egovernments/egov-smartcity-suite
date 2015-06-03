@@ -51,7 +51,7 @@ public class BoundaryTypeBuilder {
     private final BoundaryType boundaryTypeImpl;
 
     // use this count where unique names,desciptions etc required
-    private static int count;
+    private static long count;
 
     public BoundaryTypeBuilder() {
         boundaryTypeImpl = new BoundaryType();
@@ -63,14 +63,8 @@ public class BoundaryTypeBuilder {
         return this;
     }
 
-    public BoundaryTypeBuilder withId(final Integer id) {
-        try {
-            final Field idField = boundaryTypeImpl.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(boundaryTypeImpl, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+    public BoundaryTypeBuilder withId(final Long id) {
+        boundaryTypeImpl.setId(id);
         return this;
     }
 

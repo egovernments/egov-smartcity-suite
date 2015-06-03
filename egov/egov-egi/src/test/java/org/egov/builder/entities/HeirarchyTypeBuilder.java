@@ -39,7 +39,6 @@
  */
 package org.egov.builder.entities;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.HierarchyType;
@@ -50,7 +49,7 @@ public class HeirarchyTypeBuilder {
     private final HierarchyType heirarchyTypeImpl;
 
     // use this count where unique names,desciptions etc required
-    private static int count;
+    private static long count;
 
     public HeirarchyTypeBuilder() {
         heirarchyTypeImpl = new HierarchyType();
@@ -62,14 +61,8 @@ public class HeirarchyTypeBuilder {
         return this;
     }
 
-    public HeirarchyTypeBuilder withId(final Integer id) {
-        try {
-            final Field idField = heirarchyTypeImpl.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(heirarchyTypeImpl, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+    public HeirarchyTypeBuilder withId(final Long id) {
+        heirarchyTypeImpl.setId(id);
         return this;
     }
 

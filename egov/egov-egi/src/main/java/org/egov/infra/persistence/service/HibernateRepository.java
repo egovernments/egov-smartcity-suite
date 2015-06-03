@@ -39,13 +39,11 @@
  */
 package org.egov.infra.persistence.service;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -53,7 +51,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public abstract class HibernateRepository<T extends AbstractPersistable <? extends Serializable>> {
+public abstract class HibernateRepository<T> {
 
     @PersistenceContext
     protected EntityManager entityManager;

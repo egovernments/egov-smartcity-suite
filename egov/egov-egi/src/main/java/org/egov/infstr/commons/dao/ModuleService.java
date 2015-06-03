@@ -47,7 +47,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.admin.master.entity.MenuLink;
+import org.egov.infra.admin.common.entity.MenuLink;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.hibernate.Query;

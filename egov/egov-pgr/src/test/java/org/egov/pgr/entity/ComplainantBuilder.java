@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.infra.admin.master.entity.User;
 
 public class ComplainantBuilder {
@@ -72,13 +70,7 @@ public class ComplainantBuilder {
     }
 
     public ComplainantBuilder withId(final long id) {
-        try {
-            final Field idField = complainant.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(complainant, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        complainant.setId(id);
         return this;
     }
 

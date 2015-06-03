@@ -39,9 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.lang.reflect.Field;
-
-import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.pims.commons.Designation;
 
 /**
@@ -57,13 +54,7 @@ public class EscalationBuilder {
     }
 
     public EscalationBuilder withId(final long id) {
-        try {
-            final Field idField = escalation.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(escalation, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        escalation.setId(id);
         return this;
     }
     

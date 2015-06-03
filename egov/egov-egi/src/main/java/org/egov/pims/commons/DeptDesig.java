@@ -41,28 +41,47 @@ package org.egov.pims.commons;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egeis_deptdesig")
-public class DeptDesig extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = DeptDesig.SEQ_DEPTDESIG, sequenceName = DeptDesig.SEQ_DEPTDESIG, allocationSize = 1)
+public class DeptDesig extends AbstractAuditable {
     private static final long serialVersionUID = 6184300877653586028L;
+    public static final String SEQ_DEPTDESIG = "SEQ_egeis_deptdesig";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_DEPTDESIG, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
     private Designation designation;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     private Department department;
     private Integer sanctionedPosts;
     private Integer outsourcedPosts;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public Designation getDesignation() {
         return designation;

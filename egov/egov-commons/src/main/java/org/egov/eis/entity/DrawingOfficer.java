@@ -41,20 +41,32 @@ package org.egov.eis.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "eg_drawingofficer")
-public class DrawingOfficer extends AbstractAuditable<User, Long> {
+@SequenceGenerator(name = DrawingOfficer.SEQ_DRAWINGOFFICER, sequenceName = DrawingOfficer.SEQ_DRAWINGOFFICER, allocationSize = 1)
+public class DrawingOfficer extends AbstractAuditable {
     private static final long serialVersionUID = 1678672850806848215L;
+    public static final String SEQ_DRAWINGOFFICER = "SEQ_EG_DRAWINGOFFICER";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_DRAWINGOFFICER, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String code;
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -68,6 +80,14 @@ public class DrawingOfficer extends AbstractAuditable<User, Long> {
     private Position position;
     String accountNumber;
     String tan;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;
@@ -121,7 +141,7 @@ public class DrawingOfficer extends AbstractAuditable<User, Long> {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(final Position position) {
         this.position = position;
     }
 

@@ -88,6 +88,8 @@ public class AbstractEstimate extends StateAware {
         }
     }
 
+    private Long id;
+    
     private Boundary ward;
 
     private String name;
@@ -774,6 +776,16 @@ public class AbstractEstimate extends StateAware {
 
     public void setEstimateValue(final Money estimateValue) {
         this.estimateValue = estimateValue;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+      this.id = id;
     }
 
 }
