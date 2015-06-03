@@ -39,8 +39,10 @@
  */
 package org.egov.infra.admin.master.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -69,6 +71,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.validation.regex.Constants;
@@ -137,9 +140,9 @@ public class User extends AbstractAuditable {
     @Length(max = 20)
     private String aadhaarNumber;
 
-/*    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Address> address = new ArrayList<>();
-*/
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<Address> address = new ArrayList<Address>();
+    
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -251,7 +254,7 @@ public class User extends AbstractAuditable {
         this.aadhaarNumber = aadhaarNumber;
     }
 
-    /*public List<Address> getAddress() {
+    public List<Address> getAddress() {
         return address;
     }
 
@@ -260,12 +263,13 @@ public class User extends AbstractAuditable {
     }
 
     public void addAddress(final Address address) {
-        getAddress().add(address);
+        address.setUser(this);
+        this.address.add(address);
     }
 
     public void removeAddress(final Address address) {
         getAddress().remove(address);
-    }*/
+    }
 
     public boolean isActive() {
         return active;

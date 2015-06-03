@@ -120,7 +120,7 @@ public abstract class GenericWorkFlowAction extends SearchFormAction {
 
 	public List<String> getValidActions() {
 		List<String> validActions = Collections.emptyList();
-		if (!getModel().hasState()) {
+		if (getModel().getId() == null) {
 			validActions = Arrays.asList(FORWARD);
 
 		} else {
@@ -141,7 +141,7 @@ public abstract class GenericWorkFlowAction extends SearchFormAction {
 
 	public String getNextAction() {
 		WorkFlowMatrix wfMatrix = null;
-		if (getModel().hasState()) {
+		if (getModel().getId() != null) {
 			if (getModel().getCurrentState() != null) {
 				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel().getCreatedDate().toDate());
 			} else {
