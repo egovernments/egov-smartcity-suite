@@ -58,7 +58,8 @@
 		var name = document.getElementById('name').value;
 		populateuniquename({name:name});		
     }
-    function validate(){
+    
+    function validateFormAndSubmit(){
         if (!validateForm_scheme()) {
         	undoLoadingMask();
     		return false;
@@ -70,17 +71,25 @@
             document.getElementById('validtoId').value = "";
             return false;
  	    } 
- 	    
+        document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-create.action';
+    	document.schemeForm.submit();
     	return true;
-    }        
+    }     
+
+    function resetForm(){
+    	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-newForm.action';
+    	document.schemeForm.submit();
+    }    
     </SCRIPT>
   </head>
   <body >
    <s:form name="schemeForm" action="scheme" theme="css_xhtml" validate="true">
     <div class="formmainbox"><div class="subheadnew"><s:text name="scheme.create.title"/></div>
-  		 <s:token/>                      
+  		<s:token name="%{tokenName()}"/>  
+  		<s:hidden id="id" name="id"/>                    
   		<div style="color: red">            
 		<s:actionerror/>  
+		<s:fielderror/> 
 		</div>
 		<div style="color: green">
 		<s:actionmessage />
@@ -95,11 +104,11 @@
     		<tr>
 					<td class="greybox" width="10%" ><s:text name="scheme.code"/><span class="mandatory">*</span></td>
 				    <td class="greybox" width="30%" ><s:textfield id="code" name="code" value="%{code}" onblur="checkuniquenesscode();"/></td>
-				     <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/scheme!codeUniqueCheck.action'/>
+				     <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/scheme-codeUniqueCheck.action'/>
 				                       
 				    <td class="greybox" width="10%"><s:text name="scheme.name"/><span class="mandatory">*</span></td>
 				    <td class="greybox"  width="30%"><s:textfield id="name" name="name" value="%{name}" onblur="checkuniquenessname();"/></td>
-					<egov:uniquecheck id="uniquename" name="uniquename" fieldtoreset="name" fields="['Value']" url='masters/scheme!nameUniqueCheck.action'/>
+					<egov:uniquecheck id="uniquename" name="uniquename" fieldtoreset="name" fields="['Value']" url='masters/scheme-nameUniqueCheck.action'/>
 			</tr>
 			<tr>
 			        <td class="bluebox"><s:text name="scheme.fund"/><span class="mandatory">*</span></td>
@@ -107,7 +116,7 @@
 					<s:select name="fund" id="fundId" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="scheme.fund.id" />
 					</td>
 					<td class="bluebox">IsActive</td>
-					<td class="bluebox"><s:checkbox id="isactive" name="isactive" value="%{isactive}"/> </td>
+					<td class="bluebox"><s:checkbox id="isActive" name="isActive" value="%{isActive}"/> </td>
 			</tr>
 			<tr>
 					<td class="greybox" > <s:text name="scheme.startDate" /><span class="mandatory">*</span></td>
@@ -131,8 +140,12 @@
     	  <div class="buttonbottom" >
     	  <table align="center">  
 	    	 <tr class="buttonbottom" id="buttondiv" style="align:middle" >
-				<td><s:submit  name="Save" value="Save" method="create" cssClass="buttonsubmit" onclick="return validate();"/></td>
-				<td><s:submit method="newform" value="Cancel"  cssClass="button" /></td>
+				<td><input type="submit" class="button" value="Save"
+							id="saveButton" name="button"
+							onclick="return validateFormAndSubmit();" /></td>
+				<td><input type="submit" class="button" value="Reset"
+							id="resetButton" name="button"
+							onclick="resetForm();" /></td>
 			    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
 			</tr>
 		  </table>

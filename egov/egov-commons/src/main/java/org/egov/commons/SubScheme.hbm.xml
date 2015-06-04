@@ -4,7 +4,6 @@
 <!-- Generated Apr 10, 2008 5:15:10 AM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
 	<class name="org.egov.commons.SubScheme" table="SUB_SCHEME">
-		<cache usage="transactional" />
 		<id name="id" type="integer">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">

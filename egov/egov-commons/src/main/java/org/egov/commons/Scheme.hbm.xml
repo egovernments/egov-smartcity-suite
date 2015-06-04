@@ -4,7 +4,6 @@
 <!-- Generated Apr 10, 2008 5:15:10 AM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
     <class name="org.egov.commons.Scheme" table="SCHEME" >
-    	<cache usage="transactional"/>
         <id name="id" type="integer">
             <column name="ID" precision="10" scale="0" />
             <generator class="sequence" >
@@ -26,8 +25,8 @@
         <property name="validto" type="date">
             <column name="VALIDTO" length="7" />
         </property>
-        <property name="isactive" type="java.lang.Boolean">
-            <column name="ISACTIVE" length="1" />
+        <property name="isactive" type="integer">
+            <column name="ISACTIVE" precision="1" scale="0"/>
         </property>
         <property name="description" type="string">
             <column name="DESCRIPTION" />
@@ -54,7 +53,6 @@
 			<column name="LASTMODIFIEDBY"></column>
 		</many-to-one>
         <set name="subSchemes" inverse="true">
-        	<cache usage="transactional"/>
             <key>
                 <column name="SCHEMEID" precision="22" scale="0" not-null="true" />
             </key>

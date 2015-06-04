@@ -45,15 +45,15 @@
 		<link href="<c:url value='/resources/css/budget.css'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/css/commonegovnew.css'/>" rel="stylesheet" type="text/css" />
 		<link href="${pageContext.request.contextPath}/resources/css/error.css" rel="stylesheet" type="text/css"></link>
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>		
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>		
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
