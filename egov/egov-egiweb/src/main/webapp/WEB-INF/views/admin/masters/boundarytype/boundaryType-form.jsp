@@ -49,10 +49,10 @@
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
                 <c:if test="${empty hierarchyTypes and empty message}">
-                    <div id="message" class="success" align="center"><strong><spring:message code="root.boundaryType.exists"/></strong></div>
+                    <div class="alert alert-danger" role="alert"><spring:message code="root.boundaryType.exists"/></div>
 					<div class="row">
 						<div class="text-center">
 							<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
@@ -109,7 +109,3 @@
         </div>
     </div>
 </div>
-
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>

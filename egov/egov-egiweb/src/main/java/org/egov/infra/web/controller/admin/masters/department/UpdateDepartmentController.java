@@ -83,7 +83,7 @@ public class UpdateDepartmentController {
             return "department-updateForm";
 
         departmentService.updateDepartment(department);
-        redirectAttributes.addFlashAttribute("message", "Successfully updated Department !");
+        redirectAttributes.addFlashAttribute("message", "Department successfully updated!");
         return "redirect:/department/view/" + department.getName();
     }
 }

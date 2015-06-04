@@ -41,15 +41,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel " data-collapsed="0">
 			<div class="panel-body">
 				<c:if test="${not empty warning}">
-                	<div id="message" class="success">${warning}</div>
+                	<div class="alert alert-danger" role="alert">${warning}</div>
            		</c:if>
 				<form:form id="viewRouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -128,8 +126,5 @@
 		$("#boundaryId").val(boundaryId);    
 	}
 </script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouting.js'/>"></script>
 		

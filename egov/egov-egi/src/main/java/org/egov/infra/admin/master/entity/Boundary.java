@@ -56,7 +56,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
@@ -97,7 +96,6 @@ public class Boundary extends AbstractAuditable {
 
     private Long boundaryNum;
 
-    @Valid
     @ManyToOne
     @JoinColumn(name = "boundaryType", updatable = false)
     private BoundaryType boundaryType;
@@ -141,7 +139,6 @@ public class Boundary extends AbstractAuditable {
     @Transient
     private Long boundaryTypeId;
 
-    @Valid
     @Transient
     private CityWebsite cityWebsite = new CityWebsite();
 

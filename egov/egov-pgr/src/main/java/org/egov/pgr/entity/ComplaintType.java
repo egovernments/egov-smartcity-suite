@@ -62,7 +62,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.json.simple.JSONObject;
 
 @Entity
-@Unique(id = "id", tableName = "pgr_complainttype", fields = { "name", "code" }, columnName = { "name",
+@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name",
         "code" }, enableDfltMsg = true)
 @Table(name = "egpgr_complainttype")
 @Searchable

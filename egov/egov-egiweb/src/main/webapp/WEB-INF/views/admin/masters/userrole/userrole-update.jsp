@@ -41,20 +41,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
 		<form:form  id="updateuserRoleForm" action="${user.username}" method ="post"  modelAttribute="user" commandName="user" class="form-horizontal form-groups-bordered" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.modifyuserRole"/></strong>
+						<strong><spring:message code="lbl.hdr.userrole.info"/></strong>
 					</div>
 				</div> 
 				<div class="panel-body">
@@ -64,12 +63,11 @@
 							<c:out value="${user.username}"></c:out>
 							<form:hidden path="id" id="id" value="${user.id}"/>
 							<form:hidden path="username" id="username" value="${user.username}"/>
-							<br><br>
 						</div>
 					</div>
 						
 						   <div class="form-group">
-                     <p id="myParagraph2" style="visiblility:hidden;">
+                   
                       <label class="col-sm-3 control-label">
                             <spring:message code="lbl.userRole"/>
                             <small><i class="entypo-star error-msg"></i></small>
@@ -84,7 +82,6 @@
                             <form:errors path="roles" cssClass="error-msg"/>
                         </div>
                             <spring:message  code="lbl.userrole.pressCntrlToSelectMultipleRole" />                 
-                        </p>
                      </div> 		
 				</div>
 			</div>
@@ -98,9 +95,8 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+</div>
+</div>
 <script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
 <script> 
 

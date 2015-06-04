@@ -43,14 +43,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
 		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="boundary" id="boundaryViewForm" >
 			<div class="panel panel-primary" data-collapsed="0">

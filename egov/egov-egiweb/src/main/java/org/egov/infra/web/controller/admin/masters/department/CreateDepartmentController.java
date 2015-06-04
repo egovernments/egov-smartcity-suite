@@ -84,7 +84,7 @@ public class CreateDepartmentController {
             return "department-form";
 
         departmentService.createDepartment(department);
-        redirectAttrs.addFlashAttribute("message", "Successfully created Department !");
+        redirectAttrs.addFlashAttribute("message", "Department successfully created!");
 
         return "redirect:/department/view/" + department.getName();
     }

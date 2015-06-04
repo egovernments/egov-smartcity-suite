@@ -50,7 +50,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -82,13 +81,11 @@ public class BoundaryType extends AbstractAuditable {
     private String name;
 
     @ManyToOne
-    @Valid
     @NotNull
     @JoinColumn(name = "hierarchytype")
     private HierarchyType hierarchyType;
 
     @ManyToOne
-    @Valid
     @JoinColumn(name = "parent")
     private BoundaryType parent;
 

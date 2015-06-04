@@ -46,7 +46,7 @@
 	<div class="col-md-12">
 		<form:form  id="complaintRouterSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter" >
 		 		<c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

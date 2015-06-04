@@ -49,7 +49,7 @@
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
 		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeViewForm" >
 			<div class="panel panel-primary" data-collapsed="0">

@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{name}")
@@ -81,11 +82,11 @@ public class UpdateUserRoleController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateUserRoles(@ModelAttribute final User user, final BindingResult errors) {
+    public String updateUserRoles(@ModelAttribute final User user, final BindingResult errors, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "/userrole/update/" + user.getUsername();
         userService.updateUser(user);
-
+        redirectAttrs.addFlashAttribute("message", "User Role successfully modified!");
         return "redirect:/userrole/view/" + user.getUsername();
 
     }

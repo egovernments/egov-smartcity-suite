@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -56,15 +56,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/role/update/{name}")
 public class UpdateRoleController {
 
-    private RoleService roleService;
+    private final RoleService roleService;
 
     @Autowired
-    public UpdateRoleController(RoleService roleService) {
+    public UpdateRoleController(final RoleService roleService) {
         this.roleService = roleService;
     }
 
     @ModelAttribute
-    public Role roleModel(@PathVariable String name) {
+    public Role roleModel(@PathVariable final String name) {
 
         return roleService.getRoleByName(name);
 
@@ -76,15 +76,16 @@ public class UpdateRoleController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs) {
-        
+    public String update(@Valid @ModelAttribute final Role role, final BindingResult errors,
+            final RedirectAttributes redirectAttrs) {
+
         if (errors.hasErrors())
             return "role-update";
 
         roleService.update(role);
-        redirectAttrs.addFlashAttribute("message", "Successfully Updated Role !");
+        redirectAttrs.addFlashAttribute("message", "Role successfully updated!");
 
-        return "redirect:/role/view/"+role.getName();
+        return "redirect:/role/view/" + role.getName();
     }
 
 }
