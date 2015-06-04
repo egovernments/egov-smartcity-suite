@@ -67,6 +67,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.GsonBuilder;
 
@@ -144,11 +145,12 @@ public class HomeController {
     }
 
     @RequestMapping(value = "profile/edit", method = RequestMethod.POST)
-    public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder) {
+    public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder, final RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
             return "profile-edit";
         userService.updateUser(user);
-        return "profile-edit";
+        redirAttrib.addFlashAttribute("message", "Profile successfully updated");
+        return "redirect:/home/profile/edit";
     }
 
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {

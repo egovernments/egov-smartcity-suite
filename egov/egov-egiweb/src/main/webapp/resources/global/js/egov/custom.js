@@ -101,5 +101,10 @@ $(document).ready(function()
 		$('.loader-class').modal('show', {backdrop: 'static'});
 	});
 	
+	//fade out success message
+	$(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
+        $(".alert-success").alert('close');
+    }); 
+	
 });
 

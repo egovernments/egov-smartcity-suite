@@ -43,6 +43,9 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'/>">
 <div class="row">
 	<div class="col-md-12">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">${message}</div>
+		</c:if>
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -148,4 +151,3 @@
 
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>
-<script src="<c:url value='/resources/js/app/editprofile.js'/>"></script>
