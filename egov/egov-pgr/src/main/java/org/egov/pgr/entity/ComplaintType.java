@@ -64,7 +64,7 @@ import org.json.simple.JSONObject;
 @Entity
 @Unique(id = "id", tableName = "pgr_complainttype", fields = { "name", "code" }, columnName = { "name",
         "code" }, enableDfltMsg = true)
-@Table(name = "pgr_complainttype")
+@Table(name = "egpgr_complainttype")
 @Searchable
 @SequenceGenerator(name = ComplaintType.SEQ_COMPLAINTTYPE, sequenceName = ComplaintType.SEQ_COMPLAINTTYPE, allocationSize = 1)
 public class ComplaintType extends AbstractAuditable {
