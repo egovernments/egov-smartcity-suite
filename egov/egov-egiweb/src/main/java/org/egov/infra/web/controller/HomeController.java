@@ -52,9 +52,11 @@ import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -86,6 +88,9 @@ public class HomeController {
     
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
@@ -97,9 +102,8 @@ public class HomeController {
     }
 
     @RequestMapping(value = "favourite/add", method = RequestMethod.POST)
-    public @ResponseBody boolean addFavourite(@ModelAttribute final Favourites favourites) {
-    	favouritesService.addToCurrentUserFavourite(favourites);
-    	return favourites.getId() != null;
+    public @ResponseBody boolean addFavourite(@Valid @ModelAttribute final Favourites favourites, final BindingResult bindResult) {
+        return !bindResult.hasErrors() && favouritesService.addToCurrentUserFavourite(favourites).getId() != null;
     }
 
     @RequestMapping(value = "favourite/remove")
@@ -114,8 +118,7 @@ public class HomeController {
     	if (passwordEncoder.matches(currentPwd, user.getPassword())) {
     		if (newPwd.equals(retypeNewPwd)) {
     			user.setPassword(passwordEncoder.encode(newPwd));
-    			//TODO Set next password expiry date
-    			//user.setPwdExpiryDate(new DateTime().toDate());
+    			user.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
     			userService.updateUser(user);
     			return "SUCCESS";
     		}

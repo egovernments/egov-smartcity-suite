@@ -131,4 +131,8 @@ public class ApplicationProperties {
 	public boolean smsEnabled() {
             return environment.getProperty("email.enabled",Boolean.class);
         }
+	
+	public Integer userPasswordExpiryInDays() {
+	    return environment.getProperty("user.pwd.expiry.days", Integer.class);
+	}
 }

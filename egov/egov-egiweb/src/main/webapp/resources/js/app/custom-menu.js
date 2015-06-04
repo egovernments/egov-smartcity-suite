@@ -155,7 +155,7 @@ $(document).ready(function () {
 		$('.favourites').modal('hide');
 		var fd = new FormData();    
 		fd.append( 'actionId', actionId);
-		fd.append( 'name', favouriteName);
+		fd.append( 'name', $("#fav-name").val());
 		fd.append( 'contextRoot', contextRoot);
 		$.ajax({
 			type: "POST",
@@ -164,12 +164,13 @@ $(document).ready(function () {
 			processData: false,
 			contentType: false,
 			}).done(function(value) {
-			if(value) {
-				$('#'+actionId+' a i').addClass('added-as-fav');
-				$('#favMenu ul').append('<li id="fav-'+actionId+'"> <a href="'+favouriteURL+'" class="open-popup"><i class="floatRight fa fa-times-circle remove-favourite"></i>'+favouriteName+'</a> </li>')
+				if(value) {
+					$('#'+actionId+' a i').addClass('added-as-fav');
+					$('#favMenu ul').append('<li id="fav-'+actionId+'"> <a href="'+favouriteURL+'" class="open-popup"><i class="floatRight fa fa-times-circle remove-favourite"></i>'+$("#fav-name").val()+'</a> </li>')
 				} else {
-				bootbox.alert("Could not add to Favourite");
-			}
+					bootbox.alert("Could not add to Favourite");
+				}
+				$("#fav-name").val("");
 		});
 		
 	});
