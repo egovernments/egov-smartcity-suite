@@ -64,23 +64,23 @@ function validate(obj){
 	<div class="formmainbox">
 	<div class="subheadnew"><s:text name="service.master.search.header"></s:text> </div>
 	
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:960px;margin:0 auto;">
 
 		
 		<tr>
-			<td width="4%" class="bluebox2">&nbsp;</td>
-			<td width="21%" class="bluebox2"><s:text name="service.master.search.category"></s:text> <span class="mandatory">*</span></td>
-			<td width="30%" class="bluebox2"><s:select headerKey="-1"
+			<td class="greybox" width="5%">&nbsp;</td>
+			<td class="greybox"><s:text name="service.master.search.category"></s:text> <span class="mandatory1">*</span></td>
+			<td class="greybox"><s:select headerKey="-1"
 				headerValue="----Choose----"
 				name="serviceCategory" id="serviceCategoryid" cssClass="selectwk"
 				list="dropdownData.serviceCategoryList" listKey="id" listValue="name"
 				value="%{serviceCategory.id}" /></td>
-			
 		</tr>
 		
 
 	</table>
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
+<div align="left" class="mandatorycoll">&nbsp;&nbsp;&nbsp;<s:text name="common.mandatoryfields"/></div>
+<br/>
 	</div>
 	
 	<div class="buttonbottom">

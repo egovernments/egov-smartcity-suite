@@ -45,12 +45,12 @@
 		
 		var makeAccountsDetailTable = function() {
 		var accountColumns = [ 
-			{key:"functionid",hidden:true,width:10, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".function.id","hidden")},
-            {key:"function",label:'Function',width:90, formatter:createTextFieldFormatterForFunction(ACCOUNTDETAILSLIST,".function.name")},
-			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.id","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},
-			{key:"accounthead", label:'Account Head <span class="mandatory">*</span>',width:250,formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},				
-			{key:"amount",label:'Amount <span class="mandatory">*</span>',width:90, formatter:createAmountFieldFormatter(ACCOUNTDETAILSLIST,".amount")}, 
+			{key:"functionid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".function.id","hidden")},
+            {key:"function",label:'Function', formatter:createTextFieldFormatterForFunction(ACCOUNTDETAILSLIST,".function.name")},
+			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.id","hidden")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},
+			{key:"accounthead", label:'Account Head <span class="mandatory1">*</span>',formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},				
+			{key:"amount",label:'Amount <span class="mandatory1">*</span>', formatter:createAmountFieldFormatter(ACCOUNTDETAILSLIST,".amount")}, 
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];
@@ -108,14 +108,14 @@
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
 	
-			{key:"glcode",hidden:true,width:90, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".serviceAccountDetail.glCodeId.glcode","hidden")},
-			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
-			{key:"detailType.name",hidden:true,width:90, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".detailType.name","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code',width:120, formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
-			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatter(SUBLEDGERLIST,".detailKeyId")},
-			{key:"detailKey",label:'Name',width:120, formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount <span class="mandatory">*</span>',width:90, formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
+			{key:"glcode",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".serviceAccountDetail.glCodeId.glcode","hidden")},
+			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code <span class="mandatory">*</span>', formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"detailType.name",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".detailType.name","hidden")},
+			{key:"detailType.id",label:'Type <span class="mandatory">*</span>', formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code', formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
+			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatter(SUBLEDGERLIST,".detailKeyId")},
+			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
+			{key:"amount",label:'Amount <span class="mandatory">*</span>', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];
@@ -308,4 +308,9 @@ function updateSLDetailDropdown(field,index,value){
     #subledgercodescontainer li.yui-ac-highlight {background:#ff0;}
     #subledgercodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 .yui-skin-sam tr.yui-dt-odd{background-color:#F5F5F5;}
+
+    .yui-dt-liner input
+    {
+       width:100%;
+    }
 </style>

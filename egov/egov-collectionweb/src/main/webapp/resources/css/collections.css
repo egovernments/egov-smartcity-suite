@@ -59,19 +59,16 @@ table.tablebottom2 {
 
 td.bluebox {
 	background-color: #FFFFFF;
-	border-bottom: 1px solid white;
-	border-top: 1px solid white;
-	font-size: 11px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	padding-right: 5px;
-	padding-left: 5px;
-	color: #000000;
-	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	}
+   border-bottom: 1px solid white;
+  border-top: 1px solid white;
+  font-size: 12px;
+  padding: 8px 5px;
+  color: #000000;
+  text-align: left;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
 	
-	td.bluebox3 {
+td.bluebox3 {
 	background-color: #FFFFFF;
 	font-size: 11px;
 	padding-top: 3px;
@@ -90,25 +87,17 @@ td.bluebox {
 	border-top-color: white;
 	border-right-color: #E9E9E9;
 	border-bottom-color: white;
-	}
+}
 
 td.blueborderfortd {
-	background-color: #FFFFFF;
-	font-size: 11px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	padding-right: 5px;
-	padding-left: 5px;
-	color: #000000;
-	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #E9E9E9;
-	}
+  background-color: #FFFFFF;
+  font-size: 12px;
+  color: #000000;
+  text-align: left;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  border: 1px solid #E9E9E9;
+  padding: 5px;
+}
 	
 td.blueborderfortd1 {
 	background-color: #F5F5F5;
@@ -191,24 +180,18 @@ td.blueborderfortd2 {
 	}
 	
 th.bluebgheadtd {
-	height: 32px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #E9E9E9;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	font-weight: bold;
-	color: #FFFFFF;
-	padding-right: 5px;
-	padding-left: 5px;
-	background-color: #999999;
-	text-align: center;
-	background-image: url(/egi/resources/erp2/images/tablebg.gif);
-	background-repeat: repeat-x;
-	}
+  height: 32px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #171616;
+  padding: 10px;
+  background-color: #E0E0E0;
+  text-align: center;
+  background-repeat: repeat-x;
+  border: 1px solid #E9E9E9;
+}
+
 td.totalbg {
 	background-color: #E4E4E4;
 	font-size: 11px;
@@ -458,19 +441,13 @@ td.totalbg {
 	}
 	
 	div.subheadnew {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	color: #000000;
-	background-color: #CCCCCC;
-	padding-top: 5px;
-	padding-right: 3px;
-	padding-bottom: 5px;
-	padding-left: 3px;
-	background-image: url(/egi/resources/erp2/images/greysmallbg.gif);
-	background-repeat: repeat-x;
-	background-position: bottom;
-	text-align: center;
+	    font-family: Verdana, Arial, Helvetica, sans-serif;
+		  color: #fff;
+		  text-align: center;
+		  padding: 10px 15px;
+		  background-color: #F2851F;
+		  border-color: #F2851F;
+		  font-weight: bold;
 	}
 div.subheadsmallnew {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -516,16 +493,19 @@ input.centretext {
 	padding-left: 8px;
 }
 td.bluebox2 {
-	background-color: #F5F5F5;
-	font-size: 11px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	padding-right: 5px;
-	padding-left: 5px;
-	color: #000000;
-	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	}
+	  width: 25px;
+	  background-color: #fff;
+	  border-bottom: 1px solid white;
+	  border-top: 1px solid white;
+	  font-size: 12px;
+	  padding-top: 3px;
+	  padding-bottom: 3px;
+	  padding-right: 5px;
+	  padding-left: 5px;
+	  color: #000000;
+	  text-align: left;
+	  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
 	
 .buttongeneral {
 	font-family: Arial, Helvetica, sans-serif;
@@ -852,15 +832,34 @@ text-align: center;
 background-color:#FFFFEE;
 font-family: Arial, Helvetica, sans-serif;
 border: 1px solid #EEEE00;
-	}
+}
 
 .blankspace{
 	height:5px;
 }
 
-
 div.textholdernew {padding-left:5px;}
 
+#serviceCategory
+{
+    border: 1px solid #F2851F;
+}
 
+.mandatory1
+{
+  color:red;
+  font-size: 12px;
+}
 
+td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select, td.bluebox2 input[type="text"], td.bluebox2 select {
+  min-width: 180px;
+  min-height: 30px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  background-color: #FFF;
+  background-image: none;
+  border: 1px solid #CCC;
+}
 

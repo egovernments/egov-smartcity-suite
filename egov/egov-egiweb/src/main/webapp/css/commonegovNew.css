@@ -307,22 +307,8 @@ td.greybox  input.hiddentext {
 	cursor: not-allowed;
 	}
 
-input.button {
-	width: 133px;
-	height: 27px;
-	font-family: Arial, Helvetica, sans-serif;
-	color: #333333;
-	background-image: url(../images/buttonbg.gif);
-	text-align: center;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	font-size: 12px;
-	font-weight: bold;
-	}
 
-input.buttonsubmit {
+input.buttonsubmit, input.button {
 	width: 133px;
 	font-family: Arial,Helvetica,sans-serif;
 	text-align: center;
@@ -338,14 +324,15 @@ input.buttonsubmit {
 	
 }
 
-input.buttonsubmit.normal
+
+input.buttonsubmit.normal, input.button
 {
  color: #333;
  background-color: #FFF;
  border-color: #CCC;
 }
 
-input.buttonsubmit:hover, input.buttonsubmit:active, input.buttonsubmit:focus
+input.buttonsubmit:hover, input.buttonsubmit:active, input.buttonsubmit:focus, input.button:hover, input.button:focus, input.button:active
 {
     color: #FFF;
 	background-color: #F5861F;

@@ -82,20 +82,23 @@ function clearCodeIfExists(){
 	 }	
 }
 </script>
-<div class="formmainbox">
-	 <div class="errorstyle" id="error_area" style="display:none;"></div>
+
+<div class="errorstyle" id="error_area" style="display:none;"></div>
 	 <span align="center" style="display:none" id="CodeUnique">
  		<font  style='color: red ; font-weight:bold '> 
          	<s:text name="service.code.already.exists"/>
  		 </font>
 	</span>
-		<span class="mandatory">
+		<span class="mandatory1">
 			<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-	<div class="subheadnew"><s:text name="service.master.create.header"></s:text> </div><br>
+
+<div class="formmainbox">
+	 
+	<div class="subheadnew"><s:text name="service.master.create.header"></s:text> </div>
 
 	<div class="subheadsmallnew">
 				<span class="subheadnew"> <s:text name="service.create.details.header"></s:text> </span>
@@ -111,10 +114,10 @@ function clearCodeIfExists(){
 		<tr>
 			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
-			<td width="25%" class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory">*</span></td>
+			<td width="25%" class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
 			<td width="25%" class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
 			 onkeyup="uniqueCheckCode();" onblur="clearCodeIfExists();"></s:textfield> </td>
-			<td width="25%" class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory">*</span></td>
+			<td width="25%" class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
 			<td width="25%" class="bluebox"> <s:textfield name="serviceName" id="serviceName" maxLength="100" ></s:textfield> </td>
 		</tr>
 		<tr>
@@ -220,7 +223,9 @@ function clearCodeIfExists(){
             document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="100%";
         </script>
 <div id="subledgercodescontainer"></div> 
-	
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
+
+<br/>
+<div align="left" class="mandatorycoll"> &nbsp;&nbsp;&nbsp;<s:text name="common.mandatoryfields"/></div>
+<br/>
 </div>
 

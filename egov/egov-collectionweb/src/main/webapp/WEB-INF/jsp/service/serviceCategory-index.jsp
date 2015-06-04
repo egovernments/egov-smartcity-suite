@@ -53,12 +53,13 @@ function onSubmit(obj){
 	<body>  
 	<s:form action="serviceCategory" theme="simple" > 
 	  	<div class="subheadnew"><s:text name="serviceCategory.edit.title"/></div>
+	  	<br/>
 	  	<table width="80%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		        <tr>  
 		            <th class="bluebgheadtd" width="18%" style="display:none">ID</th>  
-					<th class="bluebgheadtd" width="25%"><s:text name="masters.serviceCategory.serviceCategoryName"/></th>
-					<th class="bluebgheadtd" width="25%"><s:text name="masters.serviceCategory.servicCategoryeCode"/></th>
-					<th class="bluebgheadtd" width="16%"><s:text name="masters.edit"/></th>
+					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.serviceCategoryName"/></th>
+					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.servicCategoryeCode"/></th>
+					<th class="bluebgheadtd" width="15%"><s:text name="masters.edit"/></th>
 
 				</tr>  
 				<s:iterator var="p" value="serviceCategoryList">  
