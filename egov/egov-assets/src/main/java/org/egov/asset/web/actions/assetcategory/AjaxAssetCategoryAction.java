@@ -43,7 +43,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -51,14 +50,11 @@ import org.egov.asset.model.AssetCategory;
 import org.egov.asset.service.AssetCategoryService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
-@Namespace("/assetcategory")
 @Results({
-    @Result(name = AjaxAssetCategoryAction.PARENT_CATEGORIES, location = "/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-parentcategories.jsp"),
-    @Result(name = AjaxAssetCategoryAction.ASSET_CAT_DETAILS, location = "/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-assetcatdetails.jsp") })
+        @Result(name = AjaxAssetCategoryAction.PARENT_CATEGORIES, location = "ajaxAssetCategory-parentcategories.jsp"),
+        @Result(name = AjaxAssetCategoryAction.ASSET_CAT_DETAILS, location = "ajaxAssetCategory-assetcatdetails.jsp") })
 public class AjaxAssetCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = -8703869606104325609L;
@@ -81,7 +77,7 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    @Action(value = "/ajaxAssetCategory-populateParentCategories")
+    @Action(value = "/assetcategory/ajaxAssetCategory-populateParentCategories")
     public String populateParentCategories() {
         try {
             if (assetType.equalsIgnoreCase("-1"))
@@ -89,13 +85,14 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
             else
                 assetCategoryList = assetCategoryService.getAllAssetCategoryByAssetType(assetType);
         } catch (final Exception e) {
-            LOGGER.error("Error while loading assetCategoryList in populateParentCategories() method " + e.getMessage());
+            LOGGER.error(
+                    "Error while loading assetCategoryList in populateParentCategories() method " + e.getMessage());
             throw new EGOVRuntimeException(e.getMessage());
         }
         return PARENT_CATEGORIES;
     }
 
-    @Action(value = "/ajaxAssetCategory-populateParentDetails")
+    @Action(value = "/assetcategory/ajaxAssetCategory-populateParentDetails")
     public String populateParentDetails() {
         parentCategory = assetCategoryService.findById(parentCatId, false);
         return ASSET_CAT_DETAILS;

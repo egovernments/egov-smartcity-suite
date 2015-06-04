@@ -49,13 +49,15 @@ import org.egov.asset.service.AppService;
 import org.egov.asset.service.AssetCategoryService;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * This class will expose all asset category related operations.
  */
-@Transactional(readOnly = true)
-public class AssetCategoryServiceImpl extends BaseServiceImpl<AssetCategory, Long> implements AssetCategoryService {
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class AssetCategoryServiceImpl extends BaseServiceImpl<AssetCategory, Long>implements AssetCategoryService {
 
     private static final Logger logger = Logger.getLogger(AssetCategoryServiceImpl.class);
     private AppService appService;
@@ -66,7 +68,6 @@ public class AssetCategoryServiceImpl extends BaseServiceImpl<AssetCategory, Lon
     }
 
     @Override
-    @Transactional
     public void setAssetCategoryNumber(final AssetCategory entity) {
         final CFinancialYear financialYear = new CFinancialYear();
         if (entity != null && (entity.getId() == null || entity.getCode() == null || "".equals(entity.getCode()))

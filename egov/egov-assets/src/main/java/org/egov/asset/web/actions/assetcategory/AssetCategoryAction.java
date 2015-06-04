@@ -49,7 +49,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -70,15 +69,11 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
-@Namespace("/assetcategory")
-@Results({
-    @Result(name = AssetCategoryAction.NEW, location = "/WEB-INF/jsp/assets/assetcategory/assetCategory-new.jsp"),
-    @Result(name = AssetCategoryAction.SEARCH, location = "/WEB-INF/jsp/assets/assetcategory/assetCategory-search.jsp"),
-    @Result(name = AssetCategoryAction.EDIT, location = "/WEB-INF/jsp/assets/assetcategory/assetCategory-edit.jsp") })
+@Results({ @Result(name = AssetCategoryAction.NEW, location = "assetCategory-new.jsp"),
+        @Result(name = AssetCategoryAction.SEARCH, location = "assetCategory-search.jsp"),
+        @Result(name = AssetCategoryAction.EDIT, location = "assetCategory-edit.jsp") })
 public class AssetCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = -1510474404320433556L;
@@ -136,8 +131,8 @@ public class AssetCategoryAction extends BaseFormAction {
         addDropdownData("depreciationMethodList", Arrays.asList(DepreciationMethod.values()));
         try {
             final String purposeId = appService.getUniqueAppConfigValue(module_asset, assetAccCodePURPOSEID);
-            final List<CChartOfAccounts> assetAccounts = commonsService.getAccountCodeByPurpose(Integer
-                    .valueOf(purposeId));
+            final List<CChartOfAccounts> assetAccounts = commonsService
+                    .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("assetAccountCodeList", assetAccounts);
         } catch (final EGOVException e) {
             LOGGER.error("Error while loading dropdown data - assetAccountCodeList." + e.getMessage());
@@ -147,8 +142,8 @@ public class AssetCategoryAction extends BaseFormAction {
 
         try {
             final String purposeId = appService.getUniqueAppConfigValue(module_asset, accDepPURPOSEID);
-            final List<CChartOfAccounts> accumulatedDeps = commonsService.getAccountCodeByPurpose(Integer
-                    .valueOf(purposeId));
+            final List<CChartOfAccounts> accumulatedDeps = commonsService
+                    .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("accDepAccountCodeList", accumulatedDeps);
         } catch (final EGOVException e) {
             LOGGER.error("Error while loading dropdown data - accDepAccountCodeList." + e.getMessage());
@@ -158,8 +153,8 @@ public class AssetCategoryAction extends BaseFormAction {
 
         try {
             final String purposeId = appService.getUniqueAppConfigValue(module_asset, revResAccPURPOSEID);
-            final List<CChartOfAccounts> revAccounts = commonsService.getAccountCodeByPurpose(Integer
-                    .valueOf(purposeId));
+            final List<CChartOfAccounts> revAccounts = commonsService
+                    .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("revAccountCodeList", revAccounts);
         } catch (final EGOVException e) {
             LOGGER.error("Error while loading dropdown data - revAccountCodeList." + e.getMessage());
@@ -169,8 +164,8 @@ public class AssetCategoryAction extends BaseFormAction {
 
         try {
             final String purposeId = appService.getUniqueAppConfigValue(module_asset, depExpAccPURPOSEID);
-            final List<CChartOfAccounts> depExpenseAccounts = commonsService.getAccountCodeByPurpose(Integer
-                    .valueOf(purposeId));
+            final List<CChartOfAccounts> depExpenseAccounts = commonsService
+                    .getAccountCodeByPurpose(Integer.valueOf(purposeId));
             addDropdownData("depExpAccountCodeList", depExpenseAccounts);
         } catch (final EGOVException e) {
             LOGGER.error("Error while loading dropdown data - depExpAccountCodeList." + e.getMessage());
@@ -184,13 +179,13 @@ public class AssetCategoryAction extends BaseFormAction {
      *
      * @return a <code>String</code> representing the value 'NEW'
      */
-    @Action(value = "/assetCategory-newform")
+    @Action(value = "/assetcategory/assetCategory-newform")
     public String newform() {
         userMode = NEW;
         return showform();
     }
-    
-    @Action(value = "/assetCategory-showform")
+
+    @Action(value = "/assetcategory/assetCategory-showform")
     public String showform() {
         String result = null;
 
@@ -221,27 +216,27 @@ public class AssetCategoryAction extends BaseFormAction {
         return result;
     }
 
-    @Action(value = "/assetCategory-edit")
+    @Action(value = "/assetcategory/assetCategory-edit")
     public String edit() {
         userMode = EDIT;
         dataDisplayStyle = "none";
         return SEARCH;
     }
 
-    @Action(value = "/assetCategory-view")
+    @Action(value = "/assetcategory/assetCategory-view")
     public String view() {
         userMode = VIEW;
         dataDisplayStyle = "none";
         return SEARCH;
     }
 
-    @Action(value = "/assetCategory-list")
+    @Action(value = "/assetcategory/assetCategory-list")
     public String list() {
         if (!assetType.equalsIgnoreCase("-1") && (id == null || id == -1))
             assetCategoryList = assetCategoryService.findAllBy("from AssetCategory ac order by name asc");
         else if (!assetType.equalsIgnoreCase("-1") && (id == null || id == -1))
-            assetCategoryList = assetCategoryService.findAllBy("from AssetCategory ac where ac.assetType=" + assetType
-                    + " order by name asc");
+            assetCategoryList = assetCategoryService
+                    .findAllBy("from AssetCategory ac where ac.assetType=" + assetType + " order by name asc");
         else if (id != null && id != -1) {
             assetCategoryList = new ArrayList<AssetCategory>();
             assetCategoryList.add(assetCategoryService.findById(id, false));
@@ -263,8 +258,7 @@ public class AssetCategoryAction extends BaseFormAction {
     }
 
     @ValidationErrorPage(value = EDIT)
-    @Transactional
-    @Action(value = "/assetCategory-save")
+    @Action(value = "/assetcategory/assetCategory-save")
     public String save() throws NumberFormatException, EGOVException {
         addDepMetaDatas();
         if (parentId != null && parentId != -1L)
@@ -283,13 +277,12 @@ public class AssetCategoryAction extends BaseFormAction {
         return showform();
     }
 
-    @Transactional
     protected void addDepMetaDatas() {
         assetCategory.getDepreciationMetaDataList().clear();
         for (final DepreciationMetaData lDepreciationMetaData : depMetaDatas)
             if (validDepMetaData(lDepreciationMetaData)) {
-                lDepreciationMetaData.setFinancialYear((CFinancialYear) getPersistenceService().find(
-                        "from CFinancialYear where id = ?", lDepreciationMetaData.getFinancialYear().getId()));
+                lDepreciationMetaData.setFinancialYear((CFinancialYear) getPersistenceService()
+                        .find("from CFinancialYear where id = ?", lDepreciationMetaData.getFinancialYear().getId()));
                 lDepreciationMetaData.setAssetCategory(assetCategory);
                 assetCategory.addDepreciationMetaData(lDepreciationMetaData);
             }

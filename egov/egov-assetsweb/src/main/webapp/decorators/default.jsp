@@ -45,21 +45,19 @@
 
 <link href="<c:url value='/resources/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
 
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css" />
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js" />
 
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script> 
-<script type="text/javascript" src="/egi/commonyui/build/dragdrop/dragdrop.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="/egi/commonyui/yui2.8/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
 
-<script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
-
-<script type="text/javascript" src="/egi/commonyui/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/prototype.js'/>"></script>
 
