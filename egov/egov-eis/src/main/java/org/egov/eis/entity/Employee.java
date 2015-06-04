@@ -79,11 +79,9 @@ public class Employee extends User {
     @Pattern(regexp = Constants.ALPHANUMERIC)
     private String code;
 
-    @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date dateOfAppointment;
 
-    @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date dateOfRetirement;
 
