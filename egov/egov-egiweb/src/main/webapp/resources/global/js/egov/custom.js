@@ -39,6 +39,26 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
+	// jQuery plugin to prevent double submission of forms
+	jQuery.fn.preventDoubleSubmission = function() {
+	  $(this).on('submit',function(e){
+	    var $form = $(this);
+	 
+	    if ($form.data('submitted') === true) {
+	      // Previously submitted - don't submit again
+	      e.preventDefault();
+	    } else {
+	      // Mark it so that the next submit can be ignored
+	      $form.data('submitted', true);
+	    }
+	  });
+	 
+	  // Keep chainability
+	  return this;
+	};
+	
+	$('form').preventDoubleSubmission();
+	
 	$(".is_valid_number").on("input", function(){
         var regexp = /[^0-9]/g;
 		if($(this).val().match(regexp)){
@@ -104,6 +124,10 @@ $(document).ready(function()
 	//fade out success message
 	$(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
         $(".alert-success").alert('close');
+    });
+	
+	$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
+        $(".alert-danger").alert('close');
     }); 
 	
 });
