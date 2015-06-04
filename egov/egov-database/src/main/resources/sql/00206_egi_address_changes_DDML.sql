@@ -1,12 +1,12 @@
-update eg_boundary_type set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_boundary set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_user set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_city_website set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_department set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_hierarchy_type set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
-update eg_role set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
+update eg_boundary_type set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_boundary set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_user set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_city_website set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_department set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_hierarchy_type set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
+update eg_role set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
 
-update pgr_complainttype set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',version=0;
+update pgr_complainttype set createdby = 1,createddate='01-01-2010',lastmodifiedby=1,lastmodifieddate='01-01-2015',"version"=0;
 ALTER TABLE pgr_complainttype RENAME TO egpgr_complainttype;
 ALTER SEQUENCE seq_pgr_complainttype RENAME TO seq_egpgr_complainttype;
 ALTER TABLE eg_module ALTER contextroot type varchar(10);
