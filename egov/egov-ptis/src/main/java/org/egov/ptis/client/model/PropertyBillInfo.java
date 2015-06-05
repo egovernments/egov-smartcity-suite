@@ -47,21 +47,11 @@ package org.egov.ptis.client.model;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_STREET_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTGOVT_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPENPLOT_STR;
@@ -109,31 +99,10 @@ public class PropertyBillInfo {
 	private String currentPeriod;
 	private TaxCalculationInfo taxCalcInfo;
 
-	private BigDecimal firstHalfCurrentSewerageTax;
-	private BigDecimal firstHalfCurrentWaterTax;
-	private BigDecimal firstHalfCurrentGeneralTax;
-	private BigDecimal firstHalfCurrentLightTax;
-	private BigDecimal firstHalfCurrentFireServiceTax;
-	private BigDecimal firstHalfCurrentSewerageBenefitTax;
-	private BigDecimal firstHalfCurrentWaterBenefitTax;
-	private BigDecimal firstHalfCurrentRoadTax;
-	private BigDecimal firstHalfCurrentMunicipalEduCess;
-	private BigDecimal firstHalfCurrentEgCess;
-	private BigDecimal firstHalfCurrentEduCess;
-	private BigDecimal firstHalfCurrentBigBuildingCess;
-
-	private BigDecimal secondHalfCurrentSewerageTax;
-	private BigDecimal secondHalfCurrentWaterTax;
-	private BigDecimal secondHalfCurrentGeneralTax;
-	private BigDecimal secondHalfCurrentLightTax;
-	private BigDecimal secondHalfCurrentFireServiceTax;
-	private BigDecimal secondHalfCurrentSewerageBenefitTax;
-	private BigDecimal secondHalfCurrentWaterBenefitTax;
-	private BigDecimal secondHalfCurrentRoadTax;
-	private BigDecimal secondHalfCurrentMunicipalEduCess;
-	private BigDecimal secondHalfCurrentEgCess;
-	private BigDecimal secondHalfCurrentEduCess;
-	private BigDecimal secondHalfCurrentBigBuildingCess;
+	private BigDecimal currentGeneralTax;
+	private BigDecimal currentEduCess;
+	private BigDecimal currentLibCess;
+	private BigDecimal currentUnauthPenalty;
 
 	private String firstSixMonthsPeriod;
 	private String secondSixMonthsPeriod;
@@ -143,13 +112,12 @@ public class PropertyBillInfo {
 	public PropertyBillInfo() {
 	}
 
-	public PropertyBillInfo(Map<String, Map<String, BigDecimal>> reasonwiseDues,
-			BasicProperty basicProperty, String billNo) {
+	public PropertyBillInfo(Map<String, Map<String, BigDecimal>> reasonwiseDues, BasicProperty basicProperty,
+			String billNo) {
 		this.reasonwiseDues = reasonwiseDues;
 		this.basicProperty = basicProperty;
 		this.billNo = billNo;
-		String propType = getBasicProperty().getProperty().getPropertyDetail()
-				.getPropertyTypeMaster().getType();
+		String propType = getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
 		if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
 			isCentralGovtProp = 1;
 		}
@@ -167,68 +135,18 @@ public class PropertyBillInfo {
 
 	private void setCurrentHalfYearTaxes() {
 		BigDecimal[] halfYearTaxes = new BigDecimal[2];
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_SEWERAGE_TAX));
-		firstHalfCurrentSewerageTax = halfYearTaxes[0];
-		secondHalfCurrentSewerageTax = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_FIRE_SERVICE_TAX));
-		firstHalfCurrentFireServiceTax = halfYearTaxes[0];
-		secondHalfCurrentFireServiceTax = halfYearTaxes[1];
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_TAX));
+		currentGeneralTax = halfYearTaxes[0];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_GENERAL_TAX));
-		firstHalfCurrentGeneralTax = halfYearTaxes[0];
-		secondHalfCurrentGeneralTax = halfYearTaxes[1];
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS));
+		currentEduCess = halfYearTaxes[0];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_GENERAL_WATER_TAX));
-		firstHalfCurrentWaterTax = halfYearTaxes[0];
-		secondHalfCurrentWaterTax = halfYearTaxes[1];
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_LIBRARY_CESS));
+		currentLibCess = halfYearTaxes[0];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_LIGHTINGTAX));
-		firstHalfCurrentLightTax = halfYearTaxes[0];
-		secondHalfCurrentLightTax = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX));
-		firstHalfCurrentSewerageBenefitTax = halfYearTaxes[0];
-		secondHalfCurrentSewerageBenefitTax = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_WATER_BENEFIT_TAX));
-		firstHalfCurrentWaterBenefitTax = halfYearTaxes[0];
-		secondHalfCurrentWaterBenefitTax = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_STREET_TAX));
-		firstHalfCurrentRoadTax = halfYearTaxes[0];
-		secondHalfCurrentRoadTax = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS));
-		firstHalfCurrentMunicipalEduCess = halfYearTaxes[0];
-		secondHalfCurrentMunicipalEduCess = halfYearTaxes[1];
-
-		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-		halfYearTaxes = getHalfYearTaxes(edCessRes.add(edCessNonRes));
-		firstHalfCurrentEduCess = halfYearTaxes[0];
-		secondHalfCurrentEduCess = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX));
-		firstHalfCurrentEgCess = halfYearTaxes[0];
-		secondHalfCurrentEgCess = halfYearTaxes[1];
-
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
-		firstHalfCurrentBigBuildingCess = halfYearTaxes[0];
-		secondHalfCurrentBigBuildingCess = halfYearTaxes[1];
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+		currentUnauthPenalty = halfYearTaxes[0];
 	}
 
 	private BigDecimal[] getHalfYearTaxes(BigDecimal taxForYear) {
@@ -262,121 +180,37 @@ public class PropertyBillInfo {
 		return (ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty().getPropertyOwnerSet()));
 	}
 
-	public BigDecimal getArrSewerageTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_SEWERAGE_TAX).setScale(2);
-	}
-
-	public BigDecimal getArrFireserviceTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).setScale(2);
-	}
-
 	public BigDecimal getArrGeneralTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_GENERAL_TAX).setScale(2);
 	}
 
-	public BigDecimal getArrWaterTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_GENERAL_WATER_TAX).setScale(2);
+	public BigDecimal getArrEduCess() {
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS).setScale(2);
 	}
 
-	public BigDecimal getArrLightTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_LIGHTINGTAX).setScale(2);
+	public BigDecimal getArrLibCess() {
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_LIBRARY_CESS).setScale(2);
 	}
 
-	public BigDecimal getArrSewerageBenefitTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX).setScale(2);
-	}
-
-	public BigDecimal getArrWaterBenefitTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_WATER_BENEFIT_TAX).setScale(2);
-	}
-
-	public BigDecimal getArrRoadTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_STREET_TAX).setScale(2);
-	}
-
-	public BigDecimal getArrMunicipalEduCessTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS)
-				.setScale(2);
-	}
-
-	public BigDecimal getArrEdCess() {
-		BigDecimal edCessRes = reasonwiseDues.get(ARREARS_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(ARREARS_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-
-		return edCessRes.add(edCessNonRes).setScale(2);
-	}
-
-	public BigDecimal getArrEgCess() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-				.setScale(2);
-	}
-
-	public BigDecimal getArrBigRes() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-				.setScale(2);
-	}
-
-	public BigDecimal getArrBuildCess() {
-		return BigDecimal.ZERO.setScale(2);
-	}
-
-	public BigDecimal getArrMisc() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY).setScale(2);
-	}
-
-	public BigDecimal getCurrSewerageTax() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_SEWERAGE_TAX).setScale(2);
-	}
-
-	public BigDecimal getCurrFireserviceTax() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).setScale(2);
+	public BigDecimal getArrCurrentUnauthPenalty() {
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY).setScale(2);
 	}
 
 	public BigDecimal getCurrGeneralTax() {
 		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_TAX).setScale(2);
 	}
 
-	public BigDecimal getCurrWaterTax() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_WATER_TAX).setScale(2);
+	public BigDecimal getCurrEduCess() {
+		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS).setScale(2);
 	}
 
-	public BigDecimal getCurrLightTax() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_LIGHTINGTAX).setScale(2);
+	public BigDecimal getCurrLibCess() {
+		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_LIBRARY_CESS).setScale(2);
 
 	}
 
-	public BigDecimal getCurrEdCess() {
-
-		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-
-		if (edCessRes.equals(BigDecimal.ZERO)) {
-			return edCessNonRes.setScale(2);
-		} else {
-			return edCessRes.setScale(2);
-		}
-	}
-
-	public BigDecimal getCurrEgCess() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-				.setScale(2);
-	}
-
-	public BigDecimal getCurrBigRes() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-				.setScale(2);
-	}
-
-	public BigDecimal getCurrBuildCess() {
-		return BigDecimal.ZERO.setScale(2);
-	}
-
-	public BigDecimal getCurrMisc() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY).setScale(2);
+	public BigDecimal getCurrentUnauthPenalty() {
+		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY).setScale(2);
 	}
 
 	public BigDecimal getGrandTotal() {
@@ -451,8 +285,7 @@ public class PropertyBillInfo {
 	}
 
 	public EgdmCollectedReceipt getLastCollectedReceipt() {
-		EgDemand egDemand = ptDemandDAO
-				.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+		EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
 		Date lastPayDate = null;
 		Date newDate = null;
 		EgdmCollectedReceipt lastColReceipt = null;
@@ -511,8 +344,7 @@ public class PropertyBillInfo {
 	}
 
 	public String getPropertyType() {
-		return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster()
-				.getType();
+		return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
 	}
 
 	public int getIsCentralGovtProp() {
@@ -539,110 +371,6 @@ public class PropertyBillInfo {
 		this.currentPeriod = currentPeriod;
 	}
 
-	public BigDecimal getFirstHalfCurrentSewerageTax() {
-		return firstHalfCurrentSewerageTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentWaterTax() {
-		return firstHalfCurrentWaterTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentGeneralTax() {
-		return firstHalfCurrentGeneralTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentLightTax() {
-		return firstHalfCurrentLightTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentFireServiceTax() {
-		return firstHalfCurrentFireServiceTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentSewerageBenefitTax() {
-		return firstHalfCurrentSewerageBenefitTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentWaterBenefitTax() {
-		return firstHalfCurrentWaterBenefitTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentRoadTax() {
-		return firstHalfCurrentRoadTax;
-	}
-
-	public BigDecimal getFirstHalfCurrentMunicipalEduCess() {
-		return firstHalfCurrentMunicipalEduCess;
-	}
-
-	public BigDecimal getFirstHalfCurrentEgCess() {
-		return firstHalfCurrentEgCess;
-	}
-
-	public BigDecimal getFirstHalfCurrentEduCess() {
-		return firstHalfCurrentEduCess;
-	}
-
-	public BigDecimal getFirstHalfCurrentBigBuildingCess() {
-		return firstHalfCurrentBigBuildingCess;
-	}
-
-	public BigDecimal getFirstHalfCurrentMisc() {
-		return getCurrMisc().divide(new BigDecimal(2)).setScale(2);
-	}
-
-	public BigDecimal getSecondHalfCurrentSewerageTax() {
-		return secondHalfCurrentSewerageTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentWaterTax() {
-		return secondHalfCurrentWaterTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentGeneralTax() {
-		return secondHalfCurrentGeneralTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentLightTax() {
-		return secondHalfCurrentLightTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentFireServiceTax() {
-		return secondHalfCurrentFireServiceTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentSewerageBenefitTax() {
-		return secondHalfCurrentSewerageBenefitTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentWaterBenefitTax() {
-		return secondHalfCurrentWaterBenefitTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentRoadTax() {
-		return secondHalfCurrentRoadTax;
-	}
-
-	public BigDecimal getSecondHalfCurrentMunicipalEduCess() {
-		return secondHalfCurrentMunicipalEduCess;
-	}
-
-	public BigDecimal getSecondHalfCurrentEgCess() {
-		return secondHalfCurrentEgCess;
-	}
-
-	public BigDecimal getSecondHalfCurrentEduCess() {
-		return secondHalfCurrentEduCess;
-	}
-
-	public BigDecimal getSecondHalfCurrentBigBuildingCess() {
-		return secondHalfCurrentBigBuildingCess;
-	}
-
-	public BigDecimal getSecondHalfCurrentMisc() {
-		return getCurrMisc().divide(new BigDecimal(2)).setScale(2);
-	}
-
 	public BigDecimal getResidentialALV() {
 		BigDecimal resALVTotal = BigDecimal.ZERO;
 
@@ -651,7 +379,7 @@ public class PropertyBillInfo {
 			String propType = this.taxCalcInfo.getPropertyType();
 
 			if (propType.equals(PROPTYPE_RESD_STR)) {
-				return this.taxCalcInfo.getTotalAnnualLettingValue();
+				return this.taxCalcInfo.getTotalNetARV();
 			} else if (propType.equals(PROPTYPE_MIXED_STR)) {
 				resALVTotal = sumALVOnUnitUsage(USAGES_FOR_RESD);
 			}
@@ -668,7 +396,7 @@ public class PropertyBillInfo {
 			String propType = this.taxCalcInfo.getPropertyType();
 
 			if (propType.equals(PropertyTaxConstants.PROPTYPE_NONRESD_STR)) {
-				return this.taxCalcInfo.getTotalAnnualLettingValue();
+				return this.taxCalcInfo.getTotalNetARV();
 			} else if (propType.equals(PROPTYPE_MIXED_STR)) {
 				nonResALVTotal = sumALVOnUnitUsage(USAGES_FOR_NON_RESD);
 			}
@@ -687,20 +415,19 @@ public class PropertyBillInfo {
 		BigDecimal totalALV = BigDecimal.ZERO;
 
 		if (this.taxCalcInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-			for (List<UnitTaxCalculationInfo> unitTaxCalcs : this.taxCalcInfo
-					.getUnitTaxCalculationInfos()) {
+			for (List<UnitTaxCalculationInfo> unitTaxCalcs : this.taxCalcInfo.getUnitTaxCalculationInfos()) {
 				for (UnitTaxCalculationInfo unitTax : unitTaxCalcs) {
 					if (usages.contains(unitTax.getUnitUsage())) {
-						totalALV = totalALV.add(unitTax.getAnnualRentAfterDeduction());
+						totalALV = totalALV.add(unitTax.getNetARV());
 					}
 				}
 			}
 		} else {
 			for (int i = 0; i < this.taxCalcInfo.getUnitTaxCalculationInfos().size(); i++) {
-				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) this.taxCalcInfo
-						.getUnitTaxCalculationInfos().get(i);
+				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) this.taxCalcInfo.getUnitTaxCalculationInfos()
+						.get(i);
 				if (usages.contains(unitTax.getUnitUsage())) {
-					totalALV = totalALV.add(unitTax.getAnnualRentAfterDeduction());
+					totalALV = totalALV.add(unitTax.getNetARV());
 				}
 			}
 		}
@@ -718,7 +445,7 @@ public class PropertyBillInfo {
 			if (propType.equals(PROPTYPE_MIXED_STR)) {
 				openPlotTotalALV = sumALVOnUnitUsage(USAGES_FOR_OPENPLOT);
 			} else if (propType.equals(PROPTYPE_OPENPLOT_STR)) {
-				openPlotTotalALV = this.taxCalcInfo.getTotalAnnualLettingValue();
+				openPlotTotalALV = this.taxCalcInfo.getTotalNetARV();
 			}
 		}
 

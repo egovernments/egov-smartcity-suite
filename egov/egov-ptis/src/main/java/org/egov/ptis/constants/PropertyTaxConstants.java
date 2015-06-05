@@ -339,8 +339,7 @@ public interface PropertyTaxConstants {
 			put("SHOP", "Shop");
 			put("RESTAURANT_WITH_BAR", "Restaurant with bar");
 			put("DEPARTMENTAL_STORE_AND_SHOPPING_CENTER", "Departmental store and shopping center");
-			put("DISPENSARY_CLINIC_AND_PATHOLOGICAL_LABORATORY",
-					"Dispensary, clinic and pathological laboratory");
+			put("DISPENSARY_CLINIC_AND_PATHOLOGICAL_LABORATORY", "Dispensary, clinic and pathological laboratory");
 			put("PRIVATE_HEALTH_CLUB_GYMNASIUM", "Private health club, gymnasium");
 			put("OFFICE", "Office");
 			put("AIRPORT_BUILDINGS", "Airport buildings");
@@ -352,20 +351,17 @@ public interface PropertyTaxConstants {
 					"Mangal Karyalaya / hall / community hall / convention hall / party hall, etc. ( non air-conditioned )");
 			put("GODOWN_STORAGE_WAREHOUSE", "Godown / storage / warehouse");
 			put("UNSTARRED_HOTEL", "Unstarred hotel");
-			put("HOTEL_UPTO_FOUR_STAR_AND_SERVICE_APARTMENT",
-					"Hotel upto four star and service apartment");
+			put("HOTEL_UPTO_FOUR_STAR_AND_SERVICE_APARTMENT", "Hotel upto four star and service apartment");
 			put("HOTEL_FIVE_STAR_AND_ABOVE", "Hotel - five star and above");
 			put("BANK", "Bank");
 			put("NON_BANKING_FINANCIAL_INSTITUTION", "Non-banking financial institution");
-			put("LIFE_AND_NON_LIFE_INSURANCE_CORPORATION_OR_COMP",
-					"Life and non-life insurance corporation or company");
+			put("LIFE_AND_NON_LIFE_INSURANCE_CORPORATION_OR_COMP", "Life and non-life insurance corporation or company");
 			put("ASSET_MANAGEMENT_COMP_AND_TRUSTEE_COMP_OF_MUTUAL_FUND",
 					"Asset management company and trustee company of Mutual Fund");
 			put("STOCK_EXCHANGE", "Stock exchange");
 			put("COMMODITY_EXCHANGE", "Commodity exchange");
 			put("SECURITY_EXCHANGE_BOARD_OF_INDIA", "Security Exchange Board of India");
-			put("ATM_CENTER_AND_MONEY_CHANGING_CENTER",
-					"Automatic Teller Machine Centre and Money Changing Centre");
+			put("ATM_CENTER_AND_MONEY_CHANGING_CENTER", "Automatic Teller Machine Centre and Money Changing Centre");
 			put("CO_OPERATIVE_CREDIT_SOCIETY", "Co-operative credit society");
 			put("MALL", "Mall");
 			put("EDUCATIONAL_INSTITUTION", "Educational institution");
@@ -385,8 +381,7 @@ public interface PropertyTaxConstants {
 			put("SPECIAL_CAR_PARKING_STRUCTURE", "Special car parking structure");
 			put("MULTIPLEX", "Multiplex");
 			put("FILM_SHOOTING_STUDIO", "Film shooting studio");
-			put("OPEN_AIR_THEATRE_STAGE_AND_OTHER_STRUCTURES",
-					"Open air theatre - stage and other structures");
+			put("OPEN_AIR_THEATRE_STAGE_AND_OTHER_STRUCTURES", "Open air theatre - stage and other structures");
 			put("SWIMMING_POOL", "Swimming pool");
 			put("PETROL_PUMP_OR_SERVICE_STATION_OR_LPG_OR_CNG_STATION_OR_KEROSENE_STATION",
 					"Structures ancillary to petrol pump or service station or LPG or CNG station or kerosene station");
@@ -415,7 +410,7 @@ public interface PropertyTaxConstants {
 
 	// Named Queries
 	public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";
-	public static final String QUERY_BASERENT_BY_OCCUPANCY_AREA_STRUCTURE = "BASERENT_BY_OCCUPANCY_AREA_STRUCTURE";
+	public static final String QUERY_BASERATE_BY_OCCUPANCY_ZONE = "BASERATE_BY_OCCUPANCY_ZONE";
 	public static final String QUERY_PROPERTY_BY_UPICNO = "getPropertyByUpicNo";
 	public static final String QUERY_PROPERTY_BY_UPICNO_AND_STATUS = "getPropertyByUpicNoAndStatus";
 	public static final String QUERY_BASICPROPERTY_BY_UPICNO = "getBasicPropertyByUpicNo";
@@ -466,57 +461,23 @@ public interface PropertyTaxConstants {
 	public static final String EMPTY_STR = "";
 
 	// Demand Reason master codes
-	public static final String DEMANDRSN_CODE_FIRE_SERVICE_TAX = "FIRE_SER_TAX";
-	public static final String DEMANDRSN_CODE_LIGHTINGTAX = "LIGHTINGTAX";
-	public static final String DEMANDRSN_CODE_SEWERAGE_TAX = "SEWERAGETAX";
 	public static final String DEMANDRSN_CODE_GENERAL_TAX = "GEN_TAX";
-	public static final String DEMANDRSN_CODE_GENERAL_WATER_TAX = "GEN_WATER_TAX";
-	public static final String DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX = "EMP_GUA_CESS";
-	public static final String DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX = "BIG_RESD_TAX";
-	public static final String DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD = "EDU_CESS_RESD";
-	public static final String DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD = "EDU_CESS_NONRESD";
-	public static final String DEMANDRSN_CODE_WARRANT_FEE = "WARRANT_FEE";
-	public static final String DEMANDRSN_CODE_NOTICE_FEE = "NOTICE_FEE";
-	public static final String DEMANDRSN_CODE_COURT_FEE = "COURT_FEE";
-	public static final String DEMANDRSN_CODE_RECOVERY_FEE = "RECOVERY_FEE";
+	public static final String DEMANDRSN_CODE_LIBRARY_CESS = "LIB_CESS";
+	public static final String DEMANDRSN_CODE_EDUCATIONAL_CESS = "EDU_CESS";
+	public static final String DEMANDRSN_CODE_UNAUTHORIZED_PENALTY = "UNAUTH_PENALTY";
 	public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
 	public static final String DEMANDRSN_CODE_PENALTY_FINES = "PENALTY_FINES";
-	public static final String DEMANDRSN_REBATE = "REBATE";
-	public static final String DEMANDRSN_CODE_ADVANCE_REBATE = "ADVANCE_REBATE";
 	public static final String DEMANDRSN_CODE_ADVANCE = "ADVANCE";
-	public static final String DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX = "SWG_BNFT_TAX";
-	public static final String DEMANDRSN_CODE_WATER_BENEFIT_TAX = "WATER_BNFT_TAX";
-	public static final String DEMANDRSN_CODE_STREET_TAX = "STREET_TAX";
-	public static final String DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS = "MUN_EDU_CESS";
+	public static final String DEMANDRSN_REBATE = "REBATE";
 
 	// Demand Reason master Strings
-	public static final String DEMANDRSN_STR_FIRE_SERVICE_TAX = "FIRESERVICETAX";
-	public static final String DEMANDRSN_STR_LIGHTINGTAX = "LIGHTINGTAX";
-	public static final String DEMANDRSN_STR_SEWERAGE_TAX = "SEWERAGETAX";
-	public static final String DEMANDRSN_STR_GENERAL_TAX = "GENERALTAX";
-	public static final String DEMANDRSN_STR_GENERAL_WATER_TAX = "GENERALWATERTAX";
-	public static final String DEMANDRSN_STR_EMPLOYEE_GUARANTEE_TAX = "EMPLOYMENTGUARANTEECESS";
-	public static final String DEMANDRSN_STR_BIG_RESIDENTIAL_BLDG_TAX = "BIG RESIDENTIAL BUILDING TAX";
-	public static final String DEMANDRSN_STR_EDUCATIONAL_CESS_RESD = "EDUCATIONCESS_RESIDENTIAL";
-	public static final String DEMANDRSN_STR_EDUCATIONAL_CESS_NONRESD = "EDUCATIONCESS_NON_RESIDENTIAL";
-	public static final String DEMANDRSN_STR_WARRANT_FEE = "WARRANT_FEE";
-	public static final String DEMANDRSN_STR_NOTICE_FEE = "NOTICE_FEE";
-	public static final String DEMANDRSN_STR_COURT_FEE = "COURT_FEE";
+	public static final String DEMANDRSN_STR_GENERAL_TAX = "GENERAL TAX";
+	public static final String DEMANDRSN_STR_LIBRARY_CESS = "LIBRARY CESS";
+	public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "EDUCATION CESS";
+	public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "UNAUTHORIZED PENALTY";
 	public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
 	public static final String DEMANDRSN_STR_PENALTY_FINES = "PENALTY_FINES";
-	public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
 	public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
-	public static final String DEMANDRSN_STR_SEWERAGE_BENEFIT_TAX = "SEWERAGE BENEFIT TAX";
-	public static final String DEMANDRSN_STR_WATER_BENEFIT_TAX = "WATER BENEFIT TAX";
-	public static final String DEMANDRSN_STR_STREET_TAX = "STREET TAX";
-	public static final String DEMANDRSN_STR_MUNICIPAL_EDUCATIONAL_CESS = "MUNICIPAL EDUCATIONAL CESS";
-
-	public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
-	public static final String MUTATIONRS_OTHERS = "OTHERS";
-	public static final String MUTATIONRS_SALES_DEED = "SALE DEED";
-	public static final String MUTATIONRS_COURT_ORDER = "COURT ORDER";
-
-	public static final String ALV = "ALV";
 
 	// Tax Payable constants
 	public static final String DEMANDRSN_CODE_GEN_TAX_PAYABLE = "PROPERTY TAX-PROPERTY TAX ON ALL PROPERTIES";
@@ -534,24 +495,9 @@ public interface PropertyTaxConstants {
 			put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, 0);
 			put(DEMANDRSN_CODE_PENALTY_FINES, 1);
 			put(DEMANDRSN_CODE_GENERAL_TAX, 2);
-			put(DEMANDRSN_REBATE, 3);
-			put(DEMANDRSN_CODE_SEWERAGE_TAX, 4);
-			put(DEMANDRSN_CODE_LIGHTINGTAX, 5);
-			put(DEMANDRSN_CODE_FIRE_SERVICE_TAX, 6);
-			put(DEMANDRSN_CODE_GENERAL_WATER_TAX, 7);
-			put(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX, 8);
-			put(DEMANDRSN_CODE_WATER_BENEFIT_TAX, 9);
-			put(DEMANDRSN_CODE_STREET_TAX, 10);
-			put(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS, 11);
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, 12);
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, 13);
-			put(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX, 14);
-			put(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, 15);
-			put(DEMANDRSN_CODE_WARRANT_FEE, 15);
-			put(DEMANDRSN_CODE_NOTICE_FEE, 17);
-			put(DEMANDRSN_CODE_COURT_FEE, 18);
-			put(DEMANDRSN_CODE_ADVANCE_REBATE, 19);
-			put(DEMANDRSN_CODE_ADVANCE, 20);
+			put(DEMANDRSN_CODE_LIBRARY_CESS, 3);
+			put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 4);
+			put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 5);
 		}
 	};
 
@@ -686,9 +632,8 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_MODIFY_REASON_DATA_UPDATE = "DATA_UPDATE";
 	public static final String PROPERTY_MODIFY_REASON_EDIT_OWNER = "EDIT_OWNER";
 	public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
-			PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ,
-			PROPERTY_MODIFY_REASON_DATA_ENTRY, PROPERTY_MODIFY_REASON_DATA_UPDATE,
-			PROPERTY_MODIFY_REASON_MODIFY);
+			PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
+			PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
 
 	// Constants for Government Properties
 	public static final Double STATEGOVT_BUILDING_ALV_PERCENTAGE = new Double(8.25d);
@@ -738,22 +683,9 @@ public interface PropertyTaxConstants {
 		{
 
 			put(DEMANDRSN_CODE_GENERAL_TAX, "4311002");
-			put(DEMANDRSN_CODE_SEWERAGE_TAX, "4311032");
-			put(DEMANDRSN_CODE_LIGHTINGTAX, "4311042");
-			put(DEMANDRSN_CODE_FIRE_SERVICE_TAX, "4311012");
-			put(DEMANDRSN_CODE_GENERAL_WATER_TAX, "4311022");
-			put(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX, "4311044");
-			put(DEMANDRSN_CODE_WATER_BENEFIT_TAX, "4311046");
-			put(DEMANDRSN_CODE_STREET_TAX, "4311048");
-			put(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS, "4311050");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, "4312002");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, "4312002");
-			put(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX, "4312004");
-			put(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, "4311004");
-			put(DEMANDRSN_CODE_WARRANT_FEE, "4311018");
-			put(DEMANDRSN_CODE_NOTICE_FEE, "4311018");
-			put(DEMANDRSN_CODE_COURT_FEE, "4311018");
-			put(DEMANDRSN_CODE_RECOVERY_FEE, "4311018");
+			put(DEMANDRSN_CODE_LIBRARY_CESS, "4311032");
+			put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311042");
+			put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311012");
 
 		}
 	};
@@ -761,18 +693,9 @@ public interface PropertyTaxConstants {
 	public static final HashMap<String, String> GLCODEMAP_FOR_ARREARTAX = new HashMap<String, String>() {
 		{
 			put(DEMANDRSN_CODE_GENERAL_TAX, "4311001");
-			put(DEMANDRSN_CODE_SEWERAGE_TAX, "4311031");
-			put(DEMANDRSN_CODE_LIGHTINGTAX, "4311041");
-			put(DEMANDRSN_CODE_FIRE_SERVICE_TAX, "4311011");
-			put(DEMANDRSN_CODE_GENERAL_WATER_TAX, "4311021");
-			put(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX, "4311043");
-			put(DEMANDRSN_CODE_WATER_BENEFIT_TAX, "4311045");
-			put(DEMANDRSN_CODE_STREET_TAX, "4311047");
-			put(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS, "4311049");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, "4312001");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, "4312001");
-			put(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX, "4312003");
-			put(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, "4311003");
+			put(DEMANDRSN_CODE_LIBRARY_CESS, "4311031");
+			put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311041");
+			put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311011");
 		}
 	};
 
@@ -781,22 +704,9 @@ public interface PropertyTaxConstants {
 	public static final HashMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = new HashMap<String, String>() {
 		{
 			put(DEMANDRSN_CODE_GENERAL_TAX, "1100101");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, "1105201");
-			put(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, "1105201");
-			put(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, "1100102");
-			put(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX, "1105202");
-			put(DEMANDRSN_CODE_GENERAL_WATER_TAX, "1100201");
-			put(DEMANDRSN_CODE_SEWERAGE_TAX, "1100301");
-			put(DEMANDRSN_CODE_FIRE_SERVICE_TAX, "1108003");
-			put(DEMANDRSN_CODE_LIGHTINGTAX, "1100501");
-			put(DEMANDRSN_CODE_WARRANT_FEE, "1404016");
-			put(DEMANDRSN_CODE_NOTICE_FEE, "1404016");
-			put(DEMANDRSN_CODE_COURT_FEE, "1404016");
-			put(DEMANDRSN_CODE_RECOVERY_FEE, "1404016");
-			put(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX, "1100302");
-			put(DEMANDRSN_CODE_WATER_BENEFIT_TAX, "1100202");
-			put(DEMANDRSN_CODE_STREET_TAX, "1108007");
-			put(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS, "1105203");
+			put(DEMANDRSN_CODE_LIBRARY_CESS, "1105201");
+			put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "1105201");
+			put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1100102");
 		}
 	};
 
@@ -821,21 +731,11 @@ public interface PropertyTaxConstants {
 	public static final LinkedHashMap<String, String> DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
 		{
 			put(DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_CODE_GENERAL_TAX);
-			put(DEMANDRSN_STR_SEWERAGE_TAX, DEMANDRSN_CODE_SEWERAGE_TAX);
-			put(DEMANDRSN_STR_LIGHTINGTAX, DEMANDRSN_CODE_LIGHTINGTAX);
-			put(DEMANDRSN_STR_FIRE_SERVICE_TAX, DEMANDRSN_CODE_FIRE_SERVICE_TAX);
-			put(DEMANDRSN_STR_GENERAL_WATER_TAX, DEMANDRSN_CODE_GENERAL_WATER_TAX);
-			put(DEMANDRSN_STR_EDUCATIONAL_CESS_RESD, DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-			put(DEMANDRSN_STR_EDUCATIONAL_CESS_NONRESD, DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-			put(DEMANDRSN_STR_EMPLOYEE_GUARANTEE_TAX, DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX);
-			put(DEMANDRSN_STR_BIG_RESIDENTIAL_BLDG_TAX, DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX);
-			put(DEMANDRSN_STR_WARRANT_FEE, DEMANDRSN_CODE_WARRANT_FEE);
-			put(DEMANDRSN_STR_NOTICE_FEE, DEMANDRSN_CODE_NOTICE_FEE);
-			put(DEMANDRSN_STR_COURT_FEE, DEMANDRSN_CODE_COURT_FEE);
+			put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
+			put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+			put(DEMANDRSN_STR_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
 			put(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY, DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
 			put(DEMANDRSN_STR_PENALTY_FINES, DEMANDRSN_CODE_PENALTY_FINES);
-			put(DEMANDRSN_STR_ADVANCE_REBATE, DEMANDRSN_CODE_ADVANCE_REBATE);
-			put(DEMANDRSN_STR_ADVANCE, DEMANDRSN_CODE_ADVANCE);
 		}
 	};
 
@@ -1022,23 +922,9 @@ public interface PropertyTaxConstants {
 	public static final List<String> ORDERED_DEMAND_RSNS_LIST = new ArrayList<String>() {
 		{
 			add(DEMANDRSN_CODE_GENERAL_TAX);
-			add(DEMANDRSN_CODE_SEWERAGE_TAX);
-			add(DEMANDRSN_CODE_GENERAL_WATER_TAX);
-			add(DEMANDRSN_CODE_FIRE_SERVICE_TAX);
-			add(DEMANDRSN_CODE_LIGHTINGTAX);
-			add(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX);
-			add(DEMANDRSN_CODE_WATER_BENEFIT_TAX);
-			add(DEMANDRSN_CODE_STREET_TAX);
-			add(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS);
-			add(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-			add(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-			add(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX);
-			add(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX);
-			add(DEMANDRSN_CODE_WARRANT_FEE);
-			add(DEMANDRSN_CODE_NOTICE_FEE);
-			add(DEMANDRSN_CODE_COURT_FEE);
-			add(DEMANDRSN_REBATE);
-			add(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
+			add(DEMANDRSN_CODE_LIBRARY_CESS);
+			add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+			add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
 			add(DEMANDRSN_CODE_PENALTY_FINES);
 			add(DEMANDRSN_CODE_ADVANCE);
 		}
@@ -1101,39 +987,6 @@ public interface PropertyTaxConstants {
 	public static final Character STATUS_BILL_CREATE_FAILED = 'F';
 
 	public static final String STRING_EMPTY = new String();
-
-	public static final List<String> commonExemptedTaxes = Arrays.asList(
-			DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD,
-			DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX,
-			DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX);
-
-	public static final Map<String, List<String>> exemptedTaxesByReason = new HashMap<String, List<String>>() {
-		{
-			put("Agiaries", commonExemptedTaxes);
-			put("Andhalaya", commonExemptedTaxes);
-			put("Beggars Home", commonExemptedTaxes);
-			put("Budh Vihar", commonExemptedTaxes);
-			put("Burial ground", commonExemptedTaxes);
-			put("Charitable", commonExemptedTaxes);
-			put("Church", commonExemptedTaxes);
-			put("Dharmshala", commonExemptedTaxes);
-			put("Durgahs", commonExemptedTaxes);
-			put("Gurudwara", commonExemptedTaxes);
-			put("Jain Temple", commonExemptedTaxes);
-			put("Mosque", commonExemptedTaxes);
-			put("Musafirkhana", commonExemptedTaxes);
-			put("Orphanages Asylum", commonExemptedTaxes);
-			put("Place of cremation/burning ghat", commonExemptedTaxes);
-			put("Prayer Halls", commonExemptedTaxes);
-			put("Remand Home", commonExemptedTaxes);
-			put("School and Hostels for the physically challenged", commonExemptedTaxes);
-			put("Synagogues", commonExemptedTaxes);
-			put("Temple", commonExemptedTaxes);
-			put("Government Tenant", Arrays.asList(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD,
-					DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX,
-					DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
-		}
-	};
 
 	public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(4);
 	public static final Integer MAX_ADVANCES_ALLOWED = 5;

@@ -51,436 +51,72 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 @XStreamAlias("unitinfo")
 public class UnitTaxCalculationInfo {
 	@XStreamAsAttribute
-    private Date baseRentEffectiveDate;
+	private Date baseRateEffectiveDate;
 
-    @XStreamAsAttribute
-    private String floorNumber;
+	@XStreamAsAttribute
+	private String floorNumber;
 
-    @XStreamAsAttribute
-    private Integer unitNumber;
+	@XStreamAsAttribute
+	private BigDecimal floorArea;
 
-    @XStreamAsAttribute
-    private BigDecimal unitArea;
+	private BigDecimal unitAreaInSqFt;
+	private String unitOccupation;
+	private String unitOccupier;
+	private String unitUsage;
+	private BigDecimal baseRate;
+	private BigDecimal baseRatePerSqMtPerMonth;
+	private BigDecimal mrv;
+	private BigDecimal buildingValue;
+	private BigDecimal siteValue;
+	private BigDecimal grossARV;
+	private BigDecimal depreciation;
+	private BigDecimal netARV;
 
-    private BigDecimal unitAreaInSqFt;
-    private String unitOccupation;
-    private String unitUsage;
-    private BigDecimal baseRent;
-    private BigDecimal baseRentPerSqMtPerMonth;
-    private BigDecimal monthlyRent;
-    private BigDecimal annualRentBeforeDeduction;
-    private BigDecimal annualRentAfterDeduction;
-    private BigDecimal totalTaxPayable;
-    private BigDecimal monthlyRentPaidByTenant;
+	private Date occpancyDate;
+	private Date effectiveAssessmentDate;
 
-    private Date occpancyDate;
-    private Date effectiveAssessmentDate;
-
-    private String structuralFactorCode;
-    private String structuralFactorIndex;
-    private BigDecimal structuralFactorValue;
-    private String locationFactorCode;
-    private String locationFactorIndex;
-    private BigDecimal locationFactorValue;
-    private String usageFactorCode;
-    private String usageFactorIndex;
-    private BigDecimal usageFactorValue;
-    private String occupancyFactorCode;
-    private String occupancyFactorIndex;
-    private BigDecimal occupancyFactorValue;
-    private String ageFactorCode;
-    private String ageFactorIndex;
-    private BigDecimal ageFactorvalue;
-    private Integer floorNumberInteger;
-    private String unitOccupier;
-    private String instDate;
-    private String manualAlv;
-    private BigDecimal residentialALV = BigDecimal.ZERO;
-    private BigDecimal nonResidentialALV  = BigDecimal.ZERO;
-    private BigDecimal resdEduCess  = BigDecimal.ZERO;
-    private BigDecimal nonResdEduCess  = BigDecimal.ZERO;
-    private BigDecimal egCess  = BigDecimal.ZERO;
-    private Boolean hasALVChanged = Boolean.FALSE;
-    private BigDecimal bigBuildingTaxALV = BigDecimal.ZERO;
-
-    private String taxExemptionReason;
-
-    @XStreamOmitField
-    private Boolean isHistory;
-    @XStreamOmitField
-    private Date propertyCreatedDate;
+	@XStreamOmitField
+	private Date propertyCreatedDate;
 
 	@XStreamAlias("misctaxes")
-    private List<MiscellaneousTax> miscellaneousTaxes = new ArrayList<MiscellaneousTax>();
+	private List<MiscellaneousTax> miscellaneousTaxes = new ArrayList<MiscellaneousTax>();
 
-    @XStreamAlias("areataxes")
-    private List<AreaTaxCalculationInfo> areaTaxCalculationInfos = new ArrayList<AreaTaxCalculationInfo>();
+	private BigDecimal totalTaxPayable;
 
-    public UnitTaxCalculationInfo() {}
+	public UnitTaxCalculationInfo() {
+	}
 
-    public UnitTaxCalculationInfo(UnitTaxCalculationInfo unit) {
-    	this.floorNumber = unit.getFloorNumber();
-		this.unitNumber = unit.getUnitNumber();
-		this.unitArea = unit.getUnitArea();
+	public UnitTaxCalculationInfo(UnitTaxCalculationInfo unit) {
+		this.floorNumber = unit.getFloorNumber();
 		this.unitOccupation = unit.getUnitOccupation();
 		this.unitUsage = unit.getUnitUsage();
-		this.baseRent = unit.getBaseRent();
-		this.baseRentPerSqMtPerMonth = unit.getBaseRentPerSqMtPerMonth();
-		this.monthlyRent = unit.getMonthlyRent();
-		this.annualRentBeforeDeduction = unit.getAnnualRentBeforeDeduction();
-		this.annualRentAfterDeduction = unit.getAnnualRentAfterDeduction();
-		this.totalTaxPayable = unit.getTotalTaxPayable();
-		this.monthlyRentPaidByTenant = unit.getMonthlyRentPaidByTenant();
 		this.occpancyDate = new Date(unit.getOccpancyDate().getTime());
 		this.effectiveAssessmentDate = unit.getEffectiveAssessmentDate();
-		this.floorNumberInteger = unit.getFloorNumberInteger();
-		this.unitOccupier = unit.getUnitOccupier();
-		this.instDate = unit.getInstDate();
-		this.residentialALV = unit.getResidentialALV();
-		this.nonResidentialALV = unit.getNonResidentialALV();
-		this.resdEduCess = unit.getResdEduCess();
-		this.nonResdEduCess = unit.getNonResdEduCess();
-		this.egCess = unit.getEgCess();
-		this.baseRentEffectiveDate = unit.getBaseRentEffectiveDate();
-		this.bigBuildingTaxALV = unit.getBigBuildingTaxALV();
-
-		if (unit.getHasALVChanged() == null) {
-			this.hasALVChanged = Boolean.FALSE;
-		} else {
-			this.hasALVChanged = unit.getHasALVChanged();
-		}
-
-		this.isHistory = unit.getIsHistory();
 		this.propertyCreatedDate = unit.getPropertyCreatedDate();
-		this.taxExemptionReason = unit.getTaxExemptionReason();
-
-    }
-
-    public String getUnitOccupation() {
-        return unitOccupation;
-    }
-
-    public BigDecimal getUnitArea() {
-        return unitArea;
-    }
-
-    public Date getOccpancyDate() {
-        return occpancyDate;
-    }
-
-    public Date getEffectiveAssessmentDate() {
-        return effectiveAssessmentDate;
-    }
-
-    public BigDecimal getMonthlyRent() {
-        return monthlyRent;
-    }
-
-    public Integer getUnitNumber() {
-        return unitNumber;
-    }
-
-    public List<MiscellaneousTax> getMiscellaneousTaxes() {
-        return miscellaneousTaxes;
-    }
-
-    public BigDecimal getBaseRentPerSqMtPerMonth() {
-        return baseRentPerSqMtPerMonth;
-    }
-
-    public BigDecimal getAnnualRentBeforeDeduction() {
-        return annualRentBeforeDeduction;
-    }
-
-    public BigDecimal getAnnualRentAfterDeduction() {
-        return annualRentAfterDeduction;
-    }
-
-    public BigDecimal getTotalTaxPayable() {
-        return totalTaxPayable;
-    }
-
-    public void setUnitNumber(Integer unitNumber) {
-        this.unitNumber = unitNumber;
-    }
-
-    public void setUnitOccupation(String unitOccupation) {
-        this.unitOccupation = unitOccupation;
-    }
-
-    public void setUnitArea(BigDecimal unitArea) {
-        this.unitArea = unitArea;
-    }
-
-    public void setBaseRentPerSqMtPerMonth(BigDecimal baseRentPerSqMtPerMonth) {
-        this.baseRentPerSqMtPerMonth = baseRentPerSqMtPerMonth;
-    }
-
-    public void setMonthlyRent(BigDecimal monthlyRent) {
-        this.monthlyRent = monthlyRent;
-    }
-
-    public void setAnnualRentBeforeDeduction(BigDecimal annualRentBeforeDeduction) {
-        this.annualRentBeforeDeduction = annualRentBeforeDeduction;
-    }
-
-    public void setAnnualRentAfterDeduction(BigDecimal annualRentAfterDeduction) {
-        this.annualRentAfterDeduction = annualRentAfterDeduction;
-    }
-
-    public void setTotalTaxPayable(BigDecimal totalTaxPayable) {
-        this.totalTaxPayable = totalTaxPayable;
-    }
-
-    public void setOccpancyDate(Date occpancyDate) {
-        this.occpancyDate = occpancyDate;
-    }
-
-    public void setEffectiveAssessmentDate(Date effectiveAssessmentDate) {
-        this.effectiveAssessmentDate = effectiveAssessmentDate;
-    }
-
-    public void setMiscellaneousTaxes(List<MiscellaneousTax> miscellaneousTaxes) {
-        this.miscellaneousTaxes = miscellaneousTaxes;
-    }
-
-    public void addMiscellaneousTaxes(MiscellaneousTax miscellaneousTaxes) {
-        this.getMiscellaneousTaxes().add(miscellaneousTaxes);
-    }
-
-    public void addAreaTaxCalculationInfo(AreaTaxCalculationInfo areaTaxCalculationInfo) {
-        this.getAreaTaxCalculationInfos().add(areaTaxCalculationInfo);
-    }
-
-    public String getFloorNumber() {
-        return floorNumber;
-    }
-
-    public void setFloorNumber(String floorNumber) {
-        this.floorNumber = floorNumber;
-    }
-
-    public BigDecimal getBaseRent() {
-        return baseRent;
-    }
-
-    public void setBaseRent(BigDecimal baseRent) {
-        this.baseRent = baseRent;
-    }
-
-    public String getUnitUsage() {
-        return unitUsage;
-    }
-
-    public void setUnitUsage(String unitUsage) {
-        this.unitUsage = unitUsage;
-    }
-
-    public String getStructuralFactorCode() {
-        return structuralFactorCode;
-    }
-
-    public void setStructuralFactorCode(String structuralFactorCode) {
-        this.structuralFactorCode = structuralFactorCode;
-    }
-
-    public BigDecimal getStructuralFactorValue() {
-        return structuralFactorValue;
-    }
-
-    public void setStructuralFactorValue(BigDecimal structuralFactorValue) {
-        this.structuralFactorValue = structuralFactorValue;
-    }
-
-    public String getLocationFactorCode() {
-        return locationFactorCode;
-    }
-
-    public void setLocationFactorCode(String locationFactorCode) {
-        this.locationFactorCode = locationFactorCode;
-    }
-
-    public BigDecimal getLocationFactorValue() {
-        return locationFactorValue;
-    }
-
-    public void setLocationFactorValue(BigDecimal locationFactorValue) {
-        this.locationFactorValue = locationFactorValue;
-    }
-
-    public String getUsageFactorCode() {
-        return usageFactorCode;
-    }
-
-    public void setUsageFactorCode(String usageFactorCode) {
-        this.usageFactorCode = usageFactorCode;
-    }
-
-    public BigDecimal getUsageFactorValue() {
-        return usageFactorValue;
-    }
-
-    public void setUsageFactorValue(BigDecimal usageFactorValue) {
-        this.usageFactorValue = usageFactorValue;
-    }
-
-    public String getOccupancyFactorCode() {
-        return occupancyFactorCode;
-    }
-
-    public void setOccupancyFactorCode(String occupancyFactorCode) {
-        this.occupancyFactorCode = occupancyFactorCode;
-    }
-
-    public BigDecimal getOccupancyFactorValue() {
-        return occupancyFactorValue;
-    }
-
-    public void setOccupancyFactorValue(BigDecimal occupancyFactorValue) {
-        this.occupancyFactorValue = occupancyFactorValue;
-    }
-
-    public String getAgeFactorCode() {
-        return ageFactorCode;
-    }
-
-    public void setAgeFactorCode(String ageFactorCode) {
-        this.ageFactorCode = ageFactorCode;
-    }
-
-    public BigDecimal getAgeFactorvalue() {
-        return ageFactorvalue;
-    }
-
-    public void setAgeFactorvalue(BigDecimal ageFactorvalue) {
-        this.ageFactorvalue = ageFactorvalue;
-    }
-
-    public String getStructuralFactorIndex() {
-        return structuralFactorIndex;
-    }
-
-    public void setStructuralFactorIndex(String structuralFactorIndex) {
-        this.structuralFactorIndex = structuralFactorIndex;
-    }
-
-    public String getLocationFactorIndex() {
-        return locationFactorIndex;
-    }
-
-    public void setLocationFactorIndex(String locationFactorIndex) {
-        this.locationFactorIndex = locationFactorIndex;
-    }
-
-    public String getUsageFactorIndex() {
-        return usageFactorIndex;
-    }
-
-    public void setUsageFactorIndex(String usageFactorIndex) {
-        this.usageFactorIndex = usageFactorIndex;
-    }
-
-    public String getOccupancyFactorIndex() {
-        return occupancyFactorIndex;
-    }
-
-    public void setOccupancyFactorIndex(String occupancyFactorIndex) {
-        this.occupancyFactorIndex = occupancyFactorIndex;
-    }
-
-    public String getAgeFactorIndex() {
-        return ageFactorIndex;
-    }
-
-    public void setAgeFactorIndex(String ageFactorIndex) {
-        this.ageFactorIndex = ageFactorIndex;
-    }
-
-    public Integer getFloorNumberInteger() {
-        return floorNumberInteger;
-    }
-
-    public void setFloorNumberInteger(Integer floorNumberInteger) {
-        this.floorNumberInteger = floorNumberInteger;
-    }
-
-    public List<AreaTaxCalculationInfo> getAreaTaxCalculationInfos() {
-        return areaTaxCalculationInfos;
-    }
-
-    public void setAreaTaxCalculationInfos(List<AreaTaxCalculationInfo> areaTaxCalculationInfos) {
-        this.areaTaxCalculationInfos = areaTaxCalculationInfos;
-    }
-
-    public BigDecimal getMonthlyRentPaidByTenant() {
-        return monthlyRentPaidByTenant;
-    }
-
-    public void setMonthlyRentPaidByTenant(BigDecimal monthlyRentPaidByTenant) {
-        this.monthlyRentPaidByTenant = monthlyRentPaidByTenant;
-    }
-
-    public String getUnitOccupier() {
-		return unitOccupier;
 	}
 
-	public void setUnitOccupier(String unitOccupier) {
-		this.unitOccupier = unitOccupier;
-	}
-	public String getInstDate() {
-		return instDate;
+	public Date getBaseRateEffectiveDate() {
+		return baseRateEffectiveDate;
 	}
 
-	public void setInstDate(String instDate) {
-		this.instDate = instDate;
+	public void setBaseRateEffectiveDate(Date baseRateEffectiveDate) {
+		this.baseRateEffectiveDate = baseRateEffectiveDate;
 	}
 
-	public String getManualAlv() {
-		return manualAlv;
+	public String getFloorNumber() {
+		return floorNumber;
 	}
 
-	public void setManualAlv(String manualAlv) {
-		this.manualAlv = manualAlv;
+	public void setFloorNumber(String floorNumber) {
+		this.floorNumber = floorNumber;
 	}
 
-	public BigDecimal getResidentialALV() {
-		return residentialALV;
+	public BigDecimal getFloorArea() {
+		return floorArea;
 	}
 
-	public void setResidentialALV(BigDecimal residentialALV) {
-		this.residentialALV = residentialALV;
-	}
-
-	public BigDecimal getNonResidentialALV() {
-		return nonResidentialALV;
-	}
-
-	public void setNonResidentialALV(BigDecimal nonResidentialALV) {
-		this.nonResidentialALV = nonResidentialALV;
-	}
-
-	public BigDecimal getResdEduCess() {
-		return resdEduCess;
-	}
-
-	public void setResdEduCess(BigDecimal resdEduCess) {
-		this.resdEduCess = resdEduCess;
-	}
-
-	public BigDecimal getNonResdEduCess() {
-		return nonResdEduCess;
-	}
-
-	public void setNonResdEduCess(BigDecimal nonResdEduCess) {
-		this.nonResdEduCess = nonResdEduCess;
-	}
-
-	public BigDecimal getEgCess() {
-		return egCess;
-	}
-
-	public void setEgCess(BigDecimal egCess) {
-		this.egCess = egCess;
+	public void setFloorArea(BigDecimal floorArea) {
+		this.floorArea = floorArea;
 	}
 
 	public BigDecimal getUnitAreaInSqFt() {
@@ -491,30 +127,109 @@ public class UnitTaxCalculationInfo {
 		this.unitAreaInSqFt = unitAreaInSqFt;
 	}
 
-	public Boolean getHasALVChanged() {
-		return hasALVChanged;
+	public String getUnitOccupation() {
+		return unitOccupation;
 	}
 
-	public void setHasALVChanged(Boolean hasALVChanged) {
-		this.hasALVChanged = hasALVChanged;
+	public void setUnitOccupation(String unitOccupation) {
+		this.unitOccupation = unitOccupation;
 	}
 
-	public Date getBaseRentEffectiveDate() {
-		return baseRentEffectiveDate;
+	public String getUnitOccupier() {
+		return unitOccupier;
 	}
 
-	public void setBaseRentEffectiveDate(Date baseRentEffectiveDate) {
-		this.baseRentEffectiveDate = baseRentEffectiveDate;
+	public void setUnitOccupier(String unitOccupier) {
+		this.unitOccupier = unitOccupier;
 	}
 
-	public Boolean getIsHistory() {
-		return isHistory;
+	public String getUnitUsage() {
+		return unitUsage;
 	}
 
-	public void setIsHistory(Boolean isHistory) {
-		this.isHistory = isHistory;
+	public void setUnitUsage(String unitUsage) {
+		this.unitUsage = unitUsage;
 	}
 
+	public BigDecimal getBaseRate() {
+		return baseRate;
+	}
+
+	public void setBaseRate(BigDecimal baseRate) {
+		this.baseRate = baseRate;
+	}
+
+	public BigDecimal getBaseRatePerSqMtPerMonth() {
+		return baseRatePerSqMtPerMonth;
+	}
+
+	public void setBaseRatePerSqMtPerMonth(BigDecimal baseRatePerSqMtPerMonth) {
+		this.baseRatePerSqMtPerMonth = baseRatePerSqMtPerMonth;
+	}
+
+	public BigDecimal getMrv() {
+		return mrv;
+	}
+
+	public void setMrv(BigDecimal mrv) {
+		this.mrv = mrv;
+	}
+
+	public BigDecimal getBuildingValue() {
+		return buildingValue;
+	}
+
+	public void setBuildingValue(BigDecimal buildingValue) {
+		this.buildingValue = buildingValue;
+	}
+
+	public BigDecimal getSiteValue() {
+		return siteValue;
+	}
+
+	public void setSiteValue(BigDecimal siteValue) {
+		this.siteValue = siteValue;
+	}
+
+	public BigDecimal getGrossARV() {
+		return grossARV;
+	}
+
+	public void setGrossARV(BigDecimal grossARV) {
+		this.grossARV = grossARV;
+	}
+
+	public BigDecimal getDepreciation() {
+		return depreciation;
+	}
+
+	public void setDepreciation(BigDecimal depreciation) {
+		this.depreciation = depreciation;
+	}
+
+	public BigDecimal getNetARV() {
+		return netARV;
+	}
+
+	public void setNetARV(BigDecimal netARV) {
+		this.netARV = netARV;
+	}
+
+	public Date getOccpancyDate() {
+		return occpancyDate;
+	}
+
+	public void setOccpancyDate(Date occpancyDate) {
+		this.occpancyDate = occpancyDate;
+	}
+
+	public Date getEffectiveAssessmentDate() {
+		return effectiveAssessmentDate;
+	}
+
+	public void setEffectiveAssessmentDate(Date effectiveAssessmentDate) {
+		this.effectiveAssessmentDate = effectiveAssessmentDate;
+	}
 
 	public Date getPropertyCreatedDate() {
 		return propertyCreatedDate;
@@ -524,66 +239,31 @@ public class UnitTaxCalculationInfo {
 		this.propertyCreatedDate = propertyCreatedDate;
 	}
 
-	public BigDecimal getBigBuildingTaxALV() {
-		return bigBuildingTaxALV;
+	public List<MiscellaneousTax> getMiscellaneousTaxes() {
+		return miscellaneousTaxes;
 	}
 
-	public void setBigBuildingTaxALV(BigDecimal bigBuildingTaxALV) {
-		this.bigBuildingTaxALV = bigBuildingTaxALV;
+	public void setMiscellaneousTaxes(List<MiscellaneousTax> miscellaneousTaxes) {
+		this.miscellaneousTaxes = miscellaneousTaxes;
+	}
+
+	public void addMiscellaneousTaxes(MiscellaneousTax miscellaneousTaxes) {
+		getMiscellaneousTaxes().add(miscellaneousTaxes);
+	}
+
+	public BigDecimal getTotalTaxPayable() {
+		return totalTaxPayable;
+	}
+
+	public void setTotalTaxPayable(BigDecimal totalTaxPayable) {
+		this.totalTaxPayable = totalTaxPayable;
 	}
 
 	@Override
-    public int hashCode() {
+	public int hashCode() {
 
-		int hashCode = this.ageFactorCode.hashCode() + this.ageFactorvalue.hashCode()
-				+ this.annualRentAfterDeduction.hashCode() + this.annualRentBeforeDeduction.hashCode()
-				+ this.baseRent.hashCode() + this.baseRentPerSqMtPerMonth.hashCode()
-				+ this.effectiveAssessmentDate.hashCode() + this.floorNumber.hashCode()
-				+ this.locationFactorCode.hashCode() + this.locationFactorValue.hashCode()
-				+ this.monthlyRent.hashCode() + this.occpancyDate.hashCode() + this.occupancyFactorCode.hashCode()
-				+ this.occupancyFactorValue.hashCode() + this.structuralFactorCode.hashCode()
-				+ this.structuralFactorValue.hashCode() + this.totalTaxPayable.hashCode() + this.unitArea.hashCode()
-				+ this.unitNumber.hashCode() + this.unitOccupation.hashCode() + this.unitUsage.hashCode()
-				+ this.usageFactorCode.hashCode() + this.usageFactorValue.hashCode()
-				+ this.structuralFactorIndex.hashCode() + this.locationFactorIndex.hashCode()
-				+ this.ageFactorIndex.hashCode() + this.occupancyFactorIndex.hashCode()
-				+ this.usageFactorIndex.hashCode() + this.floorNumberInteger + this.monthlyRentPaidByTenant.hashCode();
+		int hashCode = this.effectiveAssessmentDate.hashCode() + this.floorNumber.hashCode()
+				+ this.occpancyDate.hashCode() + this.unitOccupation.hashCode() + this.unitUsage.hashCode();
 		return hashCode;
-    }
-
-    public void addApplicableFactor(List<ApplicableFactor> applicableFactors) {
-        for (ApplicableFactor applicableFactor : applicableFactors) {
-            if (applicableFactor.getFactorName().equals("SF")) {
-                this.setStructuralFactorCode(applicableFactor.getFactorName());
-                this.setStructuralFactorIndex(applicableFactor.getFactorIndex());
-                this.setStructuralFactorValue(applicableFactor.getFactorValue());
-            } else if (applicableFactor.getFactorName().equals("UF")) {
-                this.setUsageFactorCode(applicableFactor.getFactorName());
-                this.setUsageFactorIndex(applicableFactor.getFactorIndex());
-                this.setUsageFactorValue(applicableFactor.getFactorValue());
-            } else if (applicableFactor.getFactorName().equals("OF")) {
-                this.setOccupancyFactorCode(applicableFactor.getFactorName());
-                this.setOccupancyFactorIndex(applicableFactor.getFactorIndex());
-                this.setOccupancyFactorValue(applicableFactor.getFactorValue());
-            } else if (applicableFactor.getFactorName().equals("AF")) {
-                this.setAgeFactorCode(applicableFactor.getFactorName());
-                this.setAgeFactorIndex(applicableFactor.getFactorIndex());
-                this.setAgeFactorvalue(applicableFactor.getFactorValue());
-            } else if (applicableFactor.getFactorName().equals("LF")) {
-                this.setLocationFactorCode(applicableFactor.getFactorName());
-                this.setLocationFactorIndex(applicableFactor.getFactorIndex());
-                this.setLocationFactorValue(applicableFactor.getFactorValue());
-            }
-
-        }
-
-    }
-
-	public String getTaxExemptionReason() {
-		return taxExemptionReason;
-	}
-
-	public void setTaxExemptionReason(String taxExemptionReason) {
-		this.taxExemptionReason = taxExemptionReason;
 	}
 }

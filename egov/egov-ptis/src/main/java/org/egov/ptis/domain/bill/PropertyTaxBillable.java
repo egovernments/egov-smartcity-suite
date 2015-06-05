@@ -45,7 +45,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
 
@@ -645,18 +644,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 			String propertyId = getPropertyId();
 			Map<String, Date> latestCollRcptDateMap = ptUtils
 					.getLatestCollRcptDateForProp(propertyId);
-
-			for (EgDemandDetails dd : currentDemand.getEgDemandDetails()) {
-				if (DEMANDRSN_CODE_GENERAL_WATER_TAX.equalsIgnoreCase(dd.getEgDemandReason()
-						.getEgDemandReasonMaster().getCode())) {
-					waterTaxForInst.put(dd.getEgDemandReason().getEgInstallmentMaster(),
-							dd.getAmount());
-					waterTaxCollForInst
-							.put(dd.getEgDemandReason().getEgInstallmentMaster(),
-									(dd.getAmtCollected() == null) ? BigDecimal.ZERO : dd
-											.getAmtCollected());
-				}
-			}
 
 			if (isMigrated) {
 

@@ -41,21 +41,20 @@ package org.egov.ptis.client.util;
 
 import java.util.Comparator;
 
-import org.egov.infstr.utils.DateUtils;
 import org.egov.ptis.client.model.UnitTaxCalculationInfo;
 
 public enum UnitTaxInfoComparator implements Comparator<UnitTaxCalculationInfo> {
         UNIT_SORT {
             public int compare(UnitTaxCalculationInfo o1, UnitTaxCalculationInfo o2) {
-                return o1.getUnitNumber().compareTo(o2.getUnitNumber());
+                return o1.getFloorNumber().compareTo(o2.getFloorNumber());
             }},
         FLOOR_SORT {
             public int compare(UnitTaxCalculationInfo o1, UnitTaxCalculationInfo o2) {
-                return o1.getFloorNumberInteger().compareTo(o2.getFloorNumberInteger());
+                return o1.getFloorNumber().compareTo(o2.getFloorNumber());
             }},
         INST_SORT {
                 public int compare(UnitTaxCalculationInfo o1, UnitTaxCalculationInfo o2) {
-                    return DateUtils.getDate(o1.getInstDate(),"dd/MM/yyyy").compareTo(DateUtils.getDate(o2.getInstDate(),"dd/MM/yyyy"));
+                    return o1.getOccpancyDate().compareTo(o2.getOccpancyDate());
                 }};
         
 

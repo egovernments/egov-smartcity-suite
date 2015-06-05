@@ -43,17 +43,12 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
@@ -102,7 +97,6 @@ import org.egov.demand.model.DepreciationMaster;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -110,13 +104,11 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
-import org.egov.ptis.client.adapter.TaxXmlToDbConverterAdapter;
 import org.egov.ptis.client.model.MiscellaneousTax;
 import org.egov.ptis.client.model.MiscellaneousTaxDetail;
 import org.egov.ptis.client.model.TaxCalculationInfo;
 import org.egov.ptis.client.model.UnitTaxCalculationInfo;
-import org.egov.ptis.client.service.TaxCalculator;
-import org.egov.ptis.client.service.TaxXMLToDBCoverterService;
+import org.egov.ptis.client.service.impl.TaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -165,18 +157,16 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
 	private PropertyTaxNumberGenerator ptNumberGenerator;
 
-	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot,
-			String mutationCode, String propTypeId, String propUsageId, String propOccId,
-			Character status, String docnumber, String nonResPlotArea,
-			boolean isfloorDetailsRequired) {
+	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
+			String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
+			String nonResPlotArea, boolean isfloorDetailsRequired) {
 		LOGGER.debug("Entered into createProperty");
-		LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot
-				+ ", mutationCode: " + mutationCode + ",propTypeId: " + propTypeId
-				+ ", propUsageId: " + propUsageId + ", propOccId: " + propOccId + ", status: "
-				+ status);
-		currentInstall = (Installment) getPropPerServ()
-				.find("from Installment I where I.module.moduleName=? and (I.fromDate <= ? and I.toDate >= ?) ",
-						PTMODULENAME, new Date(), new Date());
+		LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
+				+ mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
+				+ propOccId + ", status: " + status);
+		currentInstall = (Installment) getPropPerServ().find(
+				"from Installment I where I.module.moduleName=? and (I.fromDate <= ? and I.toDate >= ?) ",
+				PTMODULENAME, new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
 
@@ -199,15 +189,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ().find(
 				"from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
 		if (propTypeMstr != null) {
-			if (!(propTypeMstr.getCode().equals(PROPTYPE_NON_RESD)
-					|| propTypeMstr.getCode().equals(PROPTYPE_RESD) || propTypeMstr.getCode()
-					.equals(PROPTYPE_OPEN_PLOT))) {
+			if (!(propTypeMstr.getCode().equals(PROPTYPE_NON_RESD) || propTypeMstr.getCode().equals(PROPTYPE_RESD) || propTypeMstr
+					.getCode().equals(PROPTYPE_OPEN_PLOT))) {
 				property.getPropertyDetail().setExtra_field5(null);
 			}
 		}
 		if (propUsageId != null) {
-			PropertyUsage usage = (PropertyUsage) getPropPerServ().find(
-					"from PropertyUsage pu where pu.id = ?", Long.valueOf(propUsageId));
+			PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+					Long.valueOf(propUsageId));
 			property.getPropertyDetail().setPropertyUsage(usage);
 		} else {
 			property.getPropertyDetail().setPropertyUsage(null);
@@ -238,22 +227,19 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return property;
 	}
 
-	public void createFloors(Property property, String mutationCode, String propUsageId,
-			String propOccId, boolean isfloorDetailsRequired) {
+	public void createFloors(Property property, String mutationCode, String propUsageId, String propOccId,
+			boolean isfloorDetailsRequired) {
 		LOGGER.debug("Entered into createFloors");
-		LOGGER.debug("createFloors: Property: " + property + ", mutationCode: " + mutationCode
-				+ ", propUsageId: " + propUsageId + ", propOccId: " + propOccId);
+		LOGGER.debug("createFloors: Property: " + property + ", mutationCode: " + mutationCode + ", propUsageId: "
+				+ propUsageId + ", propOccId: " + propOccId);
 		Area totBltUpArea = new Area();
 		Float totBltUpAreaVal = new Float(0);
-		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
-				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			if (((property.getPropertyDetail().getPropertyTypeMaster().getCode()
-					.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property.getPropertyDetail()
-					.getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && !isfloorDetailsRequired)
+		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+			if (((property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property
+					.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && !isfloorDetailsRequired)
 					|| !(property.getPropertyDetail().getPropertyTypeMaster().getCode()
 							.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property.getPropertyDetail()
-							.getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))) {
+							.getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))) {
 				if (!mutationCode.equals("NEW") || STATUS_WORKFLOW.equals(property.getStatus())) {
 					property.getPropertyDetail().setFloorDetails(new HashSet<FloorIF>());
 				}
@@ -275,18 +261,16 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						PropertyOccupation occupancy = null;
 						if (floor.getUnitType() != null) {
 							unitType = (PropertyTypeMaster) getPropPerServ().find(
-									"from PropertyTypeMaster utype where utype.id = ?",
-									floor.getUnitType().getId());
+									"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
 						}
 						if (floor.getPropertyUsage() != null) {
-							usage = (PropertyUsage) getPropPerServ().find(
-									"from PropertyUsage pu where pu.id = ?",
+							usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
 									floor.getPropertyUsage().getId());
 						}
 						if (floor.getPropertyOccupation() != null) {
-							occupancy = (PropertyOccupation) getPropPerServ().find(
-									"from PropertyOccupation po where po.id = ?",
-									floor.getPropertyOccupation().getId());
+							occupancy = (PropertyOccupation) getPropPerServ()
+									.find("from PropertyOccupation po where po.id = ?",
+											floor.getPropertyOccupation().getId());
 						}
 
 						StructureClassification structureClass = null;
@@ -301,19 +285,16 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 						if (floor.getDepreciationMaster() != null) {
 							depMaster = (DepreciationMaster) getPropPerServ().find(
-									"from DepreciationMaster dm where dm.id=?",
-									floor.getDepreciationMaster().getId());
+									"from DepreciationMaster dm where dm.id=?", floor.getDepreciationMaster().getId());
 						}
 
 						floor.setDepreciationMaster(depMaster);
 
-						LOGGER.debug("createFloors: PropertyUsage: " + usage
-								+ ", PropertyOccupation: " + occupancy + ", StructureClass: "
-								+ structureClass);
+						LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
+								+ ", StructureClass: " + structureClass);
 
 						if (unitType != null
-								&& unitType.getCode().equalsIgnoreCase(
-										PropertyTaxConstants.UNITTYPE_OPEN_PLOT)) {
+								&& unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT)) {
 							floor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
 						}
 
@@ -342,10 +323,9 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				}
 				PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
 						"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-				PropertyUsage usage = (PropertyUsage) getPropPerServ().find(
-						"from PropertyUsage pu where pu.id = ?", Long.valueOf(propUsageId));
-				LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: "
-						+ occupancy);
+				PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+						Long.valueOf(propUsageId));
+				LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
 				property.getPropertyDetail().setPropertyOccupation(occupancy);
 				property.getPropertyDetail().setPropertyUsage(usage);
 				// setting total builtup area.
@@ -361,10 +341,9 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			}
 			PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
 					"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-			PropertyUsage usage = (PropertyUsage) getPropPerServ().find(
-					"from PropertyUsage pu where pu.id = ?", Long.valueOf(propUsageId));
-			LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: "
-					+ occupancy);
+			PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+					Long.valueOf(propUsageId));
+			LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
 			property.getPropertyDetail().setPropertyOccupation(occupancy);
 			property.getPropertyDetail().setPropertyUsage(usage);
 		}
@@ -372,18 +351,15 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	}
 
 	public PropertyStatusValues createPropStatVal(BasicProperty basicProperty, String statusCode,
-			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails,
-			String parentPropId) {
+			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails, String parentPropId) {
 		LOGGER.debug("Entered into createPropStatVal");
-		LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: "
-				+ statusCode + ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: "
-				+ courtOrdNum + ", orderDate: " + orderDate + ", judgmtDetails: " + judgmtDetails
-				+ ", parentPropId: " + parentPropId);
+		LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: " + statusCode
+				+ ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: " + courtOrdNum + ", orderDate: "
+				+ orderDate + ", judgmtDetails: " + judgmtDetails + ", parentPropId: " + parentPropId);
 		PropertyStatusValues propStatVal = new PropertyStatusValues();
 		PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
 				"from PropertyStatus where statusCode=?", statusCode);
-		if (PROPERTY_MODIFY_REASON_MODIFY.equals(statusCode)
-				|| PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
+		if (PROPERTY_MODIFY_REASON_MODIFY.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
 				|| PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode)) {
 			propStatVal.setIsActive("W");
 		} else {
@@ -409,8 +385,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		}
 		propStatVal.setBasicProperty(basicProperty);
 		if (basicProperty.getPropertyMutationMaster() != null
-				&& basicProperty.getPropertyMutationMaster().getCode()
-						.equals(PROP_CREATE_RSN_BIFUR)) {
+				&& basicProperty.getPropertyMutationMaster().getCode().equals(PROP_CREATE_RSN_BIFUR)) {
 			BasicProperty referenceBasicProperty = (BasicProperty) propPerServ.find(
 					"from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
 			propStatVal.setReferenceBasicProperty(referenceBasicProperty);
@@ -420,11 +395,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return propStatVal;
 	}
 
-	public Property createDemand(PropertyImpl property, Property oldProperty,
-			Date dateOfCompletion, boolean isfloorDetailsRequired) {
+	public Property createDemand(PropertyImpl property, Property oldProperty, Date dateOfCompletion,
+			boolean isfloorDetailsRequired) {
 		LOGGER.debug("Entered into createDemand");
-		LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: "
-				+ dateOfCompletion);
+		LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
 
 		instTaxMap = taxCalculator.calculatePropertyTax(property, dateOfCompletion);
 
@@ -456,13 +430,12 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 			// In case of Property Type as (Open Plot,State Govt,Central Govt),
 			// set the alv to PTDemandCalculations
-			if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
-					.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
+			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
 					|| property.getPropertyDetail().getPropertyTypeMaster().getCode()
 							.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
 					|| property.getPropertyDetail().getPropertyTypeMaster().getCode()
 							.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
-				ptDmdCalc.setAlv(taxCalcInfo.getTotalAnnualLettingValue());
+				ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
 			} else if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
 					.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
 					&& !property.getPropertyDetail().getPropertyTypeMaster().getCode()
@@ -473,8 +446,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					// FloorwiseDemandCalculations should be set only for the
 					// current installment for each floor.
 					for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
-						ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor,
-								taxCalcInfo));
+						ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
 					}
 				}
 			}
@@ -482,18 +454,19 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		property.setPtDemandSet(ptDmdSet);
 
-		try {
-
-			property = (PropertyImpl) new TaxXmlToDbConverterAdapter(
-					TaxXMLToDBCoverterService.createConverter(property.getBasicProperty(),
-							propertyTaxUtil, basicPrpertyService, ptNumberGenerator))
-					.convertXmlToDB(property, oldProperty);
-
-		} catch (Exception e) {
-			LOGGER.error("Error while converting Tax XML", e);
-			throw new EGOVRuntimeException("Error while converting Tax XML", e);
-		}
-
+		/*
+		 * try {
+		 * 
+		 * property = (PropertyImpl) new TaxXmlToDbConverterAdapter(
+		 * TaxXMLToDBCoverterService
+		 * .createConverter(property.getBasicProperty(), propertyTaxUtil,
+		 * basicPrpertyService, ptNumberGenerator)) .convertXmlToDB(property,
+		 * oldProperty);
+		 * 
+		 * } catch (Exception e) {
+		 * LOGGER.error("Error while converting Tax XML", e); throw new
+		 * EGOVRuntimeException("Error while converting Tax XML", e); }
+		 */
 		LOGGER.debug("Exiting from createDemand");
 		return property;
 	}
@@ -506,11 +479,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param dateOfCompletion
 	 * @return newProperty
 	 */
-	public Property createDemandForModify(Property oldProperty, Property newProperty,
-			Date dateOfCompletion) {
+	public Property createDemandForModify(Property oldProperty, Property newProperty, Date dateOfCompletion) {
 		LOGGER.debug("Entered into createDemandForModify");
-		LOGGER.debug("createDemandForModify: oldProperty: " + oldProperty + ", newProperty: "
-				+ newProperty + ", dateOfCompletion: " + dateOfCompletion);
+		LOGGER.debug("createDemandForModify: oldProperty: " + oldProperty + ", newProperty: " + newProperty
+				+ ", dateOfCompletion: " + dateOfCompletion);
 
 		List<Installment> instList = new ArrayList<Installment>();
 		instList = new ArrayList<Installment>(instTaxMap.keySet());
@@ -518,20 +490,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		Ptdemand ptDemandOld = new Ptdemand();
 		Ptdemand ptDemandNew = new Ptdemand();
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				new Date());
+		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
 		ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
-		PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail()
-				.getPropertyTypeMaster();
-		PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-				.getPropertyTypeMaster();
+		PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
+		PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
 		Set<EgDemandDetails> newEgDmdDtlsSet = new HashSet<EgDemandDetails>();
 
-		if (!oldProperty
-				.getPropertyDetail()
-				.getPropertyTypeMaster()
-				.getCode()
+		if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
 				|| !oldProperty.getPropertyDetail().getExtra_field1()
 						.equals(newProperty.getPropertyDetail().getExtra_field1())
@@ -545,14 +511,12 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 			LOGGER.info("------------------------Start OldProperty demand set ---------------------------");
 			for (Ptdemand ptd : oldProperty.getPtDemandSet()) {
-				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : "
-						+ ptd.getEgDemandDetails());
+				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
 			}
 			LOGGER.info("------------------------End OldProperty demand set ---------------------------");
 			LOGGER.info("------------------------Start New Property demand set ---------------------------");
 			for (Ptdemand ptd : newProperty.getPtDemandSet()) {
-				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : "
-						+ ptd.getEgDemandDetails());
+				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
 			}
 			LOGGER.info("------------------------End New Property demand set ---------------------------");
 
@@ -562,8 +526,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 			LOGGER.info("----------------------------------------------- Adjustments --------------------------------------------------");
 			for (Ptdemand ptd : newProperty.getPtDemandSet()) {
-				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : "
-						+ ptd.getEgDemandDetails());
+				LOGGER.info(ptd.getEgInstallmentMaster().getDescription() + " : " + ptd.getEgDemandDetails());
 			}
 			LOGGER.info("--------------------------------------------------------------------------------------------------------------");
 		}
@@ -578,19 +541,19 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		for (Installment inst : instList) {
 
-			newEgDmdDtlsSet = carryForwardCollection(newProperty, inst, newDemandDtlsMap.get(inst),
-					ptDemandOld, oldPropTypeMaster, newPropTypeMaster);
+			newEgDmdDtlsSet = carryForwardCollection(newProperty, inst, newDemandDtlsMap.get(inst), ptDemandOld,
+					oldPropTypeMaster, newPropTypeMaster);
 
 			if (inst.equals(currentInstall)) {
 				// carry forward the penalty from the old property to the new
 				// property
-				penaltyDmdDtlsList = getEgDemandDetailsListForReason(
-						ptDemandOld.getEgDemandDetails(), DEMANDRSN_CODE_PENALTY_FINES);
+				penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
+						DEMANDRSN_CODE_PENALTY_FINES);
 				if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0) {
 					ptDemandNew.getEgDemandDetails().addAll(penaltyDmdDtlsList);
 				}
-				penaltyDmdDtlsList = getEgDemandDetailsListForReason(
-						ptDemandOld.getEgDemandDetails(), DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
+				penaltyDmdDtlsList = getEgDemandDetailsListForReason(ptDemandOld.getEgDemandDetails(),
+						DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
 				if (penaltyDmdDtlsList != null && penaltyDmdDtlsList.size() > 0) {
 					ptDemandNew.getEgDemandDetails().addAll(penaltyDmdDtlsList);
 				}
@@ -622,11 +585,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return occupationDate;
 	}
 
-	private Set<EgDemandDetails> createAllDmdDeatails(Installment installment,
-			List<Installment> instList, HashMap<Installment, TaxCalculationInfo> instTaxMap) {
+	private Set<EgDemandDetails> createAllDmdDeatails(Installment installment, List<Installment> instList,
+			HashMap<Installment, TaxCalculationInfo> instTaxMap) {
 		LOGGER.debug("Entered into createAllDmdDeatails");
-		LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: "
-				+ instList + ", instTaxMap: " + instTaxMap);
+		LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: " + instList + ", instTaxMap: "
+				+ instTaxMap);
 
 		Set<EgDemandDetails> dmdDetSet = new HashSet<EgDemandDetails>();
 
@@ -635,12 +598,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					|| inst.getFromDate().equals(installment.getFromDate())) {
 				TaxCalculationInfo taxCalcInfo = instTaxMap.get(inst);
 
-				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(taxCalcInfo
-						.getConsolidatedUnitTaxCalculationInfo());
+				Map<String, BigDecimal> taxMap = new HashMap<String, BigDecimal>();
 
 				for (Map.Entry<String, BigDecimal> tax : taxMap.entrySet()) {
-					EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(
-							tax.getKey(), inst);
+					EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(tax.getKey(), inst);
 					dmdDetSet.add(createDemandDetails(tax.getValue(), egDmdRsn, inst));
 				}
 			}
@@ -651,16 +612,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createAllDmdDeatails(Property oldProperty, Property newProperty,
-			Installment installment, List<Installment> instList,
-			HashMap<Installment, TaxCalculationInfo> instTaxMap) {
+	private void createAllDmdDeatails(Property oldProperty, Property newProperty, Installment installment,
+			List<Installment> instList, HashMap<Installment, TaxCalculationInfo> instTaxMap) {
 		LOGGER.debug("Entered into createAllDmdDeatails");
-		LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + ", newProperty: "
-				+ newProperty + ",installment: " + installment + ", instList: " + instList);
+		LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + ", newProperty: " + newProperty
+				+ ",installment: " + installment + ", instList: " + instList);
 		Set<EgDemandDetails> adjustedDmdDetailsSet = new HashSet<EgDemandDetails>();
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				new Date());
+		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
 		Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
 		Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
@@ -673,25 +632,25 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		List<String> adjstmntReasons = new ArrayList<String>() {
 			{
-				add(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX);
-				add(DEMANDRSN_CODE_GENERAL_WATER_TAX);
-				add(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX);
+				add(DEMANDRSN_CODE_GENERAL_TAX);
+				add(DEMANDRSN_CODE_LIBRARY_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
 			}
 		};
 
 		List<String> rsnsForNewResProp = new ArrayList<String>() {
 			{
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
 				add(DEMANDRSN_CODE_GENERAL_TAX);
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
+				add(DEMANDRSN_CODE_LIBRARY_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
 			}
 		};
 
 		List<String> rsnsForNewNonResProp = new ArrayList<String>() {
 			{
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
 				add(DEMANDRSN_CODE_GENERAL_TAX);
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
+				add(DEMANDRSN_CODE_LIBRARY_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
 			}
 		};
 
@@ -734,14 +693,12 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						}
 					}
 
-					PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-							.getPropertyTypeMaster();
+					PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
 
 					LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
 					LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
 
-					if (oldProperty.getTaxExemptReason() == null
-							&& newProperty.getTaxExemptReason() == null) {
+					if (oldProperty.getTaxExemptReason() == null && newProperty.getTaxExemptReason() == null) {
 						for (int i = 0; i < adjstmntReasons.size(); i++) {
 							String oldPropRsn = adjstmntReasons.get(i);
 							String newPropRsn = null;
@@ -751,26 +708,21 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 							 * for demand reason oldPropRsn, if we dont have
 							 * EgDemandDetails then doing collection adjustments
 							 */
-							newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet,
-									oldPropRsn);
+							newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
 
 							if (newEgDmndDetails == null) {
 								if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
 									newPropRsn = rsnsForNewResProp.get(i);
-								} else if (newPropTypeMaster.getCode().equalsIgnoreCase(
-										PROPTYPE_NON_RESD)) {
+								} else if (newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
 									newPropRsn = rsnsForNewNonResProp.get(i);
 								}
 
-								oldEgdmndDetails = getEgDemandDetailsForReason(
-										oldEgDemandDetailsSet, oldPropRsn);
-								newEgDmndDetails = getEgDemandDetailsForReason(
-										newEgDemandDetailsSet, newPropRsn);
+								oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
+								newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
 
 								if (newEgDmndDetails != null && oldEgdmndDetails != null) {
-									newEgDmndDetails.setAmtCollected(newEgDmndDetails
-											.getAmtCollected().add(
-													oldEgdmndDetails.getAmtCollected()));
+									newEgDmndDetails.setAmtCollected(newEgDmndDetails.getAmtCollected().add(
+											oldEgdmndDetails.getAmtCollected()));
 								} else {
 									continue;
 								}
@@ -778,8 +730,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						}
 					} else {
 						if (oldProperty.getTaxExemptReason() == null) {
-							newEgDemandDetailsSet = adjustmentsForTaxExempted(
-									ptDemandOld.getEgDemandDetails(), newEgDemandDetailsSet, inst);
+							newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
+									newEgDemandDetailsSet, inst);
 						}
 					}
 
@@ -787,9 +739,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					// of this method, bcoz it has to be invoked in all usecases
 					// and not only when there is property type change
 
-					newEgDemandDetailsSet = carryForwardCollection(newProperty, inst,
-							newEgDemandDetailsSet, ptDemandOld, oldProperty.getPropertyDetail()
-									.getPropertyTypeMaster(), newPropTypeMaster);
+					newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
+							ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
 					LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);
 					adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
 					demandDetails.put(inst, newEgDemandDetailsSet);
@@ -805,20 +756,19 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		}
 
 		LOGGER.info("Exit from PropertyService.createAllDmdDeatails, Modify Adjustments for "
-				+ oldProperty.getBasicProperty().getUpicNo() + " And installment : " + installment
-				+ "\n\n" + adjustedDmdDetailsSet);
+				+ oldProperty.getBasicProperty().getUpicNo() + " And installment : " + installment + "\n\n"
+				+ adjustedDmdDetailsSet);
 		ptDemandNew.setEgDemandDetails(adjustedDmdDetailsSet);
 		LOGGER.debug("Exiting from createAllDmdDeatails");
 	}
 
 	private Set<EgDemandDetails> carryForwardCollection(Property newProperty, Installment inst,
-			Set<EgDemandDetails> newEgDemandDetailsSet, Ptdemand ptDmndOld,
-			PropertyTypeMaster oldPropTypeMaster, PropertyTypeMaster newPropTypeMaster) {
+			Set<EgDemandDetails> newEgDemandDetailsSet, Ptdemand ptDmndOld, PropertyTypeMaster oldPropTypeMaster,
+			PropertyTypeMaster newPropTypeMaster) {
 		LOGGER.debug("Entered into carryForwardCollection");
 		LOGGER.debug("carryForwardCollection: newProperty: " + newProperty + ", inst: " + inst
 				+ ", newEgDemandDetailsSet: " + newEgDemandDetailsSet + ", ptDmndOld: " + ptDmndOld
-				+ ", oldPropTypeMaster: " + oldPropTypeMaster + ", newPropTypeMaster: "
-				+ newPropTypeMaster);
+				+ ", oldPropTypeMaster: " + oldPropTypeMaster + ", newPropTypeMaster: " + newPropTypeMaster);
 
 		Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<String, BigDecimal>();
 
@@ -835,47 +785,17 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			 * made unit level instead of property level with new requirement,
 			 * refer card #3427 Modified on 16 October 2014 [Nayeem]
 			 */
-			if (newProperty.getTaxExemptReason() != null
-					&& !newProperty.getTaxExemptReason().equals("-1")) {
-				if (!rsn.equalsIgnoreCase(DEMANDRSN_CODE_SEWERAGE_TAX)
-						&& !rsn.equalsIgnoreCase(DEMANDRSN_CODE_LIGHTINGTAX)
-						&& !rsn.equalsIgnoreCase(DEMANDRSN_CODE_FIRE_SERVICE_TAX)) {
+			if (newProperty.getTaxExemptReason() != null && !newProperty.getTaxExemptReason().equals("-1")) {
+				if (!rsn.equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
+						&& !rsn.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
+						&& !rsn.equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
 
 					continue;
 				}
 			}
 
-			if (rsn.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)) {
-				if (oldPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)
-						&& newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-					oldEgDmndDtlsList = getEgDemandDetailsListForReason(
-							ptDmndOld.getEgDemandDetails(), DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-					newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet,
-							DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-				} else if (oldPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)
-						&& newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-					oldEgDmndDtlsList = getEgDemandDetailsListForReason(
-							ptDmndOld.getEgDemandDetails(), DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
-					newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet,
-							DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-				} else if (oldPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)
-						&& newPropTypeMaster.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-					oldEgDmndDtlsList = getEgDemandDetailsListForReason(
-							ptDmndOld.getEgDemandDetails(), DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-					newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet,
-							DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-				} else {
-					oldEgDmndDtlsList = getEgDemandDetailsListForReason(
-							ptDmndOld.getEgDemandDetails(), DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-					newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet,
-							DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-				}
-			} else {
-
-				oldEgDmndDtlsList = getEgDemandDetailsListForReason(ptDmndOld.getEgDemandDetails(),
-						rsn);
-				newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet, rsn);
-			}
+			oldEgDmndDtlsList = getEgDemandDetailsListForReason(ptDmndOld.getEgDemandDetails(), rsn);
+			newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet, rsn);
 
 			Map<Installment, EgDemandDetails> oldDemandDtlsMap = null;
 			Map<Installment, EgDemandDetails> newDemandDtlsMap = null;
@@ -901,11 +821,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return newEgDemandDetailsSet;
 	}
 
-	public void calculateExcessCollection(Map<String, BigDecimal> dmdRsnAmt, String rsn,
-			EgDemandDetails oldDmndDtls, EgDemandDetails newDmndDtls) {
+	public void calculateExcessCollection(Map<String, BigDecimal> dmdRsnAmt, String rsn, EgDemandDetails oldDmndDtls,
+			EgDemandDetails newDmndDtls) {
 		if (newDmndDtls != null && oldDmndDtls != null) {
-			newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().add(
-					oldDmndDtls.getAmtCollected()));
+			newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().add(oldDmndDtls.getAmtCollected()));
 			newDmndDtls.setAmtRebate(newDmndDtls.getAmtRebate().add(oldDmndDtls.getAmtRebate()));
 		} else if (newDmndDtls != null && oldDmndDtls == null) {
 			newDmndDtls.setAmtCollected(ZERO);
@@ -916,8 +835,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			// This part of code handles the adjustment of extra collections
 			// when there is decrease in tax during property modification.
 
-			BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(
-					newDmndDtls.getAmount());
+			BigDecimal extraCollAmt = newDmndDtls.getAmtCollected().subtract(newDmndDtls.getAmount());
 			// If there is extraColl then add to map
 			if (extraCollAmt.compareTo(BigDecimal.ZERO) > 0) {
 				dmdRsnAmt.put(rsn, extraCollAmt);
@@ -963,10 +881,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param demandDetailsList
 	 * @return demandDetailsMap
 	 */
-	public Map<Installment, EgDemandDetails> getEgDemandDetailsAsMap(
-			List<EgDemandDetails> demandDetailsList) {
-		LOGGER.debug("Entered into getEgDemandDetailsAsMap, demandDetailsList: "
-				+ demandDetailsList);
+	public Map<Installment, EgDemandDetails> getEgDemandDetailsAsMap(List<EgDemandDetails> demandDetailsList) {
+		LOGGER.debug("Entered into getEgDemandDetailsAsMap, demandDetailsList: " + demandDetailsList);
 		Map<Installment, EgDemandDetails> demandDetailsMap = new HashMap<Installment, EgDemandDetails>();
 		for (EgDemandDetails dmndDtls : demandDetailsList) {
 			demandDetailsMap.put(dmndDtls.getEgDemandReason().getEgInstallmentMaster(), dmndDtls);
@@ -982,10 +898,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param demandDetailsList
 	 * @return
 	 */
-	public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetAsMap(
-			List<EgDemandDetails> demandDetailsList, List<Installment> instList) {
-		LOGGER.debug("Entered into getEgDemandDetailsSetAsMap, demandDetailsList: "
-				+ demandDetailsList + ", instList: " + instList);
+	public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetAsMap(List<EgDemandDetails> demandDetailsList,
+			List<Installment> instList) {
+		LOGGER.debug("Entered into getEgDemandDetailsSetAsMap, demandDetailsList: " + demandDetailsList
+				+ ", instList: " + instList);
 		Map<Installment, Set<EgDemandDetails>> demandDetailsMap = new HashMap<Installment, Set<EgDemandDetails>>();
 		Set<EgDemandDetails> ddSet = null;
 
@@ -1011,10 +927,9 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param demandReason
 	 * @return EgDemandDetails
 	 */
-	public EgDemandDetails getEgDemandDetailsForReason(Set<EgDemandDetails> egDemandDetailsSet,
-			String demandReason) {
-		LOGGER.debug("Entered into getEgDemandDetailsForReason, egDemandDetailsSet: "
-				+ egDemandDetailsSet + ", demandReason: " + demandReason);
+	public EgDemandDetails getEgDemandDetailsForReason(Set<EgDemandDetails> egDemandDetailsSet, String demandReason) {
+		LOGGER.debug("Entered into getEgDemandDetailsForReason, egDemandDetailsSet: " + egDemandDetailsSet
+				+ ", demandReason: " + demandReason);
 		List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
 		EgDemandDetails egDemandDetails = null;
 		for (Map<String, EgDemandDetails> egDmndDtlsMap : egDemandDetailsList) {
@@ -1036,10 +951,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param demandReason
 	 * @return EgDemandDetails
 	 */
-	private List<EgDemandDetails> getEgDemandDetailsListForReason(
-			Set<EgDemandDetails> egDemandDetailsSet, String demandReason) {
-		LOGGER.debug("Entered into getEgDemandDetailsListForReason: egDemandDetailsSet: "
-				+ egDemandDetailsSet + ", demandReason: " + demandReason);
+	private List<EgDemandDetails> getEgDemandDetailsListForReason(Set<EgDemandDetails> egDemandDetailsSet,
+			String demandReason) {
+		LOGGER.debug("Entered into getEgDemandDetailsListForReason: egDemandDetailsSet: " + egDemandDetailsSet
+				+ ", demandReason: " + demandReason);
 		List<Map<String, EgDemandDetails>> egDemandDetailsList = getEgDemandDetailsAsMap(egDemandDetailsSet);
 		List<EgDemandDetails> demandListForReason = new ArrayList<EgDemandDetails>();
 		for (Map<String, EgDemandDetails> egDmndDtlsMap : egDemandDetailsList) {
@@ -1060,45 +975,27 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @param installment
 	 * @return
 	 */
-	public List<Map<String, EgDemandDetails>> getEgDemandDetailsAsMap(
-			Set<EgDemandDetails> egDemandDetailsSet) {
-		LOGGER.debug("Entered into getEgDemandDetailsAsMap, egDemandDetailsSet: "
-				+ egDemandDetailsSet);
-		List<EgDemandDetails> egDemandDetailsList = new ArrayList<EgDemandDetails>(
-				egDemandDetailsSet);
+	public List<Map<String, EgDemandDetails>> getEgDemandDetailsAsMap(Set<EgDemandDetails> egDemandDetailsSet) {
+		LOGGER.debug("Entered into getEgDemandDetailsAsMap, egDemandDetailsSet: " + egDemandDetailsSet);
+		List<EgDemandDetails> egDemandDetailsList = new ArrayList<EgDemandDetails>(egDemandDetailsSet);
 		List<Map<String, EgDemandDetails>> egDemandDetailsListOfMap = new ArrayList<Map<String, EgDemandDetails>>();
 
 		for (EgDemandDetails egDmndDtls : egDemandDetailsList) {
 			Map<String, EgDemandDetails> egDemandDetailsMap = new HashMap<String, EgDemandDetails>();
-			EgDemandReasonMaster dmndRsnMstr = egDmndDtls.getEgDemandReason()
-					.getEgDemandReasonMaster();
+			EgDemandReasonMaster dmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
 			if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX)) {
 				egDemandDetailsMap.put(DEMANDRSN_CODE_GENERAL_TAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_SEWERAGE_TAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_SEWERAGE_TAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_FIRE_SERVICE_TAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_FIRE_SERVICE_TAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIGHTINGTAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_LIGHTINGTAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_WATER_TAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_GENERAL_WATER_TAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(
-					DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD, egDmndDtls);
-			} else if (dmndRsnMstr.getCode()
-					.equalsIgnoreCase(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(
-					DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)) {
-				egDemandDetailsMap.put(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, egDmndDtls);
+			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
+				egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, egDmndDtls);
+			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)) {
+				egDemandDetailsMap.put(DEMANDRSN_CODE_LIBRARY_CESS, egDmndDtls);
+			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
+				egDemandDetailsMap.put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, egDmndDtls);
 			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
 				egDemandDetailsMap.put(DEMANDRSN_CODE_PENALTY_FINES, egDmndDtls);
 			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
 				egDemandDetailsMap.put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, egDmndDtls);
-			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(
-					PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
+			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
 				egDemandDetailsMap.put(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, egDmndDtls);
 			}
 			egDemandDetailsListOfMap.add(egDemandDetailsMap);
@@ -1117,20 +1014,17 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 */
 	private Set<EgDemandDetails> adjustmentsForTaxExempted(Set<EgDemandDetails> oldEgDemandDetails,
 			Set<EgDemandDetails> newEgDemandDetails, Installment inst) {
-		LOGGER.debug("Entered into adjustmentsForTaxExempted, oldEgDemandDetails: "
-				+ oldEgDemandDetails + ", newEgDemandDetails: " + newEgDemandDetails + ", inst:"
-				+ inst);
+		LOGGER.debug("Entered into adjustmentsForTaxExempted, oldEgDemandDetails: " + oldEgDemandDetails
+				+ ", newEgDemandDetails: " + newEgDemandDetails + ", inst:" + inst);
 		BigDecimal totalDmndAdjstmntAmnt = BigDecimal.ZERO;
 		BigDecimal totalCollAdjstmntAmnt = BigDecimal.ZERO;
 
 		for (EgDemandDetails egDmndDtls : oldEgDemandDetails) {
 			if (egDmndDtls.getEgDemandReason().getEgInstallmentMaster().equals(inst)) {
-				EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason()
-						.getEgDemandReasonMaster();
-				if (!egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_SEWERAGE_TAX)
-						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIGHTINGTAX)
-						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(
-								DEMANDRSN_CODE_FIRE_SERVICE_TAX)) {
+				EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
+				if (!egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
+						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
+						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
 					// totalDmndAdjstmntAmnt =
 					// totalDmndAdjstmntAmnt.add(egDmndDtls.getAmount().subtract(
 					// egDmndDtls.getAmtCollected()));
@@ -1143,24 +1037,22 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		for (EgDemandDetails egDmndDtls : newEgDemandDetails) {
 
-			EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason()
-					.getEgDemandReasonMaster();
+			EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
 
-			if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_SEWERAGE_TAX)) {
+			if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
 
 				egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.50")));
 
-			} else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIGHTINGTAX)) {
+			} else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)) {
 
 				egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.25")));
 
-			} else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_FIRE_SERVICE_TAX)) {
+			} else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
 
 				egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.25")));
 			}
 		}
-		LOGGER.debug("newEgDmndDetails: " + newEgDmndDetails
-				+ "\nExiting from adjustmentsForTaxExempted");
+		LOGGER.debug("newEgDmndDetails: " + newEgDmndDetails + "\nExiting from adjustmentsForTaxExempted");
 		return (new HashSet<EgDemandDetails>(newEgDmndDetails));
 	}
 
@@ -1177,7 +1069,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		for (Ptdemand ptDemand : ptDemandSet) {
 			for (EgDemandDetails egDmndDtls : ptDemand.getEgDemandDetails()) {
 				if (egDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)) {
+						.equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
 					isBigResi = TRUE;
 					break;
 				}
@@ -1187,10 +1079,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return isBigResi;
 	}
 
-	private EgDemandDetails createDemandDetails(BigDecimal amount, EgDemandReason dmdRsn,
-			Installment inst) {
-		LOGGER.debug("Entered into createDemandDetails, amount: " + amount + ", dmdRsn: " + dmdRsn
-				+ ", inst: " + inst);
+	private EgDemandDetails createDemandDetails(BigDecimal amount, EgDemandReason dmdRsn, Installment inst) {
+		LOGGER.debug("Entered into createDemandDetails, amount: " + amount + ", dmdRsn: " + dmdRsn + ", inst: " + inst);
 		EgDemandDetails demandDetail = new EgDemandDetails();
 		demandDetail.setAmount(amount);
 		demandDetail.setAmtCollected(BigDecimal.ZERO);
@@ -1202,10 +1092,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return demandDetail;
 	}
 
-	public EgDemandDetails createDemandDetails(BigDecimal amount, BigDecimal amountCollected,
-			EgDemandReason dmdRsn, Installment inst) {
-		LOGGER.debug("Entered into createDemandDetails, amount: " + amount + "amountCollected: "
-				+ amountCollected + ", dmdRsn: " + dmdRsn + ", inst: " + inst);
+	public EgDemandDetails createDemandDetails(BigDecimal amount, BigDecimal amountCollected, EgDemandReason dmdRsn,
+			Installment inst) {
+		LOGGER.debug("Entered into createDemandDetails, amount: " + amount + "amountCollected: " + amountCollected
+				+ ", dmdRsn: " + dmdRsn + ", inst: " + inst);
 		EgDemandDetails demandDetail = new EgDemandDetails();
 		demandDetail.setAmount(amount != null ? amount : BigDecimal.ZERO);
 		demandDetail.setAmtCollected(amountCollected != null ? amountCollected : BigDecimal.ZERO);
@@ -1217,8 +1107,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return demandDetail;
 	}
 
-	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal,
-			FloorIF floor, TaxCalculationInfo taxCalcInfo) {
+	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal, FloorIF floor,
+			TaxCalculationInfo taxCalcInfo) {
 		// LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
 		// + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
 		FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
@@ -1238,23 +1128,18 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					 * condition is to check each unitTax corresponds to which
 					 * floor
 					 */
-					if (((floor.getUnitType() == null || !floor.getUnitType().getCode()
-							.equals(PROPTYPE_OPEN_PLOT))
-							&& unitTax.getFloorNumberInteger().equals(floor.getFloorNo())
-							&& unitTax.getUnitNumber().equals(
-									Integer.valueOf(floor.getExtraField1())) && (unitTax
-								.getUnitArea().toString()).equals(floor.getBuiltUpArea().getArea()
-							.toString()))
+					if (((floor.getUnitType() == null || !floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT))
+							&& unitTax.getFloorNumber().equals(floor.getFloorNo())
+							&& unitTax.getFloorNumber().equals(Integer.valueOf(floor.getExtraField1())) && (unitTax
+								.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea().toString()))
 							|| (floor.getUnitType() != null
 									&& floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT)
-									&& unitTax.getUnitNumber().equals(
-											Integer.valueOf(floor.getExtraField1()))
-									&& (unitTax.getUnitArea().toString()).equals(floor
-											.getBuiltUpArea().getArea().toString())
-									&& unitTax.getUnitUsage().equals(
-											floor.getPropertyUsage().getUsageName())
-									&& unitTax.getUnitOccupation().equals(
-											floor.getPropertyOccupation().getOccupation()) && unitTax
+									&& unitTax.getFloorNumber().equals(Integer.valueOf(floor.getExtraField1()))
+									&& (unitTax.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea()
+											.toString())
+									&& unitTax.getUnitUsage().equals(floor.getPropertyUsage().getUsageName())
+									&& unitTax.getUnitOccupation()
+											.equals(floor.getPropertyOccupation().getOccupation()) && unitTax
 									.getOccpancyDate().equals(sdf.parse(floor.getExtraField3())))) {
 
 						setFloorDmdCalTax(unitTax, floorDmdCalc);
@@ -1269,52 +1154,25 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return floorDmdCalc;
 	}
 
-	public void setFloorDmdCalTax(UnitTaxCalculationInfo unitTax,
-			FloorwiseDemandCalculations floorDmdCalc) {
-		floorDmdCalc.setAlv(unitTax.getAnnualRentAfterDeduction());
+	public void setFloorDmdCalTax(UnitTaxCalculationInfo unitTax, FloorwiseDemandCalculations floorDmdCalc) {
+		floorDmdCalc.setAlv(unitTax.getNetARV());
 		for (MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes()) {
 			for (MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails()) {
-				if (PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
-					floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
-					floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX
-						.equals(miscTax.getTaxName())) {
-					floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
-					floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax
-						.getTaxName())) {
-					floorDmdCalc.setTax5(floorDmdCalc.getTax5().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax
-						.getTaxName())) {
-					floorDmdCalc.setTax6(floorDmdCalc.getTax6().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax
-						.getTaxName())) {
-					floorDmdCalc.setTax7(floorDmdCalc.getTax7().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax
-						.getTaxName())) {
-					floorDmdCalc.setTax8(floorDmdCalc.getTax8().add(
-							taxDetail.getCalculatedTaxValue()));
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax
-						.getTaxName())) {
-					floorDmdCalc.setTax9(floorDmdCalc.getTax9().add(
-							taxDetail.getCalculatedTaxValue()));
+				if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
+					floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(taxDetail.getCalculatedTaxValue()));
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName())) {
+					floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(taxDetail.getCalculatedTaxValue()));
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName())) {
+					floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(taxDetail.getCalculatedTaxValue()));
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equals(miscTax.getTaxName())) {
+					floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(taxDetail.getCalculatedTaxValue()));
 				}
 			}
 		}
 	}
 
 	public void createAttributeValues(Property property, Installment curInstall) {
-		LOGGER.debug("Entered into createAttributeValues, property: " + property + ", curInstall: "
-				+ curInstall);
+		LOGGER.debug("Entered into createAttributeValues, property: " + property + ", curInstall: " + curInstall);
 		Set<Ptdemand> ptDmdSet = property.getPtDemandSet();
 		if (currentInstall == null) {
 			currentInstall = curInstall;
@@ -1333,15 +1191,13 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			Set<FloorwiseDemandCalculations> floorDmdCalcSet = propPtDemand.getDmdCalculations()
 					.getFlrwiseDmdCalculations();
 			if (floorDmdCalcSet != null && floorDmdCalcSet.size() > 0) {
-				List<List<UnitTaxCalculationInfo>> unitTaxCalInfos = taxCalInfo
-						.getUnitTaxCalculationInfos();
+				List<List<UnitTaxCalculationInfo>> unitTaxCalInfos = taxCalInfo.getUnitTaxCalculationInfos();
 				for (FloorwiseDemandCalculations floorDmdCalc : floorDmdCalcSet) {
 					FloorIF floor = floorDmdCalc.getFloor();
 					UnitTaxCalculationInfo unitTaxCalInfo1 = null;
 					String floorString = (floor.getFloorNo() == null || floor.getFloorNo().equals(
-							OPEN_PLOT_UNIT_FLOORNUMBER)) ? propertyTaxUtil
-							.getFloorStr(OPEN_PLOT_UNIT_FLOORNUMBER) : propertyTaxUtil
-							.getFloorStr(floor.getFloorNo());
+							OPEN_PLOT_UNIT_FLOORNUMBER)) ? propertyTaxUtil.getFloorStr(OPEN_PLOT_UNIT_FLOORNUMBER)
+							: propertyTaxUtil.getFloorStr(floor.getFloorNo());
 
 					try {
 						for (List<UnitTaxCalculationInfo> unitTaxCalcs : unitTaxCalInfos) {
@@ -1355,34 +1211,27 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 							 */
 							if (((floor.getUnitType() == null || !floor.getUnitType().getCode()
 									.equals(PROPTYPE_OPEN_PLOT))
-									&& (unitTaxCalInfo.getFloorNumber() == null || unitTaxCalInfo
-											.getFloorNumber().equalsIgnoreCase(floorString))
-									&& unitTaxCalInfo.getUnitNumber()
-											.equals(floor.getExtraField1()) && (unitTaxCalInfo
-										.getUnitArea().toString()).equals(floor.getBuiltUpArea()
-									.getArea().toString()))
+									&& (unitTaxCalInfo.getFloorNumber() == null || unitTaxCalInfo.getFloorNumber()
+											.equalsIgnoreCase(floorString))
+									&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1()) && (unitTaxCalInfo
+										.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea().toString()))
 									|| (floor.getUnitType() != null
-											&& floor.getUnitType().getCode()
-													.equals(PROPTYPE_OPEN_PLOT)
-											&& unitTaxCalInfo.getUnitNumber().equals(
-													floor.getExtraField1())
-											&& (unitTaxCalInfo.getUnitArea().toString())
-													.equals(floor.getBuiltUpArea().getArea()
-															.toString())
+											&& floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT)
+											&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1())
+											&& (unitTaxCalInfo.getFloorArea().toString()).equals(floor.getBuiltUpArea()
+													.getArea().toString())
 											&& unitTaxCalInfo.getUnitUsage().equals(
 													floor.getPropertyUsage().getUsageName())
 											&& unitTaxCalInfo.getUnitOccupation().equals(
 													floor.getPropertyOccupation().getOccupation()) && unitTaxCalInfo
-											.getOccpancyDate().equals(
-													sdf.parse(floor.getExtraField3())))) {
+											.getOccpancyDate().equals(sdf.parse(floor.getExtraField3())))) {
 								unitTaxCalInfo1 = unitTaxCalInfo;
 								break;
 
 							}
-							if ((unitTaxCalInfo.getFloorNumber() != null && unitTaxCalInfo
-									.getFloorNumber().equalsIgnoreCase(floorString))
-									&& unitTaxCalInfo.getUnitNumber()
-											.equals(floor.getExtraField1())) {
+							if ((unitTaxCalInfo.getFloorNumber() != null && unitTaxCalInfo.getFloorNumber()
+									.equalsIgnoreCase(floorString))
+									&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1())) {
 								unitTaxCalInfo1 = unitTaxCalInfo;
 								break;
 							}
@@ -1418,8 +1267,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				}
 			}
 		}
-		LOGGER.debug("completionDate: " + completionDate
-				+ "\nExiting from getLowestDtOfCompFloorWise");
+		LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
 		return completionDate;
 	}
 
@@ -1469,18 +1317,15 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		LOGGER.debug("Exiting from createAmalgPropStatVal");
 	}
 
-	public Property createArrearsDemand(Property oldproperty, Date dateOfCompletion,
-			PropertyImpl property) {
-		LOGGER.debug("Entered into createArrearsDemand, oldproperty: " + oldproperty
-				+ ", dateOfCompletion: " + dateOfCompletion + ", property: " + property);
+	public Property createArrearsDemand(Property oldproperty, Date dateOfCompletion, PropertyImpl property) {
+		LOGGER.debug("Entered into createArrearsDemand, oldproperty: " + oldproperty + ", dateOfCompletion: "
+				+ dateOfCompletion + ", property: " + property);
 		Ptdemand oldPtDmd = null;
 		Ptdemand currPtDmd = null;
 		Ptdemand oldCurrPtDmd = null;
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		Installment effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				dateOfCompletion);
-		Installment currInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				new Date());
+		Installment effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
+		Installment currInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		for (Ptdemand demand : property.getPtDemandSet()) {
 			if (demand.getIsHistory().equalsIgnoreCase("N")) {
 				if (demand.getEgInstallmentMaster().equals(currInstall)) {
@@ -1491,8 +1336,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		}
 		for (Ptdemand ptDmd : oldproperty.getPtDemandSet()) {
 			if (ptDmd.getIsHistory().equalsIgnoreCase("N")) {
-				if ((ptDmd.getEgInstallmentMaster().getFromDate()).before(effectiveInstall
-						.getFromDate())) {
+				if ((ptDmd.getEgInstallmentMaster().getFromDate()).before(effectiveInstall.getFromDate())) {
 					oldPtDmd = (Ptdemand) ptDmd.clone();
 					oldPtDmd.setEgptProperty(property);
 					property.addPtDemand(oldPtDmd);
@@ -1509,13 +1353,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return property;
 	}
 
-	private void addArrDmdDetToCurrentDmd(Ptdemand ptDmd, Ptdemand currPtDmd,
-			Installment effectiveInstall) {
-		LOGGER.debug("Entered into addArrDmdDetToCurrentDmd. ptDmd: " + ptDmd + ", currPtDmd: "
-				+ currPtDmd);
+	private void addArrDmdDetToCurrentDmd(Ptdemand ptDmd, Ptdemand currPtDmd, Installment effectiveInstall) {
+		LOGGER.debug("Entered into addArrDmdDetToCurrentDmd. ptDmd: " + ptDmd + ", currPtDmd: " + currPtDmd);
 		for (EgDemandDetails dmdDet : ptDmd.getEgDemandDetails()) {
-			if ((dmdDet.getEgDemandReason().getEgInstallmentMaster().getFromDate())
-					.before(effectiveInstall.getFromDate())) {
+			if ((dmdDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()).before(effectiveInstall
+					.getFromDate())) {
 				currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
 			}
 		}
@@ -1534,11 +1376,10 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 *            (This is the objection workflow initiator, who will be set as
 	 *            the initiator of modify property initiator/owner)
 	 */
-	public void initiateModifyWfForObjection(Long basicPropId, String objectionNum,
-			Date objectionDate, User objWfInitiator, String docNumber, String modifyRsn) {
-		LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId
-				+ ", objectionNum: " + objectionNum + ", objectionDate: " + objectionDate
-				+ ", objWfInitiator: " + objWfInitiator);
+	public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate,
+			User objWfInitiator, String docNumber, String modifyRsn) {
+		LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId + ", objectionNum: "
+				+ objectionNum + ", objectionDate: " + objectionDate + ", objWfInitiator: " + objWfInitiator);
 		// Retrieve BasicProperty by basicPropId bcoz, upicno will be generated
 		// during final approval for create property and this
 		// api is used to initiate modify workflow before upicno is generated
@@ -1550,8 +1391,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
 		PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty());
 		PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
-		LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty
-				+ ", newProperty: " + newProperty);
+		LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty + ", newProperty: " + newProperty);
 		List floorProxy = new ArrayList();
 		String propUsageId = null;
 		String propOccId = null;
@@ -1564,9 +1404,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			}
 		}
 		newProperty.getPropertyDetail().setFloorDetailsProxy(floorProxy);
-		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty,
-				PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, objectionNum, objectionDate,
-				null, null));
+		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
+				propCompletionDate, objectionNum, objectionDate, null, null));
 		if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
 			propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
 		}
@@ -1574,8 +1413,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
 		}
 		newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId,
-				STATUS_WORKFLOW, null, null, false);
+				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false);
 
 		newProperty.setStatus(STATUS_WORKFLOW);
 		// Setting the property state to the objection workflow initiator
@@ -1603,23 +1441,20 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		basicProperty.addProperty(newProperty);
 
 		basicProperty = basicPrpertyService.update(basicProperty);
-		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
-				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			createAttributeValues(newProperty, null);
 		}
 		LOGGER.debug("Exiting from initiateModifyWfForObjection");
 	}
 
 	private Date getPropertyCompletionDate(BasicProperty basicProperty, PropertyImpl newProperty) {
-		LOGGER.debug("Entered into getPropertyCompletionDate - basicProperty.upicNo="
-				+ basicProperty.getUpicNo());
+		LOGGER.debug("Entered into getPropertyCompletionDate - basicProperty.upicNo=" + basicProperty.getUpicNo());
 		Date propCompletionDate = null;
-		String propertyTypeMasterCode = newProperty.getPropertyDetail().getPropertyTypeMaster()
-				.getCode();
+		String propertyTypeMasterCode = newProperty.getPropertyDetail().getPropertyTypeMaster().getCode();
 		if (propertyTypeMasterCode.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
 				|| ((propertyTypeMasterCode.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || propertyTypeMasterCode
-						.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && newProperty
-						.getPropertyDetail().getFloorDetails().isEmpty())) {
+						.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && newProperty.getPropertyDetail().getFloorDetails()
+						.isEmpty())) {
 			for (PropertyStatusValues propstatval : basicProperty.getPropertyStatusValuesSet()) {
 				if (propstatval.getExtraField1() != null) {
 					try {
@@ -1639,8 +1474,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			}
 		}
 
-		LOGGER.debug("propCompletionDate=" + propCompletionDate
-				+ "\nExiting from getPropertyCompletionDate");
+		LOGGER.debug("propCompletionDate=" + propCompletionDate + "\nExiting from getPropertyCompletionDate");
 		return propCompletionDate;
 	}
 
@@ -1720,51 +1554,45 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		for (PropertyStatusValues psv : basicProperty.getPropertyStatusValuesSet()) {
 			if (PROPERTY_MODIFY_REASON_MODIFY.equals(psv.getPropertyStatus().getStatusCode())
 					&& psv.getIsActive().equals("W")) {
-				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "Y",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
+				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
-				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "W",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
+				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
 				}
 			}
 			if (PROPERTY_MODIFY_REASON_AMALG.equals(psv.getPropertyStatus().getStatusCode())
 					&& psv.getIsActive().equals("W")) {
-				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "Y",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
+				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
-				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "W",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
+				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
 				}
 			}
 			if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(psv.getPropertyStatus().getStatusCode())
 					&& psv.getIsActive().equals("W")) {
-				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "Y",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
-				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
-						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
-								basicProperty.getUpicNo(), "W",
-								PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
+						QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
+						PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
 				LOGGER.debug("setWFPropStatValActive: wfPropStatVal: " + wfPropStatVal);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
@@ -1782,14 +1610,13 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @return Map of installment and respective reason wise demand for each
 	 *         installment
 	 */
-	public Map<Installment, Map<String, BigDecimal>> populateTaxesForVoucherCreation(
-			Property property) {
+	public Map<Installment, Map<String, BigDecimal>> populateTaxesForVoucherCreation(Property property) {
 		LOGGER.debug("Entered into populateTaxesForVoucherCreation, property: " + property);
 		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
 		if ((instTaxMap != null)) {
 			for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec : instTaxMap.entrySet()) {
-				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(instTaxRec
-						.getValue().getConsolidatedUnitTaxCalculationInfo());
+				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(instTaxRec.getValue()
+						.getConsolidatedUnitTaxCalculationInfo());
 				amounts.put(instTaxRec.getKey(), taxMap);
 			}
 		} else {
@@ -1807,8 +1634,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @return Map of installment and respective reason wise demand for each
 	 *         installment
 	 */
-	public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForOldProp(
-			Property property) {
+	public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForOldProp(Property property) {
 		LOGGER.debug("Entered into prepareRsnWiseDemandForOldProp, property: " + property);
 		Installment inst = null;
 		Map<Installment, Map<String, BigDecimal>> instWiseDmd = new HashMap<Installment, Map<String, BigDecimal>>();
@@ -1822,8 +1648,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 								.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
 								&& !dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
 										.equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
-							rsnWiseDmd.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster()
-									.getCode(), dmdDet.getAmount());
+							rsnWiseDmd.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode(),
+									dmdDet.getAmount());
 						}
 					}
 				}
@@ -1834,10 +1660,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return instWiseDmd;
 	}
 
-	public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForPropToBeDeactivated(
-			Property property) {
-		LOGGER.debug("Entered into prepareRsnWiseDemandForPropToBeDeactivated, property: "
-				+ property);
+	public Map<Installment, Map<String, BigDecimal>> prepareRsnWiseDemandForPropToBeDeactivated(Property property) {
+		LOGGER.debug("Entered into prepareRsnWiseDemandForPropToBeDeactivated, property: " + property);
 
 		Map<Installment, Map<String, BigDecimal>> amts = prepareRsnWiseDemandForOldProp(property);
 		for (Installment inst : amts.keySet()) {
@@ -1879,14 +1703,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		 * excess collection will be adjusted to the group to which GEN_TAX
 		 * belongs i.e., demandReasons1[GROUP1]
 		 */
-		Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(
-				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_SEWERAGE_TAX,
-				DEMANDRSN_CODE_FIRE_SERVICE_TAX, DEMANDRSN_CODE_LIGHTINGTAX,
-				DEMANDRSN_CODE_GENERAL_WATER_TAX));
+		Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+				DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-		Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(
-				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD, DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX,
-				DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD));
+		Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+				DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
 		Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
 
@@ -1897,21 +1718,19 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 			for (String demandReason : excessAmountByDemandReasonForInstallment.getValue().keySet()) {
 
-				adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1,
-						demandReasons2, excessAmountByDemandReasonForInstallment, demandReason,
-						false, null);
+				adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
+						excessAmountByDemandReasonForInstallment, demandReason, false, null);
 
 				// when the demand details is absent in all the installments /
 				// fully collected(in case of current installment demand
 				// details) , adjusting to its group
 				// and remaining to one of group for current installment
 				// if (!isDemandDetailExists) {
-				Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-						demandReasons1) : new LinkedHashSet<String>(demandReasons2);
+				Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(demandReasons1)
+						: new LinkedHashSet<String>(demandReasons2);
 				reasons.remove(demandReason);
 				for (String reason : reasons) {
-					adjustExcessCollection(installments, newDemandDetailsByInstallment,
-							demandReasons1, demandReasons2,
+					adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
 							excessAmountByDemandReasonForInstallment, reason, true, demandReason);
 					if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason)
 							.compareTo(BigDecimal.ZERO) == 0) {
@@ -1920,8 +1739,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				}
 				// }
 
-				if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason)
-						.compareTo(BigDecimal.ZERO) > 0) {
+				if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason).compareTo(BigDecimal.ZERO) > 0) {
 
 					EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
 							newDemandDetailsByInstallment.get(currerntInstallment),
@@ -1931,34 +1749,28 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						LOGGER.info("adjustExcessCollectionAmount - Advance demand details is not present, creating.. ");
 
 						currentDemandDetail = new PropertyTaxCollection().insertAdvanceCollection(
-								PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE,
-								excessAmountByDemandReasonForInstallment.getValue().get(
-										demandReason), currerntInstallment);
+								PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, excessAmountByDemandReasonForInstallment
+										.getValue().get(demandReason), currerntInstallment);
 						ptDemand.addEgDemandDetails(currentDemandDetail);
-						newDemandDetailsByInstallment.get(currerntInstallment).add(
-								currentDemandDetail);
+						newDemandDetailsByInstallment.get(currerntInstallment).add(currentDemandDetail);
 						// HibernateUtil.getCurrentSession().flush();
 					} else {
-						currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected()
-								.add(excessAmountByDemandReasonForInstallment.getValue().get(
-										demandReason)));
+						currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
+								excessAmountByDemandReasonForInstallment.getValue().get(demandReason)));
 						currentDemandDetail.setModifiedDate(new Date());
 
 					}
 				}
 
-				excessAmountByDemandReasonForInstallment.getValue().put(demandReason,
-						BigDecimal.ZERO);
+				excessAmountByDemandReasonForInstallment.getValue().put(demandReason, BigDecimal.ZERO);
 			}
 		}
 		LOGGER.info("Excess collection adjustment is successfully completed..");
 		LOGGER.debug("Exiting from adjustExcessCollectionAmount");
 	}
 
-	private Boolean adjustExcessCollection(
-			List<Installment> installments,
-			Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
-			Set<String> demandReasons1,
+	private Boolean adjustExcessCollection(List<Installment> installments,
+			Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, Set<String> demandReasons1,
 			Set<String> demandReasons2,
 			Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
 			String demandReason, Boolean isGroupAdjustment, String reasonNotExists) {
@@ -1976,28 +1788,24 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				isDemandDetailExists = Boolean.FALSE;
 			} else {
 				isDemandDetailExists = Boolean.TRUE;
-				balanceDemand = newDemandDetail.getAmount().subtract(
-						newDemandDetail.getAmtCollected());
+				balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
 
 				if (balanceDemand.compareTo(BigDecimal.ZERO) > 0) {
 
 					BigDecimal excessCollection = isGroupAdjustment ? excessAmountByDemandReasonForInstallment
-							.getValue().get(reasonNotExists)
-							: excessAmountByDemandReasonForInstallment.getValue().get(demandReason);
+							.getValue().get(reasonNotExists) : excessAmountByDemandReasonForInstallment.getValue().get(
+							demandReason);
 
 					if (excessCollection.compareTo(BigDecimal.ZERO) > 0) {
 
 						if (excessCollection.compareTo(balanceDemand) <= 0) {
-							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(
-									excessCollection));
+							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(excessCollection));
 							newDemandDetail.setModifiedDate(new Date());
 							excessCollection = BigDecimal.ZERO;
 						} else {
-							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(
-									balanceDemand));
+							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(balanceDemand));
 							newDemandDetail.setModifiedDate(new Date());
-							BigDecimal remainingExcessCollection = excessCollection
-									.subtract(balanceDemand);
+							BigDecimal remainingExcessCollection = excessCollection.subtract(balanceDemand);
 
 							while (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
 
@@ -2008,9 +1816,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 								Set<String> oneReason = new LinkedHashSet<String>();
 								oneReason.add(demandReason);
-								remainingExcessCollection = adjustToInstallmentDemandDetails(
-										installments, newDemandDetailsByInstallment,
-										excessAmountByDemandReasonForInstallment,
+								remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
+										newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
 										remainingExcessCollection, oneReason);
 
 								if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0) {
@@ -2019,13 +1826,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 								if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
 									Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-											demandReasons1) : new LinkedHashSet<String>(
-											demandReasons2);
+											demandReasons1) : new LinkedHashSet<String>(demandReasons2);
 									reasons.remove(demandReason);
 
-									remainingExcessCollection = adjustToInstallmentDemandDetails(
-											installments, newDemandDetailsByInstallment,
-											excessAmountByDemandReasonForInstallment,
+									remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
+											newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
 											remainingExcessCollection, reasons);
 								}
 
@@ -2040,8 +1845,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 								 */
 								if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
 									EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-											newDemandDetailsByInstallment.get(PropertyTaxUtil
-													.getCurrentInstallment()), demandReason);
+											newDemandDetailsByInstallment.get(PropertyTaxUtil.getCurrentInstallment()),
+											demandReason);
 									/**
 									 * if the demand reason does not exist in
 									 * the current installment then adjusting
@@ -2050,8 +1855,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 									 */
 									if (currentDemandDetail == null) {
 										Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-												demandReasons1) : new LinkedHashSet<String>(
-												demandReasons2);
+												demandReasons1) : new LinkedHashSet<String>(demandReasons2);
 										reasons.remove(demandReason);
 										for (String rsn : reasons) {
 											currentDemandDetail = getEgDemandDetailsForReason(
@@ -2063,8 +1867,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 										}
 									}
 
-									currentDemandDetail.setAmtCollected(currentDemandDetail
-											.getAmtCollected().add(remainingExcessCollection));
+									currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
+											remainingExcessCollection));
 									currentDemandDetail.setModifiedDate(new Date());
 									remainingExcessCollection = BigDecimal.ZERO;
 									excessCollection = BigDecimal.ZERO;
@@ -2084,8 +1888,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					}
 				}
 				String rsn = isGroupAdjustment ? reasonNotExists : demandReason;
-				if (excessAmountByDemandReasonForInstallment.getValue().get(rsn)
-						.compareTo(BigDecimal.ZERO) == 0) {
+				if (excessAmountByDemandReasonForInstallment.getValue().get(rsn).compareTo(BigDecimal.ZERO) == 0) {
 					break;
 				}
 			}
@@ -2096,32 +1899,30 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		return isDemandDetailExists;
 	}
 
-	private BigDecimal adjustToInstallmentDemandDetails(
-			List<Installment> installments,
+	private BigDecimal adjustToInstallmentDemandDetails(List<Installment> installments,
 			Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
 			Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
 			BigDecimal remainingExcessCollection, Set<String> reasons) {
 		LOGGER.debug("Entered into adjustToInstallmentDemandDetails");
-		LOGGER.debug("adjustToInstallmentDemandDetails : reasons=" + reasons
-				+ ", remainingExcessCollection=" + remainingExcessCollection);
+		LOGGER.debug("adjustToInstallmentDemandDetails : reasons=" + reasons + ", remainingExcessCollection="
+				+ remainingExcessCollection);
 		for (String reason : reasons) {
 			for (Installment nextInstallment : installments) {
 				EgDemandDetails nextNewDemandDetail = getEgDemandDetailsForReason(
 						newDemandDetailsByInstallment.get(nextInstallment), reason);
 
 				if (nextNewDemandDetail != null) {
-					BigDecimal balance = nextNewDemandDetail.getAmount().subtract(
-							nextNewDemandDetail.getAmtCollected());
+					BigDecimal balance = nextNewDemandDetail.getAmount()
+							.subtract(nextNewDemandDetail.getAmtCollected());
 
 					if (balance.compareTo(BigDecimal.ZERO) > 0) {
 						if (remainingExcessCollection.compareTo(balance) <= 0) {
-							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail
-									.getAmtCollected().add(remainingExcessCollection));
+							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(
+									remainingExcessCollection));
 							nextNewDemandDetail.setModifiedDate(new Date());
 							remainingExcessCollection = BigDecimal.ZERO;
 						} else {
-							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail
-									.getAmtCollected().add(balance));
+							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(balance));
 							nextNewDemandDetail.setModifiedDate(new Date());
 							remainingExcessCollection = remainingExcessCollection.subtract(balance);
 						}
@@ -2133,8 +1934,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				}
 			}
 		}
-		LOGGER.debug("adjustToInstallmentDemandDetails : remainingExcessCollection="
-				+ remainingExcessCollection);
+		LOGGER.debug("adjustToInstallmentDemandDetails : remainingExcessCollection=" + remainingExcessCollection);
 		LOGGER.debug("Exiting from adjustToInstallmentDemandDetails");
 		return remainingExcessCollection;
 	}
@@ -2155,18 +1955,15 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				.withDateInfo(new Date());
 
 		PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
-				"from PropertyMutationMaster PM where upper(PM.code) = ?",
-				PROPERTY_MODIFY_REASON_DATA_ENTRY);
+				"from PropertyMutationMaster PM where upper(PM.code) = ?", PROPERTY_MODIFY_REASON_DATA_ENTRY);
 		newProperty.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
 		newProperty.setStatus(PropertyTaxConstants.STATUS_WORKFLOW);
 		basicProperty.addProperty(newProperty);
 
-		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty,
-				PROPERTY_MODIFY_REASON_MODIFY,
+		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
 				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null));
 
-		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
-				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			createAttributeValues(newProperty, null);
 		}
 
@@ -2194,5 +1991,5 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	public void setEisCommonsService(EisCommonsService eisCommonsService) {
 		this.eisCommonsService = eisCommonsService;
 	}
-	
+
 }
