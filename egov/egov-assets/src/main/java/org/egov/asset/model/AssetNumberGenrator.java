@@ -41,26 +41,24 @@ package org.egov.asset.model;
 
 import javax.script.ScriptContext;
 
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssetNumberGenrator {
 
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator squenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
     public String getAssetNumber(final Asset asset, final String year) {
-        // List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-        // "assets.assetnumber.generator");
         final ScriptContext scriptContext = ScriptService.createContext("asset", asset, "year", year,
-                "sequenceGenerator", sequenceGenerator);
+                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
         return scriptService.executeScript("assets.assetnumber.generator", scriptContext).toString();
-        // return
-        // scripts.get(0).eval(Script.createContext("asset",asset,"year",year,"sequenceGenerator",sequenceGenerator)).toString();
     }
 
 }

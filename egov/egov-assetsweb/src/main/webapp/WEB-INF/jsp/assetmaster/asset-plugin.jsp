@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%> 
+<%@ include file="/includes/taglibs.jsp" %>  
 
 <script>
 
@@ -68,7 +68,7 @@ function update(elemValue) {
 
 </script>
 <s:form action="asset" theme="simple" name="assetPluginForm">
-<s:token/>
+<s:token name="%{tokenName()}"/> 		
 <table id="formTable" width="100%" border="0" cellspacing="0"
 	cellpadding="0">
 	<tr>

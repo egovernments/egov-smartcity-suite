@@ -75,9 +75,11 @@
         <property name="assetDetails" type="java.lang.String">
             <column name="ASSET_DETAILS"/>
         </property> 
-        <property name="modeOfAcquisition" type="java.lang.String">
-            <column name="MODEOFACQUISITION" length="1024" />
-        </property>
+         <property name="modeOfAcquisition" column="MODEOFACQUISITION" not-null="true">
+			<type name="org.hibernate.type.EnumType">       
+				<param name="enumClass">org.egov.asset.model.ModeOfAcquisition</param>     
+			</type>   
+		</property> 
         <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
             <column name="STATUSID" precision="22" scale="0" not-null="true"/>
         </many-to-one>

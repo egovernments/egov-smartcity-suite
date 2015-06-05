@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -56,7 +59,6 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,14 +66,15 @@ import org.slf4j.LoggerFactory;
 public class HeirarchyTypeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeirarchyTypeDAO.class);
-    private final SessionFactory sessionFactory;
 
-    public HeirarchyTypeDAO(final SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public HeirarchyTypeDAO() {
     }
 
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 
     /**
@@ -137,7 +140,8 @@ public class HeirarchyTypeDAO {
         }
     }
 
-    public HierarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
+    public HierarchyType getHierarchyTypeByName(final String name)
+            throws NoSuchObjectException, TooManyValuesException {
 
         if (name == null)
             throw new EGOVRuntimeException("heirarchyType.name.null");
@@ -164,7 +168,7 @@ public class HeirarchyTypeDAO {
 
     /**
      * returns set of parent boundary for the given child boundary
-     * 
+     *
      * @param childBoundary
      * @return
      */
@@ -173,8 +177,8 @@ public class HeirarchyTypeDAO {
         if (childBoundary == null)
             throw new EGOVRuntimeException("Childbndry.object.null");
         else {
-            final Query qry = getSession().createQuery(
-                    "select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
+            final Query qry = getSession()
+                    .createQuery("select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
             qry.setEntity("childBoundary", childBoundary);
 
             for (final Iterator iter = qry.iterate(); iter.hasNext();) {
@@ -190,7 +194,7 @@ public class HeirarchyTypeDAO {
     /**
      * returns set of child boundary for the given parent boundary and
      * childBoundaryType
-     * 
+     *
      * @param parentBoundary
      * @return
      */
@@ -199,9 +203,8 @@ public class HeirarchyTypeDAO {
         if (parentBoundary == null || childBoundaryType == null)
             throw new EGOVRuntimeException("parentBoundary.childBoundaryType.object.null");
         else {
-            final Query qry = getSession()
-                    .createQuery(
-                            "select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
+            final Query qry = getSession().createQuery(
+                    "select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
             qry.setEntity("parentBoundary", parentBoundary);
             qry.setEntity("childBoundaryType", childBoundaryType);
 

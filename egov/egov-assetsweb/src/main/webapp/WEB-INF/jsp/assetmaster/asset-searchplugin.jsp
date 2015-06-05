@@ -1,4 +1,4 @@
-<!-- #-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -37,8 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
+<%@ include file="/includes/taglibs.jsp" %> 
 <script>
 function setupAjaxAssettype(elem){
    	populateparentcat({assetType:elem.value});
@@ -53,6 +52,10 @@ window.onload = function () {
 	</s:else>
 }
 
+function submitForm(){
+	document.assetViewForm.action='${pageContext.request.contextPath}/assetmaster/asset-showSerachResult.action';
+   	document.assetViewForm.submit();
+}
 </script>
 <html>
 	<head>
@@ -71,8 +74,7 @@ window.onload = function () {
 				<s:actionmessage theme="simple" />
 			</div>
 		</s:if>
-		<s:form action="asset" theme="simple"
-			name="assetSearchPluginForm">
+		<s:form action="asset" theme="simple" name="assetSearchPluginForm">
 			<div class="errorstyle" id="search_error" style="display:none;"></div>
 			<div class="navibarshadowwk">
 			</div>
@@ -119,7 +121,6 @@ window.onload = function () {
 										headerValue="%{getText('list.default.select')}"
 										name="assetType" id="assettype"
 										cssClass="selectwk" list="dropdownData.assetTypeList"
-										listKey="value" listValue='value'
 										value="%{assetType}"
 										onChange="setupAjaxAssettype(this);" />
 									<egov:ajaxdropdown id="populateParentcat"
@@ -196,7 +197,8 @@ window.onload = function () {
 							<tr>
 								<td colspan="4">
 									<div class="buttonholderwk">
-										<s:submit cssClass="buttonfinal" value="SEARCH" id="searchButton" method="showSerachResult"/>
+										<input type="submit" class="buttonfinal" value="SEARCH" id="searchButton" 
+															onclick="submitForm();"/>
 										<input type="button" class="buttonfinal" value="CLOSE"
 											id="closeButton" name="button" onclick="window.close();" />
 									</div>

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -78,28 +78,28 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-@Transactional
+@Transactional(readOnly = true)
 public class PersistenceService<T, ID extends Serializable> implements GenericDAO<T, ID> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
     private static final String DEFAULT_FIELD = "_hibernate_class";
     protected org.hibernate.SessionFactory sessionFactory;
     protected Class<T> type;
-    
+
     @Autowired
-    @Qualifier("entityValidator") 
+    @Qualifier("entityValidator")
     private LocalValidatorFactoryBean entityValidator;
-    
+
     @PersistenceContext
     EntityManager entityManager;
-    
+
     public void setType(final Class<T> type) {
         this.type = type;
     }
-    
+
     public Class<T> getType() {
         return this.type;
     }
-    
+
     public Session getSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -161,7 +161,8 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
      * @param params
      * @return
      */
-    public Page findPageBy(final String query, final Integer pageNumber, final Integer pageSize, final Object... params) {
+    public Page findPageBy(final String query, final Integer pageNumber, final Integer pageSize,
+            final Object... params) {
         final Query q = getQueryWithParams(query, params);
         return new Page(q, pageNumber, pageSize);
     }
@@ -215,12 +216,14 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         return results.isEmpty() ? null : results.get(0);
     }
 
+    @Transactional
     public T persist(final T model) {
         validate(model);
         getSession().saveOrUpdate(model);
         return model;
     }
 
+    @Transactional
     public T merge(final T model) {
         validate(model);
         return (T) getSession().merge(model);
@@ -230,6 +233,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
     @Override
     public T create(final T entity) {
         validate(entity);
@@ -237,6 +241,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         return (T) getSession().load(this.type, id);
     }
 
+    @Transactional
     @Override
     public void delete(final T entity) {
         getSession().delete(entity);
@@ -259,9 +264,11 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     }
 
     public T findByIdWithJoinFetch(final ID id, final String joinFetchPropertyName) {
-        return (T)getSession().createCriteria(type).setFetchMode(joinFetchPropertyName,FetchMode.JOIN).add(Restrictions.idEq(id)).uniqueResult(); 
+        return (T) getSession().createCriteria(type).setFetchMode(joinFetchPropertyName, FetchMode.JOIN)
+                .add(Restrictions.idEq(id)).uniqueResult();
     }
-    
+
+    @Transactional
     @Override
     public T update(final T entity) {
         validate(entity);
@@ -288,7 +295,8 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         return getSession().getNamedQuery(namedQuery).getQueryString();
     }
 
-    private List<T> search(final String queryString, final int pageNumber, final int pageSize, final PagingStrategy paging) {
+    private List<T> search(final String queryString, final int pageNumber, final int pageSize,
+            final PagingStrategy paging) {
         final QueryParser parser = new QueryParser(DEFAULT_FIELD, new StandardAnalyzer());
         parser.setAllowLeadingWildcard(true);
         parser.setDefaultOperator(Operator.AND);

@@ -1,4 +1,4 @@
-<!-- #-------------------------------------------------------------------------------
+<!-- -------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -37,32 +37,15 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-				
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">  
-  <style type="text/css">
+<%@ include file="/includes/taglibs.jsp" %> 
 
-#yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
-	Width: 100%;
-}
+<style type="text/css">
+
+	#yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
+		Width: 100%;
+	}
 
 </style>
-<link rel="stylesheet" href="/egi/commonyui/build/treeview/assets/tree.css" type="text/css" />
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/build/assets/skins/sam/datatable.css" />
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/build/button/assets/button.css" />
-
-<script type="text/javascript" src="/egi/commonyui/build/yahoo/yahoo.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/dom/dom.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/event/event.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/element/element-beta.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/datasource/datasource-beta.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/datatable/datatable-beta.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/button/button-beta.js"></script>
-<script type="text/javascript" src="/egi/commonyui/build/treeview/treeview.js"></script>
-<script type="text/javascript" src="/egi/commonjs/ajaxCommonFunctions.js"></script>
-<script src="<egov:url path='/resources/javascript/helper.js'/>"></script>	
 
 <script>
 		  
@@ -117,12 +100,13 @@ function assignValues(obj){
  } 
 
 
-function validateInput(){
+function validateFormAndSubmit(){
+
 	if(document.getElementById('assettype').value=="-1" && document.getElementById('parentCategoryId').value==-1 && document.getElementById('subCategoryIds').value=="" &&
 			document.getElementById('status').value=="" && document.getElementById('asset_statusId').value=="" && document.getElementById('code').value=="" && 
 			document.getElementById('description').value=="" )
-		{
-			if(document.getElementById('asset_searchBy1').checked == true){
+		{	
+			if(document.getElementById('asset_searchBy1').checked == true){ 
 				if(document.getElementById('zoneId').value==-1 && document.getElementById('wardId').value=="" && document.getElementById('streetId').value==-1)
 				{	
 					document.getElementById("category_error").innerHTML='<s:text name="view.asset.search.null" />'; 
@@ -143,8 +127,10 @@ function validateInput(){
 	{
 		document.getElementById("category_error").innerHTML='';
 		document.getElementById("category_error").style.display="none";
-		return true;
+		
 	}
+	document.assetViewForm.action='${pageContext.request.contextPath}/assetmaster/asset-list.action';
+	document.assetViewForm.submit();
 }
 </script>
 <html>
@@ -154,7 +140,7 @@ function validateInput(){
 			</title>
 		</s:if>
 		<s:elseif test="%{userMode=='edit'}">
-			<title>- <s:text name="page.title.asset.edit" />
+			<title> <s:text name="page.title.asset.edit" />
 			</title>
 		</s:elseif>
 	</head>
@@ -173,7 +159,6 @@ function validateInput(){
 
 		<s:form action="asset" theme="simple" name="assetViewForm">
 			<div class="errorstyle" id="category_error" style="display: none;"></div>
-			<!-- s:push value="model"-->
 			<div class="navibarshadowwk">
 			</div>
 			<div class="formmainbox">
@@ -184,10 +169,6 @@ function validateInput(){
 						</div>
 						<div class="rbcontent2">
 							<s:hidden name="userMode" />
-							<s:hidden id="xmlconfigname" name="xmlconfigname"
-																			value="%{xmlconfigname}" />
-							<s:hidden id="categoryname" name="categoryname"
-																			value="%{categoryname}" />
 																		
 							<table id="formTable" width="100%" border="0" cellspacing="0"
 								cellpadding="0">
@@ -227,7 +208,6 @@ function validateInput(){
 																	headerValue="%{getText('list.default.select')}"
 																	name="assetType" id="assettype"
 																	cssClass="selectwk" list="dropdownData.assetTypeList"
-																	listKey="value" listValue='value'
 																	value="%{assetType}"
 																 />
 																
@@ -364,8 +344,8 @@ function validateInput(){
 											<tr>
 												<td colspan="4">
 													<div class="buttonholderwk">
-														<s:submit cssClass="buttonfinal" value="SEARCH"
-															id="submitButton" method="list" onclick="return validateInput();" />
+														<input type="submit" class="buttonfinal" value="SEARCH" id="submitButton" 
+															onclick="return validateFormAndSubmit();"/>
 														<input type="button" class="buttonfinal" value="CLOSE"
 															id="closeButton" name="button" onclick="window.close();" />
 													</div>
@@ -466,7 +446,6 @@ function validateInput(){
 					</div>
 				</div>
 			</div>
-			<!-- /s:push-->
 			<script>
 				showRow();
 			</script>

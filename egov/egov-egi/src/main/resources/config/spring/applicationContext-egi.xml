@@ -154,7 +154,6 @@
 	</bean>
 
 	<bean id="heirarchyTypeDAO" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype">
-		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
 	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionDAO" scope="prototype" autowire="default">

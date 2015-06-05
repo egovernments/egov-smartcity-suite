@@ -939,3 +939,29 @@ select {
 	border: 5px solid #FAD584;
 	text-align: center;
 }
+
+th.pagetableth {
+	background-color: #E8EDF1;
+	height: 30px;
+	overflow: hidden;
+	border-left: 1px solid #D1D9E1;
+	color: #00639B;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 12px;
+	padding: 3px;
+	text-align: left;
+	word-wrap: break-word;
+}
+
+td.pagetabletd{
+	color: #333333;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-align: left;
+	line-height: 12px;
+	overflow: hidden;
+	border: 1px solid #D1D9E1;
+	padding: 3px;
+}

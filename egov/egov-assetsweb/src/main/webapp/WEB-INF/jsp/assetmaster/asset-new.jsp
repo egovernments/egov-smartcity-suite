@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">
@@ -71,7 +71,7 @@
 			}
 		</script>
 		<s:form action="asset" theme="simple" name="assetForm">
-		<s:token/>	
+		<s:token name="%{tokenName()}"/> 	
 		<div class="errorstyle" id="asset_error" style="display:none;"></div>
 			<s:push value="model">
 				<div class="navibarshadowwk">
@@ -81,11 +81,7 @@
 						<div class="rbroundbox2">
 							<div class="rbtop2"><div></div>
 							</div>
-							<div class="rbcontent2">
-								<div class="datewk">
-									<span class="bold">Today</span>
-									<egov:now />
-								</div>
+							<div class="rbcontent2">								
 								<s:hidden name="id" />
 								<s:hidden name="userMode" />
 								<%@ include file='asset-form.jsp'%>
@@ -98,7 +94,7 @@
 				</div>
 				<s:if test="%{userMode=='new'}">
 					<div class="buttonholderwk" id="divButRow1" name="divButRow1">
-						<s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" method="save" 
+						<input type="submit" class="buttonfinal" value="SAVE" id="saveButton" 
 							onclick="return validateFormAndSubmit();"/>
 						<input type="button" class="buttonfinal" value="CLOSE"
 							id="closeButton" name="button"
@@ -117,7 +113,7 @@
 				</s:elseif>
 				<s:elseif test="%{userMode=='edit'}">
 					<div class="buttonholderwk" id="divButRow3" name="divButRow3">
-						<s:submit cssClass="buttonfinal" value="SAVE" id="saveButton" method="save" 
+						<input type="submit" class="buttonfinal" value="SAVE" id="saveButton" 
 							onclick="return validateFormAndSubmit();"/>
 						<input type="button" class="buttonfinal" value="CLOSE"
 							id="closeButton" name="button"

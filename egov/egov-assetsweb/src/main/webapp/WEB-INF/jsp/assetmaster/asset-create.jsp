@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ include file="/includes/taglibs.jsp" %> 
 <html>
 	<head>  
 	    <title> <s:text name="page.title.asset.create" /></title>
@@ -63,7 +63,7 @@
 			}
 		</script>
 		<s:form action="asset" theme="simple" name="assetForm">
-		<s:token/>		
+		<s:token name="%{tokenName()}"/> 		
 			<div class="errorstyle" id="asset_error" style="display:none;"></div>
 			<s:push value="model">
 				<div class="navibarshadowwk">
@@ -74,10 +74,6 @@
 							<div class="rbtop2">
 							</div>
 							<div class="rbcontent2">
-								<div class="datewk">
-									<span class="bold">Today</span>
-									<egov:now />
-								</div>
 								<s:hidden name="id" />
 								<s:hidden name="rowId" id="rowid"/>
 								<%@ include file='asset-form.jsp'%>
@@ -89,7 +85,7 @@
 				</div>
 				<s:if test="%{not id}">
 					<div class="buttonholderwk" id="divButRow1" name="divButRow1">
-						<s:submit cssClass="buttonfinal" value="CREATE" id="submitButton" method="create" 
+						<input type="submit" class="buttonfinal" value="CREATE" id="createButton" 
 							onclick="return validateFormAndSubmit();"/>
 						<input type="button" class="buttonfinal" value="CLOSE"
 							id="closeButton" name="button"

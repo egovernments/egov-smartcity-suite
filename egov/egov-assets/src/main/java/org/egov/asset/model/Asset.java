@@ -57,14 +57,12 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = { "CODE" }, message = "asset.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = {
+        "CODE" }, message = "asset.code.isunique")
 public class Asset extends BaseModel {
 
     // Constructors
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 730236511745178022L;
 
     /** default constructor */
@@ -93,7 +91,7 @@ public class Asset extends BaseModel {
     private String assetDetails;
 
     @Required(message = "asset.modeofacqui.null")
-    private String modeOfAcquisition;
+    private ModeOfAcquisition modeOfAcquisition;
     @Required(message = "asset.status.null")
     private EgwStatus status;
     private String description;
@@ -161,11 +159,11 @@ public class Asset extends BaseModel {
         this.description = description;
     }
 
-    public String getModeOfAcquisition() {
+    public ModeOfAcquisition getModeOfAcquisition() {
         return modeOfAcquisition;
     }
 
-    public void setModeOfAcquisition(final String modeOfAcquisition) {
+    public void setModeOfAcquisition(final ModeOfAcquisition modeOfAcquisition) {
         this.modeOfAcquisition = modeOfAcquisition;
     }
 

@@ -37,10 +37,10 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/struts-tags"%>
+
 
 <style type="text/css">
-#yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
+#yui-dt0-bodytable, #yui-dt1-bodytable, #yui-dt2-bodytable {
 	Width: 100%;
 }
 </style>
@@ -67,115 +67,122 @@ function trim(str) {
 }
 
 function validateFormAndSubmit(){
-var code= dom.get("code").value;
-var name= dom.get("name").value;
-var pattern=/[^0-9a-zA-Z-&:/ ]/;
-var namepattern=/[^0-9a-zA-Z-&:/ ]/;
-var lenVal = document.getElementById("length").value;
-var widthVal = document.getElementById("width").value;
-var totalAreaVal = document.getElementById("totalArea").value;
-if(code.match(pattern)){
-   dom.get("asset_error").style.display='';
-   document.getElementById("asset_error").innerHTML='<s:text name='asset.code.alphaNumericwithspecialchar' />'
-    	return false;
-}else if(name.match(namepattern) ){
-   dom.get("asset_error").style.display='';
-   document.getElementById("asset_error").innerHTML='<s:text name='asset.name.alphaNumericwithspecialchar' />'
-    	return false;
-}
-
-if(document.getElementById("status").value!=-1){
-       var status=document.getElementById('status').options[document.getElementById('status').selectedIndex].text;
-	   if(status=='Cancelled') {
-		var remarks=document.getElementById("remarks").value;
-		if(trim(remarks)==""){
-			dom.get("asset_error").style.display='';
-    		document.getElementById("asset_error").innerHTML='<s:text name="asset.remarks.null" />';
-    		return false;
+	var code= dom.get("code").value;
+	var name= dom.get("name").value;
+	var pattern=/[^0-9a-zA-Z-&:/ ]/;
+	var namepattern=/[^0-9a-zA-Z-&:/ ]/;
+	var lenVal = document.getElementById("length").value;
+	var widthVal = document.getElementById("width").value;
+	var totalAreaVal = document.getElementById("totalArea").value;
+	if(code.match(pattern)){
+	   dom.get("asset_error").style.display='';
+	   document.getElementById("asset_error").innerHTML='<s:text name='asset.code.alphaNumericwithspecialchar' />'
+	    	return false;
+	}else if(name.match(namepattern) ){
+	   dom.get("asset_error").style.display='';
+	   document.getElementById("asset_error").innerHTML='<s:text name='asset.name.alphaNumericwithspecialchar' />'
+	    	return false;
+	}
+	
+	if(document.getElementById("status").value!=-1){
+	       var status=document.getElementById('status').options[document.getElementById('status').selectedIndex].text;
+		   if(status=='Cancelled') {
+			var remarks=document.getElementById("remarks").value;
+			if(trim(remarks)==""){
+				dom.get("asset_error").style.display='';
+	    		document.getElementById("asset_error").innerHTML='<s:text name="asset.remarks.null" />';
+	    		return false;
+			}
 		}
 	}
-}
-
-if(document.getElementById("name").value==''){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please enter asset name'
-  document.getElementById("name").focus();
-  return false;
-}
-if(document.getElementById("department").value=='-1'){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please select department'
-  document.getElementById("department").focus();
-  return false;
-}
- 
-if(document.getElementById("catTypeIdDummy").value=='-1'){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please select asset category type'
-  document.getElementById("catTypeIdDummy").focus();
-  return false;
-}
-if(document.getElementById("assetcat").value=='-1'){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please select asset category'
-  document.getElementById("assetcat").focus();
-  return false;
-}
-if(document.getElementById("dateOfCreation").value==''){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please select asset date of creation'
-  document.getElementById("dateOfCreation").focus();
-  return false;
-}
-if(lenVal!='' && (isNaN(lenVal) || getNumber(lenVal)<0) )
-{
-	dom.get("asset_error").style.display='';
-	document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> length' ;
-	return false;
-}	
-if(widthVal!='' && (isNaN(widthVal) || getNumber(widthVal)<0) )
-{
-	dom.get("asset_error").style.display='';
-	document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> width' ;
-	return false;
-}
-if(totalAreaVal!='' && (isNaN(totalAreaVal) || getNumber(totalAreaVal)<0) )
-{
-	dom.get("asset_error").style.display='';
-	document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> area' ;
-	return false;
-}
-if(!validateLocationDetails()){
-	return false;
-}
-
-if(document.getElementById("status").value=='-1'){
-  dom.get("asset_error").style.display='';
-  document.getElementById("asset_error").innerHTML='Please select asset status'
-  document.getElementById("status").focus();
-  return false;
-}
-else{
-    clearMessage('asset_error')
-	links=document.assetForm.getElementsByTagName("span");
-	errors=false;
-	for(i=0;i<links.length;i++)
-    {
-        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-            errors=true;
-            break;
-        }
-    }
-    if(errors){
-        dom.get("asset_error").style.display='';
-    	document.getElementById("asset_error").innerHTML='Please enter valid values where indicated';
-    	return false;
-    }else{
-    	enableFields();
-    	return true;
-    }
-    
-}
+	
+	if(document.getElementById("name").value==''){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='Please enter asset name'
+	  document.getElementById("name").focus();
+	  return false;
+	}
+	if(document.getElementById("department").value=='-1'){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='Please select department'
+	  document.getElementById("department").focus();
+	  return false;
+	}
+	 
+	if(document.getElementById("catTypeIdDummy").value=='-1'){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='Please select asset category type'
+	  document.getElementById("catTypeIdDummy").focus();
+	  return false;
+	}
+	if(document.getElementById("assetcat").value=='-1'){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='Please select asset category'
+	  document.getElementById("assetcat").focus();
+	  return false;
+	}
+	if(document.getElementById("dateOfCreation").value==''){
+		  dom.get("asset_error").style.display='';
+		  document.getElementById("asset_error").innerHTML='Please select asset date of creation'
+		  document.getElementById("dateOfCreation").focus();
+		  return false;
+		}
+	if(document.getElementById("modeofacqui").value==''){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='<s:text name="asset.modeofacqui.null"/>';
+	  document.getElementById("modeofacqui").focus();
+	  return false;
+	}
+	if(lenVal!='' && (isNaN(lenVal) || getNumber(lenVal)<0) )
+	{
+		dom.get("asset_error").style.display='';
+		document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> length' ;
+		return false;
+	}	
+	if(widthVal!='' && (isNaN(widthVal) || getNumber(widthVal)<0) )
+	{
+		dom.get("asset_error").style.display='';
+		document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> width' ;
+		return false;
+	}
+	if(totalAreaVal!='' && (isNaN(totalAreaVal) || getNumber(totalAreaVal)<0) )
+	{
+		dom.get("asset_error").style.display='';
+		document.getElementById("asset_error").innerHTML='<s:text name="asset.valid.number" /> area' ;
+		return false;
+	}
+	if(!validateLocationDetails()){
+		return false;
+	}
+	
+	if(document.getElementById("status").value=='-1'){
+	  dom.get("asset_error").style.display='';
+	  document.getElementById("asset_error").innerHTML='Please select asset status'
+	  document.getElementById("status").focus();
+	  return false;
+	}
+	else{
+	    clearMessage('asset_error')
+		links=document.assetForm.getElementsByTagName("span");
+		errors=false;
+		for(i=0;i<links.length;i++)
+	    {
+	        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
+	            errors=true;
+	            break;
+	        }
+	    }
+	    if(errors){
+	        dom.get("asset_error").style.display='';
+	    	document.getElementById("asset_error").innerHTML='Please enter valid values where indicated';
+	    	return false;
+	    }else{
+	    	enableFields();
+	    	document.assetForm.action='${pageContext.request.contextPath}/assetmaster/asset-save.action';
+	    	document.assetForm.submit();
+	    }
+	    
+	}
 }
 
 function validateLocationDetails(){
@@ -236,14 +243,14 @@ function showValueSummary()
 		//$('accdepreciation').value='0';
 		//$('writtendownvalue').value='0';
 		$('grossval').show();
-		$('accdep').show();
+		//$('accdep').show();
 		//$('wdv').hide();
 	}else{
 		$('grossvalue').value='0';
 		//$('accdepreciation').value='0';
 		//$('writtendownvalue').value='0';
 		$('grossval').hide();
-		$('accdep').hide();
+		//$('accdep').hide();
 		//$('wdv').hide();
 	}
 }
@@ -296,11 +303,10 @@ function openVehicleMaster() {
 }
 
 </script>
-<table id="formTable" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table id="formTable" width="100%" border="0" cellspacing="0"
+	cellpadding="0">
 	<tr>
-		<td>
-			&nbsp;
-		</td>
+		<td>&nbsp;</td>
 	</tr>
 	<tr>
 		<td>
@@ -309,7 +315,8 @@ function openVehicleMaster() {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img
+								src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -317,84 +324,72 @@ function openVehicleMaster() {
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<span class="mandatory">*</span> 
-						<s:text	name="asset.code" />:
-					</td>
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.code" />:</td>
 					<td width="21%" class="whitebox2wk" colspan="3">
-						<div id="codeLabel" class="estimateno" style="display:none;"><s:if test="%{not code}">&lt; Not Assigned &gt;</s:if><s:property value="code" /></div>
-						<s:textfield name="code" value="%{code}" id="code" 
-						disabled="%{fDisabled}"	cssClass="selectwk" maxlength="30" />
+						<div id="codeLabel" class="estimateno" style="display: none;">
+							<s:if test="%{not code}">&lt; Not Assigned &gt;</s:if>
+							<s:property value="code" />
+						</div> <s:textfield name="code" value="%{code}" id="code"
+							disabled="%{fDisabled}" cssClass="selectwk" maxlength="30" />
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<span class="mandatory">*</span> 
-						<s:text	name="asset.name" />
-					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:textfield name="name" value="%{name}" id="name" 
-						disabled="%{fDisabled}"	cssClass="selectwk" maxlength="255" />
-					</td>
+					<td width="11%" class="greyboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.name" /></td>
+					<td width="21%" class="greybox2wk" colspan="3"><s:textfield
+							name="name" value="%{name}" id="name" disabled="%{fDisabled}"
+							cssClass="selectwk" maxlength="255" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<span class="mandatory">*</span> 
-						<s:text	name="asset.dept" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{sDisabled}"
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.dept" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="department"
 							id="department" cssClass="selectwk"
 							list="dropdownData.departmentList" listKey="id" listValue='name'
-							value="%{department.id}" />
-					</td>
+							value="%{department.id}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<span class="mandatory">*</span> 
-						<s:text name="asset.cat.type" />:
-					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{sDisabled}"
+					<td width="11%" class="greyboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.cat.type" />:</td>
+					<td width="21%" class="greybox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}"
-							id="catTypeIdDummy" name="assetType"
-							cssClass="selectwk" list="dropdownData.assetTypeList"
-							listKey="value" listValue='value'
+							id="catTypeIdDummy" name="assetType" cssClass="selectwk"
+							list="dropdownData.assetTypeList"
 							value="%{assetCategory.assetType}"
-							onChange="setupAjaxAssettype(this);" />
-						<egov:ajaxdropdown id="populateAssetcat"
-							fields="['Text','Value']" dropdownId='assetcat'
-							url='assetmaster/ajaxAsset!populateParentCategories.action'
-							selectedValue="%{id}" />
-					</td>
+							onChange="setupAjaxAssettype(this);" /> <egov:ajaxdropdown
+							id="populateAssetcat" fields="['Text','Value']"
+							dropdownId='assetcat'
+							url='assetmaster/ajaxAsset-populateParentCategories.action'
+							selectedValue="%{id}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<span class="mandatory">*</span> 
-						<s:text	name="asset.category" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{sDisabled}"
-							headerValue="%{getText('list.default.select')}" name="assetCategory"
-							id="assetcat" cssClass="selectwk"
-							list="dropdownData.assetCategoryList" listKey="id" listValue='name'
-							value="%{assetCategory.id}" onChange="setupAjaxAssetcat(this);"/>
-					</td>
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.category" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{sDisabled}"
+							headerValue="%{getText('list.default.select')}"
+							name="assetCategory" id="assetcat" cssClass="selectwk"
+							list="dropdownData.assetCategoryList" listKey="id"
+							listValue='name' value="%{assetCategory.id}"
+							onChange="setupAjaxAssetcat(this);" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<s:text	name="asset.desc" />
+					<td width="11%" class="greyboxwk"><s:text name="asset.desc" />
 					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:textarea  name="description" value="%{description}" rows="3" cols="20"
-							id="desc" disabled="%{fDisabled}" cssClass="selectwk" maxlength="200" />
-					</td>
+					<td width="21%" class="greybox2wk" colspan="3"><s:textarea
+							name="description" value="%{description}" rows="3" cols="20"
+							id="desc" disabled="%{fDisabled}" cssClass="selectwk"
+							maxlength="200" /></td>
 				</tr>
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img
+								src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.location.details' />
@@ -402,79 +397,71 @@ function openVehicleMaster() {
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-							<s:text	name="asset.location.zone" />:
-								</td>
-								<td width="21%" class="whitebox2wk">
-									<s:select id="zoneId" name="zoneId" cssClass="selectwk" disabled="%{fDisabled}"
-										list="dropdownData.zoneList" listKey="id" listValue="name" 
-										headerKey="-1" headerValue="%{getText('list.default.select')}"
-										value="%{zoneId}" onChange="setupAjaxWards(this);" />	
-										<egov:ajaxdropdown id="populateWard"
-							fields="['Text','Value']" dropdownId='assetward'
-							url='assetmaster/ajaxAsset!populateWard.action'
-							 />
-				           </td>
+					<td width="11%" class="whiteboxwk"><s:text
+							name="asset.location.zone" />:</td>
+					<td width="21%" class="whitebox2wk"><s:select id="zoneId"
+							name="zoneId" cssClass="selectwk" disabled="%{fDisabled}"
+							list="dropdownData.zoneList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="%{getText('list.default.select')}"
+							value="%{zoneId}" onChange="setupAjaxWards(this);" /> <egov:ajaxdropdown
+							id="populateWard" fields="['Text','Value']"
+							dropdownId='assetward'
+							url='assetmaster/ajaxAsset-populateWard.action' /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<s:text	name="asset.location.ward" />
-					</td>
-					<td width="21%" class="greybox2wk">
-									<s:select id="assetward" name="ward" cssClass="selectwk"  disabled="%{fDisabled}"
-										list="dropdownData.wardList" listKey="id" listValue="name" 
-										headerKey="-1" headerValue="%{getText('list.default.select')}" onChange="setupAjaxStreet(this);" value="%{ward.id}"/>
-							 <egov:ajaxdropdown id="populateStreet" fields="['Text','Value']" dropdownId='street' url='assetmaster/ajaxAsset!populateStreets.action' selectedValue="%{ward.id}" />	
-					</td>
+					<td width="11%" class="greyboxwk"><s:text
+							name="asset.location.ward" /></td>
+					<td width="21%" class="greybox2wk"><s:select id="assetward"
+							name="ward" cssClass="selectwk" disabled="%{fDisabled}"
+							list="dropdownData.wardList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="%{getText('list.default.select')}"
+							onChange="setupAjaxStreet(this);" value="%{ward.id}" /> <egov:ajaxdropdown
+							id="populateStreet" fields="['Text','Value']" dropdownId='street'
+							url='assetmaster/ajaxAsset-populateStreets.action'
+							selectedValue="%{ward.id}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.location.street" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{fDisabled}"
+					<td width="11%" class="whiteboxwk"><s:text
+							name="asset.location.street" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{fDisabled}"
 							headerValue="%{getText('list.default.select')}" name="street"
-							id="street" cssClass="selectwk"
-							list="dropdownData.streetList" listKey="id" listValue='name'
-							onChange="setupAjaxLocation(this);resetDropDowns();"  value="%{street.id}" />
-						<egov:ajaxdropdown id="populateLocation"
+							id="street" cssClass="selectwk" list="dropdownData.streetList"
+							listKey="id" listValue='name'
+							onChange="setupAjaxLocation(this);resetDropDowns();"
+							value="%{street.id}" /> <egov:ajaxdropdown id="populateLocation"
 							fields="['Text','Value']" dropdownId='location'
-							url='assetmaster/ajaxAsset!populateLocations.action'
-							selectedValue="%{street.id}" />
-					</td>
+							url='assetmaster/ajaxAsset-populateLocations.action'
+							selectedValue="%{street.id}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<s:text	name="asset.location" />
-					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{fDisabled}"
+					<td width="11%" class="greyboxwk"><s:text
+							name="asset.location" /></td>
+					<td width="21%" class="greybox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{fDisabled}"
 							headerValue="%{getText('list.default.select')}" name="location"
 							id="location" cssClass="selectwk"
 							list="dropdownData.locationList" listKey="id" listValue='name'
-							onChange="setupAjaxArea(this);" value="%{location.id}"/>
-						<egov:ajaxdropdown id="populateArea"
-							fields="['Text','Value']" dropdownId='assetarea'
-							url='assetmaster/ajaxAsset!populateArea.action'
-							 selectedValue="%{area.id}" />	
-					</td>
+							onChange="setupAjaxArea(this);" value="%{location.id}" /> <egov:ajaxdropdown
+							id="populateArea" fields="['Text','Value']"
+							dropdownId='assetarea'
+							url='assetmaster/ajaxAsset-populateArea.action'
+							selectedValue="%{area.id}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.location.area" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{fDisabled}"
+					<td width="11%" class="whiteboxwk"><s:text
+							name="asset.location.area" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:select
+							headerKey="-1" disabled="%{fDisabled}"
 							headerValue="%{getText('list.default.select')}" name="area"
-							id="assetarea" cssClass="selectwk"
-							list="dropdownData.areaList" listKey="id" listValue='name'
-							value="%{area.id}"/>
-					</td>
+							id="assetarea" cssClass="selectwk" list="dropdownData.areaList"
+							listKey="id" listValue='name' value="%{area.id}" /></td>
 				</tr>
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img
+								src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -482,79 +469,77 @@ function openVehicleMaster() {
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="greyboxwk">
-						<s:text	name="asset.details" />
+					<td width="11%" class="greyboxwk"><s:text name="asset.details" />
 					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:textarea  name="assetDetails" value="%{assetDetails}" rows="5" cols="40"
-							id="assetdetails" disabled="%{fDisabled}" cssClass="selectwk"/>
-					</td>
-				</tr>
-				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.acquisition.mode" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:select headerKey="-1" disabled="%{fDisabled}"
-							headerValue="%{getText('list.default.select')}" name="modeOfAcquisition"
-							id="modeofacqui" cssClass="selectwk"
-							list="dropdownData.acquisitionModeList" listKey="value" listValue='value'
-							value="%{modeOfAcquisition}" />
+					<td width="21%" class="greybox2wk" colspan="3"><s:textarea
+							name="assetDetails" value="%{assetDetails}" rows="5" cols="40"
+							id="assetdetails" disabled="%{fDisabled}" cssClass="selectwk" />
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<span class="mandatory">*</span>
-						<s:text	name="asset.date.of.creation" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:date name="dateOfCreation" id="dateOfCreationId" format="dd/MM/yyyy"/>
-						<s:textfield name="dateOfCreation" value="%{dateOfCreationId}" id="dateOfCreation" cssClass="selectboldwk" 
-							onfocus="javascript:vDateType='3';" maxlength="10" disabled="%{fDisabled}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                    	<a href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');" 
-                    		onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-                    		<img src="${pageContext.request.contextPath}/resources/image/calendar.png" alt="Calendar" width="16" 
-                    		height="16" border="0" align="absmiddle" />
-                    	</a>
-					</td>
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span> 
+					<s:text	name="asset.acquisition.mode" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:select
+							headerKey="" disabled="%{fDisabled}"
+							headerValue="%{getText('list.default.select')}"
+							name="modeOfAcquisition" id="modeofacqui" cssClass="selectwk"
+							list="dropdownData.acquisitionModeList" value="%{modeOfAcquisition}" /></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.length" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:textfield name="lengthValue" value="%{length}" id="length" onblur="validateNumbers(this);calculateArea();" cssClass="selectwk" />
-						<span style="color:red">&nbsp;In Meters</span>
-					</td>
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.date.of.creation" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:date
+							name="dateOfCreation" id="dateOfCreationId" format="dd/MM/yyyy" />
+						<s:textfield name="dateOfCreation" value="%{dateOfCreationId}"
+							id="dateOfCreation" cssClass="selectboldwk"
+							onfocus="javascript:vDateType='3';" maxlength="10"
+							disabled="%{fDisabled}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
+						href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');"
+						onmouseover="window.status='Date Picker';return true;"
+						onmouseout="window.status='';return true;"> <img
+							src="${pageContext.request.contextPath}/resources/image/calendar.png"
+							alt="Calendar" width="16" height="16" border="0"
+							align="absmiddle" />
+					</a></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.width" />
+					<td width="11%" class="whiteboxwk"><s:text name="asset.length" />
 					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:textfield name="widthValue" value="%{width}" id="width" onblur="validateNumbers(this);calculateArea();" cssClass="selectwk" />
-						<span style="color:red">&nbsp;In Meters</span>
-					</td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:textfield
+							name="lengthValue" value="%{length}" id="length"
+							onblur="validateNumbers(this);calculateArea();"
+							cssClass="selectwk" /> <span style="color: red">&nbsp;In
+							Meters</span></td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.area" />
+					<td width="11%" class="whiteboxwk"><s:text name="asset.width" />
 					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:textfield name="areaValue" value="%{totalArea}" id="totalArea" onblur="validateNumbers(this)" cssClass="selectwk" />
-						<span style="color:red">&nbsp;In Square Meters</span>
-						<s:if test="(sourcePath!=null && (userMode=='view' || userMode=='edit'))">
-						<input class="buttonfinal"  type="button" id="sourcePath" value='<s:text name="asset.vehicle.master.view"/>'
-							onclick="return openVehicleMaster();"/>
-						</s:if>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:textfield
+							name="widthValue" value="%{width}" id="width"
+							onblur="validateNumbers(this);calculateArea();"
+							cssClass="selectwk" /> <span style="color: red">&nbsp;In
+							Meters</span></td>
+				</tr>
+				<tr>
+					<td width="11%" class="whiteboxwk"><s:text name="asset.area" />
 					</td>
-					
+					<td width="21%" class="whitebox2wk" colspan="3"><s:textfield
+							name="areaValue" value="%{totalArea}" id="totalArea"
+							onblur="validateNumbers(this)" cssClass="selectwk" /> <span
+						style="color: red">&nbsp;In Square Meters</span> <s:if
+							test="(sourcePath!=null && (userMode=='view' || userMode=='edit'))">
+							<input class="buttonfinal" type="button" id="sourcePath"
+								value='<s:text name="asset.vehicle.master.view"/>'
+								onclick="return openVehicleMaster();" />
+						</s:if></td>
+
 				</tr>
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img
+								src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.value.summary' />
@@ -562,28 +547,25 @@ function openVehicleMaster() {
 					</td>
 				</tr>
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<span class="mandatory">*</span> 
-						<s:text	name="asset.status" />
-					</td>
+					<td width="11%" class="whiteboxwk"><span class="mandatory">*</span>
+						<s:text name="asset.status" /></td>
 					<td width="21%" class="whitebox2wk" colspan="3" id="tdstatmain">
 						<s:select headerKey="-1" disabled="%{fDisabled}"
 							headerValue="%{getText('list.default.select')}" name="status"
-							id="status" cssClass="selectwk"
-							list="dropdownData.statusList" listKey="id" listValue='description'
-							value="%{status.id}" onchange="showValueSummary();"/>
+							id="status" cssClass="selectwk" list="dropdownData.statusList"
+							listKey="id" listValue='description' value="%{status.id}"
+							onchange="showValueSummary();" />
 					</td>
-					<td width="21%" class="whitebox2wk" colspan="3" id="tdstatalt" style="display:none;">
-						<s:text name="%{status.description}"/>
+					<td width="21%" class="whitebox2wk" colspan="3" id="tdstatalt"
+						style="display: none;"><s:text name="%{status.description}" />
 					</td>
 				</tr>
-				<tr id="grossval"> 
-					<td width="11%" class="greyboxwk">
-						<s:text	name="asset.gross.value" />
-					</td>
-					<td width="21%" class="greybox2wk" colspan="3">
-						<s:textfield name="grossValue" value="%{grossValue}" id="grossvalue" 
-						disabled="%{fDisabled}"	cssClass="selectamountwk" maxlength="30" />
+				<tr id="grossval">
+					<td width="11%" class="greyboxwk"><s:text
+							name="asset.gross.value" /></td>
+					<td width="21%" class="greybox2wk" colspan="3"><s:textfield
+							name="grossValue" value="%{grossValue}" id="grossvalue"
+							disabled="%{fDisabled}" cssClass="selectamountwk" maxlength="30" />
 					</td>
 				</tr>
 				<!-- <tr id="accdep">
@@ -596,42 +578,42 @@ function openVehicleMaster() {
 					</td>
 				</tr> -->
 				<tr>
-					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.remarks" />
-					</td>
-					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:textarea  name="remarks" value="%{remarks}" rows="5" cols="40"
-							id="remarks" disabled="%{fDisabled}" cssClass="selectwk"/>
-					</td>
+					<td width="11%" class="whiteboxwk"><s:text
+							name="asset.remarks" /></td>
+					<td width="21%" class="whitebox2wk" colspan="3"><s:textarea
+							name="remarks" value="%{remarks}" rows="5" cols="40" id="remarks"
+							disabled="%{fDisabled}" cssClass="selectwk" /></td>
 				</tr>
 				<tr>
 					<td colspan="4" class="shadowwk"></td>
 				</tr>
 				<s:if test="%{userMode=='edit' && sourcePath!=null}">
 					<tr>
-	            		<td colspan="4"><div align="right" class="mandatory" 
-	            			style="font-size:11px;padding-right:20px;">* <s:text name="asset.vehicle.master.footnote" />
-	            		</div></td>
-	          		</tr>
+						<td colspan="4"><div align="right" class="mandatory"
+								style="font-size: 11px; padding-right: 20px;">
+								*
+								<s:text name="asset.vehicle.master.footnote" />
+							</div></td>
+					</tr>
 				</s:if>
 				<tr>
-            		<td colspan="4"><div align="right" class="mandatory" 
-            			style="font-size:11px;padding-right:20px;">* <s:text name="default.message.mandatory" />
-            		</div></td>
-          		</tr>
+					<td colspan="4"><div align="right" class="mandatory"
+							style="font-size: 11px; padding-right: 20px;">
+							*
+							<s:text name="default.message.mandatory" />
+						</div></td>
+				</tr>
 			</table>
 		</td>
 	</tr>
 	<tr>
-		<td>
-			&nbsp; 
-		</td>
+		<td>&nbsp;</td>
 	</tr>
 </table>
 <script>
 	if($('status').options[$('status').selectedIndex].text != 'Capitalized'){
 		$('grossval').hide();
-		$('accdep').hide();
+		//$('accdep').hide();
 		//$('wdv').hide();
 	}
 	<s:if test="%{isAutoGeneratedCode=='yes' || isAutoGeneratedCode==null}">
