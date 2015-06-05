@@ -56,11 +56,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lib.rrbac.model.Action;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "eg_module")
+@Unique(id = "id", tableName = "eg_module", fields = {"code"}, columnName = {"code"}, enableDfltMsg = true)
 @SequenceGenerator(name = Module.SEQ_MODULE, sequenceName = Module.SEQ_MODULE, allocationSize = 1)
 public class Module implements Serializable {
 
@@ -83,6 +85,8 @@ public class Module implements Serializable {
     private String displayName;
 
     private Integer orderNumber;
+    
+    private String code;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_action", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "module_id") )
@@ -105,8 +109,16 @@ public class Module implements Serializable {
     public void setName(final String name) {
         this.name = name;
     }
+    
+    public String getCode() {
+		return code;
+	}
 
-    public boolean isEnabled() {
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
+	public boolean isEnabled() {
         return enabled;
     }
 
