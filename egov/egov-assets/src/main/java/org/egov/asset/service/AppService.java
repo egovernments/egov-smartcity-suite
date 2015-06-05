@@ -84,7 +84,7 @@ public class AppService {
      * @return
      */
     public String getUniqueAppConfigValue(final String key) {
-        return getUniqueAppConfigValue("Assets", key);
+        return getUniqueAppConfigValue("Asset Management", key);
     }
 
     // Spring Injection
