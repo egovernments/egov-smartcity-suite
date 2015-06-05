@@ -73,6 +73,10 @@ public class UserService {
     public User getUserById(final Long id) {
         return userRepository.findOne(id);
     }
+    
+    public User getUserRefById(final Long id) {
+        return userRepository.getOne(id);
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

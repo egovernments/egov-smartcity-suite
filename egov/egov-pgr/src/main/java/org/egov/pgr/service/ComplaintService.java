@@ -149,7 +149,7 @@ public class ComplaintService {
             complaint.setCRN(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);
-        if (!securityUtils.isCurrentUserAnonymous() && user.getType().equals(UserType.CITIZEN)) {
+        if (!securityUtils.isCurrentUserAnonymous() && securityUtils.currentUserType().equals(UserType.CITIZEN)) {
             complaint.getComplainant().setEmail(user.getEmailId());
             complaint.getComplainant().setName(user.getName());
             complaint.getComplainant().setMobile(user.getMobileNumber());
