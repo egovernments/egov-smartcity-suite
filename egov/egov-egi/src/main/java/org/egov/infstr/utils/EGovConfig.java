@@ -50,7 +50,8 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 
 /**

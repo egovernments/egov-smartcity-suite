@@ -37,48 +37,39 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.config;
+package org.egov.infra.persistence.validator.annotation;
 
-import java.io.Serializable;
-import java.util.Date;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class AppConfigValues implements Serializable {
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	private static final long serialVersionUID = 1L;
-	private Integer id;
-	private AppConfig key;
-	private String value;
-	private Date effectiveFrom;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
-	public Date getEffectiveFrom() {
-		return effectiveFrom;
-	}
+import org.egov.infra.persistence.validator.CompositeUniqueCheckValidator;
 
-	public void setEffectiveFrom(Date effectiveFrom) {
-		this.effectiveFrom = effectiveFrom;
-	}
+@Target({ TYPE })
+@Retention(RUNTIME)
+@Documented
+@Constraint(validatedBy = CompositeUniqueCheckValidator.class)
+public @interface CompositeUnique {
+    String[] fields() default {};
+    String[] compositefields() default {};
+    String id();
 
-	public Integer getId() {
-		return id;
-	}
+    String tableName();
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    String[] columnName() default {};
+    String[] compositecolumnName() default{};
+    String message() default "{validator.unique}";
 
-	public String getValue() {
-		return value;
-	}
+    boolean enableDfltMsg() default false;
+    
+    Class<?>[] groups() default {};
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    Class<? extends Payload>[] payload() default {};
 
-	public AppConfig getKey() {
-		return key;
-	}
-
-	public void setKey(AppConfig key) {
-		this.key = key;
-	}
 }

@@ -100,8 +100,8 @@ public class Email {
 		ByteArrayDataSource attachment = null;
 
 		if (this.username == null && this.password == null) {
-			this.username = appConfValDao.getConfigValuesByModuleAndKey("egi", "mailSenderUserName").get(0).getValue();
-			this.password = appConfValDao.getConfigValuesByModuleAndKey("egi", "mailSenderPassword").get(0).getValue();
+			this.username = appConfValDao.getConfigValuesByModuleAndKey("Administration", "mailSenderUserName").get(0).getValue();
+			this.password = appConfValDao.getConfigValuesByModuleAndKey("Administration", "mailSenderPassword").get(0).getValue();
 		}
 
 		try {
@@ -112,8 +112,8 @@ public class Email {
 				LOGGER.debug("attachment to the email is done !!");
 			}
 
-			email.setHostName(appConfValDao.getConfigValuesByModuleAndKey("egi", "smtpHostName").get(0).getValue());
-			email.setSmtpPort(Integer.valueOf(appConfValDao.getConfigValuesByModuleAndKey("egi", "smtpPort").get(0).getValue()));
+			email.setHostName(appConfValDao.getConfigValuesByModuleAndKey("Administration", "smtpHostName").get(0).getValue());
+			email.setSmtpPort(Integer.valueOf(appConfValDao.getConfigValuesByModuleAndKey("smtpHostName", "smtpPort").get(0).getValue()));
 			email.setAuthenticator(new DefaultAuthenticator(this.username, this.password));
 			email.setDebug(false);
 			email.setTo(this.toList);

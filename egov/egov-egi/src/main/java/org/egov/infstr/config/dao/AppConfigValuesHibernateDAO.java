@@ -45,8 +45,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infstr.config.AppConfig;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.DateUtils;
 import org.hibernate.Query;
@@ -95,7 +96,7 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	 */
 	@Override
 	public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
-		final Query qry = getCurrentSession().createQuery("from AppConfigValues a where a.key.keyName =:keyName and a.key.module =:moduleName ");
+		final Query qry = getCurrentSession().createQuery("from AppConfigValues a where a.key.keyName =:keyName and a.key.module.name =:moduleName ");
 		qry.setString(KEY_COLUMN_NAME, keyName);
 		qry.setString(MODULE_COLUMN_NAME, moduleName);
 		return qry.list();
@@ -106,7 +107,7 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	 */
 	@Override
 	public List<AppConfig> getAppConfigKeys(final String moduleName) {
-		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.module =:moduleName ");
+		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.module.name =:moduleName ");
 		qry.setString(MODULE_COLUMN_NAME, moduleName);
 		return qry.list();
 	}
@@ -116,7 +117,7 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	 */
 	@Override
 	public AppConfig getConfigKeyByName(final String keyName, final String moduleName) {
-		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.keyName =:keyName  and a.module=:moduleName");
+		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.keyName =:keyName  and a.module.name=:moduleName");
 		qry.setString(KEY_COLUMN_NAME, keyName);
 		qry.setString(MODULE_COLUMN_NAME, moduleName);
 		return (AppConfig) qry.uniqueResult();
@@ -137,7 +138,7 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	@Override
 	public List<AppConfigValues> getAppConfigValues(final String moduleName, final String keyName, final Date effectiveFrom) {
 		final Query qry = getCurrentSession().createQuery(
-				"from AppConfigValues a where a.key.keyName =:keyName and a.key.module =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc");
+				"from AppConfigValues a where a.key.keyName =:keyName and a.key.module.name =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc");
 		qry.setString(KEY_COLUMN_NAME, keyName);
 		qry.setString(MODULE_COLUMN_NAME, moduleName);
 		qry.setDate("effectiveFrom", effectiveFrom);
@@ -153,6 +154,6 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	 */
 	@Override
 	public List<String> getAllAppConfigModule() {
-		return getCurrentSession().createQuery("select distinct(a.module) from AppConfig a order by a.module").list();
+		return getCurrentSession().createQuery("select distinct(a.module.name) from AppConfig a order by a.module.name").list();
 	}
 }

@@ -10,7 +10,7 @@
 			</generator>
 		</id>
 
-		<many-to-one name="appconfigvalue" class="org.egov.infstr.config.AppConfigValues" fetch="select">
+		<many-to-one name="appconfigvalue" class="org.egov.infra.admin.master.entity.AppConfigValues" fetch="select">
 			<column name="APPCONFIG_VALUES_ID" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		<property name="checklistvalue" type="string">

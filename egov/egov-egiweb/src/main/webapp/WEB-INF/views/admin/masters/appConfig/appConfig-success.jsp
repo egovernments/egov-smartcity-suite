@@ -1,4 +1,4 @@
-/*#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,41 +36,49 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
-$(document).ready(function(){
-	// Instantiate the Bloodhound suggestion engine
-	var complaintlocation = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: 'modules?moduleName=%QUERY',
-			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (cl) {
-					return {
-						name: cl.name,
-						value: cl.id
-					};
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	complaintlocation.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#module').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: complaintlocation.ttAdapter()
-	}).on('typeahead:selected', function(event, data){    
-		$("#module").val(data.name);    
-		$("#moduleid").val(data.value);    
-    });
-});
+#------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+					<strong>${message}</strong>
+				</div>
+			</div>
+			<form:form id="appconfigForm" method="post"
+				class="form-horizontal form-groups-bordered">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-3 col-xs-6 add-margin">
+							KeyName
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
+							<c:out value="${appConfig.keyName }"></c:out>
+							<input id="compTypeName" type="hidden"
+								value="<c:out value="${appConfig.keyName }" />" />
+						</div>
+						
+					</div>
+					
+
+					<div class="row text-center">
+						<div class="row">
+							<div class="text-center">
+								<a href="javascript:void(0)" class="btn btn-default"
+									onclick="self.close()"><spring:message code="lbl.close" /></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form:form>
+
+		</div>
+	</div>
+</div>
+

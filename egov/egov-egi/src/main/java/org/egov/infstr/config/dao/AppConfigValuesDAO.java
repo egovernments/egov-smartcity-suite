@@ -42,8 +42,8 @@ package org.egov.infstr.config.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infstr.config.AppConfig;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.dao.GenericDAO;
 
 public interface AppConfigValuesDAO extends GenericDAO<AppConfigValues, Integer> {

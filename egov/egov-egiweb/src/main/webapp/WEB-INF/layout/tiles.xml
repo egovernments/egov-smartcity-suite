@@ -103,6 +103,23 @@
         <put-attribute name="page-title" value="title.updateRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-update.jsp"/>
     </definition>
+      <definition name="appConfig-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.createAppconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-form.jsp"/>
+    </definition>
+     <definition name="appConfig-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.successAppconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-success.jsp"/>
+    </definition>
+        <definition name="appConfig-editform" extends="base_layout">
+        <put-attribute name="page-title" value="title.updateAppconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-editform.jsp"/>
+    </definition>
+      <definition name="appConfig-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-list.jsp"/>
+    </definition>
+    
     <definition name="hierarchyType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-form.jsp"/>

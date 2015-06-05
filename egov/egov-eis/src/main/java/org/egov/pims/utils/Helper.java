@@ -45,7 +45,8 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 
 public  class Helper {

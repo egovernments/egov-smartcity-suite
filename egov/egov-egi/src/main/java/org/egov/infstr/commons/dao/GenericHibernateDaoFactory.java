@@ -39,7 +39,8 @@
  */
 package org.egov.infstr.commons.dao;
 
-import org.egov.infstr.config.AppConfigValues;
+
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.config.AppData;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;

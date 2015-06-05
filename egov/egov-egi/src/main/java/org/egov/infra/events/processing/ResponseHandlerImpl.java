@@ -142,7 +142,7 @@ public class ResponseHandlerImpl implements ResponseHandler {
             /*
              * Reading Sender Information : Name / PhoneNumber from Appconfig
              */
-            final String sender = appConfValDao.getConfigValuesByModuleAndKey("egi", "smsSender").get(0).getValue();
+            final String sender = appConfValDao.getConfigValuesByModuleAndKey("Administration", "smsSender").get(0).getValue();
 
             sendSMS(sms.getMessage(), sms.getPhonenumber(), sender);
             if (LOG.isDebugEnabled())
@@ -178,7 +178,7 @@ public class ResponseHandlerImpl implements ResponseHandler {
              * Reading SMS ServiceProvider URL from Appconfig
              */
             final StringBuffer urlStr = new StringBuffer(appConfValDao
-                    .getConfigValuesByModuleAndKey("egi", "serviceProviderUrl").get(0).getValue());
+                    .getConfigValuesByModuleAndKey("Administration", "serviceProviderUrl").get(0).getValue());
 
             for (int i = 0; i < phoneNumber.size(); i++) {
                 final String[] phoneNo = phoneNumber.get(i).toString().split(",");

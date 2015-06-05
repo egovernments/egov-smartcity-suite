@@ -69,6 +69,7 @@ import org.egov.asset.util.AssetIdentifier;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
@@ -79,7 +80,6 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
@@ -316,7 +316,7 @@ public class AssetAction extends SearchFormAction {
 		 * Fetch Acquisition Mode Dropdown List
 		 */
 		final List<AppConfigValues> configList = appService.getAppConfigValue(
-				"Assets", "MODE_OF_ACQUISITION");
+				"Asset Management", "MODE_OF_ACQUISITION");
 		addDropdownData("acquisitionModeList", configList);
 
 		/**
