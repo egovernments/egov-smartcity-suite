@@ -130,14 +130,16 @@
         <property name="electricity" column="electricity" type="boolean" />			
         <property name="attachedBathRoom" column="attachedBathRoom" type="boolean" />
         <property name="waterHarvesting" column="waterHarvesting" type="boolean" />
-        <property name="cable" column="cable" type="boolean" />
-	<many-to-one name="floor"
+        <property name="extentSite" column="extentsite" type="double" />
+        <property name="extentAppartenauntLand" column="extent_appurtenant_land" type="double" />
+        
+	<many-to-one name="floorType"
 		class="org.egov.ptis.domain.entity.property.FloorType" column="floor" />
-	<many-to-one name="roof"
+	<many-to-one name="roofType"
 		class="org.egov.ptis.domain.entity.property.RoofType" column="roof" />
-	<many-to-one name="wall"
+	<many-to-one name="wallType"
 		class="org.egov.ptis.domain.entity.property.WallType" column="wall" />
-	<many-to-one name="wood"
+	<many-to-one name="woodType"
 		class="org.egov.ptis.domain.entity.property.WoodType" column="wood" />
 		
 		<set name="floorDetails" order-by="FLOOR_NO"

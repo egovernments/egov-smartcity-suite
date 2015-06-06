@@ -96,38 +96,11 @@
 		<property name="basicPrpertyService" ref="basicPrpertyService" />
 		<!-- <property name="ptNumberGenerator" ref="propertyTaxNumberGenerator" /> -->  
 	</bean> 
+  
     
-    <bean id="residentialUnitTaxCalculator" class="org.egov.ptis.client.service.ResidentialUnitTaxCalculator" scope="prototype">
-        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-        <property name="persistenceService" ref="persistenceService" />
-    </bean>
-    
-    <bean id="nonResidentialUnitTaxCalculator" class="org.egov.ptis.client.service.NonResidentialUnitTaxCalculator" scope="prototype">
-        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-        <property name="persistenceService" ref="persistenceService" />
-    </bean>
-    
-    <bean id="openPlotUnitTaxCalculator" class="org.egov.ptis.client.service.OpenPlotUnitTaxCalculator" scope="prototype">
-        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-        <property name="persistenceService" ref="persistenceService" />
-    </bean>
-    
-    <bean id="govtPropertyUnitTaxCalculator" class="org.egov.ptis.client.service.GovtPropertyUnitTaxCalculator" scope="prototype">
-        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-    </bean>
-    
-    <bean id="resdAndNonResdUnitTaxCalculator" class="org.egov.ptis.client.service.ResdAndNonResdUnitTaxCalculator" scope="prototype">
-    	<property name="propertyTaxUtil" ref="propertyTaxUtil" />
-    	<property name="persistenceService" ref="persistenceService" />
-    </bean>
     
     <bean id="taxCalculator" class="org.egov.ptis.client.service.TaxCalculator" scope="prototype">
         <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-        <property name="residentialUnitTaxCalculator" ref="residentialUnitTaxCalculator" />
-        <property name="nonResidentialUnitTaxCalculator" ref="nonResidentialUnitTaxCalculator" />
-        <property name="openPlotUnitTaxCalculator" ref="openPlotUnitTaxCalculator" />
-        <property name="govtPropertyUnitTaxCalculator" ref="govtPropertyUnitTaxCalculator"/>
-        <property name="resdAndNonResdUnitTaxCalculator" ref="resdAndNonResdUnitTaxCalculator"/>
     </bean> 
     
    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
