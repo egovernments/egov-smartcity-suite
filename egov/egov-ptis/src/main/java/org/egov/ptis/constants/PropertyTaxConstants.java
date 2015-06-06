@@ -470,6 +470,10 @@ public interface PropertyTaxConstants {
 	public static final String DEMANDRSN_CODE_ADVANCE = "ADVANCE";
 	public static final String DEMANDRSN_CODE_ADVANCE_REBATE = "ADVANCE_REBATE";
 	public static final String DEMANDRSN_REBATE = "REBATE";
+	public static final String DEMANDRSN_CODE_WARRANT_FEE = "WARRANT_FEE";
+	public static final String DEMANDRSN_CODE_NOTICE_FEE = "NOTICE_FEE";
+	public static final String DEMANDRSN_CODE_COURT_FEE = "COURT_FEE";
+	public static final String DEMANDRSN_CODE_RECOVERY_FEE = "RECOVERY_FEE";
 
 	// Demand Reason master Strings
 	public static final String DEMANDRSN_STR_GENERAL_TAX = "GENERAL TAX";
@@ -992,5 +996,10 @@ public interface PropertyTaxConstants {
 
 	public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(4);
 	public static final Integer MAX_ADVANCES_ALLOWED = 5;
+	
+	public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
+	public static final String MUTATIONRS_OTHERS = "OTHERS";
+	public static final String MUTATIONRS_SALES_DEED = "SALE DEED";
+	public static final String MUTATIONRS_COURT_ORDER = "COURT ORDER";
 
 }

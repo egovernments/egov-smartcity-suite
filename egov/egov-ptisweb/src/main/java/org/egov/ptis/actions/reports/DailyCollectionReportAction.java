@@ -40,19 +40,10 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_STREET_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
@@ -169,11 +160,9 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
-		Query qry = persistenceService
-				.getSession()
-				.createQuery(
-						"select distinct UI FROM UserImpl UI left join UI.userRoles ur left join ur.role r "
-								+ "where r.roleName = :roleName AND UI.isActive=1 AND ur.isHistory='N' order by UI.userName");
+		Query qry = persistenceService.getSession().createQuery(
+				"select distinct UI FROM UserImpl UI left join UI.userRoles ur left join ur.role r "
+						+ "where r.roleName = :roleName AND UI.isActive=1 AND ur.isHistory='N' order by UI.userName");
 		qry.setParameter("roleName", PropertyTaxConstants.ROLE_OPERATOR);
 		List<UserImpl> userList = qry.list();
 		addDropdownData("userList", userList);
@@ -207,21 +196,15 @@ public class DailyCollectionReportAction extends BaseFormAction {
 		Long reportStartTime = System.currentTimeMillis();
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		// UserDAO userDao = new UserDAO();
-		currInst = instalDao.getInsatllmentByModuleForGivenDate(module, new Date())
-				.getDescription();
-		StringBuilder qryString = new StringBuilder(
-				"from org.egov.erpcollection.models.ReceiptHeader rh")
+		currInst = instalDao.getInsatllmentByModuleForGivenDate(module, new Date()).getDescription();
+		StringBuilder qryString = new StringBuilder("from org.egov.erpcollection.models.ReceiptHeader rh")
 				.append(" left join fetch rh.receiptInstrument rcptInst")
-				.append(" left join fetch rcptInst.instrumentType")
-				.append(" left join fetch rh.receiptDetails")
-				.append(" left join fetch rh.receiptPayeeDetails")
-				.append(" left join fetch rh.receiptMisc")
-				.append(" left join fetch rh.onlinePayment")
-				.append(" left join fetch rh.challan")
+				.append(" left join fetch rcptInst.instrumentType").append(" left join fetch rh.receiptDetails")
+				.append(" left join fetch rh.receiptPayeeDetails").append(" left join fetch rh.receiptMisc")
+				.append(" left join fetch rh.onlinePayment").append(" left join fetch rh.challan")
 				.append(" where rh.manualreceiptnumber is null and rh.manualreceiptdate is null")
 				.append(" and rh.status.description != 'Cancelled' and rh.service.serviceName = 'Property Tax'")
-				.append(" and rh.createdBy.id = :userId")
-				.append(" and rh.createdDate >= :fromDate")
+				.append(" and rh.createdBy.id = :userId").append(" and rh.createdDate >= :fromDate")
 				.append(" and rh.createdDate <= :toDate").append(" order by rh.modifiedDate desc");
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(toDate);
@@ -233,8 +216,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 
 		Long qryStartTime = System.currentTimeMillis();
 		List<ReceiptHeader> rcptHeaderList = qry.list();
-		LOGGER.debug("Main Query took " + (System.currentTimeMillis() - qryStartTime) / 1000
-				+ "sec(s)..!");
+		LOGGER.debug("Main Query took " + (System.currentTimeMillis() - qryStartTime) / 1000 + "sec(s)..!");
 		LOGGER.debug("Number of records: " + rcptHeaderList.size());
 		if (rcptHeaderList != null && !rcptHeaderList.isEmpty()) {
 			Long loopStartTime = System.currentTimeMillis();
@@ -244,14 +226,12 @@ public class DailyCollectionReportAction extends BaseFormAction {
 			for (ReceiptHeader rcptHeader : rcptHeaderList) {
 				ReceiptInfo rcptInfo = new ReceiptInfo();
 				rcptInfo.setReceiptNo(rcptHeader.getReceiptnumber());
-				String indexNo = org.apache.commons.lang.StringUtils.trim(rcptHeader
-						.getConsumerCode().contains("(") ? rcptHeader.getConsumerCode().substring(
-						0, rcptHeader.getConsumerCode().indexOf('(')) : rcptHeader
-						.getConsumerCode());
+				String indexNo = org.apache.commons.lang.StringUtils
+						.trim(rcptHeader.getConsumerCode().contains("(") ? rcptHeader.getConsumerCode().substring(0,
+								rcptHeader.getConsumerCode().indexOf('(')) : rcptHeader.getConsumerCode());
 				rcptInfo.setIndexNo(indexNo);
 				rcptInfo.setWardNo(rcptHeader.getConsumerCode().substring(
-						rcptHeader.getConsumerCode().lastIndexOf(":") + 1,
-						rcptHeader.getConsumerCode().indexOf(")")));
+						rcptHeader.getConsumerCode().lastIndexOf(":") + 1, rcptHeader.getConsumerCode().indexOf(")")));
 				// FIX ME rcptHeader.getReceiptPayeeDetails() is not available
 				// in collection
 				// rcptInfo.setHouseNo(rcptHeader.getReceiptPayeeDetails().getPayeeAddress().split(",")[0]);
@@ -268,11 +248,10 @@ public class DailyCollectionReportAction extends BaseFormAction {
 						instrumentDetails
 								.append(instrumentHead.getInstrumentNumber())
 								.append(", ")
-								.append(instrumentHead.getInstrumentDate() != null ? dateFormat
-										.format(instrumentHead.getInstrumentDate()) : " ")
+								.append(instrumentHead.getInstrumentDate() != null ? dateFormat.format(instrumentHead
+										.getInstrumentDate()) : " ")
 								.append(", ")
-								.append(instrumentHead.getBankId() != null ? instrumentHead
-										.getBankId().getName() : " ");
+								.append(instrumentHead.getBankId() != null ? instrumentHead.getBankId().getName() : " ");
 					}
 
 					paymentModes.add(instrumentHead.getInstrumentType().getType());
@@ -315,27 +294,20 @@ public class DailyCollectionReportAction extends BaseFormAction {
 			cashCollInfo.setCollByCash(totalCashCollAmt);
 			cashCollInfo.setCollByCheque(totalChequeCollAmt);
 			cashCollInfo.setOtherColl(totalOthersCollAmt);
-			cashCollInfo.setEduEgsArrColl(arrTotalCollInfo.getEduCess().add(
-					arrTotalCollInfo.getEgsCess()));
-			cashCollInfo.setEduEgsCurrColl(currTotalCollInfo.getEduCess().add(
-					currTotalCollInfo.getEgsCess()));
+			cashCollInfo.setEduEgsArrColl(arrTotalCollInfo.getEduCess().add(arrTotalCollInfo.getEgsCess()));
+			cashCollInfo.setEduEgsCurrColl(currTotalCollInfo.getEduCess().add(currTotalCollInfo.getEgsCess()));
 			cashCollInfo.setTotalArrColl(arrTotalCollInfo.getTotal());
-			cashCollInfo.setTotalCurrColl(currTotalCollInfo.getTotal().subtract(
-					rebateTotalCollInfo.getTotal()));
-			cashCollInfo.setGrandTotal(arrTotalCollInfo.getTotal()
-					.add(currTotalCollInfo.getTotal()).subtract(rebateTotalCollInfo.getTotal()));
+			cashCollInfo.setTotalCurrColl(currTotalCollInfo.getTotal().subtract(rebateTotalCollInfo.getTotal()));
+			cashCollInfo.setGrandTotal(arrTotalCollInfo.getTotal().add(currTotalCollInfo.getTotal())
+					.subtract(rebateTotalCollInfo.getTotal()));
 			cashCollInfo.setRcptInfoList(rcptInfoList);
 			User user = userService.getUserById(Long.valueOf(userId));
 			cashCollInfo.setOperator(user.getUsername());
-			LOGGER.debug("Loop took " + (System.currentTimeMillis() - loopStartTime) / 1000
-					+ " sec(s)..!");
-			ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DAILY_COLLECTION,
-					cashCollInfo, null);
+			LOGGER.debug("Loop took " + (System.currentTimeMillis() - loopStartTime) / 1000 + " sec(s)..!");
+			ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DAILY_COLLECTION, cashCollInfo, null);
 			reportInput.setPrintDialogOnOpenReport(true);
-			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput),
-					getSession());
-			LOGGER.debug("Report took " + (System.currentTimeMillis() - reportStartTime) / 1000
-					+ " sec(s)..!");
+			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
+			LOGGER.debug("Report took " + (System.currentTimeMillis() - reportStartTime) / 1000 + " sec(s)..!");
 			LOGGER.debug("Exited from generateReport method(if block)");
 			return REPORT;
 		} else {
@@ -367,456 +339,177 @@ public class DailyCollectionReportAction extends BaseFormAction {
 		for (ReceiptDetail rcptDetail : rcptDetails) {
 			String glcode = rcptDetail.getAccounthead().getGlcode();
 			if (GLCODE_FOR_PENALTY.equals(glcode)) {
-				if (currInst.equals(rcptDetail.getDescription().substring(16,
-						rcptDetail.getDescription().length()))) {
+				if (currInst.equals(rcptDetail.getDescription().substring(16, rcptDetail.getDescription().length()))) {
 
-					currCollInfo
-							.setMiscTax(currCollInfo.getMiscTax().add(rcptDetail.getCramount()));
-					currTotalCollInfo.setMiscTax(currTotalCollInfo.getMiscTax().add(
-							rcptDetail.getCramount()));
+					currCollInfo.setMiscTax(currCollInfo.getMiscTax().add(rcptDetail.getCramount()));
+					currTotalCollInfo.setMiscTax(currTotalCollInfo.getMiscTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
 						currTotalCashCollInfo.setMiscTax(currTotalCashCollInfo.getMiscTax().add(
 								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setMiscTax(currTotalChequeCollInfo.getMiscTax()
-								.add(rcptDetail.getCramount()));
+						currTotalChequeCollInfo.setMiscTax(currTotalChequeCollInfo.getMiscTax().add(
+								rcptDetail.getCramount()));
 					}
 
-					totalCurrentTax = totalCurrentTax
-							.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO);
+					totalCurrentTax = totalCurrentTax.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount()
+							: ZERO);
 				} else {
 					arrCollInfo.setMiscTax(arrCollInfo.getMiscTax().add(rcptDetail.getCramount()));
-					arrTotalCollInfo.setMiscTax(arrTotalCollInfo.getMiscTax().add(
-							rcptDetail.getCramount()));
+					arrTotalCollInfo.setMiscTax(arrTotalCollInfo.getMiscTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setMiscTax(arrTotalCashCollInfo.getMiscTax().add(
-								rcptDetail.getCramount()));
+						arrTotalCashCollInfo
+								.setMiscTax(arrTotalCashCollInfo.getMiscTax().add(rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
 						arrTotalChequeCollInfo.setMiscTax(arrTotalChequeCollInfo.getMiscTax().add(
 								rcptDetail.getCramount()));
 					}
-					totalArrearTax = totalArrearTax
-							.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO);
+					totalArrearTax = totalArrearTax.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount()
+							: ZERO);
 				}
 			} else if (GLCODE_FOR_TAXREBATE.equals(glcode)) {
 
 				rebateCollInfo.setGeneralTax(rebateCollInfo.getGeneralTax().add(
 						rcptDetail.getDramount() != null ? rcptDetail.getDramount() : ZERO));
 
-				totalRebate = totalRebate.add(rcptDetail.getDramount() != null ? rcptDetail
-						.getDramount() : ZERO);
-				rebateTotalCollInfo.setGeneralTax(rebateTotalCollInfo.getGeneralTax().add(
-						rcptDetail.getDramount()));
+				totalRebate = totalRebate.add(rcptDetail.getDramount() != null ? rcptDetail.getDramount() : ZERO);
+				rebateTotalCollInfo.setGeneralTax(rebateTotalCollInfo.getGeneralTax().add(rcptDetail.getDramount()));
 
 				if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-					rebateTotalCashCollInfo.setGeneralTax(rebateTotalCashCollInfo.getGeneralTax()
-							.add(rcptDetail.getDramount()));
+					rebateTotalCashCollInfo.setGeneralTax(rebateTotalCashCollInfo.getGeneralTax().add(
+							rcptDetail.getDramount()));
 				} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-					rebateTotalChequeCollInfo.setGeneralTax(rebateTotalChequeCollInfo
-							.getGeneralTax().add(rcptDetail.getDramount()));
+					rebateTotalChequeCollInfo.setGeneralTax(rebateTotalChequeCollInfo.getGeneralTax().add(
+							rcptDetail.getDramount()));
 				}
 			} else if (GLCODEMAP_FOR_ARREARTAX.containsValue(glcode)) {
 				if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_GENERAL_TAX).equals(glcode)) {
 
 					arrCollInfo.setGeneralTax(arrCollInfo.getGeneralTax().add(
 							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setGeneralTax(arrTotalCollInfo.getGeneralTax().add(
-							rcptDetail.getCramount()));
+					arrTotalCollInfo.setGeneralTax(arrTotalCollInfo.getGeneralTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setGeneralTax(arrTotalCashCollInfo.getGeneralTax()
-								.add(rcptDetail.getCramount()));
+						arrTotalCashCollInfo.setGeneralTax(arrTotalCashCollInfo.getGeneralTax().add(
+								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setGeneralTax(arrTotalChequeCollInfo.getGeneralTax()
-								.add(rcptDetail.getCramount()));
+						arrTotalChequeCollInfo.setGeneralTax(arrTotalChequeCollInfo.getGeneralTax().add(
+								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_SEWERAGE_TAX).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS).equals(glcode)) {
 
 					arrCollInfo.setSewerageTax(arrCollInfo.getSewerageTax().add(
 							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setSewerageTax(arrTotalCollInfo.getSewerageTax().add(
-							rcptDetail.getCramount()));
+					arrTotalCollInfo.setSewerageTax(arrTotalCollInfo.getSewerageTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setSewerageTax(arrTotalCashCollInfo.getSewerageTax()
-								.add(rcptDetail.getCramount()));
+						arrTotalCashCollInfo.setSewerageTax(arrTotalCashCollInfo.getSewerageTax().add(
+								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setSewerageTax(arrTotalChequeCollInfo
-								.getSewerageTax().add(rcptDetail.getCramount()));
+						arrTotalChequeCollInfo.setSewerageTax(arrTotalChequeCollInfo.getSewerageTax().add(
+								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_LIGHTINGTAX).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_LIBRARY_CESS).equals(glcode)) {
 
 					arrCollInfo.setLightTax(arrCollInfo.getLightTax().add(
 							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setLightTax(arrTotalCollInfo.getLightTax().add(
-							rcptDetail.getCramount()));
+					arrTotalCollInfo.setLightTax(arrTotalCollInfo.getLightTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
 						arrTotalCashCollInfo.setLightTax(arrTotalCashCollInfo.getLightTax().add(
 								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setLightTax(arrTotalChequeCollInfo.getLightTax()
-								.add(rcptDetail.getCramount()));
+						arrTotalChequeCollInfo.setLightTax(arrTotalChequeCollInfo.getLightTax().add(
+								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_GENERAL_WATER_TAX).equals(
-						glcode)) {
+				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY).equals(glcode)) {
 
 					arrCollInfo.setWaterTax(arrCollInfo.getWaterTax().add(
 							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setWaterTax(arrTotalCollInfo.getWaterTax().add(
-							rcptDetail.getCramount()));
+					arrTotalCollInfo.setWaterTax(arrTotalCollInfo.getWaterTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
 						arrTotalCashCollInfo.setWaterTax(arrTotalCashCollInfo.getWaterTax().add(
 								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setWaterTax(arrTotalChequeCollInfo.getWaterTax()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).equals(
-						glcode)) {
-
-					arrCollInfo.setFireTax(arrCollInfo.getFireTax().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setFireTax(arrTotalCollInfo.getFireTax().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setFireTax(arrTotalCashCollInfo.getFireTax().add(
+						arrTotalChequeCollInfo.setWaterTax(arrTotalChequeCollInfo.getWaterTax().add(
 								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setFireTax(arrTotalChequeCollInfo.getFireTax().add(
-								rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-						.equals(glcode)
-						|| GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
-								.equals(glcode)) {
-
-					arrCollInfo.setEduCess(arrCollInfo.getEduCess().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-
-					arrTotalCollInfo.setEduCess(arrTotalCollInfo.getEduCess().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setEduCess(arrTotalCashCollInfo.getEduCess().add(
-								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setEduCess(arrTotalChequeCollInfo.getEduCess().add(
-								rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-						.equals(glcode)) {
-
-					arrCollInfo.setEgsCess(arrCollInfo.getEgsCess().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setEgsCess(arrTotalCollInfo.getEgsCess().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setEgsCess(arrTotalCashCollInfo.getEgsCess().add(
-								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setEgsCess(arrTotalChequeCollInfo.getEgsCess().add(
-								rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-						.equals(glcode)) {
-
-					arrCollInfo.setBigBuildingCess(arrCollInfo.getBigBuildingCess().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-					arrTotalCollInfo.setBigBuildingCess(arrTotalCollInfo.getBigBuildingCess().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setBigBuildingCess(arrTotalCashCollInfo
-								.getBigBuildingCess().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setBigBuildingCess(arrTotalChequeCollInfo
-								.getBigBuildingCess().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX).equals(
-						glcode)) {
-
-					arrCollInfo.setSewerageBenefitTax(arrCollInfo.getSewerageBenefitTax().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-
-					arrTotalCollInfo.setSewerageBenefitTax(arrTotalCollInfo.getSewerageBenefitTax()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setSewerageBenefitTax(arrTotalCashCollInfo
-								.getSewerageBenefitTax().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setSewerageBenefitTax(arrTotalChequeCollInfo
-								.getSewerageBenefitTax().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_WATER_BENEFIT_TAX).equals(
-						glcode)) {
-
-					arrCollInfo.setWaterBenefitTax(arrCollInfo.getWaterBenefitTax().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-
-					arrTotalCollInfo.setWaterBenefitTax(arrTotalCollInfo.getWaterBenefitTax().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setWaterBenefitTax(arrTotalCashCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setWaterBenefitTax(arrTotalChequeCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_STREET_TAX).equals(glcode)) {
-
-					arrCollInfo.setStreetTax(arrCollInfo.getStreetTax().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-
-					arrTotalCollInfo.setStreetTax(arrTotalCollInfo.getStreetTax().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setStreetTax(arrTotalCashCollInfo.getStreetTax().add(
-								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setStreetTax(arrTotalChequeCollInfo.getStreetTax()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS)
-						.equals(glcode)) {
-
-					arrCollInfo.setMunicipalEduCess(arrCollInfo.getMunicipalEduCess().add(
-							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
-
-					arrTotalCollInfo.setMunicipalEduCess(arrTotalCollInfo.getMunicipalEduCess()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						arrTotalCashCollInfo.setMunicipalEduCess(arrTotalCashCollInfo
-								.getMunicipalEduCess().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						arrTotalChequeCollInfo.setMunicipalEduCess(arrTotalChequeCollInfo
-								.getMunicipalEduCess().add(rcptDetail.getCramount()));
 					}
 				}
 
-				totalArrearTax = totalArrearTax.add(rcptDetail.getCramount() != null ? rcptDetail
-						.getCramount() : ZERO);
+				totalArrearTax = totalArrearTax.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO);
 			} else {
 				if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX).equals(glcode)) {
 
 					currCollInfo.setGeneralTax(rcptDetail.getCramount());
-					currTotalCollInfo.setGeneralTax(currTotalCollInfo.getGeneralTax().add(
-							rcptDetail.getCramount()));
+					currTotalCollInfo.setGeneralTax(currTotalCollInfo.getGeneralTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setGeneralTax(currTotalCashCollInfo.getGeneralTax()
-								.add(rcptDetail.getCramount()));
+						currTotalCashCollInfo.setGeneralTax(currTotalCashCollInfo.getGeneralTax().add(
+								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setGeneralTax(currTotalChequeCollInfo
-								.getGeneralTax().add(rcptDetail.getCramount()));
+						currTotalChequeCollInfo.setGeneralTax(currTotalChequeCollInfo.getGeneralTax().add(
+								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_SEWERAGE_TAX).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS).equals(glcode)) {
 
 					currCollInfo.setSewerageTax(rcptDetail.getCramount());
-					currTotalCollInfo.setSewerageTax(currTotalCollInfo.getSewerageTax().add(
-							rcptDetail.getCramount()));
+					currTotalCollInfo.setSewerageTax(currTotalCollInfo.getSewerageTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setSewerageTax(currTotalCashCollInfo.getSewerageTax()
-								.add(rcptDetail.getCramount()));
+						currTotalCashCollInfo.setSewerageTax(currTotalCashCollInfo.getSewerageTax().add(
+								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setSewerageTax(currTotalChequeCollInfo
-								.getSewerageTax().add(rcptDetail.getCramount()));
+						currTotalChequeCollInfo.setSewerageTax(currTotalChequeCollInfo.getSewerageTax().add(
+								rcptDetail.getCramount()));
 					}
 
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_LIGHTINGTAX).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_LIBRARY_CESS).equals(glcode)) {
 
 					currCollInfo.setLightTax(rcptDetail.getCramount());
-					currTotalCollInfo.setLightTax(currTotalCollInfo.getLightTax().add(
-							rcptDetail.getCramount()));
+					currTotalCollInfo.setLightTax(currTotalCollInfo.getLightTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
 						currTotalCashCollInfo.setLightTax(currTotalCashCollInfo.getLightTax().add(
 								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setLightTax(currTotalChequeCollInfo.getLightTax()
-								.add(rcptDetail.getCramount()));
+						currTotalChequeCollInfo.setLightTax(currTotalChequeCollInfo.getLightTax().add(
+								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_WATER_TAX).equals(
-						glcode)) {
+				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY).equals(glcode)) {
 
 					currCollInfo.setWaterTax(rcptDetail.getCramount());
-					currTotalCollInfo.setWaterTax(currTotalCollInfo.getWaterTax().add(
-							rcptDetail.getCramount()));
+					currTotalCollInfo.setWaterTax(currTotalCollInfo.getWaterTax().add(rcptDetail.getCramount()));
 
 					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
 						currTotalCashCollInfo.setWaterTax(currTotalCashCollInfo.getWaterTax().add(
 								rcptDetail.getCramount()));
 					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setWaterTax(currTotalChequeCollInfo.getWaterTax()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).equals(
-						glcode)) {
-
-					currCollInfo.setFireTax(rcptDetail.getCramount());
-					currTotalCollInfo.setFireTax(currTotalCollInfo.getFireTax().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setFireTax(currTotalCashCollInfo.getFireTax().add(
+						currTotalChequeCollInfo.setWaterTax(currTotalChequeCollInfo.getWaterTax().add(
 								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setFireTax(currTotalChequeCollInfo.getFireTax()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-						.equals(glcode)
-						|| GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
-								.equals(glcode)) {
-
-					if (currCollInfo.getEduCess() == null) {
-						currCollInfo.setEduCess(rcptDetail.getCramount());
-					} else {
-						currCollInfo.setEduCess(currCollInfo.getEduCess().add(
-								rcptDetail.getCramount()));
-					}
-
-					currTotalCollInfo.setEduCess(currTotalCollInfo.getEduCess().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setEduCess(currTotalCashCollInfo.getEduCess().add(
-								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setEduCess(currTotalChequeCollInfo.getEduCess()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-						.equals(glcode)) {
-
-					currCollInfo.setEgsCess(rcptDetail.getCramount());
-					currTotalCollInfo.setEgsCess(currTotalCollInfo.getEgsCess().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setEgsCess(currTotalCashCollInfo.getEgsCess().add(
-								rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setEgsCess(currTotalChequeCollInfo.getEgsCess()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-						.equals(glcode)) {
-
-					currCollInfo.setBigBuildingCess(rcptDetail.getCramount());
-					currTotalCollInfo.setBigBuildingCess(currTotalCollInfo.getBigBuildingCess()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setBigBuildingCess(currTotalCashCollInfo
-								.getBigBuildingCess().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setBigBuildingCess(currTotalChequeCollInfo
-								.getBigBuildingCess().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX)
-						.equals(glcode)) {
-
-					currCollInfo.setSewerageBenefitTax(rcptDetail.getCramount());
-					currTotalCollInfo.setSewerageBenefitTax(currTotalCollInfo
-							.getSewerageBenefitTax().add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setSewerageBenefitTax(currTotalCashCollInfo
-								.getSewerageBenefitTax().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setSewerageBenefitTax(currTotalChequeCollInfo
-								.getSewerageBenefitTax().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_WATER_BENEFIT_TAX).equals(
-						glcode)) {
-
-					currCollInfo.setWaterBenefitTax(rcptDetail.getCramount());
-					currTotalCollInfo.setWaterBenefitTax(currTotalCollInfo.getWaterBenefitTax()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setWaterBenefitTax(currTotalCashCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setWaterBenefitTax(currTotalChequeCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_WATER_BENEFIT_TAX).equals(
-						glcode)) {
-
-					currCollInfo.setWaterBenefitTax(rcptDetail.getCramount());
-					currTotalCollInfo.setWaterBenefitTax(currTotalCollInfo.getWaterBenefitTax()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setWaterBenefitTax(currTotalCashCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setWaterBenefitTax(currTotalChequeCollInfo
-								.getWaterBenefitTax().add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_STREET_TAX).equals(glcode)) {
-
-					currCollInfo.setStreetTax(rcptDetail.getCramount());
-					currTotalCollInfo.setStreetTax(currTotalCollInfo.getStreetTax().add(
-							rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setStreetTax(currTotalCashCollInfo.getStreetTax()
-								.add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setStreetTax(currTotalChequeCollInfo.getStreetTax()
-								.add(rcptDetail.getCramount()));
-					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS)
-						.equals(glcode)) {
-
-					currCollInfo.setMunicipalEduCess(rcptDetail.getCramount());
-					currTotalCollInfo.setMunicipalEduCess(currTotalCollInfo.getMunicipalEduCess()
-							.add(rcptDetail.getCramount()));
-
-					if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-						currTotalCashCollInfo.setMunicipalEduCess(currTotalCashCollInfo
-								.getMunicipalEduCess().add(rcptDetail.getCramount()));
-					} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-						currTotalChequeCollInfo.setMunicipalEduCess(currTotalChequeCollInfo
-								.getMunicipalEduCess().add(rcptDetail.getCramount()));
 					}
 				}
 
-				totalCurrentTax = totalCurrentTax.add(rcptDetail.getCramount() != null ? rcptDetail
-						.getCramount() : ZERO);
+				totalCurrentTax = totalCurrentTax.add(rcptDetail.getCramount() != null ? rcptDetail.getCramount()
+						: ZERO);
 			}
 		}
 		arrTotalCollInfo.setTotal(arrTotalCollInfo.getTotal().add(totalArrearTax));
 		currTotalCollInfo.setTotal(currTotalCollInfo.getTotal().add(totalCurrentTax));
 		rebateTotalCollInfo.setTotal(rebateTotalCollInfo.getTotal().add(totalRebate));
 		if (PAYMENT_MODE_CASH.equals(paymentMode)) {
-			totalCashCollAmt = totalCashCollAmt.add(totalCurrentTax.add(totalArrearTax).subtract(
-					totalRebate));
+			totalCashCollAmt = totalCashCollAmt.add(totalCurrentTax.add(totalArrearTax).subtract(totalRebate));
 			arrTotalCashCollAmt = arrTotalCashCollAmt.add(totalArrearTax);
 			currTotalCashCollAmt = currTotalCashCollAmt.add(totalCurrentTax);
 			rebateTotalCashCollAmt = rebateTotalCashCollAmt.add(totalRebate);
 		} else if (PAYMENT_MODE_CHEQUE.equals(paymentMode)) {
-			totalChequeCollAmt = totalChequeCollAmt.add(totalCurrentTax.add(totalArrearTax)
-					.subtract(totalRebate));
+			totalChequeCollAmt = totalChequeCollAmt.add(totalCurrentTax.add(totalArrearTax).subtract(totalRebate));
 			arrTotalChequeCollAmt = arrTotalChequeCollAmt.add(totalArrearTax);
 			currTotalChequeCollAmt = currTotalChequeCollAmt.add(totalCurrentTax);
 			rebateTotalChequeCollAmt = rebateTotalChequeCollAmt.add(totalRebate);
 		} else {
-			totalOthersCollAmt = totalOthersCollAmt.add(totalCurrentTax.add(totalArrearTax)
-					.subtract(totalRebate));
+			totalOthersCollAmt = totalOthersCollAmt.add(totalCurrentTax.add(totalArrearTax).subtract(totalRebate));
 		}
 		currTotalCashCollInfo.setTotal(currTotalCashCollAmt);
 		arrTotalCashCollInfo.setTotal(arrTotalCashCollAmt);

@@ -348,7 +348,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		for (Map.Entry<String, Set<UnitAreaCalculationDetail>> entry : unitAreaDetails.entrySet()) {
 
 			unitTaxInfo = new UnitTaxCalculationInfo();
-			unitTaxInfo.setUnitNumber(unitCalcDetail.getUnitNumber());
+			unitTaxInfo.setFloorNumber(unitCalcDetail.getUnitNumber().toString());
 
 			i = 0;
 			totalUnitArea = BigDecimal.ZERO;
@@ -362,20 +362,14 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 				if (i == 0) {
 					unitTaxInfo.setFloorNumber(isNull(floorNumberString) ? unitArea
 							.getFloorNumber() : floorNumberString);
-					unitTaxInfo.setFloorNumberInteger(isNull(floorNumberString) ? null : Integer
-							.valueOf(floorNumberString));
-					unitTaxInfo.setUsageFactorIndex(unitArea.getUnitUsage());
+					unitTaxInfo.setFloorNumber(isNull(floorNumberString) ? null : floorNumberString);
 					unitTaxInfo.setUnitOccupation(unitArea.getUnitOccupation());
 
 					manualALV = unitArea.getManualALV().compareTo(BigDecimal.ZERO) == 0 ? null
 							: roundOffTwo(unitArea.getManualALV()).toString();
 
-					unitTaxInfo.setManualAlv(manualALV);
-					unitTaxInfo.setBaseRentPerSqMtPerMonth(roundOffTwo(unitArea
+					unitTaxInfo.setBaseRatePerSqMtPerMonth(roundOffTwo(unitArea
 							.getBaseRentPerSqMtr()));
-					unitTaxInfo.setMonthlyRentPaidByTenant(unitArea.getMonthlyRentPaidByTenanted()
-							.compareTo(BigDecimal.ZERO) == 0 ? null : unitArea
-							.getMonthlyRentPaidByTenanted());
 				}
 
 				totalUnitArea = totalUnitArea.add(unitArea.getTaxableArea());
@@ -385,13 +379,10 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 				areaTaxInfo.setMonthlyBaseRent(roundOffTwo(unitArea.getMonthlyBaseRent()));
 				areaTaxInfo.setCalculatedTax(unitArea.getMonthlyRentalValue());
 
-				unitTaxInfo.addAreaTaxCalculationInfo(areaTaxInfo);
-
 				i++;
 			}
 
-			unitTaxInfo.setUnitArea(roundOffTwo(totalUnitArea));
-			unitTaxInfo.setMonthlyRent(roundOff(totalMonthlyRent));
+			unitTaxInfo.setFloorArea(roundOffTwo(totalUnitArea));
 			unitTaxInfo.setUnitAreaInSqFt(roundOffTwo(totalUnitArea.multiply(SqFt)));
 			unitTaxes.add(unitTaxInfo);
 		}
@@ -437,30 +428,6 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 				firstInstTxCalInfo = txCalInfo.getValue();
 				Boolean isMultipleBRsEffective = false;
 				// set Installment date
-				for (UnitTaxCalculationInfo unitinfo : firstInstTxCalInfo
-						.getConsolidatedUnitTaxCalculationInfo()) {
-
-					if (firstInstTxCalInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-						for (List<UnitTaxCalculationInfo> utax : txCalInfo.getValue()
-								.getUnitTaxCalculationInfos()) {
-							if (utax.size() > 1
-									&& utax.get(0).getUnitNumber().equals(unitinfo.getUnitNumber())) {
-								isMultipleBRsEffective = false;
-								if (!isPropertyModified
-										|| (isPropertyModified && !(propertyTaxUtil.between(utax
-												.get(0).getOccpancyDate(), txCalInfo.getKey()
-												.getFromDate(), txCalInfo.getKey().getToDate())))) {
-									isMultipleBRsEffective = true;
-									break;
-								}
-							}
-
-						}
-					}
-
-					unitinfo.setInstDate(DateUtils.getDefaultFormattedDate(unitinfo
-							.getOccpancyDate()));
-				}
 
 				if (!isMultipleBRsEffective) {
 					taxCalInfoList.put(txCalInfo.getKey(), firstInstTxCalInfo);
@@ -473,67 +440,6 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			if (i == 1)
 				continue;
 
-			int size = 0;
-			for (UnitTaxCalculationInfo unitInfo1 : prevTaxCalInfo
-					.getConsolidatedUnitTaxCalculationInfo()) {
-				TaxCalculationInfo taxcal = null;
-				List<UnitTaxCalculationInfo> removeListConUnitInfo = new ArrayList<UnitTaxCalculationInfo>();
-
-				// Compare alv of each UnitTaxCalculationInfo and
-				// remove(adding
-				// to separete list) it from the list if the alv has not
-				// changed
-				for (UnitTaxCalculationInfo unitInfo2 : txCalInfo.getValue()
-						.getConsolidatedUnitTaxCalculationInfo()) {
-					taxcal = txCalInfo.getValue();
-					if (unitInfo1.getUnitNumber().equals(unitInfo2.getUnitNumber())) {
-
-						if (unitInfo1.getAnnualRentAfterDeduction().compareTo(
-								unitInfo2.getAnnualRentAfterDeduction()) == 0) {
-							removeListConUnitInfo.add(unitInfo2);
-						}
-					}
-				}
-
-				if (removeListConUnitInfo.size() > 0) {
-					List<UnitTaxCalculationInfo> removeListUnitInfo = new ArrayList<UnitTaxCalculationInfo>();
-					// Remove from the ConsolidatedUnitTaxCalculationInfo
-					// list
-					taxcal.getConsolidatedUnitTaxCalculationInfo().removeAll(removeListConUnitInfo);
-
-					// Remove the corresponding unittaxinfo from the
-					// UnitTaxCalculationInfo list
-					for (UnitTaxCalculationInfo ui1 : removeListConUnitInfo) {
-						if (taxcal.getUnitTaxCalculationInfos().get(0) instanceof List) {
-							for (List<UnitTaxCalculationInfo> ui2 : taxcal
-									.getUnitTaxCalculationInfos()) {
-								if (ui2.size() == 1
-										&& ui1.getUnitNumber().equals(ui2.get(0).getUnitNumber())) {
-									removeListUnitInfo.add(ui2.get(0));
-								}
-							}
-						} else {
-							for (int j = 0; j < taxcal.getUnitTaxCalculationInfos().size(); j++) {
-								UnitTaxCalculationInfo unit = (UnitTaxCalculationInfo) taxcal
-										.getUnitTaxCalculationInfos().get(j);
-								if (ui1.getUnitNumber().equals(unit.getUnitNumber())) {
-									removeListUnitInfo.add(unit);
-								}
-							}
-						}
-					}
-					taxcal.getUnitTaxCalculationInfos().removeAll(removeListUnitInfo);
-				}
-				size++;
-				if ((prevTaxCalInfo.getConsolidatedUnitTaxCalculationInfo().size()) == size) {
-					if (taxcal != null
-							&& taxcal.getConsolidatedUnitTaxCalculationInfo().size() != 0) {
-						prevTaxCalInfo = taxcal;
-						taxCalInfoList.put(txCalInfo.getKey(), taxcal);
-						txCalInfo.getKey();
-					}
-				}
-			}
 		}
 		return taxCalInfoList;
 	}

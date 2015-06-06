@@ -90,8 +90,7 @@ public class PropertyNoticeInfo {
 	private static final String PROPERTY_AMENITY = "PROPERTY-AMENITY";
 
 	private final Set<PropertyFloorDetailsInfo> propertyFloorDetails = new TreeSet<PropertyFloorDetailsInfo>();
-	private DateFormat dateFormatter = new SimpleDateFormat(
-			PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
+	private DateFormat dateFormatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	private int isCentralGovtProp = 0;
 
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
@@ -173,8 +172,7 @@ public class PropertyNoticeInfo {
 		int tenants = 0;
 
 		for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
-			if (PropertyTaxConstants.TENANT.equalsIgnoreCase(floor.getPropertyOccupation()
-					.getOccupancyCode())) {
+			if (PropertyTaxConstants.TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode())) {
 				tenants++;
 			}
 		}
@@ -211,8 +209,7 @@ public class PropertyNoticeInfo {
 	public BigDecimal getTotalALV() {
 		BigDecimal totalALV = BigDecimal.ZERO;
 
-		for (FloorwiseDemandCalculations floorDemand : currentDemand.getDmdCalculations()
-				.getFlrwiseDmdCalculations()) {
+		for (FloorwiseDemandCalculations floorDemand : currentDemand.getDmdCalculations().getFlrwiseDmdCalculations()) {
 			totalALV = totalALV.add(floorDemand.getAlv());
 		}
 
@@ -252,8 +249,8 @@ public class PropertyNoticeInfo {
 
 	public String getZoneNo() {
 
-		return org.apache.commons.lang.StringUtils.leftPad(property.getBasicProperty()
-				.getBoundary().getParent().getBoundaryNum().toString(), 2, '0');
+		return org.apache.commons.lang.StringUtils.leftPad(property.getBasicProperty().getBoundary().getParent()
+				.getBoundaryNum().toString(), 2, '0');
 	}
 
 	public String getWardName() {
@@ -273,8 +270,7 @@ public class PropertyNoticeInfo {
 	}
 
 	public String getOwnerAddress() {
-		return ptisCacheMgr.buildAddressByImplemetation(property.getBasicProperty().getAddress())
-				.concat(", Chennai");
+		return ptisCacheMgr.buildAddressByImplemetation(property.getBasicProperty().getAddress()).concat(", Chennai");
 	}
 
 	public String getCompleteAddress() {
@@ -304,8 +300,8 @@ public class PropertyNoticeInfo {
 	}
 
 	public String getPropertyType() {
-		return PropertyTaxConstants.PROPERTYTYPE_CODE_TO_STR.get(property.getPropertyDetail()
-				.getPropertyTypeMaster().getCode());
+		return PropertyTaxConstants.PROPERTYTYPE_CODE_TO_STR.get(property.getPropertyDetail().getPropertyTypeMaster()
+				.getCode());
 	}
 
 	public int getIsCentralGovtProp() {
@@ -316,12 +312,10 @@ public class PropertyNoticeInfo {
 		this.isCentralGovtProp = isCentralGovtProp;
 	}
 
-	private void getTotalTaxForMiscTax(
-			Map<Integer, Map<String, BigDecimal>> miscTaxAndTotalTaxForUnit,
+	private void getTotalTaxForMiscTax(Map<Integer, Map<String, BigDecimal>> miscTaxAndTotalTaxForUnit,
 			List<UnitTaxCalculationInfo> unitTaxes) {
 		LOGGER.info("Entered into getTotalTaxForMiscTax");
-		LOGGER.info("getTotalTaxForMiscTax - miscTaxAndTotalTaxForUnit: "
-				+ miscTaxAndTotalTaxForUnit);
+		LOGGER.info("getTotalTaxForMiscTax - miscTaxAndTotalTaxForUnit: " + miscTaxAndTotalTaxForUnit);
 
 		if (miscTaxAndTotalTaxForUnit.isEmpty()) {
 
@@ -330,25 +324,23 @@ public class PropertyNoticeInfo {
 				for (MiscellaneousTax miscTax : unit.getMiscellaneousTaxes()) {
 					miscTaxAndTotalTax.put(miscTax.getTaxName(), miscTax.getTotalCalculatedTax());
 				}
-				miscTaxAndTotalTaxForUnit.put(unit.getUnitNumber(), miscTaxAndTotalTax);
+				miscTaxAndTotalTaxForUnit.put(Integer.valueOf(unit.getFloorNumber()), miscTaxAndTotalTax);
 			}
 
 		} else {
 
 			for (UnitTaxCalculationInfo unit : unitTaxes) {
-				Map<String, BigDecimal> miscTaxAndTotalTax = miscTaxAndTotalTaxForUnit.get(unit
-						.getUnitNumber()) == null ? new HashMap<String, BigDecimal>()
-						: miscTaxAndTotalTaxForUnit.get(unit.getUnitNumber());
+				Map<String, BigDecimal> miscTaxAndTotalTax = miscTaxAndTotalTaxForUnit.get(unit.getFloorNumber()) == null ? new HashMap<String, BigDecimal>()
+						: miscTaxAndTotalTaxForUnit.get(unit.getFloorNumber());
 				for (MiscellaneousTax miscTax : unit.getMiscellaneousTaxes()) {
 					miscTaxAndTotalTax.put(miscTax.getTaxName(), miscTax.getTotalCalculatedTax());
 				}
-				miscTaxAndTotalTaxForUnit.put(unit.getUnitNumber(), miscTaxAndTotalTax);
+				miscTaxAndTotalTaxForUnit.put(Integer.valueOf(unit.getFloorNumber()), miscTaxAndTotalTax);
 			}
 
 		}
 
-		LOGGER.info("getTotalTaxForMiscTax - miscTaxAndTotalTaxForUnit: "
-				+ miscTaxAndTotalTaxForUnit);
+		LOGGER.info("getTotalTaxForMiscTax - miscTaxAndTotalTaxForUnit: " + miscTaxAndTotalTaxForUnit);
 		LOGGER.info("Exiting from getTotalTaxForMiscTax");
 	}
 
@@ -361,7 +353,7 @@ public class PropertyNoticeInfo {
 		for (Map.Entry<Integer, List<UnitTaxCalculationInfo>> mapEntry : unitsByUnitNo.entrySet()) {
 
 			for (UnitTaxCalculationInfo unit : mapEntry.getValue()) {
-				Date date = dateFormatter.parse(unit.getInstDate());
+				Date date = unit.getOccpancyDate();
 
 				if (unitTaxesByDateUnitNo.get(date) == null) {
 					Map<Integer, List<UnitTaxCalculationInfo>> unByUnitNo = new TreeMap<Integer, List<UnitTaxCalculationInfo>>();
