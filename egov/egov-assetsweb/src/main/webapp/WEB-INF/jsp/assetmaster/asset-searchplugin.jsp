@@ -101,7 +101,7 @@ function submitForm(){
 								<td colspan="4" class="headingwk">
 									<div class="arrowiconwk">
 										<img
-											src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+											src="/egi/resources/erp2/images/arrow.gif" />
 									</div>
 									<div class="headplacer">
 										<s:text name="search.criteria" />
@@ -216,7 +216,7 @@ function submitForm(){
 											<td colspan="7" class="headingwk">
 												<div class="arrowiconwk">
 													<img
-														src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+														src="/egi/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="search.result" />

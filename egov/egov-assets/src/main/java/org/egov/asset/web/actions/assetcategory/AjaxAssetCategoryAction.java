@@ -80,7 +80,7 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
     @Action(value = "/assetcategory/ajaxAssetCategory-populateParentCategories")
     public String populateParentCategories() {
         try {
-            if (assetType.equalsIgnoreCase("-1"))
+            if (assetType.equalsIgnoreCase("") || assetType.equalsIgnoreCase("-1"))
                 assetCategoryList = assetCategoryService.findAll();
             else
                 assetCategoryList = assetCategoryService.getAllAssetCategoryByAssetType(assetType);

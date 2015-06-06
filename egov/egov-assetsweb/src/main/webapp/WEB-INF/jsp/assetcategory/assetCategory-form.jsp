@@ -160,7 +160,7 @@ parentCatDetailsSuccessHandler = function(req,res){
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img src="/egi/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.cat.details' />

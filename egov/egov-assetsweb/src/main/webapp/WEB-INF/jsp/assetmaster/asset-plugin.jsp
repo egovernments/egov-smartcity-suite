@@ -83,7 +83,7 @@ function update(elemValue) {
 				<tr>
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+							<img src="/egi/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='Search PlugIn' />
@@ -99,7 +99,7 @@ function update(elemValue) {
 			        	<input type="text" id="assetname" class="selectboldwk" />
 			        		<s:hidden id="asset" name="asset" value="%{asset.id}"/>
 			       		<a onclick="searchAsset()" href="#">
-			       		<IMG id="img" height=16 src="${pageContext.request.contextPath}/resources/image/magnifier.png" 
+			       		<IMG id="img" height=16 src="/egi/resources/erp2/images/magnifier.png" 
 			       			width=16 alt="Search" border="0" align="absmiddle"></a>
 						<input type="button" class="buttonfinal" value="CREATE ASSET"
 							id="createButton" name="button"

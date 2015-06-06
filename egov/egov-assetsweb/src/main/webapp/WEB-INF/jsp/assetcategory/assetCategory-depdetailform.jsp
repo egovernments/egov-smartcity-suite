@@ -197,7 +197,7 @@ function validateDuplicate(records,oArgs){
 	<tr>
 		<td colspan="3" class="headingwk">
 			<div class="arrowiconwk">
-				<img src="${pageContext.request.contextPath}/resources/image/arrow.gif" />
+				<img src="/egi/resources/erp2/images/arrow.gif" />
 			</div>
 			<div class="headplacer">
 				<s:text name='title.dep.details' />
@@ -207,7 +207,7 @@ function validateDuplicate(records,oArgs){
 			<a href="#"
 				onclick="depDetailDataTable.addRow({SlNo:depDetailDataTable.getRecordSet().getLength()+1});return false;">
 				<img border="0" alt="Add Depreciation"
-					src="${pageContext.request.contextPath}/resources/image/add.png" /> </a>
+					src="/egi/resources/erp2/images/add.png" /> </a>
 		</td>
 	</tr>
 	<tr>

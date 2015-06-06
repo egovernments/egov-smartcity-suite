@@ -90,7 +90,7 @@ window.document.onkeydown = function(event) {
 <decorator:head/>
 </head>
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="../resources/image/bar_loader.gif"> <span id="message">Please wait....</span></div>
+	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
 	    <div id="BreadCrumb">
 	    	<egov:breadcrumb/>
 	    </div>

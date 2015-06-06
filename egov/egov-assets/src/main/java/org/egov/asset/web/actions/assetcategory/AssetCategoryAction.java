@@ -232,11 +232,11 @@ public class AssetCategoryAction extends BaseFormAction {
 
     @Action(value = "/assetcategory/assetCategory-list")
     public String list() {
-        if (!assetType.equalsIgnoreCase("-1") && (id == null || id == -1))
+        if (assetType.equalsIgnoreCase("") && (id == null || id == -1))
             assetCategoryList = assetCategoryService.findAllBy("from AssetCategory ac order by name asc");
-        else if (!assetType.equalsIgnoreCase("-1") && (id == null || id == -1))
+        else if (!assetType.equalsIgnoreCase("") && (id == null || id == -1))
             assetCategoryList = assetCategoryService
-                    .findAllBy("from AssetCategory ac where ac.assetType=" + assetType + " order by name asc");
+                    .findAllBy("from AssetCategory ac where ac.assetType='" + AssetType.valueOf(assetType) + "' order by name asc");
         else if (id != null && id != -1) {
             assetCategoryList = new ArrayList<AssetCategory>();
             assetCategoryList.add(assetCategoryService.findById(id, false));
