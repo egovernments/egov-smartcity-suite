@@ -56,8 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AssetBaseSearchAction extends SearchFormAction {
 
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 3403911393047059235L;
     protected Asset asset = new Asset();
     protected String assetType;
     protected Long zoneId;
@@ -74,7 +73,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
         addRelatedEntity("street", Boundary.class);
         addRelatedEntity("ward", Boundary.class);
         addRelatedEntity("zone", Boundary.class);
-        addRelatedEntity("status", EgwStatus.class, "description");
+        addRelatedEntity("status", EgwStatus.class);
     }
 
     @Override

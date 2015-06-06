@@ -61,6 +61,7 @@ import org.egov.asset.service.AssetCategoryService;
 import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -90,10 +91,10 @@ public class AssetCategoryAction extends BaseFormAction {
     private Long parentId;
 
     // Purpose code keys
-    private String assetAccCodePURPOSEID = "ASSET_ACCOUNT_CODE_PURPOSEID";
-    private String revResAccPURPOSEID = "REVALUATION_RESERVE_ACCOUNT_PURPOSEID";
-    private String depExpAccPURPOSEID = "DEPRECIATION_EXPENSE_ACCOUNT_PURPOSEID";
-    private String accDepPURPOSEID = "ACCUMULATED_DEPRECIATION_PURPOSEID";
+    private static final String assetAccCodePURPOSEID = "ASSET_ACCOUNT_CODE_PURPOSEID";
+    private static final String revResAccPURPOSEID = "REVALUATION_RESERVE_ACCOUNT_PURPOSEID";
+    private static final String depExpAccPURPOSEID = "DEPRECIATION_EXPENSE_ACCOUNT_PURPOSEID";
+    private static final String accDepPURPOSEID = "ACCUMULATED_DEPRECIATION_PURPOSEID";
 
     // UI fields
     private String userMode;
@@ -104,6 +105,8 @@ public class AssetCategoryAction extends BaseFormAction {
 
     @Autowired
     private CommonsService commonsService;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     /**
      * Default Constructor
@@ -233,10 +236,9 @@ public class AssetCategoryAction extends BaseFormAction {
     @Action(value = "/assetcategory/assetCategory-list")
     public String list() {
         if (assetType.equalsIgnoreCase("") && (id == null || id == -1))
-            assetCategoryList = assetCategoryService.findAllBy("from AssetCategory ac order by name asc");
+            assetCategoryList = assetCategoryService.findAll("name");
         else if (!assetType.equalsIgnoreCase("") && (id == null || id == -1))
-            assetCategoryList = assetCategoryService
-                    .findAllBy("from AssetCategory ac where ac.assetType='" + AssetType.valueOf(assetType) + "' order by name asc");
+            assetCategoryList = assetCategoryService.getAllAssetCategoryByAssetType(assetType);
         else if (id != null && id != -1) {
             assetCategoryList = new ArrayList<AssetCategory>();
             assetCategoryList.add(assetCategoryService.findById(id, false));
@@ -281,8 +283,11 @@ public class AssetCategoryAction extends BaseFormAction {
         assetCategory.getDepreciationMetaDataList().clear();
         for (final DepreciationMetaData lDepreciationMetaData : depMetaDatas)
             if (validDepMetaData(lDepreciationMetaData)) {
-                lDepreciationMetaData.setFinancialYear((CFinancialYear) getPersistenceService()
-                        .find("from CFinancialYear where id = ?", lDepreciationMetaData.getFinancialYear().getId()));
+                // lDepreciationMetaData.setFinancialYear((CFinancialYear)
+                // getPersistenceService().find("from CFinancialYear where id =
+                // ?", lDepreciationMetaData.getFinancialYear().getId()));
+                lDepreciationMetaData.setFinancialYear(
+                        financialYearDAO.getFinancialYearById(lDepreciationMetaData.getFinancialYear().getId()));
                 lDepreciationMetaData.setAssetCategory(assetCategory);
                 assetCategory.addDepreciationMetaData(lDepreciationMetaData);
             }
@@ -392,22 +397,6 @@ public class AssetCategoryAction extends BaseFormAction {
 
     public void setDepMetaDatas(final List<DepreciationMetaData> depMetaDatas) {
         this.depMetaDatas = depMetaDatas;
-    }
-
-    public void setAssetAccCodePURPOSEID(final String assetAccCodePURPOSEID) {
-        this.assetAccCodePURPOSEID = assetAccCodePURPOSEID;
-    }
-
-    public void setRevResAccPURPOSEID(final String revResAccPURPOSEID) {
-        this.revResAccPURPOSEID = revResAccPURPOSEID;
-    }
-
-    public void setDepExpAccPURPOSEID(final String depExpAccPURPOSEID) {
-        this.depExpAccPURPOSEID = depExpAccPURPOSEID;
-    }
-
-    public void setAccDepPURPOSEID(final String accDepPURPOSEID) {
-        this.accDepPURPOSEID = accDepPURPOSEID;
     }
 
     public void setAppService(final AppService appService) {

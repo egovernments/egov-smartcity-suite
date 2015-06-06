@@ -71,7 +71,6 @@ public class AppService {
      */
     public String getUniqueAppConfigValue(final String moduleName, final String key) {
         final List<AppConfigValues> resultList = getAppConfigValue(moduleName, key);
-        logger.info("Found AppConfig " + resultList.get(0));
         return resultList.get(0).getValue();
     }
 

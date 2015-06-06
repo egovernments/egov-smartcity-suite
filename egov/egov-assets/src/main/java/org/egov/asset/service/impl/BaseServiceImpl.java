@@ -40,24 +40,15 @@
 package org.egov.asset.service.impl;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.egov.asset.service.BaseService;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.EgwStatus;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
 
 public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<T, ID> {
 
     protected PersistenceService<T, ID> persistenceService;
-    protected PersistenceService genericService;
 
     /**
      * Public constructor for creating a new BaseServiceImpl.
@@ -227,87 +218,6 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
     public Page findPageBy(final String query, final Integer pageNumber, final Integer pageSize,
             final Object... params) {
         return persistenceService.findPageBy(query, pageNumber, pageSize, params);
-    }
-
-    /**
-     * search list of object by query and offset range.
-     *
-     * @param queryString
-     * @param pageNumber
-     * @param pageSize
-     * @return list of object.
-     */
-    // public List<T> search(String queryString,int pageNumber,int pageSize){
-    // return persistenceService.search(queryString, pageNumber, pageSize);
-    // }
-
-    /**
-     * Search list of objects by query.
-     *
-     * @param queryString
-     * @return list of objects
-     */
-    // public List<T> search(String queryString){
-    // return persistenceService.search(queryString);
-    // }
-
-    public void setGenericService(final PersistenceService genericService) {
-        this.genericService = genericService;
-    }
-
-    /**
-     * This method retrieves the <code>CFinancialYear</code> for the given date.
-     *
-     * @param date
-     *            an instance of <code>Date</code> for which the financial year
-     *            is to be retrieved.
-     * @return
-     */
-    @Override
-    public CFinancialYear getCurrentFinancialYear(final Date date) {
-        List<CFinancialYear> financialYear = null;
-        financialYear = persistenceService.getSession()
-                .createQuery("from CFinancialYear cfinancialyear where ? between "
-                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list();
-
-        if (financialYear == null || financialYear != null && financialYear.isEmpty())
-            throw new ValidationException(Arrays.asList(new ValidationError("financialyear", "financialyear.invalid")));
-        else
-            return financialYear.get(0);
-    }
-
-    /**
-     * Return <code>EgwStatus</code> for given code from ASSET module
-     *
-     * @param statusCode
-     *            Status code
-     * @return EgwStatus object for given module type and status code
-     */
-    @Override
-    public EgwStatus getAssetStatusByCode(final String code) {
-        final Query qry = genericService.getSession()
-                .createQuery("from EgwStatus S where S.moduletype ='ASSET' and S.code =:code");
-        qry.setString("code", code);
-        return (EgwStatus) qry.uniqueResult();
-    }
-
-    @Override
-    public String getFinancialYear(final Date date) {
-        List<CFinancialYear> financialYearList = null;
-        String finYear = "";
-
-        final SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
-        financialYearList = persistenceService.getSession()
-                .createQuery("from CFinancialYear cfinancialyear where ? between "
-                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list();
-
-        if (financialYearList == null || financialYearList != null && financialYearList.isEmpty())
-            finYear = simpleDateformat.format(date);
-        else
-            finYear = financialYearList.get(0).getFinYearRange();
-        return finYear;
     }
 
 }

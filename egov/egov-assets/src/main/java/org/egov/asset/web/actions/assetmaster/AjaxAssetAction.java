@@ -51,7 +51,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
-import org.egov.asset.model.AssetType;
+import org.egov.asset.service.AssetCategoryService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -104,6 +104,7 @@ public class AjaxAssetAction extends BaseFormAction {
     private Long parentCatId; // Set by Ajax call
     private List<AssetCategory> assetSubCategoryList;
     public static final String SUB_CATEGORIES = "subcategories";
+    private AssetCategoryService assetCategoryService;
 
     @Autowired
     private HeirarchyTypeDAO heirarchyTypeDAO;
@@ -236,35 +237,32 @@ public class AjaxAssetAction extends BaseFormAction {
 
     @Action(value = "/assetmaster/ajaxAsset-populateCategoryDetails")
     public String populateCategoryDetails() {
-        assetCategory = (AssetCategory) getPersistenceService().find("from AssetCategory where id=?", categoryId);
+        assetCategory = assetCategoryService.findById(categoryId, false);
         return ASSET_CAT_DETAILS;
     }
 
     @Action(value = "/assetmaster/ajaxAsset-populateParentCategories")
     public String populateParentCategories() {
-        if (assetType == null || assetType.equalsIgnoreCase("-1"))
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory");
+        if (assetType == null || assetType.equalsIgnoreCase("") || assetType.equalsIgnoreCase("-1"))
+            assetCategoryList = assetCategoryService.findAll();
         else
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType=?",
-                    AssetType.valueOf(assetType));
+            assetCategoryList = assetCategoryService.getAllAssetCategoryByAssetType(assetType);
         return PARENT_CATEGORIES;
     }
 
     @Action(value = "/assetmaster/ajaxAsset-populateParentAssetCategoryList")
     public String populateParentAssetCategoryList() {
         if (assetType == null || assetType.equalsIgnoreCase("-1"))
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where parent is null");
+            assetCategoryList = assetCategoryService.getAllParentAssetCategory();
         else
-            assetCategoryList = getPersistenceService()
-                    .findAllBy("from AssetCategory where parent is null and assetType=?", AssetType.valueOf(assetType));
+            assetCategoryList = assetCategoryService.getAllParentAssetCategoryByAssetType(assetType);
         return PARENT_CATEGORIES;
     }
 
     @Action(value = "/assetmaster/ajaxAsset-populateSubCategories")
     public String populateSubCategories() {
         if (parentCatId != -1 && parentCatId != null)
-            assetSubCategoryList = getPersistenceService().findAllBy("from AssetCategory where parent.id=?",
-                    parentCatId);
+            assetSubCategoryList = assetCategoryService.getAllAssetCategoryByParent(parentCatId);
         else
             assetSubCategoryList = Collections.emptyList();
         return SUB_CATEGORIES;
@@ -389,6 +387,10 @@ public class AjaxAssetAction extends BaseFormAction {
 
     public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
         this.boundaryTypeService = boundaryTypeService;
+    }
+
+    public void setAssetCategoryService(final AssetCategoryService assetCategoryService) {
+        this.assetCategoryService = assetCategoryService;
     }
 
 }

@@ -39,16 +39,22 @@
  */
 package org.egov.asset.service.impl;
 
+import java.util.List;
+
 import org.egov.asset.model.AssetActivities;
 import org.egov.asset.service.AssetActivitiesService;
 import org.egov.infstr.services.PersistenceService;
 
-public class AssetActivitiesImpl extends BaseServiceImpl<AssetActivities, Long>
-		implements AssetActivitiesService {
+public class AssetActivitiesServiceImpl extends BaseServiceImpl<AssetActivities, Long>
+        implements AssetActivitiesService {
 
-	public AssetActivitiesImpl(
-			final PersistenceService<AssetActivities, Long> persistenceService) {
-		super(persistenceService);
-	}
+    public AssetActivitiesServiceImpl(final PersistenceService<AssetActivities, Long> persistenceService) {
+        super(persistenceService);
+    }
+
+    @Override
+    public List<AssetActivities> getAssetActivitiesByAssetId(final Long assetId) {
+        return findAllBy(" from AssetActivities where asset.id=? ", assetId);
+    }
 
 }

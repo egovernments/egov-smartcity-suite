@@ -61,141 +61,126 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssetCommonUtil {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(AssetCommonUtil.class);
-	private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
-	private static final String Zone_BOUNDARY_TYPE = "Zone";
-	private static String hierarchyTypeName = "LOCATION";
-	@Autowired
-	private HeirarchyTypeDAO heirarchyTypeDAO;
-	@Autowired
-	private BoundaryService boundaryService;
-	@Autowired
-	private BoundaryTypeService boundaryTypeService;
+    private static final Logger LOGGER = Logger.getLogger(AssetCommonUtil.class);
+    private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+    private static final String Zone_BOUNDARY_TYPE = "Zone";
+    private static String hierarchyTypeName = "LOCATION";
+    @Autowired
+    private HeirarchyTypeDAO heirarchyTypeDAO;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
 
-	@SuppressWarnings("unchecked")
-	public List<Boundary> getAllZoneOfHTypeAdmin() {
-		HierarchyType hType = null;
-		try {
-			hType = heirarchyTypeDAO
-					.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
-		} catch (final EGOVException e) {
-			LOGGER.error("Error_While_Loading_HeirarchyType" + e.getMessage());
-			throw new EGOVRuntimeException(
-					"Unable_To_Load_Heirarchy_Information", e);
-		}
-		List<Boundary> zoneList = null;
-		final BoundaryType bType = boundaryTypeService
-				.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE,
-						hType);
-		zoneList = boundaryService
-				.getChildBoundariesByBoundaryId(bType.getId());
-		return zoneList;
-	}
+    @SuppressWarnings("unchecked")
+    public List<Boundary> getAllZoneOfHTypeAdmin() {
+        HierarchyType hType = null;
+        try {
+            hType = heirarchyTypeDAO.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+        } catch (final EGOVException e) {
+            LOGGER.error("Error_While_Loading_HeirarchyType" + e.getMessage());
+            throw new EGOVRuntimeException("Unable_To_Load_Heirarchy_Information", e);
+        }
+        List<Boundary> zoneList = null;
+        final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE, hType);
+        zoneList = boundaryService.getChildBoundariesByBoundaryId(bType.getId());
+        return zoneList;
+    }
 
-	/**
-	 * Populate the ward list by zone
-	 */
-	public List<Boundary> populateWard(final Long zoneId) {
-		List<Boundary> wardList = new LinkedList<Boundary>();
-		try {
-			wardList = boundaryService.getChildBoundariesByBoundaryId(zoneId);
-		} catch (final Exception e) {
-			LOGGER.error("Error while loading warda - wards." + e.getMessage());
-			throw new EGOVRuntimeException("Unable to load ward information", e);
-		}
-		return wardList;
-	}
+    /**
+     * Populate the ward list by zone
+     */
+    public List<Boundary> populateWard(final Long zoneId) {
+        List<Boundary> wardList = new LinkedList<Boundary>();
+        try {
+            wardList = boundaryService.getChildBoundariesByBoundaryId(zoneId);
+        } catch (final Exception e) {
+            LOGGER.error("Error while loading warda - wards." + e.getMessage());
+            throw new EGOVRuntimeException("Unable to load ward information", e);
+        }
+        return wardList;
+    }
 
-	/**
-	 * Populate the Area list by ward
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Boundary> populateArea(final Long wardId) {
-		HierarchyType hType = null;
-		List<Boundary> areaList = new LinkedList<Boundary>();
-		try {
-			hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
-		} catch (final Exception e) {
-			LOGGER.error("Error while loading areas - areas." + e.getMessage());
-			throw new EGOVRuntimeException("Unable to load areas information",
-					e);
-		}
-		final BoundaryType childBoundaryType = boundaryTypeService
-				.getBoundaryTypeByNameAndHierarchyType("Area", hType);
-		final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-		areaList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(
-				parentBoundary, childBoundaryType));
+    /**
+     * Populate the Area list by ward
+     */
+    @SuppressWarnings("unchecked")
+    public List<Boundary> populateArea(final Long wardId) {
+        HierarchyType hType = null;
+        List<Boundary> areaList = new LinkedList<Boundary>();
+        try {
+            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
+        } catch (final Exception e) {
+            LOGGER.error("Error while loading areas - areas." + e.getMessage());
+            throw new EGOVRuntimeException("Unable to load areas information", e);
+        }
+        final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Area", hType);
+        final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
+        areaList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
 
-		LOGGER.info("***********Ajax AreaList: " + areaList.toString());
-		return areaList;
-	}
+        LOGGER.info("***********Ajax AreaList: " + areaList.toString());
+        return areaList;
+    }
 
-	/**
-	 * Populate the street list by Ward
-	 *
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Boundary> populateStreets(final Long wardId) {
-		HierarchyType hType = null;
-		List<Boundary> streetList = new LinkedList<Boundary>();
-		try {
-			hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
-		} catch (final Exception e) {
-			LOGGER.error("Error while loading Streets." + e.getMessage());
-			throw new EGOVRuntimeException(
-					"Unable to load Streets information", e);
-		}
-		final BoundaryType childBoundaryType = boundaryTypeService
-				.getBoundaryTypeByNameAndHierarchyType("Street", hType);
-		final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
-		streetList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(
-				parentBoundary, childBoundaryType));
-		return streetList;
-	}
+    /**
+     * Populate the street list by Ward
+     *
+     * @throws Exception
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public List<Boundary> populateStreets(final Long wardId) {
+        HierarchyType hType = null;
+        List<Boundary> streetList = new LinkedList<Boundary>();
+        try {
+            hType = heirarchyTypeDAO.getHierarchyTypeByName(hierarchyTypeName);
+        } catch (final Exception e) {
+            LOGGER.error("Error while loading Streets." + e.getMessage());
+            throw new EGOVRuntimeException("Unable to load Streets information", e);
+        }
+        final BoundaryType childBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Street",
+                hType);
+        final Boundary parentBoundary = boundaryService.getBoundaryById(wardId);
+        streetList = new LinkedList(heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType));
+        return streetList;
+    }
 
-	/**
-	 * Populate the location list by area
-	 */
-	public List<Boundary> populateLocations(final Long areaId) {
-		List<Boundary> locationList = new LinkedList<Boundary>();
-		try {
-			locationList = boundaryService
-					.getChildBoundariesByBoundaryId(areaId);
-		} catch (final Exception e) {
-			LOGGER.error("Error while loading locations - locations."
-					+ e.getMessage());
-			throw new EGOVRuntimeException(
-					"Unable to load location information", e);
-		}
-		LOGGER.info("***********Ajax locationList: " + locationList.toString());
-		return locationList;
-	}
+    /**
+     * Populate the location list by area
+     */
+    public List<Boundary> populateLocations(final Long areaId) {
+        List<Boundary> locationList = new LinkedList<Boundary>();
+        try {
+            locationList = boundaryService.getChildBoundariesByBoundaryId(areaId);
+        } catch (final Exception e) {
+            LOGGER.error("Error while loading locations - locations." + e.getMessage());
+            throw new EGOVRuntimeException("Unable to load location information", e);
+        }
+        LOGGER.info("***********Ajax locationList: " + locationList.toString());
+        return locationList;
+    }
 
-	public static Date loadCurrentDate() {
-		final Date currDate = new Date();
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			return sdf.parse(sdf.format(currDate));
-		} catch (final ParseException e) {
-			throw new ValidationException(Arrays.asList(new ValidationError(
-					"Exception while formatting voucher date",
-					"Transaction failed")));
-		}
-	}
+    public static Date loadCurrentDate() {
+        final Date currDate = new Date();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            return sdf.parse(sdf.format(currDate));
+        } catch (final ParseException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError("Exception while formatting voucher date", "Transaction failed")));
+        }
+    }
 
-	public void setHeirarchyTypeDAO(final HeirarchyTypeDAO heirarchyTypeDAO) {
-		this.heirarchyTypeDAO = heirarchyTypeDAO;
-	}
+    public void setHeirarchyTypeDAO(final HeirarchyTypeDAO heirarchyTypeDAO) {
+        this.heirarchyTypeDAO = heirarchyTypeDAO;
+    }
 
-	public void setBoundaryService(BoundaryService boundaryService) {
-		this.boundaryService = boundaryService;
-	}
+    public void setBoundaryService(final BoundaryService boundaryService) {
+        this.boundaryService = boundaryService;
+    }
 
-	public void setBoundaryTypeService(BoundaryTypeService boundaryTypeService) {
-		this.boundaryTypeService = boundaryTypeService;
-	}
+    public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
+        this.boundaryTypeService = boundaryTypeService;
+    }
 
 }

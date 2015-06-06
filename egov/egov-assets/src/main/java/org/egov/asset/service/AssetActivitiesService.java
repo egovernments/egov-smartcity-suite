@@ -39,9 +39,11 @@
  */
 package org.egov.asset.service;
 
+import java.util.List;
+
 import org.egov.asset.model.AssetActivities;
 
-public interface AssetActivitiesService extends
-		BaseService<AssetActivities, Long> {
+public interface AssetActivitiesService extends BaseService<AssetActivities, Long> {
 
+    public List<AssetActivities> getAssetActivitiesByAssetId(final Long assetId);
 }

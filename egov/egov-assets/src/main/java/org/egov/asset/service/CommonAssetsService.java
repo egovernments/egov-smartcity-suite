@@ -52,9 +52,12 @@ import org.egov.asset.model.Asset;
 import org.egov.asset.model.AssetCategory;
 import org.egov.asset.model.ModeOfAcquisition;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -62,6 +65,7 @@ import org.egov.infstr.security.utils.SecurityUtils;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommonAssetsService {
 
@@ -88,7 +92,6 @@ public class CommonAssetsService {
     public static final String ASSET_DESCRIPTION = "ASSET_DESCRIPTION"; // String
     public static final String ASSET_CATEGORY_CODE = "ASSET_CATEGORY_CODE"; // String
     public static final String ASSET_CATEGORY_NAME = "ASSET_CATEGORY_NAME"; // String
-    public static final String BOUNDARY_IMPL_QUERY = "from BoundaryImpl where id=?";
     // Search Asset parameters
     public static final String ASSET_TYPE = "ASSET_TYPE"; // Long
     public static final String ASSET_DEPARTMENT_ID = "ASSET_DEPARTMENT_ID"; // Integer
@@ -97,6 +100,12 @@ public class CommonAssetsService {
     public static final String ASSET_DEPARTMENT_CODE = "ASSET_DEPARTMENT_CODE";
     public static final String ASSET_WARD_NAME = "ASSET_WARD_NAME";
     public static final String ASSET_STATUS_LIST = "ASSET_STATUS_LIST";
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     /**
      * Find the <code>AssetCategory</code> by its ID. Return NULL if
@@ -109,7 +118,7 @@ public class CommonAssetsService {
     public AssetCategory getAssetCategoryById(final Long categoryId) {
         AssetCategory assetCategory = null;
         try {
-            assetCategory = assetCategoryService.find("from AssetCategory where id=?", categoryId);
+            assetCategory = assetCategoryService.findById(categoryId, false);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetCategoryById.");
             throw new EGOVRuntimeException("Hibernate Exception : getting AssetCategoryById." + he.getMessage(), he);
@@ -138,27 +147,6 @@ public class CommonAssetsService {
     }
 
     /**
-     * Find the <code>AssetCategory</code> by Department ID. Returns NULL if
-     * <code>AssetCategory</code> not found.
-     *
-     * @param deptId
-     * @return <code>AssetCategory</code>
-     * @since v2.1
-     */
-    public Asset getAssetByDeptId(final Integer deptId) {
-        Asset asset = null;
-        try {
-            final String query = "from Asset ac where ac.department.id=?";
-            asset = assetService.find(query, deptId);
-        } catch (final HibernateException he) {
-            LOGGER.error("Error while getting getAssetByDeptId.");
-            throw new EGOVRuntimeException("Hibernate Exception : getting getAssetByDeptId." + he.getMessage(), he);
-        }
-
-        return asset;
-    }
-
-    /**
      * Find the <code>Asset</code> by its ID. Returns NULL if <code>Asset</code>
      * not found.
      *
@@ -169,7 +157,7 @@ public class CommonAssetsService {
     public Asset getAssetById(final Long assetId) {
         Asset asset = null;
         try {
-            asset = assetService.find("from Asset where id=?", assetId);
+            asset = assetService.findById(assetId, false);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetById.");
             throw new EGOVRuntimeException("Hibernate Exception : getting AssetById." + he.getMessage(), he);
@@ -189,7 +177,7 @@ public class CommonAssetsService {
     public Asset getAssetByCode(final String code) {
         Asset asset = null;
         try {
-            asset = assetService.find("from Asset where code=?", code);
+            asset = assetService.getAssetByCode(code);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetByCode.");
             throw new EGOVRuntimeException("Hibernate Exception : getting AssetByCode." + he.getMessage(), he);
@@ -208,8 +196,7 @@ public class CommonAssetsService {
     public List<Asset> getAssetsByCategoryId(final Long categoryId) {
         List<Asset> assetList = null;
         try {
-            final String query = "from Asset a where a.assetCategory.id=? order by code";
-            assetList = assetService.findAllBy(query, categoryId);
+            assetList = assetService.getAssetsByCategoryId(categoryId);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetsByCategoryId.");
             throw new EGOVRuntimeException("Hibernate Exception : getting AssetsByCategoryId." + he.getMessage(), he);
@@ -229,7 +216,7 @@ public class CommonAssetsService {
     public AssetCategory getAssetCategoryByCode(final String code) {
         AssetCategory assetCategory = null;
         try {
-            assetCategory = assetCategoryService.find("from AssetCategory where code=?", code);
+            assetCategory = assetCategoryService.getAssetCategoryByCode(code);
         } catch (final HibernateException he) {
             LOGGER.error("Error while getting AssetCategoryByCode.");
             throw new EGOVRuntimeException("Hibernate Exception : getting AssetCategoryByCode." + he.getMessage(), he);
@@ -263,8 +250,7 @@ public class CommonAssetsService {
      * @return - List of all status for asset
      */
     public List<EgwStatus> getAllAssetStatus() {
-        final String query = "from EgwStatus st where st.moduletype='ASSET' order by description";
-        return genericService.findAllBy(query);
+        return egwStatusHibernateDAO.getStatusByModule("ASSET");
     }
 
     /**
@@ -344,8 +330,8 @@ public class CommonAssetsService {
                 throw new ValidationException(
                         Arrays.asList(new ValidationError("asset.category.mandatory", "asset.category.mandatory")));
             else if (parameters.get(ASSET_CATEGORY_ID) != null) {
-                final AssetCategory assetCategory = (AssetCategory) genericService.find("from AssetCategory where id=?",
-                        (Long) parameters.get(ASSET_CATEGORY_ID));
+                final AssetCategory assetCategory = assetCategoryService
+                        .findById((Long) parameters.get(ASSET_CATEGORY_ID), false);
                 if (assetCategory == null)
                     throw new ValidationException(Arrays
                             .asList(new ValidationError("asset.category.doesNotExist", "asset.category.doesNotExist")));
@@ -356,24 +342,13 @@ public class CommonAssetsService {
                 throw new ValidationException(
                         Arrays.asList(new ValidationError("asset.status.mandatory", "asset.status.mandatory")));
             else if (parameters.get(ASSET_STATUS_ID) != null) {
-                final EgwStatus status = (EgwStatus) genericService.find("from EgwStatus where id=?",
-                        (Integer) parameters.get(ASSET_STATUS_ID));
+                final EgwStatus status = (EgwStatus) egwStatusHibernateDAO
+                        .findById((Integer) parameters.get(ASSET_STATUS_ID), false);
                 if (status == null)
                     throw new ValidationException(Arrays
                             .asList(new ValidationError("asset.status.doesNotExist", "asset.status.doesNotExist")));
                 asset.setStatus(status);
-                /*
-                 * if ("Capitalized".equalsIgnoreCase(status.getDescription()))
-                 * { if(parameters.get(ASSET_GROSS_VALUE)!=null)
-                 * asset.setGrossValue
-                 * ((BigDecimal)parameters.get(ASSET_GROSS_VALUE));
-                 * if(parameters.get(ASSET_ACCUMULATIVE_DEPRECIATION)!=null)
-                 * asset.setAccDepreciation((BigDecimal)parameters.get(
-                 * ASSET_ACCUMULATIVE_DEPRECIATION));
-                 * if(parameters.get(ASSET_WRITTEN_DOWN_VALUE)!=null)
-                 * asset.setWrittenDownValue
-                 * ((BigDecimal)parameters.get(ASSET_WRITTEN_DOWN_VALUE)); }
-                 */
+
             }
             // Asset Description (String)
             if (parameters.get(ASSET_DESCRIPTION) != null)
@@ -381,8 +356,7 @@ public class CommonAssetsService {
 
             // Area Id (Integer) - Mandatory Field
             if (parameters.get(ASSET_AREA_ID) != null) {
-                final Boundary area = (Boundary) genericService.find(BOUNDARY_IMPL_QUERY,
-                        (Integer) parameters.get(ASSET_AREA_ID));
+                final Boundary area = boundaryService.getBoundaryById((Long) parameters.get(ASSET_AREA_ID));
                 if (area == null)
                     throw new ValidationException(
                             Arrays.asList(new ValidationError("asset.area.doesNotExist", "asset.area.doesNotExist")));
@@ -391,8 +365,7 @@ public class CommonAssetsService {
 
             // Location Id (Integer) - Mandatory Field
             if (parameters.get(ASSET_LOCATION_ID) != null) {
-                final Boundary location = (Boundary) genericService.find(BOUNDARY_IMPL_QUERY,
-                        (Integer) parameters.get(ASSET_LOCATION_ID));
+                final Boundary location = boundaryService.getBoundaryById((Long) parameters.get(ASSET_LOCATION_ID));
                 if (location == null)
                     throw new ValidationException(Arrays
                             .asList(new ValidationError("asset.location.doesNotExist", "asset.location.doesNotExist")));
@@ -401,8 +374,7 @@ public class CommonAssetsService {
 
             // Street Id (Integer) - Mandatory Field
             if (parameters.get(ASSET_STREET_ID) != null) {
-                final Boundary street = (Boundary) genericService.find(BOUNDARY_IMPL_QUERY,
-                        (Integer) parameters.get(ASSET_STREET_ID));
+                final Boundary street = boundaryService.getBoundaryById((Long) parameters.get(ASSET_STREET_ID));
                 if (street == null)
                     throw new ValidationException(Arrays
                             .asList(new ValidationError("asset.street.doesNotExist", "asset.street.doesNotExist")));
@@ -411,31 +383,17 @@ public class CommonAssetsService {
 
             // Ward Id (Integer) - Mandatory Field
             if (parameters.get(ASSET_WARD_ID) != null) {
-                final Boundary ward = (Boundary) genericService.find(BOUNDARY_IMPL_QUERY,
-                        (Integer) parameters.get(ASSET_WARD_ID));
+                final Boundary ward = boundaryService.getBoundaryById((Long) parameters.get(ASSET_WARD_ID));
                 if (ward == null)
                     throw new ValidationException(
                             Arrays.asList(new ValidationError("asset.ward.doesNotExist", "asset.ward.doesNotExist")));
                 asset.setWard(ward);
             }
 
-            // Asset Details (String)
-            /*
-             * if(parameters.get(ASSET_DETAILS)!=null)
-             * asset.setAssetDetails((String)parameters.get(ASSET_DETAILS));
-             */
-
             // Mode Of Acquisition (String)
             if (parameters.get(ASSET_MODE_OF_ACQUISITION) != null)
                 asset.setModeOfAcquisition(
                         ModeOfAcquisition.valueOf((String) parameters.get(ASSET_MODE_OF_ACQUISITION)));
-
-            // Commissioning Date (Date)
-            /*
-             * if(parameters.get(ASSET_COMMISSIONING_DATE)!=null)
-             * asset.setCommDate
-             * ((Date)parameters.get(ASSET_COMMISSIONING_DATE));
-             */
 
             asset = assetService.persist(asset);
 
@@ -586,9 +544,8 @@ public class CommonAssetsService {
             counter++;
         }
         if (!StringUtils.isEmpty((String) parameters.get(ASSET_CATEGORY_CODE))) {
-            final AssetCategory assetCategory = (AssetCategory) genericService.find(
-                    " from AssetCategory where upper(code)=?",
-                    ((String) parameters.get(ASSET_CATEGORY_CODE)).toUpperCase());
+            final AssetCategory assetCategory = assetCategoryService
+                    .getAssetCategoryByCode(((String) parameters.get(ASSET_CATEGORY_CODE)).toUpperCase());
             if (assetCategory == null)
                 throw new ValidationException("invalid.assetcategory.code", "Invalid Assetcategory Code");
             else {
@@ -598,8 +555,8 @@ public class CommonAssetsService {
             }
         }
         if (!StringUtils.isEmpty((String) parameters.get(ASSET_DEPARTMENT_CODE))) {
-            final Department dept = (Department) genericService.find(" from Department where upper(code)=?",
-                    ((String) parameters.get(ASSET_DEPARTMENT_CODE)).toUpperCase());
+            final Department dept = departmentService
+                    .getDepartmentByCode(((String) parameters.get(ASSET_DEPARTMENT_CODE)).toUpperCase());
             if (dept == null)
                 throw new ValidationException("invalid.department.code", "Invalid Department Code");
             else {
@@ -609,6 +566,7 @@ public class CommonAssetsService {
             }
         }
         if (!StringUtils.isEmpty((String) parameters.get(ASSET_WARD_NAME))) {
+            // TODO - Fixme: Try to get this API from BoundaryService
             final Boundary boundary = (Boundary) genericService.find(
                     " from Boundary where upper(name)=? and boundaryType=(select id from BoundaryType where upper(name)=? and heirarchyType=(select id from HierarchyType where upper(name)=?))",
                     ((String) parameters.get(ASSET_WARD_NAME)).toUpperCase(), "WARD", "ADMINISTRATION");
@@ -630,9 +588,7 @@ public class CommonAssetsService {
             sql.append(" and asset.status.id in (?").append(counter).append(")");
             final ArrayList<Integer> statuses = new ArrayList<Integer>();
             for (final String statusDesc : (String[]) parameters.get(ASSET_STATUS_LIST)) {
-                final EgwStatus status = (EgwStatus) genericService.find(
-                        " from EgwStatus where upper(moduletype)='ASSET' and upper(description)=?",
-                        statusDesc.toUpperCase());
+                final EgwStatus status = egwStatusHibernateDAO.getStatusByModuleAndCode("ASSET", statusDesc);
                 if (status == null)
                     throw new ValidationException("invalid.status.description", "Invalid Status Description");
                 statuses.add(status.getId());
@@ -810,6 +766,7 @@ public class CommonAssetsService {
      * @return
      */
     @SuppressWarnings("unchecked")
+    // TODO - Fixme: Try to get this API from Status DAO
     public List<EgwStatus> getStatusListByDescs(final String[] statusDesc) {
         List<EgwStatus> lStatusList = null;
         final List<String> descriptions = Arrays.asList(statusDesc);

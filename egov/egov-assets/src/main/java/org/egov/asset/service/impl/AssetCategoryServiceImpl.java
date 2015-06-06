@@ -86,7 +86,28 @@ public class AssetCategoryServiceImpl extends BaseServiceImpl<AssetCategory, Lon
 
     @Override
     public List<AssetCategory> getAllAssetCategoryByAssetType(final String assetType) {
-        return findAllBy(" from AssetCategory where assetType = ?", AssetType.valueOf(assetType));
+        return findAllBy(" from AssetCategory where assetType = ? order by name asc", AssetType.valueOf(assetType));
+    }
+
+    @Override
+    public List<AssetCategory> getAllParentAssetCategory() {
+        return findAllBy(" from AssetCategory where parent is null order by name asc");
+    }
+
+    @Override
+    public List<AssetCategory> getAllParentAssetCategoryByAssetType(final String assetType) {
+        return findAllBy(" from AssetCategory where parent is null and assetType = ? order by name asc",
+                AssetType.valueOf(assetType));
+    }
+
+    @Override
+    public List<AssetCategory> getAllAssetCategoryByParent(final Long parentId) {
+        return findAllBy(" from AssetCategory where parent.id=? order by name asc", parentId);
+    }
+
+    @Override
+    public AssetCategory getAssetCategoryByCode(final String code) {
+        return find(" from AssetCategory where code=?", code);
     }
 
     public void setAppService(final AppService appService) {
