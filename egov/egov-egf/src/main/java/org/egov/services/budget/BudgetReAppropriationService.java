@@ -50,11 +50,11 @@ import javax.script.ScriptContext;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -66,6 +66,7 @@ import org.egov.pims.commons.Position;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.egov.web.actions.budget.BudgetReAppropriationView;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class BudgetReAppropriationService extends PersistenceService<BudgetReAppropriation, Long>{
@@ -75,7 +76,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 	BudgetDetailConfig budgetDetailConfig;
 	PersistenceService persistenceService;
 	SequenceGenerator sequenceGenerator;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 	private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationService.class);
 	protected ScriptService sequenceNumberScript;
@@ -83,10 +84,6 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 		return sequenceGenerator;
 	}
 	
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
 	public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
 		this.sequenceGenerator = sequenceGenerator;
 	}
@@ -357,7 +354,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
 	private String getAppConfigFor(String module,String key) {
 		try {
-			List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(module,key);
+			List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key);
 			return list.get(0).getValue().toString();
 		} catch (Exception e) {
 			throw new ValidationException(Arrays.asList(new ValidationError(key+" not defined in appconfig",key+" not defined in appconfig")));

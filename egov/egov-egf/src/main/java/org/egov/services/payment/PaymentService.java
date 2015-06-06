@@ -80,7 +80,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -120,7 +120,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         private static final Logger     LOGGER  = Logger.getLogger(PaymentService.class);
         public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
         public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
-        private GenericHibernateDaoFactory genericDao;
+        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
         protected PersistenceService persistenceService;
         public List<CChartOfAccounts> purchaseBillGlcodeList=new ArrayList<CChartOfAccounts>();
         public List<CChartOfAccounts> worksBillGlcodeList=new ArrayList<CChartOfAccounts>();
@@ -158,7 +158,6 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting getAccountBalance...");
                 EgovCommon common = new EgovCommon();
                 common.setPersistenceService(persistenceService);
-                common.setGenericDao(genericDao);
                 common.setFundFlowService(fundFlowService);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getAccountBalance.");
                 return common.getAccountBalance(formatter.parse(voucherDate), Integer.valueOf(accountId),amount,paymentId, accGlcodeID);
@@ -166,7 +165,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public boolean isChequeNoGenerationAuto()
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting isChequeNoGenerationAuto...");
-                List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"Cheque_no_generation_auto");
+                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"Cheque_no_generation_auto");
                 String chequeNoGeneration = appList.get(0).getValue();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed isChequeNoGenerationAuto.");
                 if(chequeNoGeneration.equalsIgnoreCase("Y"))
@@ -177,7 +176,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public boolean isRtgsNoGenerationAuto()
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting isRtgsNoGenerationAuto...");
-                List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"RTGSNO_GENERATION_AUTO");
+                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"RTGSNO_GENERATION_AUTO");
                 String chequeNoGeneration = appList.get(0).getValue();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed isRtgsNoGenerationAuto.");
                 if(chequeNoGeneration.equalsIgnoreCase("Y"))
@@ -761,7 +760,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         pensionBillGlcodeList = populateGlCodeIds(Constants.PENSION_BILL_PURPOSE_IDS);
                         
                         //Contingent Bill
-                        appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,Constants.CONTINGENCY_BILL_PURPOSE_IDS);
+                        appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CONTINGENCY_BILL_PURPOSE_IDS);
                         cBillGlcodeIdList = new ArrayList<BigDecimal>();
                         if(appList != null && appList.size() > 0 ) {
                                 Integer iPurposeIds [] = new Integer[appList.size()]; 
@@ -788,7 +787,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public String getAppConfValForCJVPaymentModeRTGS()
         {
                 String value = "";
-                List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"CJV_PAYMENT_MODE_AS_RTGS");
+                List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"CJV_PAYMENT_MODE_AS_RTGS");
                 if(appConfig == null || appConfig.isEmpty())
                         throw new EGOVRuntimeException("CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
                 for(AppConfigValues app:appConfig)
@@ -798,7 +797,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public String getAppConfDateValForCJVPaymentModeRTGS()
         {
                 String value = "";
-                List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS");
+                List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS");
                 if(appConfig == null || appConfig.isEmpty())
                         throw new EGOVRuntimeException("DATE_RESTRICTION_FOR_CJV_PAYMENT_MODE_AS_RTGS is not defined in AppConfig");
                 for(AppConfigValues app:appConfig)
@@ -809,7 +808,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         private List<CChartOfAccounts> populateGlCodeIds(String appConfigKey) throws EGOVException {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting populateGlCodeIds...");
                 List<CChartOfAccounts> glCodeList = new ArrayList<CChartOfAccounts>();
-                List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,appConfigKey);
+                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,appConfigKey);
                 String purposeids = appList.get(0).getValue();
                 if(purposeids != null && !purposeids.equals("")){
                         final String purposeIds[] = purposeids.split(",");
@@ -1152,7 +1151,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         public boolean isRestrictPaymentToOnlyRtgsForContractor()
         {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting isRestrictPaymentToOnlyRtgsForContractor...");
-                List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"RESTRICT_PAYEMENT_TOONLY_RTGS_FOR_CONTRACTOR_CODES");
+                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"RESTRICT_PAYEMENT_TOONLY_RTGS_FOR_CONTRACTOR_CODES");
                 String restrictingPayment = appList.get(0).getValue();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed isRestrictPaymentToOnlyRtgsForContractor.");
                 if(restrictingPayment.equalsIgnoreCase("Y"))
@@ -1333,7 +1332,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                                 .append(" and lower(ph.type)=lower('"+parameters.get("paymentMode")[0]+"')");
                         }
                         sql.append(" and vmis.departmentid     =dept.id_dept  ");                 
-                        final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                         final String approvedstatus = appList.get(0).getValue();
                         List<String> descriptionList = new ArrayList<String>();
                         descriptionList.add("New");
@@ -1455,7 +1454,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                                 .append(" and lower(ph.type)=lower('"+parameters.get("paymentMode")[0]+"')");
                         }
                         sql.append(" and vmis.departmentid     =dept.id_dept  ");                 
-                        final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                         final String approvedstatus = appList.get(0).getValue();
                         List<String> descriptionList = new ArrayList<String>();
                         descriptionList.add("New");
@@ -1469,7 +1468,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where id=?",Integer.valueOf(parameters.get("bankaccount")[0]));
                         String payTo = null;
                         try{
-                                List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                                List<AppConfigValues> configValues =appConfigValuesDAO.
                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.EB_VOUCHER_PROPERTY_BANKBRANCH); 
                                 
                                 for (AppConfigValues appConfigVal : configValues) {
@@ -1571,7 +1570,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                                 .append(" and lower(ph.type)=lower('"+parameters.get("paymentMode")[0]+"')");
                         }
                         sql.append(" and vmis.departmentid     =dept.id_dept  ");                 
-                        final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                         final String approvedstatus = appList.get(0).getValue();
                         List<String> descriptionList = new ArrayList<String>();
                         descriptionList.add("New");
@@ -1829,7 +1828,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                         sql.append(" and ph.bankaccountnumberid="+parameters.get("bankaccount")[0]);
                         sql.append(" and lower(ph.type)=lower('"+parameters.get("paymentMode")[0]+"')");
                         
-                        final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                         final String approvedstatus = appList.get(0).getValue();
                         List<String> descriptionList = new ArrayList<String>();
                         descriptionList.add("New");
@@ -2606,7 +2605,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                                 sql.append(" and gl.glcodeid in (select distinct glcodeid from tds where remittance_mode='A')");
                         }
                         sql.append(" and vmis.departmentid     =dept.id_dept  ");                 
-                        final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                         final String approvedstatus = appList.get(0).getValue();
                         List<String> descriptionList = new ArrayList<String>();
                         descriptionList.add("New");
@@ -2863,9 +2862,6 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         }
         public void setPersistenceService(PersistenceService persistenceService) {
                 this.persistenceService = persistenceService;
-        }
-        public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
         }
         public VoucherService getVoucherService() {
                 return voucherService;

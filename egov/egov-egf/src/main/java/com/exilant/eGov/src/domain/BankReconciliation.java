@@ -54,11 +54,12 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -88,7 +89,7 @@ public class BankReconciliation {
 	private SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
 	private SimpleDateFormat sdf1 =new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS",Locale.getDefault());
-	public GenericHibernateDaoFactory genericDao;
+	public @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	
 	 
 	private TaskFailedException taskExc;
@@ -521,7 +522,7 @@ public class BankReconciliation {
  * @return
  */
 private String getExcludeStatuses() {
-	final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport");
+	final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 	final String statusExclude = appList.get(0).getValue();
 	return statusExclude;
 	

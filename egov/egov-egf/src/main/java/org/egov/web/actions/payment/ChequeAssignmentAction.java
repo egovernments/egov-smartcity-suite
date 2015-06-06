@@ -79,12 +79,12 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -106,6 +106,7 @@ import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -139,7 +140,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 	List<InstrumentVoucher> instVoucherList;
 	List<InstrumentHeader> instVoucherDisplayList;
 	private static final Logger LOGGER = Logger.getLogger(ChequeAssignmentAction.class);
-	private GenericHibernateDaoFactory genericDao;
+	@Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;  
 	private static final String JASPER_PATH="/org/egov/payment/client/bankAdviceReport.jasper";
 	InputStream inputStream;
 	ReportHelper reportHelper;
@@ -315,7 +317,7 @@ private void setTNEBMandatoryFields(){
 		for(String key:propartyAppConfigKeysList){
 			String value = null;
 		try{
-			List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+			List<AppConfigValues> configValues =appConfigValuesDAO.
 					getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,key); 
 			
 			for (AppConfigValues appConfigVal : configValues) {
@@ -561,7 +563,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		rtgsChequeAssignmentList.addAll(dbpRtgsAssignmentList);
 		if(!paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE))
 		{
-			List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
+			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
 			inFavourOf = appList.get(0).getValue();
 		}
 		chequeDt = new Date();
@@ -684,7 +686,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		if(!paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE))
 		{
 			chequeDt = new Date();
-			List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
+			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
 			inFavourOf = appList.get(0).getValue();
 		}
 		loadBankAndAccount();
@@ -1432,7 +1434,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 
 		List<AppConfigValues> appConfigValuesList;
 		surrendarReasonMap=new LinkedHashMap<String, String>();
-		appConfigValuesList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
+		appConfigValuesList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
 		for(AppConfigValues app:appConfigValuesList)
 		{
 			String value = app.getValue();
@@ -2006,9 +2008,6 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 
 	public void setInFavourOf(String inFavourOf) {
 		this.inFavourOf = inFavourOf;
-	}
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 	public InputStream getInputStream() {
 		return inputStream;

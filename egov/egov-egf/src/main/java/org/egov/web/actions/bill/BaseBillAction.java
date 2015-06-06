@@ -47,7 +47,6 @@ import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -57,12 +56,12 @@ import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -104,7 +103,8 @@ public class BaseBillAction extends BaseVoucherAction {
         protected PersistenceService<EgBillregister, Long> billRegisterService;
         protected PersistenceService<Cbill, Long> cbillService;
         protected EgovCommon egovCommon;
-        protected GenericHibernateDaoFactory genericDao;
+        @Autowired
+        protected AppConfigValuesDAO appConfigValuesDAO;
         protected CChartOfAccounts      defaultNetPayCode;
         protected Long billRegisterId;
         protected static final String   FALSE   = "false";
@@ -144,7 +144,7 @@ public class BaseBillAction extends BaseVoucherAction {
         
         public boolean isBillNumberGenerationAuto()
         {
-                List<AppConfigValues> configValuesByModuleAndKey = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","Bill_Number_Geneartion_Auto");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","Bill_Number_Geneartion_Auto");
                 billNumberGenerationAuto=false;
                 if(configValuesByModuleAndKey.size()>0)
                 {
@@ -210,13 +210,7 @@ public class BaseBillAction extends BaseVoucherAction {
         public void setEgovCommon(EgovCommon egovCommon) {
                 this.egovCommon = egovCommon;
         }
-        public GenericHibernateDaoFactory getGenericDao() {
-                return genericDao;
-        }
         
-        public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
-        }
         public List<CChartOfAccounts> getNetPayList() {
                 return netPayList;
         }

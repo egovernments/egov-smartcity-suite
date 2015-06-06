@@ -66,10 +66,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -78,8 +78,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
@@ -123,7 +122,8 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
         private static final String JOURNAL_VOUCHER = "Journal Voucher";
         private EisCommonService eisCommonService; 
         private boolean isRestrictedtoOneFunctionCenter;
-        private GenericHibernateDaoFactory genericDao;
+        @Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;
         private CVoucherHeader paymentVoucher ;
         private static final String     APPROVE = "approve";
         private final SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
@@ -392,7 +392,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
         private String createReversalVoucher() throws ParseException{
                 
                 String appConfigKey = "GJV_FOR_RCPT_CHQ_DISHON";
-                AppConfigValues appConfigValues = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
+                AppConfigValues appConfigValues = appConfigValuesDAO.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
                 String gjvForRcpt=appConfigValues.getValue();
                 CVoucherHeader voucherHeader=null;  
                 //DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
@@ -892,13 +892,6 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
                 this.paymentVoucher = paymentVoucher;
         }
 
-        public GenericHibernateDaoFactory getGenericDao() {
-                return genericDao;
-        }
-
-        public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
-        }
         public CVoucherHeader getBankChargesReversalVoucher() {
                 return bankChargesReversalVoucher;
         }

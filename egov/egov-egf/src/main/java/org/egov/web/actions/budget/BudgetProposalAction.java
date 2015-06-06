@@ -64,19 +64,19 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -97,6 +97,7 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 /*@Results(value={
 		@Result(name="PDF",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.pdf"}),
@@ -148,7 +149,7 @@ public class BudgetProposalAction extends BaseFormAction {
 	private static final String SUCCESSFUL ="successful";
 	private Date asOndate;
 	private Date headerAsOnDate;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private InputStream inputStream;
 	private ReportHelper reportHelper;
 	private Long docNo;              
@@ -321,7 +322,7 @@ public class BudgetProposalAction extends BaseFormAction {
 		{
     		deptMap.put(d.getId().intValue(),d);
 		}
-    	excludelist=genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+    	excludelist=appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
     	if(excludelist.isEmpty())
 			throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
     	if(LOGGER.isInfoEnabled())     LOGGER.info("Finished loadToMasterDataMap...... ");
@@ -959,7 +960,7 @@ int i=0;
     }
     
 	private String getAppConfigValueByKey(String key){
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF",key);
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",key);
 		String appValue = "-1";
 		if(appList.isEmpty())
 			appValue = " ";
@@ -1636,12 +1637,6 @@ int i=0;
 	public void setBpBeanList(List<BudgetProposalBean> bpBeanList) {
 		this.bpBeanList = bpBeanList;
 	}
-
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
 
 	public Date getAsOndate() {
 		return asOndate;

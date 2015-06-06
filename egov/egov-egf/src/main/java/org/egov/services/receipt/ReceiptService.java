@@ -47,20 +47,21 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	protected EisCommonService eisCommonService;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private EisUtilService eisService;
 	private  PersistenceService persistenceService;
 	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
@@ -70,19 +71,16 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
 	}
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao; 
-	}
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
 	public void createVoucherfromPreApprovedVoucher(ReceiptVoucher rv){
-		final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
 		final String approvedVoucherStatus = appList.get(0).getValue();
 		rv.getVoucherHeader().setStatus(Integer.valueOf(approvedVoucherStatus));
 	}
 	public void cancelVoucher(ReceiptVoucher rv){
-		final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","cancelledstatus");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","cancelledstatus");
 		final String approvedVoucherStatus = appList.get(0).getValue();
 		rv.getVoucherHeader().setStatus(Integer.valueOf(approvedVoucherStatus));
 	}

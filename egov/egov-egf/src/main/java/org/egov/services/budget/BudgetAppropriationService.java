@@ -54,21 +54,23 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.BudgetReportEntry;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class BudgetAppropriationService extends PersistenceService{
 	private FinancialYearDAO financialYearDAO;
 	private BudgetDetailsDAO budgetDetailsDAO;
-	private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
+	@Autowired
+	private AppConfigValuesDAO appConfigValuesHibernateDAO;
 	//private GenericDaoFactory genericDao;
 	
 	public void setBudgetDetailsDAO(BudgetDetailsDAO budgetDetailsDAO) {
@@ -300,16 +302,6 @@ public class BudgetAppropriationService extends PersistenceService{
 		}
 		return soFarAppropriated;
 	}
-
-	public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
-		return appConfigValuesHibernateDAO;
-	}
-
-	public void setAppConfigValuesHibernateDAO(
-			AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
-		this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
-	}
-
 
 }
 

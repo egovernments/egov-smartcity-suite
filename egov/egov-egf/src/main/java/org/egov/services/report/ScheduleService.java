@@ -53,7 +53,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -64,11 +64,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ScheduleService extends PersistenceService{
 	private static final Logger	LOGGER	= Logger.getLogger(ScheduleService.class);
 	static final BigDecimal NEGATIVE = new BigDecimal("-1");
-	GenericHibernateDaoFactory genericDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	int minorCodeLength;
 	int majorCodeLength;
 	int detailCodeLength;
@@ -143,7 +144,7 @@ public abstract class ScheduleService extends PersistenceService{
 	}
 	
 	public String getAppConfigValueFor(String module,String key){
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 	}
 	
 	public String getFormattedDate(Date date){
@@ -295,9 +296,6 @@ public abstract class ScheduleService extends PersistenceService{
 	}
 	
 
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
 }
 
 class ChartOfAccount{

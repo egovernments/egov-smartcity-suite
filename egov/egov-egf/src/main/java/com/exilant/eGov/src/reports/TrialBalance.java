@@ -43,7 +43,6 @@
  */
 package com.exilant.eGov.src.reports;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -59,11 +58,12 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -99,6 +99,9 @@ public class TrialBalance
 	private BigDecimal totalOpeningBalance=BigDecimal.ZERO;
 	private BigDecimal totalDebitAmount=BigDecimal.ZERO;
 	private BigDecimal totalCreditAmount=BigDecimal.ZERO;
+	
+	@Autowired
+	    private AppConfigValuesDAO appConfigValuesDAO;
 	
 	//	This method is called by the TrialBalance.jsp
 	public ArrayList getTBReport(String asOnDate,String fId,String departmentId,String functionaryId,String functionCodeId,String fieldId)throws Exception
@@ -183,7 +186,7 @@ public String getDateTime() throws Exception
 			tsFieldIdCond=" and divisionId= ?";
 		}
 		String defaultStatusExclude=null;
-		List<AppConfigValues> listAppConfVal=new AppConfigValuesHibernateDAO(AppConfigValues.class,HibernateUtil.getCurrentSession()).
+		List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
 		getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		if(null!= listAppConfVal)
 		{
@@ -846,7 +849,7 @@ public String getDateTime() throws Exception
     			tsFieldIdCond=" and divisionId= ?";
     		}
     		String defaultStatusExclude=null;
-			List<AppConfigValues> listAppConfVal=new AppConfigValuesHibernateDAO(AppConfigValues.class,HibernateUtil.getCurrentSession()).
+			List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
 			getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 			if(null!= listAppConfVal)
 			{

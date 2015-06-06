@@ -71,13 +71,13 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -97,6 +97,7 @@ import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.hibernate.HibernateException;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -139,7 +140,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private String mode;
 	private VoucherService voucherService;
 	private VoucherTypeBean voucherTypeBean;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private Long vhId;
 	private String departmentName;
 	private Long departmentId;
@@ -182,7 +183,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 				.findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=1 order by coa.glcode ");
 		addDropdownData("interFundList", glCodeList);
 		LoadAjaxedDropDowns();
-		List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"BANKBALANCE_CHECK_DATE");
+		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"BANKBALANCE_CHECK_DATE");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","BANKBALANCE_CHECK_DATE is not defined in AppConfig");
 		startDateForBalanceCheckStr = appConfig.get(0).getValue();
@@ -596,10 +597,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	/**
 	 * @return the genericDao
 	 */
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
+	
 	public String getMode() {
 		return mode;
 	}
@@ -730,14 +728,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 			return true;
 		else
 			return false;
-	}
-
-	/**
-	 * @param genericDao
-	 *            the genericDao to set
-	 */
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	public void setInstrumentService(final InstrumentService instrumentService) {
@@ -1668,7 +1658,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private void loadBankBalances() {
 		final EgovCommon common = new EgovCommon();
 		common.setPersistenceService(persistenceService);
-		common.setGenericDao(genericDao);
 		common.setFundFlowService(fundFlowService);
 		if (contraVoucher != null
 				&& contraVoucher.getFromBankAccountId() != null) {

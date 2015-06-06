@@ -67,7 +67,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.domain.transaction.entity.EbSchedulerLog;
@@ -78,6 +77,7 @@ import org.egov.eb.utils.EBConstants;
 import org.egov.eb.utils.EBUtils;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -86,8 +86,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
@@ -153,7 +152,8 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
         private Accountdetailtype accDetailType; 
         private CChartOfAccounts coaDebit;
         private SequenceGenerator sequenceGenerator;
-        private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
+        @Autowired
+        private AppConfigValuesDAO appConfigValuesHibernateDAO;
         private EBBillInfoService billInfoService;
         private BudgetDetailsHibernateDAO budgetDetailsDAO;
         private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -1034,13 +1034,4 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 this.ebSchedulerLogService = ebSchedulerLogService;
         }
 
-        public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
-                return appConfigValuesHibernateDAO;
-        }
-
-        public void setAppConfigValuesHibernateDAO(
-                        AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
-                this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
-        }
-        
 }

@@ -67,21 +67,22 @@ import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
 import org.egov.exceptions.EGOVException;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.Page;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -101,7 +102,8 @@ public class VoucherSearchAction extends BaseFormAction
 	public  Map<String,String> nameList=new LinkedHashMap<String, String>();
 	public final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
-	public GenericHibernateDaoFactory genericDao;
+	@Autowired
+        protected AppConfigValuesDAO appConfigValuesDAO;
 	private final List<String> headerFields = new ArrayList<String>();
 	private final List<String> mandatoryFields = new ArrayList<String>();
 	public Date fromDate=new Date();
@@ -509,10 +511,6 @@ public class VoucherSearchAction extends BaseFormAction
 
 	public void setShowMode(String showMode) {
 		this.showMode = showMode;
-	}
-
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	public Integer getPage() {

@@ -47,25 +47,26 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.report.DepartmentwiseExpenditureReport;
 import org.egov.web.actions.report.DepartmentwiseExpenditureResult;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DEReportService {
 
 	final static Logger LOGGER = Logger.getLogger(DEReportService.class);
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private FinancialYearHibernateDAO financialYearDAO;
 	private PersistenceService persistenceService;
 	   
@@ -437,20 +438,12 @@ public class DEReportService {
 		return Constants.DDMMYYYYFORMAT1.format(date);
 	}
 
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
 	public FinancialYearHibernateDAO getFinancialYearDAO() {
 		return financialYearDAO;
 	}
 
 	public PersistenceService getPersistenceService() {
 		return persistenceService;
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	public void setFinancialYearDAO(FinancialYearHibernateDAO financialYearDAO) {

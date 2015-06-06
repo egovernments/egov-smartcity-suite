@@ -107,7 +107,7 @@ public class ApprovePreapprovedVouchers extends VoucherSearchAction {
 			sql = sql + " and vh.vouchermis.divisionid=" + voucherHeader.getVouchermis().getDivisionid().getId();
 		}
 		
-		final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
 		final String statusInclude = appList.get(0).getValue();
 		
 		final List<CVoucherHeader> list = persistenceService.findAllBy(" from CVoucherHeader vh where vh.status  in (" + statusInclude + ") and vh.moduleId is not null " + sql

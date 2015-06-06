@@ -62,26 +62,26 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -131,7 +131,7 @@ public class BudgetSearchAction extends BaseFormAction{
 	protected String nextfinYearRange = "";
 	private String previousfinYearRange = "";
 	private String twopreviousfinYearRange = "";
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private boolean shouldShowREAppropriations=true;
 	List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
 	public String getMessage(){
@@ -143,7 +143,7 @@ public class BudgetSearchAction extends BaseFormAction{
 	}
 	
 	public List<AppConfigValues> getExcludeStatusForBudget(){
-		excludeList=genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+		excludeList=appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
 		 return excludeList;
 	}
 	public boolean isErrorMessage() {
@@ -591,14 +591,12 @@ public class BudgetSearchAction extends BaseFormAction{
 		return previousfinYearRange;
 	}
 	private boolean getConsiderReAppropriationAsSeperate(){
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
 		String appValue = "-1"; 
 		appValue = appList.get(0).getValue();
 		return "Y".equalsIgnoreCase(appValue);
 	}
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
+	
 	public boolean getShouldShowREAppropriations() {
 		return shouldShowREAppropriations;
 	}

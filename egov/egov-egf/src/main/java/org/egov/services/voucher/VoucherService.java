@@ -89,7 +89,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.models.Script;
@@ -128,7 +128,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         protected PersistenceService persistenceService;
         protected EisCommonService eisCommonService;
         private BudgetDetailsDAO budgetDetailsDAO;
-        private GenericHibernateDaoFactory genericDao;
+        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
         private VoucherHibernateDAO voucherHibDAO;
         @Autowired
         private ChartOfAccountsDAO coaDAO;
@@ -289,7 +289,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         
                 }
         public void createVoucherfromPreApprovedVoucher(CVoucherHeader vh){
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                 final String approvedVoucherStatus = appList.get(0).getValue();
                 vh.setStatus(Integer.valueOf(approvedVoucherStatus));
         }
@@ -1245,9 +1245,6 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         }
         public void setPersistenceService(PersistenceService persistenceService) {
                 this.persistenceService = persistenceService;
-        }
-        public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao; 
         }
         public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
         {

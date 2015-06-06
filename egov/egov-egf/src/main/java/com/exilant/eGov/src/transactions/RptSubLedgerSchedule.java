@@ -57,11 +57,10 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -91,6 +90,9 @@ public class RptSubLedgerSchedule
     private boolean isStartDateFirstApril = false;
     @Autowired
     private FinancialYearDAO financialYearDao;
+    @Autowired
+    private AppConfigValuesDAO appConfigValuesDAO;
+    
     Query pst;
         public RptSubLedgerSchedule(){} 
         
@@ -167,7 +169,7 @@ public class RptSubLedgerSchedule
                         departmentFromCondition = ",vouchermis vmis";
                         departmentWhereCondition = "AND vh.id = vmis.voucherheaderid and vmis.departmentid=? ";
                 }
-                List<AppConfigValues> listAppConfVal=new AppConfigValuesHibernateDAO(AppConfigValues.class,HibernateUtil.getCurrentSession()).
+                List<AppConfigValues> listAppConfVal= appConfigValuesDAO.
                 getConfigValuesByModuleAndKey("finance","statusexcludeReport");
                 if(null!= listAppConfVal)
                 {

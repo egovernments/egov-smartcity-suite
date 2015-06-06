@@ -111,7 +111,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -164,7 +164,7 @@ public class CreateVoucher {
         private static final String REVERSAL_VOUCHER_DATE = "Reversal voucher date";
         private static final String VOUCHER_HEADER_ID = "Original voucher header id";
         @Autowired
-        private GenericHibernateDaoFactory    genericDao;
+        private AppConfigValuesDAO    appConfigValuesDAO;
         final private static Logger LOGGER=Logger.getLogger(CreateVoucher.class);
         //Expenditure Types
         private final static String CONBILL="Works";
@@ -269,8 +269,6 @@ public class CreateVoucher {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Initializing CreateVoucher Service");
                 try
                 {
-                        if(LOGGER.isDebugEnabled())     LOGGER.debug("calling setGenericHibDao"+genericDao);
-                        if(LOGGER.isDebugEnabled())     LOGGER.debug("calling setGenericHibDao");
 
                         generalLedgerService=new PersistenceService<CGeneralLedger, Long>();
                         generalLedgerService.setType(CGeneralLedger.class);
@@ -448,7 +446,7 @@ public class CreateVoucher {
                                   * If NO, set the value as system date
                                   **/
                                 try{
-                                List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                                List<AppConfigValues> configValues =appConfigValuesDAO.
                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"VOUCHERDATE_FROM_UI"); 
                                 
                                 for (AppConfigValues appConfigVal : configValues) {
@@ -472,7 +470,7 @@ public class CreateVoucher {
                                 else{
                                         
                                         try{
-                                                List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                                                List<AppConfigValues> configValues =appConfigValuesDAO.
                                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"USE BILLDATE IN CREATE VOUCHER FROM BILL"); 
                                                 
                                                 for (AppConfigValues appConfigVal : configValues) {

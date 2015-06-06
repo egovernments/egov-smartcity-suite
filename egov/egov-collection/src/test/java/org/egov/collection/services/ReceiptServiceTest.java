@@ -8,7 +8,7 @@ public class ReceiptServiceTest { /*extends AbstractPersistenceServiceTest<Recei
 	private CollectionObjectFactory objectFactory;
 	private CollectionsUtil collectionsUtil;
 	private EisUtilService eisUtilService;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private Department department;
 	
 	@Before

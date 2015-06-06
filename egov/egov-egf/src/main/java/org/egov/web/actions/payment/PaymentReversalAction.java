@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +46,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.exceptions.EGOVException;
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -59,14 +57,16 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.commons.VoucherSearchUtil;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.model.payment.Paymentheader;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class PaymentReversalAction extends BaseVoucherAction{
@@ -80,12 +80,12 @@ public class PaymentReversalAction extends BaseVoucherAction{
 	Bankaccount bankAccount;
 	private List<Paymentheader> paymentHeaderList = new ArrayList<Paymentheader>();
 	private Paymentheader paymentHeader = new Paymentheader();
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 
 	@Override
 	public void prepare() {
 		super.prepare();
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport");
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		String statusExclude = appList.get(0).getValue();
 		if("".equalsIgnoreCase(statusExclude) || statusExclude == null)
 			throw new ValidationException(Arrays.asList(new ValidationError("voucher.excludestatus.not.set", "voucher.excludestatus.not.set")));
@@ -201,10 +201,6 @@ public class PaymentReversalAction extends BaseVoucherAction{
 
 	public Paymentheader getPaymentHeader() {
 		return paymentHeader;
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	@Override

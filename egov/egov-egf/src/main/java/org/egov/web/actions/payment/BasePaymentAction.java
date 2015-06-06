@@ -47,11 +47,12 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
@@ -95,7 +96,9 @@ public class BasePaymentAction extends BaseVoucherAction {
 	public void setCanCheckBalance(boolean canCheckBalance) {
 		this.canCheckBalance = canCheckBalance;
 	}
-	protected GenericHibernateDaoFactory genericDao;
+	@Autowired
+	protected AppConfigValuesDAO appConfigValuesDAO;
+	
 	protected String showMode;
 @Action(value="/payment/basePayment-viewInboxItems")
 	public String viewInboxItems() {
@@ -151,14 +154,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 	public void setAction(String action) {
 		this.action = action;
 	}
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
+	
 	public String getPaymentid() {
 		return paymentid;
 	}

@@ -42,13 +42,12 @@ package org.egov.web.actions.masters.loangrant;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class LoanGrantBaseAction extends BaseFormAction {
@@ -59,7 +58,7 @@ public class LoanGrantBaseAction extends BaseFormAction {
 	protected Integer subSchemeId;
 	protected Integer schemeId;
 	protected Integer fundId;
-	protected GenericHibernateDaoFactory genericDao;
+	protected @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private Integer defaultFundId;
 	EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 	@Override
@@ -68,7 +67,7 @@ public class LoanGrantBaseAction extends BaseFormAction {
 	{
 		super.prepare();
 		//if Fundid is present then it is defaulted else it is made mandatory to select
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"loangrant.default.fundid");
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"loangrant.default.fundid");
 		String fundId = appList.get(0).getValue();
 		if(fundId!=null && !fundId.isEmpty())
 		{
@@ -80,9 +79,6 @@ public class LoanGrantBaseAction extends BaseFormAction {
 	public Object getModel() {
 		
 		return null;
-	}
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 	public Integer getDefaultFundId() {
 		return defaultFundId;

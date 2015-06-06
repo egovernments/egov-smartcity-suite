@@ -49,18 +49,19 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.exceptions.EGOVException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 public class VoucherSearchUtil {
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private PersistenceService persistenceService;
 	private static final Logger LOGGER=Logger.getLogger(VoucherSearchUtil.class);
 	private FinancialYearDAO financialYearDAO;
@@ -174,10 +175,6 @@ public class VoucherSearchUtil {
 		return voucherList;
 	}
 
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
@@ -253,8 +250,7 @@ public class VoucherSearchUtil {
 		}
 		String sql1 = sql
 		+ " and  (vh.id  in (select voucherHeader.id from EgBillregistermis) and vh.id not in (select billVoucherHeader.id from Miscbilldetail where billVoucherHeader is not null and  payVoucherHeader  in (select id from CVoucherHeader where status not in (4,1) and type='Payment')) )";
-		final List<AppConfigValues> appList = genericDao
-		.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
 				"finance", "statusexcludeReport");
 		String statusExclude = appList.get(0).getValue();
 		statusExclude = statusExclude + ","
@@ -334,7 +330,7 @@ public class VoucherSearchUtil {
 		return sql;
 	}
 	public String excludeVoucherStatus(){
-		final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(	"finance", "statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(	"finance", "statusexcludeReport");
 		return appList.get(0).getValue();
 	}
 

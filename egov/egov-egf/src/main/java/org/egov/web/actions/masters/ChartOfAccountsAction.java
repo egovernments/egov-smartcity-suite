@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +48,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -58,12 +57,13 @@ import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -84,7 +84,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 	boolean budgetCheckRequired = false;
 	Long coaId;
 	Long parentId;
-	GenericHibernateDaoFactory genericDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	String glCode = "";
 	List<CChartOfAccounts> allChartOfAccounts;
 	int majorCodeLength = 0;
@@ -116,10 +116,6 @@ public class ChartOfAccountsAction extends BaseFormAction{
 
 	public void setGlCode(String glCode) {
 		this.glCode = glCode;
-	}
-
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	public boolean isBudgetCheckRequired() {
@@ -464,7 +460,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 	}
 	
 	String getAppConfigValueFor(String module,String key){
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 	}
 
 	void populateCodeLength() {

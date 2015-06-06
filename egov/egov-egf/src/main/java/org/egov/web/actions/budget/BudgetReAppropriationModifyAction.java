@@ -64,7 +64,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -81,6 +81,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -104,7 +105,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	BudgetService budgetService;
 	String isBeRe = Constants.BE;
 	List<BudgetReAppropriationView> savedBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
-	GenericHibernateDaoFactory genericDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	String message = "";
 	boolean deleted = false;
 	BudgetReAppropriation budgetReAppropriation;
@@ -154,10 +155,6 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 
 	public List<BudgetReAppropriationView> getSavedBudgetReAppropriationList() {
 		return savedBudgetReAppropriationList;
-	}
-	
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 	
 	public String getIsBeRe() {

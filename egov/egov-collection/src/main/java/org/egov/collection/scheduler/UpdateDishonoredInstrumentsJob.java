@@ -62,7 +62,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.config.AppData;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -77,7 +77,7 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 	private static final long serialVersionUID = 1L;
 
 	protected PersistenceService persistenceService;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
 	private ReceiptHeaderService receiptHeaderService;
 
@@ -130,8 +130,7 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 			
 			bouncedToDate = DateUtils.add(bouncedToDate,Calendar.DAY_OF_MONTH , 1);
 			
-			AppData appData = (AppData) genericDao.getAppDataDAO()
-					.getValueByModuleAndKey(
+			AppData appData = (AppData) appConfigValuesDAO.getConfigValuesByModuleAndKey(
 							CollectionConstants.MODULE_NAME_COLLECTIONS,
 							CollectionConstants.BOUNCEDINSTRUPDATE_RECONDATE);
 			bouncedFromDate = sdf.parse(appData.getValue());
@@ -313,11 +312,6 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 		// returns true only if batch update to all systems was successful
 		return flag;
 	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
 
 	public boolean isTestMode() {
 		return testMode;

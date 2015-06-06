@@ -47,13 +47,13 @@ package org.egov.utils;
  *
  */
 public class CheckListHelper {
-	private Integer id;
+	private Long id;
 	private String Name;
 	private  String val;
-    public Integer getId() {
+    public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getName() {

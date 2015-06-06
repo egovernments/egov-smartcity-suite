@@ -39,9 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import static org.egov.collection.constants.CollectionConstants.RCPT_CANCEL;
-import static org.egov.collection.constants.CollectionConstants.RCPT_CREATE;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,6 +76,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -86,7 +84,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.NumberUtil;
@@ -95,6 +93,7 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -131,6 +130,9 @@ public class ChallanAction extends BaseFormAction {
 	private final String VIEW=CollectionConstants.VIEW;
 	private CollectionCommon collectionCommon;
 	private ReceiptHeaderService receiptHeaderService;
+	
+	@Autowired
+	private AppConfigValuesDAO appConfigValuesDAO;
 	
 	//Added for Challan Approval
 	private String challanId;
@@ -1130,12 +1132,12 @@ public class ChallanAction extends BaseFormAction {
 			}
 		}
 		
-		String isBillNoReqd = EGovConfig.getAppConfigValue(
+		String isBillNoReqd = appConfigValuesDAO.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
 				CollectionConstants.APPCONFIG_VALUE_ISBILLNUMREQD,
 				CollectionConstants.NO);
 		
-		String isServiceReqd = EGovConfig.getAppConfigValue(
+		String isServiceReqd = appConfigValuesDAO.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
 				CollectionConstants.APPCONFIG_VALUE_ISSERVICEREQD,
 				CollectionConstants.NO);

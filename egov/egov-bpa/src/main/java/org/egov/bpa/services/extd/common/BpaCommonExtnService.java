@@ -106,7 +106,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.mail.Email;
 import org.egov.infstr.mail.Email.Builder;
@@ -184,7 +184,7 @@ public class BpaCommonExtnService extends ActionSupport  {
   private EisCommonService eisCommonService;
   private PersonalInformationService personalInformationService;
     private List<Bank> listOfBanks = new ArrayList<Bank>();
-    private GenericHibernateDaoFactory genericDao;
+    private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());	
 	SimpleDateFormat sdf1 =new SimpleDateFormat("yyyy-M-d",Locale.getDefault());	
 	private static Configuration config ;	
@@ -241,7 +241,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 	}
 	
 	public List<AppConfigValues> getAppConfigValue(String moduleName,String key){
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(moduleName, key);
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
 	}
 
 	

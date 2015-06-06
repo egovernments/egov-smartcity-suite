@@ -44,10 +44,6 @@
 package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,9 +55,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.chartOfAccounts.CodeValidator;
@@ -88,6 +85,8 @@ public class GeneralLedgerReport {
     EGovernCommon egc=new EGovernCommon();
     CommnFunctions cmnFun=new CommnFunctions();
     
+    @Autowired
+     private AppConfigValuesDAO appConfigValuesDAO;
     
 	public GeneralLedgerReport(){}
 /**
@@ -967,7 +966,7 @@ public class GeneralLedgerReport {
 				functionCondition = " and gl.functionid=? ";
 			String queryTillDateOpBal="";
 			String defaultStatusExclude=null;
-			List<AppConfigValues> listAppConfVal=new AppConfigValuesHibernateDAO(AppConfigValues.class,HibernateUtil.getCurrentSession()).
+			List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
 			getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 			if(null!= listAppConfVal)
 			{

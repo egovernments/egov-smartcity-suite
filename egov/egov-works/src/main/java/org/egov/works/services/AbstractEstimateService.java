@@ -64,7 +64,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;

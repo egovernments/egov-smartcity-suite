@@ -67,7 +67,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -83,6 +83,7 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -116,12 +117,9 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	private String type="";
 	String finalStatus = "";
 	private static final String ACTIONNAME="actionName";
-	GenericHibernateDaoFactory genericDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private String message = "";
 	
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
 	public BudgetReAppropriationMisc getAppropriationMisc() {
 		return appropriationMisc;
 	}
@@ -378,7 +376,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 	
 	protected String getFinalStatus() {
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_final_approval_status").get(0).getValue();
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budget_final_approval_status").get(0).getValue();
 	}
 
 	public String loadActuals(){

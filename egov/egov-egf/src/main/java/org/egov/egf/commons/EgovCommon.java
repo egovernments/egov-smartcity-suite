@@ -54,7 +54,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,12 +69,13 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
@@ -84,12 +84,9 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.model.instrument.InstrumentHeader;
@@ -115,7 +112,7 @@ public class EgovCommon {
 
         private static final Logger LOGGER = Logger.getLogger(EgovCommon.class);
         private PersistenceService persistenceService;
-        private GenericHibernateDaoFactory genericDao;
+        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
         @Autowired
         private ChartOfAccountsDAO chartOfAccountsDAO;
         @Autowired
@@ -133,10 +130,6 @@ public class EgovCommon {
 
         public void setFundFlowService(FundFlowService fundFlowService) {
                 this.fundFlowService = fundFlowService;
-        }
-
-        public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
         }
 
         public FinancialYearHibernateDAO getFinDao() {
@@ -217,8 +210,7 @@ public class EgovCommon {
                                         .findAllBy(opBalncQuery1.toString(), cashInHandCode, fundId);
                         opeAvailable1 = BigDecimal.valueOf((Double) tsummarylist.get(0));
 
-                        final List<AppConfigValues> appList = genericDao
-                                        .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                         "EGF", "cancelledstatus");
                         final String statusExclude = appList.get(0).getValue();
 
@@ -317,8 +309,7 @@ public class EgovCommon {
                         Integer glcodeid = Integer.valueOf(list.get(0).toString());
                         CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
                                         "from CChartOfAccounts where id=?", Long.valueOf(glcodeid));
-                        final List<AppConfigValues> paymentStatusList = genericDao
-                                        .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> paymentStatusList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                         "EGF", "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
                         for (AppConfigValues values : paymentStatusList) {
                                 paymentWFStatus = paymentWFStatus + "'" + values.getValue()
@@ -328,8 +319,7 @@ public class EgovCommon {
                                 paymentWFStatus = paymentWFStatus.substring(0, paymentWFStatus
                                                 .length() - 1);
 
-                        final List<AppConfigValues> preAppList = genericDao
-                                        .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> preAppList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                         "EGF", "PREAPPROVEDVOUCHERSTATUS");
                         final String preApprovedStatus = preAppList.get(0).getValue();
 
@@ -512,7 +502,7 @@ public class EgovCommon {
                 BigDecimal opeAvailable = BigDecimal.ZERO;
                 BigDecimal bankBalance = BigDecimal.ZERO;
 
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF",
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",
                                                 "Balance Check Based on Fund Flow Report");
                 final String balanceChequeBasedOnFundFlowReport = appList.get(0).getValue();
 
@@ -649,8 +639,7 @@ public class EgovCommon {
                                                         bankId);
                         Integer glcodeid = Integer.valueOf(list.get(0).toString());
 
-                        final List<AppConfigValues> appList = genericDao
-                                        .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                         "finance", "statusexcludeReport");
                         final String statusExclude = appList.get(0).getValue();
 
@@ -689,8 +678,7 @@ public class EgovCommon {
                                                                 " from org.egov.infra.workflow.entity.State where id in (select state.id from Paymentheader where id=?) ",
                                                                 paymentId);
                                 String paymentWFStatus = "";
-                                final List<AppConfigValues> paymentStatusList = genericDao
-                                                .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                                final List<AppConfigValues> paymentStatusList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                                 "EGF",
                                                                 "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
                                 for (AppConfigValues values : paymentStatusList) {
@@ -703,8 +691,7 @@ public class EgovCommon {
                                         paymentWFStatus = paymentWFStatus.substring(0,
                                                         paymentWFStatus.length() - 1);
 
-                                final List<AppConfigValues> preAppList = genericDao
-                                                .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                                final List<AppConfigValues> preAppList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                                 "EGF", "PREAPPROVEDVOUCHERSTATUS");
                                 final String preApprovedStatus = preAppList.get(0).getValue();
 
@@ -806,7 +793,7 @@ public class EgovCommon {
                 Long cashInHandId = null;
                 // String
                 // boundaryTypeval=EGovConfig.getProperty("egf_config.xml","city","","BoundaryType");
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF, "boundaryforaccounts");
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF, "boundaryforaccounts");
                 final String boundaryTypeval = appList.get(0).getValue();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Boundary Type Level  = " + boundaryTypeval);
                 if (null == boundaryTypeval || boundaryTypeval.trim().equals(""))
@@ -875,7 +862,7 @@ public class EgovCommon {
         }
 
         public boolean isShowChequeNumber() {
-                String value = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,Constants.CHEQUE_NO_GENERATION_APPCONFIG_KEY).get(0)
+                String value = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CHEQUE_NO_GENERATION_APPCONFIG_KEY).get(0)
                                 .getValue();
                 if ("Y".equalsIgnoreCase(value))
                         return false;
@@ -1166,7 +1153,7 @@ public class EgovCommon {
                 }
 
 
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {
                         glCodeBalQry
@@ -1257,7 +1244,7 @@ public class EgovCommon {
                 }
 
 
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {
                         glCodeBalQry
@@ -1853,8 +1840,7 @@ public class EgovCommon {
                 BigDecimal subledgerDbtBalance = BigDecimal.ZERO;
                 BigDecimal subledgerCrdBalance = BigDecimal.ZERO;
 
-                final List<AppConfigValues> appList = genericDao
-                                .getAppConfigValuesDAO().getConfigValuesByModuleAndKey(
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
                                                 "finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {

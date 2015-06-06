@@ -48,28 +48,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.CityWebsite;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.services.report.FunctionwiseIEService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value={
 		@Result(name="functionwiseIE-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf","contentDisposition","no-cache;filename=FunctionwiseIE.pdf"}),
@@ -87,7 +87,7 @@ public class FunctionwiseIEAction extends ReportAction
 	private final FunctionwiseIE functionwiseIE = new FunctionwiseIE();
 	private CityWebsiteService cityWebsiteDAO;
 	private CityWebsite cityWebsite;
-	private GenericHibernateDaoFactory genericDao;	
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;	
 	private FinancialYearDAO financialYearDAO;
 	private String heading="";
 	private Date todayDate;
@@ -99,13 +99,6 @@ public class FunctionwiseIEAction extends ReportAction
 		this.financialYearDAO = financialYearDAO;
 	}
 
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao; 
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
 	private EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 	private static final Logger LOGGER = Logger.getLogger(FunctionwiseIEAction.class);
 	private List<CommonReportBean> ieWithBudgetList;
@@ -305,10 +298,10 @@ public class FunctionwiseIEAction extends ReportAction
 	}
 
 	private void setDatasForBudgetWise() {
-		Integer majorCodeLen = Integer.valueOf(genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey
+		Integer majorCodeLen = Integer.valueOf(appConfigValuesDAO.getConfigValuesByModuleAndKey
 				(Constants.EGF,FinancialConstants.APPCONFIG_COA_MAJORCODE_LENGTH).get(0).getValue());
 		reportSearch.setMajorCodeLen(majorCodeLen);
-		Integer minorCodeLen = Integer.valueOf(genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey
+		Integer minorCodeLen = Integer.valueOf(appConfigValuesDAO.getConfigValuesByModuleAndKey
 				(Constants.EGF,FinancialConstants.APPCONFIG_COA_MINORCODE_LENGTH).get(0).getValue());
 		
 		reportSearch.setMinorCodeLen(minorCodeLen);
@@ -392,7 +385,7 @@ public class FunctionwiseIEAction extends ReportAction
 	{
 	 setDatasForBudgetWise();
 	//override minor code length with detail code for detail report
-	Integer minorCodeLen = Integer.valueOf(genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey
+	Integer minorCodeLen = Integer.valueOf(appConfigValuesDAO.getConfigValuesByModuleAndKey
 			(Constants.EGF,FinancialConstants.APPCONFIG_COA_DETAILCODE_LENGTH).get(0).getValue());
 	reportSearch.setMinorCodeLen(minorCodeLen);
 	reportSearch.setByDepartment(true);
@@ -419,7 +412,7 @@ public class FunctionwiseIEAction extends ReportAction
 
 	public String search() throws Exception
 	{
-		Integer majorCodeLen = Integer.valueOf(genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey
+		Integer majorCodeLen = Integer.valueOf(appConfigValuesDAO.getConfigValuesByModuleAndKey
 				(Constants.EGF,FinancialConstants.APPCONFIG_COA_MAJORCODE_LENGTH).get(0).getValue());
 		reportSearch.setMajorCodeLen(majorCodeLen);
 		populateDataSource(reportSearch);

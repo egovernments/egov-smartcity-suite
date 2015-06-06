@@ -58,6 +58,7 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -65,8 +66,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -92,7 +92,7 @@ public class CollectionsUtil {
 	@Autowired
 	private ModuleService moduleService;
 	@Autowired
-	private AppConfigValuesHibernateDAO appConfigValuesDAO;
+	private AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
 	private EisCommonService eisCommonService;
 	private EISServeable eisService;

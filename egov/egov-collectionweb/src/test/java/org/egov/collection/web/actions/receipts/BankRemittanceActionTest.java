@@ -52,7 +52,7 @@ private FinancialsUtil financialsUtil;
 private CollectionsUtil collectionsUtil; 
 private UserManager userManager;
 private EisManager eisManager;
-private GenericHibernateDaoFactory genericDao;
+private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	
 	public BankRemittanceActionTest() {
 		this.type = ReceiptHeader.class;

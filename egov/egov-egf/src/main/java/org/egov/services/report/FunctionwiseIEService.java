@@ -51,24 +51,27 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.report.CommonReportBean;
 import org.egov.web.actions.report.FunctionwiseIE;
 import org.egov.web.actions.report.FunctionwiseIEEntry;
 import org.egov.web.actions.report.ReportSearch;
-import org.hibernate.type.*;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class FunctionwiseIEService  
 {
 	private int codeLength;
-	private GenericHibernateDaoFactory genericDao;	
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;	
 	private ReportSearch reportSearch;
 	protected SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
 	protected SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
@@ -76,14 +79,10 @@ public class FunctionwiseIEService
 	private String capExpCodeCond = "";
 	private String capExpCodesWithQuotesCond = "";
 	
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-	
 	public String getFilterQueryVoucher(ReportSearch reportSearch) throws EGOVException,ParseException
 	{
 		
-		String excludeStatus = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
+		String excludeStatus = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
 		String appendQry="";
 		appendQry = " AND vh.voucherdate>=TO_DATE('"+formatter.format(sdf.parse(reportSearch.getStartDate()))+"') ";
 		appendQry = appendQry+" AND vh.voucherdate<=TO_DATE('"+formatter.format(sdf.parse(reportSearch.getEndDate()))+"') ";
@@ -95,7 +94,7 @@ public class FunctionwiseIEService
 	public String getFilterQueryVoucherAsOnDate(ReportSearch reportSearch) throws EGOVException,ParseException
 	{
 		
-		String excludeStatus = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
+		String excludeStatus = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
 		String appendQry="";
 		appendQry = " AND vh.voucherdate>=TO_DATE('"+formatter.format(reportSearch.getYearStartDate())+"') ";
 		appendQry = appendQry+" AND vh.voucherdate<=TO_DATE('"+formatter.format(reportSearch.getAsOnDate())+"') ";
@@ -107,7 +106,7 @@ public class FunctionwiseIEService
 	public String getFilterQueryVoucherAsOnPreviousYearDate(ReportSearch reportSearch) throws EGOVException,ParseException
 	{
 		
-		String excludeStatus = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
+		String excludeStatus = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport").get(0).getValue();
 		String appendQry="";
 		appendQry = " AND vh.voucherdate>=TO_DATE('"+formatter.format(reportSearch.getPreviousYearStartDate())+"') ";
 		
@@ -583,7 +582,7 @@ public class FunctionwiseIEService
 
 	public  List<CommonReportBean> populateDataWithBudget(final FunctionwiseIE functionwiseIE,ReportSearch reportSearch)throws EGOVException,ParseException
 	{
-		String capExpCode = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey
+		String capExpCode = appConfigValuesDAO.getConfigValuesByModuleAndKey
 		(Constants.EGF, FinancialConstants.APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT).get(0).getValue();
 		String[] temp = capExpCode.split(",");
 		//To generate condition for appconfig values.

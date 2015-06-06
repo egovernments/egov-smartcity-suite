@@ -64,6 +64,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -71,9 +72,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -94,9 +93,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long>{
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
-    private GenericHibernateDaoFactory genericDao;
     private ScriptService scriptExecutionService;
-    private AppConfigValuesHibernateDAO appConfigValuesHibernateDAO;
+    private AppConfigValuesDAO appConfigValuesHibernateDAO;
     PersistenceService persistenceService;
     private static final Logger LOGGER=Logger.getLogger(BudgetDetailService.class);
 
@@ -472,7 +470,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
 
     public List<Object[]> fetchActualsForFYDate(String fromDate,String toVoucherDate,List<String> mandatoryFields) {
         if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting fetchActualsForFY"+fromDate );
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
         if(list.isEmpty())
             throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
         StringBuffer miscQuery = getMiscQuery(mandatoryFields,"vmis","gl","vh");
@@ -519,7 +517,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         if(date != null){
             dateCondition = " AND vh.voucherdate <='"+Constants.DDMMYYYYFORMAT1.format(date)+"' ";
         }
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
         if(list.isEmpty())
             throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
         StringBuffer miscQuery = getMiscQuery(mandatoryFields,"vmis","gl","vh");
@@ -602,7 +600,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         if(date != null){
             dateCondition = " AND vh.voucherdate <='"+Constants.DDMMYYYYFORMAT1.format(date)+"' ";
         }
-    //    List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+    //    List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
 
         StringBuffer miscQuery = getMiscQuery(mandatoryFields,"vmis","gl","vh");
         if(dept!=null)
@@ -1104,7 +1102,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
             condition=" SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
         }
         StringBuffer query = new StringBuffer();
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
         if(list.isEmpty())
             throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
         String voucherstatusExclude = ((AppConfigValues)list.get(0)).getValue();
@@ -1231,7 +1229,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
             condition=" SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
         }
         StringBuffer query = new StringBuffer();
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
         if(list.isEmpty())
             throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
         String voucherstatusExclude = ((AppConfigValues)list.get(0)).getValue();
@@ -1345,7 +1343,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
         return result;
     }
     public List<Object[]> fetchActualsForFYWithParams(String fromDate,String toVoucherDate,StringBuffer miscQuery) {
-            List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+            List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
             if(list.isEmpty())
                 throw new ValidationException("","exclude_status_forbudget_actual is not defined in AppConfig");
             StringBuffer budgetGroupQuery = new StringBuffer();
@@ -1456,9 +1454,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
         return miscQuery;
     }
 
-    public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-        this.genericDao = genericDao;
-    }
+   
     public PersonalInformation getEmpForCurrentUser()
     {
         return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
@@ -1483,11 +1479,11 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
         Functionary empfunctionary=empAssignment.getFunctionary();
         Designation designation = empAssignment.getDesignation();
         Boolean consolidateBudget=Boolean.FALSE;
-        List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
+        List<AppConfigValues> list = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
         if(list.isEmpty())
             throw new ValidationException("","budget_toplevel_approver_designation is not defined in AppConfig");
 
-        List<AppConfigValues> list2 = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_secondlevel_approver_designation");
+        List<AppConfigValues> list2 = appConfigValuesHibernateDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budget_secondlevel_approver_designation");
         if(list2.isEmpty())
             throw new ValidationException("","budget_secondlevel_approver_designation is not defined in AppConfig");
 
@@ -1510,14 +1506,5 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
 
         return consolidateBudget;
     }
-
-	public AppConfigValuesHibernateDAO getAppConfigValuesHibernateDAO() {
-		return appConfigValuesHibernateDAO;
-	}
-
-	public void setAppConfigValuesHibernateDAO(
-			AppConfigValuesHibernateDAO appConfigValuesHibernateDAO) {
-		this.appConfigValuesHibernateDAO = appConfigValuesHibernateDAO;
-	}
     
 } 

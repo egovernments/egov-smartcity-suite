@@ -44,7 +44,7 @@ package org.egov.collection.web.actions.receipts;
 public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challan,Long>{
 	private ChallanAction action;
 	private CollectionObjectFactory objectFactory;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private CommonsManager commonsManager;
 	private BoundaryDAO boundaryDAO;
 	

@@ -49,13 +49,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Persistence;
-
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.FundFlowBean;
@@ -64,6 +62,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author mani
@@ -74,14 +73,14 @@ public class FundFlowService extends PersistenceService {
 	private static Logger LOGGER=Logger.getLogger(FundFlowService.class);
 	SimpleDateFormat sqlformat=new SimpleDateFormat("dd-MMM-yyyy");
 	final String START_FINANCIALYEAR_DATE="01-Apr-2012";
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	/**
 	 * All amounts is in lakhs
 	 */
 	
 	public List<FundFlowBean> getOutStandingPayments(Date asPerDate,Long fundId) {
 		String voucherDate=sqlformat.format(asPerDate);
-		List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
+		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 		
@@ -164,7 +163,7 @@ public class FundFlowService extends PersistenceService {
 	
 	public List<FundFlowBean> getConcurrancePayments(Date asPerDate,Long fundId) {
 		String voucherDate=sqlformat.format(asPerDate);
-		List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
+		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
 		String voucherStatus ="";
@@ -344,12 +343,7 @@ public class FundFlowService extends PersistenceService {
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("account containg transactions ------"+tempList.size());
 		return tempList;
 	}
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}	
+	
 	
 	
 public BigDecimal	getBankBalance(Long bankaccountId,Date asPerDate, Long bankAccGlcodeId)
@@ -454,7 +448,7 @@ private BigDecimal getContraReceipt(Long bankaccountId, Date asPerDate, Long acc
  */
 private BigDecimal getOutStandingPayment(Long bankaccountId, Date asPerDate)
 {
-	List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
+	List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
 	if(appConfig == null || appConfig.isEmpty())
 		throw new ValidationException("","PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
 	String voucherStatus ="";

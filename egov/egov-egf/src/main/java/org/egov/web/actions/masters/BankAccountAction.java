@@ -47,9 +47,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -58,12 +55,16 @@ import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 @Transactional(readOnly=true)
 public class BankAccountAction extends JQueryGridActionSupport {
 	private static final long serialVersionUID = 1L;
@@ -72,7 +73,9 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	private Integer bankBranchId;
 	private PersistenceService<Bankaccount, Integer> bankAccountPersistenceService;
 	private PersistenceService<CChartOfAccounts, Long> chartOfAccountService;
-	GenericHibernateDaoFactory genericDao;
+	@Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;
+	
 	String code = EGovConfig.getProperty("egf_config.xml",
 			"glcodeMaxLength", "", "AccountCode");
 
@@ -212,7 +215,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		return glCode;
 	}
 	String getAppConfigValueFor(String module,String key){
-		return genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 	}
 	public String postInChartOfAccounts(String glCode, String parentId,
 			String accNumber) throws Exception {
@@ -232,14 +235,6 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		chart.setMajorCode(chart.getGlcode().substring(0,majorCodeLength));
 		chartOfAccountService.persist(chart);
 		return String.valueOf(chart.getId());
-	}
-
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	public void setBankAccountPersistenceService(final PersistenceService<Bankaccount, Integer> bankAccountPersistenceService) {

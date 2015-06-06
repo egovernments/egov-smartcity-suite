@@ -183,8 +183,8 @@ public class ContingentBillAction extends BaseBillAction {
         }
         
         private void getNetPayableCodes() {
-                List<AppConfigValues> configValuesByModuleAndKey = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","contingencyBillPurposeIds");
-                List<AppConfigValues>  configValuesByModuleAndKeydefault = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","contingencyBillDefaultPurposeId");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","contingencyBillPurposeIds");
+                List<AppConfigValues>  configValuesByModuleAndKeydefault = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","contingencyBillDefaultPurposeId");
                 String cBillDefaulPurposeId = configValuesByModuleAndKeydefault.get(0).getValue();
                 netPayList = new ArrayList<CChartOfAccounts>();
                 //CChartOfAccounts coa;
@@ -821,7 +821,7 @@ public class ContingentBillAction extends BaseBillAction {
                         CheckListHelper chkHelper=new CheckListHelper();
                         chkHelper.setName(chk.getAppconfigvalue().getValue());
                         chkHelper.setVal(chk.getChecklistvalue());
-                        chkHelper.setId((chk.getAppconfigvalue().getId()).intValue());  
+                        chkHelper.setId((chk.getAppconfigvalue().getId()));  
                         checkListsTable.add(chkHelper);
                 }
                 return cbill;

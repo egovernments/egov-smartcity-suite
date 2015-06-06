@@ -254,7 +254,7 @@ public class PaymentAction extends BasePaymentAction{
                 if(billSubType!=null && !billSubType.equalsIgnoreCase("")){
                         
                         try{
-                                List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                                List<AppConfigValues> configValues =appConfigValuesDAO.
                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.EB_VOUCHER_PROPERTY_BANK); 
                                 
                                 for (AppConfigValues appConfigVal : configValues) {
@@ -315,7 +315,7 @@ public class PaymentAction extends BasePaymentAction{
                 for(String key:propartyAppConfigKeysList){
                         String value = null;
                 try{
-                        List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                        List<AppConfigValues> configValues =appConfigValuesDAO.
                                         getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,key); 
                         
                         for (AppConfigValues appConfigVal : configValues) {

@@ -313,7 +313,7 @@ public String nonBillPayment()
 	{
 		appconfigKey="salaryBillPurposeIds";
 	}
-	AppConfigValues appConfigValues = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,appconfigKey).get(0);
+	AppConfigValues appConfigValues = appConfigValuesDAO.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,appconfigKey).get(0);
 	String purposeValue = appConfigValues.getValue();
 	CGeneralLedger netPay = (CGeneralLedger)persistenceService.find("from CGeneralLedger where voucherHeaderId.id=? and glcodeId.purposeId=?",voucherHeader.getId(),purposeValue);
 	if(netPay==null)

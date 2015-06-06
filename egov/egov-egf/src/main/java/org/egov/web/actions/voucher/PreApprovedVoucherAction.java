@@ -79,7 +79,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -132,7 +132,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         protected List<String> mandatoryFields = new ArrayList<String>();
         protected EisUtilService eisService;
         private static  BillsService billsMngr=null;
-        private GenericHibernateDaoFactory genericDao;
+        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
         private BillsAccountingService billsAccountingService;
         private BillsService billsManager;
         private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
@@ -215,7 +215,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         {
                 egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?", Long.valueOf(parameters.get(BILLID)[0]));
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("egBillregister=="+egBillregister);
-                final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
+                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
                 final String pjv_wc_enabled = appList.get(0).getValue();
                 // loading aprover user info
                 preApprovedVoucher.setVoucherDate(new Date());
@@ -223,7 +223,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 getHeaderMandateFields();
                 String purposeValueVN="",purposeValue="";
                 try{
-                        List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+                        List<AppConfigValues> configValues =appConfigValuesDAO.
                                         getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"VOUCHERDATE_FROM_UI"); 
                         
                         for (AppConfigValues appConfigVal : configValues) {
@@ -277,7 +277,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                                  throw new ValidationException(errors);
                         }
                 }
-                List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
+                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
                 String pjv_wc_enabled = appList.get(0).getValue();
                 
                 type = billsManager.getBillTypeforVoucher(voucherHeader);
@@ -462,7 +462,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                         }
                         getMasterDataForBill();
                         //Check if budgetary Appropriation is enabled for the application. Only if required we need to do the check.
-                        List<AppConfigValues> list =genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
+                        List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
                         Long vhid = null;
                         if(list.isEmpty())
                                 throw new ValidationException(EMPTY_STRING,"budgetCheckRequired is not defined in AppConfig");
@@ -1193,10 +1193,6 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 this.receiptWorkflowService = receiptWorkflowService;
         }
 
-        public void getGenericHibDao(final GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
-        }
-
         public PreApprovedVoucherAction(){
                 try{
                 addRelatedEntity(VoucherConstant.GLCODE, CChartOfAccounts.class);
@@ -1218,9 +1214,6 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 this.showVoucherDate = showVoucherDate;
         }
 
-        public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
-        }
         public FinancialYearHibernateDAO getFinancialYearDAO() {
                 return financialYearDAO;
         }

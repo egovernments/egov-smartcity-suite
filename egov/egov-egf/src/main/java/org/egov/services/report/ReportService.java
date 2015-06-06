@@ -59,7 +59,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.web.actions.report.IEStatementEntry;
@@ -71,9 +71,10 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReportService  {
-	GenericHibernateDaoFactory genericDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	int minorCodeLength;
 	List<Character> coaType = new ArrayList<Character>();
 	private FinancialYearHibernateDAO financialYearDAO;
@@ -203,7 +204,7 @@ public abstract class ReportService  {
 
 	public String getAppConfigValueFor(String module, String key) {
 		try {
-			return genericDao.getAppConfigValuesDAO()
+			return appConfigValuesDAO
 					.getConfigValuesByModuleAndKey(module, key).get(0)
 					.getValue();
 		} catch (Exception e) {
@@ -213,10 +214,6 @@ public abstract class ReportService  {
 					+ "is not defined in appconfig")));
 		}
 		return "";
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 
 	void addFundAmount(List<Fund> fundList, Statement type, BigDecimal divisor,

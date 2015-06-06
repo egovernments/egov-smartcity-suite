@@ -87,7 +87,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -122,7 +122,7 @@ public class DishonoredChequeAction extends DispatchAction {
         private static final String ERROR = "error";
         private static final String SUCCESS = "success";
         private InstrumentService instrumentService;
-        protected GenericHibernateDaoFactory genericDao;
+        protected @Autowired AppConfigValuesDAO appConfigValuesDAO;
         private boolean isRestrictedtoOneFunctionCenter;
         public PersistenceService<InstrumentHeader, Long> instrumentHeaderService ;
         PersistenceService persistenceService;
@@ -759,7 +759,7 @@ public class DishonoredChequeAction extends DispatchAction {
                 //String functionId=null;
                 String departmentId=null;
                 String appConfigKey = "GJV_FOR_RCPT_CHQ_DISHON";
-                AppConfigValues appConfigValues = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
+                AppConfigValues appConfigValues = appConfigValuesDAO.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
                 String gjvForRcpt=appConfigValues.getValue();
                 //DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
                 try{
@@ -1452,12 +1452,7 @@ public class DishonoredChequeAction extends DispatchAction {
         public void setInstrumentHeaderService(PersistenceService<InstrumentHeader, Long> instrumentHeaderService) {
                 this.instrumentHeaderService = instrumentHeaderService;
         }
-        public GenericHibernateDaoFactory getGenericDao() {
-                return genericDao;
-        }
-        public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-                this.genericDao = genericDao;
-        }
+        
         public boolean isRestrictedtoOneFunctionCenter() {
                 return isRestrictedtoOneFunctionCenter;
         }

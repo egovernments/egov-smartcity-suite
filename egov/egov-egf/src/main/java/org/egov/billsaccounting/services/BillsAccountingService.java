@@ -46,9 +46,9 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.ValidationException;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.hibernate.Query;
@@ -70,7 +70,7 @@ public class BillsAccountingService  {
 	private static final String MISSINGMSG= "is not defined in AppConfig values cannot proceed creating voucher";
 	
 	@Autowired
-	GenericHibernateDaoFactory genericHibDao;
+        private AppConfigValuesDAO appConfigValuesDAO;  
 	
 	/**
 	 * API to create voucher in pre approved status
@@ -83,8 +83,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		long vh=-1;
 		try {
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("genericHibDao not null"+genericHibDao);
-			List vStatusList=genericHibDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
+			List vStatusList=appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
 			
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -122,8 +121,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		long vh=-1;
 		try {
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("genericHibDao not null"+genericHibDao);
-			List vStatusList=genericHibDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
+			List vStatusList=appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
 			
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -155,7 +153,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		
 			try {
-				List vStatusList=	genericHibDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");	
+				List vStatusList=	appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");	
 				if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 				{	
 					AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -187,7 +185,7 @@ public class BillsAccountingService  {
 	{
 		try {
 			String voucherStatus=null;
-			List vStatusList=	genericHibDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");	
+			List vStatusList=	appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");	
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	
 				AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);

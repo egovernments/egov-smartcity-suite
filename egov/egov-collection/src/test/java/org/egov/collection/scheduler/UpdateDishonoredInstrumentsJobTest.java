@@ -6,7 +6,7 @@ public class UpdateDishonoredInstrumentsJobTest { /* extends AbstractPersistence
 	private InstrumentService instrService;
 	private UpdateDishonoredInstrumentsJob delegate;
 	private ReceiptService receiptService;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private CollectionsNumberGenerator collectionsNumberGenerator;
 	private SequenceNumberGenerator sequenceGenerator;
 	private ScriptService scriptExecutionService;

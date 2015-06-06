@@ -88,11 +88,11 @@ import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
@@ -111,6 +111,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -168,7 +169,8 @@ public class CommonAction extends BaseFormAction{
 	private Integer	billSubtypeId;
 	private String billType;
 	private String searchType;
-	private GenericHibernateDaoFactory genericDao;
+	@Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;  
 	private List<AppConfigValues>	checkList;
 	private RelationService relationService;
 	private String accountDetailTypeName;
@@ -822,7 +824,7 @@ public class CommonAction extends BaseFormAction{
 			if(billSubType!=null && !billSubType.equalsIgnoreCase("")){
 				String bankAccount= null;
 				try{
-					List<AppConfigValues> configValues =genericDao.getAppConfigValuesDAO().
+					List<AppConfigValues> configValues =appConfigValuesDAO.
 							getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.EB_VOUCHER_PROPERTY_BANKACCOUNT); 
 					
 					for (AppConfigValues appConfigVal : configValues) {
@@ -1188,10 +1190,10 @@ public String ajaxLoadCheckList()
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadCheckList...");
 	if(LOGGER.isInfoEnabled())     LOGGER.info("..............................................................................ajaxLoadCheckList");
 	EgBillSubType egBillSubType =(EgBillSubType) persistenceService.find("from EgBillSubType where id=?",billSubtypeId);
-	checkList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
+	checkList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
 	if(checkList.size()==0)
 	{
-		checkList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF",FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
+		checkList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
 	}
 
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadCheckList.");
@@ -1547,12 +1549,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	public void setBillType(String billType) {
 		this.billType = billType;
 	}
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
+	
 	public List<AppConfigValues> getCheckList() {
 		return checkList;
 	}
@@ -1966,7 +1963,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksWithPaymentInWorkFlow...");
 		try {
 			String voucherStatusKey = parameters.get("voucherStatusKey")[0];
-			List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
+			List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
 			if(appConfig == null || appConfig.isEmpty())
 				throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 			
@@ -2068,7 +2065,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		try {
 			accNumList = new ArrayList<Bankaccount>();
 			String voucherStatusKey = parameters.get("voucherStatusKey")[0];
-			List<AppConfigValues> appConfig = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
+			List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
 			if(appConfig == null || appConfig.isEmpty())
 				throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 

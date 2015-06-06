@@ -46,18 +46,18 @@ import java.util.List;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -70,7 +70,8 @@ public class BudgetGroupAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private BudgetGroup budgetGroup = new BudgetGroup();
 	private PersistenceService<BudgetGroup, Long> budgetGroupService;
-	private GenericHibernateDaoFactory genericDao;	
+	@Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;  
 	private List<BudgetGroup> budgetGroupList = new ArrayList<BudgetGroup>();
 	private static final String SEARCH="search"; 
 	private static final String VIEW="view"; 
@@ -81,9 +82,6 @@ public class BudgetGroupAction extends BaseFormAction{
 	private String target="";
 	private String mode="";
 	private int majorcodelength =0;
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
 	
 	@Override
 	public Object getModel() {
@@ -102,16 +100,16 @@ public class BudgetGroupAction extends BaseFormAction{
 	public void prepare()
 	{
 		super.prepare();
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"coa_majorcode_length");
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"coa_majorcode_length");
 		majorcodelength = Integer.valueOf(appList.get(0).getValue());
 		
-		appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budgetgroup_range_minor_or_detailed");
+		appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budgetgroup_range_minor_or_detailed");
 		String range = appList.get(0).getValue();
 		
 		if(range.equalsIgnoreCase("minor"))
-			appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"coa_minorcode_length");
+			appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"coa_minorcode_length");
 		else
-			appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"coa_detailcode_length");
+			appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"coa_detailcode_length");
 		int rangecodelength = Integer.valueOf(appList.get(0).getValue());
 		
 		addDropdownData("majorCodeList", getPersistenceService().findAllBy(LENGTHQUERY,majorcodelength));

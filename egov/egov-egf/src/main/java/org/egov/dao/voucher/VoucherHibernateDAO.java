@@ -58,10 +58,10 @@ import org.egov.commons.VoucherDetail;
 import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -69,6 +69,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -82,7 +83,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherHibernateDAO.class);
 	private PersistenceService<VoucherDetail, Integer> vdPersitSer;
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
 			final Map<String, Object> searchFilterMap) throws EGOVException,ParseException{
 		
@@ -130,7 +131,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 		}
 			
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("sql===================="+ sql.toString());
-		final List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("finance","statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		final String statusExclude = appList.get(0).getValue();
 		
 		List<CVoucherHeader> list = (List<CVoucherHeader>)findAllBy(" from CVoucherHeader vh where vh.status not in ("+statusExclude+") "+sql.toString()+" order by vh.cgn,vh.voucherNumber,vh.voucherDate ");
@@ -265,12 +266,4 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 		this.vdPersitSer = vdPersitSer;
 	}
 
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-	
 }

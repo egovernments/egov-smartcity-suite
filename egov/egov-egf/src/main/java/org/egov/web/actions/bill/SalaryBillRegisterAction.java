@@ -55,11 +55,11 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -71,6 +71,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.bills.EgSalaryCodes;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
@@ -97,7 +98,7 @@ public class SalaryBillRegisterAction extends BaseFormAction{
 	private Long billregisterId;
 	private List<EgSalaryCodes> earningsCodes = new ArrayList<EgSalaryCodes>();
 	private List<EgSalaryCodes> deductionsCodes = new ArrayList<EgSalaryCodes>();
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private CChartOfAccounts	defaultNetPayCode;
 	
 	public SalaryBillRegisterAction() {
@@ -156,8 +157,8 @@ public class SalaryBillRegisterAction extends BaseFormAction{
 		netPayList = new ArrayList<EgBilldetails>();
 //		String salaryBillDefaultPurposeId = EGovConfig.getProperty("egf_config.xml","salaryBillDefaultPurposeId","","defaultValues");
 //		String salaryBillPurposeIds = EGovConfig.getProperty("egf_config.xml","salaryBillPurposeIds","","defaultValues");
-		List<AppConfigValues> configValuesByModuleAndKey = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","salaryBillPurposeIds");
-		List<AppConfigValues> defaultConfigValuesByModuleAndKey = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","salaryBillDefaultPurposeId");
+		List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","salaryBillPurposeIds");
+		List<AppConfigValues> defaultConfigValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","salaryBillDefaultPurposeId");
 		String cBillDefaulPurposeId = defaultConfigValuesByModuleAndKey.get(0).getValue();
 		List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy("FROM CChartOfAccounts WHERE purposeid in ("+cBillDefaulPurposeId+") and isactiveforposting = 1 and classification=4");
 		for (CChartOfAccounts chartOfAccounts : salaryPayableCoa) {
@@ -381,9 +382,6 @@ public class SalaryBillRegisterAction extends BaseFormAction{
 	}
 	public EgBillregister getBillregister() {
 		return billregister;
-	}
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
 	}
 	public void setDefaultNetPayCode(CChartOfAccounts defaultNetPayCode) {
 		this.defaultNetPayCode = defaultNetPayCode;

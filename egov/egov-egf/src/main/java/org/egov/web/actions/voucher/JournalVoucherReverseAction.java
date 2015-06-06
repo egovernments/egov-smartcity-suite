@@ -56,11 +56,12 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class JournalVoucherReverseAction extends BaseVoucherAction {
@@ -69,7 +70,7 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
 	
 	public  Map<String,String> nameList = new LinkedHashMap<String, String>();
 	public List<Map<String,Object>> voucherList;
-	public GenericHibernateDaoFactory genericDao;
+	public @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	
 	public String fromDate;
 	public String toDate;
@@ -208,10 +209,6 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
 		this.showMode = showMode;
 	}
 
-	public void setGenericDao(final GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-	
 	@Override
 	public Object getModel() {
 		return voucherHeader;

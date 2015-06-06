@@ -51,8 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -67,17 +65,17 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.BudgetDetail;
@@ -89,7 +87,10 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.hibernate.FlushMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BudgetVarianceReport.pdf"}),
@@ -107,7 +108,7 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 	protected List<String> headerFields = new ArrayList<String>();
 	protected List<String> mandatoryFields = new ArrayList<String>();
 	private Vouchermis vouchermis = new Vouchermis();
-	private GenericHibernateDaoFactory genericDao;
+	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private ReportService reportService;
 	private List<String> accountTypeList = new ArrayList<String>(); 
 	private String accountType = "";
@@ -459,14 +460,6 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 		return budgetDetail;
 	}
 
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
-	public GenericHibernateDaoFactory getGenericDao() {
-		return genericDao;
-	}
-
 	public void setVouchermis(Vouchermis vouchermis) {
 		this.vouchermis = vouchermis;
 	}
@@ -531,7 +524,7 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 		return "";
 	}
 	private boolean getConsiderReAppropriationAsSeperate(){
-		List<AppConfigValues> appList = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
+		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
 		String appValue = "-1"; 
 		appValue = appList.get(0).getValue();
 		return "Y".equalsIgnoreCase(appValue); 
