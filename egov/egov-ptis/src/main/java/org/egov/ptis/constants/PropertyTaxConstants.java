@@ -468,6 +468,7 @@ public interface PropertyTaxConstants {
 	public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
 	public static final String DEMANDRSN_CODE_PENALTY_FINES = "PENALTY_FINES";
 	public static final String DEMANDRSN_CODE_ADVANCE = "ADVANCE";
+	public static final String DEMANDRSN_CODE_ADVANCE_REBATE = "ADVANCE_REBATE";
 	public static final String DEMANDRSN_REBATE = "REBATE";
 
 	// Demand Reason master Strings
@@ -478,6 +479,7 @@ public interface PropertyTaxConstants {
 	public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
 	public static final String DEMANDRSN_STR_PENALTY_FINES = "PENALTY_FINES";
 	public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
+	public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
 
 	// Tax Payable constants
 	public static final String DEMANDRSN_CODE_GEN_TAX_PAYABLE = "PROPERTY TAX-PROPERTY TAX ON ALL PROPERTIES";

@@ -454,19 +454,6 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		property.setPtDemandSet(ptDmdSet);
 
-		/*
-		 * try {
-		 * 
-		 * property = (PropertyImpl) new TaxXmlToDbConverterAdapter(
-		 * TaxXMLToDBCoverterService
-		 * .createConverter(property.getBasicProperty(), propertyTaxUtil,
-		 * basicPrpertyService, ptNumberGenerator)) .convertXmlToDB(property,
-		 * oldProperty);
-		 * 
-		 * } catch (Exception e) {
-		 * LOGGER.error("Error while converting Tax XML", e); throw new
-		 * EGOVRuntimeException("Error while converting Tax XML", e); }
-		 */
 		LOGGER.debug("Exiting from createDemand");
 		return property;
 	}
@@ -1614,11 +1601,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		LOGGER.debug("Entered into populateTaxesForVoucherCreation, property: " + property);
 		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
 		if ((instTaxMap != null)) {
-			for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec : instTaxMap.entrySet()) {
+/*			for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec : instTaxMap.entrySet()) {
 				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(instTaxRec.getValue()
 						.getConsolidatedUnitTaxCalculationInfo());
 				amounts.put(instTaxRec.getKey(), taxMap);
-			}
+			}*/
 		} else {
 			amounts = prepareRsnWiseDemandForOldProp(property);
 		}
