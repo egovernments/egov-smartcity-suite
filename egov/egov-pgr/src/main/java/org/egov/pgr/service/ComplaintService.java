@@ -39,15 +39,11 @@
  */
 package org.egov.pgr.service;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang3.StringUtils.upperCase;
 import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
-import static org.egov.pgr.utils.constants.PGRConstants.DASH_DELIM;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,7 +153,7 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-        .withComments("Complaint registered with Complaint tracking Number : " + complaint.getCRN())
+        .withComments("Complaint registered with Complaint Number : " + complaint.getCRN())
         .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
@@ -199,8 +195,8 @@ public class ComplaintService {
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
             LOG.debug("Terminating Complaint Workflow");
-            complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
-            .withSenderName(userName).withDateInfo(new Date()).end();
+            complaint.transition(true).end().withComments(approvalComent).withStateValue(complaint.getStatus().getName())
+            .withSenderName(userName).withDateInfo(new Date());
 
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
             final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
@@ -216,10 +212,6 @@ public class ComplaintService {
         return savedComplaint;
     }
 
-    public String generateCRN() {
-        return upperCase(randomAlphabetic(3)) + DASH_DELIM + randomNumeric(3);
-    }
-
     public Complaint getComplaintById(final Long complaintID) {
         return complaintRepository.findOne(complaintID);
     }
@@ -231,10 +223,8 @@ public class ComplaintService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Complaint getComplaintByCrnNo(final String crnNo) {
-        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
-                Restrictions.eq("complaint.CRN", crnNo));
-        return (Complaint) criteria.uniqueResult();
+    public Complaint getComplaintByCrnNo(final String crn) {
+        return complaintRepository.findByCRN(crn);
     }
 
     public List<Complaint> getComplaintsEligibleForEscalation() {

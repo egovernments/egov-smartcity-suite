@@ -39,13 +39,9 @@
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 
 	<div class="col-md-12">
