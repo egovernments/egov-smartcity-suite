@@ -16,7 +16,7 @@
 					<table border="0" cellspacing="0" cellpadding="0" style="position:relative;top:50px;left:50px;">
 						 <tr>
 							<td width="10%">
-							    <img width="100px" alt="Error" src="/egi/images/error.png">
+							    <img width="100px" alt="Error" src="/egi/resources/erp2/images/error.png">
 							</td>
                             <td>
 							    <span class="bold">You are not authorised to view this page.</span>
@@ -26,9 +26,6 @@
 				</div>				
 			</div>
 		</div>
-	</div>
-	<div class="buttonbottom" style="position:absolute;bottom:0px;width:100%;clear:both;left:0px;right:0px">
-		eGov Urban Portal Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> &copy; All Rights Reserved.
 	</div>
 </body>
 </html>

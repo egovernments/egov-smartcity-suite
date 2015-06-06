@@ -41,26 +41,24 @@ package org.egov.asset.model;
 
 import javax.script.ScriptContext;
 
-import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssetCategoryNumberGenrator {
 
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator squenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
-    public String getAssetCategoryNumber(final AssetCategory assetCategory, final CFinancialYear financialYear) {
-        // List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
-        // "assets.assetcategorynumber.generator");
-        // return
-        // scripts.get(0).eval(Script.createContext("assetCategory",assetCategory,"finYear",financialYear,"sequenceGenerator",sequenceGenerator)).toString();
-        final ScriptContext scriptContext = ScriptService.createContext("assetCategory", assetCategory, "finYear",
-                financialYear, "sequenceGenerator", sequenceGenerator);
+    public String getAssetCategoryNumber(final AssetCategory assetCategory) {
+
+        final ScriptContext scriptContext = ScriptService.createContext("assetCategory", assetCategory,
+                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
         return scriptService.executeScript("assets.assetcategorynumber.generator", scriptContext).toString();
     }
 

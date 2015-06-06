@@ -222,17 +222,11 @@
 	</jsp-config>
 	<welcome-file-list>
 	    <welcome-file>/index.jsp</welcome-file>
-    </welcome-file-list>
+    </welcome-file-list>    
 	<error-page>
 		<error-code>500</error-code>
- 		<location>/error/500</location>
- 	</error-page>
- 	
- 	<error-page>
- 		<error-code>404</error-code>
- 		<location>/error/404</location>
- 	</error-page>
-
+		<location>/error/error.jsp</location>
+	</error-page>
 	<session-config>
 		<cookie-config>
 			<path>/</path>

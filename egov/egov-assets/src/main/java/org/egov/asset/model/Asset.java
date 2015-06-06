@@ -96,7 +96,6 @@ public class Asset extends BaseModel {
     private EgwStatus status;
     private String description;
     private Department department;
-    // @Required(message="asset.creationdate.null")
     private Date dateOfCreation;
 
     private String remarks;
