@@ -86,8 +86,7 @@
 			<bean parent="persistenceService">
 				<property name="type" value="org.egov.asset.model.Asset" />
 			</bean>
-		</constructor-arg>			
-		<property name="genericService" ref="persistenceService" />		
+		</constructor-arg>				
 		<property name="appService" ref="appService" />
 		<property name="assetNumberGenrator" ref="assetNumberGenrator"/>
 	</bean>
@@ -98,7 +97,6 @@
 				<property name="type" value="org.egov.asset.model.AssetActivities" />
 			</bean>
 		</constructor-arg>
-		<property name="genericService" ref="persistenceService" />	
 	</bean>
 	
 </beans>
