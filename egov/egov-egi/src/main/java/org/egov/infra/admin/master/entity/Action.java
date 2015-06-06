@@ -37,14 +37,11 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lib.rrbac.model;
+package org.egov.infra.admin.master.entity;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.entity.Role;
 
 public class Action implements Comparable<Action> {
 

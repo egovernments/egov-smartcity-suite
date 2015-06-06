@@ -55,10 +55,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.AuthorizationException;
+import org.egov.infra.admin.master.entity.Action;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.lib.rrbac.dao.ActionDAO;
-import org.egov.lib.rrbac.model.Action;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /*

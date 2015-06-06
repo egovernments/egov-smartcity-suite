@@ -39,6 +39,7 @@
  */
 package org.egov.lib.rrbac.model;
 
+import org.egov.infra.admin.master.entity.Action;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Script;
 

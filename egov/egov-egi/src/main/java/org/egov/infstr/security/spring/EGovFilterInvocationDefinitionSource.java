@@ -45,10 +45,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.lib.rrbac.dao.ActionDAO;
-import org.egov.lib.rrbac.model.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;

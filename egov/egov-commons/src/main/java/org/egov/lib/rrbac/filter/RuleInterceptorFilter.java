@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -62,7 +63,6 @@ import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.lib.rrbac.dao.ActionDAO;
-import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.model.AuthorizationRule;
 
 /**

@@ -46,7 +46,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rrbac.model.Action;
+import org.egov.infra.admin.master.entity.Action;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class ActionDAO  {
 	
 	
 	public Action findActionByName(final String name) {
-		final Query qry = getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act where act.name =:name ");
+		final Query qry = getCurrentSession().createQuery("from org.egov.infra.admin.master.entity.Action act where act.name =:name ");
 		qry.setString("name", name);
 		return (Action) qry.uniqueResult();
 	}
@@ -96,13 +96,13 @@ public class ActionDAO  {
 		}
 		// There are no query params with URL
 		if (url.indexOf("?") == -1) {
-			queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where replace(url,'/../'||contextRoot||'/','/') = :fullURL and queryParams is null", contextPath, url, hasContextPath);
+			queryResult = this.getQueryResult("from org.egov.infra.admin.master.entity.Action where replace(url,'/../'||contextRoot||'/','/') = :fullURL and queryParams is null", contextPath, url, hasContextPath);
 			if (queryResult.isEmpty()) 
-                            queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where :fullURL like url||'%'", contextPath, url, hasContextPath);
+                            queryResult = this.getQueryResult("from org.egov.infra.admin.master.entity.Action where :fullURL like url||'%'", contextPath, url, hasContextPath);
 		} else { // There are query params exists with URL
-			queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where :fullURL = replace(url,'/../'||contextRoot||'/','/')||'?'||queryParams ", contextPath, url, hasContextPath);
+			queryResult = this.getQueryResult("from org.egov.infra.admin.master.entity.Action where :fullURL = replace(url,'/../'||contextRoot||'/','/')||'?'||queryParams ", contextPath, url, hasContextPath);
 			if (queryResult.isEmpty()) {
-				queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where :fullURL like replace(url,'/../'||contextRoot||'/','/')||'?'||'%' ", contextPath, url, hasContextPath);
+				queryResult = this.getQueryResult("from org.egov.infra.admin.master.entity.Action where :fullURL like replace(url,'/../'||contextRoot||'/','/')||'?'||'%' ", contextPath, url, hasContextPath);
 			}
 		}
 		actionForURL = queryResult.isEmpty() ? null : queryResult.get(0);
@@ -113,7 +113,7 @@ public class ActionDAO  {
 	
 	public List<Action> getActionWithRoles() {
 		try {
-			return getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.roles").list();
+			return getCurrentSession().createQuery("from org.egov.infra.admin.master.entity.Action act left join fetch act.roles").list();
 		} catch (final Exception e) {
 			throw new EGOVRuntimeException("Error occurred at getActionWithRG. ", e);
 		}
@@ -122,7 +122,7 @@ public class ActionDAO  {
 	
 	public List<Action> getActionWithRG() {
 		try {
-			return getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.ruleGroup").list();
+			return getCurrentSession().createQuery("from org.egov.infra.admin.master.entity.Action act left join fetch act.ruleGroup").list();
 		} catch (final Exception e) {
 			throw new EGOVRuntimeException("Error occurred at getActionWithRG. ", e);
 		}

@@ -44,8 +44,7 @@
 		org.egov.lib.rrbac.services.RbacManagerHome,
 		org.egov.infstr.utils.ServiceLocator,
 		org.egov.infstr.utils.HibernateUtil,
-		org.hibernate.LockMode,
-		 org.egov.lib.rrbac.model.Action;"
+		org.hibernate.LockMode,org.egov.infra.admin.common.entity.Action;"
 %>
 
 <%

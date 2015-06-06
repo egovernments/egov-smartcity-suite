@@ -8,7 +8,7 @@
 				<param name="sequence">SEQ_AUTH_RULE</param>
 			</generator>
 		</id>
-		<many-to-one name="action" class="org.egov.lib.rrbac.model.Action">
+		<many-to-one name="action" class="org.egov.infra.admin.master.entity.Action">
 			<column name="ACTIONID" />
 		</many-to-one>
 		<many-to-one name="script" class="org.egov.infstr.models.Script">

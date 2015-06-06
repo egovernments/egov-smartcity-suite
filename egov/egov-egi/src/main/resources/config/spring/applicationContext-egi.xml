@@ -58,16 +58,11 @@
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 
-	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
-		<constructor-arg ref="genericDao" />
-	</bean>
-
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
 	</bean>
 
 	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
 		<constructor-arg ref="commonsDAOFactory"/>
-		<constructor-arg ref="genericDao"/>
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
@@ -110,10 +105,6 @@
 
 	<bean id="userPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
-	</bean>
-
-	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype">
-		<constructor-arg ref="sessionFactory" />
 	</bean>
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
