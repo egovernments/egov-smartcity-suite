@@ -54,8 +54,6 @@ import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +63,6 @@ public class Email {
 	private final List<InternetAddress> toList;
 	private final List<InternetAddress> ccList;
 	private final List<InternetAddress> bccList;
-	private final GenericHibernateDaoFactory genericHibernateDaoFactory;
 	private String username;
 	private String password;
 	private final String subject;
@@ -74,8 +71,7 @@ public class Email {
 	private final String name;
 	private final String description;
 
-	private Email(final Builder builder, GenericHibernateDaoFactory genericHibernateDaoFactory) {
-		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
+	private Email(final Builder builder) {
 		this.body = builder.body;
 		this.subject = builder.subject;
 		this.username = builder.username;
@@ -94,14 +90,13 @@ public class Email {
 			LOGGER.debug("Email parameters :" + this.toList + "||" + this.ccList + "||" + this.bccList + "||" + this.subject + "||" + this.body);
 		}
 
-		final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 
 		final MultiPartEmail email = new MultiPartEmail();
 		ByteArrayDataSource attachment = null;
 
 		if (this.username == null && this.password == null) {
-			this.username = appConfValDao.getConfigValuesByModuleAndKey("Administration", "mailSenderUserName").get(0).getValue();
-			this.password = appConfValDao.getConfigValuesByModuleAndKey("Administration", "mailSenderPassword").get(0).getValue();
+			this.username = "";
+			this.password = "";
 		}
 
 		try {
@@ -112,8 +107,8 @@ public class Email {
 				LOGGER.debug("attachment to the email is done !!");
 			}
 
-			email.setHostName(appConfValDao.getConfigValuesByModuleAndKey("Administration", "smtpHostName").get(0).getValue());
-			email.setSmtpPort(Integer.valueOf(appConfValDao.getConfigValuesByModuleAndKey("smtpHostName", "smtpPort").get(0).getValue()));
+			email.setHostName("");
+			email.setSmtpPort(Integer.valueOf(0));
 			email.setAuthenticator(new DefaultAuthenticator(this.username, this.password));
 			email.setDebug(false);
 			email.setTo(this.toList);
@@ -181,8 +176,8 @@ public class Email {
 			this.bccLst = new ArrayList<InternetAddress>();
 		}
 
-		public Email build(GenericHibernateDaoFactory genericHibernateDaoFactory) {
-			return new Email(this, genericHibernateDaoFactory);
+		public Email build() {
+			return new Email(this);
 		}
 
 		public Builder subject(final String subject) {

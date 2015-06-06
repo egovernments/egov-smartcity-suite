@@ -56,9 +56,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -85,6 +85,9 @@ public class EisUtilService implements EISServeable {
     private BoundaryDAO boundaryDAO;
     @Autowired
     private PersonalInformationDAO personalInformationDAO;
+    
+    @Autowired
+    private AppConfigValuesDAO appConfigValuesDAO;
 
     public PersistenceService getPersistenceService() {
         return persistenceService;
@@ -484,7 +487,7 @@ public class EisUtilService implements EISServeable {
      * ISFILTERBYDEPT is NO then returns all the departments
      */
     public List<Department> getDeptsForUser() {
-        String filterByDept = EGovConfig.getAppConfigValue("EIS-PAYROLL", "FILTERBYDEPT", "NO");
+        String filterByDept = appConfigValuesDAO.getAppConfigValue("EIS-PAYROLL", "FILTERBYDEPT", "NO");
         List<Department> deptlist = null;
         if (filterByDept != null && filterByDept.toUpperCase().equals("YES")) {
             List<BigDecimal> deptList = getPersistenceService().findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,

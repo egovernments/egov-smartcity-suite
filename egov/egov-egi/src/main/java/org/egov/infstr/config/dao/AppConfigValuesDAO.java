@@ -42,63 +42,110 @@ package org.egov.infstr.config.dao;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.dao.GenericDAO;
+import org.egov.infstr.utils.DateUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface AppConfigValuesDAO extends GenericDAO<AppConfigValues, Integer> {
+@Repository
+@Transactional(readOnly=true)
+public class AppConfigValuesDAO  {
 
-	/**
-	 * Gets the App config values by moduleName and keyName.
-	 * @param moduleName the module name
-	 * @param keyName the key name
-	 * @return the AppConfigValues by module and key
-	 */
-	List<AppConfigValues> getConfigValuesByModuleAndKey(String moduleName, String keyName);
+	private static final String KEY_COLUMN_NAME = "keyName";
+	private static final String MODULE_COLUMN_NAME = "moduleName";
 
-	/**
-	 * Creates the app config value.
-	 * @param appconfigvalues the new app config values
-	 * @return the AppConfigValues
-	 */
-	AppConfigValues createAppConfigValues(AppConfigValues appconfigvalues);
-
-	/**
-	 * Gets the app config keys.
-	 * @param moduleName the module name
-	 * @return the AppConfig
-	 */
-	List<AppConfig> getAppConfigKeys(String moduleName);
+	@PersistenceContext	
+        private EntityManager entityManager;
+    
+        
+        public Session  getCurrentSession() {
+                return entityManager.unwrap(Session.class);
+        }
 
 	/**
-	 * Gets the AppConfig object by keyName and moduleName.
-	 * @param keyName the key name
-	 * @param moduleName the module name
-	 * @return the AppConfig
+	 * {@inheritDoc}
 	 */
-	AppConfig getConfigKeyByName(String keyName, String moduleName);
+	
+	public void createAppConfigValues(final AppConfigValues appValues) {
+		entityManager.persist(appValues);
+	}
 
 	/**
-	 * Gets the AppConfigValues by moduleName, keyName and effectiveFrom date passed.
-	 * @param moduleName the module name
-	 * @param keyName the key name
-	 * @param date the date
-	 * @return the AppConfigValues
+	 * {@inheritDoc}
 	 */
-	AppConfigValues getAppConfigValueByDate(String moduleName, String keyName, Date effectiveFrom);
+	
+	public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
+		final Query qry = getCurrentSession().createQuery("from AppConfigValues a where a.key.keyName =:keyName and a.key.module.name =:moduleName ");
+		qry.setString(KEY_COLUMN_NAME, keyName);
+		qry.setString(MODULE_COLUMN_NAME, moduleName);
+		return qry.list();
+	}
 
 	/**
-	 * Gets all the AppConfigValues by moduleName, keyName and effectiveFrom date passed.
-	 * @param String the module name
-	 * @param String the key name
-	 * @param Date the effective from date
-	 * @return the AppConfigValues list
+	 * {@inheritDoc}
 	 */
-	List<AppConfigValues> getAppConfigValues(String moduleName, String keyName, Date effectiveFrom);
+	
+	public List<AppConfig> getAppConfigKeys(final String moduleName) {
+		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.module.name =:moduleName ");
+		qry.setString(MODULE_COLUMN_NAME, moduleName);
+		return qry.list();
+	}
 
 	/**
-	 * Gets the all app config module names.
-	 * @return the all app config module names
+	 * {@inheritDoc}
 	 */
-	List<String> getAllAppConfigModule();
+	
+	public AppConfig getConfigKeyByName(final String keyName, final String moduleName) {
+		final Query qry = getCurrentSession().createQuery("from AppConfig a where a.keyName =:keyName  and a.module.name=:moduleName");
+		qry.setString(KEY_COLUMN_NAME, keyName);
+		qry.setString(MODULE_COLUMN_NAME, moduleName);
+		return (AppConfig) qry.uniqueResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public AppConfigValues getAppConfigValueByDate(final String moduleName, final String keyName, final Date effectiveFrom) {
+		final List<AppConfigValues> appConfigValues = getAppConfigValues(moduleName, keyName, effectiveFrom);
+		return appConfigValues.isEmpty() ? null : appConfigValues.get(appConfigValues.size() - 1);
+	}
+
+	public String getAppConfigValue(final String moduleName, final String keyName, final String defaultVal) {
+	    final List<AppConfigValues> appConfigValues = getAppConfigValues(moduleName, keyName, new Date());
+            return appConfigValues.isEmpty() ? defaultVal : appConfigValues.get(appConfigValues.size() - 1).toString();
+        }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public List<AppConfigValues> getAppConfigValues(final String moduleName, final String keyName, final Date effectiveFrom) {
+		final Query qry = getCurrentSession().createQuery(
+				"from AppConfigValues a where a.key.keyName =:keyName and a.key.module.name =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc");
+		qry.setString(KEY_COLUMN_NAME, keyName);
+		qry.setString(MODULE_COLUMN_NAME, moduleName);
+		qry.setDate("effectiveFrom", effectiveFrom);
+		final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom, effectiveFrom);
+		qry.setDate("dateFrom", dateRange[0]);
+		qry.setDate("dateTo", dateRange[1]);
+
+		return qry.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public List<String> getAllAppConfigModule() {
+		return getCurrentSession().createQuery("select distinct(a.module.name) from AppConfig a order by a.module.name").list();
+	}
+	
+	
 }

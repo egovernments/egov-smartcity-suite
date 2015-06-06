@@ -40,19 +40,15 @@
 package org.egov.infstr.utils;
 
 import java.net.URL;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 
 /**
  * The Class EGovConfig. Used to read the values from properties file and XMl configuration files
@@ -437,15 +433,5 @@ public final class EGovConfig {
 		return properties.getProperty(messageKey);
 	}
 
-	/**
-	 * This method returns the currently active config value for the given module name and key
-	 * @param moduleName a <code>String<code> representing the module name
-	 * @param key a <code>String</code> representing the key
-	 * @param defaultValue Default value to be returned in case the key is not defined
-	 * @return <code>String</code> representing the configuration value
-	 */
-	public static String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
-		final AppConfigValues configVal = new AppConfigValuesHibernateDAO(AppConfigValues.class, HibernateUtil.getCurrentSession()).getAppConfigValueByDate(moduleName, key, new Date());
-		return configVal == null ? defaultValue : configVal.getValue();
-	}
+	
 }

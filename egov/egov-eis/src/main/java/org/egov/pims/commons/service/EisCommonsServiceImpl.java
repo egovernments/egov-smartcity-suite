@@ -52,7 +52,7 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.PositionMasterDAO;
@@ -83,6 +83,9 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 	
 	@Autowired
 	private PersonalInformationHibernateDAO pimsDao;
+	
+	@Autowired
+        private AppConfigValuesDAO appConfigValuesDAO;
     
     @PersistenceContext
 	private EntityManager entityManager;
@@ -237,7 +240,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 	
 	public Boolean isEmployeeAutoGenerateCodeYesOrNo()
 	{
-		String employeeAutoGenCodeYesOrNo=EGovConfig.getAppConfigValue("Employee","EMPAUTOGENERATECODE","no");
+		String employeeAutoGenCodeYesOrNo=appConfigValuesDAO.getAppConfigValue("Employee","EMPAUTOGENERATECODE","no");
 		boolean autoGenCode = false;
 		if("yes".equalsIgnoreCase(employeeAutoGenCodeYesOrNo))
 		{

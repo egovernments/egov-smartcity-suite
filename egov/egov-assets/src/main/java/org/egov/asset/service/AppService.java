@@ -43,11 +43,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 
 public class AppService {
     private static final Logger logger = Logger.getLogger(AppService.class);
-    private AppConfigValuesHibernateDAO appConfigValuesDAO;
+    private AppConfigValuesDAO appConfigValuesDAO;
 
     /**
      * This method will return the value in AppConfigValue table for the given
@@ -88,7 +88,7 @@ public class AppService {
     }
 
     // Spring Injection
-    public void setAppConfigValuesDAO(final AppConfigValuesHibernateDAO appConfigValuesDAO) {
+    public void setAppConfigValuesDAO(final AppConfigValuesDAO appConfigValuesDAO) {
         this.appConfigValuesDAO = appConfigValuesDAO;
     }
 

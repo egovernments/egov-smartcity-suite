@@ -57,7 +57,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.commons.service.GenericCommonsService;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.service.EmployeeService;
@@ -84,15 +83,10 @@ public class EisManagersUtill {
 	static boolean RESETHOLMON = true;
 	static Map finYearMap = new HashMap();
 	private static CommonsService commonsService;
-	private GenericCommonsService genericCommonsService;
 	private static UserService userService;
 	
 	public static UserService getUserService() {
 		return userService;
-	}
-
-	public GenericCommonsService getGenericCommonsService() {
-		return genericCommonsService;
 	}
 
 	public static CommonsService getCommonsService() {
@@ -107,9 +101,6 @@ public class EisManagersUtill {
 		this.userService = userService;
 	}
 
-	public void setGenericCommonsService(GenericCommonsService genericCommonsService) {
-		this.genericCommonsService = genericCommonsService;
-	}
 
 	public static void  updateFYMonth()
 	{

@@ -99,7 +99,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.FinancialYear;
 import org.geotools.data.DataStore;
@@ -131,8 +130,7 @@ public class CommonsServiceImpl implements CommonsService {
     @Autowired
     public BoundaryTypeService boundaryTypeService;
 
-    public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory,
-            final GenericHibernateDaoFactory genericHibernateDaoFactory, final SessionFactory sessionFactory) {
+    public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory, final SessionFactory sessionFactory) {
         this.commonsDAOFactory = commonsDAOFactory;
         this.sessionFactory = sessionFactory;
     }
