@@ -198,7 +198,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 		Address ownerAddr = null;
 		if (chkIsCorrIsDiff) {
-			ownerAddr = new Address();
+			ownerAddr = new PropertyAddress();
 			if (corrAddress1 != null && !corrAddress1.isEmpty()) {
 				corrAddress1 = propertyTaxUtil.antisamyHackReplace(corrAddress1);
 			}

@@ -125,9 +125,9 @@ public interface BasicProperty {
 
 	public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
 
-	public Date getPropCreateDate();
+	public Date getPropOccupationDate();
 
-	public void setPropCreateDate(Date propCreateDate);
+	public void setPropOccupationDate(Date propOccupationDate);
 
 	public Set<Property> getPropertySet();
 
@@ -230,5 +230,26 @@ public interface BasicProperty {
 	public void setActiveProperty(PropertyImpl activeProperty);
 
 	public void setInactiveProperty(PropertyImpl inactiveProperty);
+	
+	public String getApplicationNo();
+	
+	public void setApplicationNo(String applicationNo);
+	
+	public String getVacantLandAssmtNo();
+	
+	public void setVacantLandAssmtNo(String vacantLandAssmtNo);
+	
+	public String getRegdDocNo();
+	
+	public void setRegdDocNo(String regdDocNo);
+	
+	public Date getRegdDocDate();
+	
+	public void setRegdDocDate(Date regdDocDate);
+	
+	public String getSource();
+	
+	public void setSource(String source);
+	
 
 }

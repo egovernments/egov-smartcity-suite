@@ -657,7 +657,7 @@ public class PropertyImpl extends StateAware implements Property {
 	private List<Address> cloneAddrList(List<Address> addressList) {
 		List<Address> newAddressList = new ArrayList<Address>();
 		for (Address ownAddress : addressList) {
-			Address ownerAddr = new Address();
+			Address ownerAddr = new PropertyAddress();
 			ownerAddr.setType(ownAddress.getType());
 			ownerAddr.setLandmark(ownAddress.getLandmark());
 			ownerAddr.setPinCode(ownAddress.getPinCode());

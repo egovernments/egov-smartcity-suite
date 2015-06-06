@@ -108,7 +108,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	@Qualifier(value = "demandDAO")
 	private EgDemandDao demandDao;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	@Qualifier(value = "propertyDAO")

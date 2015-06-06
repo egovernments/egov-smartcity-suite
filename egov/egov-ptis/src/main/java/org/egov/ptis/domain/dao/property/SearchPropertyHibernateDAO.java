@@ -115,7 +115,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	@Autowired
 	private BoundaryService boundaryService;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

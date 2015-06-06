@@ -89,7 +89,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
 	PropertyTaxCollection propertyTaxCollection;
 	DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private PtDemandDao PtDemandDAO;

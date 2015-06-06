@@ -179,6 +179,7 @@ public interface PropertyTaxConstants {
 	// hierarchy types
 	public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
 	public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
+	public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
 	// boundary Types
 	public static final String CITY_BNDRY_TYPE = "Revenue City";
 	public static final String ZONE_BNDRY_TYPE = "Revenue Zone";
@@ -187,6 +188,7 @@ public interface PropertyTaxConstants {
 	public static final String ZONE = "Zone";
 	public static final String WARD = "Ward";
 	public static final String STREET = "Street";
+	public static final String LOCALITY = "locality";
 
 	// Property Types
 	public static final String PROPTYPE_RESD = "RESIDENTIAL";

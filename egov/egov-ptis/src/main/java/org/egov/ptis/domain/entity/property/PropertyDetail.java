@@ -319,4 +319,67 @@ public interface PropertyDetail extends Property {
 	
 	public void setNonResPlotArea(Area nonResPlotArea);
 	
+	public boolean isLift();
+	
+	public void setLift(boolean lift);
+	
+	public boolean isToilets();
+	
+	public void setToilets(boolean toilets);
+	
+	public boolean isWaterTap();
+	
+	public void setWaterTap(boolean waterTap);
+	
+	public boolean isStructure();
+	
+	public void setStructure(boolean structure);
+	
+	public boolean isDrainage();
+	
+	public void setDrainage(boolean drainage);
+	
+	public boolean isElectricity();
+	
+	public void setElectricity(boolean electricity);
+	
+	public boolean isAttachedBathRoom();
+	
+	public void setAttachedBathRoom(boolean attachedBathRoom);
+	
+	public boolean isWaterHarvesting();
+	
+	public void setWaterHarvesting(boolean waterHarvesting);
+	
+	public boolean isCable();
+	
+	public void setCable(boolean cable);
+	
+	public double getExtentSite();
+	
+	public void setExtentSite(double extentSite);
+	
+	public double getExtentAppartenauntLand();
+	
+	public void setExtentAppartenauntLand(double extentAppartenauntLand);
+	
+	public String getSiteOwner();
+	
+	public void setSiteOwner(String siteOwner);
+	
+	public Long getFloorType();
+	
+	public void setFloorType(Long floorType);
+	
+	public Long getRoofType();
+	
+	public void setRoofType(Long roofType);
+	
+	public Long getWallType();
+	
+	public void setWallType(Long wallType);
+	
+	public Long getWoodType();
+	
+	public void setWoodType(Long woodType);
 }

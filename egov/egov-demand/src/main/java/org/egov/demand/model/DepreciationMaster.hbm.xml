@@ -3,18 +3,18 @@
 PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.demand.model.DepreciationMaster" table="EGDCB_DEPRECIATIONMASTER">
+	<class name="org.egov.demand.model.DepreciationMaster" table="EGDM_DEPRECIATIONMASTER">
 	
 		<id
 			name="id"
-			column="ID_DEPRECIATIONMASTER"
+			column="ID"
 			type="int">
 			<generator class="native">
 				<param name="sequence">SEQ_DEPRECIATIONMASTER</param>
 			</generator>
 		</id>
 		<timestamp
-			column="LASTUPDATEDTIMESTAMP"
+			column="LASTMODIFIEDDATE"
 			name="lastUpdatedTimeStamp"
 			access="property"
 			unsaved-value="null"

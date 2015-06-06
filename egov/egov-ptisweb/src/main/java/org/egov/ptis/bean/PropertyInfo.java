@@ -1310,7 +1310,7 @@ public class PropertyInfo {
 	 * @return assessment date (property created date)
 	 */
 	public String getAssessmentDate() {
-		return dateFormatter.format(this.property.getBasicProperty().getPropCreateDate());
+		return dateFormatter.format(this.property.getBasicProperty().getPropOccupationDate());
 	}
 
 }

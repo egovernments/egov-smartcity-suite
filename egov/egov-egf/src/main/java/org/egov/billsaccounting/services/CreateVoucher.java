@@ -865,7 +865,7 @@ public class CreateVoucher {
                 if(department.getCode().equalsIgnoreCase("A"))
                 {
                         try {
-                                HierarchyType hierarchyTypeByName = new HeirarchyTypeDAO(null).getHierarchyTypeByName("ADMINISTRATION");
+                                HierarchyType hierarchyTypeByName = new HeirarchyTypeDAO().getHierarchyTypeByName("ADMINISTRATION");
                                  List topBoundaries = new BoundaryDAO(null).getTopBoundaries( hierarchyTypeByName);
                                  if(topBoundaries!=null && topBoundaries.size()>0)
                                          boundaryForUser=(Boundary)topBoundaries.get(0);

@@ -75,6 +75,8 @@ public class PropertyStatusValues extends BaseModel {
 	private String extraField2;
 	private String extraField3;
 	private BasicProperty referenceBasicProperty;
+	private Integer buildingPermissionNo;
+	private Date buildingPermissionDate;
 
 	/**
 	 * @return Returns if the given Object is equal to PropertyStatusValues
@@ -209,6 +211,22 @@ public class PropertyStatusValues extends BaseModel {
 
 	public void setReferenceBasicProperty(BasicProperty referenceBasicProperty) {
 		this.referenceBasicProperty = referenceBasicProperty;
+	}
+	
+	public Integer getBuildingPermissionNo() {
+		return buildingPermissionNo;
+	}
+
+	public void setBuildingPermissionNo(Integer buildingPermissionNo) {
+		this.buildingPermissionNo = buildingPermissionNo;
+	}
+
+	public Date getBuildingPermissionDate() {
+		return buildingPermissionDate;
+	}
+
+	public void setBuildingPermissionDate(Date buildingPermissionDate) {
+		this.buildingPermissionDate = buildingPermissionDate;
 	}
 
 	@Override

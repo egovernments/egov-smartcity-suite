@@ -81,6 +81,7 @@ public class PropertyID extends BaseModel {
 	private String southBoundary;
 	private String eastBoundary;
 	private String westBoundary;
+	private Boundary electionBoundary;
 
 	/**
 	 * @return Returns the hashCode
@@ -253,6 +254,15 @@ public class PropertyID extends BaseModel {
 
 	public void setWestBoundary(String westBoundary) {
 		this.westBoundary = westBoundary;
+	}
+	
+
+	public Boundary getElectionBoundary() {
+		return electionBoundary;
+	}
+
+	public void setElectionBoundary(Boundary electionBoundary) {
+		this.electionBoundary = electionBoundary;
 	}
 
 	@Override

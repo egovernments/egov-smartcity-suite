@@ -119,6 +119,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -131,7 +132,6 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
@@ -147,7 +147,6 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	@Autowired
 	protected EisCommonsService eisCommonsService;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
@@ -1450,14 +1449,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						LOGGER.error(e.getMessage(), e);
 					}
 				} else {
-					propCompletionDate = basicProperty.getPropCreateDate();
+					propCompletionDate = basicProperty.getPropOccupationDate();
 				}
 			}
 		} else {
 			List floorList = new ArrayList(newProperty.getPropertyDetail().getFloorDetails());
 			propCompletionDate = getLowestDtOfCompFloorWise(floorList);
 			if (propCompletionDate == null) {
-				propCompletionDate = basicProperty.getPropCreateDate();
+				propCompletionDate = basicProperty.getPropOccupationDate();
 			}
 		}
 
@@ -1483,7 +1482,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			newOwner.setOrderNo(owner.getOrderNo());
 			for (Object address : owner.getAddress()) {
 				oldOwnAddr = (Address) address;
-				Address ownerAddr = new Address();
+				Address ownerAddr = new PropertyAddress();
 				String addrStr1 = oldOwnAddr.getLandmark();
 				String addrStr2 = oldOwnAddr.getAreaLocalitySector();
 				if (addrStr1 != null && !addrStr1.isEmpty()) {

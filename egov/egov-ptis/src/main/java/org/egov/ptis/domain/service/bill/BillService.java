@@ -102,7 +102,6 @@ public class BillService {
 	private String billNo;
 	InputStream billPDF;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

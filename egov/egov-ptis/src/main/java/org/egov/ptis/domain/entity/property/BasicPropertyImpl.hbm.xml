@@ -50,6 +50,9 @@
 				<param name="sequence">SEQ_BASIC_PROPERTY</param>
 			</generator>
 		</id>
+		<property name="applicationNo" type="java.lang.String">
+			<column name="applicationno" not-null="true" />
+		</property>
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
 		</property>
@@ -126,7 +129,7 @@
 		<many-to-one name="propertyMutationMaster" column="ID_PROP_CREATE_REASON"
 			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />
 
-		<property name="propCreateDate" column="PROP_CREATE_DATE" />
+		<property name="propOccupationDate" column="PROP_CREATE_DATE" />
 
 		<one-to-one name="propertyReference" lazy="proxy"
 			class="org.egov.ptis.domain.entity.property.PropertyReference" property-ref="defaultPropertyReference"
@@ -176,7 +179,9 @@
 		<property name="allChangesCompleted" column="ALL_CHANGES_COMPLETED"/>
 		<property name="isBillCreated" column="IS_BILL_CREATED"/>
 		<property name="billCrtError" column="BILL_CRT_ERROR"/>
-		<property name="isTaxXMLMigrated" column="IS_TAXXML_MIGRATED"/> 		
+		<property name="regdDocNo" column="regd_doc_no" type="java.lang.String"/> 
+		<property name="regdDocDate" column="regd_doc_date" type="java.util.Date"/> 
+		<property name="vacantLandAssmtNo" column="vl_assessmentNo" type="java.lang.String"/> 
 	</class>
 
 </hibernate-mapping>

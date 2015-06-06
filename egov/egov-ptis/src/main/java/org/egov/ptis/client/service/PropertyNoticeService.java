@@ -104,7 +104,6 @@ public class PropertyNoticeService {
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private Map<Date, String> occupancyAndPropertyType = new TreeMap<Date, String>();
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

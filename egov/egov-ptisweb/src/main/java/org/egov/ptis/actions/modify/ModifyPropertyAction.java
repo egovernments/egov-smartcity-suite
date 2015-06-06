@@ -444,7 +444,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 
 			setDateOfCompletion(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
-					.format(basicProp.getPropCreateDate()));
+					.format(basicProp.getPropOccupationDate()));
 
 			setDocNumber(propertyModel.getDocNumber());
 			target = NEW;
@@ -749,7 +749,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		endWorkFlow(oldProperty);
 
 		basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-				PROPERTY_MODIFY_REASON_MODIFY, basicProp.getPropCreateDate(), null, null, null,
+				PROPERTY_MODIFY_REASON_MODIFY, basicProp.getPropOccupationDate(), null, null, null,
 				null));
 
 		basicPrpertyService.update(basicProp);
@@ -1256,7 +1256,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 			basicProp.setAllChangesCompleted(allChangesCompleted);
 		}
-		basicProp.setPropCreateDate(propCompletionDate);
+		basicProp.setPropOccupationDate(propCompletionDate);
 
 		setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode,
 				propTypeId, propUsageId, propOccId, status, propertyModel.getDocNumber(), null,
@@ -2177,7 +2177,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		basicProp.setExtraField1(isAuthProp);
-		basicProp.setPropCreateDate(propCompletionDate);
+		basicProp.setPropOccupationDate(propCompletionDate);
 		existingProp = updatePropertyForMigratedProp(existingProp, getAreaOfPlot(),
 				PROP_CREATE_RSN, propTypeId, propUsageId, propOccId, propertyModel.getDocNumber(),
 				null, isfloorDetailsRequired);

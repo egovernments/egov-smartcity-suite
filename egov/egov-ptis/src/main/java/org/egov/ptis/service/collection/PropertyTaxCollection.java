@@ -108,7 +108,6 @@ public class PropertyTaxCollection extends TaxCollection {
 	private PersistenceService persistenceService;
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;

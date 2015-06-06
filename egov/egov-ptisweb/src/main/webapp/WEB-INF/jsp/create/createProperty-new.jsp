@@ -49,12 +49,16 @@
     </title>
 	<!-- <sx:head/>	 -->
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript">
-/*
+
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
 function loadOnStartUp() {
-	document.getElementById("plotArea").style.display = "";
+	/* document.getElementById("plotArea").style.display = "";
 	document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
@@ -70,16 +74,16 @@ function loadOnStartUp() {
 	document.getElementById("dateOfCompletion").readOnly=true;
 	document.getElementById("dateOfCompletion").className="hiddentext";
 	document.getElementById("floorDetailsConfirm").style.display = "none";
-	document.getElementById("waterRate").style.display = "none";
+	document.getElementById("waterRate").style.display = "none"; */
 	
-	enableFieldsForPropType();
-	hideAddRmvBtnForResidFlats();
-	enableCorresAddr();
-	enableTaxExemptReason();
-	makeMandatory();
-	enableRentBox();
+	//enableFieldsForPropType();
+	//hideAddRmvBtnForResidFlats();
+	//enableCorresAddr();
+	//enableTaxExemptReason();
+	//makeMandatory();
+	//enableRentBox();
 			
-	var complDateStr = document.getElementById("dateOfCompletion").value;
+	/* var complDateStr = document.getElementById("dateOfCompletion").value;
 	if(complDateStr == "" || complDateStr == "DD/MM/YYYY" || complDateStr == undefined)
 	{		
 		waterMarkInitialize('dateOfCompletion','DD/MM/YYYY');
@@ -87,7 +91,7 @@ function loadOnStartUp() {
 	var tbl = document.getElementById('floorDetails');	
 	if(tbl!=null) {
 		resetDetailsForTenantOnload();
-	}
+	} */
 	
 	//populateLocationFactors();	
 	//populateFloorConstTypeDropDowns();
@@ -97,7 +101,7 @@ function loadOnStartUp() {
 	//prepareUnitTypeCategories();
 	//prepareUsagesForUnitTypes();
 	
-	var intervalId = -1;
+	/* var intervalId = -1;
 	var propTypeMstr = document.getElementById("propTypeMaster");
 	
 	if (propTypeMstr.options[propTypeMstr.selectedIndex].text == 'Mixed') {
@@ -108,19 +112,24 @@ function loadOnStartUp() {
 		clearInterval(intervalId);
 	} 	
 	
-	document.getElementById("taxExemptRow").style.display = "none";		
+	document.getElementById("taxExemptRow").style.display = "none";		 */
 	//enableSubmitButton();
 }
-
-var areUnitTypeCatsAndUsagePopulated = false;
+function onSubmit(obj) {
+	alert(obj)
+	document.forms[0].action=obj;
+	document.forms[0].submit;
+   return true;
+}
+/* var areUnitTypeCatsAndUsagePopulated = false;
 function doOnValidationErrors() {	
 
 	/* if (!areUnitTypeCatsAndUsagePopulated && isCategoriesPrepared && isUsagesPrepared) {
 		populateUnitTypeCatAndUsageOnValidationErrors();	
-	}  */
-/*}
+	}  
+}*/
 
-function resetFloorDetailsForResdAndNonResd(obj) {
+/* function resetFloorDetailsForResdAndNonResd(obj) {
 	var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
 	var rowIndex = getRow(obj).rowIndex;
 	var tbl = document.getElementById('floorDetails');
@@ -350,7 +359,7 @@ function finishAllChangesMsg(button) {
 		alert("Please check the '" + allChngsCmpltdLabel.slice(0, allChngsCmpltdLabel.length-1) + "' to proceed with " + action);
 		return false;
 	}
-}*/
+}  */
 
 </script>
 </head>
@@ -381,18 +390,18 @@ function finishAllChangesMsg(button) {
         </tr>
         <s:hidden name="modelId" id="modelId" value="%{modelId}" />
       <tr>
-        	<div id="loadingMask" style="display:none" align="center">
-        	<p align="center"><img src="/egi/images/bar_loader.gif"> 
+        	<!-- <div id="loadingMask" style="display:none" align="center">
+        	<p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> 
         		<span id="message">
         			<p style="color: red">Please wait....</p>
         		</span>
         	</p>
-        	</div>
+        	</div> -->
         	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>
 		    <div class="buttonbottom" align="center">		   
-		    	<td><s:submit value="Approve" name="Approve"
+		    	<%-- <td><s:submit value="Approve" name="Approve"
 						id='Create:Save' cssClass="buttonsubmit" method="create"
 						/></td>				
 				<td><s:submit value="Data Entry" name="Save"
@@ -402,7 +411,10 @@ function finishAllChangesMsg(button) {
 						id="Create:Forward" method="forward" cssClass="buttonsubmit"
 						onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 				<td><input type="button" name="button2" id="button2"
-						value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td>				
+						value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
+						<td><s:submit value="Approve" name="Approve"
+						id='approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action');"
+						/></td>				
 			</div>
 		</tr> 
 		</table>

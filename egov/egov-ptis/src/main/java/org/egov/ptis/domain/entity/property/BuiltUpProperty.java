@@ -92,6 +92,22 @@ public class BuiltUpProperty extends AbstractProperty {
 	private Character comZone = 'N';
 	private Character cornerPlot = 'N';
 	private PropertyOccupation propertyOccupation;
+	private boolean lift = false;
+	private boolean toilets = false;
+	private boolean waterTap = false;
+	private boolean structure = false;
+	private boolean drainage = false;
+	private boolean electricity = false;
+	private boolean attachedBathRoom = false;
+	private boolean waterHarvesting = false;
+	private boolean cable = false;
+	private double extentSite;
+	private double extentAppartenauntLand;
+	private String siteOwner;
+	private Long floorType;
+	private Long roofType;
+	private Long wallType;
+	private Long woodType;
 
 	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
 			Area commVacantLand, Area nonResPlotArea, 
@@ -718,4 +734,157 @@ public class BuiltUpProperty extends AbstractProperty {
 	public void setNonResPlotArea(Area nonResPlotArea) {
 		this.nonResPlotArea = nonResPlotArea;
 	}
+
+	@Override
+	public boolean isLift() {
+		return lift;
+	}
+
+	@Override
+	public void setLift(boolean lift) {
+		this.lift = lift;
+	}
+
+	@Override
+	public boolean isToilets() {
+		return toilets;
+	}
+
+	@Override
+	public void setToilets(boolean toilets) {
+		this.toilets = toilets;
+	}
+
+	@Override
+	public boolean isWaterTap() {
+		return waterTap;
+	}
+
+	@Override
+	public void setWaterTap(boolean waterTap) {
+		this.waterTap = waterTap;
+	}
+
+	@Override
+	public boolean isStructure() {
+		return structure;
+	}
+
+	@Override
+	public void setStructure(boolean structure) {
+		this.structure = structure;
+	}
+
+	@Override
+	public boolean isDrainage() {
+		return drainage;
+	}
+
+	@Override
+	public void setDrainage(boolean drainage) {
+		this.drainage = drainage;
+	}
+
+	@Override
+	public boolean isElectricity() {
+		return electricity;
+	}
+
+	@Override
+	public void setElectricity(boolean electricity) {
+		this.electricity = electricity;
+	}
+
+	@Override
+	public boolean isAttachedBathRoom() {
+		return attachedBathRoom;
+	}
+
+	@Override
+	public void setAttachedBathRoom(boolean attachedBathRoom) {
+		this.attachedBathRoom = attachedBathRoom;
+	}
+
+	@Override
+	public boolean isWaterHarvesting() {
+		return waterHarvesting;
+	}
+
+	@Override
+	public void setWaterHarvesting(boolean waterHarvesting) {
+		this.waterHarvesting = waterHarvesting;
+	}
+
+	@Override
+	public boolean isCable() {
+		return cable;
+	}
+
+	@Override
+	public void setCable(boolean cable) {
+		this.cable = cable;
+	}
+
+	@Override
+	public double getExtentSite() {
+		return extentSite;
+	}
+
+	@Override
+	public void setExtentSite(double extentSite) {
+		this.extentSite = extentSite;
+	}
+
+	public double getExtentAppartenauntLand() {
+		return extentAppartenauntLand;
+	}
+
+	@Override
+	public void setExtentAppartenauntLand(double extentAppartenauntLand) {
+		this.extentAppartenauntLand = extentAppartenauntLand;
+	}
+	
+	@Override
+	public String getSiteOwner() {
+		return siteOwner;
+	}
+
+	@Override
+	public void setSiteOwner(String siteOwner) {
+		this.siteOwner = siteOwner;
+	}
+
+	public Long getFloorType() {
+		return floorType;
+	}
+
+	public void setFloorType(Long floorType) {
+		this.floorType = floorType;
+	}
+
+	public Long getRoofType() {
+		return roofType;
+	}
+
+	public void setRoofType(Long roofType) {
+		this.roofType = roofType;
+	}
+
+	public Long getWallType() {
+		return wallType;
+	}
+
+	public void setWallType(Long wallType) {
+		this.wallType = wallType;
+	}
+
+	public Long getWoodType() {
+		return woodType;
+	}
+
+	public void setWoodType(Long woodType) {
+		this.woodType = woodType;
+	}
+	
+	
 }

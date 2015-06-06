@@ -52,6 +52,7 @@ import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -69,6 +70,7 @@ import org.egov.ptis.notice.PtNotice;
  */
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
+	private String applicationNo;
 	private Boolean active;
 	private String upicNo;
 	private PropertyID propertyID;
@@ -78,7 +80,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private Set<PropertyStatusValues> propertyStatusValuesSet = new HashSet<PropertyStatusValues>();
 	private Set<PropertyMutation> propMutationSet = new HashSet<PropertyMutation>();
 	private PropertyMutationMaster propertyMutationMaster;
-	private Date propCreateDate;
+	private Date propOccupationDate;
 	private Set<Property> propertySet = new HashSet<Property>();
 	private PropertyReference propertyReference;
 	private PropertyStatus status;
@@ -99,6 +101,10 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private boolean isDemandActive = false;
 	private PropertyImpl activeProperty;
 	private PropertyImpl inactiveProperty;
+	private String regdDocNo;
+	private Date regdDocDate;
+	private String vacantLandAssmtNo;
+	private String source;
 
 	@Override
 	public Set<PropertyDocs> getPropertyDocsSet() {
@@ -199,16 +205,6 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	@Override
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
-
-	@Override
-	public void setAddress(PropertyAddress address) {
-		this.address = address;
-	}
-
-	@Override
-	public PropertyAddress getAddress() {
-		return address;
 	}
 
 	/**
@@ -366,16 +362,6 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	public void setPropertyStatusValuesSet(
 			Set<PropertyStatusValues> propertyStatusValuesSet) {
 		this.propertyStatusValuesSet = propertyStatusValuesSet;
-	}
-
-	@Override
-	public Date getPropCreateDate() {
-		return propCreateDate;
-	}
-
-	@Override
-	public void setPropCreateDate(Date propCreateDate) {
-		this.propCreateDate = propCreateDate;
 	}
 
 	@Override
@@ -683,4 +669,76 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	public void setInactiveProperty(PropertyImpl inactiveProperty) {
 		this.inactiveProperty = inactiveProperty;
 	}
+
+	@Override
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	@Override
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	@Override
+	public String getVacantLandAssmtNo() {
+		return vacantLandAssmtNo;
+	}
+
+	@Override
+	public void setVacantLandAssmtNo(String vacantLandAssmtNo) {
+		this.vacantLandAssmtNo = vacantLandAssmtNo;
+	}
+
+	@Override
+	public String getRegdDocNo() {
+		return regdDocNo;
+	}
+
+	@Override
+	public void setRegdDocNo(String regdDocNo) {
+		this.regdDocNo = regdDocNo;
+	}
+
+	@Override
+	public Date getRegdDocDate() {
+		return regdDocDate;
+	}
+
+	@Override
+	public void setRegdDocDate(Date regdDocDate) {
+		this.regdDocDate = regdDocDate;
+	}
+
+	@Override
+	public PropertyAddress getAddress() {
+		return address;
+	}
+
+	@Override
+	public void setAddress(PropertyAddress address) {
+        this.address = address;		
+	}
+
+	@Override
+	public Date getPropOccupationDate() {
+		return propOccupationDate;
+	}
+
+	@Override
+	public void setPropOccupationDate(Date propOccupationDate) {
+		this.propOccupationDate = propOccupationDate;
+		
+	}
+
+	@Override
+	public String getSource() {
+		return source;
+	}
+
+	@Override
+	public void setSource(String source) {
+		this.source = source;
+	}
+	
 }

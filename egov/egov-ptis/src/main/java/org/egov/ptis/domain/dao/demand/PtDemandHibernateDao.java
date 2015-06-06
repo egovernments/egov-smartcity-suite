@@ -77,7 +77,6 @@ public class PtDemandHibernateDao implements PtDemandDao {
 	private static final String BILLID_PARAM = "billid";
 	private static final String PROPERTY = "property";
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

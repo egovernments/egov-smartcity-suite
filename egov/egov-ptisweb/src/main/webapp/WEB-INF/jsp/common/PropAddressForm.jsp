@@ -38,7 +38,34 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <%@ include file="/includes/taglibs.jsp" %>
-
+<script>
+ jQuery(document).ready(function(){
+	 jQuery('#locality').change(function() {
+		console.log("came jursidiction"+jQuery('#locality').val());
+		alert(jQuery('#locality').val());
+		jQuery.ajax({
+			url: "/ptis/common/ajaxCommon-blockByLocality.action",
+			type: "GET",
+			data: {
+				locality : jQuery('#locality').val()
+			},
+			dataType: "json",
+			success: function (response) {
+				jQuery('#zoneId').val(response.zoneId);
+				jQuery('#wardId').val(response.wardId);
+				jQuery('#blockId').val(response.blockId);
+				jQuery('#zoneName').val(response.zoneName);
+				jQuery('#wardName').val(response.wardName);
+				jQuery('#blockName').val(response.blockName);
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
+});
+</script>
 
 
 <div id="PropAddressDiv">
@@ -48,36 +75,38 @@
 	
 	 <tr>
   	<td class="greybox2">&nbsp;</td>
-  	<egov:ajaxdropdown id="areaId" fields="['Text','Value']" dropdownId="areaId" url="common/ajaxCommon-streetByWard.action" />
-	<td class="greybox">Locality <span class="mandatory1">*</span> : </td>
-	<td class="greybox"><s:select name="areaId" id="areaId" list="dropdownData.streetList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{areaId}"/>
+	<td class="greybox"><s:text name="locality"></s:text> <span class="mandatory1">*</span> : </td>
+	<td class="greybox"><s:select name="locality" id="locality" list="dropdownData.localityList"
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{locality}"/>
 	</td>
     <td class="greybox" colspan="2">&nbsp;</td>
   </tr>
 	
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%">Zone no <span class="mandatory1">*</span> : </td>
-	    <td class="bluebox"><s:textfield name="zoneno" maxlength="20" /></td>
-	    <td class="bluebox" width="10%">Rev Ward No <span class="mandatory1">*</span>: </td>
-	    <td class="bluebox"><s:textfield name="revwardno" maxlength="20" /></td>
+	    <td class="bluebox" width="8%"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
+	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/></td>
+	    <s:hidden id="zoneId"></s:hidden>
+	    <td class="bluebox" width="10%"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
+	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" /></td>
+	    <s:hidden id="wardId"></s:hidden>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%">Block No <span class="mandatory1">*</span> :  </td>
-	    <td class="bluebox"> <s:textfield name="revwardno" maxlength="20" /></td>
-	    <td class="bluebox" width="8%">Street : </td>
+	    <td class="bluebox" width="8%"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
+	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" /></td>
+	    <s:hidden id="blockId"></s:hidden>
+	    <td class="bluebox" width="8%"><s:text name="Street"></s:text> : </td>
 	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" /></td>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="10%">Elec Ward No : </td>
-	    <td class="bluebox"><s:select name="sbelecwardno" id="sbelecwardno" list="dropdownData.streetList"
+	    <td class="bluebox" width="10%"><s:text name="elec.wardno"></s:text> : </td>
+	    <td class="bluebox"><s:select name="sbelecwardno" id="sbelecwardno" list="dropdownData.localityList"
 	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{areaId}"/></td>
-	    <td class="bluebox" width="8%">Door No <span class="mandatory1">*</span> : </td>
+	    <td class="bluebox" width="8%"><s:text name="doorno"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="50" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>
  

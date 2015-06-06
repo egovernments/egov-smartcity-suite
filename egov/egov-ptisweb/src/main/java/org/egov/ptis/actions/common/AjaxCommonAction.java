@@ -40,14 +40,13 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +58,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -66,12 +68,14 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.egov.commons.Functionary;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractUser;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
@@ -87,13 +91,16 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.json.JSONObject;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 /*
  * @Results({ @Result(name = "AJAX_RESULT", type = "Stream", location =
- * "returnStream", params = { "contentType", "text/plain" }) })
+ * "returnStream", params = { "contentType", "application/json" }) })
  */
 @Transactional(readOnly = true)
 @Namespace("/common")
@@ -103,9 +110,10 @@ import org.springframework.transaction.annotation.Transactional;
     @Result(name="street",location="ajaxCommon-street.jsp")  ,
     @Result(name="area",location="ajaxCommon-area.jsp") ,
     @Result(name="category",location="ajaxCommon-category.jsp")  ,
-    @Result(name="structural",location="ajaxCommon-structural.jsp")  
+    @Result(name="structural",location="ajaxCommon-structural.jsp"),
+   /* @Result(name = "AJAX_RESULT", type = "Stream", location = "returnStream", params = { "contentType", "application/json" })*/
   })
-public class AjaxCommonAction extends BaseFormAction {
+public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
 	private static final String CATEGORY = "category";
@@ -120,6 +128,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private Long zoneId;
 	private Long wardId;
 	private Long areaId;
+	private Long locality;
 	private Integer departmentId;
 	private Integer designationId;
 	private Integer propTypeId;
@@ -131,7 +140,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private List<Boundary> streetList;
 	private List<PropertyUsage> propUsageList;
 	private List<Designation> designationMasterList = new ArrayList<Designation>();
-	private List<AbstractUser> userList = new ArrayList<AbstractUser>();
+	private List<User> userList = new ArrayList<User>();
 	private List<Category> categoryList;
 	private List<StructureClassification> structuralClassifications;
 	private String returnStream = "";
@@ -139,9 +148,13 @@ public class AjaxCommonAction extends BaseFormAction {
 	private Date completionOccupationDate;
 	private Logger LOGGER = Logger.getLogger(getClass());
 	private List<String> partNumbers;
+	private HttpServletResponse response;
+	
 	@Autowired
 	private CategoryDao categoryDAO;
-
+	@Autowired
+    private BoundaryService boundaryService;
+	
 	@Override
 	public Object getModel() {
 		return null;
@@ -184,6 +197,30 @@ public class AjaxCommonAction extends BaseFormAction {
 				+ ((streetList != null) ? streetList : ZERO));
 		return "street";
 	}
+	
+	
+	@Action(value = "/ajaxCommon-blockByLocality")
+	public void blockByLocality() throws IOException, NoSuchObjectException {
+		LOGGER.debug("Entered into blockByLocality, locality: " + locality);
+		
+		//streetList = new ArrayList<Boundary>(0);
+		
+		Boundary blockBoundary = (Boundary) getPersistenceService()
+				.find("select CH.parent from CrossHeirarchyImpl CH where CH.child.id = ? ", getLocality());
+		Boundary wardBoundary = blockBoundary.getParent();
+		Boundary zoneBoundary = wardBoundary.getParent();
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("zoneName", zoneBoundary.getName());
+		jsonObject.put("wardName", wardBoundary.getName());
+		jsonObject.put("blockName", blockBoundary.getName());
+		jsonObject.put("zoneId", zoneBoundary.getId());
+		jsonObject.put("wardId", wardBoundary.getId());
+		jsonObject.put("blockId", blockBoundary.getId());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(jsonObject.toString(), response.getWriter());
+	}
 
 	@SuppressWarnings("unchecked")
 	public String populateDesignationsByDept() {
@@ -214,7 +251,7 @@ public class AjaxCommonAction extends BaseFormAction {
 			eisService.setPersistenceService(persistenceService);
 			List<EmployeeView> empInfoList = eisService.getEmployeeInfoList(paramMap);
 			for (EmployeeView employeeView : empInfoList) {
-				userList.add((AbstractUser)employeeView.getEmployee());
+				userList.add((User)employeeView.getEmployee());
 			}
 		}
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : "
@@ -452,7 +489,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		this.designationId = designationId;
 	}
 
-	public List<AbstractUser> getUserList() {
+	public List<User> getUserList() {
 		return userList;
 	}
 
@@ -510,6 +547,19 @@ public class AjaxCommonAction extends BaseFormAction {
 
 	public void setPartNumbers(List<String> partNumbers) {
 		this.partNumbers = partNumbers;
+	}
+
+	public Long getLocality() {
+		return locality;
+	}
+
+	public void setLocality(Long locality) {
+		this.locality = locality;
+	}
+
+	@Override
+	public void setServletResponse(HttpServletResponse httpServletResponse) {
+		this.response = httpServletResponse;
 	}
 
 }

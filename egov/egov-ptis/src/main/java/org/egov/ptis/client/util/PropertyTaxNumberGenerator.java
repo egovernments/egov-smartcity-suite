@@ -62,7 +62,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class PropertyTaxNumberGenerator {
 	private SequenceNumberGenerator sequenceNumberGenerator;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

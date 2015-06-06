@@ -821,7 +821,7 @@ public class ContingentBillAction extends BaseBillAction {
                         CheckListHelper chkHelper=new CheckListHelper();
                         chkHelper.setName(chk.getAppconfigvalue().getValue());
                         chkHelper.setVal(chk.getChecklistvalue());
-                        chkHelper.setId(chk.getAppconfigvalue().getId());  
+                        chkHelper.setId((chk.getAppconfigvalue().getId()).intValue());  
                         checkListsTable.add(chkHelper);
                 }
                 return cbill;

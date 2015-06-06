@@ -51,7 +51,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -80,7 +80,6 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 	private BillService billService;
 	protected PersistenceService persistenceService;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDao;

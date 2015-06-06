@@ -94,7 +94,6 @@ public class FinancialUtil {
 	private static final String URL_FOR_DCB = "/ptis/view/viewDCBProperty!displayPropInfo.action?propertyId=";
 
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;

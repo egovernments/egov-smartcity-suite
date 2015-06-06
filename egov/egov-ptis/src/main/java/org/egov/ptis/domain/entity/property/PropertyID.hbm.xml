@@ -75,6 +75,8 @@
 			column="ADM2" />
 		<many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ADM3" />
+		<many-to-one name="electionBoundary" class="org.egov.infra.admin.master.entity.Boundary"
+			column="elect_bndry" />
 		<property name="northBoundary" column="NORTH_BOUNDED" />
 		<property name="southBoundary" column="SOUTH_BOUNDED" />
 		<property name="eastBoundary" column="EAST_BOUNDED" />
