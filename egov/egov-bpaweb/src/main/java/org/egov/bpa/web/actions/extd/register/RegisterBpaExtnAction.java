@@ -58,8 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -130,6 +128,7 @@ import org.egov.commons.ObjectHistory;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -143,7 +142,6 @@ import org.egov.infra.workflow.entity.State;
 /*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -152,6 +150,8 @@ import org.egov.pims.service.EisUtilService;
 import org.egov.portal.entity.Citizen;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Transactional(readOnly = true)
 @Namespace("/extd/register")

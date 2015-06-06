@@ -56,7 +56,6 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 //import org.egov.lib.rjbac.user.dao.UserDAO;
@@ -143,7 +142,7 @@ public class BpaPimsInternalExtnServiceFactory {
 		return empList;
 	}
 	
-	public List<AbstractUser> getApproverListByPassingDeptAndDesignationId(String departmentId,String desgId) 
+	public List<User> getApproverListByPassingDeptAndDesignationId(String departmentId,String desgId) 
 	{
 		logger.info("...inside getApproverListByPassingDeptAndDesignationId....");
 		HashMap<String,String> paramMap = new HashMap<String, String>();
@@ -152,11 +151,11 @@ public class BpaPimsInternalExtnServiceFactory {
 		if(desgId!=null && !desgId.equals(""))			
 			paramMap.put("designationId", desgId);
 		List<EmployeeView> empList;
-		List<AbstractUser> approverList = new ArrayList<AbstractUser>();
+		List<User> approverList = new ArrayList<User>();
 		empList = eisService.getEmployeeInfoList(paramMap);
 		for (EmployeeView emp : empList) {
 			if (emp.getEmployee() != null)
-				approverList.add((AbstractUser)emp.getEmployee());
+				approverList.add((User)emp.getEmployee());
 
 		}
 		return approverList;

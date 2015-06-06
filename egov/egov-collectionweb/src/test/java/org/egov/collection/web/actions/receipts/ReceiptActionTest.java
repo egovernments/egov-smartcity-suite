@@ -62,7 +62,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	private EgovCommon egovCommon;
 	private EisCommonsManager eisCommonsManagerMock;
 	//WorkflowService<ReceiptHeader> receiptWorkflowServiceMock;
-	private GenericHibernateDaoFactory genericHibDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	
 	private ApplicationContextBeanProvider beanProvider;
 	private AuditEventService auditEventService; 

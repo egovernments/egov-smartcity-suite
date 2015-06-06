@@ -49,7 +49,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 	private ReceiptHeaderService receiptHeaderService;
 	private InstrumentService instrumentService;
 	private CommonsManager commonsManager;
-	private GenericHibernateDaoFactory genericHibDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	
 	private CollectionObjectFactory objectFactory;
 	private CollectionsNumberGenerator collectionsNumberGenerator;

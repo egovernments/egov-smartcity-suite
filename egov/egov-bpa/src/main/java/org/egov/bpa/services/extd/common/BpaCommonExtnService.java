@@ -91,6 +91,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PersonalInformationService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 /*import org.egov.infstr.workflow.WorkflowService;
 import org.egov.infstr.workflow.inbox.WorkFlowItemsService;*/
 import org.egov.infra.admin.master.entity.Boundary;
@@ -107,7 +108,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.mail.Email;
 import org.egov.infstr.mail.Email.Builder;
 import org.egov.infstr.services.PersistenceService;
@@ -143,7 +143,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -236,7 +235,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 
 	public String getAppconfigValueResult(String module,String key,String defaultValue)
 	{
-		return EGovConfig.getAppConfigValue(module, key, defaultValue);
+		return appConfigValuesDAO.getAppConfigValue(module, key, defaultValue);
 
 	}
 	
@@ -1050,7 +1049,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 			}
 			LOGGER.debug("Sending to Email "+registration.getOwner().getEmailId());
 			LOGGER.debug("emailSubject "+emailSubject);
-			Email email = builder.build(genericDao);	 			
+			Email email = builder.build();	 			
 			email.send();
 		 }
 		}
@@ -1869,13 +1868,7 @@ public void setEisManager(EisManager eisManager) {
 	this.eisManager = eisManager;
 }
 */
-public GenericHibernateDaoFactory getGenericDao() {
-	return genericDao;
-}
 
-public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-	this.genericDao = genericDao;
-}
 /*
  * Api to give the center date i.e., day4 in list of 3 dates ( day3,day4 and day5 ) to automatically Schedule SiteInspection ,
  *  if a record is forwarded to Official on day1 and no action is taken on record.

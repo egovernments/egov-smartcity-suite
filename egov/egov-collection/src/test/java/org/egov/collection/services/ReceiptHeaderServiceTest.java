@@ -14,7 +14,7 @@ public class ReceiptHeaderServiceTest { /* extends
 	private CollectionObjectFactory objectFactory;
 	private FinancialsUtil financialsUtil;
 	private CollectionsUtil collectionsUtil;
-	private GenericHibernateDaoFactory genericHibDao;
+	@Autowired AppConfigValuesDAO appConfigValuesDAO;
 	private EisCommonsManager eisCommonsManagerMock;
 	private CreateVoucher voucherCreatorMock;
 	

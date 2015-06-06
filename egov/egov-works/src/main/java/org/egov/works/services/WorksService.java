@@ -62,12 +62,12 @@ import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
 import org.egov.masters.dao.MastersDAOFactory;
@@ -87,7 +87,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
-    private GenericHibernateDaoFactory genericHibDao;
+    private @Autowired AppConfigValuesDAO appConfigValuesDAO;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -105,11 +105,11 @@ public class WorksService {
      * @return
      */
     public List<AppConfigValues> getAppConfigValue(final String moduleName, final String key) {
-        return genericHibDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(moduleName, key);
+        return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
     }
 
     public List<String> getNatureOfWorkAppConfigValues(final String moduleName, final String key) {
-        final List<AppConfigValues> appValuesList = genericHibDao.getAppConfigValuesDAO()
+        final List<AppConfigValues> appValuesList = appConfigValuesDAO
                 .getConfigValuesByModuleAndKey(moduleName, key);
         final List<String> natureOfWorksList = new ArrayList<String>();
         if (appValuesList != null && !appValuesList.isEmpty())
@@ -123,10 +123,6 @@ public class WorksService {
         if (!configList.isEmpty())
             return configList.get(0).getValue();
         return null;
-    }
-
-    public void setGenericHibDao(final GenericHibernateDaoFactory genericHibDao) {
-        this.genericHibDao = genericHibDao;
     }
 
     public Accountdetailtype getAccountdetailtypeByName(final String name) {

@@ -68,6 +68,7 @@ import org.egov.bnd.model.RegistrationUnit;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.ObjectHistory;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
@@ -78,8 +79,7 @@ import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.pims.commons.Position;
@@ -139,7 +139,7 @@ public class BndCommonService {
     private ObjectTypeService objectTypeService;
     
     @Autowired
-    private AppConfigValuesHibernateDAO appConfigValuesDAO;
+    private AppConfigValuesDAO appConfigValuesDAO;
 //    private EISServeable eisService;
 
     @Autowired
@@ -150,10 +150,6 @@ public class BndCommonService {
    /* public void setEisService(final EISServeable eisService) {
         this.eisService = eisService;
     }*/
-
-    public void setAppConfigValuesDAO(final AppConfigValuesHibernateDAO appConfigValuesDAO) {
-        this.appConfigValuesDAO = appConfigValuesDAO;
-    }
 
     public void setObjectHistoryService(final ObjectHistoryService objectHistoryService) {
         this.objectHistoryService = objectHistoryService;
@@ -251,7 +247,7 @@ public class BndCommonService {
     }
 
     public boolean getAppconfigValue(final String module, final String key, final String defaultValue) {
-        final String appConfigValue = EGovConfig.getAppConfigValue(module, key, defaultValue);
+        final String appConfigValue = appConfigValuesDAO.getAppConfigValue(module, key, defaultValue);
         return appConfigValue != null
                 && (appConfigValue.equals("1") || appConfigValue.equals("Y") || appConfigValue.equals("y")
                         || appConfigValue.equals("YES") || appConfigValue.equals("yes"));
@@ -274,13 +270,13 @@ public class BndCommonService {
     }
 
     public BigDecimal getCertFeeConfigValueforNAForm(final String module, final String key, final String defaultValue) {
-        final String appConfigValue = EGovConfig.getAppConfigValue(module, key, defaultValue);
+        final String appConfigValue = appConfigValuesDAO.getAppConfigValue(module, key, defaultValue);
         return new BigDecimal(appConfigValue);
 
     }
 
     public String getAppconfigValueResult(final String module, final String key, final String defaultValue) {
-        return EGovConfig.getAppConfigValue(module, key, defaultValue);
+        return appConfigValuesDAO.getAppConfigValue(module, key, defaultValue);
 
     }
 

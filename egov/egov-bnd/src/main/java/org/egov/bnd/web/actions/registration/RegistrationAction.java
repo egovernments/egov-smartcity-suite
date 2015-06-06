@@ -270,10 +270,12 @@ public class RegistrationAction extends BndCommonAction {
         placeTypeTemp = BndConstants.HOSPTIAL;
         registration.setPlaceType(bndCommonService.getPlaceType(placeTypeTemp));
 
-        if (registration.getEventAddress() == null)
+        /*
+         * FIXME  PHOENIX
+         * if (registration.getEventAddress() == null)
             registration.setEventAddress(new Address());
         if (registration.getInformantAddress() == null)
-            registration.setInformantAddress(new Address());
+            registration.setInformantAddress(new Address());*/
 
         copyAddressDetails(registration.getEstablishment().getAddress(), registration.getEventAddress());
         copyAddressDetails(registration.getEstablishment().getAddress(), registration.getInformantAddress());
