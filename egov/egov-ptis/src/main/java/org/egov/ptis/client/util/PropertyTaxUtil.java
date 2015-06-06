@@ -139,6 +139,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
@@ -146,7 +147,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -187,7 +187,6 @@ import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
@@ -212,7 +211,6 @@ public class PropertyTaxUtil {
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
-	@Qualifier(value = "moduleDAO")
 	private static ModuleService moduleDao;
 	@Autowired
 	private static InstallmentDao installmentDao;
@@ -1639,7 +1637,7 @@ public class PropertyTaxUtil {
 	 * @param address
 	 * @return String formed by concatenating the address fields
 	 */
-	public static String buildAddress(PropertyAddress address) {
+	public static String buildAddress(Address address) {
 
 		LOGGER.debug("Entered into buildAddress");
 
@@ -1649,19 +1647,25 @@ public class PropertyTaxUtil {
 
 		StringBuffer strAddress = new StringBuffer();
 
-		strAddress.append((isNotBlank(address.getLandmark())) ? address.getLandmark() : " ").append("|");
-		strAddress.append((isNotBlank(address.getHouseNoBldgApt())) ? address.getHouseNoBldgApt() : " ").append("|");
-		strAddress.append((isNotBlank(address.getDoorNumOld())) ? address.getDoorNumOld() : " ").append("|");
+		strAddress.append(
+				(isNotBlank(address.getLandmark())) ? address.getLandmark() : " ")
+				.append("|");
+		strAddress.append(
+				(isNotBlank(address.getHouseNoBldgApt())) ? address.getHouseNoBldgApt() : " ")
+				.append("|");
+	/*	strAddress.append((isNotBlank(address.getDoorNumOld())) ? address.getDoorNumOld() : " ")
+				.append("|");*/
 
 		String tmpPin = address.getPinCode();
-		strAddress.append((tmpPin != null && !tmpPin.toString().isEmpty()) ? tmpPin : " ").append("|");
+		strAddress.append((tmpPin != null && !tmpPin.toString().isEmpty()) ? tmpPin : " ").append(
+				"|");
 
-		strAddress.append((isNotBlank(address.getMobileNo())) ? address.getMobileNo() : " ").append("|");
-		strAddress.append((isNotBlank(address.getEmailAddress())) ? address.getEmailAddress() : " ").append("|");
-		strAddress.append(isNotBlank(address.getExtraField1()) ? address.getExtraField1() : " ").append("|");
-		strAddress.append(isNotBlank(address.getExtraField2()) ? address.getExtraField2() : " ").append("|");
-		strAddress.append(isNotBlank(address.getExtraField3()) ? address.getExtraField3() : " ").append("|");
-		strAddress.append(isNotBlank(address.getExtraField4()) ? address.getExtraField4() : " ");
+		/*strAddress.append((isNotBlank(address.getMobileNo())) ? address.getMobileNo() : " ")
+				.append("|");
+		strAddress
+				.append((isNotBlank(address.getEmailAddress())) ? address.getEmailAddress() : " ")
+				.append("|");*/
+		
 
 		LOGGER.debug("Exit from buildAddress, Address: " + strAddress.toString());
 

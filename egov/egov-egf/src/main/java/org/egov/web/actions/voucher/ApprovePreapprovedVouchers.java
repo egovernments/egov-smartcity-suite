@@ -51,7 +51,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.billsaccounting.services.BillsAccountingService;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.VoucherDetail;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 

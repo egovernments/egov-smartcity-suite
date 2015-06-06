@@ -89,11 +89,10 @@ import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractUser;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
@@ -157,7 +156,7 @@ public class CommonAction extends BaseFormAction{
 	private ArrayList<Map<String, String>> nameList;
 	private InstrumentService instrumentService;
 	private List<String> detailCodes = new ArrayList<String>();
-	private  List<AbstractUser> userList;
+	private  List<User> userList;
 	private Integer  designationId;
 	private VoucherService voucherService;
 	private String functionaryName;
@@ -1058,7 +1057,7 @@ public class CommonAction extends BaseFormAction{
 	public String ajaxLoadUser()throws Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadUser...");
-		userList = new ArrayList<AbstractUser>();
+		userList = new ArrayList<User>();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("CommonAction | ajaxLoadUserByDesg | Start");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Functionar received : = "+ functionaryName);
 		String functionaryId = null;
@@ -1070,7 +1069,7 @@ public class CommonAction extends BaseFormAction{
 			List<EmployeeView>   empInfoList = voucherService.getUserByDeptAndDesgName(departmentId.toString(),
 					designationId.toString(),functionaryId);
 			 for (EmployeeView employeeView : empInfoList) {
-					userList.add((AbstractUser)employeeView.getEmployee());
+					userList.add((User)employeeView.getEmployee());
 				}
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadUser.");
@@ -1079,7 +1078,7 @@ public class CommonAction extends BaseFormAction{
 
 	public String ajaxHodForDept() throws Exception{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxHodForDept...");
-		userList = new ArrayList<AbstractUser>();
+		userList = new ArrayList<User>();
 		
 		List<PersonalInformation> listOfPI = null;//new EisUtilService().getAllHodEmpByDept(departmentId);
 		for (PersonalInformation personalInformation : listOfPI) {
@@ -1493,10 +1492,10 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	public List<String> getDetailCodes() {
 		return detailCodes;
 	}
-	public List<AbstractUser> getUserList() {
+	public List<User> getUserList() {
 		return userList;
 	}
-	public void setUserList(List<AbstractUser> userList) {
+	public void setUserList(List<User> userList) {
 		this.userList = userList;
 	}
 	public void setDesignationId(Integer designationId) {

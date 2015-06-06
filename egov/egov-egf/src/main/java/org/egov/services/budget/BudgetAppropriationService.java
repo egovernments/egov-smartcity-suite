@@ -56,7 +56,7 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;

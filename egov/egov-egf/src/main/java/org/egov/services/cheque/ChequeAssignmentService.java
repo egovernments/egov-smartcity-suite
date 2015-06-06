@@ -63,7 +63,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.ChequeAssignment;

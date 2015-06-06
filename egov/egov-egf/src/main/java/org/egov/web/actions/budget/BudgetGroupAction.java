@@ -51,7 +51,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.config.AppConfigValues;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetGroup;

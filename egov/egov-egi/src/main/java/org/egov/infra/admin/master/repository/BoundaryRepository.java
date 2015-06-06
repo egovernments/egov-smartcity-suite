@@ -65,6 +65,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
             @Param("boundaryNum") Long boundaryNum);
+    
 
     @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType = :boundaryType AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.boundaryNum")
     List<Boundary> findActiveBoundariesByBoundaryTypeAndAsOnDate(@Param("boundaryType") BoundaryType boundaryType,
