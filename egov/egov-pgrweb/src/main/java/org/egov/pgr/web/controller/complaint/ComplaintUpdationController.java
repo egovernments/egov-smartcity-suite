@@ -93,7 +93,7 @@ public class ComplaintUpdationController {
 
     @ModelAttribute
     public Complaint getComplaint(@PathVariable final String crnNo) {
-        return complaintService.getComplaintByCrnNo(crnNo);
+        return complaintService.getComplaintByCRN(crnNo);
     }
 
     @RequestMapping(method = RequestMethod.GET)

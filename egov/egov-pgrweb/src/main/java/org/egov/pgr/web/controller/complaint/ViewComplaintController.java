@@ -63,7 +63,7 @@ public class ViewComplaintController {
 
     @RequestMapping(value = "/complaint/view/{crnNo}", method = RequestMethod.GET)
     public String viewComplaints(@PathVariable String crnNo, Model model) {
-        Complaint complaint = complaintService.getComplaintByCrnNo(crnNo);
+        Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);

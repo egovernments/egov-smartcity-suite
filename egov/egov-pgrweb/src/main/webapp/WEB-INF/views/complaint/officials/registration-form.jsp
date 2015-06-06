@@ -72,8 +72,8 @@
 					<div class="form-group display-hide" id="regnoblock">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
-							<form:input path="CRN" id="crn" cssClass="form-control" placeholder="" disabled="true"/>
-							<form:errors path="CRN" cssClass="add-margin error-msg"/>
+							<form:input path="crn" id="crn" cssClass="form-control" placeholder="" disabled="true"/>
+							<form:errors path="crn" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">

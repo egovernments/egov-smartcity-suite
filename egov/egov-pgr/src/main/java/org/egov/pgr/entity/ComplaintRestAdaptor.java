@@ -62,7 +62,7 @@ public class ComplaintRestAdaptor implements JsonSerializer<Complaint>, JsonDese
         String resolutionDate="";
         resolutionDate=formatter.print(complaint.getEscalationDate());
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("complaintnumber", complaint.getCRN());
+        jsonObject.addProperty("complaintnumber", complaint.getCrn());
         jsonObject.addProperty("timetoresolve", "" + resolutionDate);
         jsonObject.addProperty("message",
                 "Thank you for your submission. We apologize for the inconvenience caused to you. We will resolve the complaint by :"

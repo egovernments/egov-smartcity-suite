@@ -59,7 +59,7 @@ public class ComplaintBuilder {
     }
 
     public ComplaintBuilder withCRN(final String CRN) {
-        complaint.setCRN(CRN);
+        complaint.setCrn(CRN);
         return this;
     }
 
@@ -130,7 +130,7 @@ public class ComplaintBuilder {
 
     public ComplaintBuilder withDefaults() {
         withId(count);
-        if (null == complaint.getCRN())
+        if (null == complaint.getCrn())
             withCRN("TEST-CMXJ4-" + count);
         if (null == complaint.getComplaintType())
             withComplaintType(new ComplaintTypeBuilder().withDefaults().build());
@@ -154,7 +154,7 @@ public class ComplaintBuilder {
     }
 
     public ComplaintBuilder withDbDefaults() {
-        if (null == complaint.getCRN())
+        if (null == complaint.getCrn())
             withCRN("TEST-CMXJ4-" + count);
         if (null == complaint.getComplaintType())
             withComplaintType(new ComplaintTypeBuilder().withDefaults().build());

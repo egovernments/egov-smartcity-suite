@@ -88,7 +88,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
         complaint.setComplaintType(complaintType);
         complaint.setComplainant(complainant);
         crnNo = "CRN-rmd1";
-        when(complaintService.getComplaintByCrnNo(crnNo)).thenReturn(complaint);
+        when(complaintService.getComplaintByCRN(crnNo)).thenReturn(complaint);
         
 	}
 

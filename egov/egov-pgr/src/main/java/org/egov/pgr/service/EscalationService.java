@@ -146,7 +146,7 @@ public class EscalationService {
                 final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint
                         .getEscalationDate().toDate());
                 final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                        .append(",\n \n     The complaint Number (").append(complaint.getCRN())
+                        .append(",\n \n     The complaint Number (").append(complaint.getCrn())
                         .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
                         .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
                         .append(complaint.getLocation().getName()).append("\n Complaint description - ")
@@ -154,9 +154,9 @@ public class EscalationService {
                         .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
                         .append(superiorUser.getName()).append("\n Escalation Time - ").append(formattedEscalationDate);
                 final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
-                        .append(complaint.getCRN()).append(" (").append(complaint.getStatus().getName()).append(")");
+                        .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
                 final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                        .append(", The complaint Number (").append(complaint.getCRN())
+                        .append(", The complaint Number (").append(complaint.getCrn())
                         .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
                         .append(formattedEscalationDate);
                 if (superiorUser != null && superiorUser.getEmailId() != null)

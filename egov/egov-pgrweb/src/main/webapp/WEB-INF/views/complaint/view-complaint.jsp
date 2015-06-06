@@ -51,7 +51,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<strong><c:out value="${complaint.CRN}"></c:out></strong>
+					<strong><c:out value="${complaint.crn}"></c:out></strong>
 				</div>
 			</div>
 			<div class="panel-body">
@@ -81,7 +81,7 @@
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content"
 						id="ct-ctnumber">
-						<c:out value="${complaint.CRN}"></c:out>
+						<c:out value="${complaint.crn}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.complaintDate" />

@@ -80,8 +80,8 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
 
         if (complaint.getReceivingMode().equals(ReceivingMode.PAPER) && complaint.getReceivingCenter().isCrnRequired()
-                && complaint.getCRN().isEmpty())
-            resultBinder.rejectValue("CRN", "crn.mandatory.for.receivingcenter");
+                && complaint.getCrn().isEmpty())
+            resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
 
         if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
             if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))

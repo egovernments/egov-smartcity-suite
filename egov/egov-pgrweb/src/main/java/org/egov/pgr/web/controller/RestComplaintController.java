@@ -154,7 +154,7 @@ public class RestComplaintController extends GenericComplaintController {
     public String putComputer(@PathVariable final String complaintno, @RequestBody final RestComplaint restComplaint,
             final HttpServletRequest request) {
 
-        Complaint complaint = complaintService.getComplaintByCrnNo(complaintno);
+        Complaint complaint = complaintService.getComplaintByCRN(complaintno);
         Long approvalPosition = 0l;
         Long userId = 0L;
         if (restComplaint.getApprovalUserName() != null) {

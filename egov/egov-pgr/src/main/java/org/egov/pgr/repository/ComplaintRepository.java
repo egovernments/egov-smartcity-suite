@@ -46,6 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     
-    Complaint findByCRN(String crn);
+    Complaint findByCrn(String crn);
 
 }

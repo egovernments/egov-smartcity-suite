@@ -141,8 +141,8 @@ public class ComplaintService {
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) {
-        if (complaint.getCRN().isEmpty())
-            complaint.setCRN(applicationNumberGenerator.generate());
+        if (complaint.getCrn().isEmpty())
+            complaint.setCrn(applicationNumberGenerator.generate());
         final User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);
         if (!securityUtils.isCurrentUserAnonymous() && securityUtils.currentUserType().equals(UserType.CITIZEN)) {
@@ -153,7 +153,7 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-        .withComments("Complaint registered with Complaint Number : " + complaint.getCRN())
+        .withComments("Complaint registered with Complaint Number : " + complaint.getCrn())
         .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
@@ -223,8 +223,8 @@ public class ComplaintService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Complaint getComplaintByCrnNo(final String crn) {
-        return complaintRepository.findByCRN(crn);
+    public Complaint getComplaintByCRN(final String crn) {
+        return complaintRepository.findByCrn(crn);
     }
 
     public List<Complaint> getComplaintsEligibleForEscalation() {
@@ -253,8 +253,8 @@ public class ComplaintService {
         hql.setParameter("name", "PGR");
 
         citizenInboxBuilder.module((Module) hql.uniqueResult());
-        citizenInboxBuilder.identifier(savedComplaint.getCRN());
-        citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCRN());
+        citizenInboxBuilder.identifier(savedComplaint.getCrn());
+        citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCrn());
         citizenInboxBuilder.state(savedComplaint.getState());
         citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
@@ -273,7 +273,7 @@ public class ComplaintService {
 
     private String getDetailedMessage(final Complaint savedComplaint) {
         final StringBuilder detailedMessage = new StringBuilder();
-        detailedMessage.append("Complaint No. ").append(savedComplaint.getCRN()).append(" regarding ")
+        detailedMessage.append("Complaint No. ").append(savedComplaint.getCrn()).append(" regarding ")
         .append(savedComplaint.getComplaintType().getName()).append(" was ")
         .append(savedComplaint.getStatus().getName())
         .append(savedComplaint.getLastModifiedBy().getType().equals(UserType.CITIZEN) ? " by you." : ".");
@@ -338,7 +338,7 @@ public class ComplaintService {
         .append("Dear ")
         .append(complaint.getComplainant().getName())
         .append(",\n \n \tThank you for registering a complaint (")
-        .append(complaint.getCRN())
+        .append(complaint.getCrn())
         .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
         .append("\n \n Complaint Details - \n \n Complaint type - ")
         .append(complaint.getComplaintType().getName());
@@ -348,9 +348,9 @@ public class ComplaintService {
         .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
         .append(formattedCreatedDate);
         final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -")
-                .append(complaint.getCRN()).append(" successfuly");
+                .append(complaint.getCrn()).append(" successfuly");
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
-                .append(", Thank you for registering a complaint (").append(complaint.getCRN())
+                .append(", Thank you for registering a complaint (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
         if (complaint.getComplainant().getEmail() != null)
             emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());

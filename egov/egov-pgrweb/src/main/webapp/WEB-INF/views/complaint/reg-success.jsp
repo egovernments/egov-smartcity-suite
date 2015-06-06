@@ -46,7 +46,7 @@
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 					<strong><spring:message code="msg.complaint.reg.success"/></strong>
-					<div><spring:message code="lbl.complaint.reg.no"/>(<spring:message code="lbl.crn"/>) : <span id="ctn_no"><strong>${complaint.CRN}</strong></span>.<spring:message code="msg.crn.info"/></div>
+					<div><spring:message code="lbl.complaint.reg.no"/>(<spring:message code="lbl.crn"/>) : <span id="ctn_no"><strong>${complaint.crn}</strong></span>.<spring:message code="msg.crn.info"/></div>
 				</div>
 			</div>
 			<div class="panel-body">

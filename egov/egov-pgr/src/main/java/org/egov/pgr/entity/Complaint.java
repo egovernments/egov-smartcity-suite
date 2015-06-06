@@ -87,7 +87,7 @@ public class Complaint extends StateAware {
     @NotNull
     @Column(name = "crn", unique = true)
     @Searchable(name = "crn")
-    private String CRN = "";
+    private String crn = "";
 
     @ManyToOne
     @NotNull
@@ -146,25 +146,27 @@ public class Complaint extends StateAware {
     @Column(name = "escalation_date", nullable = false)
     private Date escalationDate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
 
-    public String getCRN() {
-        return CRN;
+    public String getCrn() {
+        return crn;
     }
 
-    public void setCRN(final String cRN) {
-        CRN = cRN;
+    public void setCrn(final String crn) {
+        this.crn = crn;
     }
 
     @Override
     public String myLinkId() {
-        return CRN;
+        return crn;
 
     }
 
@@ -275,7 +277,7 @@ public class Complaint extends StateAware {
     @Override
     public String getStateDetails() {
         final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
-        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCRN(),
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
                 getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
     }
 
