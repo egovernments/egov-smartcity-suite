@@ -102,10 +102,11 @@
 							<th>Values</th>
 								<th>Operation</th>
 							  </tr>
-							<tr id="Floorinfo">
+						
 										<c:choose>
 											<c:when test="${!appConfig.appDataValues.isEmpty()}">
 												<c:forEach items="${appConfig.appDataValues}" var="var1" varStatus="counter">
+												<tr id="Floorinfo">
 													<td class="blueborderfortd">	
 											
 							<fmt:formatDate value="${var1.effectiveFrom}" var="historyDate"
@@ -120,9 +121,12 @@
 											 name="appDataValues[${counter.index}].value" id="appDataValues[${counter.index}].value"
 											  required="required"/>
 										</td>
-												
+											<td id="rowadddelete">
+										 <input type="button" class="btn btn-success"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
+									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;"></td>
+										
 												 	
-										<td><img id="addF" name="addF"
+										<%-- <td><img id="addF" name="addF"
 														src="${pageContext.request.contextPath}/images/addrow.gif"
 														alt="Add" onclick="javascript:addFloor(); return false;"
 														width="18" height="18" border="0" /> &nbsp;<img
@@ -131,10 +135,10 @@
 														alt="Remove"
 														onclick="javascript:delFloor(this);return false;"
 														width="18" height="18" border="0" /> 
-														</td>
+														</td> --%>
 														<input type="hidden"
 														id="cmdaddListId" value="appDataValues[${counter.index}].id" />
-													
+													</tr>
 												</c:forEach>
 											</c:when>
 
@@ -179,29 +183,98 @@
 		$("#moduleid").val(moduleid);
 	}
 
-	function addFloor()
-	{   
-			var tableObj=document.getElementById('floorDetails');
-			//var	cmdaindex=tableObj.rows.length-1;
-			var tbody=tableObj.tBodies[0];
-			var lastRow = tableObj.rows.length;
-			var rowObj = tableObj.rows[1].cloneNode(true);
-			tbody.appendChild(rowObj);
-			var rowno = parseInt(tableObj.rows.length)-2;
-			   document.forms[0].effectiveFrom[lastRow-1].value="";
-			document.forms[0].value[lastRow-1].value="";
-		 
-			document.forms[0].effectiveFrom[lastRow-1].setAttribute("name","appConfig.appDataValues["+cmdaindex+"].effectiveFrom");
-		  	 document.forms[0].value[lastRow-1].setAttribute("name","appConfig.appDataValues["+cmdaindex+"].value");
-		document.forms[0].cmdaddListId[lastRow-1].setAttribute("name","appConfig.appDataValues["+cmdaindex+"].id");		    
-			cmdaindex++;
+	 function addRow1() 
+     {
+	   
+             var table = document.getElementById('floorDetails');
+
+             var rowCount = table.rows.length;
+             var row = table.insertRow(rowCount);
+             var counts = rowCount - 1;
+             var newRow = document.createElement("tr");
+             
+           /*   var newCol = document.createElement("td");
+             newRow.appendChild(newCol);
+       		var cell1 = row.insertCell(0);
+       		cell1.innerHTML = counts+1; */
+             
+         	var newCol = document.createElement("td");
+			newRow.appendChild(newCol);
+			 
+             var cell1 = row.insertCell(0);
 			
-		 }
+             var houseNo = document.createElement("input");
+             houseNo.setAttribute("class","form-control datepicker");
+            houseNo.type = "text";
+            houseNo.setAttribute("required", "required");
+          //  houseNo.className = "form-control datepicker";
+          	houseNo.setAttribute("maxlength", "10");
+        	
+          //cell2.innerHTML ='<input type="text"  name="appDataValues[" + counts + "].effectiveFrom" class="form-control datepicker"/>';
+             houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
+             houseNo.setAttribute("dateFormat", "dd/MM/yyyy");
+            houseNo.name = "appDataValues[" + counts + "].effectiveFrom";
+            cell1.appendChild(houseNo);
+           
+            /* $('#' + cell2).datepicker();
+            $('#' + cell2).datepicker('option', {dateFormat: 'dd/mm/yy'}); */
+             
+             var newCol = document.createElement("td");
+ 			newRow.appendChild(newCol);
+             var cell2 = row.insertCell(1);
+             var street = document.createElement("input");
+             street.setAttribute("class","form-control low-width");
+             street.type = "text";
+             street.setAttribute("required", "required");
+             street.name = "appDataValues[" + counts + "].value";
+             cell2.appendChild(street);
+             
+             var newCol = document.createElement("td");
+  			newRow.appendChild(newCol);
+              var cell3 = row.insertCell(2);
+            /*  var street1 = document.createElement("input");
+             street1.type = "button";
+             street1.name = "add";
+            cell4.appendChild(street1); 
+             cell4.innerHTML= "<a href='#' onclick='addRow1()'>Add</a>";	
+ */
+             var addButton = document.createElement("input");
+             addButton.type = "button";
+             addButton.setAttribute("class", "btn btn-success");
+             addButton.setAttribute("onclick", "return addRow1();");
+             addButton.setAttribute("value", "Add");
+             cell3.appendChild(addButton);
+             
+            /*  var newCol = document.createElement("td");
+   			newRow.appendChild(newCol); */
+           /*     var cell5 = row.insertCell(4);
+              var street2 = document.createElement("input");
+              street2.type = "button";
+              street2.name = "delete";
+            cell5.appendChild(street2); 
+              cell5.innerHTML= "<a href='#' onclick='delFloor(this)'>DELETE</a>";	 */
+             
+              var x = document.createElement("LABEL");
+              var t = document.createTextNode(" ");
+                 cell3.appendChild(t);
+                     
+             var addButton = document.createElement("input");
+             addButton.type = "button";
+             addButton.setAttribute("class", "btn btn-success");
+             addButton.setAttribute("onclick", "return delFloor(this);");
+             addButton.setAttribute("value", "Delete");
+             cell3.appendChild(addButton);
+
+     }
+
+	
+     
 	function delFloor(obj)
 	{
 				var tb1=document.getElementById("floorDetails");
 		        var lastRow = (tb1.rows.length)-1;
 		        var curRow=getRow(obj).rowIndex;
+		        var counts = lastRow - 1;
 		         if(lastRow ==1)
 		      	{
 		     		 alert('you canont delete this row ');
@@ -210,15 +283,14 @@
 		        }
 		      	else
 		      	{
-		      		// alert(curRow);
 		      		var updateserialnumber=curRow;
-		 			/* for(updateserialnumber;updateserialnumber<tb1.rows.length-1;updateserialnumber++)
+		      		for(updateserialnumber;updateserialnumber<tb1.rows.length-1;updateserialnumber++)
 		 			{
-		 				if(document.forms[0].srlNo[updateserialnumber]!=null)
-		 					document.forms[0].srlNo[updateserialnumber].value=updateserialnumber;
-		 			} */
+		 				if(counts!=null)
+		 					counts=updateserialnumber;
+		 			}
 		 			
-		 			tb1.deleteRow(curRow);
+		      		tb1.deleteRow(curRow);
 		 			return true;
 		      }
 		  

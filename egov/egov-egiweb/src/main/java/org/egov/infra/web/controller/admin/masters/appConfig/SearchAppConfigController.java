@@ -61,8 +61,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SearchAppConfigController {
 
     private AppConfigService appConfigValueService;
-    private static final String REDIRECT_URL_VIEW = "redirect:/appConfig/update/";
-
+   
     @Autowired
     public SearchAppConfigController(AppConfigService appConfigValueService) {
         this.appConfigValueService = appConfigValueService;
@@ -94,11 +93,8 @@ public class SearchAppConfigController {
 
         if (errors.hasErrors())
             return "appConfig-list";
-        
-       // final String pathVars1 = appConfig.getKeyName()  ;
-        //final String pathVars2=appConfig.getModule().getName();
-        
-        return "redirect:/appConfig/update/" + appConfig.getKeyName() ;
+    
+        return "redirect:/appConfig/update/" + appConfig.getKeyName()+","+appConfig.getModule().getName() ;
     }
 
 }

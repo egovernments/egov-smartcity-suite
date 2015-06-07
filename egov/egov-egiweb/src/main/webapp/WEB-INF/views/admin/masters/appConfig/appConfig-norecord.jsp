@@ -45,52 +45,25 @@
 <div class="row" id="page-content">
     <div class="col-md-12">
         <div class="panel" data-collapsed="0">
-            <div class="panel-body">
-                <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
-                </c:if>
+            
+                
 
                 <form:form id="searchAppconfigForm" method="post"   modelAttribute="appConfig" class="form-horizontal form-groups-bordered">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
 								<strong><spring:message code="title.searchAppConfig"></spring:message></strong>
-							</div>
-						</div> 
-						
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"></spring:message><small><i
-										class="entypo-star error-msg"></i></small></label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="keyName"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${appConfigList}" itemValue="keyName" itemLabel="keyName"/>
-	                            </form:select>
-	                            <form:errors path="keyName" cssClass="error-msg"/>
-	                        </div>
-						</div>
-						<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-										class="entypo-star error-msg"></i></small></label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="module.name"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${modulesList}" itemValue="name" itemLabel="name"/>
-	                            </form:select>
-	                            <form:errors path="module.name" cssClass="error-msg"/>
-	                        </div>
-						</div>
-	                </div>
+							</div></div>
+							<div class="panel-body">
+							<c:if test="${not empty message}">
+                    <div id="message" class="success">${message}</div>
+                </c:if></div>
+							
 	                </div>
 
                     <div class="form-group">
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>                           
-                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+                           <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                         </div>
                     </div>
                     

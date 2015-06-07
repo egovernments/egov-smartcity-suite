@@ -39,6 +39,11 @@
  */
 package org.egov.infra.web.controller.admin.masters.appConfig;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -61,50 +66,62 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/appConfig/create")
 public class CreateAppConfigController {
 
-   private AppConfigService appConfigValueService;
-   
-
+	private AppConfigService appConfigValueService;
 
 	@Autowired
-    public CreateAppConfigController(AppConfigService appConfigValueService) {
-        this.appConfigValueService = appConfigValueService;
-    }
+	public CreateAppConfigController(AppConfigService appConfigValueService) {
+		this.appConfigValueService = appConfigValueService;
+	}
 
-    @ModelAttribute
-    public AppConfig appConfigModel() {
-    	return new AppConfig();
-    }
-	
-   
+	@ModelAttribute
+	public AppConfig appConfigModel() {
+		return new AppConfig();
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String createAppConfigValueForm(@ModelAttribute  AppConfig appConfig , Model model) {
-    	if(appConfig.getAppDataValues().isEmpty()){
-    	appConfig.addAppDataValues(new AppConfigValues());
-    	} 
-    	model.addAttribute("mode", "new");
-    	return "appConfig-form";
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String createAppConfigValue(
-    		@Valid @ModelAttribute AppConfig appConfig,final BindingResult errors, final RedirectAttributes redirectAttrs,
+	@RequestMapping(method = RequestMethod.GET)
+	public String createAppConfigValueForm(@ModelAttribute AppConfig appConfig,@ModelAttribute List<AppConfigValues>appConfigList,
 			Model model) {
-    	 if (errors.hasErrors()) {
-            return "appConfig-form";
-        }
-    	 if(appConfig!=null){
-    	for(AppConfigValues appConfDat:	appConfig.getAppDataValues())
-    	{
-    		appConfDat.setKey(appConfig);
-    	}
-    	 }
-       appConfigValueService.createAppConfigValues(appConfig);
-        model.addAttribute("mode", "new");
-        redirectAttrs.addFlashAttribute("appConfig", appConfig); 
-        model.addAttribute("message", "AppConfig Value Successfully Created!");
-        return "appConfig-success";
-        
-    }
+		if (appConfig.getAppDataValues().isEmpty()) {
+			appConfigList.add(new AppConfigValues());
+		}
+		model.addAttribute("mode", "new");
+		return "appConfig-form";
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String createAppConfigValue(
+			@Valid @ModelAttribute AppConfig appConfig,@Valid @ModelAttribute List<AppConfigValues>appConfigList,
+			final BindingResult errors, final RedirectAttributes redirectAttrs,
+			Model model) {
+		if (errors.hasErrors()) {
+			return "appConfig-form";
+		}
+		appConfig=buildappConfigDetails(appConfig,appConfigList);
+		appConfigValueService.createAppConfigValues(appConfig);
+		model.addAttribute("mode", "new");
+		redirectAttrs.addFlashAttribute("appConfig", appConfig);
+		model.addAttribute("message", "AppConfig Value Successfully Created!");
+		return "appConfig-success";
+
+	}
+
+	private AppConfig buildappConfigDetails(AppConfig appConfig,List<AppConfigValues> unitDetail)
+	{
+		Set<AppConfigValues> unitSet=new HashSet<AppConfigValues>();
+    	
+			for(AppConfigValues unitdetail:unitDetail)
+	    	{
+				if(unitdetail.getEffectiveFrom() != null && !"".equals(unitdetail.getValue())){
+	    		unitdetail.setKey(appConfig);
+	    		unitSet.add(unitdetail);
+				}
+	    	}	
+			appConfig.getAppDataValues().clear();
+			
+			appConfig.getAppDataValues().addAll(unitSet);
+   	
+    	return appConfig;
+    	
+	}
 
 }

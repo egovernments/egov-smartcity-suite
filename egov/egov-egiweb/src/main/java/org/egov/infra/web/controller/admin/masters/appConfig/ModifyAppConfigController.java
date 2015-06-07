@@ -42,9 +42,13 @@ package org.egov.infra.web.controller.admin.masters.appConfig;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -68,68 +72,87 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 
 @Controller
-
-/*@RequestMapping("/appConfig/update/keyName/{keyName}/moduleName/{moduleName}")*/
-@RequestMapping("/appConfig/update/{keyName}")
-
+/*
+ * @RequestMapping("/appConfig/update/keyName/{keyName}/moduleName/{moduleName}")
+ */
+@RequestMapping("/appConfig/update/{keyNameArray}")
 public class ModifyAppConfigController {
 
-   private AppConfigService appConfigValueService;
-   
-  
+	private AppConfigService appConfigValueService;
+
 	@Autowired
-    public ModifyAppConfigController(AppConfigService appConfigValueService,ModuleService moduleService) {
-        this.appConfigValueService = appConfigValueService;
-       }
+	public ModifyAppConfigController(AppConfigService appConfigValueService,
+			ModuleService moduleService) {
+		this.appConfigValueService = appConfigValueService;
+	}
 
 	
+	 @ModelAttribute public AppConfig appConfigModel(@PathVariable final String[]  keyNameArray,Model model) { 
+		 String keyName="";
+		 String moduleName="";
+		 if(keyNameArray.length>1)
+		 {
+			 keyName=keyNameArray[0];
+			moduleName=keyNameArray[1];
+		 }
+		return appConfigValueService.findBykeyNameAndModuleName(keyName,moduleName); 
+		}
+	 
 
-		/* @ModelAttribute
-    	public AppConfig appConfigModel(@PathVariable String keyName,@PathVariable String moduleName) {
-    	if(keyName.contains(","))
-    	{
-    		
-    	}
-        return appConfigValueService.findBykeyNameAndModuleName(keyName,moduleName);
-    	}*/
+	/*@ModelAttribute
+	public AppConfig appConfigModel(@PathVariable String keyName) {
 
-	 @ModelAttribute
-	    public AppConfig appConfigModel(@PathVariable String keyName) {
-	    	
-	        return appConfigValueService.findBykeyName(keyName);
-	    }
-    @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeFormForUpdate(@ModelAttribute  AppConfig appConfig ,Model model) {
-    	if(appConfig!=null && appConfig.getAppDataValues().isEmpty()){
-    		appConfig.addAppDataValues(new AppConfigValues());
-    	}
-    	else
-    	{
-    		appConfig.setAppDataValues(appConfig.getAppDataValues());
-    	}
-    	model.addAttribute("mode", "update");
-       
-        return "appConfig-editform";
-    }
+		return appConfigValueService.findBykeyName(keyName);
+	}*/
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String updateComplaintType(@Valid @ModelAttribute AppConfig appConfig, BindingResult errors,
-            RedirectAttributes redirectAttrs,Model model) {
-        if (errors.hasErrors()) {
-            return "appConfig-editform";
-        }
-        if(appConfig!=null){
-        for(AppConfigValues appConfDat:	appConfig.getAppDataValues())
-    	{
-    		appConfDat.setKey(appConfig);
-    	}
-        }
-        appConfigValueService.updateAppConfigValues(appConfig);
-        String message = "AppConfig Value updated Successfully";
-        redirectAttrs.addFlashAttribute("appConfig", appConfig);
-        model.addAttribute("message", message);
+	@RequestMapping(method = RequestMethod.GET)
+	public String complaintTypeFormForUpdate(
+			@ModelAttribute AppConfig appConfig, Model model) {
+		if (appConfig != null) {
+			if (appConfig.getAppDataValues().isEmpty()) {
+				appConfig.addAppDataValues(new AppConfigValues());
+			} else {
+				appConfig.setAppDataValues(appConfig.getAppDataValues());
+			}
+			model.addAttribute("mode", "update");
+			return "appConfig-editform";
+		} else {
+			return "appConfig-norecord";
+		}
+	}
 
-        return "appConfig-success";
-    }
-    
+	@RequestMapping(method = RequestMethod.POST)
+	public String updateComplaintType(
+			@Valid @ModelAttribute AppConfig appConfig, BindingResult errors,
+			RedirectAttributes redirectAttrs, Model model) {
+		if (errors.hasErrors()) {
+			return "appConfig-editform";
+		}
+		appConfig=buildFeeDetails(appConfig,appConfig.getAppDataValues());
+		appConfigValueService.updateAppConfigValues(appConfig);
+		String message = "AppConfig Value updated Successfully";
+		redirectAttrs.addFlashAttribute("appConfig", appConfig);
+		model.addAttribute("message", message);
+
+		return "appConfig-success";
+	}
+
+	private AppConfig buildFeeDetails(AppConfig appConfig,List<AppConfigValues> unitDetail)
+	{
+		Set<AppConfigValues> unitSet=new HashSet<AppConfigValues>();
+    	
+			for(AppConfigValues unitdetail:unitDetail)
+	    	{
+				if(unitdetail.getEffectiveFrom() != null && !"".equals(unitdetail.getValue())){
+	    		unitdetail.setKey(appConfig);
+	    		unitSet.add(unitdetail);
+				}
+	    	}	
+			appConfig.getAppDataValues().clear();
+			
+			appConfig.getAppDataValues().addAll(unitSet);
+   	
+    	return appConfig;
+    	
+	}
 }
