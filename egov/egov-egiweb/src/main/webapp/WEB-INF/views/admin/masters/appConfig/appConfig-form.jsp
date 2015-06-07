@@ -211,9 +211,7 @@
             houseNo.setAttribute("required", "required");
           //  houseNo.className = "form-control datepicker";
           	houseNo.setAttribute("maxlength", "10");
-        	
-          //cell2.innerHTML ='<input type="text"  name="appDataValues[" + counts + "].effectiveFrom" class="form-control datepicker"/>';
-             houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
+        	houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
              houseNo.setAttribute("dateFormat", "dd/MM/yyyy");
             houseNo.name = "appDataValues[" + counts + "].effectiveFrom";
             cell1.appendChild(houseNo);
