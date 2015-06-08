@@ -446,6 +446,8 @@ public class EisUtilService implements EISServeable {
                 .add(Restrictions.le("view.fromDate", date))
                 .add(Restrictions.or(Restrictions.ge("view.toDate", date), Restrictions.isNull("view.toDate")))
                 .add(Restrictions.isNotNull("view.userName"));
+        ProjectionList projections = Projections.projectionList().add(Projections.property("view.employee"));
+        criteria.setProjection(projections);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return (List<User>)criteria.list();
     }
