@@ -56,9 +56,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.AuthorizationException;
 import org.egov.infra.admin.master.entity.Action;
+import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.lib.rrbac.dao.ActionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /*
@@ -72,7 +72,9 @@ public class ActionsBasedOnWorkFlowFilter implements Filter {
 	@Autowired
 	private ScriptService scriptService;
 	private PersistenceService workFlowPerService;
-	private ActionDAO actionDao;
+	
+	@Autowired
+	private ActionService actionService;
 
 	@Override
 	public void init(FilterConfig config) {
@@ -120,9 +122,9 @@ public class ActionsBasedOnWorkFlowFilter implements Filter {
 			String requestURI = request.getRequestURI();
 			String contextPath = request.getContextPath();
 			requestURI = StringUtils.remove(requestURI, contextPath);
-			action = actionDao.findActionByURL(StringUtils.remove(contextPath, '/'), requestURI);
+			action = actionService.getActionByUrlAndContextRoot(requestURI, StringUtils.remove(contextPath, '/'));
 		} else {
-			action = (Action) actionDao.findById(Integer.getInteger(actionId));
+			action = actionService.getActionById(Long.valueOf(actionId));
 		}
 		return action;
 	}
@@ -131,7 +133,4 @@ public class ActionsBasedOnWorkFlowFilter implements Filter {
 		this.workFlowPerService = authRuleService;
 	}
 
-	public void setActionDao(ActionDAO actionDao) {
-		this.actionDao = actionDao;
-	}
 }

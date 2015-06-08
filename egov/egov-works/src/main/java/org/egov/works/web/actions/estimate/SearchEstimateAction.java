@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -73,7 +74,6 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.lib.rrbac.dao.ActionDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeService;
@@ -156,7 +156,7 @@ public class SearchEstimateAction extends SearchFormAction {
     private String ward = "";
     private String loginUserDeptName = "";
     @Autowired
-    private ActionDAO actionDao;
+    private ActionService actionservice;
     private List<Role> roles = new ArrayList<Role>();
     private String milestoneStatus;
     private String status2;
@@ -606,7 +606,7 @@ public class SearchEstimateAction extends SearchFormAction {
             copyEstActionName = actionList.get(actionList.size() - 1);
 
             // get the roles for the Copy Estimate action
-            final Action copyEstaction = actionDao.findActionByName(copyEstActionName);
+            final Action copyEstaction = actionservice.getActionByName(copyEstActionName);
             copyEstActionRoles.addAll(copyEstaction.getRoles());
 
             // check if the userroles contains the copy estimate action roles

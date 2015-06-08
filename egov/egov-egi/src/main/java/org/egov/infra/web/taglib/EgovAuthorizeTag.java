@@ -49,10 +49,10 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.web.utils.ERPWebApplicationContext;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.security.AuthorizeRule;
-import org.egov.lib.rrbac.dao.ActionDAO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,21 +70,21 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Integer actionId;
+	private Long actionId;
 	private String actionName;
 	private AuthorizeRule ruleObject;
 
 	/**
 	 * @return Returns the actionId.
 	 */
-	public Integer getActionId() {
+	public Long getActionId() {
 		return this.actionId;
 	}
 
 	/**
 	 * @param actionId The actionId to set.
 	 */
-	public void setActionId(final Integer actionId) {
+	public void setActionId(final Long actionId) {
 		this.actionId = actionId;
 	}
 
@@ -137,13 +137,13 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
 		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
 		//
-		final ActionDAO rbacService = (ActionDAO) provider.getBean("actionDao");
+		final ActionService rbacService = (ActionService) provider.getBean("actionDao");
 
 		if (this.actionName != null) {
-			action = rbacService.findActionByName(this.actionName);
+			action = rbacService.getActionByName(this.actionName);
 		}
 		if (this.actionId != null) {
-			action = (Action)rbacService.findById(this.actionId);
+			action = (Action)rbacService.getActionById(this.actionId);
 		}
 		if (action != null) {
 			// if user's role belongs to action roles

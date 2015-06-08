@@ -43,6 +43,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,7 +51,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -61,6 +61,7 @@ import org.hibernate.search.annotations.DocumentId;
 @Entity
 @Table(name = "eg_module")
 @SequenceGenerator(name = Module.SEQ_MODULE, sequenceName = Module.SEQ_MODULE, allocationSize = 1)
+@Cacheable
 public class Module implements Serializable {
 
     private static final long serialVersionUID = -632195454827894969L;
@@ -85,8 +86,7 @@ public class Module implements Serializable {
 
     private String code;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_action", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "module_id") )
+    @OneToMany(mappedBy="parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Action> actions = Collections.emptySet();
 
     private String contextRoot;

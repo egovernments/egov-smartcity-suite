@@ -126,7 +126,6 @@
 
 	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
 		<property name="userService" ref="userService" />
-		<property name="actionDao" ref="actionDao" />
 		<property name="daoService" ref="persistenceService" />
 		<property name="scriptExecuter" ref="scriptExecutionService" />
 		<property name="authRuleService" ref="authRuleService" />
@@ -145,9 +144,6 @@
 	</bean>
 
 	<bean id="heirarchyTypeDAO" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype">
-	</bean>
-
-	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionDAO" scope="prototype" autowire="default">
 	</bean>
 
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">

@@ -56,11 +56,11 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
     @Override
     public List<Object[]> fetchModulesForRoles(final Set<Role> roles) {
         final StringBuffer sql = new StringBuffer()
-                .append("SELECT DISTINCT mod.name,mod.contextRoot,mod.displayName, mod.id FROM eg_module mod,eg_action act,eg_roleaction_map ram ")
-                .append("WHERE act.id=ram.actionid AND act.id IN (SELECT DISTINCT actionid FROM eg_roleaction_map WHERE roleid IN ( ");
+                .append("SELECT DISTINCT mod.name,mod.contextRoot,mod.displayName, mod.id, mod.ordernumber FROM eg_module mod,eg_action act,eg_roleaction ram ")
+                .append("WHERE act.id=ram.actionid AND act.id IN (SELECT DISTINCT actionid FROM eg_roleaction WHERE roleid IN ( ");
         roles.parallelStream().forEach(role -> sql.append("?,"));
         sql.deleteCharAt(sql.length() - 1);
-        sql.append(")) AND mod.enabled=true AND (mod.parentmodule is null OR mod.id = mod.parentmodule) ORDER BY mod.name ASC");
+        sql.append(")) AND mod.enabled=true AND (mod.parentmodule is null OR mod.id = mod.parentmodule) ORDER BY mod.ordernumber ASC");
         final Query query = entityManager.createNativeQuery(sql.toString());
 
         int i = 1;
@@ -75,14 +75,14 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
         final StringBuffer sql = new StringBuffer()
                 .append("SELECT DISTINCT view_ram.module_id as id,view_ram.module_name as name,null as url,view_ram.typeflag as typeflag,view_ram.context_root as ctx_root,view_ram.order_number as ordernumber ")
                 .append("FROM VIEW_EG_MENULINK view_ram WHERE  view_ram.parent_id =? and view_ram.typeflag='M' and view_ram.is_enabled=true ")
-                .append("AND EXISTS (SELECT action.id FROM eg_action action, eg_roleaction_map roleaction where action.module_id = view_ram.module_id ")
-                .append("AND action.is_enabled = true AND action.id = roleaction.actionid  AND roleaction.roleid IN (SELECT roleid FROM eg_userrole userrole ")
+                .append("AND EXISTS (SELECT action.id FROM eg_action action, eg_roleaction roleaction where action.parentmodule = view_ram.module_id ")
+                .append("AND action.enabled = true AND action.id = roleaction.actionid  AND roleaction.roleid IN (SELECT roleid FROM eg_userrole userrole ")
                 .append("WHERE userrole.userid = ?) UNION (SELECT module.id FROM eg_module module WHERE module.parentmodule = view_ram.module_id AND module.enabled=true) ) ")
                 .append("UNION SELECT distinct view_ram.action_id as id,view_ram.action_name as name,view_ram.action_url as url,view_ram.typeflag as typeflag, ")
                 .append("view_ram.context_root as ctx_root,view_ram.order_number as ordernumber FROM VIEW_EG_MENULINK view_ram where   parent_id = ? and typeflag='A' ")
-                .append("AND view_ram.is_enabled=true and (view_ram.action_id in (select actionid from eg_roleaction_map ra  where ra.roleid in ")
-                .append("(select roleid from eg_userrole ur where ur.userid = ?))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction_map ra ")
-                .append("where actionid = view_ram.action_id)) order by typeflag desc,name asc");
+                .append("AND view_ram.is_enabled=true and (view_ram.action_id in (select actionid from eg_roleaction ra  where ra.roleid in ")
+                .append("(select roleid from eg_userrole ur where ur.userid = ?))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction ra ")
+                .append("where actionid = view_ram.action_id)) order by typeflag desc,ordernumber asc");
 
         final Query query = entityManager.createNativeQuery(sql.toString());
         query.setParameter(1, parentId);

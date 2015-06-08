@@ -51,19 +51,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.lib.rrbac.dao.ActionDAO;
 import org.egov.lib.rrbac.model.AuthorizationRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This Filter is used to put rules on actions based on Authentication. 
@@ -77,7 +78,8 @@ public class RuleInterceptorFilter implements Filter {
 	private transient PersistenceService daoService;
 	private transient PersistenceService<AuthorizationRule, Long> authRuleService;
 	private transient UserService userService;
-	private transient ActionDAO actionDao;
+	@Autowired
+	private ActionService actionService;
 	private transient ScriptService scriptExecuter;
 
 	@Override
@@ -154,9 +156,9 @@ public class RuleInterceptorFilter implements Filter {
 		if ((actionId == null) || (actionId.length() == 0)) {
 			final String contextPath = request.getContextPath();
 			final String requestURI = StringUtils.remove(request.getRequestURI(), contextPath);
-			action = this.actionDao.findActionByURL(StringUtils.remove(contextPath, '/'), requestURI);
+			action = this.actionService.getActionByUrlAndContextRoot(requestURI, StringUtils.remove(contextPath, '/'));
 		} else {
-			action = (Action) this.actionDao.findById(Integer.getInteger(actionId));
+			action = (Action) this.actionService.getActionById(Long.valueOf(actionId));
 		}
 		return action;
 	}
@@ -190,22 +192,6 @@ public class RuleInterceptorFilter implements Filter {
 	 */
 	public void setScriptExecuter(final ScriptService scriptExecuter) {
 		this.scriptExecuter = scriptExecuter;
-	}
-
-	/**
-	 * Sets the user manager.
-	 * @param userManager the new user manager
-	 */
-	public void setUserService(final UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
-	 * Sets the action dao.
-	 * @param actionDao the new action dao
-	 */
-	public void setActionDao(final ActionDAO actionDao) {
-		this.actionDao = actionDao;
 	}
 
 	/**
