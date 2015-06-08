@@ -441,15 +441,13 @@ public class EisUtilService implements EISServeable {
         date = date == null ? new Date() : date;
         Long dept = deptId.longValue();
         Long desig = desigId.longValue();
-        Criteria criteria = persistenceService.getSession().createCriteria(EmployeeView.class, "emp")
-                .add(Restrictions.eq("deptId.id", dept)).add(Restrictions.eq("desigId.id", desig))
-                .add(Restrictions.le("emp.fromDate", date))
-                .add(Restrictions.or(Restrictions.ge("emp.toDate", date), Restrictions.isNull("emp.toDate")))
-                .add(Restrictions.isNotNull("emp.userMaster"));
-        ProjectionList projections = Projections.projectionList().add(Projections.property("emp.userMaster"));
-        criteria.setProjection(projections);
+        Criteria criteria = persistenceService.getSession().createCriteria(EmployeeView.class, "view")
+                .add(Restrictions.eq("view.department.id", dept)).add(Restrictions.eq("view.designation.id", desig))
+                .add(Restrictions.le("view.fromDate", date))
+                .add(Restrictions.or(Restrictions.ge("view.toDate", date), Restrictions.isNull("view.toDate")))
+                .add(Restrictions.isNotNull("view.userName"));
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
+        return (List<User>)criteria.list();
     }
 
     /**
