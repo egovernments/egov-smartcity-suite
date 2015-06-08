@@ -90,7 +90,8 @@ public class AppConfigValues extends AbstractAuditable {
 
 	@NotNull
 	@Column(name = "effective_from")
-	@Temporal(TemporalType.TIMESTAMP)
+	@DateFormat
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date effectiveFrom;
 
 	@NotNull

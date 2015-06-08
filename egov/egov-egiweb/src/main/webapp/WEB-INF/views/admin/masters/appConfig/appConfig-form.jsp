@@ -40,6 +40,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
@@ -98,7 +99,7 @@
       				  <tr>
       				 <th>Date</th>
 							<th>Values</th>
-								<th>Add Operation</th>
+								<th>Operation</th>
 								
 							  </tr>
 						
@@ -109,34 +110,27 @@
 													
 													<td class="blueborderfortd">	
 											
-											 <input type="text" class="form-control datepicker" value="${var1.effectiveFrom}"  
-											 name="appDataValues[${counter.index}].effectiveFrom" 
-											 id="appDataValues[${counter.index}].effectiveFrom" required="required"  />
-												</input></td>
+											
+							<fmt:formatDate value="${var1.effectiveFrom}" var="historyDate"
+											pattern="dd/MM/yyyy" />
+							 <input type="text" class="form-control datepicker checkdate" value="${historyDate}" 
+											 name="appDataValues[${counter.index}].effectiveFrom"  
+											 id="appDataValues[${counter.index}].effectiveFrom" required="required"/>
+											</td>
 											<td class="blueborderfortd">	
 											
 											 <input type="text" class="form-control low-width"  value="${var1.value}" name="appDataValues[${counter.index}].value" 
 											 id="appDataValues[${counter.index}].value" required="required" >
-												</input></td>
+											 <input type="hidden"
+														id="cmdaddListId" value="appDataValues[${counter.index}].id" />
+												</td>
 												
 												 	
 										<td id="rowadddelete">
 										 <input type="button" class="btn btn-success"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
 									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;"></td>
-									<%-- 	<img id="addF" name="addF"
-														src="${pageContext.request.contextPath}/images/addrow.gif"
-														alt="Add" onclick="javascript:addRow1(); return false;"
-														width="18" height="18" border="0" /> &nbsp;
+								
 														
-														<img
-														id="dDelF" name="dDelF"
-														src="${pageContext.request.contextPath}/images/removerow.gif"
-														alt="Remove"
-														onclick="javascript:delFloor(this);return false;"
-														width="18" height="18" border="0" />  
-														</td>--%>
-														<input type="hidden"
-														id="cmdaddListId" value="appDataValues[${counter.index}].id" />
 													</tr>
 												</c:forEach>
 											</c:when>
@@ -205,7 +199,9 @@
              var cell1 = row.insertCell(0);
 			
              var houseNo = document.createElement("input");
-             houseNo.className="datepicker";
+             var att = document.createAttribute("class");
+      		att.value="form-control datepicker";
+      		houseNo.setAttributeNode(att); 
             // houseNo.setAttribute("class","form-control datepicker");
             houseNo.type = "text";
             houseNo.setAttribute("required", "required");
@@ -250,6 +246,13 @@
              addButton.setAttribute("onclick", "return delFloor(this);");
              addButton.setAttribute("value", "Delete");
              cell3.appendChild(addButton);
+
+             var hiddenId = document.createElement("input");
+             hiddenId.type = "hidden";
+             hiddenId.id = "appDataValues[" + counts + "].id";
+            // hiddenId.name = "appDataValues[" + counts + "].id";
+             hiddenId.setAttribute("value", "${appDataValues[" + counts + "].id}");
+             cell3.appendChild(hiddenId);
 
      }
 

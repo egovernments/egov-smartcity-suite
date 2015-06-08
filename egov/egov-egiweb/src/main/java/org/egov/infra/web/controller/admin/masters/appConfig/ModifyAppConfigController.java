@@ -117,6 +117,7 @@ public class ModifyAppConfigController {
 			model.addAttribute("mode", "update");
 			return "appConfig-editform";
 		} else {
+			model.addAttribute("message", "No record found");
 			return "appConfig-norecord";
 		}
 	}

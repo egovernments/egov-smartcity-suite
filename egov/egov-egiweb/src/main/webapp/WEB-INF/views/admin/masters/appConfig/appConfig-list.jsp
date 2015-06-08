@@ -64,7 +64,7 @@
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="keyName"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
+	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
 	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 	                                <form:options items="${appConfigList}" itemValue="keyName" itemLabel="keyName"/>
 	                            </form:select>
@@ -76,7 +76,7 @@
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="module.name"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
+	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required" >
 	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 	                                <form:options items="${modulesList}" itemValue="name" itemLabel="name"/>
 	                            </form:select>

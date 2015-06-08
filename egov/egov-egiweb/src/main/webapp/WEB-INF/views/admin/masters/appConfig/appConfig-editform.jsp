@@ -94,7 +94,7 @@
 					
 					
 					<div class="col-md-12">
-					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered"   id="floorDetails" >
+					 <table  class="table table-bordered"   id="floorDetails" >
       				  <tr>
 						<th>Date</th>
 							<th>Values</th>
@@ -118,30 +118,22 @@
 											 <input type="text" class="form-control low-width"  value="${var1.value}" 
 											 name="appDataValues[${counter.index}].value" id="appDataValues[${counter.index}].value"
 											  required="required"/>
+											
 										</td>
 											<td id="rowadddelete">
 										 <input type="button" class="btn btn-success"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
-									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;"></td>
+									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;">
+									  <input type="hidden"
+														id="appDataValues[${counter.index}].id" value="${var1.id}" /></td>
 										
-												 	
-										<%-- <td><img id="addF" name="addF"
-														src="${pageContext.request.contextPath}/images/addrow.gif"
-														alt="Add" onclick="javascript:addFloor(); return false;"
-														width="18" height="18" border="0" /> &nbsp;<img
-														id="dDelF" name="dDelF"
-														src="${pageContext.request.contextPath}/images/removerow.gif"
-														alt="Remove"
-														onclick="javascript:delFloor(this);return false;"
-														width="18" height="18" border="0" /> 
-														</td> --%>
-														<input type="hidden"
-														id="cmdaddListId" value="appDataValues[${counter.index}].id" />
+										
+														
 													</tr>
 												</c:forEach>
 											</c:when>
 
 										</c:choose>
-									</tr>
+								
 								
 			
 					  </table>
@@ -202,20 +194,20 @@
              var cell1 = row.insertCell(0);
 			
              var houseNo = document.createElement("input");
-             houseNo.setAttribute("class","form-control datepicker");
+             var att = document.createAttribute("class");
+     		att.value="form-control datepicker";
+     		houseNo.setAttributeNode(att); 
+            // houseNo.setAttribute("class","form-control datepicker");
             houseNo.type = "text";
             houseNo.setAttribute("required", "required");
           //  houseNo.className = "form-control datepicker";
           	houseNo.setAttribute("maxlength", "10");
-        	
-          //cell2.innerHTML ='<input type="text"  name="appDataValues[" + counts + "].effectiveFrom" class="form-control datepicker"/>';
-             houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
+        	houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
              houseNo.setAttribute("dateFormat", "dd/MM/yyyy");
             houseNo.name = "appDataValues[" + counts + "].effectiveFrom";
             cell1.appendChild(houseNo);
            
-            /* $('#' + cell2).datepicker();
-            $('#' + cell2).datepicker('option', {dateFormat: 'dd/mm/yy'}); */
+         
              
              var newCol = document.createElement("td");
  			newRow.appendChild(newCol);
@@ -226,16 +218,13 @@
              street.setAttribute("required", "required");
              street.name = "appDataValues[" + counts + "].value";
              cell2.appendChild(street);
+
+          
              
              var newCol = document.createElement("td");
   			newRow.appendChild(newCol);
               var cell3 = row.insertCell(2);
-            /*  var street1 = document.createElement("input");
-             street1.type = "button";
-             street1.name = "add";
-            cell4.appendChild(street1); 
-             cell4.innerHTML= "<a href='#' onclick='addRow1()'>Add</a>";	
- */
+        
              var addButton = document.createElement("input");
              addButton.type = "button";
              addButton.setAttribute("class", "btn btn-success");
@@ -243,14 +232,7 @@
              addButton.setAttribute("value", "Add");
              cell3.appendChild(addButton);
              
-            /*  var newCol = document.createElement("td");
-   			newRow.appendChild(newCol); */
-           /*     var cell5 = row.insertCell(4);
-              var street2 = document.createElement("input");
-              street2.type = "button";
-              street2.name = "delete";
-            cell5.appendChild(street2); 
-              cell5.innerHTML= "<a href='#' onclick='delFloor(this)'>DELETE</a>";	 */
+         
              
               var x = document.createElement("LABEL");
               var t = document.createTextNode(" ");
@@ -262,6 +244,13 @@
              addButton.setAttribute("onclick", "return delFloor(this);");
              addButton.setAttribute("value", "Delete");
              cell3.appendChild(addButton);
+
+             var hiddenId = document.createElement("input");
+             hiddenId.type = "hidden";
+             hiddenId.id = "appDataValues[" + counts + "].id";
+            hiddenId.name = "appDataValues[" + counts + "].id";
+             hiddenId.setAttribute("value", "${appDataValues[" + counts + "].id}");
+             cell3.appendChild(hiddenId);
 
      }
 
