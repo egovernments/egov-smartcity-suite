@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <jsp:include page="view-complaint.jsp"></jsp:include>
+<c:if test="${complaint.status.name != 'WITHDRAWN'}">
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -80,6 +81,7 @@
 						maxlength="400" name="approvalComent"></textarea>
 				</div>
 			</div>
+	
 	<div class="form-group">
 		<div class="text-center">
 			 <button type="submit" class="btn btn-success">
@@ -94,3 +96,12 @@
 	</form:form>
 </div>
 </div>
+</c:if>
+<c:if test="${complaint.status.name == 'WITHDRAWN'}">
+	<div class="form-group">
+		<div class="text-center">
+		<button type="button" class="btn btn-default" onclick="window.close();">Close</button>  
+		</div>
+	</div>
+		
+</c:if>
