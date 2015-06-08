@@ -88,6 +88,7 @@
 			<button type="reset" class="btn btn-default">
 				<spring:message code="lbl.reset" />
 			</button>
+			<button type="button" class="btn btn-default" onclick="window.close();">Close</button>  
 		</div>
 	</div>
 	</form:form>
