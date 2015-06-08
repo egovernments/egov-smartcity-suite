@@ -39,7 +39,6 @@
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -206,7 +205,8 @@
              var cell1 = row.insertCell(0);
 			
              var houseNo = document.createElement("input");
-             houseNo.setAttribute("class","form-control datepicker");
+             houseNo.className="datepicker";
+            // houseNo.setAttribute("class","form-control datepicker");
             houseNo.type = "text";
             houseNo.setAttribute("required", "required");
           //  houseNo.className = "form-control datepicker";

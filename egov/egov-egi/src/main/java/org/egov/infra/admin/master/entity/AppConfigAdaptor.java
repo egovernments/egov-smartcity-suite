@@ -1,3 +1,4 @@
+
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, 
    accountability and the service delivery of the government  organizations.
@@ -37,40 +38,26 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.controller.admin.masters.appConfig;
+package org.egov.infra.admin.master.entity;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-import java.io.IOException;
-import java.util.List;
+public class AppConfigAdaptor implements JsonSerializer<AppConfig> {
 
-import javax.servlet.http.HttpServletResponse;
+    @Override
+    public JsonElement serialize(AppConfig appConfig, Type type, JsonSerializationContext jsc) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("keyName", appConfig.getKeyName());
+        jsonObject.addProperty("description", appConfig.getDescription());
+        jsonObject.addProperty("module", appConfig.getModule() != null ? appConfig.getModule().getName() : "N/A");
+       // jsonObject.addProperty("code", compaintType.getCode());
+        //jsonObject.addProperty("isActive", compaintType.getIsActive() == true ? "Yes" : "No");
+        //jsonObject.addProperty("description", null != compaintType.getDescription() ? compaintType.getDescription() : "N/A");
+        return jsonObject;
+    }
 
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.AppConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Repository
-@RequestMapping(value = "/appConfig")
-public class GenericAppConfigAjaxController {
-
-	 private AppConfigService appConfigValueService;
-
-	 @Autowired
-	    public GenericAppConfigAjaxController(AppConfigService appConfigValueService) {
-	        this.appConfigValueService = appConfigValueService;
-	    }
-	
-	 @RequestMapping(value = { "/modules" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public @ResponseBody List<Module> getAllModulesByNameLike(@RequestParam final String moduleName,
-	            final HttpServletResponse response) throws IOException {
-		 final String likemoduleName = "%" + moduleName + "%";
-	        return  appConfigValueService.findByNameContainingIgnoreCase(likemoduleName);
-	    }
-	   
 }

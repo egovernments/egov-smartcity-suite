@@ -107,6 +107,11 @@
         <put-attribute name="page-title" value="title.createAppconfig" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-form.jsp"/>
     </definition>
+    
+       <definition name="view-appconfig" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewpconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/view-appconfig.jsp"/>
+    </definition>
      <definition name="appConfig-success" extends="base_layout">
         <put-attribute name="page-title" value="title.successAppconfig" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-success.jsp"/>

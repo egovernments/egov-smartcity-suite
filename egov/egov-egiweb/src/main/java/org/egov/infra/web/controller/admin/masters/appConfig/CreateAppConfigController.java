@@ -39,7 +39,6 @@
  */
 package org.egov.infra.web.controller.admin.masters.appConfig;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,10 +78,10 @@ public class CreateAppConfigController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String createAppConfigValueForm(@ModelAttribute AppConfig appConfig,@ModelAttribute List<AppConfigValues>appConfigList,
+	public String createAppConfigValueForm(@ModelAttribute AppConfig appConfig,
 			Model model) {
 		if (appConfig.getAppDataValues().isEmpty()) {
-			appConfigList.add(new AppConfigValues());
+			appConfig.addAppDataValues(new AppConfigValues());
 		}
 		model.addAttribute("mode", "new");
 		return "appConfig-form";
@@ -90,13 +89,13 @@ public class CreateAppConfigController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String createAppConfigValue(
-			@Valid @ModelAttribute AppConfig appConfig,@Valid @ModelAttribute List<AppConfigValues>appConfigList,
+			@Valid @ModelAttribute AppConfig appConfig,
 			final BindingResult errors, final RedirectAttributes redirectAttrs,
 			Model model) {
 		if (errors.hasErrors()) {
 			return "appConfig-form";
 		}
-		appConfig=buildappConfigDetails(appConfig,appConfigList);
+		appConfig=buildappConfigDetails(appConfig,appConfig.getAppDataValues());
 		appConfigValueService.createAppConfigValues(appConfig);
 		model.addAttribute("mode", "new");
 		redirectAttrs.addFlashAttribute("appConfig", appConfig);
