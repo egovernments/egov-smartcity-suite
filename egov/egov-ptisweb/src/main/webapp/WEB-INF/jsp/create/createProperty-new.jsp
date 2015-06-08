@@ -58,6 +58,9 @@
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
 function loadOnStartUp() {
+	alert("Hi");
+	jQuery("#CorrAddrDiv").hide();
+	document.getElementById("CorrAddrDiv").style.display = "";
 	/* document.getElementById("plotArea").style.display = "";
 	document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";

@@ -246,4 +246,14 @@ public class TaxCalculator implements TaxCalculatorInterface {
 		return unitTaxCalculationInfo;
 	}
 
+	public PropertyTaxUtil getPropertyTaxUtil() {
+		return propertyTaxUtil;
+	}
+
+	public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
+		this.propertyTaxUtil = propertyTaxUtil;
+	}
+	
+	
+
 }

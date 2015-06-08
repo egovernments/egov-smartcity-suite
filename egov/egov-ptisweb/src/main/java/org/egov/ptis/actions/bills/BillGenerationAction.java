@@ -81,6 +81,9 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -113,7 +116,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Namespace("/bill")
+@Namespace("/bills")
 @Transactional(readOnly = true)
 public class BillGenerationAction extends PropertyTaxBaseAction {
 	private Logger LOGGER = Logger.getLogger(getClass());

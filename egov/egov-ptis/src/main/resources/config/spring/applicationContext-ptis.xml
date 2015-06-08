@@ -99,7 +99,7 @@
   
     
     
-    <bean id="taxCalculator" class="org.egov.ptis.client.service.TaxCalculator" scope="prototype">
+    <bean id="taxCalculator" class="org.egov.ptis.client.service.impl.TaxCalculator" scope="prototype">
         <property name="propertyTaxUtil" ref="propertyTaxUtil" />
     </bean> 
     
