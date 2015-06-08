@@ -101,11 +101,13 @@ public class AjaxController {
     @RequestMapping(value = "/ajax-approvalPositions", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getPositions(@RequestParam final Integer approvalDepartment,
             @RequestParam final Integer approvalDesignation, final HttpServletResponse response) throws IOException {
-        final List<User> users = eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date());
-        // below line should be removed once the commonService.getPosistions
-        // apis query joins and returns user
-        final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-                .disableHtmlEscaping().registerTypeAdapter(User.class, new UserAdaptor()).create();
-        return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {}.getType());
+        if (approvalDepartment != null && approvalDepartment != 0 && approvalDesignation != null && approvalDesignation != 0) {
+            final List<User> users = eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date());
+            // below line should be removed once the commonService.getPosistions
+            // apis query joins and returns user
+            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
+            return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {}.getType());
+        }
+        return "[]";
     }
 }
