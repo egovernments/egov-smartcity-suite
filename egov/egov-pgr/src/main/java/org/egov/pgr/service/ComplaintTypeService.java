@@ -95,7 +95,7 @@ public class ComplaintTypeService {
     }
 
     public List<ComplaintType> findAll() {
-        return complaintTypeRepository.findAll();
+        return complaintTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
     public List<ComplaintType> findAllByNameLike(final String name) {
