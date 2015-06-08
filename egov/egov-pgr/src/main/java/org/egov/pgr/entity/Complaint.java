@@ -58,6 +58,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
@@ -96,6 +97,7 @@ public class Complaint extends StateAware {
     private ComplaintType complaintType;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
     @NotNull
     @JoinColumn(name = "complainant", nullable = false)
     @Searchable(name = "citizen", group = Searchable.Group.COMMON)

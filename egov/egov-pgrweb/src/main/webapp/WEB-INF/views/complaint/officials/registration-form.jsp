@@ -94,7 +94,7 @@
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
 						<div class="col-sm-3">
-							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com"/>
+							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
 							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
 						</div>
 					</div>

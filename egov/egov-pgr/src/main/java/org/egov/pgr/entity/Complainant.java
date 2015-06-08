@@ -91,7 +91,6 @@ public class Complainant implements Serializable {
     private String email;
 
     @ManyToOne
-    @Valid
     @JoinColumn(name = "userDetail", nullable = true)
     private User userDetail;
 

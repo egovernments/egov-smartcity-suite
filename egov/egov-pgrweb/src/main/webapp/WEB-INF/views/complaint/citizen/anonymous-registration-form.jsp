@@ -61,7 +61,7 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin">
-							<form:input path="complainant.mobile" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number" required="required"/>
+							<form:input path="complainant.mobile" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number" required="required"/>
 							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
 						</div>
 						
@@ -69,7 +69,7 @@
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
 						<div class="col-sm-3">
-							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com"/>
+							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com" type="email"/>
 							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
