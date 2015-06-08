@@ -88,7 +88,6 @@ public class ComplaintType extends AbstractAuditable {
     @Column(name = "code")
     private String code;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     @Searchable

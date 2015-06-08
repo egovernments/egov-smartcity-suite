@@ -75,7 +75,7 @@
 							<spring:message code="lbl.department" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
-							<c:out value="${complaintType.department.name}"></c:out>
+							<c:out value="${complaintType.department.name}" default="NA"></c:out>
 						</div>
 
 						<div class="col-md-3 col-xs-6 add-margin">
