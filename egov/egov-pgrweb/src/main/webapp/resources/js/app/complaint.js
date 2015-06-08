@@ -37,6 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+	
 jQuery(document).ready(function($)
 {
 	// Instantiate the Bloodhound suggestion engine
@@ -110,25 +111,6 @@ jQuery(document).ready(function($)
 	
 	$(":input").inputmask();
 	
-	/*complaint through*/
-	$('input:radio[name="receivingMode"]').click(function(e) {
-		$('#receivingCenter').prop('selectedIndex',0);
-		 $("#crn").removeAttr('required');
-		 $("#crnReq").hide();
-		if($('#receivingMode5').is(':checked'))
-		{
-			$('#recenter, #regnoblock').show();
-		}else
-		{
-			$('#recenter, #regnoblock').hide();
-		}
-	});
-	
-	/*$('#doc').bind('input propertychange', function() {
-		var remchar = parseInt(500 - ($('#doc').val().length));
-		$('#rcc').html('Remaining Characters : '+remchar);
-		
-	});*/
 	
 	$('.freq-ct').click(function(){ 
 		$('#complaintTypeName').typeahead('val',$(this).html().trim());
@@ -163,28 +145,6 @@ jQuery(document).ready(function($)
 		}
 	});	
 	
-	$("#receivingCenter").change(function(){
-		if (this.value === '') {
-			 $("#crn").removeAttr('required');
-			 $("#crnReq").hide();
-			return;
-		} else {
-			$.ajax({
-				type: "GET",
-				url: "isCrnRequired",
-				cache: true,
-				data:{'receivingCenterId' : this.value}
-			}).done(function(value) {
-				 if(value === true) {
-					 $("#crn").attr('required','required');
-					 $("#crnReq").show();
-				 } else {
-					 $("#crn").removeAttr('required');
-					 $("#crnReq").hide();
-				 }
-			});
-		}
-	});	
 	
 	if($("#locationRequired").val() === "false") {
 		 $(".optionalmandate").hide();
@@ -194,22 +154,74 @@ jQuery(document).ready(function($)
 		 $("#location").attr('required');
 	}
 	
+	/*complaint through*/
+	$('input:radio[name="receivingMode"]').click(function(e) {
+		$('#receivingCenter').prop('selectedIndex',0);
+		disableCRN(); 
+		if($('#receivingMode5').is(':checked'))
+		{
+			enableRC();
+		}else
+		{
+			disableRC();
+		}
+	});
+	
+	
 	$('input[type=radio][name=receivingMode]').change(function() {
 		if ($("input[name=receivingMode]:checked").val() == 'PAPER') {
-			$('#recenter, #regnoblock').show();
-			$("#receivingCenter, #crn").removeAttr('disabled');
+			enableRC();
 		} else {
-			$("#receivingCenter, #crn").attr('disabled', true);
+			disableRC();
 		}
 	});
 
-	// MASK SCREEN IMPORTANT
-	//$('.loader-class').modal('show', {backdrop: 'static'});
-	//$('.loader-class').modal('hide');
-	
-
 });
 
+$("#receivingCenter").change(function(){
+	if (this.value === '') {
+		disableCRN();
+		return;
+	} else {
+		$.ajax({
+			type: "GET",
+			url: "isCrnRequired",
+			cache: true,
+			data:{'receivingCenterId' : this.value}
+		}).done(function(value) {
+			 if(value === true) {
+				 enabledCRN();
+			 } else {
+				 disableCRN();
+			 }
+		});
+	}
+});	
 function setComplaintTypeId(obj) {
 	$("#complaintTypeId").val(obj)
+}
+
+function enableRC() {
+	$('#recenter').show();
+	$("#receivingCenter").removeAttr('disabled');
+}
+
+function disableRC(){
+	$('#recenter').hide();
+	$("#receivingCenter").attr('disabled', true)
+}
+
+function enabledCRN() {
+	$('#regnoblock').show();
+	$("#crnReq").show();
+	$("#crn").attr('required','required');
+	$("#crn").removeAttr('disabled');
+}
+
+function disableCRN() {
+	$('#regnoblock').hide();
+	$("#crnReq").hide();
+	$("#crn").val("");
+	$("#crn").removeAttr('required');
+	$("#crn").attr('disabled',true);
 }

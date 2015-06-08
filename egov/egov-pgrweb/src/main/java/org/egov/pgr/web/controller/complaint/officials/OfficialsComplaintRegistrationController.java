@@ -79,7 +79,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
 
-        if (complaint.getReceivingMode().equals(ReceivingMode.PAPER) && complaint.getReceivingCenter().isCrnRequired()
+        if (ReceivingMode.PAPER.equals(complaint.getReceivingMode()) && complaint.getReceivingCenter() != null && complaint.getReceivingCenter().isCrnRequired()
                 && complaint.getCrn().isEmpty())
             resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
 
