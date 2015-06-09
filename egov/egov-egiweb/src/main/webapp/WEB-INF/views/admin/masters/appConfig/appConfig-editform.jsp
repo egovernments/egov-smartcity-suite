@@ -122,8 +122,8 @@
 										</td>
 											<td id="rowadddelete">
 										 <input type="button" class="btn btn-success"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
-									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;">
-									  <input type="hidden"
+								<!-- 	<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;">
+									 -->  <input type="hidden"
 														id="appDataValues[${counter.index}].id" value="${var1.id}" /></td>
 										
 										
@@ -234,7 +234,7 @@
              
          
              
-              var x = document.createElement("LABEL");
+            /*   var x = document.createElement("LABEL");
               var t = document.createTextNode(" ");
                  cell3.appendChild(t);
                      
@@ -243,7 +243,7 @@
              addButton.setAttribute("class", "btn btn-success");
              addButton.setAttribute("onclick", "return delFloor(this);");
              addButton.setAttribute("value", "Delete");
-             cell3.appendChild(addButton);
+             cell3.appendChild(addButton); */
 
              var hiddenId = document.createElement("input");
              hiddenId.type = "hidden";
