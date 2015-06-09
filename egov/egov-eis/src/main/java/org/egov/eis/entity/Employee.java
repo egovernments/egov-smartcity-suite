@@ -45,7 +45,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -61,6 +60,7 @@ import javax.validation.constraints.Pattern;
 
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -68,7 +68,6 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
-@DiscriminatorValue("EMPLOYEE")
 public class Employee extends User {
 
     private static final long serialVersionUID = -1105585841211211215L;
@@ -98,6 +97,10 @@ public class Employee extends User {
     @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Assignment> assignments = new HashSet<Assignment>(0);
 
+    public Employee() {
+        setType(UserType.EMPLOYEE);
+    }
+
     public String getCode() {
         return code;
     }
@@ -126,7 +129,7 @@ public class Employee extends User {
         return employeeStatus;
     }
 
-    public void setEmployeeStatus(EmployeeStatus employeeStatus) {
+    public void setEmployeeStatus(final EmployeeStatus employeeStatus) {
         this.employeeStatus = employeeStatus;
     }
 
@@ -134,7 +137,7 @@ public class Employee extends User {
         return employeeType;
     }
 
-    public void setEmployeeType(EmployeeType employeeType) {
+    public void setEmployeeType(final EmployeeType employeeType) {
         this.employeeType = employeeType;
     }
 
@@ -142,7 +145,7 @@ public class Employee extends User {
         return assignments;
     }
 
-    public void setAssignments(Set<Assignment> assignments) {
+    public void setAssignments(final Set<Assignment> assignments) {
         this.assignments = assignments;
     }
 

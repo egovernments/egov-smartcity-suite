@@ -39,20 +39,23 @@
  */
 package org.egov.portal.entity;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 
 @Entity
 @Table(name = "eg_citizen")
-@DiscriminatorValue("CITIZEN")
 public class Citizen extends User {
 
     private static final long serialVersionUID = -521416613072970524L;
 
     private String activationCode;
+
+    public Citizen() {
+        setType(UserType.CITIZEN);
+    }
 
     public String getActivationCode() {
         return activationCode;

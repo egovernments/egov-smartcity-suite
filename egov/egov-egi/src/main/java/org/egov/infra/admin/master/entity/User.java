@@ -49,8 +49,6 @@ import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -87,7 +85,6 @@ import com.google.gson.annotations.Expose;
 @Entity
 @Table(name = "eg_user")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 20)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 public class User extends AbstractAuditable {
@@ -142,7 +139,7 @@ public class User extends AbstractAuditable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Address> address = new ArrayList<Address>();
-    
+
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -159,7 +156,7 @@ public class User extends AbstractAuditable {
     private String locale;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", insertable = false, updatable = false)
+    @Column(name = "type")
     private UserType type;
 
     @Override
@@ -325,6 +322,10 @@ public class User extends AbstractAuditable {
 
     public UserType getType() {
         return type;
+    }
+
+    public void setType(final UserType userType) {
+        type = userType;
     }
 
 }
