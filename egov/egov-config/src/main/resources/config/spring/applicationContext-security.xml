@@ -96,6 +96,7 @@
 				<value>loginType</value>
 				<value>counterId</value>
 				<value>ipAddress</value>
+				<value>userAgentInfo</value>
 			</list>
 		</property>
 		<property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />

@@ -37,7 +37,16 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-
+<%@page import="org.apache.commons.lang3.StringUtils"%>
+<%
+	String ipAddress = request.getRemoteAddr();
+	String proxiedIPAddress = request.getHeader("X-Forwarded-For");
+	if (StringUtils.isNotBlank(proxiedIPAddress)) {
+		String [] ipAddresses = proxiedIPAddress.split(",");
+		ipAddress = ipAddresses[ipAddresses.length-1].trim();
+	}
+	String userAgentInfo = request.getHeader("User-Agent");
+%>
 <!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html lang="en">
@@ -311,9 +320,9 @@
 							<form method="post" role="form" id="signinform"
 								action="${pageContext.request.contextPath}/j_security_check"
 								autocomplete="off">
-								<input type="hidden" id="ipAddress" name="ipAddress"
-									value="${pageContext.request.remoteAddr}" /> <input
-									type="hidden" id="loginType" name="loginType" />
+									<input type="hidden" id="ipAddress" name="ipAddress" value="<%=ipAddress%>" /> 
+									<input type="hidden" id="loginType" name="loginType" />
+									<input type="hidden"  name="userAgentInfo" value="<%=userAgentInfo%>" /> 
 								<div class="form-group">
 	
 									<div class="input-group">

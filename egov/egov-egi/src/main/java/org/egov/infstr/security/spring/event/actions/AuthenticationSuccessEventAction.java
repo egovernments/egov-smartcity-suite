@@ -67,15 +67,14 @@ public class AuthenticationSuccessEventAction implements ApplicationSecurityEven
 
     @Override
     public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
+        HashMap<String, String> creds = ((HashMap<String, String>) authorizedEvent.getAuthentication().getCredentials());
         final SystemAudit systemAudit = new SystemAudit();
         systemAudit.setLoginTime(new Date(authorizedEvent.getTimestamp()));
         systemAudit.setUser(securityUtils.getCurrentUser());
-        //TODO IPADDRESS AND USERAGENT INFO
-        systemAudit.setIpAddress("");
-        systemAudit.setUserAgentInfo("");
+        systemAudit.setIpAddress(creds.get("ipAddress"));
+        systemAudit.setUserAgentInfo(creds.get("userAgentInfo"));
         systemAuditService.createOrUpdateSystemAudit(systemAudit);
         final String loginLogID = systemAudit.getId().toString();
-        ((HashMap<String, String>) authorizedEvent.getAuthentication().getCredentials()).put(SecurityConstants.LOGIN_LOG_ID,
-                loginLogID);
+        creds.put(SecurityConstants.LOGIN_LOG_ID, loginLogID);
     }
 }
