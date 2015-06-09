@@ -128,11 +128,13 @@ public class State extends AbstractAuditable {
     protected State() {
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    @Override
+    protected void setId(final Long id) {
         this.id = id;
     }
 
@@ -236,6 +238,7 @@ public class State extends AbstractAuditable {
         this.status = status;
     }
 
+    @Override
     public boolean isNew() {
         return status.equals(StateStatus.STARTED);
     }

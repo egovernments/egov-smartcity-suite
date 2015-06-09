@@ -66,101 +66,90 @@ import org.hibernate.validator.constraints.SafeHtml;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@CompositeUnique(
-        id = "id",
-        tableName = "eg_appconfig", 
-        compositefields = {"keyName", "module"}, 
-        compositecolumnName = {"key_name","module"},
-        enableDfltMsg=true ,
-        message = "KeyName and Module combination allready exists"
-)
+@CompositeUnique(id = "id", tableName = "eg_appconfig", compositefields = { "keyName", "module" }, compositecolumnName = {
+        "key_name", "module" }, enableDfltMsg = true, message = "KeyName and Module combination allready exists")
 
-
-@Table( name = "eg_appconfig")
+@Table(name = "eg_appconfig")
 @SequenceGenerator(name = AppConfig.SEQ_APPCONFIG, sequenceName = AppConfig.SEQ_APPCONFIG, allocationSize = 1)
 public class AppConfig extends AbstractAuditable {
 
-	private static final long serialVersionUID = 8904645810221559541L;
+    private static final long serialVersionUID = 8904645810221559541L;
 
-	public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
+    public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
 
     @Expose
     @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG, strategy = GenerationType.SEQUENCE)
     private Long id;
-	
 
-	@NotBlank
-	@SafeHtml
-	@Length(max = 250)
-	@Column(name = "key_name")
-	@Searchable
-	private String keyName;
+    @NotBlank
+    @SafeHtml
+    @Length(max = 250)
+    @Column(name = "key_name")
+    @Searchable
+    private String keyName;
 
-	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "module", nullable = false)
-	@Searchable
-	private Module module;
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "module", nullable = false)
+    @Searchable
+    private Module module;
 
+    @NotBlank
+    @SafeHtml
+    @Length(max = 250)
+    @Searchable
+    @Column(name = "description")
+    private String description;
 
+    @OneToMany(mappedBy = "key", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AppConfigValues> appDataValues = new ArrayList<AppConfigValues>(0);
 
-	@NotBlank
-	@SafeHtml
-	@Length(max = 250)
-	@Searchable
-	@Column(name = "description")
-	private String description;
+    public String getDescription() {
+        return description;
+    }
 
-	@OneToMany(mappedBy = "key", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval=true)
-	private List<AppConfigValues> appDataValues = new ArrayList<AppConfigValues>(
-			0);
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getKeyName() {
+        return keyName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setKeyName(final String keyName) {
+        this.keyName = keyName;
+    }
 
-	public String getKeyName() {
-		return keyName;
-	}
+    public Module getModule() {
 
-	public void setKeyName(String keyName) {
-		this.keyName = keyName;
-	}
+        return module;
+    }
 
-	public Module getModule() {
+    public void setModule(final Module module) {
+        this.module = module;
+    }
 
-		return module;
-	}
+    public void addAppDataValues(final AppConfigValues appDataValues) {
+        getAppDataValues().add(appDataValues);
+    }
 
-	public void setModule(final Module module) {
-		this.module = module;
-	}
+    public List<AppConfigValues> getAppDataValues() {
+        return appDataValues;
+    }
 
-	public void addAppDataValues(AppConfigValues appDataValues) {
-		getAppDataValues().add(appDataValues);
-	}
+    public void setAppDataValues(final List<AppConfigValues> appDataValues) {
+        this.appDataValues = appDataValues;
+    }
 
-	public List<AppConfigValues> getAppDataValues() {
-		return appDataValues;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setAppDataValues(final List<AppConfigValues> appDataValues) {
-		this.appDataValues = appDataValues;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     @Override
     public int hashCode() {
@@ -192,7 +181,5 @@ public class AppConfig extends AbstractAuditable {
             return false;
         return true;
     }
-	
-
 
 }

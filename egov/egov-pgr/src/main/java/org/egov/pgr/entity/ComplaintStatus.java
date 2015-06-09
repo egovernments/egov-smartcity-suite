@@ -39,24 +39,22 @@
  */
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.search.domain.Searchable;
 
 @Entity
 @Table(name = "egpgr_complaintstatus")
 @Searchable
 @SequenceGenerator(name = ComplaintStatus.SEQ_COMPLAINTSTATUS, sequenceName = ComplaintStatus.SEQ_COMPLAINTSTATUS, allocationSize = 1)
-public class ComplaintStatus implements Serializable {
+public class ComplaintStatus extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -9009821412847211632L;
     public static final String SEQ_COMPLAINTSTATUS = "SEQ_EGPGR_COMPLAINTSTATUS";
 
@@ -67,9 +65,6 @@ public class ComplaintStatus implements Serializable {
     @NotNull
     @Searchable
     private String name;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -85,10 +80,6 @@ public class ComplaintStatus implements Serializable {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -50,16 +48,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "egpgr_complaintstatus_mapping")
 @SequenceGenerator(name = ComplaintStatusMapping.SEQ_STATUSMAP, sequenceName = ComplaintStatusMapping.SEQ_STATUSMAP, allocationSize = 1)
-public class ComplaintStatusMapping implements Serializable {
+public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -1671713502661376820L;
     public static final String SEQ_STATUSMAP = "SEQ_EGPGR_COMPLAINTSTATUS_MAPPING";
@@ -86,9 +84,6 @@ public class ComplaintStatusMapping implements Serializable {
 
     @NotNull
     private Integer orderNo;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -128,10 +123,6 @@ public class ComplaintStatusMapping implements Serializable {
 
     public void setOrderNo(final Integer orderNo) {
         this.orderNo = orderNo;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

@@ -48,15 +48,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
-import org.egov.infra.persistence.entity.Persistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "eg_event_result")
 @SequenceGenerator(name = EventResult.SEQ_EVENTRESULT, sequenceName = EventResult.SEQ_EVENTRESULT, allocationSize = 1)
-public class EventResult implements Persistable<Long> {
+public class EventResult extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 5662966690272607421L;
 
@@ -84,9 +83,6 @@ public class EventResult implements Persistable<Long> {
 
     @Column(name = "details")
     private String details;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -142,10 +138,6 @@ public class EventResult implements Persistable<Long> {
 
     public void setDetails(final String details) {
         this.details = details;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

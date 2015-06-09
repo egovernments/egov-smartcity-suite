@@ -56,7 +56,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
@@ -71,7 +70,7 @@ import com.google.gson.annotations.Expose;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 50)
 @SequenceGenerator(name = Address.SEQ_ADDRESS, sequenceName = Address.SEQ_ADDRESS, allocationSize = 1)
 @Cacheable
-public abstract class Address implements Persistable<Long> {
+public abstract class Address extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 4842889134725565148L;
     public static final String SEQ_ADDRESS = "seq_eg_address";
@@ -81,9 +80,6 @@ public abstract class Address implements Persistable<Long> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_ADDRESS)
     @DocumentId
     private Long id;
-
-    @Version
-    private Long version;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "userid")
@@ -137,7 +133,6 @@ public abstract class Address implements Persistable<Long> {
         return id;
     }
 
-    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -252,11 +247,6 @@ public abstract class Address implements Persistable<Long> {
 
     public void setType(final AddressType type) {
         this.type = type;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
     }
 
     public User getUser() {

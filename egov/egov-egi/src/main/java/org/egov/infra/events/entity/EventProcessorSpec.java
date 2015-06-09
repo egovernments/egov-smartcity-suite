@@ -47,16 +47,15 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
-import org.egov.infra.persistence.entity.Persistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "eg_event_processor_spec")
 @NamedQuery(name = "event_specByModuleAndCode", query = "select EP from EventProcessorSpec EP where EP.module=:module and EP.eventCode=:eventCode")
 @SequenceGenerator(name = EventProcessorSpec.SEQ_EVENTPROCESSORSPEC, sequenceName = EventProcessorSpec.SEQ_EVENTPROCESSORSPEC, allocationSize = 1)
-public class EventProcessorSpec implements Persistable<Long> {
+public class EventProcessorSpec extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 5661966690272607421L;
     public static final String SEQ_EVENTPROCESSORSPEC = "SEQ_EG_EVENT_PROCESSOR_SPEC";
@@ -74,9 +73,6 @@ public class EventProcessorSpec implements Persistable<Long> {
 
     @Column(name = "response_template")
     private String responseTemplate;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -108,10 +104,6 @@ public class EventProcessorSpec implements Persistable<Long> {
 
     public void setResponseTemplate(final String responseTemplate) {
         this.responseTemplate = responseTemplate;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

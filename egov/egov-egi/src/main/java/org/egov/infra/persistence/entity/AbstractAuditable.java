@@ -48,7 +48,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.search.domain.Searchable;
@@ -62,7 +61,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Searchable
-public abstract class AbstractAuditable implements Persistable<Long> {
+public abstract class AbstractAuditable extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 7138056997693406739L;
 
@@ -84,13 +83,6 @@ public abstract class AbstractAuditable implements Persistable<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date lastModifiedDate;
-    
-    @Version
-    private Long version;
-
-    public Long getVersion() {
-        return version;
-    }
     
     public User getCreatedBy() {
         return createdBy;

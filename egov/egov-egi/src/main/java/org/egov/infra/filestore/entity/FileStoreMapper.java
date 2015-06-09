@@ -39,8 +39,6 @@
  */
 package org.egov.infra.filestore.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,16 +46,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
-import org.egov.infra.persistence.entity.Persistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Table(name = "eg_filestoremap")
 @Entity
 @SequenceGenerator(name = FileStoreMapper.SEQ_FILESTOREMAPPER, sequenceName = FileStoreMapper.SEQ_FILESTOREMAPPER, allocationSize = 1)
-public class FileStoreMapper implements Persistable<Long> {
+public class FileStoreMapper extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -2997164207274266823L;
     public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
 
@@ -74,9 +71,6 @@ public class FileStoreMapper implements Persistable<Long> {
     private String fileName;
 
     private String contentType;
-
-    @Version
-    private Long version;
 
     protected FileStoreMapper() {
         // For JPA
@@ -117,10 +111,6 @@ public class FileStoreMapper implements Persistable<Long> {
 
     public void setContentType(final String contentType) {
         this.contentType = contentType;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

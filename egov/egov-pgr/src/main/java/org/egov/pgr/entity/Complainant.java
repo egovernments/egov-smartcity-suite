@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,11 +47,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
-import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Email;
@@ -64,7 +61,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "egpgr_complainant")
 @Searchable
 @SequenceGenerator(name = Complainant.SEQ_COMPLAINANT, sequenceName = Complainant.SEQ_COMPLAINANT, allocationSize = 1)
-public class Complainant implements Serializable {
+public class Complainant extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 5691022600220045218L;
     public static final String SEQ_COMPLAINANT = "SEQ_EGPGR_COMPLAINANT";
@@ -93,9 +90,6 @@ public class Complainant implements Serializable {
     @ManyToOne
     @JoinColumn(name = "userDetail", nullable = true)
     private User userDetail;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -135,10 +129,6 @@ public class Complainant implements Serializable {
 
     public void setUserDetail(final User userDetail) {
         this.userDetail = userDetail;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }

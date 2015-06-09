@@ -46,9 +46,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 
-import org.egov.infra.persistence.entity.Persistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -56,7 +55,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = { "userId", "actionId" }) )
 @SequenceGenerator(name = Favourites.SEQ_FAVOURITES, sequenceName = Favourites.SEQ_FAVOURITES, allocationSize = 1)
-public class Favourites implements Persistable<Long> {
+public class Favourites extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8966137226966715994L;
 
@@ -78,9 +77,6 @@ public class Favourites implements Persistable<Long> {
     @SafeHtml
     @NotBlank
     private String contextRoot;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -120,10 +116,6 @@ public class Favourites implements Persistable<Long> {
 
     public void setContextRoot(final String contextRoot) {
         this.contextRoot = contextRoot;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
     @Override

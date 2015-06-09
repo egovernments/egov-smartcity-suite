@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,12 +46,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "egpgr_receiving_center", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }) )
 @SequenceGenerator(name = ReceivingCenter.SEQ_RECEIVINGCENTER, sequenceName = ReceivingCenter.SEQ_RECEIVINGCENTER, allocationSize = 1)
-public class ReceivingCenter implements Serializable {
+public class ReceivingCenter extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -1568590266889348235L;
     public static final String SEQ_RECEIVINGCENTER = "SEQ_EGPGR_RECEIVING_CENTER";
@@ -65,9 +64,6 @@ public class ReceivingCenter implements Serializable {
     private String name;
 
     private boolean isCrnRequired;
-
-    @Version
-    private Long version;
 
     public Long getId() {
         return id;
@@ -91,10 +87,6 @@ public class ReceivingCenter implements Serializable {
 
     public void setCrnRequired(final boolean isCrnRequired) {
         this.isCrnRequired = isCrnRequired;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
 }
