@@ -38,5 +38,5 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<h1>401</h1>
-<p><spring:message code="error.401"/></p>
+<h1>403</h1>
+<p><spring:message code="error.403"/></p>

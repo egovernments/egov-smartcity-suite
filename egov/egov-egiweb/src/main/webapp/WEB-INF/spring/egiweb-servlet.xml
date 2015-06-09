@@ -62,7 +62,7 @@
 
 	<mvc:view-controller path="/error/500" view-name="error/500"/>
   	<mvc:view-controller path="/error/404" view-name="error/404"/>
-  	<mvc:view-controller path="/error/401" view-name="error/401"/>
+  	<mvc:view-controller path="/error/403" view-name="error/403"/>
   	<mvc:view-controller path="/error/400" view-name="error/400"/>
   	<mvc:view-controller path="/help" view-name="help"/>
   	<mvc:view-controller path="/login/secure" view-name="login"/>

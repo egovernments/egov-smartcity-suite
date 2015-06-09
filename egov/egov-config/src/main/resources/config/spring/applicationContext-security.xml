@@ -128,7 +128,7 @@
 		<constructor-arg index="0" ref="authenticationEntryPoint"/>
 		<property name="accessDeniedHandler">
 			<bean class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
-				<property name="errorPage" value="/error/401" />
+				<property name="errorPage" value="/error/403" />
 			</bean>
 		</property>
 	</bean>
