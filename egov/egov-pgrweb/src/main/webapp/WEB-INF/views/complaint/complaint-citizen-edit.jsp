@@ -60,9 +60,9 @@
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
 
-					<form:select path="status" data-first-option="false" id="status"
-						cssClass="form-control" cssErrorClass="form-control error">
-						<form:option value="0">
+					<form:select path="status" data-first-option="true" id="status"
+						cssClass="form-control" cssErrorClass="form-control error"  itemLabel="---select-----">
+						<form:option  value="${complaint.status.id}">
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${status}" itemValue="id" itemLabel="name" />
