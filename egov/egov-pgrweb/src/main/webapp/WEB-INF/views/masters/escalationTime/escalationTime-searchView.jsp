@@ -37,22 +37,26 @@
 	# 
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
-function deleteRow(obj)
-{
-	var tb1 = document.getElementById("escalationTable");
+	function deleteRow(obj) {
+		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
-	
+
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
 			alert('you canont delete this row ');
@@ -64,11 +68,10 @@ function deleteRow(obj)
 		}
 
 	}
-function resetSrNo()
-{
-	var tb1 = document.getElementById("escalationTable");
+	function resetSrNo() {
+		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
-}
+	}
 	function addRow() {
 		var table = document.getElementById("escalationTable");
 		var rowCount = table.rows.length;
@@ -88,8 +91,9 @@ function resetSrNo()
 		description.setAttribute("class", "form-control is_valid_alphanumeric");
 		description.setAttribute("id", "escalationDescription");
 		description.setAttribute("required", "required");
-			
-		description.name = "escalationList[" + counts + "].designation.description";
+
+		description.name = "escalationList[" + counts
+				+ "].designation.description";
 		cell1.appendChild(description);
 
 		var newCol = document.createElement("td");
@@ -101,137 +105,164 @@ function resetSrNo()
 		numberofHour.setAttribute("maxlength", "5");
 		numberofHour.setAttribute("required", "required");
 		numberofHour.className = "form-control is_valid_number";
-		
+
 		numberofHour.name = "escalationList[" + counts + "].noOfHrs";
 		numberofHour.setAttribute("class", "form-control");
 		numberofHour.setAttribute("id", "escalationFormId");
-			
+
 		cell2.appendChild(numberofHour);
 
 		var newCol = document.createElement("td");
 		newRow.appendChild(newCol);
 		var cell3 = row.insertCell(3);
-	/* 	var addButton = document.createElement("input");
-		addButton.type = "button";
-		addButton.setAttribute("class", "btn btn-success");
-		addButton.setAttribute("onclick", "addRow()");
-		addButton.setAttribute("value", "Add");
-		cell3.appendChild(addButton);
-
-		var x = document.createElement("LABEL");
-		 var t = document.createTextNode(" ");
-		    cell3.appendChild(t); */
-			
+		
 		var addButton = document.createElement("input");
 		addButton.type = "button";
 		addButton.setAttribute("class", "btn btn-success");
 		addButton.setAttribute("onclick", "return deleteRow(this);");
 		addButton.setAttribute("value", "Delete");
-		cell3.appendChild(addButton); 
+		cell3.appendChild(addButton);
 
 	}
-
 </script>
-<div class="row" >
+<div class="row">
 	<div class="col-md-12">
-		
+
 		<div class="" data-collapsed="0">
-			 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
+			<c:if test="${not empty message}">
+				<div class="alert alert-success" role="alert">${message}</div>
+			</c:if>
 			<div class="panel-body">
-				<form:form id="searchEscalationTimeForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
+				<form:form id="searchEscalationTimeForm" method="post"
+					class="form-horizontal form-groups-bordered"
+					modelAttribute="escalationForm">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading ">
 							<div class="panel-title">
-								<strong><spring:message code="lbl.escalationTime.heading.search"/></strong>
-							</div>
-						</div> 
-					<div class="panel-body custom-form">
-						<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.escalationTime.complaintType" /> <small><i
-									class="entypo-star error-msg"></i></small>
-							</label>
-							<div class="col-sm-6">
-								 
-								<form:input id="com_type" path="complaintType.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
-							  <input type=hidden  id="mode"  value="${mode}">
-								<form:hidden path="complaintType.id" id="complaintTypeId"  value="${complaintType.id}"/>
-								<form:errors path="complaintType.id" cssClass="add-margin error-msg"/>
+								<strong><spring:message
+										code="lbl.escalationTime.heading.search" /></strong>
 							</div>
 						</div>
-					
+						<div class="panel-body custom-form">
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message
+										code="lbl.escalationTime.complaintType" /> <small><i
+										class="entypo-star error-msg"></i></small> </label>
+								<div class="col-sm-6">
+
+									<form:input id="com_type" path="complaintType.name" type="text"
+										class="form-control typeahead is_valid_alphabet"
+										placeholder="" autocomplete="off" required="required" />
+									<input type=hidden id="mode" value="${mode}">
+									<form:hidden path="complaintType.id" id="complaintTypeId"
+										value="${complaintType.id}" />
+									<form:errors path="complaintType.id"
+										cssClass="add-margin error-msg" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="text-center">
+									<button type="submit" id="escalationTimeSearch"
+										class="btn btn-success">
+										<spring:message code="lbl.escalationTime.button.search" />
+									</button>
+									<a href="javascript:void(0)" class="btn btn-default"
+										onclick="self.close()"> <spring:message code="lbl.close" /></a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div id="noescalationDataFoundDiv" class="row container-msgs">
+						<c:if test="${mode == 'noDataFound'}">
+							<div class="form-group">
+								<div class="text-center">
+									<div class="panel-title view-content">
+										<spring:message code="lbl.escalationTime.label.NodataFound" />
+									</div>
+									<br>
+									<button type="button" id="escalationnewEscalation"
+										class="btn btn-success">
+										<spring:message
+											code="lbl.escalationTime.button.addnewEscalation" />
+									</button>
+								</div>
+							</div>
+						</c:if>
+					</div>
+				</form:form>
+				<form id="saveEscalationTimeForm" method="post"
+					class="form-horizontal form-groups-bordered"
+					modelAttribute="escalationForm">
+
+					<div id="escalationDiv" class="hidden">
+						<form:hidden path="escalationForm.complaintType.id"
+							id="formcomplaintTypeId"
+							value="${escalationForm.complaintType.id}" />
+						<form:hidden path="escalationForm.complaintType.name"
+							id="formcomplaintTypename"
+							value="${escalationForm.complaintType.name}" />
+						<table id="escalationTable" table width="100%" border="0"
+							cellpadding="0" cellspacing="0" class="table table-bordered">
+							<thead>
+								<tr>
+									<th><spring:message code="lbl.escalationTime.button.srNo" /></th>
+									<th><spring:message code="lbl.escalationTime.designation" /></th>
+									<th><spring:message code="lbl.escalationTime.noOfHours" /></th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="contact"
+									items="${escalationForm.escalationList}" varStatus="status">
+									<tr>
+										<td>${status.count}</td>
+										<td><input type="text"
+											id="escalationDescription${status.index}"
+											class="form-control is_valid_alphanumeric escalationDescription${status.index}"
+											value="${contact.designation.description}"
+											name="escalationList[${status.index}].designation.description"
+											required="required"></td>
+
+										<td><input type=hidden
+											id="escalationFormId${status.index}"
+											name="escalationList[${status.index}].designation.id"
+											value="${contact.designation.id}"> <input
+											type=hidden id="escalationId"
+											name="escalationList[${status.index}].id"> <input
+											type="text" class="form-control is_valid_number"
+											value="${contact.noOfHrs}" maxlength="5"
+											name="escalationList[${status.index}].noOfHrs"
+											required="required"></td>
+
+										<td>
+											<button type="button" onclick="deleteRow(this)" id="Add"
+												class="btn btn-success">Delete</button>
+										</td>
+									</tr>
+								</c:forEach>
+
+							</tbody>
+						</table>
 						<div class="form-group">
 							<div class="text-center">
-								<button type="submit" id="escalationTimeSearch" class="btn btn-success">
-									<spring:message code="lbl.escalationTime.button.search"/>
+								<button type="button" id="addNewRow" class="btn btn-success">
+									<spring:message code="lbl.escalationTime.button.add" />
 								</button>
-								<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
-									<spring:message code="lbl.close"/></a>
+								<button type="submit" id="saveEscalationTime"
+									class="btn btn-success">
+									<spring:message code="lbl.escalationTime.button.save" />
+								</button>
 							</div>
 						</div>
+
 					</div>
-				</div>
-			
-	
-	<div id="noescalationDataFoundDiv" class="row container-msgs">		
-	<c:if test="${mode == 'noDataFound'}">		
-		<div class="form-group">
-			<div class="text-center"> <div class="panel-title view-content">
-			<spring:message code="lbl.escalationTime.label.NodataFound"/></div> <br>
-				<button type="button"  id="escalationnewEscalation" class="btn btn-success">
-					<spring:message code="lbl.escalationTime.button.addnewEscalation"/>
-				</button>
+				</form>
 			</div>
-		</div> 		
-	</c:if>	
-	</div> 	
-	</form:form>	
-	<form id="saveEscalationTimeForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
-				
-<div id="escalationDiv"  class="hidden">	
-			<form:hidden path="escalationForm.complaintType.id" id="formcomplaintTypeId"  value="${escalationForm.complaintType.id}"/>
-				<form:hidden path="escalationForm.complaintType.name" id="formcomplaintTypename"  value="${escalationForm.complaintType.name}"/>
-		<table  id="escalationTable" table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered"  >
-		    <thead><tr>
-		  		<th><spring:message code="lbl.escalationTime.button.srNo"/></th> 
-		        <th><spring:message code="lbl.escalationTime.designation"/></th>
-		        <th><spring:message code="lbl.escalationTime.noOfHours"/></th>
-		        </tr>
-	        </thead>
-	        <tbody>
-		    <c:forEach var="contact"  items="${escalationForm.escalationList}" varStatus="status">
-		 	 <tr>
-		            <td>${status.count}</td>
-		            <td>
-		            <input type="text"  id="escalationDescription${status.index}"  class="form-control is_valid_alphanumeric escalationDescription${status.index}" value="${contact.designation.description}"  name="escalationList[${status.index}].designation.description"  required="required"></td>
-		    
-		       <td > <input type=hidden  id="escalationFormId${status.index}"  name="escalationList[${status.index}].designation.id" value="${contact.designation.id}" >
-		       <input type=hidden  id="escalationId"  name="escalationList[${status.index}].id" >
-		       <input type="text"  class="form-control is_valid_number"  value="${contact.noOfHrs}"  maxlength="5"   name="escalationList[${status.index}].noOfHrs" required="required"></td>
-			
-			   <td> <button type="button"  onclick="deleteRow(this)" id="Add" class="btn btn-success">Delete </button> </td>
-			 </tr>
-		 </c:forEach>  
-		 				
-		</tbody>
-		</table>  
-				<div class="form-group">
-					<div class="text-center"> 
-						<button type="button"  id="addNewRow" class="btn btn-success">
-							<spring:message code="lbl.escalationTime.button.add"/>
-						</button>
-		   			    <button type="submit"  id="saveEscalationTime" class="btn btn-success">
-							<spring:message code="lbl.escalationTime.button.save"/>
-						</button>	
-					</div>
-				</div>  
-					
-</div>	
-	</form>
-		</div>	
-	</div>			
 		</div>
+	</div>
 </div>
 
-<script type="text/javascript" src="<c:url value='/resources/js/app/escalationTimeviewsearch.js'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/app/escalationTimeviewsearch.js'/>"></script>

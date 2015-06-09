@@ -61,6 +61,10 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -187,5 +191,27 @@ public class EscalationService {
 	public void deleteAllInBatch( List<Escalation>  entities) {
     	escalationRepository.deleteInBatch(entities);
 		
+	}
+
+	public Page<Escalation> getPageOfEscalations(Integer pageNumber,
+			Integer pageSize, Long complaintTypeId, Long designationId) {
+		final Pageable pageable = new PageRequest(pageNumber - 1, pageSize,
+				Sort.Direction.ASC, "id");
+		if (complaintTypeId != 0 && designationId != 0){
+			return escalationRepository
+					.findEscalationBycomplaintTypeAndDesignation(complaintTypeId,
+							designationId, pageable);
+		}else if (complaintTypeId != 0){
+			return escalationRepository
+					.findEscalationBycomplaintType(complaintTypeId,
+							 pageable);
+		}else if (designationId != 0){
+			return escalationRepository
+					.findEscalationByDesignation(
+							designationId, pageable);
+		}			
+		else
+			return escalationRepository.findEscalationByAll(pageable);
+	
 	}
 }

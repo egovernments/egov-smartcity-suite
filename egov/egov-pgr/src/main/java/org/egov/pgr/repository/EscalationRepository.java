@@ -42,6 +42,8 @@ package org.egov.pgr.repository;
 import java.util.List;
 
 import org.egov.pgr.entity.Escalation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,5 +61,21 @@ public interface EscalationRepository extends JpaRepository<Escalation, Long> {
     
     @Query(" from Escalation E where  E.complaintType.id=:comTypeId")
     public List <Escalation> findEscalationByComplaintTypeId(@Param("comTypeId")Long comTypeId);
+
+	@Query("select cr from Escalation cr where cr.designation.id=:designationId and cr.complaintType.id=:complaintTypeId")
+	public Page<Escalation> findEscalationBycomplaintTypeAndDesignation(@Param("complaintTypeId") Long complaintTypeId,
+			@Param("designationId") Long designationId,
+		    Pageable pageable);
+
+	@Query("select cr from Escalation cr ")
+	public Page<Escalation> findEscalationByAll(Pageable pageable);
+
+	@Query("select cr from Escalation cr where  cr.complaintType.id=:complaintTypeId")
+	public Page<Escalation> findEscalationBycomplaintType(@Param("complaintTypeId")Long complaintTypeId,
+			Pageable pageable);
+	
+	@Query("select cr from Escalation cr where cr.designation.id=:designationId ")
+	public Page<Escalation> findEscalationByDesignation(@Param("designationId") Long designationId,
+			Pageable pageable);
 
 }
