@@ -79,13 +79,17 @@ jQuery(document).ready(function ($) {
 				{title: 'Complaint Number', data: 'resource.searchable.crn'},
 				{title: 'Complaint Type', data: 'resource.searchable.complaintType.name'},
 				{title: 'Name', data: 'resource.common.citizen.name'},
-				{title: 'Location', data: 'resource.searchable.boundary.name'},
+				//TODO: Fixme - Commented out for time being since index not working properly for location
+				//{title: 'Location', data: 'resource.searchable.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
 				{title: 'Registration Date',
 					render: function (data, type, full) {
-						var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
-						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+						if(full.resource.common.createdDate != undefined) {
+							var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
+							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+						}
+						else return "";
 			    	}
 				}
 				]

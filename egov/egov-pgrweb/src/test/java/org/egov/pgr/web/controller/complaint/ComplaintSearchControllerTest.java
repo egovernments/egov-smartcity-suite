@@ -54,13 +54,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
@@ -87,16 +92,27 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     private SearchService searchService;
     @Mock
     private ComplaintService complaintService;
+    @Mock
+    private ComplaintStatusService complaintStatusService;
+    @Mock
+    private ComplaintTypeService complaintTypeService;
 
     @Override
     protected ComplaintSearchController initController() {
         MockitoAnnotations.initMocks(this);
-        return new ComplaintSearchController(searchService, complaintService);
+        return new ComplaintSearchController(searchService, complaintService, complaintStatusService,
+                complaintTypeService);
     }
 
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();
+        final List<Department> departmentList = new ArrayList<Department>();
+        when(complaintTypeService.getAllComplaintTypeDepartments()).thenReturn(departmentList);
+
+        final List<ComplaintStatus> complaintStatusList = new ArrayList<ComplaintStatus>();
+        when(complaintStatusService.getAllComplaintStatus()).thenReturn(complaintStatusList);
+
         final List receivingModes = Arrays.asList(ReceivingMode.values());
         when(complaintService.getAllReceivingModes()).thenReturn(receivingModes);
     }

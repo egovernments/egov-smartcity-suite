@@ -47,6 +47,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
@@ -146,5 +147,9 @@ public class ComplaintTypeService {
     public ComplaintType findByCode(final String code) {
 
         return complaintTypeRepository.findByCode(code);
+    }
+
+    public List<Department> getAllComplaintTypeDepartments() {
+        return complaintTypeRepository.findAllComplaintTypeDepartments();
     }
 }

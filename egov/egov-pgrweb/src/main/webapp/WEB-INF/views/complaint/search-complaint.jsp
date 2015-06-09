@@ -145,32 +145,34 @@
 								placeholder="<spring:message code='lbl.complaintType'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<select name="test" id="ct-sel-dept" class="form-control"
-								data-first-option="false">
-								<option><spring:message code='lbl.department' /></option>
-								<option value="1">HEALTH</option>
-								<option value="2">ELECTRICAL</option>
-							</select>
+							<form:select name="complaintDepartment" path="" data-first-option="false" 
+								cssClass="form-control" >
+								<form:option value="">
+									<spring:message code="lbl.complaintDepartment" />
+								</form:option>
+								<form:options items="${complaintTypeDepartments}" itemValue="name"
+									itemLabel="name" />  
+							</form:select>
 						</div>
 					</div>
 
 					<div class="form-group show-searchcomp-more display-hide">
 
 						<div class="col-md-4 add-margin">
-							<select name="complaintStatus" id="ct-sel-status" class="form-control"
-								data-first-option="false" >
-								<option value=""><spring:message code='lbl.status' /></option>
-								<option value="REGISTERED">REGISTERED</option>
-								<option value="FORWARDED">FORWARDED</option>
-								<option value="CLOSED">CLOSED</option>
-								
-							</select>
+							<form:select name="complaintStatus" path="" data-first-option="false" 
+								cssClass="form-control" >
+								<form:option value="">
+									<spring:message code="lbl.status" />
+								</form:option>
+								<form:options items="${complaintStatuses}" itemValue="name"
+									itemLabel="name" />  
+							</form:select>
 						</div>
 						<div class="col-md-4 add-margin">
 						<form:select name="receivingCenter" path="" data-first-option="false" 
 							cssClass="form-control" >
 							<form:option value="">
-								<spring:message code="lbl.receivingcenter" />
+								<spring:message code="lbl.receivingmode" />
 							</form:option>
 							<form:options items="${complaintReceivingModes}"  />  
 						</form:select>

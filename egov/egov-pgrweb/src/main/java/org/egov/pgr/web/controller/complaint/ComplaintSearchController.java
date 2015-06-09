@@ -45,7 +45,11 @@ import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
@@ -67,10 +71,27 @@ public class ComplaintSearchController {
 
     private final ComplaintService complaintService;
 
+    private final ComplaintStatusService complaintStatusService;
+
+    private final ComplaintTypeService complaintTypeService;
+
     @Autowired
-    public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService) {
+    public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
+            final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService) {
         this.searchService = searchService;
         this.complaintService = complaintService;
+        this.complaintStatusService = complaintStatusService;
+        this.complaintTypeService = complaintTypeService;
+    }
+
+    @ModelAttribute("complaintTypeDepartments")
+    public List<Department> complaintTypeDepartments() {
+        return complaintTypeService.getAllComplaintTypeDepartments();
+    }
+
+    @ModelAttribute("complaintStatuses")
+    public List<ComplaintStatus> complaintStatuses() {
+        return complaintStatusService.getAllComplaintStatus();
     }
 
     @ModelAttribute("complaintReceivingModes")
