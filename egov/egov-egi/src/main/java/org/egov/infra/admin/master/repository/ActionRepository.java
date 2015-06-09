@@ -52,7 +52,7 @@ public interface ActionRepository extends JpaRepository<Action, Long> {
 
     Action findByName(String name);
 
-    Action findByUrlAndContextRoot(String url, String contextRoot);
+    Action findByUrlAndContextRootAndQueryParamsIsNull(String url, String contextRoot);
 
     @Query("select action from Action action where :url like url||'%' and contextRoot =:contextRoot and queryParams is null")
     List<Action> findByMatchingUrlAndContextRoot(@Param("url") String url, @Param("contextRoot") String contextRoot);

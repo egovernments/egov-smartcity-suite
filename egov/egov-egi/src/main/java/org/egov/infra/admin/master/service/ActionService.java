@@ -74,7 +74,7 @@ public class ActionService {
                 action = findNearestMatchingAction(urlPart,
                         actionRepository.findByMatchingUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams));
         } else {
-            action = actionRepository.findByUrlAndContextRoot(url, contextRoot);
+            action = actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(url, contextRoot);
             if (action == null)
                 action = findNearestMatchingAction(url, actionRepository.findByMatchingUrlAndContextRoot(url, contextRoot));
         }
