@@ -103,17 +103,9 @@
 						${complaint.complaintType.name}
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
-						Complaint Title
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-title">
-						${complaint.complaintType.name}
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.compDetails"/>
 					</div>
-					<div class="col-md-9 col-xs-6 add-margin view-content" id="ct-details">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
 						${complaint.details}
 					</div>
 				</div>
@@ -121,12 +113,10 @@
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.complaintLocation"/>
 					</div>
-					<div class="col-md-9 col-xs-6 add-margin view-content" id="ct-location">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-location">
 						<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 						<span id="address_locate">${complaint.location.localName}</span>
 					</div>
-				</div>
-				<div class="row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.landmark"/>
 					</div>
