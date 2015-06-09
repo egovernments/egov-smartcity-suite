@@ -82,7 +82,7 @@ jQuery(document).ready(function ($) {
 				{title: 'Location', data: 'resource.searchable.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
-				{title: 'Registration Date', data: 'resource.common.createdDate'},
+				{title: 'Registration Date', data: 'resource.common.createdDate'}
 				]
 			});
 		})

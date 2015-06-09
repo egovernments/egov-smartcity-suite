@@ -57,8 +57,8 @@
 
 			<div class="panel-body">
 
-				<form role="form" class="form-horizontal form-groups-bordered"
-					id="searchComplaintForm" action="">
+				<form:form  class="form-horizontal form-groups-bordered"
+					id="searchComplaintForm" modelAttribute="complaintSearchRequest" action="">
 
 					<div class="form-group">
 
@@ -167,16 +167,13 @@
 							</select>
 						</div>
 						<div class="col-md-4 add-margin">
-							<select name="receivingCenter" id="ct-sel-recenter" class="form-control"
-								data-first-option="false">
-								<option  value=""><spring:message code='lbl.receivingcenter' /></option>
-								<option value="CALL">Complaint Cell</option>
-								<option value="SMS">SMS</option>
-								<option value="WEBSITE">Website</option>
-								<option value="EMAIL">Email</option>
-								<option value="PAPER">Paper</option>
-								<option value="MOBILE">Mobile</option>
-							</select>
+						<form:select name="receivingCenter" path="" data-first-option="false" 
+							cssClass="form-control" >
+							<form:option value="">
+								<spring:message code="lbl.receivingcenter" />
+							</form:option>
+							<form:options items="${complaintReceivingModes}"  />  
+						</form:select>
 						</div>
 					</div>
 
@@ -203,7 +200,7 @@
 					</div>
 
 
-				</form>
+				</form:form>
 
 
 			</div>

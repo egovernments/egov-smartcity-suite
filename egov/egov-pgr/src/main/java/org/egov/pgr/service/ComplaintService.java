@@ -47,6 +47,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
@@ -74,6 +75,7 @@ import org.egov.infstr.notification.HTTPSMS;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.egov.portal.entity.CitizenInbox;
@@ -357,6 +359,10 @@ public class ComplaintService {
         if (complaint.getComplainant().getMobile() != null)
             httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
 
+    }
+    
+    public List getAllReceivingModes() {
+       return Arrays.asList(ReceivingMode.values());
     }
 
 }
