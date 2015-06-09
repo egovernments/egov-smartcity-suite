@@ -82,7 +82,12 @@ jQuery(document).ready(function ($) {
 				{title: 'Location', data: 'resource.searchable.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
-				{title: 'Registration Date', data: 'resource.common.createdDate'}
+				{title: 'Registration Date',
+					render: function (data, type, full) {
+						var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
+						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+			    	}
+				}
 				]
 			});
 		})
