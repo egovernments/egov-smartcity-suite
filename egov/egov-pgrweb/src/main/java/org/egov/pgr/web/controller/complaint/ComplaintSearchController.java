@@ -65,12 +65,12 @@ public class ComplaintSearchController {
 
     private final SearchService searchService;
 
-    @Autowired
-    private ComplaintService complaintService;
+    private final ComplaintService complaintService;
 
     @Autowired
-    public ComplaintSearchController(final SearchService searchService) {
+    public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService) {
         this.searchService = searchService;
+        this.complaintService = complaintService;
     }
 
     @ModelAttribute("complaintReceivingModes")
