@@ -77,7 +77,7 @@
 		<constructor-arg value="/index.jsp" />
 		<constructor-arg>
 			<list>
-				<ref bean="logoutCookieClearerHandler"/>
+				<ref bean="customLogoutHandler"/>
 				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -42,16 +42,12 @@ package org.egov.infstr.security.spring.event.actions;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.security.authentication.SecureUser;
-import org.egov.infstr.commons.EgLoginLog;
+import org.egov.infra.security.audit.entity.SystemAudit;
+import org.egov.infra.security.audit.service.SystemAuditService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,25 +57,25 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 @Service
 @Transactional
-public class AuthenticationSuccessEventAction implements
-        ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
+public class AuthenticationSuccessEventAction implements ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
 
     @Autowired
-    private UserService userService;
+    private SystemAuditService systemAuditService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Override
     public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
-        final Authentication authentication = authorizedEvent.getAuthentication();
-        final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
-        final EgLoginLog login = new EgLoginLog();
-        login.setLoginTime(new Date(authorizedEvent.getTimestamp()));
-        login.setUser(userService.getUserById(((SecureUser) authentication.getPrincipal()).getUserId()));
-        entityManager.persist(login);
-        entityManager.flush();
-        final String loginLogID = login.getId().toString();
-        ((HashMap<String, String>) authentication.getCredentials()).put(SecurityConstants.LOGIN_LOG_ID, loginLogID);
+        final SystemAudit systemAudit = new SystemAudit();
+        systemAudit.setLoginTime(new Date(authorizedEvent.getTimestamp()));
+        systemAudit.setUser(securityUtils.getCurrentUser());
+        //TODO IPADDRESS AND USERAGENT INFO
+        systemAudit.setIpAddress("");
+        systemAudit.setUserAgentInfo("");
+        systemAuditService.createOrUpdateSystemAudit(systemAudit);
+        final String loginLogID = systemAudit.getId().toString();
+        ((HashMap<String, String>) authorizedEvent.getAuthentication().getCredentials()).put(SecurityConstants.LOGIN_LOG_ID,
+                loginLogID);
     }
 }
