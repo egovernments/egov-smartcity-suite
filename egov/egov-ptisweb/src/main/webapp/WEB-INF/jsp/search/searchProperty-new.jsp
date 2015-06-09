@@ -85,7 +85,7 @@
 									</div>									
 								</td>
 							</tr>					
-														
+							<tr><td colspan="4"><br/></td></tr>							
 							<tr>
 								<td class="bluebox">&nbsp;</td>
 								<td class="bluebox">
@@ -101,23 +101,8 @@
 							
 							<tr>
 								<td class="greybox">&nbsp;</td>
-								<td class="greybox">
-									<s:text name="ParcelID" />
-									:
-								</td>
-								<td class="greybox">
-									<s:textfield name="gisId" id="gisId" value="%{gisId}" maxlength="50"/>
-								</td>
-								<td class="greybox">&nbsp;</td>
-							</tr>
-							<tr>
-								<td class="bluebox" colspan="4">
-									&nbsp; &nbsp; &nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td class="greybox">&nbsp;</td>
 								<td class="greybox" colspan="2">
+								   <br/>
 									<div class="greybox" style="text-align:center">
 										<s:hidden id="mode" name="mode" value="index"></s:hidden>
 										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'indexform');"></s:submit>
@@ -128,8 +113,6 @@
 						</s:form>
 					</table>			
 
-					<br>
-			
 					<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<s:form name="zoneform" theme="simple" id="zoneform">
 						<tr>
@@ -139,6 +122,7 @@
 								</div>
 							</td>					
 						</tr>
+						<tr><td colspan="4"><br/></td></tr>		
 						<tr>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">
@@ -191,14 +175,11 @@
 							</td>
 							<td class="greybox">&nbsp;</td>
 						</tr>
-						<tr>
-							<td class="bluebox" colspan="4">
-								&nbsp; &nbsp; &nbsp;
-							</td>
-						</tr>
+						
 						<tr>
 							<td class="greybox">&nbsp;</td>
 							<td class="greybox" colspan="2">
+							    <br/>
 								<div class="greybox" style="text-align:center">		
 									<s:hidden id="mode" name="mode" value="bndry"></s:hidden>
 									<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByBndry.action', 'zoneform');" ></s:submit>
@@ -219,11 +200,11 @@
 							</div>
 						</td>
 					</tr>
-					
+					<tr><td colspan="4"><br/></td></tr>		
 					<tr>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">
-							<s:text name="Area" />:
+							<s:text name="Area" /> :
 						</td>
 						<td class="bluebox">
 							<s:select name="areaId" id="areaId" list="dropdownData.Street" cssStyle="width: 150px;" listKey="id" listValue="name"
@@ -259,23 +240,8 @@
 					
 					<tr>
 						<td class="greybox">&nbsp;</td>
-						<td class="greybox" width="150px">
-							<s:text name="OldNo" />
-							:
-						</td>
-						<td class="greybox">
-							<s:textfield name="oldHouseNum" />
-						</td>
-						<td class="greybox">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="bluebox" colspan="4">
-							&nbsp; &nbsp; &nbsp;
-						</td>
-					</tr>
-					<tr>
-						<td class="greybox">&nbsp;</td>
 						<td class="greybox" colspan="2">
+						    <br/>
 							<div class="greybox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="area"></s:hidden>
 								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'srchByArea');"></s:submit>
@@ -297,48 +263,16 @@
 						</td>
 					</tr>
 					
+					
+					
 					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="property.type" />
-						</td>
-						<td class="bluebox">
-							<s:select name="propertyTypeMasterId" id="propertyTypeMasterId" list="dropdownData.PropTypeMaster" listKey="id" listValue="type"
-								headerKey="-1" headerValue="----Choose----" value="%{propertyTypeMasterId}" />
-						</td>
-						<td class="bluebox">&nbsp;</td>
-					</tr> 
-					<tr>
-						<td class="greybox">&nbsp;</td>
-						<td class="greybox">
-							<s:text name="objection.number" />
-						</td>
-						<td class="greybox">
-							<s:textfield name="objectionNumber"  />
-						</td>
-						<td class="greybox">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="objection.fromdate" />
-						</td>
-						<td class="bluebox">
-							<s:textfield name="objectionFromDate" id="objectionFromDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-							<a href="javascript:show_calendar('objectionForm.objectionFromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-						</td>
-						<td class="bluebox">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="greybox">&nbsp;</td>
-						<td class="greybox">
-							<s:text name="objection.todate"  />
-						</td>
-						<td class="greybox">
-							<s:textfield name="objectionToDate" id="objectionToDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-								<a href="javascript:show_calendar('objectionForm.objectionToDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
-						</td>
-						<td class="greybox">&nbsp;</td>
+					  <td class="bluebox" style="text-align:center;" colspan="4">
+					   <br/>
+					    From <span class="mandatory1">*</span>:  &nbsp;&nbsp;&nbsp; 
+					    <s:textfield name="fromdemand"  />
+					    &nbsp;&nbsp;&nbsp; To <span class="mandatory1">*</span>: &nbsp;&nbsp;&nbsp;
+					     <s:textfield name="todemand"  />
+					  </td>
 					</tr>
 					<tr>
 						<td class="bluebox" colspan="4">
@@ -346,14 +280,14 @@
 						</td>
 					</tr>				
 					<tr>
-						<td class="greybox">&nbsp;</td>
-						<td class="greybox" colspan="2">
-							<div class="greybox" style="text-align:center">
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox" colspan="2">
+							<div class="bluebox" style="text-align:center">
 								<s:hidden id="mode" name="mode" value="objection"></s:hidden>
 								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByObjection.action', 'objectionForm');"></s:submit>
 							</div>
 						</td>
-						<td class="greybox">&nbsp;</td>
+						<td class="bluebox">&nbsp;</td>
 					</tr>
 					<br/>
 					</s:form>
