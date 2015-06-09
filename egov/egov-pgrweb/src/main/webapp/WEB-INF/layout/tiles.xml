@@ -161,4 +161,10 @@
     	<put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSuccess.jsp"/>
     </definition>
+    
+        <definition name="escalationTime-searchView" extends="base_layout">
+    	<put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-searchView.jsp"/>
+    </definition>
+    
 </tiles-definitions>

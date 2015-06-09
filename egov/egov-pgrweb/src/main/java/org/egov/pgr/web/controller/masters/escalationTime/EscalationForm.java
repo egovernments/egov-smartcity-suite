@@ -37,27 +37,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.repository;
+package org.egov.pgr.web.controller.masters.escalationTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-/**
- * @author Vaibhav.K
- *
- */
-@Repository
-public interface EscalationRepository extends JpaRepository<Escalation, Long> {
-    
-    @Query(" from Escalation E where E.designation.id=:designationId and E.complaintType.id=:comTypeId")
-    public Escalation findByDesignationAndComplaintType(@Param("designationId")Long designationId,@Param("comTypeId")Long comTypeId);
-    
-    @Query(" from Escalation E where  E.complaintType.id=:comTypeId")
-    public List <Escalation> findEscalationByComplaintTypeId(@Param("comTypeId")Long comTypeId);
+public class EscalationForm {
+	private ComplaintType complaintType;
+	private List<Escalation> escalationList = new ArrayList<Escalation>();
+
+	public ComplaintType getComplaintType() {
+		return complaintType;
+	}
+
+	public void setComplaintType(ComplaintType complaintType) {
+		this.complaintType = complaintType;
+	}
+
+	public List<Escalation> getEscalationList() {
+		return escalationList;
+	}
+
+	public void setEscalationList(List<Escalation> escalationList) {
+		this.escalationList = escalationList;
+	}
+
+	public void addEscalationList(Escalation escalationObj) {
+		this.escalationList.add(escalationObj);
+	}
 
 }

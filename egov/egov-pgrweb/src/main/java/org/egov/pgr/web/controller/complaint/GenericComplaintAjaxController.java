@@ -46,16 +46,19 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -65,6 +68,9 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
 
     @Autowired
     private BoundaryService boundaryService;
+     
+    @Autowired
+    private DesignationService designationService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -77,9 +83,14 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     }
 
     @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
-            "router/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            "router/complaintTypes", "escalationTime/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);
+    }
+    
+    @RequestMapping(value = "escalationTime/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getAllDesignationsByName( @RequestParam final String designationName) {
+      return  designationService.getAllDesignationsByNameLike(designationName);
     }
 
     @RequestMapping(value = "officials/isCrnRequired", method = GET)

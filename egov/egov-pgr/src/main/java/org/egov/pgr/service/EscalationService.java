@@ -46,10 +46,10 @@ import java.util.List;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EmailUtils;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.notification.HTTPSMS;
 import org.egov.pgr.entity.Complaint;
@@ -122,7 +122,13 @@ public class EscalationService {
          else
         	 return 0;
     }
-
+    
+    public List<Escalation> findAllBycomplaintTypeId(final Long complaintTypeId) {
+        return escalationRepository.findEscalationByComplaintTypeId(complaintTypeId);
+    }
+    
+    
+    
     @Transactional
     public void escalateComplaint() {
         final AppConfigValues appConfigValue = appConfigValuesDAO.getConfigValuesByModuleAndKey(
@@ -175,4 +181,11 @@ public class EscalationService {
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;
     }
+    
+  
+    @Transactional
+	public void deleteAllInBatch( List<Escalation>  entities) {
+    	escalationRepository.deleteInBatch(entities);
+		
+	}
 }
