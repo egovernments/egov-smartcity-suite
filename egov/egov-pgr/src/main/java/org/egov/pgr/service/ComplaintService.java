@@ -201,7 +201,7 @@ public class ComplaintService {
             .withSenderName(userName).withDateInfo(new Date());
 
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
+            final Position owner = eisCommonService.getPrimaryAssignmentPositionForEmp(approvalPosition);
             complaint.setAssignee(owner);
             complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
             .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());

@@ -85,6 +85,7 @@ public interface EISServeable {
      * @param forDate
      * @return Position
      **/
+    @Deprecated
     Position getPrimaryPositionForUser(Long userId, Date forDate);
 
     /**
