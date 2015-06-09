@@ -319,7 +319,7 @@
        
 		<s:if test="modifyRsn != 'DATA_UPDATE'">
 		    <td class="blueborderfortd"  id = "AddRemoveFloor">
-	          		<img id="addF" name="addF" src="${pageContext.request.contextPath}/resources/image/addrow.gif" alt="Add" onclick="javascript:addFloor(); return false;" width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/image/removerow.gif" alt="Remove" onclick="javascript:delFloor(this);return false;" width="18" height="18" border="0" />
+	          		<img id="addF" name="addF" src="${pageContext.request.contextPath}/resources/image/addrow.gif" alt="Add" onclick="javascript:addFloor(); return false;" width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/resources/image/removerow.gif" alt="Remove" onclick="javascript:delFloor(this);return false;" width="18" height="18" border="0" />
 	        </td>
 	       
 	        <td>

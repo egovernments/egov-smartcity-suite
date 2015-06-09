@@ -58,8 +58,13 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
+	@Autowired
 	private SequenceNumberGenerator sequenceNumberGenerator;
 	@Autowired
 	private ModuleService moduleDao;

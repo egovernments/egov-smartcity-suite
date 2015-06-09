@@ -160,7 +160,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		if (getId() != null) {
 			hashCode = hashCode + getId().hashCode();
 		}
-		if (getPropertyID() != null) {
+		if (getPropertyID() != null && getAddress() != null) {
 			hashCode = hashCode + isActive().hashCode()
 					+ getAddress().hashCode();
 		}

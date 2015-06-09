@@ -693,6 +693,10 @@ public class PropertyTaxUtil {
 		this.persistenceService = persistenceService;
 	}
 
+	public PersistenceService getPersistenceService() {
+		return this.persistenceService;
+	}
+	
 	/**
 	 * To get effective assessment period as a String
 	 *
@@ -1425,7 +1429,7 @@ public class PropertyTaxUtil {
 		return (Date) persistenceService
 				.getSession()
 				.createQuery(
-						"select min(inst.fromDate) from org.egov.commons.Installment inst where inst.module.moduleName = :moduleName")
+						"select min(inst.fromDate) from org.egov.commons.Installment inst where inst.module.name = :moduleName")
 				.setString("moduleName", PTMODULENAME).uniqueResult();
 	}
 

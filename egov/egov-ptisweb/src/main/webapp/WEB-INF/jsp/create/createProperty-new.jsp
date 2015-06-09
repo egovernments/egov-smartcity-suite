@@ -47,7 +47,7 @@
     	<%-- <s:text name='NewProp.title'/>     --%>	
     	New Property
     </title>
-	<!-- <sx:head/>	 -->
+	<sx:head/>	
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"></script>
@@ -58,7 +58,6 @@
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
 function loadOnStartUp() {
-	alert("Hi");
 	jQuery("#CorrAddrDiv").hide();
 	document.getElementById("CorrAddrDiv").style.display = "";
 	/* document.getElementById("plotArea").style.display = "";
@@ -378,7 +377,7 @@ function finishAllChangesMsg(button) {
   <s:form name="CreatePropertyForm" action="createProperty" theme="simple" validate="true">
   
   <s:push value="model">
-  <s:token />
+  <%-- <s:token /> --%>
   
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
   <s:hidden name="mode" value="form" />

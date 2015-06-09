@@ -6,15 +6,15 @@
 		<td class="greybox" width="20%"><s:text name="application.no"></s:text><span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.applicationNo"
-				id="basicProperty.applicationNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="property.basicProperty.applicationNo"
+				id="property.basicProperty.applicationNo" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 			
 		<td class="greybox">
 		<s:date name="currDate" var="todaysDate" format="dd/MM/yyyy" />
-	    <s:textfield name="basicProperty.createdDate" id="createdDate" value="%{#todaysDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
+	    <s:textfield name="applicationDate" id="createdDate" value="%{#todaysDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
 	
@@ -89,7 +89,7 @@
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox">
-		  <s:textfield name="basicProperty.vacantLandAssmtNo" id="vacantLandNo" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="vacantLandNo" id="vacantLandNo" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -99,7 +99,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.appurtntland"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -134,7 +134,7 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.propOccupationDate" id="basicProperty.propOccupationDate" size="10" maxlength="10"></s:textfield>
+		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
 	
@@ -215,7 +215,7 @@
 		<td class="greybox" width="25%"><s:text name="floortype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="floortype"
+				headerValue="%{getText('default.select')}" name="floorType"
 				id="floorType" listKey="id" listValue="name"
 				list="dropdownData.floorType" value="%{floorName}"
 				cssClass="selectnew" onchange="makeMandatory();" />
@@ -223,8 +223,8 @@
 		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="rooftype"
-				id="roofTypeId" listKey="id" listValue="name"
+				headerValue="%{getText('default.select')}" name="roofType"
+				id="roofType" listKey="id" listValue="name"
 				list="dropdownData.roofType" value="%{roofName}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
@@ -235,7 +235,7 @@
 		<td class="greybox" width="25%"><s:text name="walltype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="walltype"
+				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
 				list="dropdownData.wallType" value="%{wallName}"
 				cssClass="selectnew" onchange="makeMandatory();" />
@@ -243,7 +243,7 @@
 		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="woodtype"
+				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
 				list="dropdownData.woodType" value="%{woodName}"
 				cssClass="selectnew" onchange="makeMandatory();" />
@@ -267,7 +267,7 @@
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="ownershipType"
+				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="ownershipType" listKey="id" listValue="type"
 				list="dropdownData.PropTypeMaster" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" />

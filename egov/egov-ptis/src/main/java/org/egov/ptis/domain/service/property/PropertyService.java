@@ -132,6 +132,9 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.stereotype.Service;
 
 public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
@@ -158,13 +161,13 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
 			String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
-			String nonResPlotArea, boolean isfloorDetailsRequired) {
+			String nonResPlotArea, boolean isfloorDetailsRequired,Long floorType,Long roofType,Long wallType,Long woodType) {
 		LOGGER.debug("Entered into createProperty");
 		LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
 				+ mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
 				+ propOccId + ", status: " + status);
 		currentInstall = (Installment) getPropPerServ().find(
-				"from Installment I where I.module.moduleName=? and (I.fromDate <= ? and I.toDate >= ?) ",
+				"from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ",
 				PTMODULENAME, new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
@@ -181,6 +184,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			property.getPropertyDetail().setNonResPlotArea(area);
 		}
 
+		/*property.getPropertyDetail().setFloorType(floorType);
+		property.getPropertyDetail().setRoofType(roofType);
+		property.getPropertyDetail().setWallType(wallType);
+		property.getPropertyDetail().setWoodType(woodType);*/
+		
 		property.getPropertyDetail().setFieldVerified('Y');
 		property.getPropertyDetail().setProperty(property);
 		PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
@@ -215,7 +223,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
 		property.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
 		property.getPropertyDetail().setUpdatedTime(new Date());
-		createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
+		//createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
 		// property.setStatus(status);
 		property.setIsDefaultProperty(PROPERTY_IS_DEFAULT);
 		property.setInstallment(currentInstall);
@@ -1399,7 +1407,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
 		}
 		newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false);
+				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false,null,null,null,null);
 
 		newProperty.setStatus(STATUS_WORKFLOW);
 		// Setting the property state to the objection workflow initiator

@@ -111,10 +111,10 @@ public class VacantProperty extends AbstractProperty {
 	private double extentSite;
 	private double extentAppartenauntLand;
 	private String siteOwner;
-	private Long floorType;
-	private Long roofType;
-	private Long wallType;
-	private Long woodType;
+	private FloorType floorType;
+	private RoofType roofType;
+	private WallType wallType;
+	private WoodType woodType;
 	
 
 	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
@@ -829,43 +829,44 @@ public class VacantProperty extends AbstractProperty {
 	}
 
 	@Override
-	public Long getFloorType() {
+	public FloorType getFloorType() {
 		return floorType;
 	}
 
 	@Override
-	public void setFloorType(Long floorType) {
+	public void setFloorType(FloorType floorType) {
 		this.floorType = floorType;
 	}
 
 	@Override
-	public Long getRoofType() {
+	public RoofType getRoofType() {
 		return roofType;
 	}
 
 	@Override
-	public void setRoofType(Long roofType) {
+	public void setRoofType(RoofType roofType) {
 		this.roofType = roofType;
 	}
 
 	@Override
-	public Long getWallType() {
+	public WallType getWallType() {
 		return wallType;
 	}
 
 	@Override
-	public void setWallType(Long wallType) {
+	public void setWallType(WallType wallType) {
 		this.wallType = wallType;
 	}
 
 	@Override
-	public Long getWoodType() {
+	public WoodType getWoodType() {
 		return woodType;
 	}
 
 	@Override
-	public void setWoodType(Long woodType) {
+	public void setWoodType(WoodType woodType) {
 		this.woodType = woodType;
 	}
+
 
 }

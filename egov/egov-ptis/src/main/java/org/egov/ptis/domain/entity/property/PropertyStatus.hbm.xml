@@ -51,7 +51,7 @@
 			</generator>
 		</id>
 		<timestamp
-			column="LASTUPDATEDTIMESTAMP"
+			column="created_date"
 			name="lastUpdatedTimeStamp"
 			access="property"
 			unsaved-value="null"

@@ -85,7 +85,6 @@ import org.springframework.transaction.annotation.Transactional;
  * "changePropertyAddress", params = { "namespace", "/modify", "method", "view",
  * "modelId", "${workFlowPropId}" }) })
  */
-@Transactional(readOnly = true)
 // @Namespace("/workflow")
 public class WorkflowAction extends PropertyTaxBaseAction {
 

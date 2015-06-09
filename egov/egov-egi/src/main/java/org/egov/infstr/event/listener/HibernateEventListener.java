@@ -42,6 +42,7 @@ package org.egov.infstr.event.listener;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.HibernateException;
@@ -52,6 +53,7 @@ import org.hibernate.event.spi.PreUpdateEvent;
 import org.hibernate.event.spi.PreUpdateEventListener;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
 import org.hibernate.event.spi.SaveOrUpdateEventListener;
+import org.joda.time.DateTime;
 
 /**
  * This Event listener class sets the audit properties createdBy, createdDate modifiedBy and modifiedDate. It does this by hooking to the pre-update and pre-insert events. The pre-update event was
@@ -111,10 +113,26 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 		final Object entity = event.getEntity();
 		if (entity instanceof BaseModel) {
 			this.updateAuditProperties(event.getSession(), event.getPersister().getPropertyNames(), event.getState());
+		} else if (entity instanceof AbstractAuditable) {
+			this.updateAuditableProperties(event);
 		}
 		return false;
 	}
 
+	private void updateAuditableProperties(final PreUpdateEvent event) {
+		int i = 0;
+		for (final String propName : event.getPersister().getPropertyNames()) {
+			if ("lastModifiedDate".equals(propName)) {
+				event.getState()[i] = new DateTime();
+			}
+			if ("lastModifiedBy".equals(propName)) {
+				event.getState()[i] = this.getUserObjectFromWithinEventListener(event.getSession());
+			}
+			i++;
+		}
+
+	}
+	
 	/**
 	 * For new objects that are created, this event is used to set the audit properties. This is done here instead of the pre-insert event because Hibernate checks for not-null constraints before the
 	 * pre-update and pre-insert are fired.
@@ -136,6 +154,16 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 				entity.setModifiedDate(currentDate);
 			}
 
+		} else if (object instanceof AbstractAuditable && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
+			final User usr = (User) session.load(User.class, EgovThreadLocals.getUserId());
+			final AbstractAuditable entity = (AbstractAuditable) session.getPersistenceContext().unproxyAndReassociate(object);
+			if (entity.getCreatedBy() == null) {
+				DateTime currentDate = new DateTime();
+				entity.setCreatedDate(currentDate);
+				entity.setCreatedBy(usr);
+				entity.setLastModifiedBy(usr);
+				entity.setLastModifiedDate(currentDate);
+			}
 		}
 
 	}

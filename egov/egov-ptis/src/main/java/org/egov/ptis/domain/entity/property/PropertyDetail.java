@@ -367,19 +367,19 @@ public interface PropertyDetail extends Property {
 	
 	public void setSiteOwner(String siteOwner);
 	
-	public Long getFloorType();
+	public FloorType getFloorType();
 	
-	public void setFloorType(Long floorType);
+	public void setFloorType(FloorType floorType);
 	
-	public Long getRoofType();
+	public RoofType getRoofType();
 	
-	public void setRoofType(Long roofType);
+	public void setRoofType(RoofType roofType);
 	
-	public Long getWallType();
+	public WallType getWallType();
 	
-	public void setWallType(Long wallType);
+	public void setWallType(WallType wallType);
 	
-	public Long getWoodType();
+	public WoodType getWoodType();
 	
-	public void setWoodType(Long woodType);
+	public void setWoodType(WoodType woodType);
 }

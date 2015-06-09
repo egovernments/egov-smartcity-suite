@@ -47,6 +47,8 @@ import org.egov.infstr.utils.seqgen.DatabaseSequenceException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Fetches a sequence number from a named sequence. THIS CLASS SUPERSEDES THE OLD org.egov.infstr.utils.SequenceGenerator.
@@ -57,6 +59,8 @@ import org.hibernate.criterion.Restrictions;
  * This means that there will almost definitely be gaps in the numbers fetched, since if a transaction fails,
  * the number that it fetched will be lost for good.
  */
+@Service
+@Transactional(readOnly = true)
 public class SequenceNumberGenerator {
 
     private SessionFactory sessionFactory;

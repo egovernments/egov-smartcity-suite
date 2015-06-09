@@ -4,7 +4,7 @@
 
 <hibernate-mapping>
 	<class name="org.egov.commons.Installment" table="EG_INSTALLMENT_MASTER">
-		<id name="id" column="ID_INSTALLMENT">
+		<id name="id" column="ID">
 			<generator class="native">
 				<param name="sequence">seq_installment</param>
 			</generator>

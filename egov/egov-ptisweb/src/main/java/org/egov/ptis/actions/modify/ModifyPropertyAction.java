@@ -1260,7 +1260,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode,
 				propTypeId, propUsageId, propOccId, status, propertyModel.getDocNumber(), null,
-				isfloorDetailsRequired));
+				isfloorDetailsRequired,null,null,null,null));
 
 		propertyModel = (PropertyImpl) propService.createOwnersForNew(propertyModel, oldProperty);
 		propertyModel.setBasicProperty(basicProp);

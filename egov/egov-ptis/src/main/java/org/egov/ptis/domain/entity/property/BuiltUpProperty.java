@@ -104,10 +104,10 @@ public class BuiltUpProperty extends AbstractProperty {
 	private double extentSite;
 	private double extentAppartenauntLand;
 	private String siteOwner;
-	private Long floorType;
-	private Long roofType;
-	private Long wallType;
-	private Long woodType;
+	private FloorType floorType;
+	private RoofType roofType;
+	private WallType wallType;
+	private WoodType woodType;
 
 	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
 			Area commVacantLand, Area nonResPlotArea, 
@@ -854,37 +854,46 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.siteOwner = siteOwner;
 	}
 
-	public Long getFloorType() {
+	@Override
+	public FloorType getFloorType() {
 		return floorType;
 	}
 
-	public void setFloorType(Long floorType) {
+	@Override
+	public void setFloorType(FloorType floorType) {
 		this.floorType = floorType;
 	}
 
-	public Long getRoofType() {
+	@Override
+	public RoofType getRoofType() {
 		return roofType;
 	}
 
-	public void setRoofType(Long roofType) {
+	@Override
+	public void setRoofType(RoofType roofType) {
 		this.roofType = roofType;
 	}
 
-	public Long getWallType() {
+	@Override
+	public WallType getWallType() {
 		return wallType;
 	}
 
-	public void setWallType(Long wallType) {
+	@Override
+	public void setWallType(WallType wallType) {
 		this.wallType = wallType;
 	}
 
-	public Long getWoodType() {
+	@Override
+	public WoodType getWoodType() {
 		return woodType;
 	}
 
-	public void setWoodType(Long woodType) {
+	@Override
+	public void setWoodType(WoodType woodType) {
 		this.woodType = woodType;
 	}
+	
 	
 	
 }

@@ -47,7 +47,7 @@
     <s:if test="propertyOwnerProxy.size()==0">
       <tr id="nameRow" >
         <td class="" align="center">
-        	<s:textfield name="propertyOwnerProxy[0].firstName" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerProxy[0].firstName}" 
+        	<s:textfield name="propertyOwnerProxy[0].name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerProxy[0].name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td>
         <td class="greybox">
@@ -60,7 +60,7 @@
         <s:iterator value="(propertyOwnerProxy.size).{#this}" status="ownerStatus">
 			<tr id="nameRow">
         		<td class="greybox" align="center">
-        			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].firstName" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerProxy[#ownerStatus.index].firstName}" 
+        			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerProxy[#ownerStatus.index].name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         		</td>
         		<td class="greybox">
