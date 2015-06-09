@@ -80,12 +80,12 @@ public class ModifyAppConfigController {
 
 	
 	 @ModelAttribute public AppConfig appConfigModel(@PathVariable final String[]  keyNameArray,Model model) { 
-		 String keyName="";
-		 String moduleName="";
+		 Long keyName=null;
+		 Long moduleName=null;
 		 if(keyNameArray.length>1)
 		 {
-			 keyName=keyNameArray[0];
-			moduleName=keyNameArray[1];
+			keyName=Long.parseLong(keyNameArray[0]);
+			moduleName=Long.parseLong(keyNameArray[1]);
 		 }
 		return appConfigValueService.findBykeyNameAndModuleName(keyName,moduleName); 
 		}

@@ -73,4 +73,28 @@ $(document).ready(function(){
 		$("#module").val(data.name);    
 		$("#moduleid").val(data.value);    
     });
+	
+	$('#approvalDepartment').change(function(){
+		$.ajax({
+			url: "/egi/appConfig/ajax-appConfigpopulate",     
+			type: "GET",
+			data: {
+				approvalDepartment : $('#approvalDepartment').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#approvalDesignation').empty();
+				$('#approvalDesignation').append($("<option value=''>Select</option>"));
+				$.each(response, function(index, value) {
+					$('#approvalDesignation').append($('<option>').text(value.keyName).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
+	
 });

@@ -59,7 +59,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.createAppconfig"/></strong>
+						<strong><spring:message code="lbl.hdr.modifyAppconfig"/></strong>
 					</div>
 				</div> 
 			
@@ -143,8 +143,9 @@
 					<div class="col-md-12 text-center">
 						<div class="add-margin">
 							<button type="submit" class="btn btn-primary">Submit</button>
-							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
-						</div>
+							 <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+                          </div>
 					</div>
 					</div>
 					</form:form>

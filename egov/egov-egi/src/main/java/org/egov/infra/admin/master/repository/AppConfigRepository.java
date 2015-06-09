@@ -51,10 +51,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig,Long>{
 	
-	@Query("select app from AppConfig app where app.keyName = :keyName and app.module.name = :name")
-    public AppConfig findBykeyNameAndModuleName(@Param("keyName") String keyName, @Param("name") String name);
+	@Query("select app from AppConfig app where app.id = :keyid and app.module.id = :moduleid")
+    public AppConfig findBykeyNameAndModuleName(@Param("keyid") Long keyid, @Param("moduleid") Long moduleid);
 
-	
+
+	@Query("select b from AppConfig b where b.module.id=:id")
+	List<AppConfig> findAllByModuleId(@Param("id") Long id);
 	AppConfig findBykeyName(String keyName);
 	
 	   @Query("select b from Module b where  b.enabled=true AND "
@@ -64,7 +66,7 @@ public interface AppConfigRepository extends JpaRepository<AppConfig,Long>{
 	   
 	   @Query("select b from Module b where  b.enabled=true AND "
 		   		+ "(b.parentModule IS NULL OR (b.parentModule IN (select c.id from Module c where c.parentModule IS NULL ))) "
-		   		+ " order by b.id")
+		   		+ " order by b.name")
 		  List<Module> findAllModules();
 	   
 	   @Query("select b from Module b where  b.enabled=true AND b.id=(:id)")

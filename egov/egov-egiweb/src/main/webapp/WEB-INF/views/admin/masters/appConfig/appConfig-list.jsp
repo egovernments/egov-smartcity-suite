@@ -41,7 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
 <div class="row" id="page-content">
     <div class="col-md-12">
         <div class="panel" data-collapsed="0">
@@ -59,7 +59,41 @@
 						</div> 
 						
 						<div class="panel-body custom-form">
-							<div class="form-group">
+					
+						<div class="form-group">
+								<label class="col-sm-3 control-label">Module<small><i
+										class="entypo-star error-msg"></i></small></label>
+								<div class="col-sm-6 add-margin">
+	                            <form:select path="module.name"
+	                                         id="approvalDepartment" cssClass="form-control" cssErrorClass="form-control error" required="required" >
+	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+	                                <form:options items="${modulesList}" itemValue="id" itemLabel="name"/>
+	                            </form:select>
+	                            <form:errors path="module.name" cssClass="error-msg"/>
+	                        </div>
+	                    	</div>
+	                    	
+	                    <div class="panel-body custom-form">
+					
+						<div class="form-group">
+						<label class="col-sm-3 control-label">Key Name<small><i
+										class="entypo-star error-msg"></i></small></label>
+						<div class="col-sm-6 add-margin">		
+					<form:select path="keyName" data-first-option="false"
+						id="approvalDesignation" cssClass="form-control"
+						cssErrorClass="form-control error" required="required">  
+						<form:option value="">
+							<spring:message code="lbl.AppconfigKeyName"/>
+						</form:option>
+						<form:options items="${approvalDesignationList}" itemValue="id"
+							itemLabel="keyName" />
+					</form:select>
+					  <form:errors path="keyName" cssClass="error-msg"/>
+					</div>
+					</div>
+					
+				</div>
+								<%-- <div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"></spring:message><small><i
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
@@ -70,19 +104,7 @@
 	                            </form:select>
 	                            <form:errors path="keyName" cssClass="error-msg"/>
 	                        </div>
-						</div>
-						<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-										class="entypo-star error-msg"></i></small></label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="module.name"
-	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required" >
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${modulesList}" itemValue="name" itemLabel="name"/>
-	                            </form:select>
-	                            <form:errors path="module.name" cssClass="error-msg"/>
-	                        </div>
-						</div>
+						</div> --%>
 	                </div>
 	                </div>
 
@@ -90,7 +112,7 @@
                         <div class="text-center">
                             <button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>                           
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
                         </div>
                     </div>
                     

@@ -42,16 +42,21 @@ package org.egov.infra.web.controller.admin.masters.appConfig;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -72,5 +77,14 @@ public class GenericAppConfigAjaxController {
 		 final String likemoduleName = "%" + moduleName + "%";
 	        return  appConfigValueService.findByNameContainingIgnoreCase(likemoduleName);
 	    }
-	   
+	 
+	 @RequestMapping(value = "/ajax-appConfigpopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	    public @ResponseBody List<AppConfig> getAppConfigs(
+	            @ModelAttribute("appConfig") @RequestParam final Long approvalDepartment) {
+	        List<AppConfig> appConfig =  appConfigValueService.findAllByModule(approvalDepartment);
+	        //FIXME this is hack for lazy loaded collection
+	        appConfig.forEach(appConfigs -> appConfigs.toString());
+	        return appConfig;
+	    }
+	  
 }

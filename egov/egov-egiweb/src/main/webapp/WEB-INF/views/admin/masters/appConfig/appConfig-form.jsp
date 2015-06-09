@@ -63,6 +63,17 @@
 				</div> 
 			
 				<div class="panel-body custom-form">
+				<div class="form-group">
+								<label class="col-sm-3 control-label">Module<small><i
+									class="entypo-star error-msg"></i></small></label>
+								<div class="col-sm-6">
+									<input id="module" name="appConfig.module.name"  type="text" value="${appConfig.module.name}"  class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+									<form:hidden path="module" id="moduleid"/>
+									<form:errors path="module" cssClass="add-margin error-msg"/>
+									<div class="error-msg positionerror all-errors display-hide"></div>
+								</div>
+								
+								</div>
 					<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label">Key Name<span class="mandatory"></span></label></label>
 								
@@ -81,24 +92,14 @@
                             <form:errors path="description" cssClass="add-margin error-msg"/>
 						</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-									class="entypo-star error-msg"></i></small></label>
-								<div class="col-sm-6">
-									<input id="module" name="appConfig.module.name"  type="text" value="${appConfig.module.name}"  class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
-									<form:hidden path="module" id="moduleid"/>
-									<form:errors path="module" cssClass="add-margin error-msg"/>
-									<div class="error-msg positionerror all-errors display-hide"></div>
-								</div>
-								
-								</div>
+							
 						
 					
 					<div class="col-md-12">
-					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered"   id="floorDetails" >
+					 <table class="table table-bordered"   id="floorDetails" >
       				  <tr>
-      				 <th>Date</th>
-							<th>Values</th>
+      				 <th>Date<span class="mandatory"></span></th>
+							<th>Values<span class="mandatory"></span></th>
 								<th>Operation</th>
 								
 							  </tr>
@@ -144,8 +145,9 @@
 						<div class="add-margin">
 							<button type="submit" class="btn btn-primary">Submit</button>
 							   <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-							<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
 						</div>
+					</div>
 					</div>
 					</div>
 					</form:form>
@@ -160,7 +162,7 @@
 	
 	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"></script>
+	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>

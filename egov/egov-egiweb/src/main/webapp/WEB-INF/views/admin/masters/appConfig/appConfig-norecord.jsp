@@ -63,8 +63,9 @@
 
                     <div class="form-group">
                         <div class="text-center">
-                           <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-                        </div>
+                        <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+                           </div>
                     </div>
                     
                 </form:form>

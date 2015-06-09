@@ -69,7 +69,7 @@ public class AppConfigService {
 	        this.appConfigValueRepository = appConfigValueRepos;
 	    }
 
-	 public AppConfig findBykeyNameAndModuleName(final String keyName,String moduleName) {
+	 public AppConfig findBykeyNameAndModuleName( Long keyName,Long moduleName) {
 	        return appConfigValueRepository.findBykeyNameAndModuleName(keyName,moduleName);
 	    }
 	    public AppConfig findBykeyName(final String keyName) {
@@ -85,8 +85,12 @@ public class AppConfigService {
 	  public List<AppConfig> findAll() {
 	        return appConfigValueRepository.findAll();
 	    }
+	  public List<AppConfig> findAllByModule(Long module) {
+	        return appConfigValueRepository.findAllByModuleId(module);
+	    }
+	  
 	  public Page<AppConfig> getListOfAppConfig(final Integer pageNumber, final Integer pageSize) {
-	        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "keyName");
+	        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "module.name");
 	        return appConfigValueRepository.findAll(pageable);
 	    }
 	  public List<Module> findAllModules() {
