@@ -56,24 +56,19 @@
 	</bean>-->
 
 	 <bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService" parent="persistenceService">
-	 	<property name="genericDao" ref="genericDao"/>
 	 	<property name="financialYearDAO" ref="financialYearDAO"/>
 	 </bean>
 	 <bean id="incomeExpenditureService" class="org.egov.services.report.IncomeExpenditureService" parent="persistenceService">
-	 	<property name="genericDao" ref="genericDao"/>
 	 	<property name="financialYearDAO" ref="financialYearDAO"/>
 	 </bean>
 	 <bean id="balanceSheetScheduleService" class="org.egov.services.report.BalanceSheetScheduleService" parent="persistenceService">
 	 	<property name="balanceSheetService" ref="balanceSheetService"/>
-	 	<property name="genericDao" ref="genericDao"/>
 	 </bean>
 	 <bean id="incomeExpenditureScheduleService" class="org.egov.services.report.IncomeExpenditureScheduleService" parent="persistenceService">
-	 	<property name="genericDao" ref="genericDao"/>
 	 	<property name="incomeExpenditureService" ref="incomeExpenditureService"/>
 	 </bean>
-	 <bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService" parent="persistenceService">
-	 	<property name="genericDao" ref="genericDao"/>
-	 </bean>
+	 <bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService" parent="persistenceService" />
+	
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService" parent="persistenceService" scope="prototype">
 	 <property name="eisCommonService" ref="eisCommonService"/>
 	 <property name="budgetDetailService" ref="budgetDetailService"/>
@@ -125,13 +120,11 @@
        <property name="sequenceGenerator" ref="sequenceGenerator"/>
        <property name="budgetDetailService" ref="budgetDetailService"/>
        <property name="miscWorkflowService" ref="miscWorkflowService"/>
-       <property name="genericDao" ref="genericDao"/> 
        <property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
     </bean>
     <bean id="budgetAppropriationService" class="org.egov.services.budget.BudgetAppropriationService" parent="persistenceService" scope="prototype">
        <property name="financialYearDAO" ref="financialYearDAO"/>
        <property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
-       <property name="genericDao" ref="genericDao"/>
     </bean>
     <bean id="reportHelper" class="org.egov.utils.ReportHelper"/>
 
@@ -149,7 +142,6 @@
 	<bean id="paymentService" class="org.egov.services.payment.PaymentService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.payment.Paymentheader"/>
 		<property name="persistenceService" ref="persistenceService"/>
-		<property name="genericDao" ref="genericDao"/>
 		<property name="chequeService" ref="chequeService"/>
 		<property name="chequeAssignmentService" ref="chequeAssignmentService"/>
 		<property name="instrumentService" ref="instrumentService"/>
@@ -161,7 +153,6 @@
 	</bean>
 		<bean id="chequeAssignmentService" class="org.egov.services.cheque.ChequeAssignmentService" parent="persistenceService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
-		<property name="genericDao" ref="genericDao"/>
 		<property name="commonsService" ref="commonsService"/>
 	</bean>
 	
@@ -182,7 +173,6 @@
     </bean> -->
     <bean id="receiptService" class="org.egov.services.receipt.ReceiptService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.receipt.ReceiptVoucher" />
-		<property name="genericDao" ref="genericDao"/>
 		<property name="eisCommonService" ref="eisCommonService"/>
 		<property name="eisService" ref="eisService" />
 		<property name="persistenceService" ref="persistenceService"/>
@@ -205,9 +195,6 @@
 		<property name="tdsHibernateDAO" ref="tdsHibernateDAO"/>
 	</bean>
 	
-    <bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory"/>
-     
-
 	<!--<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteService" scope="prototype" />-->
 	<bean id="voucherHelper" class="org.egov.utils.VoucherHelper" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
@@ -239,7 +226,6 @@
 	<bean id="contraVoucher" class="org.egov.model.contra.ContraJournalVoucher" scope="prototype" />
 	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon" scope="prototype" >
 		<property name="persistenceService" ref="persistenceService"/>
-		<property name="genericDao" ref="genericDao"/>
 			<property name="fundFlowService" ref="fundFlowService" />  
 	</bean>
 	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
@@ -267,7 +253,6 @@
 	<bean id="commonBean" class="org.egov.model.voucher.CommonBean" scope="prototype" />
 	<bean id="voucherSearchUtil" class="org.egov.egf.commons.VoucherSearchUtil" scope="prototype" >
 		<property name="persistenceService"  ref="persistenceService" />
-		<property name="genericDao" ref="genericDao"/>
         <property name="financialYearDAO" ref="financialYearDAO"/>
 	</bean>
    <bean id="commonMethodsImpl" class="com.exilant.eGov.src.transactions.CommonMethodsImpl" scope="prototype" />
@@ -309,16 +294,14 @@
 	 <bean id="financingSourceService" class="org.egov.services.financingsource.FinancingSourceService"  parent="persistenceService" scope="prototype">
 	 	<property name="type" value="org.egov.commons.Fundsource" />
 	 </bean>
-	  <bean id="fundFlowService" class="org.egov.services.report.FundFlowService" parent="persistenceService" scope="prototype">
-	 	<property name="genericDao" ref="genericDao"/>
-	 </bean>
+	  <bean id="fundFlowService" class="org.egov.services.report.FundFlowService" parent="persistenceService" scope="prototype" />
+	 
      <bean id="lgService" class="org.egov.services.report.LoanGrantService" parent="persistenceService" >
       </bean>
      <bean id="rpService" class="org.egov.services.report.RPService" parent="persistenceService">
       </bean>
       <bean id="departmentExpenditureService" class="org.egov.services.report.DEReportService" scope="prototype">
        <property name="persistenceService"  ref="persistenceService" />
-       <property name="genericDao" ref="genericDao"/>
        <property name="financialYearDAO" ref="financialYearDAO"/>
       </bean>
       
@@ -444,7 +427,6 @@
 		<property name="bankReconService" ref="bankReconService"/>
 		<property name="vdPersitSer" ref="vdPersitSer"/>
 		<property name="instrumentService" ref="instrumentService"/>
-		<property name="genericDao" ref="genericDao"/>
 		<property name="eisCommonsService" ref="eisCommonsService"/>
 		<property name="eisService" ref="eisService" />
 	</bean>
