@@ -128,6 +128,11 @@
         <put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-norecord.jsp"/>
     </definition>
+        
+    <definition name="appConfigList-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-viewList.jsp"/>
+    </definition>
     
     <definition name="hierarchyType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>

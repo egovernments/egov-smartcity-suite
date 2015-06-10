@@ -65,7 +65,7 @@
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="module.name"
-	                                         id="approvalDepartment" cssClass="form-control" cssErrorClass="form-control error" required="required" >
+	                                         id="appModuleName" cssClass="form-control" cssErrorClass="form-control error" required="required" >
 	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 	                                <form:options items="${modulesList}" itemValue="id" itemLabel="name"/>
 	                            </form:select>
@@ -80,7 +80,7 @@
 										class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6 add-margin">		
 					<form:select path="keyName" data-first-option="false"
-						id="approvalDesignation" cssClass="form-control"
+						id="appKeyName" cssClass="form-control"
 						cssErrorClass="form-control error" required="required">  
 						<form:option value="">
 							<spring:message code="lbl.AppconfigKeyName"/>

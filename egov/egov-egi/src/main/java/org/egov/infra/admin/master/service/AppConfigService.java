@@ -75,7 +75,9 @@ public class AppConfigService {
 	    public AppConfig findBykeyName(final String keyName) {
 	        return appConfigValueRepository.findBykeyName(keyName);
 	    }
-	 
+	    public AppConfig findById(final Long appId) {
+	        return appConfigValueRepository.findById(appId);
+	    }
 	  public List<Module> findByNameContainingIgnoreCase(String likemoduleName) {
 		  return appConfigValueRepository.findByNameContainingIgnoreCase(likemoduleName);
 	    }
@@ -104,5 +106,7 @@ public class AppConfigService {
 	    public void updateAppConfigValues(final AppConfig appConfig) {
 	    	appConfigValueRepository.save(appConfig);
 	    }
+	    
+	    
 	
 }

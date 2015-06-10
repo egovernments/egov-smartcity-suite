@@ -54,7 +54,7 @@ public interface AppConfigRepository extends JpaRepository<AppConfig,Long>{
 	@Query("select app from AppConfig app where app.id = :keyid and app.module.id = :moduleid")
     public AppConfig findBykeyNameAndModuleName(@Param("keyid") Long keyid, @Param("moduleid") Long moduleid);
 
-
+	AppConfig findById(@Param("id") Long id);
 	@Query("select b from AppConfig b where b.module.id=:id")
 	List<AppConfig> findAllByModuleId(@Param("id") Long id);
 	AppConfig findBykeyName(String keyName);

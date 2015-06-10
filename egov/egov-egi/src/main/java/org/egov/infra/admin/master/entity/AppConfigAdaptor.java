@@ -61,6 +61,7 @@ public class AppConfigAdaptor implements JsonSerializer<AppConfig> {
         // jsonObject.addProperty("description", null !=
         // compaintType.getDescription() ? compaintType.getDescription() :
         // "N/A");
+        jsonObject.addProperty("routerId", appConfig.getId());
         return jsonObject;
     }
 

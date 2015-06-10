@@ -74,20 +74,20 @@ $(document).ready(function(){
 		$("#moduleid").val(data.value);    
     });
 	
-	$('#approvalDepartment').change(function(){
+	$('#appModuleName').change(function(){
 		$.ajax({
 			url: "/egi/appConfig/ajax-appConfigpopulate",     
 			type: "GET",
 			data: {
-				approvalDepartment : $('#approvalDepartment').val()   
+				appModuleName : $('#appModuleName').val()   
 			},
 			dataType: "json",
 			success: function (response) {
 				console.log("success"+response);
-				$('#approvalDesignation').empty();
-				$('#approvalDesignation').append($("<option value=''>Select</option>"));
+				$('#appKeyName').empty();
+				$('#appKeyName').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
-					$('#approvalDesignation').append($('<option>').text(value.keyName).attr('value', value.id));
+					$('#appKeyName').append($('<option>').text(value.keyName).attr('value', value.id));
 				});
 				
 			}, 
