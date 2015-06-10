@@ -47,6 +47,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,15 +69,15 @@ public class CreateBoundaryController {
     }
     
     @RequestMapping(value = "/boundary/create", method = RequestMethod.POST)
-    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors, RedirectAttributes redirectAttributes) {
-
+    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors, RedirectAttributes redirectAttributes,final Model model) {
+        BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
+        model.addAttribute("boundaryType", boundaryType);
         if (errors.hasErrors()) {
             return "boundary-create";
         }
 
-        BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
 
-        boundary.setBoundaryType(boundaryTypeObj);
+        boundary.setBoundaryType(boundaryType);
         boundary.setHistory(false);
         
         boundaryService.createBoundary(boundary);
@@ -84,7 +85,7 @@ public class CreateBoundaryController {
         redirectAttributes.addFlashAttribute("boundary", boundary);
         redirectAttributes.addFlashAttribute("message", "Boundary successfully created !");
         
-        String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
+        String pathVars = boundaryType.getHierarchyType().getId() + "," + boundaryType.getId();
 
         return REDIRECT_URL_VIEW + pathVars;
     }

@@ -68,6 +68,12 @@
 					</div>
 	   			</div>
 	   		</div>
+	   		<div class="row">
+				<div class="text-center">
+					<a href="javascript:void(0)" class="btn btn-default" id="backBtnId" ><spring:message code="lbl.back"/></a>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+				</div>
+			</div>
 	   	</form:form>
 	   </div>
 	  </div>
@@ -75,12 +81,7 @@
 </div>
 <table class="table table-bordered datatable" id="view-boundaries">
 </table>
-<div class="row">
-	<div class="text-center">
-		<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
-		<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-	</div>
-</div>
+
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

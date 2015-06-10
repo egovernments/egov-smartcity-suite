@@ -39,22 +39,19 @@
 #-------------------------------------------------------------------------------*/
 
 $(document).ready(function() {
-	 $('#view-boundaries').dataTable( {
-	    	processing: true,
-	        serverSide: true,
-	        sort:false,
-	        filter:true,
-	        responsive:true,      
-	        "autoWidth": false,
-	        ajax: {
+	 $('#view-boundaries').dataTable({
+		 "sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			"bDestroy": true,
+	        "ajax": {
 	        	url : "/egi/list-boundaries",
 	        	data : {
 	        		boundaryTypeId : $('#btnBoundaryType').val()
 	        	}
 	        },
-	        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-	        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-	        columns : [ {
+	        "columns": [ {
 				"mData" : "name",
 				"sTitle" : "Name",
 			}, {
@@ -69,7 +66,7 @@ $(document).ready(function() {
 			}, {
 				"mData" : "toDate",
 				"sTitle" : "To Date"
-			}],
+			}]
 	    }); 
 	 
 	$('#view-boundaries tbody').on('click', 'tr', function () {
@@ -81,6 +78,10 @@ $(document).ready(function() {
 			$(this).addClass('apply-background');
 		}
 		
-    } );
+    });
+	
+	$('#backBtnId').click(function() {
+		window.location = '/egi/search-boundary';
+	});
 
 });

@@ -99,10 +99,8 @@ public class BoundaryService {
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
 
-    public Page<Boundary> getPageOfBoundaries(final Integer pageNumber, final Integer pageSize,
-            final Long boundaryTypeId) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId, pageable);
+    public List<Boundary> getPageOfBoundaries(final Long boundaryTypeId) {
+        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
 
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {

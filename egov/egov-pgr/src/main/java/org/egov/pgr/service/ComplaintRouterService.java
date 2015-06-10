@@ -39,16 +39,14 @@
  */
 package org.egov.pgr.service;
 
+import java.util.List;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,22 +151,20 @@ public class ComplaintRouterService {
         return complaintRouterRepository.findOne(id);
     }
 
-    public Page<ComplaintRouter> getPageOfRouters(final Integer pageNumber, final Integer pageSize,
-            final Long boundaryTypeId, final Long complaintTypeId, final Long boundaryId) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "position");
+    public List<ComplaintRouter> getPageOfRouters(final Long boundaryTypeId, final Long complaintTypeId,
+            final Long boundaryId) {
         if (boundaryId != 0 && complaintTypeId != 0 && boundaryTypeId != 0)
             return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndBoundary(complaintTypeId,
-                    boundaryTypeId, boundaryId, pageable);
+                    boundaryTypeId, boundaryId);
         else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId != 0)
-            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryType(complaintTypeId, boundaryTypeId,
-                    pageable);
+            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryType(complaintTypeId, boundaryTypeId);
         else if (boundaryTypeId != 0 && boundaryId != 0 && complaintTypeId == 0)
-            return complaintRouterRepository.findRoutersByBoundaryAndBoundaryType(boundaryTypeId, boundaryId, pageable);
+            return complaintRouterRepository.findRoutersByBoundaryAndBoundaryType(boundaryTypeId, boundaryId);
         else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId == 0)
-            return complaintRouterRepository.findRoutersByBoundaryType(boundaryTypeId, pageable);
+            return complaintRouterRepository.findRoutersByBoundaryType(boundaryTypeId);
         else if (boundaryTypeId == 0 && boundaryId == 0 && complaintTypeId != 0)
-            return complaintRouterRepository.findRoutersByComplaintType(complaintTypeId, pageable);
+            return complaintRouterRepository.findRoutersByComplaintType(complaintTypeId);
         else
-            return complaintRouterRepository.findRoutersByAll(pageable);
+            return complaintRouterRepository.findRoutersByAll();
     }
 }

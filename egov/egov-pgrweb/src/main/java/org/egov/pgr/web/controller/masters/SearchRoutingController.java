@@ -15,7 +15,6 @@ import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintRouterAdaptor;
 import org.egov.pgr.service.ComplaintRouterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,15 +68,11 @@ public class SearchRoutingController {
     public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
 
-        final int pageStart = Integer.valueOf(request.getParameter("start"));
-        final int pageSize = Integer.valueOf(request.getParameter("length"));
         final Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));
         final Long complaintTypeId = Long.valueOf(request.getParameter("complaintTypeId"));
         final Long boundaryId = Long.valueOf(request.getParameter("boundaryId"));
 
-        final int pageNumber = pageStart / pageSize + 1;
-        final String complaintRouterJSONData = commonSearchResult(pageNumber, pageSize, boundaryTypeId,
-                complaintTypeId, boundaryId);
+        final String complaintRouterJSONData = commonSearchResult(boundaryTypeId, complaintTypeId, boundaryId);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(complaintRouterJSONData, response.getWriter());
     }
@@ -86,31 +81,19 @@ public class SearchRoutingController {
     public @ResponseBody void springPaginationDataTablesView(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
 
-        final int pageStart = Integer.valueOf(request.getParameter("start"));
-        final int pageSize = Integer.valueOf(request.getParameter("length"));
         final Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));
         final Long complaintTypeId = Long.valueOf(request.getParameter("complaintTypeId"));
         final Long boundaryId = Long.valueOf(request.getParameter("boundaryId"));
 
-        final int pageNumber = pageStart / pageSize + 1;
-        final String complaintRouterJSONData = commonSearchResult(pageNumber, pageSize, boundaryTypeId,
-                complaintTypeId, boundaryId);
+        final String complaintRouterJSONData = commonSearchResult(boundaryTypeId, complaintTypeId, boundaryId);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(complaintRouterJSONData, response.getWriter());
     }
 
-    public String commonSearchResult(final Integer pageNumber, final Integer pageSize, final Long boundaryTypeId,
-            final Long complaintTypeId, final Long boundaryId) {
-        final Page<ComplaintRouter> pageOfRouters = complaintRouterService.getPageOfRouters(pageNumber, pageSize,
-                boundaryTypeId, complaintTypeId, boundaryId);
-        final List<ComplaintRouter> routerList = pageOfRouters.getContent();
-        final StringBuilder complaintRouterJSONData = new StringBuilder();
-        complaintRouterJSONData.append("{\"draw\": ").append("0");
-        complaintRouterJSONData.append(",\"recordsTotal\":").append(pageOfRouters.getTotalElements());
-        complaintRouterJSONData.append(",\"totalDisplayRecords\":").append(pageSize);
-        complaintRouterJSONData.append(",\"recordsFiltered\":").append(pageOfRouters.getTotalElements());
-        complaintRouterJSONData.append(",\"data\":").append(toJSON(routerList)).append("}");
-        return complaintRouterJSONData.toString();
+    public String commonSearchResult(final Long boundaryTypeId, final Long complaintTypeId, final Long boundaryId) {
+        final List<ComplaintRouter> pageOfRouters = complaintRouterService.getPageOfRouters(boundaryTypeId,
+                complaintTypeId, boundaryId);
+        return new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters)).append("}").toString();
     }
 
     private String toJSON(final Object object) {

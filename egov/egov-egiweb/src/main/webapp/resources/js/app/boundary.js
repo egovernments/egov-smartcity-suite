@@ -118,6 +118,9 @@ $('#buttonEdit').click(function() {
 	$('#boundaryViewForm').attr('action', '/egi/update-boundary'+pathVars);
 })
 
+$('#backBtnId').click(function() {
+	window.location = '/egi/search-boundary';
+});
 
 function checkForRootNode() {
 	var hierarchyTypeId = $('#hierarchyTypeSelect').val();

@@ -122,7 +122,7 @@ jQuery(document).ready(function($)
         });
 	});
 
-	$('#routerSearch').click(function(){
+	$('#routerSearch').click(function(e){
 		if($('#boundaryId').val()=="")
 			var bndryId=0;
 		else
@@ -132,16 +132,14 @@ jQuery(document).ready(function($)
 			var cmTypeId=0;
 		else
 			var cmTypeId=$('#complaintTypeId').val();
-		
-		oTable= $('#com_routing_search').dataTable({
-					processing : true,
-					serverSide : true,
-					type : 'GET',
-					sort : true,
-					filter : true,
-					responsive : true,
-					destroy : true,
-					ajax: {
+		oTable= $('#com_routing_search');
+		oTable.dataTable({
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			"bDestroy": true,
+			"ajax": {
 			        	url : "/pgr/router/resultList-view",
 			        	data : {
 			        		boundaryTypeId : $('#boundary_type_id').val(),
@@ -149,26 +147,24 @@ jQuery(document).ready(function($)
 			        		complaintTypeId : cmTypeId
 			        	}
 			        },
-					"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-							[ 10, 25, 50, "All" ] ],
-					"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					columns : [{
-						"mData" : "boundaryType",
-						"sTitle" : "Boundary Type"
-					},{
-						"mData" : "boundary",
-						"sTitle" : "Boundary"
-					}, {
-						"mData" : "complaintType",
-						"sTitle" : "Complaint Type"
-					}, {
-						"mData" : "position",
-						"sTitle" : "Position"
-					},{
-						"mData" : "routerId",
-						"visible": false
-					}]
+			"columns" : [
+			  { "mData" : "boundaryType",
+				"sTitle" : "Boundary Type"
+			  },
+			  { "mData" : "boundary",
+				"sTitle" : "Boundary"
+			  }, 
+			  { "mData" : "complaintType",
+				"sTitle" : "Complaint Type"
+			  }, 
+			  { "mData" : "position",
+				"sTitle" : "Position"
+			  },
+			  { "mData" : "routerId",
+				"visible": false
+			  }]
 				});
+		e.stopPropagation();
 	});
 	
 	$('#com_routing_search').on('click','tbody tr',function() {

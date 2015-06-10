@@ -137,7 +137,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+					<a href="javascript:void(0)" class="btn btn-default" id="backBtnId" ><spring:message code="lbl.back"/></a>
 					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
