@@ -116,7 +116,7 @@ public class InboxController {
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState().getType());
             final Inbox inboxHistoryItem = new Inbox();
             inboxHistoryItem.setId(stateHistory.getState().getId().toString());
-            inboxHistoryItem.setDate(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a"));
+            inboxHistoryItem.setDate(getFormattedDate(stateHistory.getLastModifiedDate(), "dd/MM/yyyy hh:mm a"));
             inboxHistoryItem.setSender(stateHistory.getSenderName());
             inboxHistoryItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(stateHistory.getState());
