@@ -170,4 +170,10 @@
     	<put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-search.jsp"/>
     </definition>
+     <definition name="escalation-searchView" extends="base_layout">
+    	<put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
+    </definition>
+    
+    
 </tiles-definitions>

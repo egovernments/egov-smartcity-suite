@@ -167,4 +167,63 @@ public class ComplaintRouterService {
         else
             return complaintRouterRepository.findRoutersByAll();
     }
+
+	public List <ComplaintRouter> getPageOfRouters( Long complaintTypeId, Long boundaryTypeId,
+			Long boundaryId, Long positionId) {
+             
+        if(complaintTypeId!=0)
+        {
+        	 if (boundaryId != 0 && boundaryTypeId != 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndBoundaryAndPosition(complaintTypeId,
+                         boundaryTypeId, boundaryId,positionId);
+        	 else if (boundaryId == 0 && boundaryTypeId != 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndPosition(complaintTypeId,
+                         boundaryTypeId, positionId);
+        	 else if (boundaryId == 0 && boundaryTypeId == 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndPosition(complaintTypeId,
+                          positionId);
+        	 else if (boundaryId == 0 && boundaryTypeId == 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByComplaintType(complaintTypeId);
+        	 else if (boundaryId != 0 && boundaryTypeId == 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryAndPosition(complaintTypeId,
+                		 boundaryId, positionId);
+        	 else if (boundaryId != 0 && boundaryTypeId == 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundary(complaintTypeId,
+                		 boundaryId);
+        	 else if (boundaryId != 0 && boundaryTypeId != 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndBoundary(complaintTypeId,
+                         boundaryTypeId, boundaryId);
+        	 else if (boundaryId == 0 && boundaryTypeId != 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryType (complaintTypeId,
+                         boundaryTypeId);
+        }else{
+        	
+        	 if (boundaryId != 0 && boundaryTypeId != 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByBoundaryTypeAndBoundaryAndPosition(
+                         boundaryTypeId, boundaryId,positionId);
+        	 else if (boundaryId == 0 && boundaryTypeId != 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByBoundaryTypeAndPosition(
+                         boundaryTypeId, positionId);
+        	 else if (boundaryId == 0 && boundaryTypeId == 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByPosition(
+                          positionId);
+        	 else if (boundaryId != 0 && boundaryTypeId == 0 && positionId!=0)
+                 return complaintRouterRepository.findRoutersByBoundaryAndPosition(
+                		 boundaryId, positionId);
+        	 else if (boundaryId != 0 && boundaryTypeId == 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByBoundary(
+                		 boundaryId);
+        	 else if (boundaryId != 0 && boundaryTypeId != 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByBoundaryTypeAndBoundary(
+                         boundaryTypeId, boundaryId);
+        	 else if (boundaryId == 0 && boundaryTypeId != 0 && positionId==0)
+                 return complaintRouterRepository.findRoutersByBoundaryType (
+                         boundaryTypeId);
+        	 else if (boundaryId == 0 && boundaryTypeId == 0 && positionId==0)
+                     return complaintRouterRepository.findRoutersByAll();
+        }
+		return null;   
+        
+     
+    }
 }

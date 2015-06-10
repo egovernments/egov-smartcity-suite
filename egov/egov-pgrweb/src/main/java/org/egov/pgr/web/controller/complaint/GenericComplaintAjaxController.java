@@ -126,13 +126,13 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         return locationJSONData.toString();
     }
 
-    @RequestMapping(value = { "router/position" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "router/position","escalation/position"  }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Position> getAllPositionByNameLike(@RequestParam final String positionName,
             final HttpServletResponse response) throws IOException {
         return positionMasterService.getAllPositionsByNameLike(positionName);
     }
 
-    @RequestMapping(value = { "router/boundaries-by-type" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "router/boundaries-by-type","escalation/boundaries-by-type" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getBoundariesbyType(@RequestParam final String boundaryName,
             @RequestParam final Long boundaryTypeId, final HttpServletResponse response) throws IOException {
         final String likeBoundaryName = "%" + boundaryName + "%";
