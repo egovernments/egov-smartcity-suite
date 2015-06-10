@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
+	
 	// Instantiate the Bloodhound suggestion engine
 	var complaintlocation = new Bloodhound({
 		datumTokenizer: function (datum) {
@@ -98,3 +99,59 @@ $(document).ready(function(){
 	});
 	
 });
+
+
+
+function compareDate(dt1, dt2){			
+	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
+		var d1, m1, y1, d2, m2, y2, ret;
+		dt1 = dt1.split('/');
+		dt2 = dt2.split('/');
+		ret = (eval(dt2[2])>eval(dt1[2])) ? 1 : (eval(dt2[2])<eval(dt1[2])) ? -1 : (eval(dt2[1])>eval(dt1[1])) ? 1 : (eval(dt2[1])<eval(dt1[1])) ? -1 : (eval(dt2[0])>eval(dt1[0])) ? 1 : (eval(dt2[0])<eval(dt1[0])) ? -1 : 0 ;										
+		return ret;
+	}
+function getTodayDate()
+{
+	var date;
+	    var d = new Date();
+	var curr_date = d.getDate();
+	var curr_month = d.getMonth();
+		curr_month++;
+	var curr_year = d.getFullYear();
+	    date=curr_date+"/"+curr_month+"/"+curr_year;
+	    return date;
+}
+
+function validateDate(obj)
+{
+
+	var todaysDate=getTodayDate();
+	document.getElementById("egi_error_area").style.display='none';
+	if(compareDate(obj.value,todaysDate) == 1)
+	{		
+		 var color = "#FF0000";
+		document.getElementById("egi_error_area").style.display = '';
+		document.getElementById("egi_error_area").innerHTML = '<font color="+color+">Effective Date should not be less than todays date</font>';
+		obj.value="";
+		return false;
+		}
+}
+
+	function checkSplCharIncludingFewSplchar(obj)
+	{
+		var iChars = ",";
+		document.getElementById("egi_error_area").style.display='none';
+		for (var i = 0; i < obj.value.length; i++)
+		{
+			if (iChars.indexOf(obj.value.charAt(i)) != -1)
+			{
+				
+				 var color = "#FF0000";
+				document.getElementById("egi_error_area").style.display = '';
+				document.getElementById("egi_error_area").innerHTML = '<font color="+color+">Special characters comma(,) is not allowed so add New Row for Second Value</font>';
+				obj.value="";
+				return false;
+			}
+		}
+		return true;
+	}

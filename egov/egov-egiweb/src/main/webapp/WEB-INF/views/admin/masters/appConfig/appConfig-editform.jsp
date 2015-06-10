@@ -48,7 +48,11 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
-
+	<div class="errorstyle" id="egi_error_area" style="display: none;"></div>
+	
+		<div class="errorstyle">
+			
+		</div>
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
@@ -111,12 +115,12 @@
 											pattern="dd/MM/yyyy" />
 							 <input type="text" class="form-control datepicker checkdate" value="${historyDate}" 
 											 name="appDataValues[${counter.index}].effectiveFrom"  
-											 id="appDataValues[${counter.index}].effectiveFrom" required="required"/>
+											 id="appDataValues[${counter.index}].effectiveFrom" required="required" onblur="validateDate(this);"/>
 											</td>
 											<td class="blueborderfortd">	
 											
 											 <input type="text" class="form-control low-width"  value="${var1.value}" 
-											 name="appDataValues[${counter.index}].value" id="appDataValues[${counter.index}].value"
+											 name="appDataValues[${counter.index}].value" id="appDataValues[${counter.index}].value" onblur="checkSplCharIncludingFewSplchar(this)"
 											  required="required"/>
 											
 										</td>
@@ -146,6 +150,7 @@
 							 <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
                           <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
                           </div>
+					</div>
 					</div>
 					</div>
 					</form:form>
@@ -205,6 +210,7 @@
           	houseNo.setAttribute("maxlength", "10");
         	houseNo.setAttribute("data-inputmask","'mask': 'd/M/y'");
              houseNo.setAttribute("dateFormat", "dd/MM/yyyy");
+             houseNo.setAttribute("onblur", "validateDate(this);");
             houseNo.name = "appDataValues[" + counts + "].effectiveFrom";
             cell1.appendChild(houseNo);
            
@@ -218,6 +224,7 @@
              street.type = "text";
              street.setAttribute("required", "required");
              street.name = "appDataValues[" + counts + "].value";
+             street.setAttribute("onblur", "checkSplCharIncludingFewSplchar(this);");
              cell2.appendChild(street);
 
           

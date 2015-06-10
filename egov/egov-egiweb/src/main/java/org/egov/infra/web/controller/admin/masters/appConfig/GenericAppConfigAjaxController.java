@@ -80,8 +80,8 @@ public class GenericAppConfigAjaxController {
 	 
 	 @RequestMapping(value = "/ajax-appConfigpopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	    public @ResponseBody List<AppConfig> getAppConfigs(
-	            @ModelAttribute("appConfig") @RequestParam final Long approvalDepartment) {
-	        List<AppConfig> appConfig =  appConfigValueService.findAllByModule(approvalDepartment);
+	            @ModelAttribute("appConfig") @RequestParam final Long appModuleName) {
+	        List<AppConfig> appConfig =  appConfigValueService.findAllByModule(appModuleName);
 	        //FIXME this is hack for lazy loaded collection
 	        appConfig.forEach(appConfigs -> appConfigs.toString());
 	        return appConfig;

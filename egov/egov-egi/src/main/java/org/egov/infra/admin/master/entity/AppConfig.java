@@ -70,6 +70,7 @@ import com.google.gson.annotations.Expose;
         "key_name", "module" }, enableDfltMsg = true, message = "KeyName and Module combination allready exists")
 
 @Table(name = "eg_appconfig")
+@Searchable
 @SequenceGenerator(name = AppConfig.SEQ_APPCONFIG, sequenceName = AppConfig.SEQ_APPCONFIG, allocationSize = 1)
 public class AppConfig extends AbstractAuditable {
 

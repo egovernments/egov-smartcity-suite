@@ -66,6 +66,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "eg_appconfig_values")
+@Searchable
 @SequenceGenerator(name = AppConfigValues.SEQ_APPCONFIG_VALUE, sequenceName = AppConfigValues.SEQ_APPCONFIG_VALUE, allocationSize = 1)
 public class AppConfigValues extends AbstractAuditable {
 
@@ -78,17 +79,18 @@ public class AppConfigValues extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "value")
+    
     @NotBlank
     @SafeHtml
     @Length(max = 4000)
     @Searchable
+    @Column(name = "value")
     private String value;
 
     @NotNull
-    @Column(name = "effective_from")
     @DateFormat
     @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @Column(name = "effective_from")
     private Date effectiveFrom;
 
     @NotNull
