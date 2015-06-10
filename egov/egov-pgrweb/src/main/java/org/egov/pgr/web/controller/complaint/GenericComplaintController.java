@@ -83,17 +83,16 @@ public abstract class GenericComplaintController {
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if(ArrayUtils.isNotEmpty(files)) {
-            return fileStoreService.storeStreams(Arrays.asList(files)
-                    .stream()
-                    .filter(file -> !file.isEmpty())
+            return Arrays.asList(files)
+                    .stream().filter(file -> !file.isEmpty())
                     .map(file -> {
                         try {
-                            return file.getInputStream();
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), PGRConstants.MODULE_NAME);
                         } catch (Exception e) {
                             throw new EGOVRuntimeException("Error occurred while getting inputstream",e);
                         }
                     })
-                    .collect(Collectors.toSet()), PGRConstants.MODULE_NAME);
+                    .collect(Collectors.toSet());
         } else {
             return null;
         }

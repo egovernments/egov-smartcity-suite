@@ -122,7 +122,7 @@ public class LocalDiskFileStoreServiceTest {
     @Test
     public final void testUploadFile() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMapper map = diskFileService.store(newFile, "testmodule");
+	final FileStoreMapper map = diskFileService.store(newFile, "testmodule", "text/plain");
 	deleteTempFiles(newFile, map);
 	assertNotNull(map.getFileStoreId());
     }
@@ -130,13 +130,13 @@ public class LocalDiskFileStoreServiceTest {
     @Test(expected = EGOVRuntimeException.class)
     public final void testUploadFileFail() throws IOException {
 	final File newFile = new File("file.txt");
-	diskFileService.store(newFile, "testmodule");
+	diskFileService.store(newFile, "testmodule", "text/plain");
     }
 
     @Test
     public final void testUploadInputStream() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMapper map = diskFileService.store(new FileInputStream(newFile), "testmodule");
+	final FileStoreMapper map = diskFileService.store(new FileInputStream(newFile),"nofile" , "text/plain","testmodule");
 	deleteTempFiles(newFile, map);
 	assertNotNull(map.getFileStoreId());
     }
@@ -149,7 +149,7 @@ public class LocalDiskFileStoreServiceTest {
 	    FileUtils.write(newFile, "Test");
 	    files.add(newFile);
 	}
-	final Set<FileStoreMapper> maps = diskFileService.store(files, "testmodule");
+	//final Set<FileStoreMapper> maps = diskFileService.store(files, "testmodule");
 	for(File file : files) {
 	    Files.deleteIfExists(file.toPath());
 	}
@@ -164,14 +164,14 @@ public class LocalDiskFileStoreServiceTest {
 	    FileInputStream fin = new FileInputStream(newFile);
 	    files.add(fin);
 	}
-	diskFileService.storeStreams(files, "testmodule");
+	//diskFileService.storeStreams(files, "testmodule");
 	FileUtils.deleteDirectory(tempFilePath.toFile());
     }
     
     @Test
     public final void testFetch() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMapper map = diskFileService.store(newFile, "test");
+	final FileStoreMapper map = diskFileService.store(newFile, "text/plain", "test");
 	final File file = diskFileService.fetch(map, "testmodule");
 	assertNotNull(file);
 	assertTrue(file.getName().equals(map.getFileStoreId().toString()));
@@ -192,7 +192,10 @@ public class LocalDiskFileStoreServiceTest {
 	    FileUtils.write(newFile, "Test");
 	    files.add(newFile);
 	}
-	final Set<FileStoreMapper> maps = diskFileService.store(files, "testmodule");
+	final Set<FileStoreMapper> maps = new HashSet<>();
+	for(File file : files)
+	    maps.add(diskFileService.store(file, "text/plain", "testmodule"));
+	
 	final Set<File> returnfiles = diskFileService.fetchAll(maps, "testmodule");
 	assertNotNull(returnfiles);
 	assertTrue(returnfiles.size()== 10);

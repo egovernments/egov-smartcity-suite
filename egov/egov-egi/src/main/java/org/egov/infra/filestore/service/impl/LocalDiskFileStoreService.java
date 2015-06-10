@@ -74,12 +74,12 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMapper store(final File sourceFile, final String moduleName) {
+    public FileStoreMapper store(final File sourceFile, final String mimeType, final String moduleName) {
         try {
             final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), sourceFile.getName());
             final Path newFilePath = createNewFilePath(fileMapper, moduleName);
             Files.copy(sourceFile.toPath(), newFilePath);
-            fileMapper.setContentType(Files.probeContentType(newFilePath));
+            fileMapper.setContentType(mimeType);
             return fileMapper;
         } catch (final IOException e) {
             throw new EGOVRuntimeException(String.format("Error occurred while storing files at %s/%s", fileStoreBaseDir,moduleName), e);
@@ -87,27 +87,17 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMapper store(final InputStream sourceFileStream, final String moduleName) {
+    public FileStoreMapper store(final InputStream sourceFileStream, final String fileName, final String mimeType, final String moduleName) {
         try {
-            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(),"noname");
+            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(),fileName);
             final Path newFilePath = createNewFilePath(fileMapper, moduleName);
             Files.copy(sourceFileStream, newFilePath);
-            fileMapper.setContentType(Files.probeContentType(newFilePath));
+            fileMapper.setContentType(mimeType);
             sourceFileStream.close();
             return fileMapper;
         } catch (final IOException e) {
             throw new EGOVRuntimeException(String.format("Error occurred while storing files at %s/%s", fileStoreBaseDir,moduleName), e);
         }
-    }
-
-    @Override
-    public Set<FileStoreMapper> store(final Set<File> files, final String moduleName) {
-        return files.stream().map((file) -> store(file, moduleName)).collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<FileStoreMapper> storeStreams(final Set<InputStream> fileStreams, final String moduleName) {
-        return fileStreams.stream().map((fileStream) -> store(fileStream, moduleName)).collect(Collectors.toSet());
     }
 
     @Override
