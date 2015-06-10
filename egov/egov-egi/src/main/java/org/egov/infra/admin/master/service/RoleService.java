@@ -48,6 +48,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.RoleRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,50 +56,50 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RoleService {
 
-	private final RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	public RoleService(final RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
-	}
+    @Autowired
+    public RoleService(final RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
-	@Transactional
-	public void createRole(final Role role) {
-		roleRepository.saveAndFlush(role);
-	}
+    @Transactional
+    public void createRole(final Role role) {
+        roleRepository.saveAndFlush(role);
+    }
 
-	@Transactional
-	public void update(final Role role) {
-		roleRepository.saveAndFlush(role);
-	}
+    @Transactional
+    public void update(final Role role) {
+        roleRepository.saveAndFlush(role);
+    }
 
-	@Transactional
-	public void remove(final Role role) {
-		roleRepository.delete(role);
-	}
+    @Transactional
+    public void remove(final Role role) {
+        roleRepository.delete(role);
+    }
 
-	public List<Role> getAllRoles() {
-		return roleRepository.findAll();
-	}
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
-	public Role getRoleById(final Long roleID) {
-		return roleRepository.findOne(roleID);
-	}
+    public Role getRoleById(final Long roleID) {
+        return roleRepository.findOne(roleID);
+    }
 
-	public Role getRoleByName(final String name) {
-		return roleRepository.findByName(name);
-	}
+    public Role getRoleByName(final String name) {
+        return roleRepository.findByName(name);
+    }
 
-	public List<Role> getRolesByNameLike(final String name) {
-		return roleRepository.findByNameContainingIgnoreCase(name);
-	}
+    public List<Role> getRolesByNameLike(final String name) {
+        return roleRepository.findByNameContainingIgnoreCase(name);
+    }
 
-	public Role load(final Long id) {
-		// FIXME alternative ?
-		return (Role) entityManager.unwrap(Session.class).load(Role.class, id);
-	}
+    public Role load(final Long id) {
+        // FIXME alternative ?
+        return (Role) entityManager.unwrap(Session.class).load(Role.class, id);
+    }
 
 }
