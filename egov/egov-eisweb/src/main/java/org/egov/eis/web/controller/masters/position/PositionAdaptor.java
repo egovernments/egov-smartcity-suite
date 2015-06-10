@@ -17,9 +17,9 @@ public class PositionAdaptor implements JsonSerializer<Position> {
         jsonObject.addProperty("name", null != position.getName() ? position.getName() : "NA");
         jsonObject.addProperty("outSourcedPost", position.getIsPostOutsourced());
         jsonObject.addProperty("positionId", position.getId());
-       /* jsonObject.addProperty("departmentName", position.getDeptDesig().getDepartment().getName());
+        jsonObject.addProperty("departmentName", position.getDeptDesig().getDepartment().getName());
         jsonObject.addProperty("designationName", position.getDeptDesig().getDesignation().getName());
-     */ 
+        jsonObject.addProperty("isOutSourced", (position.isPostOutsourced()?1:0));
         jsonObject.addProperty("outSourcedPostCount", position.getDeptDesig().getOutsourcedPosts());
         jsonObject.addProperty("sanctionedPostCount", position.getDeptDesig().getSanctionedPosts());
         return jsonObject;

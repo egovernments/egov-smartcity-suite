@@ -124,11 +124,14 @@ public class SearchPositionController {
 	 @RequestMapping(value = "resultList-update", method = RequestMethod.GET)
 	    public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
 	            final HttpServletResponse response) throws IOException {
-
+		 Long departmentId = Long.valueOf(0),designationId=  Long.valueOf(0);
 	        final int pageStart = Integer.valueOf(request.getParameter("start"));
 	        final int pageSize = Integer.valueOf(request.getParameter("length"));
-	        final Long departmentId = Long.valueOf(request.getParameter("departmentId"));
-	        final Long designationId = Long.valueOf(request.getParameter("designationId"));
+	       
+	        if(request.getParameter("departmentId")!=null && !"".equals(request.getParameter("departmentId"))) 
+	        	departmentId = Long.valueOf(request.getParameter("departmentId"));
+	        if(request.getParameter("designationId")!=null && !"".equals(request.getParameter("designationId"))) 
+	             designationId = Long.valueOf(request.getParameter("designationId"));
 	        final int pageNumber = pageStart / pageSize + 1;
 	        
 	        final String complaintRouterJSONData = commonSearchResult(pageNumber, pageSize, departmentId,

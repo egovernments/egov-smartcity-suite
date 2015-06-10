@@ -125,7 +125,7 @@
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label class="col-sm-3 control-label"> <spring:message
-										code="lbl.department" /><span class="mandatory"></span>
+										code="lbl.department" />
 								</label>
 
 								<div class="col-sm-6 add-margin">
@@ -144,7 +144,7 @@
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label"> <spring:message
-										code="lbl.designation" /><span class="mandatory"></span>
+										code="lbl.designation" />
 								</label>
 
 								<div class="col-sm-6 add-margin">
@@ -197,10 +197,10 @@
 
 					<div class="row">
 						<div class="col-md-6 col-xs-6 table-header">List of	Positions</div>
-						<div class="col-md-6 col-xs-6 add-margin text-right">
+						<!-- <div class="col-md-6 col-xs-6 add-margin text-right">
 							<span class="inline-elem">Search</span> <span class="inline-elem"><input
 								type="text" id="searchposition" class="form-control input-sm"></span>
-						</div>
+						</div> -->
 						<div class="col-md-12">
 							<table class="table table-bordered datatable" id="position-table">
 								

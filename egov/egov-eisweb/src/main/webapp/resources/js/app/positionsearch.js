@@ -48,26 +48,46 @@ $(document).ready(function(){
 				},{
 					"mData" : "sanctionedPostCount",
 					"visible": false
+				},{
+					"mData" : "departmentName",
+					"visible": false
+				},{
+					"mData" : "designationName",
+					"visible": false
+				},{
+					"mData" : "isOutSourced",
+					"visible": false
+
 				}]
 			});
 		
 	}
 	
-	$('#position-table').on( 'draw.dt', function () {
-		$("#outSourcedPost").val(tableContainer1.fnGetData(0,4)); 
-		$("#sanctionedPost").val(tableContainer1.fnGetData(0,5)); 
-	} );
 	
-	$('#searchposition').keyup(function(){
+	$('#position-table').on( 'draw.dt', function () {
+		var outsourced=0, sanctioned=0;
+		var oTable = $('#position-table').dataTable();
+		$.each( oTable.fnGetData(), function(i, row){
+				if(oTable.fnGetData(i,1) == true)
+					outsourced=outsourced+1;
+					sanctioned=sanctioned+1;
+		})
+		
+		$("#outSourcedPost").val(outsourced); 
+		$("#sanctionedPost").val(sanctioned); 
+		
+	  } );
+	
+	/*$('#searchposition').keyup(function(){
 		tableContainer1.fnFilter(this.value);
-	});
+	});*/
 
 	$('#position-table').on('click', 'tbody tr', function(event){
 		if($(event.target).attr('class') ==  'btn btn-xs btn-secondary edit-position')
 	    {
 			$("#positionname-edit").val(tableContainer1.fnGetData(this,0));
-			$("#designationname-edit").val($('#position_desig option:selected').text());
-			$("#departmentname-edit").val($('#position_dept option:selected').text());
+			$("#designationname-edit").val(tableContainer1.fnGetData(this,7));
+			$("#departmentname-edit").val(tableContainer1.fnGetData(this,6));
 			$("#position-id").val(tableContainer1.fnGetData(this,3));
 			if(tableContainer1.fnGetData(this,1) == true){
 				$('#outSourced-Yes').prop('checked', true);

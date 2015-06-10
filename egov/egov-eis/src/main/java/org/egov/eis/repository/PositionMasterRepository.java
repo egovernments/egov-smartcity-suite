@@ -65,5 +65,11 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long>{
 	Page<Position> findPositionBydepartmentAndDesignation(
 			@Param("departmentId") Long departmentId,
 			@Param("designationId") Long designationId, Pageable page);
+	@Query("select cr from Position cr where cr.deptDesig.department.id=:departmentId ")
+	Page<Position> findPositionBydepartment(@Param("departmentId")Long departmentId, Pageable pageable);
+	
+	@Query("select cr from Position cr where  cr.deptDesig.designation.id=:designationId")
+	Page<Position> findPositionByDesignation(@Param("designationId") Long designationId,
+			Pageable pageable);
 
 }

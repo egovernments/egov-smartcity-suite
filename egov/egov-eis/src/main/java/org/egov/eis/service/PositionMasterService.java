@@ -119,6 +119,14 @@ public class PositionMasterService {
 			return positionMasterRepository
 					.findPositionBydepartmentAndDesignation(departmentId,
 							designationId, pageable);
+		else if (departmentId != 0 )
+			return positionMasterRepository
+					.findPositionBydepartment(departmentId,
+							 pageable);
+		else if (designationId != 0 )
+			return positionMasterRepository
+					.findPositionByDesignation(
+							designationId, pageable);
 		else
 			return positionMasterRepository.findPositionByAll(pageable);
 	}
