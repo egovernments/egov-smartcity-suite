@@ -56,6 +56,7 @@ import org.egov.infra.admin.master.repository.DepartmentRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author subhash
@@ -110,7 +111,7 @@ public class DepartmentServiceTest {
         Department department2 = new DepartmentBuilder().withName("test2").withCode("test2").build();
         when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(department1, department2));
         List<Department> list = departmentService.getAllDepartments();
-        verify(departmentRepository).findAll();
+        verify(departmentRepository).findAll(new Sort(Sort.Direction.ASC, "name"));
         assertEquals(list.size(), 2);
     }
 }
