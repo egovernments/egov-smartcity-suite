@@ -18,24 +18,24 @@
         <module>egov-egi</module>
 	<module>egov-commons</module>
         <module>egov-eis</module>
-        <module>egov-egf</module> 
+       <!--  <module>egov-egf</module> -->
         <module>egov-portal</module>
         <module>egov-pgr</module>
-       	<!-- <module>egov-assets</module>  -->
-		<module>egov-collection</module>   
-        <module>egov-demand</module> 
-         <module>egov-ptis</module>
-        <!--  <module>egov-bpa</module>
+       	<module>egov-assets</module> 
+		 <!--<module>egov-collection</module>   
+        <module>egov-demand</module>
+        <module>egov-ptis</module>
+        <module>egov-bpa</module>
         <module>egov-bnd</module> -->
-        <module>egov-eisweb</module> 
+        <module>egov-eisweb</module>
         <module>egov-egiweb</module>
        <!--  <module>egov-egfweb</module> -->
         <module>egov-pgrweb</module>
          <module>egov-portalweb</module>
-		<!-- <module>egov-assetsweb</module> -->
-	    <module>egov-collectionweb</module>
+		<module>egov-assetsweb</module>
+		<!-- <module>egov-collectionweb</module>
         <module>egov-ptisweb</module>
-        <!--  <module>egov-bpaweb</module>
+        <module>egov-bpaweb</module>
         <module>egov-bndweb</module> -->
         <module>egov-ear</module>
     </modules>
