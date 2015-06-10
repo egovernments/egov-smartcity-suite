@@ -126,9 +126,13 @@ $(document).ready(function()
         $(".alert-success").alert('close');
     });
 	
-	$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
+	/*$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
         $(".alert-danger").alert('close');
-    }); 
+    }); */
 	
 });
 
+/*$(".refreshInBox refeshDraft").on('click', function() {
+	if(window.opener)
+		window.opener.refreshInbox();
+});*/
