@@ -136,12 +136,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 
-public class PropertyService extends PersistenceService<PropertyImpl, Long> {
+public class PropertyService  {
 
 	private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
 
 	private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
-
+    
 	private PersistenceService propPerServ;
 	private Installment currentInstall;
 	private TaxCalculator taxCalculator;
@@ -223,7 +223,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
 		property.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
 		property.getPropertyDetail().setUpdatedTime(new Date());
-		//createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
+		createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
 		// property.setStatus(status);
 		property.setIsDefaultProperty(PROPERTY_IS_DEFAULT);
 		property.setInstallment(currentInstall);
@@ -254,14 +254,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					if (floor != null) {
 						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
 						floor.setCreatedTimeStamp(new Date());
-
+/*
 						if ("-1".equals(floor.getExtraField7())) {
 							floor.setExtraField7(null);
 						}
 
 						if ("-1".equalsIgnoreCase(floor.getTaxExemptedReason())) {
 							floor.setTaxExemptedReason(null);
-						}
+						}*/
 
 						PropertyTypeMaster unitType = null;
 						PropertyUsage usage = null;

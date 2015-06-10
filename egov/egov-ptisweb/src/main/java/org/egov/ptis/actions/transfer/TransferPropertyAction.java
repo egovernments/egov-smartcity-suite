@@ -667,8 +667,8 @@ public class TransferPropertyAction extends WorkflowAction {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 
 		transRsnId = propMutation.getPropMutationMstr().getIdMutation().toString();
-		setMobileNo(getBasicProperty().getAddress().getMobileNo());
-		setEmail(getBasicProperty().getAddress().getEmailAddress());
+		setMobileNo(getBasicProperty().getAddress().getUser().getMobileNumber());
+		setEmail(getBasicProperty().getAddress().getUser().getEmailId());
 		setOldOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
 		setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
 		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();

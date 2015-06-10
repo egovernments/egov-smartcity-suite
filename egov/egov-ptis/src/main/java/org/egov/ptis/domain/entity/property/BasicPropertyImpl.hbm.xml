@@ -69,7 +69,7 @@
 		</many-to-one>
 
 		<property name="upicNo" column="PROPERTYID" />
-		<property name="active" column="ISACTIVE" type="yes_no" />
+		<property name="active" column="ISACTIVE" type="boolean" />
 
 		<many-to-one name="address" column="ADDRESSID"
 			class="org.egov.ptis.domain.entity.property.PropertyAddress" cascade="all"
@@ -129,7 +129,7 @@
 		<many-to-one name="propertyMutationMaster" column="ID_PROP_CREATE_REASON"
 			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />
 
-		<property name="propOccupationDate" column="PROP_CREATE_DATE" />
+		<property name="propOccupationDate" column="PROP_OCCUPANCY_DATE" />
 
 		<one-to-one name="propertyReference" lazy="proxy"
 			class="org.egov.ptis.domain.entity.property.PropertyReference" property-ref="defaultPropertyReference"

@@ -234,10 +234,10 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	private PropertyAddress getChangedOwnerContact(BasicProperty bp, String email, String mobileNo) {
 		PropertyAddress propAddr = bp.getAddress();
 		if (email != null && email != "") {
-			propAddr.setEmailAddress(email);
+			propAddr.getUser().setEmailId(email);
 		}
 		if (mobileNo != null && mobileNo != "") {
-			propAddr.setMobileNo(mobileNo);
+			propAddr.getUser().setMobileNumber(mobileNo);
 		}
 		return propAddr;
 	}

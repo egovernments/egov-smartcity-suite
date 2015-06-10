@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
@@ -56,7 +55,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_ADDR_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
@@ -67,8 +65,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_RESD_CUM_NON_RESD;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -82,7 +78,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -98,7 +93,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.enums.AddressType;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.CommonServices;
@@ -130,11 +125,11 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author parvati
@@ -147,7 +142,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
 	@Result(name = "ack", location = "create/createProperty-ack.jsp")})
 
-@Transactional(readOnly = true)
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
@@ -159,7 +153,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	
 	private Logger LOGGER = Logger.getLogger(getClass());
 	private PropertyImpl property = new PropertyImpl();
-	private PersistenceService<BasicProperty, Long> basicPrpertyService;
+	@Autowired
+	private PropertyPersistenceService basicPrpertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	private Long zoneId;
 	private Long wardId;
@@ -238,7 +233,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Autowired
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 
-	private boolean isfloorDetailsRequired;
+	private boolean isfloorDetailsRequired = true;
 	private PropertyImpl propWF;// would be current property workflow obj
 	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -248,11 +243,52 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Autowired
 	private UserService userService;
 	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+
+	public void setBoundaryService(BoundaryService boundaryService) {
+		this.boundaryService = boundaryService;
+	}
+
+	public void setSecurityUtils(SecurityUtils securityUtils) {
+		this.securityUtils = securityUtils;
+	}
+	
+	public void setLOGGER(Logger lOGGER) {
+		LOGGER = lOGGER;
+	}
+
+	public void setBasicPrpertyService(PropertyPersistenceService basicPrpertyService) {
+		this.basicPrpertyService = basicPrpertyService;
+	}
+
+	public void setPropCompletionDate(Date propCompletionDate) {
+		this.propCompletionDate = propCompletionDate;
+	}
+
+	public void setFinancialUtil(FinancialUtil financialUtil) {
+		this.financialUtil = financialUtil;
+	}
+
+	public void setPropWF(PropertyImpl propWF) {
+		this.propWF = propWF;
+	}
+
+
+
 	@Autowired
 	private EisCommonService eisCommonService;
 	
 	@Autowired
 	private BoundaryService boundaryService;
+	
+	@Autowired
+	private SecurityUtils securityUtils;
 	
 	public CreatePropertyAction() {
 		super();
@@ -276,7 +312,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_NEW;
 	}
 
-	@Transactional
 	@Action(value = "/createProperty-create")
 	public String create() {
 		/*LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
@@ -285,7 +320,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ taxExemptReason + ", isAuthProp: " + isAuthProp + ", propTypeId: " + propTypeId + ", propUsageId: "
 				+ propUsageId + ", propOccId: " + propOccId);*/
 		long startTimeMillis = System.currentTimeMillis();
-				
+		DateTime currentDate = new DateTime();
 		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
 		//String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
@@ -293,6 +328,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		//basicProperty.setUpicNo(indexNum);
 		basicProperty.setUpicNo("1085567746");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
+		property.setCreatedDate(currentDate);
+		property.setLastModifiedDate(currentDate);
+		property.setCreatedBy(securityUtils.getCurrentUser());
+		property.setLastModifiedBy(securityUtils.getCurrentUser());
 		
 		if (isNotBlank(getDocNumber())) {		
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
@@ -300,7 +339,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		
 		basicPrpertyService.persist(basicProperty);
-		setBasicProp(basicProperty);
+		getPersistenceService().getSession().flush();
+		//setBasicProp(basicProperty);
 		/*if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((property.getPropertyDetail().getPropertyTypeMaster().getCode()
 					.equalsIgnoreCase(PROPTYPE_STATE_GOVT) && !isfloorDetailsRequired)
@@ -375,7 +415,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Transactional
 	@Action(value = "/createProperty-forward")
 	public String forward() {
 		LOGGER.debug("forward: Property forward started " + property);
@@ -449,7 +488,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Transactional
+	
 	@Action(value = "/createProperty-approve")
 	public String approve() {
 		LOGGER.debug("approve: Property approval started");
@@ -587,6 +626,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
 				"from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
 		List<String> authPropList = new ArrayList<String>();
+		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from FloorType order by name");
 
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
@@ -615,7 +655,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			addDropdownData("UsageList", CommonServices.usagesForPropType(Integer.parseInt(propTypeId)));
 		}*/
-
+		addDropdownData("UsageList", usageList);
 		addDropdownData("OccupancyList", propOccList);
 		addDropdownData("StructureList", StructureList);
 		addDropdownData("AgeFactorList", ageFacList);
@@ -695,7 +735,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setPartNo(removeStart(partNo, "0"));
 		basicProperty.setActive(Boolean.TRUE);
 		//basicProperty.setGisReferenceNo(getParcelID());
-	//	basicProperty.setAddress(createPropAddress());
+		basicProperty.setAddress(createPropAddress());
 		basicProperty.setApplicationNo("123456");
 		basicProperty.setVacantLandAssmtNo(getVacantLandNo());
 		basicProperty.setPropertyID(createPropertyID(basicProperty));
@@ -914,17 +954,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyAddress propAddr = new PropertyAddress();
 		StringBuffer addrStr1 = new StringBuffer();
 		StringBuffer addrStr2 = new StringBuffer();
-		//propAddr.setType((AddressType) getPersistenceService().find(
-			//	"from AddressType where addressTypeName = ?", PROP_ADDR_TYPE));
-		//FIX ME
-		//propAddr.setBlock(boundaryDao.getBoundary(getAreaId()).getName());
 		propAddr.setHouseNoBldgApt(getHouseNumber());
 		addrStr1.append(getHouseNumber());
-		if (getOldHouseNo() != null && !getOldHouseNo().isEmpty()) {
-			//FIX ME
-			//propAddr.setDoorNumOld(getOldHouseNo());
-			addrStr1.append("(" + getOldHouseNo() + ")");
-		}
 
 		if (getAddressStr() != null && !getAddressStr().isEmpty()) {
 			String addressStr = getAddressStr();
@@ -935,12 +966,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		addrStr2.append(boundaryService.getBoundaryById(getBlockId()).getName());
 
-		if (getMobileNo() != null && !getMobileNo().isEmpty()) {
-			propAddr.setMobileNo(getMobileNo());
-		}
-		if (getEmail() != null && !getEmail().isEmpty()) {
-			propAddr.setEmailAddress(getEmail());
-		}
 		if (getPinCode() != null && !getPinCode().isEmpty()) {
 			propAddr.setPinCode((getPinCode()));
 		}
@@ -950,8 +975,11 @@ public class CreatePropertyAction extends WorkflowAction {
 			if (getPinCode() != null && !getPinCode().isEmpty()) {
 				setCorrPinCode(getPinCode());
 			}
+			
+			propAddr.setLandmark(getCorrAddress1());
+			propAddr.setStreetRoadLine(getCorrAddress2());
 		}
-
+	
 		LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
 		return propAddr;
 	}
@@ -1053,7 +1081,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	}
 */
-	@Transactional
+	
 	private void transitionWorkFlow() {
 		LOGGER.debug("Entered method : transitionWorkFlow"); 
 		
@@ -1114,9 +1142,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		setMutationId(basicProp.getPropertyMutationMaster().getIdMutation());
 		PropertyAddress propAddress = basicProp.getAddress();
 		setHouseNumber(propAddress.getHouseNoBldgApt());
-		if(propAddress.getDoorNumOld() != null) {
-			setOldHouseNo(propAddress.getDoorNumOld());
-		}
+		
 		if(propAddress.getLandmark() != null) {
 			setAddressStr(propAddress.getLandmark());
 		}
@@ -1126,24 +1152,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if(propAddress.getPinCode() != null) {
 			setPinCode(propAddress.getPinCode().toString());
 		}
-		if(propAddress.getExtraField1() != null) {
-			setKhasraNumber(propAddress.getExtraField1());
-		}
-		if(propAddress.getExtraField2() != null) {
-			setMauza(propAddress.getExtraField2());
-		}
-		if(propAddress.getExtraField3() != null) {
-			setCitySurveyNumber(propAddress.getExtraField3());
-		}
-		if(propAddress.getExtraField4() != null) {
-			setSheetNumber(propAddress.getExtraField4());
-		}
-		if(propAddress.getMobileNo() != null) {
-			setMobileNo(propAddress.getMobileNo());
-		}
-		if(propAddress.getEmailAddress() != null) {
-			setEmail(propAddress.getEmailAddress());
-		}
+	
 		
 		Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
 		if (ownerSet != null && !ownerSet.isEmpty()) {
@@ -1241,16 +1250,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.property = property;
 	}
 
-	public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-		return basicPrpertyService;
-	}
-
 	public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {
 		this.propertyImplService = propertyImplService;
-	}
-
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
 	}
 
 	public Long getZoneId() {

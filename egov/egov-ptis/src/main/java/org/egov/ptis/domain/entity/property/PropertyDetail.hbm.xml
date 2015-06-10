@@ -61,7 +61,7 @@
 
 		<many-to-one name="property" fetch="join"
 			class="org.egov.ptis.domain.entity.property.PropertyImpl"
-			column="property" unique="true" cascade="none" />
+			column="id_property" unique="true" cascade="none" />
 
 		<many-to-one name="propertyTypeMaster"
 			class="org.egov.ptis.domain.entity.property.PropertyTypeMaster"

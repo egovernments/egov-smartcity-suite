@@ -163,25 +163,6 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		address.setLandmark(addFields[0]);
 		address.setHouseNoBldgApt(addFields[1]);
 
-		if (addFields[2].equals(" ") || addFields[2].isEmpty()) {
-			address.setDoorNumOld("N/A");
-		} else {
-			address.setDoorNumOld(addFields[2]);
-		}
-		if (!addFields[3].equals(" ") && !addFields[3].isEmpty()) {
-			address.setPinCode(addFields[3]);
-		}
-		if (addFields[4].equals(" ") || addFields[4].isEmpty()) {
-			address.setMobileNo("N/A");
-		} else {
-			address.setMobileNo(addFields[4]);
-		}
-
-		address.setExtraField1(isBlank(addFields[5]) ? null : addFields[5]);
-		address.setExtraField2(isBlank(addFields[6]) ? null : addFields[6]);
-		address.setExtraField3(isBlank(addFields[7]) ? null : addFields[7]);
-		address.setExtraField4(isBlank(addFields[8]) ? null : addFields[8]);
-
 		if (userDesgn.equalsIgnoreCase(END_APPROVER_DESGN)) {
 			setIsApprPageReq(Boolean.FALSE);
 		}
@@ -312,7 +293,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		LOGGER.debug("Enetered into approve, BasicProperty: " + basicProperty + ", Address : "
 				+ address.getLandmark() + " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
-				+ address.getDoorNumOld() + " PinCode" + address.getPinCode());
+				+ " PinCode" + address.getPinCode());
 
 		try {
 			PropertyImpl nonHistProperty = (PropertyImpl) getPersistenceService().findByNamedQuery(
@@ -397,7 +378,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		LOGGER.debug("Entered into the validate method Address : " + address.getLandmark()
 				+ " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
-				+ address.getDoorNumOld() + " PinCode" + address.getPinCode());
+				+ " PinCode" + address.getPinCode());
 
 		/* Validates the input data in case the form is submitted */
 
@@ -420,7 +401,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 				addActionError(getText("mandatory.pincode.size"));
 			}
 		}
-		String mobNo = org.apache.commons.lang.StringUtils.trim(address.getMobileNo());
+		String mobNo = org.apache.commons.lang.StringUtils.trim(address.getUser().getMobileNumber());
 
 		if (mobNo != null && !mobNo.equals("") && mobNo.length() < 10) {
 			addActionError(getText("mandatory.mobileNo.size"));

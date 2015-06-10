@@ -550,7 +550,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
 						.getHouseNoBldgApt());
 				CharSequence cs = "PropertyAddress";
-				if (address.getClass().getName().contains(cs)) {
+				/*if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
 					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
 						addressStr = addressStr + "/" + propAddr.getSubNumber();
@@ -558,7 +558,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
 						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
 					}
-				}
+				}*/
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
 							+ (address.getLandmark() == null ? " " : ", " + address.getLandmark());
@@ -582,7 +582,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
 						.getHouseNoBldgApt());
 				CharSequence cs = "PropertyAddress";
-				if (address.getClass().getName().contains(cs)) {
+				/*if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
 					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
 						addressStr = addressStr + "/" + propAddr.getSubNumber();
@@ -590,7 +590,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
 						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
 					}
-				}
+				}*/
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
 							+ (StringUtils.isBlank(address.getLandmark()) ? "" : ", "
@@ -600,7 +600,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 							.getLandmark());
 				}
 
-				if (address.getClass().getName().contains(cs)) {
+				/*if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
 					addressStr = addressStr
 							+ (StringUtils.isBlank(propAddr.getExtraField1()) ? "" : ", "
@@ -618,7 +618,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 							+ (StringUtils.isBlank(propAddr.getExtraField4()) ? "" : ", "
 									+ propAddr.getExtraField4());
 				}
-
+*/
 				addressStr = addressStr
 						+ (address.getPinCode() == null ? "" : " -  "
 								+ address.getPinCode().toString());

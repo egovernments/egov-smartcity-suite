@@ -377,7 +377,7 @@ function finishAllChangesMsg(button) {
   <s:form name="CreatePropertyForm" action="createProperty" theme="simple" validate="true">
   
   <s:push value="model">
-  <%-- <s:token /> --%>
+  <s:token />
   
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
   <s:hidden name="mode" value="form" />

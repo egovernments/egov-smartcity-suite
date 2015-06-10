@@ -308,12 +308,15 @@
 	    
 		<td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
-					<s:select headerKey="-10"
+				<%-- 	<s:select headerKey="-10"
 						headerValue="%{getText('default.select')}"
 						name="propertyDetail.floorDetailsProxy[0].planApproved" listKey="key"
 						id="planapproved"
 						listValue="value" list="floorNoMap" cssClass="selectnew"
-						cssStyle="width:100%" />
+						cssStyle="width:100%" /> --%>
+						<select>
+						<option value="Yes">Yes</option>
+						<option value="No">No</option></select>
 				</div>
 	    </td>   
        

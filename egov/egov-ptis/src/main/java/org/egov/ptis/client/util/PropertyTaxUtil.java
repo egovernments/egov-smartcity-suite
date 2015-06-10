@@ -199,6 +199,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PropertyTaxUtil {
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
+	@Autowired
 	private PersistenceService persistenceService;
 	@Autowired
 	private UserService userService;

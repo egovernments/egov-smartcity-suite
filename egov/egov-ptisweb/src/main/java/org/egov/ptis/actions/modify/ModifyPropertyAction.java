@@ -363,15 +363,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propertyAddr = new PropertyAddress();
 				propertyAddr.setLandmark(isBlank(addFields[0]) ? null : addFields[0]);
 				propertyAddr.setHouseNoBldgApt(isBlank(addFields[1]) ? null : addFields[1]);
-				propertyAddr.setDoorNumOld(isBlank(addFields[2]) ? null : addFields[2]);
 				propertyAddr.setPinCode(isBlank(addFields[3]) ? null : addFields[3]);
-				propertyAddr.setMobileNo(isBlank(addFields[4]) ? null : addFields[4]);
-				propertyAddr.setEmailAddress(isBlank(addFields[5]) ? null : addFields[5]);
+				propertyAddr.getUser().setMobileNumber(isBlank(addFields[4]) ? null : addFields[4]);
+				propertyAddr.getUser().setEmailId(isBlank(addFields[5]) ? null : addFields[5]);
 
-				propertyAddr.setExtraField1(isBlank(addFields[6]) ? null : addFields[6]);
-				propertyAddr.setExtraField2(isBlank(addFields[7]) ? null : addFields[7]);
-				propertyAddr.setExtraField3(isBlank(addFields[8]) ? null : addFields[8]);
-				propertyAddr.setExtraField4(isBlank(addFields[9]) ? null : addFields[9]);
 				parcelId = isBlank(addFields[10]) ? null : addFields[10];
 				northBound = isBlank(addFields[11]) ? null : addFields[11];
 				southBound = isBlank(addFields[12]) ? null : addFields[12];
@@ -567,15 +562,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 			propertyAddr = new PropertyAddress();
 			propertyAddr.setLandmark(isBlank(addFields[0]) ? null : addFields[0]);
 			propertyAddr.setHouseNoBldgApt(isBlank(addFields[1]) ? null : addFields[1]);
-			propertyAddr.setDoorNumOld(isBlank(addFields[2]) ? null : addFields[2]);
 			propertyAddr.setPinCode(isBlank(addFields[3]) ? null : (addFields[3]));
-			propertyAddr.setMobileNo(isBlank(addFields[4]) ? null : addFields[4]);
-			propertyAddr.setEmailAddress(isBlank(addFields[5]) ? null : addFields[5]);
+			propertyAddr.getUser().setMobileNumber(isBlank(addFields[4]) ? null : addFields[4]);
+			propertyAddr.getUser().setEmailId(isBlank(addFields[5]) ? null : addFields[5]);
 
-			propertyAddr.setExtraField1(isBlank(addFields[6]) ? null : addFields[6]);
-			propertyAddr.setExtraField2(isBlank(addFields[7]) ? null : addFields[7]);
-			propertyAddr.setExtraField3(isBlank(addFields[8]) ? null : addFields[8]);
-			propertyAddr.setExtraField4(isBlank(addFields[9]) ? null : addFields[9]);
 			parcelId = isBlank(addFields[10]) ? null : addFields[10];
 			northBound = isBlank(addFields[11]) ? null : addFields[11];
 			southBound = isBlank(addFields[12]) ? null : addFields[12];
@@ -2261,16 +2251,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into updateAddress");
 
 		PropertyAddress addr = basicProp.getAddress();
-		addr.setMobileNo(propertyAddr.getMobileNo());
-		addr.setEmailAddress(propertyAddr.getEmailAddress());
 		addr.setHouseNoBldgApt(propertyAddr.getHouseNoBldgApt());
-		addr.setDoorNumOld(propertyAddr.getDoorNumOld());
 		addr.setLandmark(propertyAddr.getLandmark());
 		addr.setPinCode(propertyAddr.getPinCode());
-		addr.setExtraField1(propertyAddr.getExtraField1());
-		addr.setExtraField2(propertyAddr.getExtraField2());
-		addr.setExtraField3(propertyAddr.getExtraField3());
-		addr.setExtraField4(propertyAddr.getExtraField4());
 
 		LOGGER.debug("Exiting from updateAddress");
 	}
