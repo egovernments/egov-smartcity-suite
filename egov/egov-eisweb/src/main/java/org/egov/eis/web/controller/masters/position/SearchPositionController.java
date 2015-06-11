@@ -101,7 +101,7 @@ public class SearchPositionController {
 					//Current position outsource is true.
 					if( !positionObj.getIsPostOutsourced()){
 					 positionObj.setIsPostOutsourced(true);
-					positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts()+1);
+					 positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts()!=null?positionObj.getDeptDesig().getOutsourcedPosts()+1:1);
 					}
 				}else
 				{
@@ -109,7 +109,7 @@ public class SearchPositionController {
 					if( positionObj.getIsPostOutsourced())
 					{
 						 positionObj.setIsPostOutsourced(false);
-							positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts()-1);
+							positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts()!=null?positionObj.getDeptDesig().getOutsourcedPosts()-1:0);
 					}
 				}
 				

@@ -89,13 +89,17 @@ public class CreatePositionController {
 
 			if (departmentDesignation != null) {
 					departmentDesignation.setSanctionedPosts((departmentDesignation.getSanctionedPosts()!=null?departmentDesignation.getSanctionedPosts() + 1:1));
-						if (position.isPostOutsourced())
+						
+					if (position.isPostOutsourced())
 							departmentDesignation.setOutsourcedPosts((departmentDesignation.getOutsourcedPosts()!=null?departmentDesignation.getOutsourcedPosts()+1:1));
 				
 						position.setDeptDesig(departmentDesignation);
 			} else {
 						position.getDeptDesig().setSanctionedPosts(Integer.valueOf(1));
-							if (position.isPostOutsourced()) position.getDeptDesig().setOutsourcedPosts(Integer.valueOf(1));
+							if (position.isPostOutsourced()) 
+								position.getDeptDesig().setOutsourcedPosts(Integer.valueOf(1));
+							else
+								position.getDeptDesig().setOutsourcedPosts(Integer.valueOf(0));
 			}
 
 		}
