@@ -78,6 +78,22 @@ public class SearchPositionController {
 	        return "position-search";
 	    }
 	 
+	 
+	 @RequestMapping(value = "position-getTotalPositionCount" , method = RequestMethod.GET)
+	    public @ResponseBody String searchSanctionedAndOutSourcePositions(@RequestParam final String departmentId,@RequestParam final String designationId) {
+		 Long deptid = Long.valueOf(0),desigid=  Long.valueOf(0);
+			Integer outsourcedPost=0,sanctionedPost=0;
+			
+		 if(departmentId!=null && !"".equals(departmentId))
+			 deptid=Long.valueOf(departmentId);
+		 if(designationId!=null && !"".equals(designationId))
+			 desigid=Long.valueOf(designationId);
+		 
+		 outsourcedPost= positionMasterService.getTotalOutSourcedPosts(deptid, desigid);
+		 sanctionedPost= positionMasterService.getTotalSanctionedPosts(deptid, desigid);
+			
+	 return outsourcedPost +"/"+ sanctionedPost;
+	 }
 	  @RequestMapping(value = "position-update" , method = RequestMethod.GET)
 	    public @ResponseBody String changePosition(@RequestParam final String desigName, @RequestParam final String positionName, 
 	    		@RequestParam final String deptName,@RequestParam final String isoutsourced,@RequestParam final String positionId) {

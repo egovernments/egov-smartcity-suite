@@ -71,5 +71,33 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long>{
 	@Query("select cr from Position cr where  cr.deptDesig.designation.id=:designationId")
 	Page<Position> findPositionByDesignation(@Param("designationId") Long designationId,
 			Pageable pageable);
+	
+	@Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId and cr.isPostOutsourced is true")
+	Integer getTotalOutSourcedPostsByDepartmentAndDesignation(
+			@Param("departmentId") Long departmentId,
+			@Param("designationId") Long designationId);
+	
+	@Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.isPostOutsourced is true ")
+	Integer getTotalOutSourcedPostsByDepartment(@Param("departmentId")Long departmentId);
+	
+	@Query("select count(*)  from Position cr where  cr.deptDesig.designation.id=:designationId and cr.isPostOutsourced is true")
+	Integer getTotalOutSourcedPostsByDesignation(@Param("designationId") Long designationId);
+	
+	@Query("select count(*)  from Position cr where cr.isPostOutsourced is true")
+	Integer getTotalOutSourcedPosts();
 
+	@Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId ")
+	Integer getTotalSanctionedPostsByDepartmentAndDesignation(
+			@Param("departmentId") Long departmentId,
+			@Param("designationId") Long designationId);
+	
+	@Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId  ")
+	Integer getTotalSanctionedPostsByDepartment(@Param("departmentId")Long departmentId);
+	
+	@Query("select count(*)  from Position cr where  cr.deptDesig.designation.id=:designationId ")
+	Integer getTotalSanctionedPostsByDesignation(@Param("designationId") Long designationId);
+	
+	@Query("select count(*)  from Position cr ")
+	Integer getTotalSanctionedPosts();
+	
 }

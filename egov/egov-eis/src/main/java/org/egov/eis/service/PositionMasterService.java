@@ -135,5 +135,35 @@ public class PositionMasterService {
 		return positionMasterRepository
 				.findByNameContainingIgnoreCase(positionName);
 	}
-	
+
+	public Integer getTotalOutSourcedPosts(Long departmentId,
+			Long designationId) {
+		
+		if (departmentId != 0 && designationId != 0)
+			return positionMasterRepository
+					.getTotalOutSourcedPostsByDepartmentAndDesignation(departmentId,
+							designationId);
+		else if (designationId != 0 )
+			return positionMasterRepository.getTotalOutSourcedPostsByDesignation(designationId);
+		else if (departmentId != 0 )
+			return positionMasterRepository.getTotalOutSourcedPostsByDepartment(departmentId);
+		else
+			return positionMasterRepository.getTotalOutSourcedPosts();
+		
+	}
+	public Integer getTotalSanctionedPosts(Long departmentId,
+			Long designationId) {
+		
+		if (departmentId != 0 && designationId != 0)
+			return positionMasterRepository
+					.getTotalSanctionedPostsByDepartmentAndDesignation(departmentId,
+							designationId);
+		else if (designationId != 0 )
+			return positionMasterRepository.getTotalSanctionedPostsByDesignation(designationId);
+		else if (departmentId != 0 )
+			return positionMasterRepository.getTotalSanctionedPostsByDepartment(departmentId);
+		else
+			return positionMasterRepository.getTotalSanctionedPosts();
+		
+	}
 }
