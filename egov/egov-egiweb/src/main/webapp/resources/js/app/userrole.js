@@ -39,14 +39,13 @@
 #-------------------------------------------------------------------------------*/
 
 function populateUserRoles(dropdown) {
-		populaterolesSelect({
-		username : dropdown.value
+	populaterolesSelect({
+	username : dropdown.value
 	}); 
 }
 
 
-$(document).ready( function ()
-		{
+$(document).ready( function (){
 	if($('#currentroles').size>0){
 		jQuery("#currentroles option[value!='']").each(function() {	
 			 var currRolVal=jQuery(this).val();
@@ -56,7 +55,45 @@ $(document).ready( function ()
 				});
 		   });
 		}
-		});
+	
+	var userlist = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
+		},
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url: '/egi/userRole/ajax/userlist?userName=%QUERY',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (u) {
+					return {
+						name:u.Text,
+						value: u.Value
+					};
+				});
+			}
+		}
+	});
+	
+	userlist.initialize();
+	
+	$('#user_name').typeahead({
+		hint: true,
+		highlight: true,
+		minLength: 3
+		}, {
+		displayKey: 'name',
+		source: userlist.ttAdapter()
+		}).on('typeahead:selected', function(event, data){            
+			$("#usernameId").val(data.name); 
+	    }).on('change',function(event,data){
+	    	populateUserRoles(this);
+    		if($('#user_name').val() == ''){
+    			$("#usernameId").val('');
+    		}
+        });
+	
+});
 
 
 

@@ -75,7 +75,6 @@
                         <div class="col-sm-6 add-margin">
                             <form:select path="roles" multiple="true" size="10"
                                          id="rolesSelect" cssClass="form-control" cssErrorClass="form-control error">
-                                           <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                        <form:options items="${roles}" itemValue="id" itemLabel="name"/>
                                 </form:select>
                               

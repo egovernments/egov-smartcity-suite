@@ -46,6 +46,7 @@ import java.util.Set;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +74,7 @@ public class UserService {
     public User getUserById(final Long id) {
         return userRepository.findOne(id);
     }
-    
+
     public User getUserRefById(final Long id) {
         return userRepository.getOne(id);
     }
@@ -94,12 +95,16 @@ public class UserService {
         return userRepository.findByEmailId(emailId);
     }
 
-    public User getUserByUsernameOrEmailorMobileNumber(String identity) {
+    public User getUserByUsernameOrEmailorMobileNumber(final String identity) {
         return userRepository.findByEmailIdOrMobileNumberOrUsername(identity);
     }
-    
+
     public Optional<User> checkUserWithIdentity(final String identity) {
         return Optional.ofNullable(getUserByUsernameOrEmailorMobileNumber(identity));
     }
-    
+
+    public List<User> findAllByMatchingUserNameForType(final String username, final UserType type) {
+        return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
+    }
+
 }

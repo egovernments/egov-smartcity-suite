@@ -39,12 +39,14 @@
  */
 package org.egov.infra.admin.master.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.QueryHint;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -56,7 +58,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Set<User> findByUsernameContainingIgnoreCase(String userName);
 
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true")})
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     User findByUsername(String userName);
 
     User findByEmailId(String emailId);
@@ -65,7 +67,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
 
     Set<User> findByActiveTrue();
-    
+
     @Query("select u from User u where u.username = :identity or u.mobileNumber = :identity or u.emailId = :identity")
     User findByEmailIdOrMobileNumberOrUsername(@Param("identity") String identity);
+
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 }

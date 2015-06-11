@@ -42,7 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
-
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -58,34 +57,27 @@
 					</div>
 				</div> 
 				<div class="panel-body custom-form">
-				  <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.userName"/>
-                            <small><i class="entypo-star error-msg"></i></small>
-                        </label>
-                         <div class="col-sm-6 add-margin">
-                            <select name="username"
-                                         id="username" class="form-control" onchange="populateUserRoles(this); return checkUserRolePresent();" required="required">
-                                <option value=""> <spring:message code="lbl.select"/> </option>
-                                <c:forEach items="${users}" var="user">
-                                <option value="${user.username}">${user.username}</option>
-                                </c:forEach>
-                            </select>
-                        </div> 
-                      </div>
-                     <div class="form-group">
-                      <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.current.userRole"/>
-                        </label>
-                        <div class="col-sm-6 add-margin">
-                        	<egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
-												dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user" />
-                            <select  id="rolesSelect" class="form-control" multiple="multiple" size="10" readonly="readonly">
-                                </select>
-                            </div>
-                     </div> 
-                     
-                    
+					<div class="form-group">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.userName" />
+						<small><i class="entypo-star error-msg"></i></small> 
+						</label>
+						<div class="col-sm-6">
+							<input id="user_name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+							<input type="hidden" name="username" id="usernameId"/>
+						</div>
+					</div>
+					<div class="form-group">
+                   		<label class="col-sm-3 control-label">
+                        	<spring:message code="lbl.current.userRole"/>
+                   		</label>
+						<div class="col-sm-6 add-margin">
+							<egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
+								dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user" />
+							<select id="rolesSelect" class="form-control"
+								multiple="multiple" size="10" readonly="readonly">
+							</select>
+						</div>
+					</div> 
 				</div>
 			</div>
 			<div class="row">
@@ -99,4 +91,5 @@
 		</div>
 	</div>
 </div>
+
 <script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
