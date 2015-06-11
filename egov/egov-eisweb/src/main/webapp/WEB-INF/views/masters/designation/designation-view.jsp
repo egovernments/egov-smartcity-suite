@@ -44,7 +44,45 @@
 <link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 <link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 
-<script src="<c:url value='/resources/js/app/designation.js'/>"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#view-designation')
+	.dataTable(
+			{
+				processing : true,
+				serverSide : true,
+				sort : false,
+				filter : true,
+				responsive : true,
+				"autoWidth": false,
+				ajax : "/eis/designation/ajax/result",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+						[ 10, 25, 50, "All" ] ],
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				columns : [ {
+					"mData" : "name",
+					"sTitle" : "Name",
+				}, {
+					"mData" : "description",
+					"sTitle" : "Description"
+				} ],
+			});
+
+$('#view-designation tbody').on(
+	'click',
+	'tr',
+	function() {
+		if ($(this).hasClass('apply-background')) {
+			$(this).removeClass('apply-background');
+		} else {
+			$('#view-designation tbody tr')
+					.removeClass('apply-background');
+			$(this).addClass('apply-background');
+		}
+
+	});
+});
+</script>
 
 <table class="table table-bordered datatable" id="view-designation">
 </table>

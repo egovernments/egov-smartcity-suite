@@ -60,4 +60,5 @@ public class Constants {
     public static final String SIGNED_NUMERIC = "^(\\-)?\\d*(\\.\\d+)?$";
     public static final String SIGNED_NUMBER = "^(\\-)?\\d*$";
     public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
+    public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
 }

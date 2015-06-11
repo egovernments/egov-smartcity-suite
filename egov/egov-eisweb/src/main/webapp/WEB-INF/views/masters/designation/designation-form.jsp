@@ -63,7 +63,7 @@
 							<spring:message code="lbl.designation.name"/><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabetWithsplchar" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -90,7 +90,9 @@
     </div>
 </div>
 
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
+	
+	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+
