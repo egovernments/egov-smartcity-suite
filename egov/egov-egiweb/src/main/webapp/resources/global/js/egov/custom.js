@@ -91,7 +91,12 @@ $(document).ready(function()
 			$(this).val( $(this).val().replace(regexp,'') );
 		}
 	});
-	
+	$(".is_valid_letters_space_hyphen_underscore").on("input", function(){
+        var regexp = /[^a-zA-Z _0-9_-]/g;
+		if($(this).val().match(regexp)){
+			$(this).val( $(this).val().replace(regexp,'') );
+		}
+	});
 	try { $('.twitter-typeahead').css('display','block'); } catch(e){}
 	
 	try { $(":input").inputmask(); }catch(e){}

@@ -181,6 +181,7 @@ a:focus{
 
 .inline-elem {
 	display: inline-block;
+	vertical-align: middle;
 }
 
 .pagination {
