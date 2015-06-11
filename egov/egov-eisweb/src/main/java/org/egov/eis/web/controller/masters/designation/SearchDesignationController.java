@@ -68,7 +68,7 @@ public class SearchDesignationController {
 
 	@ModelAttribute(value = "designationList")
 	public List<Designation> listDesignation() {
-		return designationService.getAllDesignations();
+		return designationService.getAllDesignationsSortByNameAsc();
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
