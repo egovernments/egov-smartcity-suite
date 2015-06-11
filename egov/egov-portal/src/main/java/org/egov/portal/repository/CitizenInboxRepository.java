@@ -60,6 +60,6 @@ public interface CitizenInboxRepository extends JpaRepository<CitizenInbox, Long
 	@Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.assignedToCitizen.id=:citizenUserId order by ci.createdDate desc")
 	List<CitizenInbox> findAllInboxMessageByType(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
 	
-	@Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId order by ci.createdDate desc")
+	@Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId and ci.id in (select max(ci1.id) from CitizenInbox ci1 where ci1.messageType=:messageType and ci1.createdBy.id=:citizenUserId group by ci1.identifier) order by ci.createdDate desc")
 	List<CitizenInbox> findMyAccountMessages(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
 }
