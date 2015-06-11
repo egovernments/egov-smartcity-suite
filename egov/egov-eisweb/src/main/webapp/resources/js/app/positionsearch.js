@@ -65,7 +65,7 @@ $(document).ready(function(){
 	
 	
 	$('#position-table').on( 'draw.dt', function () {
-		var outsourced=0, sanctioned=0;
+	/*	var outsourced=0, sanctioned=0;
 		var oTable = $('#position-table').dataTable();
 		$.each( oTable.fnGetData(), function(i, row){
 				if(oTable.fnGetData(i,1) == true)
@@ -74,14 +74,34 @@ $(document).ready(function(){
 		})
 		
 		$("#outSourcedPost").val(outsourced); 
-		$("#sanctionedPost").val(sanctioned); 
-		
+		$("#sanctionedPost").val(sanctioned); */
+		 getSanctionAndOutsourcePositions();
 	  } );
 	
 	/*$('#searchposition').keyup(function(){
 		tableContainer1.fnFilter(this.value);
 	});*/
 
+	function getSanctionAndOutsourcePositions()
+	 $.ajax({
+         url: '/eis/position/position-getTotalPositionCount',
+         type: 'GET',
+         data: {departmentId : $('#position_dept').val(),designationId : $('#position_desig').val()
+        	 },
+         success: function(data) { 
+         	var msg = data.split('/');
+         	$("#outSourcedPost").val(msg[0]); 
+    		$("#sanctionedPost").val(msg[1]); 	
+         	alert(msg(0)+msg(1));
+         },
+         error: function() {
+         	alert("Internal server error occurred, please try after sometime.");
+         }
+ }); 
+	 
+	 
+	
+	
 	$('#position-table').on('click', 'tbody tr', function(event){
 		if($(event.target).attr('class') ==  'btn btn-xs btn-secondary edit-position')
 	    {
