@@ -49,6 +49,7 @@
 				<div class="panel-title text-center no-float">
 					<strong>${message}</strong>
 				</div>
+				
 				<div class="panel-title">
 						<strong><spring:message code="title.department.view"/></strong>
 					</div>
