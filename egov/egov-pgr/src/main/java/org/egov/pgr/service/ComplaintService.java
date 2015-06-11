@@ -195,7 +195,8 @@ public class ComplaintService {
 
         final String userName = securityUtils.getCurrentUser().getName();
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
-                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
+                ||  complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
             LOG.debug("Terminating Complaint Workflow");
             complaint.transition(true).end().withComments(approvalComent).withStateValue(complaint.getStatus().getName())
             .withSenderName(userName).withDateInfo(new Date());
