@@ -67,65 +67,51 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/designation")
 public class CreateAndViewDesignationController {
 
-	private DesignationService designationService;
-	public static final String CONTENTTYPE_JSON = "application/json";
+    private final DesignationService designationService;
+    public static final String CONTENTTYPE_JSON = "application/json";
 
-	@Autowired
-	public CreateAndViewDesignationController(DesignationService designationService) {
-		this.designationService = designationService;
-	}
+    @Autowired
+    public CreateAndViewDesignationController(final DesignationService designationService) {
+        this.designationService = designationService;
+    }
 
-	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public String createForm(Model model) {
-		model.addAttribute("designation", new Designation());
-		return "designation-form";
-	}
+    @RequestMapping(value = "create", method = RequestMethod.GET)
+    public String createForm(final Model model) {
+        model.addAttribute("designation", new Designation());
+        return "designation-form";
+    }
 
-	@RequestMapping(value = "view", method = RequestMethod.GET)
-	public String complaintTypeViewForm(@ModelAttribute Designation designation, Model model) {
-		return "designation-view";
-	}
+    @RequestMapping(value = "view", method = RequestMethod.GET)
+    public String complaintTypeViewForm(@ModelAttribute final Designation designation, final Model model) {
+        return "designation-view";
+    }
 
-	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String createDesignation(@Valid @ModelAttribute Designation designation, BindingResult errors,
-			RedirectAttributes redirectAttrs, Model model) {
-		if (errors.hasErrors()) {
-			return "designation-form";
-		}
-		designationService.createDesignation(designation);
-		redirectAttrs.addFlashAttribute("designation", designation);
-		model.addAttribute("message", "Designation created successfully");
-		return "success-designation";
-	}
+    @RequestMapping(value = "create", method = RequestMethod.POST)
+    public String createDesignation(@Valid @ModelAttribute final Designation designation, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
+            return "designation-form";
+        designationService.createDesignation(designation);
+        redirectAttrs.addFlashAttribute("designation", designation);
+        model.addAttribute("message", "Designation created successfully");
+        return "success-designation";
+    }
 
-	public String toJSON(final Object object) {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		Gson gson = gsonBuilder.registerTypeAdapter(Designation.class, new DesignationAdaptor()).create();
-		String json = gson.toJson(object);
-		return json;
-	}
+    public String toJSON(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Designation.class, new DesignationAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 
-	@RequestMapping(value = "ajax/result", method = RequestMethod.GET)
-	public @ResponseBody void springPaginationDataTables(HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
-		int pageStart = Integer.valueOf(request.getParameter("start"));
-		int pageSize = Integer.valueOf(request.getParameter("length"));
-		int pageNumber = pageStart / pageSize + 1;
-		List<Designation> totalRecords = designationService.getAllDesignations();
-
-		if (pageSize == -1) {
-			pageSize = totalRecords.size();
-		}
-
-		final List<Designation> designationList = designationService.getListOfDesignation(pageNumber, pageSize).getContent();
-		final StringBuilder designationJSONData = new StringBuilder();
-		designationJSONData.append("{\"draw\": ").append("0");
-		designationJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
-		designationJSONData.append(",\"totalDisplayRecords\":").append(designationList.size());
-		designationJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-		designationJSONData.append(",\"data\":").append(toJSON(designationList)).append("}");
-		response.setContentType(CONTENTTYPE_JSON);
-		IOUtils.write(designationJSONData, response.getWriter());
-	}
+    @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
+    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+        final List<Designation> designationList = designationService.getAllDesignations();
+        final StringBuilder designationJSONData = new StringBuilder("{\"data\":").append(toJSON(designationList))
+                .append("}");
+        response.setContentType(CONTENTTYPE_JSON);
+        IOUtils.write(designationJSONData, response.getWriter());
+    }
 
 }

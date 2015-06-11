@@ -80,7 +80,9 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+					<c:if test="${mode != 'update'}">
+			        	<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+			        </c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>

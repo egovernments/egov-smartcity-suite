@@ -98,11 +98,6 @@ public class DesignationService {
         return designationRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public Page<Designation> getListOfDesignation(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return designationRepository.findAll(pageable);
-    }
-
     public List<Designation> getAllDesignationByDepartment(final Long id, final Date givenDate) {
         return designationRepository.getAllDesignationsByDepartment(id, givenDate);
     }

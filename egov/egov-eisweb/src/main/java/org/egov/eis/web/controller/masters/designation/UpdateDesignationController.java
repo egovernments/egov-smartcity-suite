@@ -70,7 +70,8 @@ public class UpdateDesignationController {
     }
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String updateForm() {
+	public String updateForm(Model model) {
+	    model.addAttribute("mode", "update");
 		return "designation-form";
 	}
 	

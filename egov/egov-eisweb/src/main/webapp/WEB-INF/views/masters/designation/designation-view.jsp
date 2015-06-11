@@ -46,20 +46,15 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$('#view-designation')
-	.dataTable(
+	$('#view-designation').dataTable(
 			{
-				processing : true,
-				serverSide : true,
-				sort : false,
-				filter : true,
-				responsive : true,
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 				"autoWidth": false,
-				ajax : "/eis/designation/ajax/result",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-						[ 10, 25, 50, "All" ] ],
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-				columns : [ {
+				"bDestroy": true,
+				"ajax" : "/eis/designation/ajax/result",
+				"columns" : [ {
 					"mData" : "name",
 					"sTitle" : "Name",
 				}, {
