@@ -263,7 +263,8 @@
 							<div class="col-md-8">
 								
 								<div class="form-group">
-									<input type="text" class="form-control" placeholder="" id='positionname-edit' required="required">
+									<input type="text" class="form-control is_valid_letters_space_hyphen_underscore" placeholder="" id='positionname-edit' required="required">
+									
 									<input type="hidden" class="form-control" placeholder=""  id='position-id'>
 								</div>	
 							</div>

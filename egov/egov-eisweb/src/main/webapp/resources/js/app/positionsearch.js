@@ -101,7 +101,12 @@ $(document).ready(function(){
 			
 	});
 	
-	
+	$(".is_valid_letters_space_hyphen_underscore").on("input", function(){
+        var regexp = /[^a-zA-Z _0-9_-]/g;
+		if($(this).val().match(regexp)){
+			$(this).val( $(this).val().replace(regexp,'') );
+		}
+	});
 	
 	$('#position-form').on('submit', function(e){
 	       e.preventDefault();

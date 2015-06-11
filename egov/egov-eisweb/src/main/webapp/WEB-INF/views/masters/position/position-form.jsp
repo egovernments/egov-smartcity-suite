@@ -117,7 +117,7 @@
 								<div class="col-sm-6 add-margin">
 								
 								<form:input path="name" id="position_name" required="required" 
-									cssClass="form-control is_valid_alphaNumWithsplchar"
+									cssClass="form-control is_valid_letters_space_hyphen_underscore"
 									cssErrorClass="form-control error"  autocomplete="off"/>
 								<form:errors path="name" cssClass="error-msg" />
 							</div>
