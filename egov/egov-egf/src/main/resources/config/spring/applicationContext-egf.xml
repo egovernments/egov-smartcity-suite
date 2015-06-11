@@ -173,8 +173,7 @@
     </bean> -->
     <bean id="receiptService" class="org.egov.services.receipt.ReceiptService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.receipt.ReceiptVoucher" />
-		<property name="eisCommonService" ref="eisCommonService"/>
-		<property name="eisService" ref="eisService" />
+		<property name="employeeService" ref="employeeService" /> 
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
     <!-- <bean id="receiptWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
@@ -240,9 +239,7 @@
 	<!--<bean id="workflowTypeService" parent="persistenceService" >
 			<property name="type" value="org.egov.infstr.models.WorkflowTypes"/>
 	</bean>
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" >
-		<property name="persistenceService"  ref="persistenceService" />
-	</bean> 	-->
+		-->
 	<bean id="commonBean" class="org.egov.model.voucher.CommonBean" scope="prototype" />
 	<bean id="voucherSearchUtil" class="org.egov.egf.commons.VoucherSearchUtil" scope="prototype" >
 		<property name="persistenceService"  ref="persistenceService" />

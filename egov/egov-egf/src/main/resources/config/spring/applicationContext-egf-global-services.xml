@@ -46,7 +46,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" default-lazy-init="true">
-	
+		
 	<bean id="instrumentTypeService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
@@ -92,9 +92,9 @@
 	
 	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="type" value="org.egov.commons.Bankreconciliation" />
+		<property name="type" value="org.egov.commons.Bankreconciliation" /> 
 	</bean>
-		
+	
 	<bean id="contraService" class="org.egov.services.contra.ContraService"  parent="persistenceService" scope="prototype">
 	 	<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 		<property name="persistenceService" ref="persistenceService"/>
@@ -102,9 +102,8 @@
 		<property name="bankReconService" ref="bankReconService"/>
 		<property name="vdPersitSer" ref="vdPersitSer"/>
 		<property name="instrumentService" ref="instrumentService"/>
-		<property name="eisCommonsService" ref="eisCommonsService"/>
-		<property name="eisService" ref="eisService" />
-	</bean>
+		<property name="employeeService" ref="employeeService" />
+		</bean>
 	
 	<bean id="voucherCreator" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype" />
 

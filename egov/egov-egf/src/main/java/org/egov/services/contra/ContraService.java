@@ -80,7 +80,7 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.PayInBean;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EisUtilService;
+import org.egov.pims.service.EmployeeService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -110,16 +110,14 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         
         private InstrumentService instrumentService;
         private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+        @Autowired
         protected EisCommonService eisCommonService;
         private @Autowired AppConfigValuesDAO appConfigValuesDAO;
-        private EisUtilService eisService;
+        private EmployeeService employeeService;
         private int preapprovalStatus=0;
         private int instrumentCount=0;
         
         public  ContraService() throws Exception{
-        }
-        public void setEisCommonService(EisCommonService eisCommonService) {
-                this.eisCommonService = eisCommonService;
         }
         
         public Position getPositionForWfItem(ContraJournalVoucher rv)
@@ -128,7 +126,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         }
         public Department getDepartmentForUser(User user) 
         {
-                return new EgovCommon().getDepartmentForUser(user, eisCommonService, eisService,persistenceService);
+                return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService,persistenceService);
     }
         public ContraJournalVoucher updateIntoContraJournal(CVoucherHeader voucherHeader,ContraBean contraBean){
                  ContraJournalVoucher existingCJV;
@@ -651,7 +649,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         public void setInstrumentService(InstrumentService instrumentService) {
                 this.instrumentService = instrumentService;
         }
-        public void setEisService(EisUtilService eisService) {
-                this.eisService = eisService;
+        public void setEmployeeService(EmployeeService employeeService) {
+            this.employeeService = employeeService;
         }
 }

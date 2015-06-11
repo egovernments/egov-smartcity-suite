@@ -82,6 +82,8 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -90,9 +92,8 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EGovConfig;
@@ -110,7 +111,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EisUtilService;
+import org.egov.pims.service.EmployeeService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -126,6 +127,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
         private static final Logger     LOGGER  = Logger.getLogger(VoucherService.class);
         protected PersistenceService persistenceService;
+        
         protected EisCommonService eisCommonService;
         private BudgetDetailsDAO budgetDetailsDAO;
         private @Autowired AppConfigValuesDAO appConfigValuesDAO;
@@ -145,7 +147,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         public VoucherService(){
 
         }
-        private EisUtilService eisService;
+        private EISServeable eisService;
+        private EmployeeService employeeService;
         private ScriptService scriptExecutionService;
         private PersistenceService<EgBillregister, Long> billRegisterSer;
         public Boundary getBoundaryForUser(CVoucherHeader rv)
@@ -182,7 +185,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         
         public Department getDepartmentForUser(User user) 
         {
-                return new EgovCommon().getDepartmentForUser(user, eisCommonService, eisService,persistenceService);
+                return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService,persistenceService);
     }
         public PersonalInformation getEmpForCurrentUser()
         {
@@ -972,12 +975,12 @@ public List<EmployeeView>  getUserByDeptAndDesgName(String departmentId,String d
         paramMap.put("departmentId",departmentId);
         paramMap.put("designationId", designationId);
         paramMap.put("functionaryId",functionaryId);
-        List<EmployeeView> empInfoList = eisService.getEmployeeInfoList(paramMap); 
+        List<EmployeeView> empInfoList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap); 
         return empInfoList;
 }
 /**
  * 
- * @description - creates the bill register object for the vouchers except expense JV.
+ * @description - creates the bill register object for the vouchers except expense JV.eisService
  * @param billDetailslist -having account details info.
  * @param subLedgerlist - having sub ledger details info.
  * @param voucherHeader - header and misc details info.
@@ -1237,12 +1240,8 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 
                 
         }
-        public EisUtilService getEisService() {
-                return eisService;
-        }
-        public void setEisService(EisUtilService eisService) {
-                this.eisService = eisService;
-        }
+        
+        
         public void setPersistenceService(PersistenceService persistenceService) {
                 this.persistenceService = persistenceService;
         }
@@ -1276,6 +1275,13 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         }
         public void setFinancialYearDAO(FinancialYearHibernateDAO financialYearDAO) {
                 this.financialYearDAO = financialYearDAO;
+        }
+       
+        public void setEmployeeService(EmployeeService employeeService) {
+            this.employeeService = employeeService;
+        }
+        public void setEisService(EISServeable eisService) {
+            this.eisService = eisService;
         }
         
 }

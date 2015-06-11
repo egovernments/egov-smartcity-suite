@@ -91,7 +91,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.masters.AccountCodePurpose;
-import org.egov.pims.service.EisUtilService;
+import org.egov.pims.service.EmployeeService;
 import org.egov.services.report.FundFlowService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -151,14 +151,14 @@ public class EgovCommon {
                 return null;
         }
 
-        public Department getDepartmentForUser(User user, EisCommonService eisCommonService,
-                        EisUtilService eisService, PersistenceService persistenceService) {
+        public Department getDepartmentForUser(User user, EisCommonService eisCommonService, 
+                EmployeeService employeeService, PersistenceService persistenceService) {
                 try {
                         Query qry1 = 
                                         HibernateUtil.getCurrentSession()
                                         .createSQLQuery(
                                                         " select is_primary, dept_id from EG_EIS_EMPLOYEEINFO employeevi0_ where upper(trim(employeevi0_.CODE))='"
-                                                                        + eisCommonService.getEmployeeByUserId(user.getId())
+                                                                        + employeeService.getEmpForUserId(user.getId())
                                                                                         .getCode()
                                                                         + "' and ((employeevi0_.TO_DATE is null) and employeevi0_.FROM_DATE<=SYSDATE or employeevi0_.FROM_DATE<=SYSDATE and employeevi0_.TO_DATE>SYSDATE or employeevi0_.FROM_DATE in (select MAX(employeevi1_.FROM_DATE) from EG_EIS_EMPLOYEEINFO employeevi1_ where employeevi1_.ID=employeevi0_.ID and  not (exists (select employeevi2_.ID from EG_EIS_EMPLOYEEINFO employeevi2_ where employeevi2_.ID=employeevi0_.ID and ((employeevi2_.TO_DATE is null) and employeevi2_.FROM_DATE<=SYSDATE or employeevi2_.FROM_DATE<=SYSDATE and employeevi2_.TO_DATE>SYSDATE))))) ");
                         List<Object[]> employeeViewList = (List) qry1.list();

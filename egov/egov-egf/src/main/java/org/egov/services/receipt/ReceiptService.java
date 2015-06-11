@@ -56,21 +56,20 @@ import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EisUtilService;
+import org.egov.pims.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
+        @Autowired
 	protected EisCommonService eisCommonService;
 	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
-	private EisUtilService eisService;
+	 private EmployeeService employeeService;
 	private  PersistenceService persistenceService;
 	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
 	{
 		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
 	}
-	public void setEisCommonService(EisCommonService eisCommonService) {
-		this.eisCommonService = eisCommonService;
-	}
+	
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
@@ -106,9 +105,10 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	}
 	public Department getDepartmentForUser(User user) 
 	{
-		return new EgovCommon().getDepartmentForUser(user, eisCommonService, eisService,persistenceService);
+		return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService,persistenceService);
     }
-	public void setEisService(EisUtilService eisService) {
-		this.eisService = eisService;
-	}
+	
+    public void setEmployeeService(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 }
