@@ -40,7 +40,6 @@
 package org.egov.infra.web.controller;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.egov.infstr.utils.DateUtils.getFormattedDate;
 import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
 
 import java.util.Comparator;
@@ -56,6 +55,9 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderService;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -69,6 +71,8 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/inbox")
 public class InboxController {
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+    
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
@@ -98,7 +102,7 @@ public class InboxController {
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
             final Inbox inboxItem = new Inbox();
             inboxItem.setId(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId() + "#" + workflowTypes.getId());
-            inboxItem.setDate(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a"));
+            inboxItem.setDate(DATE_FORMATTER.print(state.getCreatedDate()));
             inboxItem.setSender(state.getSenderName());
             inboxItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
@@ -116,7 +120,7 @@ public class InboxController {
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState().getType());
             final Inbox inboxHistoryItem = new Inbox();
             inboxHistoryItem.setId(stateHistory.getState().getId().toString());
-            inboxHistoryItem.setDate(getFormattedDate(stateHistory.getLastModifiedDate(), "dd/MM/yyyy hh:mm a"));
+            inboxHistoryItem.setDate(DATE_FORMATTER.print(new DateTime(stateHistory.getLastModifiedDate())));
             inboxHistoryItem.setSender(stateHistory.getSenderName());
             inboxHistoryItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(stateHistory.getState());

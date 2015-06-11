@@ -86,8 +86,10 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
     @Override
     public boolean onPreUpdate(final PreUpdateEvent event) {
         final Object entity = event.getEntity();
-        if (entity instanceof BaseModel || entity instanceof Auditable)
+        if (entity instanceof BaseModel)
             updateAuditableProperties(event);
+        else if (entity instanceof Auditable)
+            updateAuditable(event);
         return false;
     }
 
@@ -152,9 +154,20 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
     private void updateAuditableProperties(final PreUpdateEvent event) {
         int i = 0;
         for (final String propName : event.getPersister().getPropertyNames()) {
-            if ("modifiedDate".equals(propName) || "lastModifiedDate".equals(propName))
+            if ("modifiedDate".equals(propName))
                 event.getState()[i] = new Date();
-            if ("modifiedBy".equals(propName) || "lastModifiedBy".equals(propName))
+            if ("modifiedBy".equals(propName))
+                event.getState()[i] = getUserObjectFromWithinEventListener(event.getSession());
+            i++;
+        }
+    }
+    
+    private void updateAuditable(final PreUpdateEvent event) {
+        int i = 0;
+        for (final String propName : event.getPersister().getPropertyNames()) {
+            if ("lastModifiedDate".equals(propName))
+                event.getState()[i] = new DateTime();
+            if ("lastModifiedBy".equals(propName))
                 event.getState()[i] = getUserObjectFromWithinEventListener(event.getSession());
             i++;
         }

@@ -139,6 +139,8 @@ public class JpaConfiguration {
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
         properties.put(AUTOCOMMIT, false);
+        properties.put("jadira.usertype.autoRegisterUserTypes", true);
+        properties.put("jadira.usertype.databaseZone", "jvm");
         //properties.put("hibernate.enable_lazy_load_no_trans", true);
         
         //Multitenancy Configuration

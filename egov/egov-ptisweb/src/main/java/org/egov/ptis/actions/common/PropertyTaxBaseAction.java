@@ -100,7 +100,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Namespace("/common")
-@Transactional(readOnly=true)
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;

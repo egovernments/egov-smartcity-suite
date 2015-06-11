@@ -117,9 +117,6 @@ public class ComplaintService {
     private EisCommonService eisCommonService;
 
     @Autowired
-    private EISServeable eisService;
-
-    @Autowired
     private CitizenInboxService citizenInboxService;
 
     @Autowired
@@ -362,7 +359,7 @@ public class ComplaintService {
 
     }
     
-    public List getAllReceivingModes() {
+    public List<ReceivingMode> getAllReceivingModes() {
        return Arrays.asList(ReceivingMode.values());
     }
 

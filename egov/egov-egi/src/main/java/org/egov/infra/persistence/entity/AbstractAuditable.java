@@ -39,8 +39,6 @@
  */
 package org.egov.infra.persistence.entity;
 
-import java.util.Date;
-
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -51,6 +49,7 @@ import javax.persistence.TemporalType;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.search.domain.Searchable;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -73,7 +72,8 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate    
     @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
-    private Date createdDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
@@ -82,7 +82,8 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    private Date lastModifiedDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastModifiedDate;
     
     public User getCreatedBy() {
         return createdBy;
@@ -97,7 +98,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     }
 
     public void setCreatedDate(final DateTime createdDate) {
-        this.createdDate = null == createdDate ? null : createdDate.toDate();
+        this.createdDate = createdDate;
     }
 
     public User getLastModifiedBy() {
@@ -113,6 +114,6 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     }
 
     public void setLastModifiedDate(final DateTime lastModifiedDate) {
-        this.lastModifiedDate = null == lastModifiedDate ? null : lastModifiedDate.toDate();
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

@@ -49,8 +49,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" default-lazy-init="true">
 	<context:component-scan base-package="org.egov.ptis" />
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	<tx:annotation-driven/>
+
 	<bean id="basicPrpertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService">
 		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
 	</bean>

@@ -49,14 +49,12 @@ import org.egov.infstr.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class will get called when Authentication is successful. Now this class
  * only Logs the User Login information.
  **/
 @Service
-@Transactional
 public class AuthenticationSuccessEventAction implements ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
 
     @Autowired

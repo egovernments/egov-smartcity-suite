@@ -131,7 +131,7 @@ public class ComplaintTypeService {
         criteria.setProjection(Projections.projectionList().add(Projections.property("complaint.complaintType"))
                 .add(Projections.count("complaint.complaintType").as("count"))
                 .add(Projections.groupProperty("complaint.complaintType")));
-        criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
+        criteria.add(Restrictions.between("complaint.createdDate", previousDate, currentDate));
         criteria.setMaxResults(5).addOrder(Order.desc("count"));
         final List<Object> resultList = criteria.list();
         final List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();

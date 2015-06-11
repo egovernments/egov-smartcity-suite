@@ -58,7 +58,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class IdentityRecoveryService {
     private static final String USER_PWD_RECOVERY_TMPLTE = "user.pwd.recovery";
-    private static final String USER_PWD_RESET_TMPLTE = "user.pwd.reset";
 
     @Autowired
     private IdentityRecoveryRepository identityRecoveryRepository;
