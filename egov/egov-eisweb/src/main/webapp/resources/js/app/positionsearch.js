@@ -9,57 +9,50 @@ $(document).ready(function(){
 	function callajaxdatatable(){
 
 		tableContainer1.dataTable({
-				processing : true,
-				serverSide : true,
-				type : 'GET',
-				sort : true,
-				filter : true,
-				responsive : true,
-				destroy : true,
-				ajax: {
-		        	url : "/eis/position/resultList-update",
-		        	data : {
-		        		departmentId : $('#position_dept').val(),
-		        		designationId : $('#position_desig').val()
-		        	}
-		        },
-		        "sPaginationType": "bootstrap",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-						[ 10, 25, 50, "All" ] ],
-				"autoWidth": false,		
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-				columns : [{
-					"mData" : "name",
-					"sTitle" : "Position"
-				},{
-					"mData" : "outSourcedPost",
-					"sTitle" : "Outsourced Posts"
-				},{
-					"targets": -1,
-					"mData" : null,
-					"defaultContent": '<button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'
-					
-				},{
-					"mData" : "positionId",
-					"visible": false
-				},{
-					"mData" : "outSourcedPostCount",
-					"visible": false
-				},{
-					"mData" : "sanctionedPostCount",
-					"visible": false
-				},{
-					"mData" : "departmentName",
-					"visible": false
-				},{
-					"mData" : "designationName",
-					"visible": false
-				},{
-					"mData" : "isOutSourced",
-					"visible": false
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			"bDestroy": true,
+			"ajax": {
+	        	url : "/eis/position/resultList-update",
+	        	data : {
+	        		departmentId : $('#position_dept').val(),
+	        		designationId : $('#position_desig').val()
+	        	}
+	        },
+	       	"columns" : [{
+				"mData" : "name",
+				"sTitle" : "Position"
+			},{
+				"mData" : "outSourcedPost",
+				"sTitle" : "Outsourced Posts"
+			},{
+				"targets": -1,
+				"mData" : null,
+				"defaultContent": '<button type="button" class="btn btn-xs btn-secondary edit-position"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'
+				
+			},{
+				"mData" : "positionId",
+				"visible": false
+			},{
+				"mData" : "outSourcedPostCount",
+				"visible": false
+			},{
+				"mData" : "sanctionedPostCount",
+				"visible": false
+			},{
+				"mData" : "departmentName",
+				"visible": false
+			},{
+				"mData" : "designationName",
+				"visible": false
+			},{
+				"mData" : "isOutSourced",
+				"visible": false
 
-				}]
-			});
+			}]
+		});
 		
 	}
 	
