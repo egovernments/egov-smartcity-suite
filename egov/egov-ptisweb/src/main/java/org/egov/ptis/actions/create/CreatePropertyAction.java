@@ -326,12 +326,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		//String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
 				//.getBoundaryNum().toString());
 		//basicProperty.setUpicNo(indexNum);
-		basicProperty.setUpicNo("1085567746");
+		basicProperty.setUpicNo("1085567767");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-		property.setCreatedDate(currentDate);
+		/*property.setCreatedDate(currentDate);
 		property.setLastModifiedDate(currentDate);
 		property.setCreatedBy(securityUtils.getCurrentUser());
-		property.setLastModifiedBy(securityUtils.getCurrentUser());
+		property.setLastModifiedBy(securityUtils.getCurrentUser());*/
 		
 		if (isNotBlank(getDocNumber())) {		
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());

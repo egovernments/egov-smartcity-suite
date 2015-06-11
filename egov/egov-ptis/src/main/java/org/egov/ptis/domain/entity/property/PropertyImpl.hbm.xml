@@ -50,10 +50,10 @@
 				<param name="sequence">SEQ_EGPT_PROPERTY</param>
 			</generator>
 		</id>
-		<!-- <property name="createdDate" type="org.joda.time.contrib.hibernate.PersistentDateTime">
+		<property name="createdDate" type="timestamp">
 			<column name="CREATED_DATE" />
 		</property>
-		<property name="lastModifiedDate" type="org.joda.time.contrib.hibernate.PersistentDateTime">
+		<property name="lastModifiedDate" type="timestamp">
 			<column name="MODIFIED_DATE" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
@@ -61,7 +61,7 @@
 		</many-to-one>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
-		</many-to-one> -->
+		</many-to-one>
 
 		<many-to-one name="propertySource"
 			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />

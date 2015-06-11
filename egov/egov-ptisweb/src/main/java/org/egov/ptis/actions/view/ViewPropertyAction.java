@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -83,6 +84,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Namespace("/view")
 @Transactional(readOnly = true)
+@Results({ @Result(name = "view", location = "/viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;
@@ -109,17 +111,29 @@ public class ViewPropertyAction extends BaseFormAction {
 	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
 	private PtDemandDao ptDemandDAO;
-
 	@Autowired
 	private UserService UserService;
 
+	public void setBasicPropertyDAO(BasicPropertyDAO basicPropertyDAO) {
+		this.basicPropertyDAO = basicPropertyDAO;
+	}
+	
+	public void setPtDemandDAO(PtDemandDao ptDemandDAO) {
+		this.ptDemandDAO = ptDemandDAO;
+	}
+
+	public void setUserService(UserService userService) {
+		UserService = userService;
+	}
+	
 	@Override
 	public Object getModel() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Action(value = "/view-viewForm", results = { @Result(name = "view", location = "/viewProperty-view.jsp") })
+	
+	@Action(value = "/viewProperty-viewForm")
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm method");
 		String target = "";
