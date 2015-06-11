@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -68,20 +68,17 @@
 
   	<s:form name="DefaultersListForm" action="defaultersReport" theme="simple">
 		<div class="formmainbox">
-  			<div class="formheading"></div>
 			<div class="headingbg"><s:text name="defaultersListReport.title"/></div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="greybox" width="45%">
+					<td class="greybox" width="30%">
 							&nbsp; &nbsp;
 					</td>
-					<td class="greybox" width="5%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						<s:text name="Zone" /><span class="mandatory"> * </span> :
+					<td class="greybox" width="20%" style="text-align: left">
+						<s:text name="Zone" /><span class="mandatory1"> * </span> :
 					</td>  
 					<td class="greybox" width="25%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp;
+						
 						<s:select id="reportZones" headerKey="-1"
 							headerValue="%{getText('default.select')}" name="zoneId"
 							value="%{zoneId}" list="ZoneBndryMap" cssClass="selectnew"
@@ -92,18 +89,15 @@
 					</td>					
 				</tr>
 				<tr>
-					<td class="bluebox" width="45%">
+					<td class="bluebox" width="20%">
 							&nbsp; &nbsp;
 					</td>					
-					<td class="bluebox" width="5%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						<s:text name="Ward" /><span class="mandatory"> * </span> : 
+					<td class="bluebox" width="25%" style="text-align: left">
+						<s:text name="Ward" /><span class="mandatory1"> * </span> : 
 					</td>
 					<td class="bluebox" width="25%" style="text-align: left">
 						<egov:ajaxdropdown id="wardAjaxDropdown" fields="['Text','Value']"
 							dropdownId="reportWards" url="common/ajaxCommon!wardByZone.action" />
-						&nbsp; &nbsp; &nbsp; &nbsp;
 						<s:select id="reportWards" headerKey="-1"
 							headerValue="%{getText('default.select')}"
 							list="dropdownData.Wards" cssClass="selectnew" name="wardId" listKey="id" listValue="name"
@@ -114,18 +108,15 @@
 					</td>
 				</tr>		
 				<tr>
-					<td class="greybox" width="45%">
+					<td class="greybox" width="20%">
 							&nbsp; &nbsp;
 					</td>					
-					<td class="greybox" width="5%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-						<s:text name="partNo" /> : 
+					<td class="greybox" width="25%" style="text-align: left">
+						<s:text name="block" /> : 
 					</td>
 					<td class="greybox" width="25%" style="text-align: left">
 						<egov:ajaxdropdown id="partNoAjaxDropdown" fields="['Text','Value']"
 							dropdownId="partNumbers" url="common/ajaxCommon!partNumbersByWard.action" />
-						&nbsp; &nbsp; &nbsp; &nbsp;
 						<s:select id="partNumbers" headerKey="-1"
 							headerValue="%{getText('default.select')}"
 							list="dropdownData.partNumbers" cssClass="selectnew" name="partNo"
@@ -136,16 +127,13 @@
 					</td>
 				</tr>			
 				<tr>
-					<td class="bluebox" width="45%">
+					<td class="bluebox" width="20%">
 							&nbsp; &nbsp;
 					</td>					
-					<td class="bluebox" width="5%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-						<s:text name="outstandingAmount" /><span class="mandatory"> * </span> : 
+					<td class="bluebox" width="25%" style="text-align: left">
+						<s:text name="outstandingAmount" /><span class="mandatory1"> * </span> : 
 					</td>
 					<td class="bluebox" width="25%" style="text-align: left">
-						&nbsp; &nbsp; &nbsp; &nbsp;
 						<s:select id="outstandingAmount" headerKey="-1"
 							headerValue="%{getText('default.select')}" name="amountRange"
 							value="%{amountRange}"
@@ -158,7 +146,7 @@
 				</tr>
 				<tr>
 					<td class="greybox" colspan="4" width="100%">
-					<span class="mandatory"><s:text name="defaulter.report.infomsg"/></span>
+					<span class="mandatory1"><s:text name="defaulter.report.infomsg"/></span>
 					</td>					
 				</tr>
 			</table>

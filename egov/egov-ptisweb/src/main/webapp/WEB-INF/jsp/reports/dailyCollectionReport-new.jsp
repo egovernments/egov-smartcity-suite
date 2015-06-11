@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -47,7 +47,27 @@
 		<title>
 			<s:text name='ptis.collectionReport.title' />
 		</title>
-		<script type="text/javascript">
+		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>		
+        <script type="text/javascript">
+
+        jQuery(function ($) {
+        	try { 
+        		$(".datepicker").datepicker({
+        			format: "dd/mm/yyyy"
+        		}); 
+        		}catch(e){
+        		console.warn("No Date Picker "+ e);
+        	}
+
+       		$('.datepicker').on('changeDate', function(ev){
+       		    $(this).datepicker('hide');
+       		});
+        		
+            	
+        });
+        	
+    
 		function checkBeforeSubmit() {
 			var fromDate = document.getElementById("fromDate").value;
 			var toDate = document.getElementById("toDate").value;
@@ -79,6 +99,9 @@
 			}
 			
 		}
+
+		
+		
 		</script>
 	</head>
 
@@ -87,7 +110,6 @@
 			<s:actionerror/>
 			<div class="formmainbox">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<div class="formheading"></div>
 					<tr>
 						<td width="100%" colspan="6" class="headingbg">												
 							<div class="headingbg">					
@@ -101,44 +123,48 @@
 					<tr>
 						<td class="bluebox" >&nbsp;</td>
 						<td class="bluebox" >
-							<s:text name="fromDate"/><span class="mandatory">*</span>
+							<s:text name="fromDate"/><span class="mandatory1">*</span>
 						</td>
 						<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
 						<td class="bluebox">
 							<s:textfield id="fromDate"
 							name="fromDate" value="%{cdFormat}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY"
+							cssClass="datepicker"
 							onblur="validateDateFormat(this);" />
-							<a href="javascript:show_calendar('forms[0].fromDate');"
+							<!-- a href="javascript:show_calendar('forms[0].fromDate');"
 							onmouseover="window.status='Date Picker';return true;"
 							onmouseout="window.status='';return true;">
 							<img src="${pageContext.request.contextPath}/images/calendaricon.gif"
 							alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-							<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
+							<div class="highlight2" style="width: 80px">DD/MM/YYYY</div-->
 						</td>
 						<td class="bluebox">
 							<div style="text-align:center">
-								<s:text name="toDate" /><span class="mandatory">*</span>
+								<s:text name="toDate" /><span class="mandatory1">*</span>
 							</div>
 						</td>
 						<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
 						<td class="bluebox">
 							<s:textfield id="toDate" name="toDate" value="%{cdFormat1}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY"
+							cssClass="datepicker"
 							onblur="validateDateFormat(this);" />
-							<a href="javascript:show_calendar('forms[0].toDate');"
+							<!-- a href="javascript:show_calendar('forms[0].toDate');"
 							onmouseover="window.status='Date Picker';return true;"
 							onmouseout="window.status='';return true;">
 							<img src="${pageContext.request.contextPath}/images/calendaricon.gif"
 							alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-								<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
+								<div class="highlight2" style="width: 80px">DD/MM/YYYY</div-->
 						</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox">
-							<s:text name="operator"/><span class="mandatory">*</span>
+							<s:text name="operator"/><span class="mandatory1">*</span>
 						</td>
 						<td class="greybox">
 							<s:select list="dropdownData.userList" listKey="id" listValue="userName" cssClass="selectnew"
@@ -150,8 +176,9 @@
 						<td colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 			</table>
+			<br/>
 			<tr>
-        		<font size="2"><div align="left" class="mandatory"><s:text name="mandtryFlds"/></div></font>
+        		<font size="2"><div align="left" class="mandatory1"> &nbsp;&nbsp; <s:text name="mandtryFlds"/></div></font>
         	</tr>
 		</div>
 		<div class="buttonbottom" align="center">

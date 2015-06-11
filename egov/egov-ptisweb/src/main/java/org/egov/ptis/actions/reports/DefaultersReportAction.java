@@ -71,6 +71,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -102,7 +104,9 @@ import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Transactional(readOnly = true)
+@ResultPath("/WEB-INF/jsp/")
 @Namespace("/reports")
+@Results({ @Result(name = "new", location = "reports/defaultersReport-new.jsp")})
 public class DefaultersReportAction extends BaseFormAction {
 
 	private static final String RESULT_NEW = "new";
@@ -210,7 +214,7 @@ public class DefaultersReportAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/defaultersReport.action", results = { @Result(name = RESULT_NEW, location = "/defaultersReport-new.jsp") })
+	@Action(value = "/defaultersReport-newForm")
 	public String newForm() {
 		return RESULT_NEW;
 	}

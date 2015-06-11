@@ -55,6 +55,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -64,7 +65,10 @@ import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
@@ -95,8 +99,11 @@ import org.springframework.transaction.annotation.Transactional;
  * @author subhash
  * 
  */
-@Namespace("/reports")
+@ParentPackage("egov")
 @Transactional(readOnly = true)
+@ResultPath("/WEB-INF/jsp/")
+@Namespace("/reports")
+@Results({ @Result(name = "new", location = "reports/dailyCollectionReport-new.jsp")})
 public class DailyCollectionReportAction extends BaseFormAction {
 
 	private static final Logger LOGGER = Logger.getLogger(DailyCollectionReportAction.class);
@@ -170,7 +177,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/dialyCollectionReport-newForm", results = { @Result(name = NEW, location = "/dialyCollectionReport-new.jsp") })
+	@Action(value = "/dailyCollectionReport-newForm")
 	public String newForm() {
 		return NEW;
 	}
