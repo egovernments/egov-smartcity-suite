@@ -96,6 +96,7 @@ public class SessionAttributeHandlerFilter implements Filter {
             httpSession.setAttribute("cityname", city.getCityName());
             httpSession.setAttribute("citylogo", city.getLogo());
             httpSession.setAttribute("citynamelocal", city.getCityNameLocal());
+            httpSession.setAttribute("citiCode", city.getCode());
         }
 
         final Principal principal = httpRequest.getUserPrincipal();

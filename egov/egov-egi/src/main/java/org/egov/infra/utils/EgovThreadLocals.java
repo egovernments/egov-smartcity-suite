@@ -43,47 +43,57 @@ import javax.servlet.ServletContext;
 
 public class EgovThreadLocals {
 
-	private static ThreadLocal<String> domainName = new ThreadLocal<>();
-	private static ThreadLocal<Long> userId = new ThreadLocal<>();
-	private static ThreadLocal<ServletContext> servletContext = new ThreadLocal<>();
-	private static ThreadLocal<String> tenantID = new ThreadLocal<>();
+    private static ThreadLocal<String> domainName = new ThreadLocal<>();
+    private static ThreadLocal<Long> userId = new ThreadLocal<>();
+    private static ThreadLocal<ServletContext> servletContext = new ThreadLocal<>();
+    private static ThreadLocal<String> tenantID = new ThreadLocal<>();
+    private static ThreadLocal<String> cityCode = new ThreadLocal<>();
 
-	public static String getTenantID() {
-		return tenantID.get();
-	}
+    public static String getCityCode() {
+        return cityCode.get();
+    }
 
-	public static void setTenantID(final String tenantJNDI) {
-		tenantID.set(tenantJNDI);
-	}
+    public static void setCityCode(final String citiCode) {
+        cityCode.set(citiCode);
+    }
 
-	public static String getDomainName() {
-		return domainName.get();
-	}
+    public static String getTenantID() {
+        return tenantID.get();
+    }
 
-	public static void setDomainName(final String domName) {
-		domainName.set(domName);
-	}
+    public static void setTenantID(final String tenantJNDI) {
+        tenantID.set(tenantJNDI);
+    }
 
-	public static Long getUserId() {
-		return userId.get();
-	}
+    public static String getDomainName() {
+        return domainName.get();
+    }
 
-	public static void setUserId(final Long userid) {
-		userId.set(userid);
-	}
+    public static void setDomainName(final String domName) {
+        domainName.set(domName);
+    }
 
-	public static ServletContext getServletContext() {
-		return servletContext.get();
-	}
+    public static Long getUserId() {
+        return userId.get();
+    }
 
-	public static void setServletContext(final ServletContext servlContext) {
-		servletContext.set(servlContext);
-	}
+    public static void setUserId(final Long userid) {
+        userId.set(userid);
+    }
 
-	public static void clearValues() {
-		setDomainName(null);
-		setUserId(null);
-		setTenantID(null);
-	}
+    public static ServletContext getServletContext() {
+        return servletContext.get();
+    }
+
+    public static void setServletContext(final ServletContext servlContext) {
+        servletContext.set(servlContext);
+    }
+
+    public static void clearValues() {
+        setDomainName(null);
+        setUserId(null);
+        setTenantID(null);
+        setCityCode(null);
+    }
 
 }

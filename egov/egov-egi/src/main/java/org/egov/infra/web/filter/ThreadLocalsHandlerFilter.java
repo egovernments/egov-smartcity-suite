@@ -69,11 +69,12 @@ public class ThreadLocalsHandlerFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
         try {
-
-            final String domainName = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            final String domainName = WebUtils.extractRequestedDomainName(httpRequest);
             EgovThreadLocals.setDomainName(domainName);
             EgovThreadLocals.setServletContext(((HttpServletRequest) request).getServletContext());
             EgovThreadLocals.setTenantID(environment.getProperty("tenant." + domainName));
+            EgovThreadLocals.setCityCode((String)httpRequest.getSession(false).getAttribute("citiCode"));
 
             chain.doFilter(request, response);
 

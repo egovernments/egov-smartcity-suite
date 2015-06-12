@@ -93,6 +93,9 @@ public class CityWebsite extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     private String logo;
+    
+    @NotBlank
+    private String code;
 
     public Long getId() {
         return id;
@@ -179,5 +182,13 @@ public class CityWebsite extends AbstractAuditable {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
