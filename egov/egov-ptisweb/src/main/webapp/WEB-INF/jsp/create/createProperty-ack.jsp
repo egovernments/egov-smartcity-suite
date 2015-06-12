@@ -55,12 +55,12 @@
   <s:push value="model">
   <s:token />
   <div class="formmainbox">
-  <div class="formheading"></div>
 		<div class="headingbg"><s:text name="CreatePropertyAckHeader"/></div>
+		<br/>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<s:if test="%{basicProperty.upicNo!=null && !basicProperty.upicNo.isEmpty()}">
-				<td colspan="5" style="background-color: #FDF7F0;font-size: 15px;" align="center">
+				<td colspan="5" style="font-size: 15px;" align="center">
 		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
 		        	<a href='../view/viewProperty!viewForm.action?propertyId=<s:property value="%{basicProperty.upicNo}"/>' >
 		        		<s:property value="%{basicProperty.upicNo}"/>
@@ -68,12 +68,13 @@
 		        </td>		    
 		   	</s:if>
 	        <s:else>
-		       	<td colspan="5" style="background-color: #FDF7F0;font-size: 15px;" align="center">
+		       	<td colspan="5" style="font-size: 15px;" align="center">
 		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
 		        </td>
 	        </s:else>
 		</tr>
 		</table>
+		<br/>
 	</div>
 	<div class="buttonbottom" align="center">
 			<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
