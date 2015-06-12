@@ -55,6 +55,8 @@
     		alert("Please select a Fund");
     		return false;
     	}   
+    	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-search.action';
+    	document.schemeForm.submit();
     	return true;
     }               
     </SCRIPT>
@@ -88,7 +90,7 @@
     	<div class="buttonbottom" >
     	<table align="center">  
     	 <tr>  
-			<td><s:submit  value="Search" method="search"   cssClass="buttonsubmit" onclick="return validateFund();" /></td>
+			<td><input type="submit" class="button" value="Search" id="search" name="button" onclick="return validateFund();" /></td>
 		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
 	  </table>
 	  </div>
@@ -151,9 +153,9 @@
 	<script type="text/javascript">
 	function urlLoad(id,showMode) {
 		if(showMode=='edit')
-			 url = "../masters/scheme!beforeEdit.action?id="+id+"&mode=edit";
+			 url = "../masters/scheme-beforeEdit.action?id="+id+"&mode=edit";
 		else          
-			 url = "../masters/scheme!beforeView.action?id="+id+"&mode=view"; 
+			 url = "../masters/scheme-beforeView.action?id="+id+"&mode=view"; 
 		window.open(url,'schemeView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	</script>

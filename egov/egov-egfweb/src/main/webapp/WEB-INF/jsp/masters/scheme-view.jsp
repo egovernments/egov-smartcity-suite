@@ -37,12 +37,10 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
 
 <%@ page language="java"%>
+
 <html>
   <head>
     
@@ -89,37 +87,35 @@
 	    <s:hidden name="id" id="id" value="%{id}" />
      	<table width="100%" border="0" cellspacing="0" cellpadding="0">                   
     		<tr>
-					<td class="greybox" width="10%" ><s:text name="scheme.code"/><span class="mandatory">*</span></td>
-				    <td class="greybox" width="30%" ><s:textfield id="code" name="code" value="%{scheme.code}" onblur="checkuniquenesscode();"/></td>
-				     <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/scheme!codeUniqueCheck.action'/>
+					<td class="greybox" width="10%" ><b><s:text name="scheme.code"/></b></td>
+				    <td class="greybox" width="30%" ><s:property value="%{scheme.code}" /></td>
 				                       
-				    <td class="greybox" width="10%"><s:text name="scheme.name"/><span class="mandatory">*</span></td>
-				    <td class="greybox"  width="30%"><s:textfield id="scheme.name" name="name" value="%{scheme.name}" onblur="checkuniquenessname();"/></td>
-					<egov:uniquecheck id="uniquename" name="uniquename" fieldtoreset="name" fields="['Value']" url='masters/scheme!nameUniqueCheck.action'/>
+				    <td class="greybox" width="10%"><b><s:text name="scheme.name"/></b></td>
+				    <td class="greybox"  width="30%"><s:property value="%{scheme.name}" /></td>
 			</tr>
 			<tr>
-			        <td class="bluebox"><s:text name="scheme.fund"/><span class="mandatory">*</span></td>
-				    <td class="bluebox">
-					<s:select name="fund" id="fundId" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="scheme.fund.id" />
+			        <td class="bluebox"><b><s:text name="scheme.fund"/></b></td>
+				    <td class="bluebox"><s:property value="%{scheme.fund.name}" /></td>
+					<td class="bluebox"><b>IsActive</b></td>
+					<td class="bluebox">
+					<s:if test="%{scheme.isactive==1}">
+					true
+					</s:if>
+					<s:else>
+					false
+					</s:else>
 					</td>
-					<td class="bluebox">IsActive</td>
-					<td class="bluebox"><s:checkbox id="isactive" name="isactive" value="%{scheme.isactive}"/> </td>
 			</tr>
 			<tr>
-					<td class="greybox" > <s:text name="scheme.startDate" /><span class="mandatory">*</span></td>
-					<td  class="greybox" ><s:date name="validfrom" id="validfromId" format="dd/MM/yyyy" />
-					<s:textfield name="validfrom" id="validfromId" value="%{scheme.validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-					<a href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td class="greybox" > <b><s:text name="scheme.startDate" /></b></td>
+					<td  class="greybox" ><s:property value="%{scheme.validfrom}" /></td>
 					
-					<td  class="greybox" ><s:text name="scheme.endDate" /><span class="mandatory">*</span></td>
-					<td  class="greybox">
-					<s:date name="validto" id="validtoId"  format="dd/MM/yyyy"/>
-					<s:textfield name="validto" id="validtoId" value="%{scheme.validto}"   maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-					<a href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					<td  class="greybox" ><b><s:text name="scheme.endDate" /></b></td>
+					<td  class="greybox"><s:property value="%{scheme.validto}" /></td>
 			</tr>
 			<tr>
-					<td class="bluebox" width="10%"><s:text name="scheme.description" /></td>
-					<td class="bluebox" colspan="3" ><s:textarea  id="description" name="description" value="%{scheme.description}" style="width:470px"/></td>				
+					<td class="bluebox" width="10%"><b><s:text name="scheme.description" /></b></td>
+					<td class="bluebox" colspan="3" ><s:property value="%{scheme.description}" /></td>				
 			</tr>          
     	</table>
     	</div>

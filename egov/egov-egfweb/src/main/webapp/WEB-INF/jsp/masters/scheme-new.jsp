@@ -71,8 +71,14 @@
             document.getElementById('validtoId').value = "";
             return false;
  	    } 
-        document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-create.action';
-    	document.schemeForm.submit();
+ 	    var showMode = document.getElementById('mode').value;
+ 	   if(showMode=='edit'){
+        	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-edit.action';
+    		document.schemeForm.submit();
+ 	   }else{
+ 		  	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-create.action';
+ 	    	document.schemeForm.submit();
+ 	 	   }
     	return true;
     }     
 
@@ -86,6 +92,7 @@
    <s:form name="schemeForm" action="scheme" theme="css_xhtml" validate="true">
     <div class="formmainbox"><div class="subheadnew"><s:text name="scheme.create.title"/></div>
   		<s:token name="%{tokenName()}"/>  
+  		<s:hidden name="mode" id="mode" value="%{mode}" />
   		<s:hidden id="id" name="id"/>                    
   		<div style="color: red">            
 		<s:actionerror/>  
@@ -103,11 +110,11 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">                   
     		<tr>
 					<td class="greybox" width="10%" ><s:text name="scheme.code"/><span class="mandatory">*</span></td>
-				    <td class="greybox" width="30%" ><s:textfield id="code" name="code" value="%{code}" onblur="checkuniquenesscode();"/></td>
+				    <td class="greybox" width="30%" ><s:textfield id="code" name="code" value="%{scheme.code}" onblur="checkuniquenesscode();"/></td>
 				     <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/scheme-codeUniqueCheck.action'/>
 				                       
 				    <td class="greybox" width="10%"><s:text name="scheme.name"/><span class="mandatory">*</span></td>
-				    <td class="greybox"  width="30%"><s:textfield id="name" name="name" value="%{name}" onblur="checkuniquenessname();"/></td>
+				    <td class="greybox"  width="30%"><s:textfield id="name" name="name" value="%{scheme.name}" onblur="checkuniquenessname();"/></td>
 					<egov:uniquecheck id="uniquename" name="uniquename" fieldtoreset="name" fields="['Value']" url='masters/scheme-nameUniqueCheck.action'/>
 			</tr>
 			<tr>
@@ -121,18 +128,18 @@
 			<tr>
 					<td class="greybox" > <s:text name="scheme.startDate" /><span class="mandatory">*</span></td>
 					<td  class="greybox" ><s:date name="validfrom" id="validfromId" format="dd/MM/yyyy" />
-					<s:textfield name="validfrom" id="validfromId" value="%{validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
+					<s:textfield name="validfrom" id="validfromId" value="%{scheme.validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 					<a href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					
 					<td  class="greybox" ><s:text name="scheme.endDate" /><span class="mandatory">*</span></td>
 					<td  class="greybox">
 					<s:date name="validto" id="validtoId" format="dd/MM/yyyy"/>
-					<s:textfield name="validto" id="validtoId" value="%{validto}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
+					<s:textfield name="validto" id="validtoId" value="%{scheme.validto}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 					<a href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			</tr>
 			<tr>
 					<td class="bluebox" width="10%"><s:text name="scheme.description" /></td>
-					<td class="bluebox" colspan="3" ><s:textarea  id="description" name="description" style="width:470px"/></td>				
+					<td class="bluebox" colspan="3" ><s:textarea  id="description" name="description" value="%{scheme.description}" style="width:470px"/></td>				
 			</tr>          
     	</table>    
     	<br/>
@@ -140,13 +147,16 @@
     	  <div class="buttonbottom" >
     	  <table align="center">  
 	    	 <tr class="buttonbottom" id="buttondiv" style="align:middle" >
-				<td><input type="submit" class="button" value="Save"
-							id="saveButton" name="button"
-							onclick="return validateFormAndSubmit();" /></td>
-				<td><input type="submit" class="button" value="Reset"
-							id="resetButton" name="button"
-							onclick="resetForm();" /></td>
+	    	 <s:if test="%{mode=='new'}">
+				<td><input type="submit" class="button" value="Save" id="saveButton" name="button" onclick="return validateFormAndSubmit();" /></td>
+				<td><input type="submit" class="button" value="Reset" id="resetButton" name="button" onclick="resetForm();" /></td>
 			    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
+			</s:if>
+			<s:else>
+				<td><input type="submit" class="button" value="Modify" id="Modify" name="button" onclick="return validateFormAndSubmit();" /></td>
+			    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
+			</s:else>
+			
 			</tr>
 		  </table>
 		 </div>

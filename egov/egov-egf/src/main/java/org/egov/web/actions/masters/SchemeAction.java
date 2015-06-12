@@ -63,7 +63,10 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@Results({ @Result(name = SchemeAction.NEW, location = "scheme-new.jsp"),
+@Results({ 
+		@Result(name = SchemeAction.NEW, location = "scheme-new.jsp"),
+		@Result(name = SchemeAction.SEARCH, location = "scheme-search.jsp"),
+		@Result(name = SchemeAction.VIEW, location = "scheme-view.jsp"),
         @Result(name = SchemeAction.UNIQUECHECKFIELD, location = "scheme-fieldUniqueCheck.jsp") })
 public class SchemeAction extends BaseFormAction {
 
@@ -96,16 +99,14 @@ public class SchemeAction extends BaseFormAction {
         super.prepare();
         final EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
         addDropdownData("fundDropDownList", masterCache.get("egi-fund"));
-        if (scheme.getId() != null)
-            if (scheme.getIsactive() != 0)
-                isActive = true;
-            else
-                isActive = false;
+      
     }
 
     @SkipValidation
     @Action(value = "/masters/scheme-newForm")
     public String newForm() {
+    	scheme.reset();
+    	isActive = false;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside NewForm method..");
         mode = NEW;
@@ -124,10 +125,15 @@ public class SchemeAction extends BaseFormAction {
     @Action(value = "/masters/scheme-beforeEdit")
     public String beforeEdit() {
         scheme = (Scheme) persistenceService.find("from Scheme where id=?", scheme.getId());
+        if (scheme.getId() != null)
+            if (scheme.getIsactive() != 0)
+                isActive = true;
+            else
+                isActive = false;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside Before Edit Method..");
         mode = EDIT;
-        return EDIT;
+        return NEW;
     }
 
     @SkipValidation
@@ -141,6 +147,7 @@ public class SchemeAction extends BaseFormAction {
     }
 
     @SkipValidation
+    @Action(value = "/masters/scheme-search")
     public String search() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Search |Search scheme Action Starts");
@@ -163,8 +170,14 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("Scheme List Size is" + schemeList.size());
         return SEARCH;
     }
-
+    @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fund", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "validfrom", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "validto", message = "", key = REQUIRED) })
+    @ValidationErrorPage(value = NEW)
     @SuppressWarnings("unchecked")
+    @Action(value = "/masters/scheme-edit")
     public String edit() {
         if (isActive)
             scheme.setIsactive(1);
@@ -183,14 +196,10 @@ public class SchemeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(".................................Scheme Modified Successfully......................");
         addActionMessage(getText("Scheme Modified Successfully"));
-        return EDIT;
+        return NEW;
     }
 
-    @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "fund", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "validfrom", message = "", key = REQUIRED),
-            @RequiredFieldValidator(fieldName = "validto", message = "", key = REQUIRED) })
+    
 
     @ValidationErrorPage(value = NEW)
     @Action(value = "/masters/scheme-create")
