@@ -84,7 +84,7 @@ public class Module implements Serializable {
 
     private Integer orderNumber;
 
-    private String code;
+    
 
     @OneToMany(mappedBy="parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Action> actions = Collections.emptySet();
@@ -105,14 +105,6 @@ public class Module implements Serializable {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
     }
 
     public boolean isEnabled() {
@@ -171,6 +163,7 @@ public class Module implements Serializable {
         result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
     }
+    
 
     @Override
     public boolean equals(final Object obj) {
