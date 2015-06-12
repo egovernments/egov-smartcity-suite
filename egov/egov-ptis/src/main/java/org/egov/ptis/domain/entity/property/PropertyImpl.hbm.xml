@@ -50,10 +50,10 @@
 				<param name="sequence">SEQ_EGPT_PROPERTY</param>
 			</generator>
 		</id>
-		<property name="createdDate" type="timestamp">
+		<property name="createdDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="CREATED_DATE" />
 		</property>
-		<property name="lastModifiedDate" type="timestamp">
+		<property name="lastModifiedDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="MODIFIED_DATE" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">

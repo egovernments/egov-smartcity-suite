@@ -215,17 +215,17 @@
 		<td class="greybox" width="25%"><s:text name="floortype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="floorType"
-				id="floorType" listKey="id" listValue="name"
-				list="dropdownData.floorType" value="%{floorName}"
+				headerValue="%{getText('default.select')}" name="floorTypeId"
+				id="floorTypeId" listKey="id" listValue="name"
+				list="dropdownData.floorType" value="%{floorTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="roofType"
-				id="roofType" listKey="id" listValue="name"
-				list="dropdownData.roofType" value="%{roofName}"
+				headerValue="%{getText('default.select')}" name="roofTypeId"
+				id="roofTypeId" listKey="id" listValue="name"
+				list="dropdownData.roofType" value="%{roofTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
@@ -237,7 +237,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
-				list="dropdownData.wallType" value="%{wallName}"
+				list="dropdownData.wallType" value="%{wallTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
@@ -245,7 +245,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
-				list="dropdownData.woodType" value="%{woodName}"
+				list="dropdownData.woodType" value="%{woodTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>

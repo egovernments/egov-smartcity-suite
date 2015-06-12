@@ -99,7 +99,7 @@
 	    	<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
 						name="propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
-						listKey="id" id="floorOccupation"
+						listKey="id" id="propOccId"
 						value="%{propertyDetail.floorDetailsProxy[0].propertyOccupation.id}"
 						listValue="occupation" list="dropdownData.OccupancyList"
 						cssClass="selectnew" onchange="resetDetailsForTenant(this); toggleDisplayOfRentAgreementFields(this);"

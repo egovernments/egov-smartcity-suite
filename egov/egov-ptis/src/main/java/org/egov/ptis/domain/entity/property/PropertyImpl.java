@@ -62,6 +62,7 @@ import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -74,7 +75,7 @@ import org.joda.time.DateTime;
  * @version 2.00
  * @see org.egov.ptis.domain.entity.property.Property
  */
-public class PropertyImpl extends StateAware implements Property {
+public class PropertyImpl extends StateAware implements Property,Auditable {
 	private static final Logger LOGGER = Logger.getLogger(PropertyImpl.class);
 	
 	private Long id;

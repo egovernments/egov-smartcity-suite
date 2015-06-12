@@ -118,6 +118,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -129,12 +130,12 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.WallType;
+import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.stereotype.Service;
 
 public class PropertyService  {
 
@@ -161,7 +162,7 @@ public class PropertyService  {
 
 	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
 			String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
-			String nonResPlotArea, boolean isfloorDetailsRequired,Long floorType,Long roofType,Long wallType,Long woodType) {
+			String nonResPlotArea, boolean isfloorDetailsRequired,Long floorTypeId,Long roofTypeId,Long wallTypeId,Long woodTypeId) {
 		LOGGER.debug("Entered into createProperty");
 		LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
 				+ mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -171,7 +172,15 @@ public class PropertyService  {
 				PTMODULENAME, new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
-
+        FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?",floorTypeId);
+        RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?",roofTypeId);
+        WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?",wallTypeId);
+        WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?",woodTypeId);
+        property.getPropertyDetail().setFloorType(floorType);
+        property.getPropertyDetail().setRoofType(roofType);
+        property.getPropertyDetail().setWallType(wallType);
+        property.getPropertyDetail().setWoodType(woodType);
+        
 		if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
 			Area area = new Area();
 			area.setArea(new Float(areaOfPlot));
@@ -183,11 +192,6 @@ public class PropertyService  {
 			area.setArea(new Float(nonResPlotArea));
 			property.getPropertyDetail().setNonResPlotArea(area);
 		}
-
-		/*property.getPropertyDetail().setFloorType(floorType);
-		property.getPropertyDetail().setRoofType(roofType);
-		property.getPropertyDetail().setWallType(wallType);
-		property.getPropertyDetail().setWoodType(woodType);*/
 		
 		property.getPropertyDetail().setFieldVerified('Y');
 		property.getPropertyDetail().setProperty(property);
@@ -224,7 +228,7 @@ public class PropertyService  {
 		property.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
 		property.getPropertyDetail().setUpdatedTime(new Date());
 		createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
-		// property.setStatus(status);
+		property.setStatus(status);
 		property.setIsDefaultProperty(PROPERTY_IS_DEFAULT);
 		property.setInstallment(currentInstall);
 		property.setEffectiveDate(currentInstall.getFromDate());

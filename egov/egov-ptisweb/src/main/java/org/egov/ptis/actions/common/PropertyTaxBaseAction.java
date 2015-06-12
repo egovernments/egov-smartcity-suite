@@ -589,7 +589,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 	protected void validateHouseNumber(Long wardId, String houseNo, BasicProperty basicProperty) {
 		Query qry = getPersistenceService().getSession().createQuery(
-				"from BasicPropertyImpl bp where bp.address.houseNo = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
+				"from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
 		qry.setParameter("houseNo", houseNo);
 		qry.setParameter("wardId", wardId);
 		//this condition is reqd bcoz, after rejection the validation shouldn't happen for the same houseNo

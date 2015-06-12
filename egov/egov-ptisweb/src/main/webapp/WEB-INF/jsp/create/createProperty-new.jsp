@@ -58,8 +58,7 @@
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
 function loadOnStartUp() {
-	jQuery("#CorrAddrDiv").hide();
-	document.getElementById("CorrAddrDiv").style.display = "";
+	enableCorresAddr();
 	/* document.getElementById("plotArea").style.display = "";
 	document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
@@ -118,7 +117,6 @@ function loadOnStartUp() {
 	//enableSubmitButton();
 }
 function onSubmit(obj) {
-	alert(obj)
 	document.forms[0].action=obj;
 	document.forms[0].submit;
    return true;

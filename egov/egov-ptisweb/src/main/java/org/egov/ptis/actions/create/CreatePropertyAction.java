@@ -50,12 +50,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_RESD_CUM_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
@@ -78,6 +80,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -106,6 +109,7 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.FloorImpl;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
@@ -176,6 +180,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String houseNumber;
 	private String oldHouseNo;
 	private String addressStr;
+	private String aadharNo;
 	private String pinCode;
 	private String parcelID;
 	private String areaOfPlot;
@@ -279,8 +284,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.propWF = propWF;
 	}
 
-
-
 	@Autowired
 	private EisCommonService eisCommonService;
 	
@@ -298,6 +301,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyUsage", PropertyUsage.class);
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyOccupation", PropertyOccupation.class);
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.structureClassification", StructureClassification.class);
+	
 	}
 
 	@SkipValidation
@@ -326,20 +330,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		//String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
 				//.getBoundaryNum().toString());
 		//basicProperty.setUpicNo(indexNum);
-		basicProperty.setUpicNo("1085567767");
+		basicProperty.setUpicNo("1085567911");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-		/*property.setCreatedDate(currentDate);
-		property.setLastModifiedDate(currentDate);
-		property.setCreatedBy(securityUtils.getCurrentUser());
-		property.setLastModifiedBy(securityUtils.getCurrentUser());*/
-		
+	
 		if (isNotBlank(getDocNumber())) {		
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
 			basicProperty.addDocs(pd);
 		}
 		
 		basicPrpertyService.persist(basicProperty);
-		getPersistenceService().getSession().flush();
+		
 		//setBasicProp(basicProperty);
 		/*if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((property.getPropertyDetail().getPropertyTypeMaster().getCode()
@@ -626,7 +626,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
 				"from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
 		List<String> authPropList = new ArrayList<String>();
-		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from FloorType order by name");
+		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
 
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
@@ -928,12 +928,20 @@ public class CreatePropertyAction extends WorkflowAction {
 				addrStr2 = getCorrAddress2();
 				addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
 				addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
-				//ownerAddr.setType(addrTypeMstr);
 				ownerAddr.setLandmark(addrStr1);
 				ownerAddr.setAreaLocalitySector(addrStr2);
 				if (getCorrPinCode() != null && !getCorrPinCode().isEmpty()) {
 					ownerAddr.setPinCode(getCorrPinCode());
 				}
+				/*if (StringUtils.isNotBlank(getMobileNo())) {
+					ownerAddr.getUser().setMobileNumber(getMobileNo());
+				}
+				if (StringUtils.isNotBlank(getEmail())) {
+					ownerAddr.getUser().setEmailId(getEmail());
+				}
+				if(StringUtils.isNotBlank(getAadharNo())) {
+					ownerAddr.getUser().setAadhaarNumber(getAadharNo());
+				}*/
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				propertyOwner.addAddress(ownerAddr);
 				PropertyOwner.add(propertyOwner);
@@ -976,10 +984,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				setCorrPinCode(getPinCode());
 			}
 			
-			propAddr.setLandmark(getCorrAddress1());
-			propAddr.setStreetRoadLine(getCorrAddress2());
 		}
-	
 		LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
 		return propAddr;
 	}
@@ -1003,7 +1008,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		return propertyId;
 	}
 
-	/*@Override
+	@Override
 	public void validate() {
 		LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
 				+ ", HouseNumber: " + houseNumber + ", MobileNo: " + mobileNo + ", PinCode: " + pinCode + ", ParcelID:"
@@ -1017,16 +1022,25 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		if (wardId == null || wardId == -1) {
 			addActionError(getText("mandatory.ward"));
-		} else if (houseNumber != null) {
+		} /*else if (houseNumber != null) {
 			validateHouseNumber(wardId, houseNumber, basicProp);
-		}
-		if (null != extentAppartenauntLand && extentAppartenauntLand != "") {
+		}*/
+		if (null == extentAppartenauntLand && extentAppartenauntLand == "") {
 			addActionError(getText("mandatory.extentAppartenauntLand"));
 		}
 		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
 			if (owner != null && owner.getName().equals("")) {
 				addActionError(getText("mandatory.ownerName"));
 			}
+		}
+		for (FloorImpl floor : property.getPropertyDetail().getFloorDetailsProxy()) {
+			if (floor != null && floor.getBuiltUpArea() == null) {
+				addActionError(getText("mandatory.assbleArea"));
+			}
+			if (floor != null && floor.getPropertyOccupation() == null || (floor.getPropertyOccupation().getId().toString()).equals("-1")) {
+				addActionError(getText("mandatory.floor.occ"));
+			}
+
 		}
 		if (getMutationId() == -1) {
 			addActionError(getText("mandatory.createRsn"));
@@ -1038,7 +1052,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			if (org.apache.commons.lang.StringUtils.equals(propertyMutationMaster.getCode(), PROP_CREATE_RSN_BIFUR)) {
 				BasicProperty basicProperty = basicPrpertyService
 						.findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, getParentIndex());
-				if (getParentIndex() == null || isEmpty(getParentIndex())) {
+				if (StringUtils.isBlank(getParentIndex())) {
 					addActionError(getText("mandatory.parentIndex"));
 				} else if (basicProperty == null) {
 					addActionError(getText("mandatory.parentIndexNotFound"));
@@ -1046,11 +1060,11 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 		}
 
-		if (floorTypeId == null && roofTypeId == null && wallTypeId == null && woodTypeId == null) {
+		if (floorTypeId == -1 && roofTypeId == -1 && wallTypeId == -1 && woodTypeId == -1) {
 			addActionError(getText("mandatory.constructionDetails"));
 		}
-
-		if (propTypeId != null && !propTypeId.equals("-1")) {
+		
+		/*if (propTypeId != null && !propTypeId.equals("-1")) {
 			PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
 					.find("from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 			if (propTypeMstr != null) {
@@ -1065,7 +1079,7 @@ public class CreatePropertyAction extends WorkflowAction {
 					}
 				}
 			}
-		}
+		}*/
 
 		if (chkIsCorrIsDiff) {
 			if (isBlank(corrAddress1)) {
@@ -1080,7 +1094,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 	}
-*/
+
 	
 	private void transitionWorkFlow() {
 		LOGGER.debug("Entered method : transitionWorkFlow"); 
@@ -1851,7 +1865,14 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void setApplicationDate(String applicationDate) {
 		this.applicationDate = applicationDate;
 	}
+
+	public String getAadharNo() {
+		return aadharNo;
+	}
+
+	public void setAadharNo(String aadharNo) {
+		this.aadharNo = aadharNo;
+	}
 	
-	 
 	
 }

@@ -42,13 +42,13 @@
  jQuery(document).ready(function(){
 	 jQuery('#locality').change(function() {
 		console.log("came jursidiction"+jQuery('#locality').val());
-		alert(jQuery('#locality').val());
 		jQuery.ajax({
 			url: "/ptis/common/ajaxCommon-blockByLocality.action",
 			type: "GET",
 			data: {
 				locality : jQuery('#locality').val()
 			},
+			cache: false,
 			dataType: "json",
 			success: function (response) {
 				jQuery('#zoneId').val(response.zoneId);
@@ -61,6 +61,7 @@
 			}, 
 			error: function (response) {
 				console.log("failed");
+				alert("No boundary details mapped for locality")
 			}
 		});
 	});
