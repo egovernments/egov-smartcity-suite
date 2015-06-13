@@ -1003,5 +1003,14 @@ public interface PropertyTaxConstants {
 	public static final String MUTATIONRS_OTHERS = "OTHERS";
 	public static final String MUTATIONRS_SALES_DEED = "SALE DEED";
 	public static final String MUTATIONRS_COURT_ORDER = "COURT ORDER";
+	
+	public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
+		{
+			put("-1","Select");
+			put("Mr", "Mr");
+			put("Ms", "Ms");
+			put("Mrs", "Mrs");
+		}
+	};
 
 }

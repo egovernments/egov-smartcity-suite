@@ -62,7 +62,7 @@
 			<s:if test="%{basicProperty.upicNo!=null && !basicProperty.upicNo.isEmpty()}">
 				<td colspan="5" style="font-size: 15px;" align="center">
 		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
-		        	<a href='../view/viewProperty!viewForm.action?propertyId=<s:property value="%{basicProperty.upicNo}"/>' >
+		        	<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.upicNo}"/>' >
 		        		<s:property value="%{basicProperty.upicNo}"/>
 		        	</a>
 		        </td>		    

@@ -172,15 +172,12 @@ public class CreatePropertyAction extends WorkflowAction {
 	private Long wallTypeId;
 	private Long woodTypeId;
 	private Long ownershipType;
-	private String mobileNo;
 	private Double extentSite;
 	private String vacantLandNo;
 	private String extentAppartenauntLand;
-	private String email;
 	private String houseNumber;
 	private String oldHouseNo;
 	private String addressStr;
-	private String aadharNo;
 	private String pinCode;
 	private String parcelID;
 	private String areaOfPlot;
@@ -244,6 +241,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private PropertyImpl newProperty = new PropertyImpl();
 	private Date currDate;
+	private Integer buildingPermissionNo;
+	private Date buildingPermissionDate;
 	
 	@Autowired
 	private UserService userService;
@@ -324,12 +323,11 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ taxExemptReason + ", isAuthProp: " + isAuthProp + ", propTypeId: " + propTypeId + ", propUsageId: "
 				+ propUsageId + ", propOccId: " + propOccId);*/
 		long startTimeMillis = System.currentTimeMillis();
-		DateTime currentDate = new DateTime();
 		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
-		//String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
-				//.getBoundaryNum().toString());
-		//basicProperty.setUpicNo(indexNum);
+		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
+				.getBoundaryNum().toString());
+		basicProperty.setUpicNo(indexNum);*/
 		basicProperty.setUpicNo("1085567911");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 	
@@ -625,7 +623,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
 		List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
 				"from PropertyMutationMaster pmm where pmm.type=?", PROP_CREATE_RSN);
-		List<String> authPropList = new ArrayList<String>();
+		List<String> authPropList = new ArrayList<String>(0);
 		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
 
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
@@ -781,8 +779,8 @@ public class CreatePropertyAction extends WorkflowAction {
 			propCompletionDate = calendar.getTime();
 		}*/
 
-		basicProperty.setPropOccupationDate(calendar.getTime());
-		//createOwners();
+		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
+		createOwners();
 
 		if ((propTypeMstr != null) 	&& propTypeMstr.getCode().equals(PROPTYPE_OPEN_PLOT)) {
 			property.setPropertyDetail(changePropertyDetail());
@@ -844,8 +842,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProp.setPropOccupationDate(propCompletionDate);
 		createOwners();
 		newProperty.setBasicProperty(basicProp);
-		newProperty.getCitizen().setMobileNumber(getMobileNo());
-		newProperty.getCitizen().setEmailId(getEmail());
+		//newProperty.getCitizen().setMobileNumber(getMobileNo());
+		//newProperty.getCitizen().setEmailId(getEmail());
 
 		if ((propTypeMstr != null) 	&& propTypeMstr.getCode().equals(PROPTYPE_OPEN_PLOT)) {
 			newProperty.setPropertyDetail(changePropertyDetail());
@@ -905,10 +903,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private void createOwners() {
 		LOGGER.debug("Entered into createOwners, Property: " + property);
 
-		/*AddressType addrTypeMstr = (AddressType) getPersistenceService().find(
-				"from AddressType where addressTypeName = ?", OWNER_ADDR_TYPE);*/
-
-		LOGGER.debug("createOwners: AddressTypemMaster: " + /*addrTypeMstr + */", CorrAddress1: " + getCorrAddress1()
+		LOGGER.debug("createOwners:  CorrAddress1: " + getCorrAddress1()
 				+ ", CorrAddress2: " + getCorrAddress2() + ", CorrPinCode: " + getCorrPinCode());
 		PropertyOwner propertyOwner;
 		String addrStr1;
@@ -923,6 +918,12 @@ public class CreatePropertyAction extends WorkflowAction {
 				propertyOwner = new PropertyOwner();
 				propertyOwner.setName(ownerName);
 				propertyOwner.setOrderNo(orderNo);
+				propertyOwner.setAadhaarNumber(owner.getAadhaarNumber());
+				propertyOwner.setUsername(owner.getMobileNumber());
+				propertyOwner.setMobileNumber(owner.getMobileNumber());
+				propertyOwner.setEmailId(owner.getEmailId());
+				propertyOwner.setPassword("NOT SET");
+				//Use Correspondence adress 
 				Address ownerAddr = new PropertyAddress();
 				addrStr1 = getCorrAddress1();
 				addrStr2 = getCorrAddress2();
@@ -933,15 +934,6 @@ public class CreatePropertyAction extends WorkflowAction {
 				if (getCorrPinCode() != null && !getCorrPinCode().isEmpty()) {
 					ownerAddr.setPinCode(getCorrPinCode());
 				}
-				/*if (StringUtils.isNotBlank(getMobileNo())) {
-					ownerAddr.getUser().setMobileNumber(getMobileNo());
-				}
-				if (StringUtils.isNotBlank(getEmail())) {
-					ownerAddr.getUser().setEmailId(getEmail());
-				}
-				if(StringUtils.isNotBlank(getAadharNo())) {
-					ownerAddr.getUser().setAadhaarNumber(getAadharNo());
-				}*/
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				propertyOwner.addAddress(ownerAddr);
 				PropertyOwner.add(propertyOwner);
@@ -1011,7 +1003,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Override
 	public void validate() {
 		LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
-				+ ", HouseNumber: " + houseNumber + ", MobileNo: " + mobileNo + ", PinCode: " + pinCode + ", ParcelID:"
+				+ ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", ParcelID:"
 				+ parcelID + ", MutationId: " + mutationId + ", PartNo: " + partNo);
 
 		if (isBlank(vacantLandNo)) {
@@ -1290,22 +1282,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setBlockId(Long blockId) {
 		this.blockId = blockId;
-	}
-
-	public String getMobileNo() {
-		return mobileNo;
-	}
-
-	public void setMobileNo(String mobileNo) {
-		this.mobileNo = mobileNo;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getHouseNumber() {
@@ -1866,13 +1842,20 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.applicationDate = applicationDate;
 	}
 
-	public String getAadharNo() {
-		return aadharNo;
+	public Integer getBuildingPermissionNo() {
+		return buildingPermissionNo;
 	}
 
-	public void setAadharNo(String aadharNo) {
-		this.aadharNo = aadharNo;
+	public void setBuildingPermissionNo(Integer buildingPermissionNo) {
+		this.buildingPermissionNo = buildingPermissionNo;
 	}
-	
+
+	public Date getBuildingPermissionDate() {
+		return buildingPermissionDate;
+	}
+
+	public void setBuildingPermissionDate(Date buildingPermissionDate) {
+		this.buildingPermissionDate = buildingPermissionDate;
+	}
 	
 }

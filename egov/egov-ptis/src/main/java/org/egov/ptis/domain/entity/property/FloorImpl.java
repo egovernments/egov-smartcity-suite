@@ -101,6 +101,9 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	private String taxExemptedReason;
 
 	private UnitRentAgreementDetail rentAgreementDetail;
+	
+	private String capitalValue;
+	private boolean planApproved;
 
 	public FloorImpl(ConstructionTypeSet constructionTypeSet,
 			StructureClassification structureClassification,
@@ -565,6 +568,25 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	public void setRentAgreementDetail(
 			UnitRentAgreementDetail rentAgreementDetail) {
 		this.rentAgreementDetail = rentAgreementDetail;
+	}
+	
+	@Override
+	public String getCapitalValue() {
+		return capitalValue;
+	}
+
+	@Override
+	public void setCapitalValue(String capitalValue) {
+		this.capitalValue = capitalValue;
+	}
+	@Override
+	public boolean isPlanApproved() {
+		return planApproved;
+	}
+
+	@Override
+	public void setPlanApproved(boolean planApproved) {
+		this.planApproved = planApproved;
 	}
 
 	@Override

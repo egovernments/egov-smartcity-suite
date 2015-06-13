@@ -182,4 +182,12 @@ public interface FloorIF {
 
 	public void setRentAgreementDetail(
 			UnitRentAgreementDetail rentAgreementDetail);
+	
+	public String getCapitalValue();
+	
+	public void setCapitalValue(String capitalValue);
+	
+	public boolean isPlanApproved();
+	
+	public void setPlanApproved(boolean planApproved);
 }

@@ -180,8 +180,7 @@ public class PropertyTaxNumberGenerator {
 		try {
 			wardNum = org.apache.commons.lang.StringUtils.leftPad(wardNum, 3, "0");
 			indexNum.append(wardNum);
-			Long index = sequenceNumberGenerator.getNextNumber(
-					"IDIV-" + wardNum).getNumber();
+			Long index = sequenceNumberGenerator.getNextNumber("1085-" + wardNum).getNumber();
 			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);

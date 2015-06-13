@@ -6,8 +6,8 @@
 		<td class="greybox" width="20%"><s:text name="application.no"></s:text><span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="property.basicProperty.applicationNo"
-				id="property.basicProperty.applicationNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="basicProperty.applicationNo"
+				id="basicProperty.applicationNo" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -32,13 +32,13 @@
 		<td class="greybox" width="">
 		   <s:textfield name="aadharNo" id="aadharNo" size="12" maxlength="12"></s:textfield>
 		</td>
-		<td class="greybox" width="25%">Father/Husband Name :</td>
+		<td class="greybox" width="25%"><s:text name="fatherhusbandname"></s:text> :</td>
 		<td class="greybox">
 		  <s:textfield name="guardname" id="guardname" maxlength="30"></s:textfield>
 		</td>
 	</tr>
 	
-	<tr>
+	<%-- <tr>
 	   <td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox"><s:text name="MobileNumber" /> : <span style="
     float: right;
@@ -51,8 +51,18 @@
 		<td class="bluebox"><s:textfield name="email" maxlength="64"
 				onblur="trim(this,this.value);validateEmail(this);" />
 		</td>
+	</tr> --%>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="gender"></s:text>:</td>
+		<td class="greybox" width=""><s:select name="gender" id="gender" headerValue="Choose" headerKey="0" 
+				list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+              </s:select></td>
+		<td class="greybox" width="25%"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox" width=""><s:textfield
+				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
-	
+
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -108,11 +118,11 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.buildingPermissionNo" id="basicProperty.buildingPermissionNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"></s:textfield>
 		</td>
-		<td class="greybox" width="25%">Building Permission Date :</td>
+		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="basicProperty.buildingPermissionDate"  class="form-control datepicker" id="basicProperty.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="buildingPermissionDate"  class="form-control datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -121,22 +131,14 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.regDocNo" id="basicProperty.regDocNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="basicProperty.regdDocNo" id="basicProperty.regdDocNo" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="basicProperty.regDocDate" id="basicProperty.regDocDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="basicProperty.regdDocDate" id="basicProperty.regdDocDate" size="12" maxlength="12"></s:textfield>
 		</td>
 	</tr>
 	
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" size="10" maxlength="10"></s:textfield>
-		</td>
-	</tr>
 	
 	<!-- Owner details section -->
 	
@@ -299,14 +301,6 @@
 	
 	<tr>
 	<td class="bluebox">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="servicecharg.category"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="sbservchargetype"
-				id="sbservchargetype" listKey="idMutation" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{mutationId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-	
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="sbapartcomplex"
@@ -360,6 +354,14 @@
 		</td>
 	</tr>
 
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" size="10" maxlength="10"></s:textfield>
+		</td>
+	</tr>
+	
 </table>
 <script type="text/javascript">
 	function showDocumentManager() {
