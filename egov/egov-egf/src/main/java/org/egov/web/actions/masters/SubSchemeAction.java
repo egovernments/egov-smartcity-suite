@@ -46,6 +46,9 @@ import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
@@ -59,16 +62,26 @@ import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
+
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Results({ 
+	@Result(name = SubSchemeAction.NEW, location = "subScheme-new.jsp"),
+	@Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
+	@Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp")})
 public class SubSchemeAction extends BaseFormAction{
 	private SubScheme subScheme = new SubScheme();
 	private boolean isActive = false;
 	private boolean clearValues = false;
 	private int fundId;
+	private static final String REQUIRED = "required";
 	private int schemeId;
 	private List<SubScheme> subSchemeList;
-	private String showMode="view";
+	public static final String SEARCH = "search";
+	public static final String VIEW = "view";
+	private String showMode=VIEW;
 	private SubSchemeService subSchemeService;
 	
 	@Override
@@ -78,7 +91,7 @@ public class SubSchemeAction extends BaseFormAction{
 	
 	public SubSchemeAction() {
 		addRelatedEntity("scheme", Scheme.class,"name");
-		addRelatedEntity("department", Department.class,"deptName");
+		addRelatedEntity("department", Department.class,"name");
 		addRelatedEntity("createdBy",User.class);
 	}
 	
@@ -86,14 +99,27 @@ public class SubSchemeAction extends BaseFormAction{
 	public void prepare() {
 		super.prepare();
 		setupDropdownDataExcluding();
-		dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=1 order by name"));
+		dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
+	
 	}
 	
-	@Override
-	public String execute() throws Exception {
+	
+	@SkipValidation
+	@Action(value = "/masters/subScheme-newForm")
+    public String newForm() {
+		
 		return NEW;
+		
 	}
-	@ValidationErrorPage(value="new")
+	@Validations(requiredFields = { @RequiredFieldValidator(fieldName = "scheme", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "validfrom", message = "", key = REQUIRED),
+            @RequiredFieldValidator(fieldName = "validto", message = "", key = REQUIRED) })
+	
+	
+	@ValidationErrorPage(value=NEW)
+	@Action(value="/masters/subScheme-create")
 	public String save(){
 		if(isActive)
 			subScheme.setIsactive(true);
@@ -108,7 +134,7 @@ public class SubSchemeAction extends BaseFormAction{
 			subScheme.setLastModifiedBy(getLoggedInUser());
 			subScheme.setLastmodifieddate(new Date());
 		}
-		validatemandatoryFields();
+		//validatemandatoryFields();
 		try {
 			subSchemeService.persist(subScheme);
 			subSchemeService.getSession().flush();
@@ -120,8 +146,8 @@ public class SubSchemeAction extends BaseFormAction{
 			throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator","An error occured contact Administrator")));
 		}
 		clearValues = true;		
-		if(showMode.equals("edit"))
-			return "view";
+		if(showMode.equals(EDIT))
+			return VIEW;
 		else
 		{
 			addActionMessage(getText("subscheme.saved.successfully"));
@@ -148,36 +174,15 @@ public class SubSchemeAction extends BaseFormAction{
 			throw new ValidationException(Arrays.asList(new ValidationError("subscheme.invalid.dates",
 					"subscheme.invalid.dates")));
 	}
-
-	public void setSubScheme(SubScheme subScheme) {
-		this.subScheme = subScheme;
-	}
-	public SubScheme getSubScheme() {
-		return subScheme;
-	}
-
-	public void setIsActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public boolean isActive() {
-		return isActive;
-	}
-
-	public void setClearValues(boolean clearValues) {
-		this.clearValues = clearValues;
-	}
-
-	public boolean isClearValues() {
-		return clearValues;
-	}
+@SkipValidation
 @Action(value="/masters/subScheme-edit")
 	public String edit()
 	{
-		showMode="edit";
+		showMode=EDIT;
 		beforeSearch();
-		return "search";
+		return SEARCH;
 	}
+@SkipValidation
 @Action(value="/masters/subScheme-beforeSearch")
 	public String beforeSearch() {
 
@@ -186,9 +191,10 @@ public class SubSchemeAction extends BaseFormAction{
 		dropdownData.put("schemeList", Collections.emptyList());
 		dropdownData.put("subSchemeList", Collections.emptyList());
 		fundId=0;
-		return "search";
+		return SEARCH;
 	}
-
+@SkipValidation
+@Action(value="/masters/subScheme-search")
 	public String search() {
 		StringBuffer query = new StringBuffer(500);
 		StringBuffer params = new StringBuffer(100);
@@ -209,24 +215,24 @@ public class SubSchemeAction extends BaseFormAction{
 		}
 	    loadDropDowns();
 		subSchemeList = persistenceService.findAllBy(query.toString());
-		return "search";
+		return SEARCH;
 	}
-
+@SkipValidation
 @Action(value="/masters/subScheme-viewSubScheme")
 	public String viewSubScheme() {
 		subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
-		return "view";
+		return VIEW;
 	}
 
 	private void loadDropDowns() {
 		
 		dropdownData.put("fundList", persistenceService
-				.findAllBy("from Fund where isActive=1 order by name"));
+				.findAllBy("from Fund where isActive='1' order by name"));
 		StringBuffer st = new StringBuffer();
 		
 		if (fundId != 0) {
 			
-			st.append("from Scheme where isactive=1 and fund.id=");
+			st.append("from Scheme where isactive=true and fund.id=");
 			st.append(fundId);
 			dropdownData.put("schemeList", persistenceService.findAllBy(st
 					.toString()));
@@ -236,7 +242,7 @@ public class SubSchemeAction extends BaseFormAction{
 			dropdownData.put("schemeList", Collections.emptyList());
 		if (schemeId != -1) {
 	
-			dropdownData.put("subSchemeList", persistenceService.findAllBy("from SubScheme where isactive=1 and scheme.id=?",schemeId));
+			dropdownData.put("subSchemeList", persistenceService.findAllBy("from SubScheme where isactive='1' and scheme.id=?",schemeId));
 
 		} else
 			dropdownData.put("subSchemeList", Collections.emptyList());
@@ -285,6 +291,29 @@ public class SubSchemeAction extends BaseFormAction{
 
 	public void setSubSchemeService(SubSchemeService subSchemeService) {
 		this.subSchemeService = subSchemeService;
+	}
+
+	public void setSubScheme(SubScheme subScheme) {
+		this.subScheme = subScheme;
+	}
+	public SubScheme getSubScheme() {
+		return subScheme;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setClearValues(boolean clearValues) {
+		this.clearValues = clearValues;
+	}
+
+	public boolean isClearValues() {
+		return clearValues;
 	}
 	
 }

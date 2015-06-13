@@ -81,7 +81,6 @@ public class SchemeAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(SchemeAction.class);
     List<Scheme> schemeList;
     private SchemeService schemeService;
-    private boolean isActive;
 
     @Override
     public Object getModel() {
@@ -106,8 +105,7 @@ public class SchemeAction extends BaseFormAction {
     @Action(value = "/masters/scheme-newForm")
     public String newForm() {
     	scheme.reset();
-    	isActive = false;
-        if (LOGGER.isDebugEnabled())
+    	if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside NewForm method..");
         mode = NEW;
         return NEW;
@@ -125,11 +123,6 @@ public class SchemeAction extends BaseFormAction {
     @Action(value = "/masters/scheme-beforeEdit")
     public String beforeEdit() {
         scheme = (Scheme) persistenceService.find("from Scheme where id=?", scheme.getId());
-        if (scheme.getId() != null)
-            if (scheme.getIsactive() != 0)
-                isActive = true;
-            else
-                isActive = false;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside Before Edit Method..");
         mode = EDIT;
@@ -179,10 +172,6 @@ public class SchemeAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/masters/scheme-edit")
     public String edit() {
-        if (isActive)
-            scheme.setIsactive(1);
-        else
-            scheme.setIsactive(0);
         try {
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
@@ -206,10 +195,7 @@ public class SchemeAction extends BaseFormAction {
     public String create() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("............................Creating New Scheme method.......................");
-        if (isActive)
-            scheme.setIsactive(1);
-        else
-            scheme.setIsactive(0);
+       
         try {
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
@@ -301,12 +287,5 @@ public class SchemeAction extends BaseFormAction {
         this.schemeService = schemeService;
     }
 
-    public boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
 
 }

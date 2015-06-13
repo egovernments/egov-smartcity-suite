@@ -65,7 +65,7 @@ public class Scheme implements java.io.Serializable {
 
     private Date validto;
 
-    private int isactive;
+    private boolean isactive;
 
     private String description;
 
@@ -140,15 +140,17 @@ public class Scheme implements java.io.Serializable {
         this.validto = validto;
     }
 
-    public int getIsactive() {
-        return isactive;
-    }
+  
 
-    public void setIsactive(final int isactive) {
-        this.isactive = isactive;
-    }
+    public boolean isIsactive() {
+		return isactive;
+	}
 
-    public String getDescription() {
+	public void setIsactive(boolean isactive) {
+		this.isactive = isactive;
+	}
+
+	public String getDescription() {
         return description;
     }
 
@@ -165,7 +167,7 @@ public class Scheme implements java.io.Serializable {
     }
 
     public Scheme(final Integer id, final Fund fund, final String code, final String name, final Date validfrom,
-            final Date validto, final int isactive, final String description, final BigDecimal sectorid,
+            final Date validto, final boolean isactive, final String description, final BigDecimal sectorid,
             final BigDecimal aaes, final BigDecimal fieldid, final Set<SubScheme> subSchemes) {
         this.id = id;
         this.fund = fund;
@@ -185,7 +187,7 @@ public class Scheme implements java.io.Serializable {
         id = null;
         code = null;
         name = null;
-        isactive = 0;
+        isactive = false;
         description = null;
         fund = null;
         validfrom = null;

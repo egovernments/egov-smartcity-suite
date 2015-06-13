@@ -37,38 +37,28 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <html>  
 <head>  
-    <title><s:text name="subScheme.add"/></title>
-     <script type="text/javascript">
+    <title>
+    <s:text name="subScheme.add"/>
+    </title>
+    <sx:head/>
+  <SCRIPT type="text/javascript">
 		function validate(){
-			if(document.getElementById('name').value == null || document.getElementById('name').value==''){
-				alert("Please enter Name");
-				return false;
-			}
-			if(document.getElementById('code').value == null || document.getElementById('code').value==''){
-				alert("Please enter Code");
-				return false;
-			}
-			if(document.getElementById('validfrom').value == null || document.getElementById('validfrom').value==''){
-				alert("Please enter Valid From Date");
-				return false;
-			}
-			if(document.getElementById('validto').value == null || document.getElementById('validto').value==''){
-				alert("Please enter Valid To Date");
-				return false;
-			}
+			if (!validateForm_subSchemeForm()) {
+	        	undoLoadingMask();
+	    		return false;
+	            }
+			
 			if(isNaN(document.getElementById('initialEstimateAmount').value)){
 				alert("Please enter valid Initial Eastimate Amount");
 				return false;
 			}
+			document.subSchemeForm.action='${pageContext.request.contextPath}/masters/subScheme-create.action';
+    		document.subSchemeForm.submit();
 			return true;
 		}
 		
@@ -83,33 +73,34 @@
 		<s:actionerror/>  
 		<s:fielderror />
 		</div>  
-		<s:form name="subSchemeForm" action="subScheme" theme="simple" >
+		<s:form id = "subSchemeForm" name="subSchemeForm" action="subScheme" theme="css_xhtml" validate="true">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
 				<td class="bluebox" width="20%"><strong>Scheme<span class="mandatory">*</span></strong></td>
 			    <td class="bluebox">
-			    	<s:select list="dropdownData.schemeList"  listKey="id" listValue="name" id="scheme" name="scheme" headerKey="0" headerValue="--- Select ---" value="%{scheme.id}" ></s:select>
+			    	<s:select name="scheme" id ="scheme" list="dropdownData.schemeList"  listKey="id" listValue="name" headerKey="" headerValue="--- Select ---" value="%{scheme.id}" />
 			    </td>
 				<td class="bluebox" width="20%"><strong>Name<span class="mandatory">*</span></strong></td>
-			    <td class="bluebox"><s:textfield id="name" name="name" value="%{name}" cssStyle="width: 250px"/></td>
+			    <td class="bluebox"><s:textfield id="name" name="name" value="%{subScheme.name}" cssStyle="width: 250px"/></td>
 			</tr>
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong>Code</strong><span class="mandatory">*</span></td>
-			    <td class="greybox"><s:textfield id="code" name="code" value="%{code}"/></td>
+			    <td class="greybox"><s:textfield id="code" name="code" value="%{subScheme.code}"/></td>
 				<td class="greybox"><strong>Valid From</strong><span class="mandatory">*</span></td>
-			    <td class="greybox">
-			    	<input type="text"  id="validfrom" name="validfrom" style="width:100px" value='<s:date name="validfrom" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.validfrom');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
+			    <td class="greybox"><s:date name="validfrom" id="validfrom" format="dd/MM/yyyy" />
+			    	<s:textfield name="validfrom" id="validfrom" value="%{subScheme.validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
+					<a href="javascript:show_calendar('subSchemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
+					
 			    </td>
 			</tr>
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><strong>Valid To</strong><span class="mandatory">*</span></td>
-			    <td class="bluebox">
-   			    	<input type="text"  id="validto" name="validto" style="width:100px" value='<s:date name="validto" format="dd/MM/yyyy"/>' onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			    	<a href="javascript:show_calendar('subSchemeForm.validto');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>
+			    <td class="bluebox"><s:date name="validto" id="validtoId" format="dd/MM/yyyy"/>
+					<s:textfield name="validto" id="validtoId" value="%{subScheme.validto}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
+					<a href="javascript:show_calendar('subSchemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 			    </td>
 				<td class="bluebox"><strong>Is Active</strong></td>
 			    <td class="bluebox"><s:checkbox name="isActive"/></td>
@@ -117,7 +108,7 @@
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong>Department</strong></td>
-			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="deptName" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{department.id}"></s:select></td>
+			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{department.id}"></s:select></td>
 				<td class="greybox"><strong>Initial Estimate Amount</strong></td>
 			    <td class="greybox"><s:textfield cssStyle="text-align: right;" id="initialEstimateAmount" name="initialEstimateAmount" value="%{initialEstimateAmount}"/></td>
 			</tr>
@@ -164,7 +155,7 @@
 		</table>
 		<br/><br/>
 		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<s:submit name="Save" value="Save" method="save" onclick="javascript: return validate();" cssClass="buttonsubmit" />
+			<input type="submit" class="button" value="Save" id="saveButton" name="button" onclick="return validate();" />
 			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 		</div>
 		<s:token/>

@@ -70,7 +70,7 @@
 			<tr>
 			    <td class="greybox">&nbsp;</td>
 				<td class="greybox"><strong><s:text name="subscheme.form.department" /></strong></td>
-			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="deptName" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{department.id}"></s:select></td>
+			    <td class="greybox"><s:select list="dropdownData.departmentList"  listKey="id" listValue="name" headerKey="0" headerValue="--- Select ---" name="department" id="department" value="%{department.id}"></s:select></td>
 				<td class="greybox"><strong><s:text name="subscheme.form.initialestimate" /></strong></td>
 			    <td class="greybox"><s:textfield cssStyle="text-align: right;" id="initialEstimateAmount" name="initialEstimateAmount" value="%{initialEstimateAmount}"/></td>
 			</tr>

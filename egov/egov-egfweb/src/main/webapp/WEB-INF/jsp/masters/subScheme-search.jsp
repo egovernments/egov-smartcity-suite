@@ -37,14 +37,9 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 
 <html>  
 <head>  
@@ -85,36 +80,24 @@
 						<s:text name="masters.subscheme.search.fund" />
 					</td>
 					<td class="bluebox">
-						<s:select list="dropdownData.fundList" listKey="id"
-							listValue="name" name="fundId" headerKey="0"
-							headerValue="---- Choose ----" onchange="loadScheme(this)"></s:select>
-						<egov:ajaxdropdown fields="['Text','Value']"
-							url="voucher/common!ajaxLoadSchemes.action" dropdownId="schemeId"
-							id="schemeId" />
+						<s:select list="dropdownData.fundList" listKey="id" listValue="name" name="fundId" headerKey="0" headerValue="---- Choose ----" onchange="loadScheme(this)"></s:select>
+						<egov:ajaxdropdown id="schemeId" dropdownId="schemeId"  fields="['Text','Value']" url="voucher/common-ajaxLoadSchemes.action" selectedValue="%{id}" />
 					</td>
 					<td class="bluebox">
 						<s:text name="masters.subscheme.search.scheme" />
 					</td>
 
 					<td class="bluebox">
-						<s:select name="schemeId" id="schemeId"
-							list="dropdownData.schemeList" headerKey="-1"
-							headerValue="---- Choose ----" listKey="id" listValue="name"
-							onchange="loadSubScheme(this)" />
+						<s:select name="schemeId" id="schemeId" list="dropdownData.schemeList" headerKey="-1" headerValue="---- Choose ----" listKey="id" listValue="name" onchange="loadSubScheme(this)" />
 					</td>
-					<egov:ajaxdropdown fields="['Text','Value']"
-						url="voucher/common!ajaxLoadSubSchemes.action"
-						dropdownId="subSchemeId" id="subSchemeId" />
-
+					<egov:ajaxdropdown id="subSchemeId" dropdownId="subSchemeId" fields="['Text','Value']" url="voucher/common-ajaxLoadSubSchemes.action" selectedValue="%{id}"  /> 
 				</tr>
 				<tr>
 					<td class="greybox">
 						<s:text name="masters.subscheme.search" />
 					</td>
 					<td class="greybox">
-						<s:select name="subScheme.id" id="subSchemeId"
-							list="dropdownData.subSchemeList" headerKey="-1"
-							headerValue="---- Choose ----" listKey="id" listValue="name" />
+						<s:select name="subScheme.id" id="subSchemeId" list="dropdownData.subSchemeList" headerKey="-1" headerValue="---- Choose ----" listKey="id" listValue="name" /> 
 					</td>
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
@@ -122,11 +105,8 @@
 
 			</table>
 			<div class="buttonbottom">
-				<s:submit method="search" value="Search" cssClass="buttonsubmit" />
-				<s:submit method="beforeSearch" value="Cancel"
-					cssClass="buttonsubmit" />
-				<input type="submit" value="Close"
-					onclick="javascript:window.close()" class="button" />
+				<input type="submit" class="button" value="Search" id="saveButton" name="button" onclick="return submitForm();" />
+				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 			</div>
 			<br />
 			<s:if test="%{subSchemeList.size!=0}">
@@ -227,13 +207,18 @@
 		function urlLoad(subSchemeId,showMode)
 		{
 		if(showMode=='edit')
-			url="../masters/subScheme!viewSubScheme.action?id="+subSchemeId+"&showMode=edit";
+			url="../masters/subScheme-viewSubScheme.action?id="+subSchemeId+"&showMode=edit";
 		else
-			url="../masters/subScheme!viewSubScheme.action?id="+subSchemeId;
+			url="../masters/subScheme-viewSubScheme.action?id="+subSchemeId;
 		window.open(url,'subSchemeView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 		}
 				
-	
+
+	    function submitForm(){
+	    	document.subSchemeForm.action='${pageContext.request.contextPath}/masters/subScheme-search.action';
+	    	document.subSchemeForm.submit();
+	    	return true;
+	    }     
 		</script>
 	</body>  
 </html>

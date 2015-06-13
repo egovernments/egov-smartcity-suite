@@ -97,14 +97,7 @@
 			        <td class="bluebox"><b><s:text name="scheme.fund"/></b></td>
 				    <td class="bluebox"><s:property value="%{scheme.fund.name}" /></td>
 					<td class="bluebox"><b>IsActive</b></td>
-					<td class="bluebox">
-					<s:if test="%{scheme.isactive==1}">
-					true
-					</s:if>
-					<s:else>
-					false
-					</s:else>
-					</td>
+					<td class="bluebox"><s:property value="%{scheme.isactive}" /></td>
 			</tr>
 			<tr>
 					<td class="greybox" > <b><s:text name="scheme.startDate" /></b></td>

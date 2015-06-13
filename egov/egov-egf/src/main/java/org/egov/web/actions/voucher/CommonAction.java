@@ -105,6 +105,7 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.egov.web.actions.masters.SubSchemeAction;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -127,7 +128,9 @@ import com.exilant.eGov.src.domain.Bank;
  */
 
 @Results({ 
-	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
+	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"}),
+	@Result(name = "schemes", location = "common-schemes.jsp"),
+	@Result(name = Constants.SUBSCHEMES, location = "common-subSchemes.jsp")
 })
 @Transactional(readOnly=true)
 public class CommonAction extends BaseFormAction{
@@ -252,9 +255,9 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Fund Id received is : " + fundId);
 		if (null == fundId) {
 			schemeList = getPersistenceService().findAllBy(
-					" from Scheme where fund.id=? and isActive=1 order by name", -1);
+					" from Scheme where fund.id=? and isActive=true order by name", -1);
 		} else {
-			schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=1 order by name",fundId);
+			schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=true order by name",fundId);
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme List size : " + schemeList.size());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadSchemes.");
@@ -280,14 +283,14 @@ public class CommonAction extends BaseFormAction{
 		return "schemeBy20";
 	}
 
-	@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 @Action(value="/voucher/common-ajaxLoadSubSchemes")
 	public String ajaxLoadSubSchemes()
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadSubSchemes...");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme Id received is : "+schemeId);
 		if(null != schemeId && schemeId !=-1){
-			subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", schemeId);
+			subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive='1' order by name", schemeId);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Subscheme List size : "+subSchemes.size());
 		}else{
 			subSchemes = Collections.EMPTY_LIST;

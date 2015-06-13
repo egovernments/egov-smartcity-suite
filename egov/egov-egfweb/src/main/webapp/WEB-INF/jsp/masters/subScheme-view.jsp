@@ -37,13 +37,9 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
 <html>
 	<head>
 		<title><s:if test="%{showMode=='edit'}">
@@ -74,6 +70,8 @@
 				return false;
 			}
 			document.getElementById("scheme").disabled  = false;
+			document.subSchemeForm.action='${pageContext.request.contextPath}/masters/subScheme-create.action';
+	    	document.subSchemeForm.submit();
 			return true;
 		}
 		
@@ -119,12 +117,12 @@
 		    <s:push value="model">
 				<%@include file="subScheme-form.jsp"%>
 				<div class="buttonbottom" style="padding-bottom: 10px;">
+				
+				
 					<s:if test="%{showMode=='edit'}">
-						<s:submit name="Save" value="Save" method="save"
-							onclick="javascript: return validate();" cssClass="buttonsubmit" />
+					<input type="submit" class="button" value="Save" id="saveButton" name="button" onclick="return validate();" />
 					</s:if>
-					<input type="button" id="Close" value="Close"
-						onclick="javascript:window.close()" class="button" />
+					<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 				</div>
 		<script>
 			<s:if test="%{isactive==true}">

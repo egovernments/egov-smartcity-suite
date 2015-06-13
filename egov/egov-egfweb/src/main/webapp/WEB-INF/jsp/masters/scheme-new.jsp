@@ -123,7 +123,7 @@
 					<s:select name="fund" id="fundId" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="" headerValue="----Select----"  value="scheme.fund.id" />
 					</td>
 					<td class="bluebox">IsActive</td>
-					<td class="bluebox"><s:checkbox id="isActive" name="isActive" value="%{isActive}"/> </td>
+					<td class="bluebox"><s:checkbox id="isactive" name="isactive" value="%{scheme.isactive}"/> </td>
 			</tr>
 			<tr>
 					<td class="greybox" > <s:text name="scheme.startDate" /><span class="mandatory">*</span></td>

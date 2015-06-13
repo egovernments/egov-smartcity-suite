@@ -25,8 +25,8 @@
         <property name="validto" type="date">
             <column name="VALIDTO" length="7" />
         </property>
-        <property name="isactive" type="integer">
-            <column name="ISACTIVE" precision="1" scale="0"/>
+        <property name="isactive" type="boolean">
+            <column name="ISACTIVE" />
         </property>
         <property name="description" type="string">
             <column name="DESCRIPTION" />
