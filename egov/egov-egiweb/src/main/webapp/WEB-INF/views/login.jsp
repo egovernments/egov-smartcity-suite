@@ -284,7 +284,7 @@
 	
 										<input type="text" class="form-control style-form"
 											name="emailId" id="emailId" placeholder="Email"
-											autocomplete="off" />
+											autocomplete="off" required="required" /> <span class="mandatory set-mandatory"></span>
 	
 										<div id="emailValid" style="display: none">
 											<div class="text-right add-margin error-msg">Not a
