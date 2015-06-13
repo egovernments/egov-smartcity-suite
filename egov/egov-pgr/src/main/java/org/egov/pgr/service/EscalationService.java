@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -52,6 +52,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.notification.HTTPSMS;
+import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
@@ -96,6 +97,9 @@ public class EscalationService {
     private HTTPSMS httpSMS;
 
     @Autowired
+    private PgrApplicationProperties pgrApplicationProperties;
+
+    @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
 
         this.escalationRepository = escalationRepository;
@@ -103,7 +107,7 @@ public class EscalationService {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Transactional
     public void create(final Escalation escalation) {
         escalationRepository.save(escalation);
@@ -120,41 +124,41 @@ public class EscalationService {
     }
 
     public Integer getHrsToResolve(final Long designationId, final Long complaintTypeId) {
-         Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
-         if(escalation != null)
-        	 return escalation.getNoOfHrs();
-         else
-        	 return 0;
+        final Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId,
+                complaintTypeId);
+        if (escalation != null)
+            return escalation.getNoOfHrs();
+        else
+            return pgrApplicationProperties.defaultResolutionTime();
     }
-    
+
     public List<Escalation> findAllBycomplaintTypeId(final Long complaintTypeId) {
         return escalationRepository.findEscalationByComplaintTypeId(complaintTypeId);
     }
-    
-    
-    
+
     @Transactional
     public void escalateComplaint() {
-        final AppConfigValues appConfigValue = appConfigValuesDAO.getConfigValuesByModuleAndKey(
-                PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        final AppConfigValues appConfigValue = appConfigValuesDAO
+                .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();
 
         for (final Complaint complaint : escalationComplaints) {
             final Position superiorPosition = eisCommonService
-                    .getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(objectType.getId(), complaint
-                            .getComplaintType().getName(), complaint.getAssignee().getId());
+                    .getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(objectType.getId(),
+                            complaint.getComplaintType().getName(), complaint.getAssignee().getId());
             final User superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(superiorPosition);
             complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
-			.withDateInfo(complaint.getEscalationDate().toDate()).withStateValue(complaint.getStatus().getName())
-			.withSenderName(securityUtils.getCurrentUser().getName());
+                    .withDateInfo(complaint.getEscalationDate().toDate())
+                    .withStateValue(complaint.getStatus().getName())
+                    .withSenderName(securityUtils.getCurrentUser().getName());
             complaintRepository.save(complaint);
             if (isEmailNotificationSet) {
-                final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint
-                        .getEscalationDate().toDate());
+                final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                        .format(complaint.getEscalationDate().toDate());
                 final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                         .append(",\n \n     The complaint Number (").append(complaint.getCrn())
                         .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
@@ -172,7 +176,7 @@ public class EscalationService {
                 if (superiorUser != null && superiorUser.getEmailId() != null)
                     emailUtils.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
                 if (superiorUser != null && superiorUser.getMobileNumber() != null)
-                	httpSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
+                    httpSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
             }
         }
     }
@@ -185,33 +189,25 @@ public class EscalationService {
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;
     }
-    
-  
-    @Transactional
-	public void deleteAllInBatch( List<Escalation>  entities) {
-    	escalationRepository.deleteInBatch(entities);
-		
-	}
 
-	public Page<Escalation> getPageOfEscalations(Integer pageNumber,
-			Integer pageSize, Long complaintTypeId, Long designationId) {
-		final Pageable pageable = new PageRequest(pageNumber - 1, pageSize,
-				Sort.Direction.ASC, "id");
-		if (complaintTypeId != 0 && designationId != 0){
-			return escalationRepository
-					.findEscalationBycomplaintTypeAndDesignation(complaintTypeId,
-							designationId, pageable);
-		}else if (complaintTypeId != 0){
-			return escalationRepository
-					.findEscalationBycomplaintType(complaintTypeId,
-							 pageable);
-		}else if (designationId != 0){
-			return escalationRepository
-					.findEscalationByDesignation(
-							designationId, pageable);
-		}			
-		else
-			return escalationRepository.findEscalationByAll(pageable);
-	
-	}
+    @Transactional
+    public void deleteAllInBatch(final List<Escalation> entities) {
+        escalationRepository.deleteInBatch(entities);
+
+    }
+
+    public Page<Escalation> getPageOfEscalations(final Integer pageNumber, final Integer pageSize,
+            final Long complaintTypeId, final Long designationId) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "id");
+        if (complaintTypeId != 0 && designationId != 0)
+            return escalationRepository.findEscalationBycomplaintTypeAndDesignation(complaintTypeId, designationId,
+                    pageable);
+        else if (complaintTypeId != 0)
+            return escalationRepository.findEscalationBycomplaintType(complaintTypeId, pageable);
+        else if (designationId != 0)
+            return escalationRepository.findEscalationByDesignation(designationId, pageable);
+        else
+            return escalationRepository.findEscalationByAll(pageable);
+
+    }
 }
