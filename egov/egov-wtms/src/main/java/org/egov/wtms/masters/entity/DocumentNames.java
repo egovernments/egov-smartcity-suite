@@ -37,13 +37,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -53,31 +55,32 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_application_type")
-@SequenceGenerator(name = ApplicationType.SEQ_APPLICATIONTYPE, sequenceName = ApplicationType.SEQ_APPLICATIONTYPE, allocationSize = 1)
-public class ApplicationType extends AbstractAuditable {
+@Table(name = "egwtr_document_names")
+@SequenceGenerator(name = DocumentNames.SEQ_DOCUMENTNAMES, sequenceName = DocumentNames.SEQ_DOCUMENTNAMES, allocationSize = 1)
+public class DocumentNames extends AbstractAuditable {
 
-    private static final long serialVersionUID = -6274768406807604673L;
-    public static final String SEQ_APPLICATIONTYPE = "SEQ_EGWTR_APPLICATION_TYPE";
+    private static final long serialVersionUID = 479666869570332343L;
+    public static final String SEQ_DOCUMENTNAMES = "SEQ_EGWTR_DOCUMENT_NAMES";
 
     @Id
-    @GeneratedValue(generator = SEQ_APPLICATIONTYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DOCUMENTNAMES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 1, max = 25)
-    @Column(name = "code", unique = true)
-    private String code;
+    @JoinColumn(name = "application_type_id", nullable = false)
+    private ApplicationType applicationType;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
-    @Column(name = "name", unique = true)
-    private String name;
+    @Column(name = "document_name")
+    private String documentName;
 
     @SafeHtml
     private String description;
+
+    private boolean isRequired;
 
     private boolean isActive;
 
@@ -91,20 +94,20 @@ public class ApplicationType extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public ApplicationType getApplicationType() {
+        return applicationType;
     }
 
-    public void setCode(final String code) {
-        this.code = code;
+    public void setApplicationType(final ApplicationType applicationType) {
+        this.applicationType = applicationType;
     }
 
-    public String getName() {
-        return name;
+    public String getDocumentName() {
+        return documentName;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setDocumentName(final String documentName) {
+        this.documentName = documentName;
     }
 
     public String getDescription() {
@@ -115,7 +118,15 @@ public class ApplicationType extends AbstractAuditable {
         this.description = description;
     }
 
-    public boolean getIsActive() {
+    public boolean getIsRequired() {
+        return isRequired;
+    }
+
+    public void setIsRequired(final boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public boolean setIsActive() {
         return isActive;
     }
 

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import java.util.Date;
 
@@ -52,43 +52,27 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
-@Table(name = "egwtr_water_rates_details")
-@SequenceGenerator(name = WaterRatesDetails.SEQ_WATERRATESDETAILS, sequenceName = WaterRatesDetails.SEQ_WATERRATESDETAILS, allocationSize = 1)
-public class WaterRatesDetails extends AbstractPersistable<Long> {
+@Table(name = "egwtr_donation_details")
+@SequenceGenerator(name = DonationDetails.SEQ_DONATIONDETAILS, sequenceName = DonationDetails.SEQ_DONATIONDETAILS, allocationSize = 1)
+public class DonationDetails extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -8237417567777811811L;
-    public static final String SEQ_WATERRATESDETAILS = "SEQ_EGWTR_WATER_RATES_DETAILS";
+    private static final long serialVersionUID = 8604331107634946265L;
+    public static final String SEQ_DONATIONDETAILS = "SEQ_EGWTR_DONATION_DETAILS";
 
     @Id
-    @GeneratedValue(generator = SEQ_WATERRATESDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DONATIONDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "water_rates_header_id", nullable = false)
-    private WaterRatesHeader waterRatesHeader;
-
-    @Column(name = "starting_units")
-    private Long startingUnits;
-
-    @Column(name = "ending_units")
-    private Long endingUnits;
-
-    private Long quantity;
-
-    @Column(name = "unit_rate")
-    private double unitRate;
-
-    @Column(name = "min_rate")
-    private double minimumRate;
-
-    @Column(name = "rate_per_month")
-    private double monthlyRate;
+    @JoinColumn(name = "donation_header_id", nullable = false)
+    private DonationHeader donationHeader;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
@@ -98,6 +82,10 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "to_date")
     private Date toDate;
+
+    @NotNull
+    @Min(value = 1)
+    private double amount;
 
     @Override
     public Long getId() {
@@ -109,60 +97,12 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public WaterRatesHeader getWaterRatesHeader() {
-        return waterRatesHeader;
+    public DonationHeader getDonationHeader() {
+        return donationHeader;
     }
 
-    public void setWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
-        this.waterRatesHeader = waterRatesHeader;
-    }
-
-    public Long getStartingUnits() {
-        return startingUnits;
-    }
-
-    public void setStartingUnits(final Long startingUnits) {
-        this.startingUnits = startingUnits;
-    }
-
-    public Long getEndingUnits() {
-        return endingUnits;
-    }
-
-    public void setEndingUnits(final Long endingUnits) {
-        this.endingUnits = endingUnits;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final Long quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getUnitRate() {
-        return unitRate;
-    }
-
-    public void setUnitRate(final double unitRate) {
-        this.unitRate = unitRate;
-    }
-
-    public double getMinimumRate() {
-        return minimumRate;
-    }
-
-    public void setMinimumRate(final double minimumRate) {
-        this.minimumRate = minimumRate;
-    }
-
-    public double getMonthlyRate() {
-        return monthlyRate;
-    }
-
-    public void setMonthlyRate(final double monthlyRate) {
-        this.monthlyRate = monthlyRate;
+    public void setDonationHeader(final DonationHeader donationHeader) {
+        this.donationHeader = donationHeader;
     }
 
     public Date getFromDate() {
@@ -179,6 +119,14 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final double amount) {
+        this.amount = amount;
     }
 
 }

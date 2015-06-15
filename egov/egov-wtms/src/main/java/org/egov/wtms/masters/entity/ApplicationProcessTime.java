@@ -37,48 +37,48 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_water_source")
-@SequenceGenerator(name = WaterSource.SEQ_WATERSOURCE, sequenceName = WaterSource.SEQ_WATERSOURCE, allocationSize = 1)
-public class WaterSource extends AbstractAuditable {
+@Table(name = "egwtr_application_process_time", uniqueConstraints = @UniqueConstraint(columnNames = {
+        "application_type_id", "category_id" }) )
+@SequenceGenerator(name = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, sequenceName = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, allocationSize = 1)
+public class ApplicationProcessTime extends AbstractAuditable {
 
-    private static final long serialVersionUID = -9098047364434545993L;
-    public static final String SEQ_WATERSOURCE = "SEQ_EGWTR_WATER_SOURCE";
+    private static final long serialVersionUID = -4345303220154873437L;
+    public static final String SEQ_APPLICATIONPROCESSTIME = "SEQ_EGWTR_APPLICATION_PROCESS_TIME";
 
     @Id
-    @GeneratedValue(generator = SEQ_WATERSOURCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPLICATIONPROCESSTIME, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 1, max = 25)
-    @Column(name = "code", unique = true)
-    private String code;
+    @JoinColumn(name = "application_type_id", nullable = false)
+    private ApplicationType applicationType;
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "type", unique = true)
-    private String type;
-
-    @NotNull
-    @SafeHtml
-    private String description;
+    @Column(name = "processing_time")
+    private Integer processTime;
 
     private boolean isActive;
 
@@ -92,28 +92,28 @@ public class WaterSource extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public ApplicationType getApplicationType() {
+        return applicationType;
     }
 
-    public void setCode(final String code) {
-        this.code = code;
+    public void setApplicationType(final ApplicationType applicationType) {
+        this.applicationType = applicationType;
     }
 
-    public String getType() {
-        return type;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setCategory(final Category category) {
+        this.category = category;
     }
 
-    public String getDescription() {
-        return description;
+    public Integer getProcessTime() {
+        return processTime;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setProcessTime(final Integer processTime) {
+        this.processTime = processTime;
     }
 
     public boolean getIsActive() {

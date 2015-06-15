@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,15 +53,15 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_usage_type")
-@SequenceGenerator(name = UsageType.SEQ_USAGETYPE, sequenceName = UsageType.SEQ_USAGETYPE, allocationSize = 1)
-public class UsageType extends AbstractAuditable {
+@Table(name = "egwtr_application_type")
+@SequenceGenerator(name = ApplicationType.SEQ_APPLICATIONTYPE, sequenceName = ApplicationType.SEQ_APPLICATIONTYPE, allocationSize = 1)
+public class ApplicationType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 796823780349590496L;
-    public static final String SEQ_USAGETYPE = "SEQ_EGWTR_USAGE_TYPE";
+    private static final long serialVersionUID = -6274768406807604673L;
+    public static final String SEQ_APPLICATIONTYPE = "SEQ_EGWTR_APPLICATION_TYPE";
 
     @Id
-    @GeneratedValue(generator = SEQ_USAGETYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPLICATIONTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull

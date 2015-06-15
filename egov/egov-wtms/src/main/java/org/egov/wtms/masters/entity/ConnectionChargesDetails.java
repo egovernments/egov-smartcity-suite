@@ -37,51 +37,53 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
-@Table(name = "egwtr_connectioncharges_header")
-@SequenceGenerator(name = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, sequenceName = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, allocationSize = 1)
-public class ConnectionChargesHeader extends AbstractAuditable {
+@Table(name = "egwtr_connectioncharges_details")
+@SequenceGenerator(name = ConnectionChargesDetails.SEQ_CONNECTIONCHARGESDETAILS, sequenceName = ConnectionChargesDetails.SEQ_CONNECTIONCHARGESDETAILS, allocationSize = 1)
+public class ConnectionChargesDetails extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -3303152312586931035L;
-    public static final String SEQ_CONNECTIONCHARGESHEADER = "SEQ_EGWTR_CONNECTIONCHARGES_HEADER";
+    private static final long serialVersionUID = -5096250692356322243L;
+    public static final String SEQ_CONNECTIONCHARGESDETAILS = "SEQ_EGWTR_CONNECTIONCHARGES_DETAILS";
 
     @Id
-    @GeneratedValue(generator = SEQ_CONNECTIONCHARGESHEADER, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CONNECTIONCHARGESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "type", unique = true)
-    private String type;
+    @JoinColumn(name = "connectioncharges_header_id", nullable = false)
+    private ConnectionChargesHeader connectionChargesHeader;
 
-    @SafeHtml
-    private String description;
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "from_date")
+    private Date fromDate;
 
-    private boolean isActive;
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "to_date")
+    private Date toDate;
 
-    @OneToMany(mappedBy = "connectionChargesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<ConnectionChargesDetails> connectionChargesDetails = new HashSet<ConnectionChargesDetails>();
+    @NotNull
+    private double amount;
 
     @Override
     public Long getId() {
@@ -93,40 +95,36 @@ public class ConnectionChargesHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public ConnectionChargesHeader getConnectionChargesHeader() {
+        return connectionChargesHeader;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setConnectionChargesHeader(final ConnectionChargesHeader connectionChargesHeader) {
+        this.connectionChargesHeader = connectionChargesHeader;
     }
 
-    public String getDescription() {
-        return description;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public Date getToDate() {
+        return toDate;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
     }
 
-    public Set<ConnectionChargesDetails> getConnectionChargesDetails() {
-        return connectionChargesDetails;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setConnectionChargesDetails(final Set<ConnectionChargesDetails> connectionChargesDetails) {
-        this.connectionChargesDetails = connectionChargesDetails;
-    }
-
-    public void addConnectionChargesDetails(final ConnectionChargesDetails connectionChargesDetail) {
-        connectionChargesDetails.add(connectionChargesDetail);
+    public void setAmount(final double amount) {
+        this.amount = amount;
     }
 
 }

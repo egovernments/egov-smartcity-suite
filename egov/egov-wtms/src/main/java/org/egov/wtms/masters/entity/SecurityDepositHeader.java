@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,40 +48,40 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_penalty_header")
-@SequenceGenerator(name = PenaltyHeader.SEQ_PENALTYHEADER, sequenceName = PenaltyHeader.SEQ_PENALTYHEADER, allocationSize = 1)
-public class PenaltyHeader extends AbstractAuditable {
+@Table(name = "egwtr_securitydeposit_header")
+@SequenceGenerator(name = SecurityDepositHeader.SEQ_SECURITYDEPOSITHEADER, sequenceName = SecurityDepositHeader.SEQ_SECURITYDEPOSITHEADER, allocationSize = 1)
+public class SecurityDepositHeader extends AbstractAuditable {
 
-    private static final long serialVersionUID = -3851299107850036408L;
-    public static final String SEQ_PENALTYHEADER = "SEQ_EGWTR_PENALTY_HEADER";
+    private static final long serialVersionUID = -8880566293275776557L;
+    public static final String SEQ_SECURITYDEPOSITHEADER = "SEQ_EGWTR_SECURITYDEPOSIT_HEADER";
 
     @Id
-    @GeneratedValue(generator = SEQ_PENALTYHEADER, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_SECURITYDEPOSITHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "penalty_type", unique = true)
-    private String penaltyType;
+    @JoinColumn(name = "usage_type_id", nullable = false, unique = true)
+    private UsageType usageType;
 
-    @SafeHtml
-    private String description;
+    @NotNull
+    @Column(name = "no_of_months")
+    private Long noOfMonths;
 
     private boolean isActive;
 
-    @OneToMany(mappedBy = "penaltyHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<PenaltyDetails> penaltyDetails = new HashSet<PenaltyDetails>();
+    @OneToMany(mappedBy = "securityDepositHeader", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<SecurityDepositDetails> securityDepositDetails = new HashSet<SecurityDepositDetails>();
 
     @Override
     public Long getId() {
@@ -93,20 +93,20 @@ public class PenaltyHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getPenaltyType() {
-        return penaltyType;
+    public UsageType getUsageType() {
+        return usageType;
     }
 
-    public void setPenaltyType(final String penaltyType) {
-        this.penaltyType = penaltyType;
+    public void setUsageType(final UsageType usageType) {
+        this.usageType = usageType;
     }
 
-    public String getDescription() {
-        return description;
+    public Long getNoOfMonths() {
+        return noOfMonths;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setNoOfMonths(final Long noOfMonths) {
+        this.noOfMonths = noOfMonths;
     }
 
     public boolean getIsActive() {
@@ -117,15 +117,16 @@ public class PenaltyHeader extends AbstractAuditable {
         this.isActive = isActive;
     }
 
-    public Set<PenaltyDetails> getPenaltyDetails() {
-        return penaltyDetails;
+    public Set<SecurityDepositDetails> getSecurityDepositDetails() {
+        return securityDepositDetails;
     }
 
-    public void setPenaltyDetails(final Set<PenaltyDetails> penaltyDetails) {
-        this.penaltyDetails = penaltyDetails;
+    public void setSecurityDepositDetails(final Set<SecurityDepositDetails> securityDepositDetails) {
+        this.securityDepositDetails = securityDepositDetails;
     }
 
-    public void addPenaltyDetails(final PenaltyDetails penaltyDetail) {
-        penaltyDetails.add(penaltyDetail);
+    public void addSecurityDepositDetails(final SecurityDepositDetails securityDepositDetail) {
+        securityDepositDetails.add(securityDepositDetail);
     }
+
 }

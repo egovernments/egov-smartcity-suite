@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,15 +53,15 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_category")
-@SequenceGenerator(name = Category.SEQ_CATEGORY, sequenceName = Category.SEQ_CATEGORY, allocationSize = 1)
-public class Category extends AbstractAuditable {
+@Table(name = "egwtr_property_type")
+@SequenceGenerator(name = PropertyType.SEQ_PROPERTYTYPE, sequenceName = PropertyType.SEQ_PROPERTYTYPE, allocationSize = 1)
+public class PropertyType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
-    public static final String SEQ_CATEGORY = "SEQ_EGWTR_CATEGORY";
+    private static final long serialVersionUID = 7783533782750455687L;
+    public static final String SEQ_PROPERTYTYPE = "SEQ_EGWTR_PROPERTY_TYPE";
 
     @Id
-    @GeneratedValue(generator = SEQ_CATEGORY, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_PROPERTYTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
@@ -76,8 +76,8 @@ public class Category extends AbstractAuditable {
     @Column(name = "name", unique = true)
     private String name;
 
-    @SafeHtml
-    private String description;
+    @NotNull
+    private Character connectionEligibility;
 
     private boolean isActive;
 
@@ -107,12 +107,12 @@ public class Category extends AbstractAuditable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public Character getConnectionEligibility() {
+        return connectionEligibility;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setConnectionEligibility(final Character connectionEligibility) {
+        this.connectionEligibility = connectionEligibility;
     }
 
     public boolean getIsActive() {

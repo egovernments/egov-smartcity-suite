@@ -37,52 +37,65 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 
 @Entity
-@Table(name = "egwtr_document_names")
-@SequenceGenerator(name = DocumentNames.SEQ_DOCUMENTNAMES, sequenceName = DocumentNames.SEQ_DOCUMENTNAMES, allocationSize = 1)
-public class DocumentNames extends AbstractAuditable {
+@Table(name = "egwtr_water_rates_header")
+@SequenceGenerator(name = WaterRatesHeader.SEQ_WATERRATESHEADER, sequenceName = WaterRatesHeader.SEQ_WATERRATESHEADER, allocationSize = 1)
+public class WaterRatesHeader extends AbstractAuditable {
 
-    private static final long serialVersionUID = 479666869570332343L;
-    public static final String SEQ_DOCUMENTNAMES = "SEQ_EGWTR_DOCUMENT_NAMES";
+    private static final long serialVersionUID = -2596548687171468023L;
+    public static final String SEQ_WATERRATESHEADER = "SEQ_EGWTR_WATER_RATES_HEADER";
 
     @Id
-    @GeneratedValue(generator = SEQ_DOCUMENTNAMES, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_WATERRATESHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(name = "connection_type")
+    private ConnectionType connectionType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "application_type_id", nullable = false)
-    private ApplicationType applicationType;
+    @JoinColumn(name = "usage_type_id", nullable = false)
+    private UsageType usageType;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "document_name")
-    private String documentName;
+    @JoinColumn(name = "water_source_id", nullable = false)
+    private WaterSource waterSource;
 
-    @SafeHtml
-    private String description;
-
-    private boolean isRequired;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "pipe_size_id", nullable = false)
+    private PipeSize pipeSize;
 
     private boolean isActive;
+
+    @OneToMany(mappedBy = "waterRatesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<WaterRatesDetails> waterRatesDetails = new HashSet<WaterRatesDetails>();
 
     @Override
     public Long getId() {
@@ -94,44 +107,56 @@ public class DocumentNames extends AbstractAuditable {
         this.id = id;
     }
 
-    public ApplicationType getApplicationType() {
-        return applicationType;
+    public ConnectionType getConnectionType() {
+        return connectionType;
     }
 
-    public void setApplicationType(final ApplicationType applicationType) {
-        this.applicationType = applicationType;
+    public void setConnectionType(final ConnectionType connectionType) {
+        this.connectionType = connectionType;
     }
 
-    public String getDocumentName() {
-        return documentName;
+    public UsageType getUsageType() {
+        return usageType;
     }
 
-    public void setDocumentName(final String documentName) {
-        this.documentName = documentName;
+    public void setUsageType(final UsageType usageType) {
+        this.usageType = usageType;
     }
 
-    public String getDescription() {
-        return description;
+    public WaterSource getWaterSource() {
+        return waterSource;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setWaterSource(final WaterSource waterSource) {
+        this.waterSource = waterSource;
     }
 
-    public boolean getIsRequired() {
-        return isRequired;
+    public PipeSize getPipeSize() {
+        return pipeSize;
     }
 
-    public void setIsRequired(final boolean isRequired) {
-        this.isRequired = isRequired;
+    public void setPipeSize(final PipeSize pipeSize) {
+        this.pipeSize = pipeSize;
     }
 
-    public boolean setIsActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
     public void setIsActive(final boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Set<WaterRatesDetails> getWaterRatesDetails() {
+        return waterRatesDetails;
+    }
+
+    public void setWaterRatesDetails(final Set<WaterRatesDetails> waterRatesDetails) {
+        this.waterRatesDetails = waterRatesDetails;
+    }
+
+    public void addWaterRatesDetails(final WaterRatesDetails waterRatesDetail) {
+        waterRatesDetails.add(waterRatesDetail);
     }
 
 }

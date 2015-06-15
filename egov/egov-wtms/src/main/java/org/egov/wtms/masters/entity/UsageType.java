@@ -37,55 +37,49 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
-
-import java.util.Date;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_donation_details")
-@SequenceGenerator(name = DonationDetails.SEQ_DONATIONDETAILS, sequenceName = DonationDetails.SEQ_DONATIONDETAILS, allocationSize = 1)
-public class DonationDetails extends AbstractPersistable<Long> {
+@Table(name = "egwtr_usage_type")
+@SequenceGenerator(name = UsageType.SEQ_USAGETYPE, sequenceName = UsageType.SEQ_USAGETYPE, allocationSize = 1)
+public class UsageType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8604331107634946265L;
-    public static final String SEQ_DONATIONDETAILS = "SEQ_EGWTR_DONATION_DETAILS";
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_USAGETYPE = "SEQ_EGWTR_USAGE_TYPE";
 
     @Id
-    @GeneratedValue(generator = SEQ_DONATIONDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_USAGETYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "donation_header_id", nullable = false)
-    private DonationHeader donationHeader;
+    @SafeHtml
+    @Length(min = 1, max = 25)
+    @Column(name = "code", unique = true)
+    private String code;
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
-    @Column(name = "from_date")
-    private Date fromDate;
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    @Column(name = "name", unique = true)
+    private String name;
 
-    @Temporal(value = TemporalType.DATE)
-    @Column(name = "to_date")
-    private Date toDate;
+    @SafeHtml
+    private String description;
 
-    @NotNull
-    @Min(value = 1)
-    private double amount;
+    private boolean isActive;
 
     @Override
     public Long getId() {
@@ -97,36 +91,36 @@ public class DonationDetails extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public DonationHeader getDonationHeader() {
-        return donationHeader;
+    public String getCode() {
+        return code;
     }
 
-    public void setDonationHeader(final DonationHeader donationHeader) {
-        this.donationHeader = donationHeader;
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public Date getFromDate() {
-        return fromDate;
+    public String getName() {
+        return name;
     }
 
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public double getAmount() {
-        return amount;
+    public boolean getIsActive() {
+        return isActive;
     }
 
-    public void setAmount(final double amount) {
-        this.amount = amount;
+    public void setIsActive(final boolean isActive) {
+        this.isActive = isActive;
     }
 
 }

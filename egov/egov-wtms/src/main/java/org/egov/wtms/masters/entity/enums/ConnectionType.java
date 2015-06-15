@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters.enums;
+package org.egov.wtms.masters.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
 

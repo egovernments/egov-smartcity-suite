@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,57 +45,43 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.entity.masters.enums.ConnectionType;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_water_rates_header")
-@SequenceGenerator(name = WaterRatesHeader.SEQ_WATERRATESHEADER, sequenceName = WaterRatesHeader.SEQ_WATERRATESHEADER, allocationSize = 1)
-public class WaterRatesHeader extends AbstractAuditable {
+@Table(name = "egwtr_penalty_header")
+@SequenceGenerator(name = PenaltyHeader.SEQ_PENALTYHEADER, sequenceName = PenaltyHeader.SEQ_PENALTYHEADER, allocationSize = 1)
+public class PenaltyHeader extends AbstractAuditable {
 
-    private static final long serialVersionUID = -2596548687171468023L;
-    public static final String SEQ_WATERRATESHEADER = "SEQ_EGWTR_WATER_RATES_HEADER";
+    private static final long serialVersionUID = -3851299107850036408L;
+    public static final String SEQ_PENALTYHEADER = "SEQ_EGWTR_PENALTY_HEADER";
 
     @Id
-    @GeneratedValue(generator = SEQ_WATERRATESHEADER, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_PENALTYHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @NotNull
-    @Column(name = "connection_type")
-    private ConnectionType connectionType;
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    @Column(name = "penalty_type", unique = true)
+    private String penaltyType;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "usage_type_id", nullable = false)
-    private UsageType usageType;
-
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "water_source_id", nullable = false)
-    private WaterSource waterSource;
-
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "pipe_size_id", nullable = false)
-    private PipeSize pipeSize;
+    @SafeHtml
+    private String description;
 
     private boolean isActive;
 
-    @OneToMany(mappedBy = "waterRatesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<WaterRatesDetails> waterRatesDetails = new HashSet<WaterRatesDetails>();
+    @OneToMany(mappedBy = "penaltyHeader", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<PenaltyDetails> penaltyDetails = new HashSet<PenaltyDetails>();
 
     @Override
     public Long getId() {
@@ -107,36 +93,20 @@ public class WaterRatesHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public ConnectionType getConnectionType() {
-        return connectionType;
+    public String getPenaltyType() {
+        return penaltyType;
     }
 
-    public void setConnectionType(final ConnectionType connectionType) {
-        this.connectionType = connectionType;
+    public void setPenaltyType(final String penaltyType) {
+        this.penaltyType = penaltyType;
     }
 
-    public UsageType getUsageType() {
-        return usageType;
+    public String getDescription() {
+        return description;
     }
 
-    public void setUsageType(final UsageType usageType) {
-        this.usageType = usageType;
-    }
-
-    public WaterSource getWaterSource() {
-        return waterSource;
-    }
-
-    public void setWaterSource(final WaterSource waterSource) {
-        this.waterSource = waterSource;
-    }
-
-    public PipeSize getPipeSize() {
-        return pipeSize;
-    }
-
-    public void setPipeSize(final PipeSize pipeSize) {
-        this.pipeSize = pipeSize;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
     public boolean getIsActive() {
@@ -147,16 +117,15 @@ public class WaterRatesHeader extends AbstractAuditable {
         this.isActive = isActive;
     }
 
-    public Set<WaterRatesDetails> getWaterRatesDetails() {
-        return waterRatesDetails;
+    public Set<PenaltyDetails> getPenaltyDetails() {
+        return penaltyDetails;
     }
 
-    public void setWaterRatesDetails(final Set<WaterRatesDetails> waterRatesDetails) {
-        this.waterRatesDetails = waterRatesDetails;
-    }
-    
-    public void addWaterRatesDetails(final WaterRatesDetails waterRatesDetail) {
-        this.waterRatesDetails.add(waterRatesDetail);
+    public void setPenaltyDetails(final Set<PenaltyDetails> penaltyDetails) {
+        this.penaltyDetails = penaltyDetails;
     }
 
+    public void addPenaltyDetails(final PenaltyDetails penaltyDetail) {
+        penaltyDetails.add(penaltyDetail);
+    }
 }

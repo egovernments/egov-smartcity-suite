@@ -37,47 +37,44 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.wtms.masters.entity.enums.DemandNoticeIssueFrequency;
 
 @Entity
-@Table(name = "egwtr_meter_cost")
-@SequenceGenerator(name = MeterCost.SEQ_METERCOST, sequenceName = MeterCost.SEQ_METERCOST, allocationSize = 1)
-public class MeterCost extends AbstractAuditable {
+@Table(name = "egwtr_demandnotice_penalty_period")
+@SequenceGenerator(name = DemandNoticePenaltyPeriod.SEQ_DEMANDNOTICEPENALTYPERIOD, sequenceName = DemandNoticePenaltyPeriod.SEQ_DEMANDNOTICEPENALTYPERIOD, allocationSize = 1)
+public class DemandNoticePenaltyPeriod extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_METERCOST = "SEQ_EGWTR_METER_COST";
+    private static final long serialVersionUID = 7262414027940915738L;
+    public static final String SEQ_DEMANDNOTICEPENALTYPERIOD = "SEQ_EGWTR_DEMANDNOTICE_PENALTY_PERIOD";
 
     @Id
-    @GeneratedValue(generator = SEQ_METERCOST, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DEMANDNOTICEPENALTYPERIOD, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     @NotNull
-    @JoinColumn(name = "pipe_size_id", nullable = false)
-    private PipeSize pipeSize;
+    @Column(name = "demandnotice_issue")
+    private DemandNoticeIssueFrequency frequencyOfDemandNoticeIssue;
 
-    @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "meter_make")
-    private String meterMake;
+    @Column(name = "penalty_days")
+    private Integer penaltyDays;
 
-    private boolean isActive;
+    @Column(name = "min_con_holding_months")
+    private Integer minConnectionHoldingMonths;
 
     @Override
     public Long getId() {
@@ -89,28 +86,28 @@ public class MeterCost extends AbstractAuditable {
         this.id = id;
     }
 
-    public PipeSize getPipeSize() {
-        return pipeSize;
+    public DemandNoticeIssueFrequency getFrequencyOfDemandNoticeIssue() {
+        return frequencyOfDemandNoticeIssue;
     }
 
-    public void setPipeSize(final PipeSize pipeSize) {
-        this.pipeSize = pipeSize;
+    public void setFrequencyOfDemandNoticeIssue(final DemandNoticeIssueFrequency frequencyOfDemandNoticeIssue) {
+        this.frequencyOfDemandNoticeIssue = frequencyOfDemandNoticeIssue;
     }
 
-    public String getMeterMake() {
-        return meterMake;
+    public Integer getPenaltyDays() {
+        return penaltyDays;
     }
 
-    public void setMeterMake(final String meterMake) {
-        this.meterMake = meterMake;
+    public void setPenaltyDays(final Integer penaltyDays) {
+        this.penaltyDays = penaltyDays;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public Integer getMinConnectionHoldingMonths() {
+        return minConnectionHoldingMonths;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setMinConnectionHoldingMonths(final Integer minConnectionHoldingMonths) {
+        this.minConnectionHoldingMonths = minConnectionHoldingMonths;
     }
 
 }

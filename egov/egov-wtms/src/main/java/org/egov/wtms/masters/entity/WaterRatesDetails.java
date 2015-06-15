@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
 import java.util.Date;
 
@@ -52,27 +52,43 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
-@Table(name = "egwtr_securitydeposit_details")
-@SequenceGenerator(name = SecurityDepositDetails.SEQ_SECURITYDEPOSITDETAILS, sequenceName = SecurityDepositDetails.SEQ_SECURITYDEPOSITDETAILS, allocationSize = 1)
-public class SecurityDepositDetails extends AbstractPersistable<Long> {
+@Table(name = "egwtr_water_rates_details")
+@SequenceGenerator(name = WaterRatesDetails.SEQ_WATERRATESDETAILS, sequenceName = WaterRatesDetails.SEQ_WATERRATESDETAILS, allocationSize = 1)
+public class WaterRatesDetails extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -977895598226057159L;
-    public static final String SEQ_SECURITYDEPOSITDETAILS = "SEQ_EGWTR_SECURITYDEPOSIT_DETAILS";
+    private static final long serialVersionUID = -8237417567777811811L;
+    public static final String SEQ_WATERRATESDETAILS = "SEQ_EGWTR_WATER_RATES_DETAILS";
 
     @Id
-    @GeneratedValue(generator = SEQ_SECURITYDEPOSITDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_WATERRATESDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "securitydeposit_header_id", nullable = false)
-    private SecurityDepositHeader securityDepositHeader;
+    @JoinColumn(name = "water_rates_header_id", nullable = false)
+    private WaterRatesHeader waterRatesHeader;
+
+    @Column(name = "starting_units")
+    private Long startingUnits;
+
+    @Column(name = "ending_units")
+    private Long endingUnits;
+
+    private Long quantity;
+
+    @Column(name = "unit_rate")
+    private double unitRate;
+
+    @Column(name = "min_rate")
+    private double minimumRate;
+
+    @Column(name = "rate_per_month")
+    private double monthlyRate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
@@ -82,10 +98,6 @@ public class SecurityDepositDetails extends AbstractPersistable<Long> {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "to_date")
     private Date toDate;
-
-    @NotNull
-    @Min(value = 1)
-    private double amount;
 
     @Override
     public Long getId() {
@@ -97,12 +109,60 @@ public class SecurityDepositDetails extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public SecurityDepositHeader getSecurityDepositHeader() {
-        return securityDepositHeader;
+    public WaterRatesHeader getWaterRatesHeader() {
+        return waterRatesHeader;
     }
 
-    public void setSecurityDepositHeader(final SecurityDepositHeader securityDepositHeader) {
-        this.securityDepositHeader = securityDepositHeader;
+    public void setWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
+        this.waterRatesHeader = waterRatesHeader;
+    }
+
+    public Long getStartingUnits() {
+        return startingUnits;
+    }
+
+    public void setStartingUnits(final Long startingUnits) {
+        this.startingUnits = startingUnits;
+    }
+
+    public Long getEndingUnits() {
+        return endingUnits;
+    }
+
+    public void setEndingUnits(final Long endingUnits) {
+        this.endingUnits = endingUnits;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(final Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getUnitRate() {
+        return unitRate;
+    }
+
+    public void setUnitRate(final double unitRate) {
+        this.unitRate = unitRate;
+    }
+
+    public double getMinimumRate() {
+        return minimumRate;
+    }
+
+    public void setMinimumRate(final double minimumRate) {
+        this.minimumRate = minimumRate;
+    }
+
+    public double getMonthlyRate() {
+        return monthlyRate;
+    }
+
+    public void setMonthlyRate(final double monthlyRate) {
+        this.monthlyRate = monthlyRate;
     }
 
     public Date getFromDate() {
@@ -119,14 +179,6 @@ public class SecurityDepositDetails extends AbstractPersistable<Long> {
 
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(final double amount) {
-        this.amount = amount;
     }
 
 }

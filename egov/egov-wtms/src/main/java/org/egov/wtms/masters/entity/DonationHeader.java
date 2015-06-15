@@ -37,8 +37,12 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,41 +50,57 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "egwtr_application_process_time", uniqueConstraints = @UniqueConstraint(columnNames = {
-        "application_type_id", "category_id" }) )
-@SequenceGenerator(name = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, sequenceName = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, allocationSize = 1)
-public class ApplicationProcessTime extends AbstractAuditable {
+@Table(name = "egwtr_donation_header")
+@SequenceGenerator(name = DonationHeader.SEQ_DONATIONHEADER, sequenceName = DonationHeader.SEQ_DONATIONHEADER, allocationSize = 1)
+public class DonationHeader extends AbstractAuditable {
 
-    private static final long serialVersionUID = -4345303220154873437L;
-    public static final String SEQ_APPLICATIONPROCESSTIME = "SEQ_EGWTR_APPLICATION_PROCESS_TIME";
+    private static final long serialVersionUID = 4583091947098722880L;
+    public static final String SEQ_DONATIONHEADER = "SEQ_EGWTR_DONATION_HEADER";
 
     @Id
-    @GeneratedValue(generator = SEQ_APPLICATIONPROCESSTIME, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DONATIONHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "application_type_id", nullable = false)
-    private ApplicationType applicationType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne
     @NotNull
-    @Column(name = "processing_time")
-    private Integer processTime;
+    @JoinColumn(name = "usage_type_id", nullable = false)
+    private UsageType usageType;
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "min_pipe_size_id", nullable = false)
+    private PipeSize minPipeSize;
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "max_pipe_size_id", nullable = false)
+    private PipeSize maxPipeSize;
+
+    @NotNull
+    @Column(name = "min_sump_capacity")
+    private Long minSumpCapacity;
+
+    @NotNull
+    @Column(name = "max_sump_capacity")
+    private Long maxSumpCapacity;
 
     private boolean isActive;
+
+    @OneToMany(mappedBy = "donationHeader", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<DonationDetails> donationDetails = new HashSet<DonationDetails>();
 
     @Override
     public Long getId() {
@@ -92,14 +112,6 @@ public class ApplicationProcessTime extends AbstractAuditable {
         this.id = id;
     }
 
-    public ApplicationType getApplicationType() {
-        return applicationType;
-    }
-
-    public void setApplicationType(final ApplicationType applicationType) {
-        this.applicationType = applicationType;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -108,12 +120,44 @@ public class ApplicationProcessTime extends AbstractAuditable {
         this.category = category;
     }
 
-    public Integer getProcessTime() {
-        return processTime;
+    public UsageType getUsageType() {
+        return usageType;
     }
 
-    public void setProcessTime(final Integer processTime) {
-        this.processTime = processTime;
+    public void setUsageType(final UsageType usageType) {
+        this.usageType = usageType;
+    }
+
+    public PipeSize getMinPipeSize() {
+        return minPipeSize;
+    }
+
+    public void setMinPipeSize(final PipeSize minPipeSize) {
+        this.minPipeSize = minPipeSize;
+    }
+
+    public PipeSize getMaxPipeSize() {
+        return maxPipeSize;
+    }
+
+    public void setMaxPipeSize(final PipeSize maxPipeSize) {
+        this.maxPipeSize = maxPipeSize;
+    }
+
+    public Long getMinSumpCapacity() {
+        return minSumpCapacity;
+    }
+
+    public void setMinSumpCapacity(final Long minSumpCapacity) {
+        this.minSumpCapacity = minSumpCapacity;
+    }
+
+    public Long getMaxSumpCapacity() {
+        return maxSumpCapacity;
+    }
+
+    public void setMaxSumpCapacity(final Long maxSumpCapacity) {
+        this.maxSumpCapacity = maxSumpCapacity;
     }
 
     public boolean getIsActive() {
@@ -122,6 +166,18 @@ public class ApplicationProcessTime extends AbstractAuditable {
 
     public void setIsActive(final boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Set<DonationDetails> getDonationDetails() {
+        return donationDetails;
+    }
+
+    public void setDonationDetails(final Set<DonationDetails> donationDetails) {
+        this.donationDetails = donationDetails;
+    }
+
+    public void addDonationDetails(final DonationDetails donationDetail) {
+        donationDetails.add(donationDetail);
     }
 
 }

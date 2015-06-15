@@ -37,13 +37,18 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.entity.masters;
+package org.egov.wtms.masters.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -53,33 +58,30 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_property_type")
-@SequenceGenerator(name = PropertyType.SEQ_PROPERTYTYPE, sequenceName = PropertyType.SEQ_PROPERTYTYPE, allocationSize = 1)
-public class PropertyType extends AbstractAuditable {
+@Table(name = "egwtr_connectioncharges_header")
+@SequenceGenerator(name = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, sequenceName = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, allocationSize = 1)
+public class ConnectionChargesHeader extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7783533782750455687L;
-    public static final String SEQ_PROPERTYTYPE = "SEQ_EGWTR_PROPERTY_TYPE";
+    private static final long serialVersionUID = -3303152312586931035L;
+    public static final String SEQ_CONNECTIONCHARGESHEADER = "SEQ_EGWTR_CONNECTIONCHARGES_HEADER";
 
     @Id
-    @GeneratedValue(generator = SEQ_PROPERTYTYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CONNECTIONCHARGESHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
     @SafeHtml
-    @Length(min = 1, max = 25)
-    @Column(name = "code", unique = true)
-    private String code;
-
-    @NotNull
-    @SafeHtml
     @Length(min = 3, max = 50)
-    @Column(name = "name", unique = true)
-    private String name;
+    @Column(name = "type", unique = true)
+    private String type;
 
-    @NotNull
-    private Character connectionEligibility;
+    @SafeHtml
+    private String description;
 
     private boolean isActive;
+
+    @OneToMany(mappedBy = "connectionChargesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<ConnectionChargesDetails> connectionChargesDetails = new HashSet<ConnectionChargesDetails>();
 
     @Override
     public Long getId() {
@@ -91,28 +93,20 @@ public class PropertyType extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public String getType() {
+        return type;
     }
 
-    public void setCode(final String code) {
-        this.code = code;
+    public void setType(final String type) {
+        this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Character getConnectionEligibility() {
-        return connectionEligibility;
-    }
-
-    public void setConnectionEligibility(final Character connectionEligibility) {
-        this.connectionEligibility = connectionEligibility;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
     public boolean getIsActive() {
@@ -121,6 +115,18 @@ public class PropertyType extends AbstractAuditable {
 
     public void setIsActive(final boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Set<ConnectionChargesDetails> getConnectionChargesDetails() {
+        return connectionChargesDetails;
+    }
+
+    public void setConnectionChargesDetails(final Set<ConnectionChargesDetails> connectionChargesDetails) {
+        this.connectionChargesDetails = connectionChargesDetails;
+    }
+
+    public void addConnectionChargesDetails(final ConnectionChargesDetails connectionChargesDetail) {
+        connectionChargesDetails.add(connectionChargesDetail);
     }
 
 }
