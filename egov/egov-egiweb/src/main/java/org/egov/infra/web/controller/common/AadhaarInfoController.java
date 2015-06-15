@@ -41,9 +41,11 @@ package org.egov.infra.web.controller.common;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.infra.aadhaar.contract.AadhaarInfo;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,6 +54,7 @@ public class AadhaarInfoController {
 
     
     @RequestMapping(value="/{aadhaarNo}", produces= MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value=HttpStatus.NOT_FOUND,reason = "This user is not found in the uidai system")
     public AadhaarInfo aadhaarInfo(@PathVariable String aadhaarNo) {
         //TODO info has to be collected from uiadi server
         AadhaarInfo aadhaarInfo = new AadhaarInfo();
