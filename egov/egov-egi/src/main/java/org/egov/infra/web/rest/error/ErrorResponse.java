@@ -37,37 +37,32 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.controller.common;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.egov.infra.aadhaar.contract.AadhaarInfo;
-import org.egov.infra.web.rest.error.ErrorResponse;
+package org.egov.infra.web.rest.error;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(value = "/aadhaar")
-public class AadhaarInfoController {
+public class ErrorResponse {
+    private final String errorCode;
+    private final String errorDetails;
+    private final int httpStatus;
 
-    @RequestMapping(value = "/{aadhaarNo}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarInfo(@PathVariable final String aadhaarNo) {
-        try {
-            // TODO info has to be collected from uiadi server
-            final AadhaarInfo aadhaarInfo = new AadhaarInfo();
-            aadhaarInfo.setAadhaarNo(aadhaarNo);
-            aadhaarInfo.setEmail(RandomStringUtils.randomAlphabetic(20) + "@gmail.com");
-            aadhaarInfo.setMobile(RandomStringUtils.randomNumeric(9));
-            aadhaarInfo.setOwnerName(RandomStringUtils.randomAlphabetic(5));
-            return new ResponseEntity<AadhaarInfo>(aadhaarInfo, HttpStatus.OK);
-        } catch (final Exception e) {
-
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse("INFRA-001",
-                    "User detail not found in uidai server for aadhaar no : " + aadhaarNo, HttpStatus.NOT_FOUND),
-                    HttpStatus.NOT_FOUND);
-        }
+    public ErrorResponse(final String errorCode, final String errorDetails, final HttpStatus httpStatus) {
+        this.errorCode = errorCode;
+        this.errorDetails = errorDetails;
+        this.httpStatus = httpStatus.value();
     }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public String getErrorDetails() {
+        return errorDetails;
+    }
+
+    public int getErrorStatus() {
+        return httpStatus;
+    }
+
 }
