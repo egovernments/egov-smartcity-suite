@@ -27,13 +27,13 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egfweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency> -->
-	  <!--   <dependency>
+		</dependency>
+	  	<dependency>
 		    <groupId>org.egov</groupId>
 		    <artifactId>egov-collectionweb</artifactId>
 		    <version>${project.parent.version}</version>
@@ -44,7 +44,7 @@
 		    <artifactId>egov-ptisweb</artifactId>
 		   <version>${project.parent.version}</version>
 		    <type>war</type>
-	   </dependency> -->
+	   </dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgrweb</artifactId>
@@ -58,19 +58,6 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-	 <dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-assetsweb</artifactId>
-			<version>${project.parent.version}</version>
-			<type>war</type>
-		</dependency>
-		<!--	<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-bndweb</artifactId>
-			<version>${project.parent.version}</version>
-			<type>war</type>
-		</dependency> -->
-
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
@@ -82,30 +69,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-commons</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-eis</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egf</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency> -->
-		<!-- <dependency>
+		</dependency>
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-collection</artifactId>
 			<version>${project.parent.version}</version>
@@ -119,31 +103,18 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-ptis</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency> -->
-
+		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgr</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		
-	<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-assets</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<!-- 	<dependency>
-			<groupId>org.egov</groupId>
-			<artifactId>egov-bnd</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
- -->
+	
 		<!-- Following dependencies are included in ear as these are used only 
 			in war modules and we have configured war modules to be archived as skinny 
 			wars (no libraries will be packaged in WEB-INF/lib in wars). Hence we have 
@@ -204,12 +175,12 @@
 							<artifactId>egov-eisweb</artifactId>
 							<contextRoot>/eis</contextRoot>
 						</webModule>
-						<!-- <webModule>
+						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-egfweb</artifactId>
-							<contextRoot>/EGF</contextRoot>
-						</webModule> -->
-						<!-- <webModule>
+							<contextRoot>/egf</contextRoot>
+						</webModule>
+						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-collectionweb</artifactId>
 							<contextRoot>/collection</contextRoot>
@@ -218,7 +189,7 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-ptisweb</artifactId>
 							<contextRoot>/ptis</contextRoot>
-						</webModule> -->
+						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-pgrweb</artifactId>
@@ -229,16 +200,6 @@
 							<artifactId>egov-portalweb</artifactId>
 							<contextRoot>/portal</contextRoot>
 						</webModule>
-					<webModule>
-							<groupId>org.egov</groupId>
-							<artifactId>egov-assetsweb</artifactId>
-							<contextRoot>/egassets</contextRoot>
-						</webModule> 
-						<!--	<webModule>
-							<groupId>org.egov</groupId>
-							<artifactId>egov-bndweb</artifactId>
-							<contextRoot>/bnd</contextRoot>
-						</webModule> -->
 					</modules>
 
 					<defaultLibBundleDir>lib</defaultLibBundleDir>

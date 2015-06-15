@@ -39,18 +39,21 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.enums.AddressType;
 
 
 @Entity
 @Table(name = "egpt_address") 
-@DiscriminatorValue("PROPERTY")
 public class PropertyAddress extends Address {
 
     private static final long serialVersionUID = 904354449098564364L;
+    
+    public PropertyAddress() {
+        setType(AddressType.PROPERTYADDRESS);
+    }
 
 }
