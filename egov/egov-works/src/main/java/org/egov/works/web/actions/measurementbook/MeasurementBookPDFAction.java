@@ -60,7 +60,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.measurementbook.ApprovalDetails;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -87,7 +87,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
     private MeasurementBookService measurementBookService;
     private WorkOrderService workOrderService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private ReportService reportService;
 
     @Override
@@ -320,7 +320,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
         this.measurementBookId = measurementBookId;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

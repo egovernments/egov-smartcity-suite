@@ -72,7 +72,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
@@ -193,7 +193,7 @@ public class AjaxContractorBillAction extends BaseFormAction{
 	private String owner = "";
 	private String arfInWorkFlowCheck;
 	@Autowired
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
 	private static final String ARF_IN_WORKFLOW_CHECK="arfInWorkflowCheck";
 	private String showValidationMsg = "";
 	
@@ -1171,7 +1171,7 @@ public class AjaxContractorBillAction extends BaseFormAction{
 		this.arfInWorkFlowCheck = arfInWorkFlowCheck;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 

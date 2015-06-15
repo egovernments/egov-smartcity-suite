@@ -99,7 +99,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.recoveries.Recovery;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.services.voucher.VoucherService;
@@ -255,7 +255,7 @@ public class ContractorBillAction extends BaseFormAction {
     private List<MBHeader> mbHeaderListForBillId = new LinkedList<MBHeader>();
     private ContractorAdvanceService contractorAdvanceService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private String isRCEstimate = "";
     private String dwCategory = "";
     private Date restorationEndDate;
@@ -2171,7 +2171,7 @@ public class ContractorBillAction extends BaseFormAction {
         this.contractorAdvanceService = contractorAdvanceService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

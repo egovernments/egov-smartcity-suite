@@ -91,7 +91,7 @@ import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -134,7 +134,7 @@ public class AbstractEstimateAction extends BaseFormAction {
     private List<MultiYearEstimate> actionMultiYearEstimateValues = new LinkedList<MultiYearEstimate>();
     private AbstractEstimateService abstractEstimateService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     @Autowired
     private UserService userService;
     private EmployeeView estimatePreparedByView;
@@ -332,7 +332,7 @@ public class AbstractEstimateAction extends BaseFormAction {
         final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
             departmentId = latestAssignment.getDepartment().getId();
-            loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
+            loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
         }
         populateCategoryList(ajaxEstimateAction, abstractEstimate.getParentCategory() != null);
         populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
@@ -362,8 +362,8 @@ public class AbstractEstimateAction extends BaseFormAction {
             abstractEstimate.setEstimatePreparedBy(LoggedInEmp);
             estimatePreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
                     abstractEstimate.getEstimatePreparedBy().getIdPersonalInformation());
-            if (assignment != null && assignment.getOldEmployee() != null)
-                loggedInUserEmployeeCode = assignment.getOldEmployee().getCode();
+            if (assignment != null && assignment.getEmployee() != null)
+                loggedInUserEmployeeCode = assignment.getEmployee().getCode();
             populatePreparedByList(ajaxEstimateAction, abstractEstimate.getExecutingDepartment() != null);
         }
     }
@@ -994,11 +994,11 @@ public class AbstractEstimateAction extends BaseFormAction {
             return commonsService.getFinYearByDate(new Date());
     }
 
-    public EmployeeService getemployeeService() {
+    public EmployeeServiceOld getemployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

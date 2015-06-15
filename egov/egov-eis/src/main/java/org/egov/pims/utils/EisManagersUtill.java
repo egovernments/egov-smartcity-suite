@@ -59,8 +59,8 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.commons.service.EisCommonsServiceImpl;
-import org.egov.pims.service.EmployeeService;
 import org.egov.pims.service.EmployeeServiceImpl;
+import org.egov.pims.service.EmployeeServiceOld;
 
 
 public class EisManagersUtill {
@@ -226,7 +226,7 @@ public class EisManagersUtill {
         return new DepartmentService();
     }*/
 
-		public static EmployeeService getEmployeeService()
+		public static EmployeeServiceOld getEmployeeService()
 		{
 			return new EmployeeServiceImpl();
 		}

@@ -43,13 +43,21 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'/>">
-<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
+	
+	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -82,7 +90,6 @@
 							
 							<div class="panel-body custom-form">
 								
-								<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">Name<span class="mandatory"></span></label>
 										<div class="col-sm-2 col-md-1 add-margin">
@@ -277,6 +284,52 @@
 										</div>
 										
 									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
+										
+										<div class="col-sm-6 add-margin">
+											<form:select path="assignment.department" id="deptId"
+												cssClass="form-control" cssErrorClass="form-control error">
+												<form:option value="">
+													<spring:message code="lbl.select" />
+												</form:option>
+												<form:options items="${department}" itemValue="id"
+													itemLabel="name" />
+											</form:select>
+											<form:errors path="assignment.department" cssClass="error-msg" />
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
+										
+										<div class="col-sm-6 add-margin">
+											<input id="designationName" type="text" class="form-control typeahead is_valid_letters_space_hyphen_underscore" autocomplete="off"
+													required="required" value="${assignment.designation.name}">
+												<form:hidden path="assignment.designation" id="designationId" value="" />
+												<form:errors path="assignment.designation" cssClass="add-margin error-msg" />
+												<c:forEach items="${designations}" var="designation">
+													<a onclick="setDesignationId(<c:out value="${designation.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+															value="${designation.name }" /> </a>
+												</c:forEach>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Position<span class="mandatory"></span></label>
+										
+										<div class="col-sm-6 add-margin">
+											<input id="positionName" type="text" class="form-control typeahead is_valid_letters_space_hyphen_underscore" autocomplete="off"
+													required="required" value="${assignment.position.name}">
+												<form:hidden path="assignment.position" id="positionId" value="" />
+												<form:errors path="assignment.position" cssClass="add-margin error-msg" />
+												<c:forEach items="${positions}" var="position">
+													<a onclick="setPositionId(<c:out value="${position.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+															value="${position.name }" /> </a>
+												</c:forEach>
+										</div>
+									</div>
 						
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">Fund</label>
@@ -334,50 +387,26 @@
 										</div>
 									</div>
 
-
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Department<span class="mandatory"></span></label>
-										
-										<div class="col-sm-6 add-margin">
-											<form:select path="assignment.department" id="comp_type_dept"
-												cssClass="form-control" cssErrorClass="form-control error">
-												<form:option value="">
-													<spring:message code="lbl.select" />
-												</form:option>
-												<form:options items="${department}" itemValue="id"
-													itemLabel="name" />
-											</form:select>
-											<form:errors path="assignment.department" cssClass="error-msg" />
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
-										
-										<div class="col-sm-6 add-margin">
-											<input type="text" class="form-control typeahead" autocomplete="off">
-										</div>
-									</div>
-
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Position<span class="mandatory"></span></label>
-										
-										<div class="col-sm-6 add-margin">
-											<input type="text" class="form-control typeahead" autocomplete="off">
-										</div>
-									</div>
-
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">If Head ofDepartment<span class="mandatory"></span></label>
 										
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<input type="radio" id="" name="ishod" value="">
+											<input type="radio" id="isHodYes" name="ishod" value="">
 											<label>Yes</label>
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<input type="radio" id="" name="ishod" value="" checked>
+											<input type="radio" id="isHodNo" name="ishod" value="" checked>
 											<label>No</label>
+										</div>
+										
+										<div class="col-sm-6 add-margin" style="display:none" id="hodDeptDiv">
+											<form:select path="assignment.department" id="hodDeptId"
+												cssClass="form-control" cssErrorClass="form-control error" multiple="true" size="5">
+												<form:options items="${department}" itemValue="id"
+													itemLabel="name" />
+											</form:select>
+											<form:errors path="assignment.department" cssClass="error-msg" />
 										</div>
 
 									</div>
@@ -391,24 +420,18 @@
 
 									<div class="row form-group">
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
-<div class="col-sm-2 table-div-column">Date Range</div>											
-<div class="col-sm-2 table-div-column">Is Primary</div>											
-<div class="col-sm-2 table-div-column">Department</div>											
-<div class="col-sm-2 table-div-column">Designation</div>											
-<div class="col-sm-2 table-div-column">Position</div>											
-<div class="col-sm-2 table-div-column">Actions</div>											
+										<div class="col-sm-2 table-div-column">Date Range</div>											
+										<div class="col-sm-2 table-div-column">Is Primary</div>											
+										<div class="col-sm-2 table-div-column">Department</div>											
+										<div class="col-sm-2 table-div-column">Designation</div>											
+										<div class="col-sm-2 table-div-column">Position</div>											
+										<div class="col-sm-2 table-div-column">Actions</div>											
 										</div>
-<div class="col-sm-2 table-div-column"><span class="parallel-actions"><i class="fa fa-edit"></i></span><span class="parallel-actions"><i class="fa fa-remove"></i></span></div>											
-										</div>
+										<div class="col-sm-2 table-div-column"><span class="parallel-actions"><i class="fa fa-edit"></i></span><span class="parallel-actions"><i class="fa fa-remove"></i></span></div>											
 									</div>
-									
-									
-								</form>
+								</div>
 							</div>
-							
-							
 						</div>
-						
 					</div>
 				</div>
 				
@@ -426,4 +449,4 @@
              </form:form>
          </div>
     </div>
- </div>               		
+

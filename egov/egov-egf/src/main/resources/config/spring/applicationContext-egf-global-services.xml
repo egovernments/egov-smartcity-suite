@@ -102,7 +102,7 @@
 		<property name="bankReconService" ref="bankReconService"/>
 		<property name="vdPersitSer" ref="vdPersitSer"/>
 		<property name="instrumentService" ref="instrumentService"/>
-		<property name="employeeService" ref="employeeService" />
+		<property name="employeeServiceOld" ref="employeeServiceOld" />
 		</bean>
 	
 	<bean id="voucherCreator" class="org.egov.billsaccounting.services.CreateVoucher" scope="prototype" />

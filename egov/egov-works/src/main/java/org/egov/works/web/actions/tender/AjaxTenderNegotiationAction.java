@@ -52,7 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -87,7 +87,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     private Integer executingDepartment;
     private Integer empID;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private List usersInExecutingDepartment;
     private Assignment assignment;
     private String tenderNo;
@@ -329,7 +329,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     // for prepared by
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

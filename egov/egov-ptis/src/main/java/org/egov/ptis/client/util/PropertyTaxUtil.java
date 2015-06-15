@@ -155,7 +155,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.ApplicableFactor;
 import org.egov.ptis.client.model.MiscellaneousTax;
@@ -204,7 +204,7 @@ public class PropertyTaxUtil {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
 	@Autowired
 	private EisCommonsService eisCommonsService;
 	private static final String HUNDRED = "100";

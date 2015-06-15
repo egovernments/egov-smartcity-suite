@@ -57,7 +57,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.EisUtilService;
 
 
@@ -75,7 +75,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	protected Long currentStateId;
 	protected EisUtilService eisService;
 	protected EisCommonsService eisCommonsService;
-	protected EmployeeService employeeService;
+	protected EmployeeServiceOld employeeService;
 	protected CommonsService commonsService;
 	protected Position pos;
 	protected String returnStream = "Inbox item does not belong to the current user ";
@@ -228,11 +228,11 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		this.mode = mode;
 	}
 
-	public EmployeeService getEmployeeService() {
+	public EmployeeServiceOld getEmployeeService() {
 		return employeeService;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 

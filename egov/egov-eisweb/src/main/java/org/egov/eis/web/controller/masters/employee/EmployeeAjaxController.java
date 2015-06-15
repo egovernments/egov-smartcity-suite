@@ -39,42 +39,43 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
-import java.util.Arrays;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.List;
 
-import org.egov.eis.entity.EmployeeAssignmentDTO;
-import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.eis.repository.EmployeeTypeRepository;
-import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value="/employee")
-public class CreateEmployeeController {
-
-    @Autowired
-    private DepartmentService departmentService;
+@RequestMapping(value= "/employee")
+public class EmployeeAjaxController {
     
     @Autowired
-    private EmployeeTypeRepository employeeTypeRepository;
-
-    @ModelAttribute("employeeStatus")
-    public List<EmployeeStatus> employeeStatus() {
-        return Arrays.asList(EmployeeStatus.values());
-    }
-
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createForm(final Model model) {
-        model.addAttribute("employeeBean", new EmployeeAssignmentDTO());
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        return "employee-form";
+    private DesignationService designationService;
+    
+    @Autowired
+    PositionMasterService positionMasterService;
+    
+    @RequestMapping(value= "/ajax/designations",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getAllDesignationsByNameLike(
+            @ModelAttribute("employeeBean") @RequestParam final String designationName) {
+        return designationService.getAllDesignationsByNameLike(designationName);
     }
     
+    @RequestMapping(value= "/ajax/positions",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position> getPositionForDeptAndDesig(
+            @ModelAttribute("employeeBean") @RequestParam final Long deptId,@RequestParam final Long desigId,@RequestParam final String positionName) {
+        return positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, positionName);
+    }
+    
+
 }

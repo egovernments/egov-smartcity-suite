@@ -116,7 +116,7 @@ public class EisCommonService {
      */
     public User getUserForPosition(final Long posId, final Date givenDate) {
         try {
-            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getOldEmployee().getUserMaster();
+            return (User)assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
         } catch (final NullPointerException e) {
             throw new EGOVRuntimeException("User Not Found");
         } catch (final Exception e) {
@@ -217,12 +217,12 @@ public class EisCommonService {
      * @param posId
      * @return List of PersonalInformation
      */
-    public List<PersonalInformation> getEmployeesForPosition(final Long posId) {
-        final List<PersonalInformation> empList = null;
+    public List<Employee> getEmployeesForPosition(final Long posId) {
+        final List<Employee> empList = null;
 
         final List<Assignment> assignList = assignmentService.getAssignmentsForPosition(posId);
         for (final Assignment assign : assignList)
-            empList.add(assign.getOldEmployee());
+            empList.add(assign.getEmployee());
 
         return empList;
     }
@@ -255,8 +255,8 @@ public class EisCommonService {
      * @param givenDate
      * @return Employee object
      */
-    public PersonalInformation getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
-        return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getOldEmployee();
+    public Employee getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
+        return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
     }
 
 }

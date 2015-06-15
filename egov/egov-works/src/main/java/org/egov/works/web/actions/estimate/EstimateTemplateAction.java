@@ -51,7 +51,7 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
@@ -70,7 +70,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     private List<EstimateTemplateActivity> sorActivities = new LinkedList<EstimateTemplateActivity>();
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private PersonalInformationService personalInformationService;
     private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
     private String mode = null;
@@ -219,11 +219,11 @@ public class EstimateTemplateAction extends SearchFormAction {
         return "search";
     }
 
-    public EmployeeService getEmployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

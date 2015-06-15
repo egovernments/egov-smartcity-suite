@@ -57,7 +57,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.tender.SetStatus;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
@@ -74,7 +74,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     private WorksPackage worksPackage = new WorksPackage();
     private List<WorksPackage> results = new LinkedList<WorksPackage>();
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     @Autowired
     private CommonsService commonsService;
     private Date fromDate;
@@ -296,7 +296,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
         this.results = results;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

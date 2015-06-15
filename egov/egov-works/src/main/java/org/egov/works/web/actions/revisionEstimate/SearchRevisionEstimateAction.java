@@ -67,7 +67,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -100,7 +100,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     private Date fromDate;
     private Date toDate;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private PersonalInformationService personalInformationService;
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
@@ -508,7 +508,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         this.toDate = toDate;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

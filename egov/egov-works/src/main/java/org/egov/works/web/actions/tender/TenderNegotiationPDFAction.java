@@ -51,7 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.services.TenderResponseService;
@@ -73,7 +73,7 @@ public class TenderNegotiationPDFAction extends BaseFormAction {
     private TenderResponseService tenderResponseService;
     private ReportService reportService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private WorksService worksService;
     private String fileName;
 
@@ -124,7 +124,7 @@ public class TenderNegotiationPDFAction extends BaseFormAction {
         return tenderResponsePDF;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

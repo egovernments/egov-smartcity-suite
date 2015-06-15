@@ -80,7 +80,7 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.voucher.PayInBean;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -113,7 +113,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         @Autowired
         protected EisCommonService eisCommonService;
         private @Autowired AppConfigValuesDAO appConfigValuesDAO;
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeServiceOld;
         private int preapprovalStatus=0;
         private int instrumentCount=0;
         
@@ -126,7 +126,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         }
         public Department getDepartmentForUser(User user) 
         {
-                return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeService,persistenceService);
+                return new EgovCommon().getDepartmentForUser(user, eisCommonService, employeeServiceOld,persistenceService);
     }
         public ContraJournalVoucher updateIntoContraJournal(CVoucherHeader voucherHeader,ContraBean contraBean){
                  ContraJournalVoucher existingCJV;
@@ -649,7 +649,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         public void setInstrumentService(InstrumentService instrumentService) {
                 this.instrumentService = instrumentService;
         }
-        public void setEmployeeService(EmployeeService employeeService) {
-            this.employeeService = employeeService;
+        public void setEmployeeServiceOld(EmployeeServiceOld employeeServiceOld) {
+            this.employeeServiceOld = employeeServiceOld;
         }
 }

@@ -52,7 +52,7 @@ import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
@@ -70,7 +70,7 @@ public class ContractorBillPDFAction extends BaseFormAction{
 	private Long egbillRegisterId;
 	private InputStream egBillRegisterPDF;
 	@Autowired
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
 	private ContractorBillService contractorBillService;
 	@Autowired
 	private CommonsService commonsService;
@@ -131,7 +131,7 @@ public class ContractorBillPDFAction extends BaseFormAction{
 		return egBillRegisterPDF;
 	}
 	
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 	

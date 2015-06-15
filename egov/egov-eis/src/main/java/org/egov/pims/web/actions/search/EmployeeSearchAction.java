@@ -52,7 +52,7 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.EisUtilService;
 
 /**
@@ -74,7 +74,7 @@ public class EmployeeSearchAction extends SearchFormAction {
 	private Integer reportBy;
 
 	private String mode;
-	private EmployeeService eisMgr;
+	private EmployeeServiceOld eisMgr;
 	private EisUtilService eisService;
 
 	private String countQuery = "";
@@ -268,11 +268,11 @@ public class EmployeeSearchAction extends SearchFormAction {
 		this.reportBy = reportBy;
 	}
 
-	public EmployeeService getEisMgr() {
+	public EmployeeServiceOld getEisMgr() {
 		return eisMgr;
 	}
 
-	public void setEisMgr(EmployeeService eisMgr) {
+	public void setEisMgr(EmployeeServiceOld eisMgr) {
 		this.eisMgr = eisMgr;
 	}
 

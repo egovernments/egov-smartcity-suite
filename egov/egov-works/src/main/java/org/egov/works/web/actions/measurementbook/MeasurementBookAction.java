@@ -70,7 +70,7 @@ import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBDetails;
@@ -110,7 +110,7 @@ public class MeasurementBookAction extends BaseFormAction {
     private String messageKey;
     private Long id;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     @Autowired
     private UserService userService;
     private EmployeeView mbPreparedByView;
@@ -306,7 +306,7 @@ public class MeasurementBookAction extends BaseFormAction {
                 else {
                     final Assignment latestAssignment = getLatestAssignmentForCurrentLoginUser();
                     if (latestAssignment != null)
-                        loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
+                        loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
                 }
                 ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
                 ajaxEstimateAction.usersInExecutingDepartment();
@@ -909,7 +909,7 @@ public class MeasurementBookAction extends BaseFormAction {
         this.id = id;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 
@@ -1123,7 +1123,7 @@ public class MeasurementBookAction extends BaseFormAction {
         this.workOrderId = workOrderId;
     }
 
-    public EmployeeService getEmployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 

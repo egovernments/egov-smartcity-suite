@@ -63,7 +63,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.services.WorksService;
@@ -95,7 +95,7 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 	@Autowired
 	private DepartmentService departmentService;
 	@Autowired
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeService;
 	private PersistenceService<Contractor, Long> contractorService;
 	private ContractorAdvanceService contractorAdvanceService;
 	
@@ -321,7 +321,7 @@ public class SearchContractorAdvanceRequisitionAction extends SearchFormAction {
 		this.departmentService = departmentService;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 

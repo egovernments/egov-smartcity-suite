@@ -173,7 +173,7 @@
     </bean> -->
     <bean id="receiptService" class="org.egov.services.receipt.ReceiptService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.receipt.ReceiptVoucher" />
-		<property name="employeeService" ref="employeeService" /> 
+		<property name="employeeServiceOld" ref="employeeServiceOld" /> 
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
     <!-- <bean id="receiptWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">

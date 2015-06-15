@@ -71,6 +71,8 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long> 
 
     @Query("select cr from Position cr where  cr.deptDesig.designation.id=:designationId")
     List<Position> findPositionByDesignation(@Param("designationId") Long designationId);
+    
+    List<Position> findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(Long deptId,Long desigId,String name);
 
     @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId and cr.isPostOutsourced is true")
     Integer getTotalOutSourcedPostsByDepartmentAndDesignation(@Param("departmentId") Long departmentId,

@@ -57,7 +57,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.dao.GenericMasterDAO;
 import org.egov.pims.model.GenericMaster;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -68,7 +68,7 @@ public class AfterGenericMasterAction extends DispatchAction {
 
 	public final static Logger LOGGER = Logger.getLogger(AfterGenericMasterAction.class.getClass());
 
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
 
 	public AfterGenericMasterAction() {
 	}
@@ -250,14 +250,14 @@ public class AfterGenericMasterAction extends DispatchAction {
 	 * @return the eisManagr
 	 */
 
-	public EmployeeService getEmployeeService() {
+	public EmployeeServiceOld getEmployeeService() {
 		return employeeService;
 	}
 
 	/**
 	 * @param eisManagr the eisManagr to set
 	 */
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 	

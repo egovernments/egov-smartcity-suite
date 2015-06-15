@@ -46,7 +46,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
@@ -55,7 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TenderResponseService extends PersistenceService<TenderResponse, Long> {
 	private static final Logger logger = Logger.getLogger(TenderResponseService.class);
 	@Autowired
-        private EmployeeService employeeService; 
+        private EmployeeServiceOld employeeService; 
 	private PersonalInformationService personalInformationService;
 
 	

@@ -76,7 +76,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
@@ -89,7 +89,7 @@ public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
     private @Autowired AppConfigValuesDAO appConfigValuesDAO;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     @Autowired
     private CommonsService commonsService;
     private PersistenceService persistenceService;
@@ -186,7 +186,7 @@ public class WorksService {
      * @param employeeService
      *            the employeeService to set
      */
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

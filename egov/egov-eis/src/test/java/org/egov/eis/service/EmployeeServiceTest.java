@@ -37,44 +37,55 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.web.controller.masters.employee;
+package org.egov.eis.service;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
-import org.egov.eis.entity.EmployeeAssignmentDTO;
-import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.eis.repository.EmployeeTypeRepository;
-import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.eis.EISAbstractSpringIntegrationTest;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.EmployeeBuilder;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-@Controller
-@RequestMapping(value="/employee")
-public class CreateEmployeeController {
-
-    @Autowired
-    private DepartmentService departmentService;
+@Ignore
+public class EmployeeServiceTest extends EISAbstractSpringIntegrationTest{
     
     @Autowired
-    private EmployeeTypeRepository employeeTypeRepository;
-
-    @ModelAttribute("employeeStatus")
-    public List<EmployeeStatus> employeeStatus() {
-        return Arrays.asList(EmployeeStatus.values());
-    }
-
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createForm(final Model model) {
-        model.addAttribute("employeeBean", new EmployeeAssignmentDTO());
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        return "employee-form";
+    private EmployeeService employeeService;
+    
+    private Employee employee;
+    
+    private void sampleEmployee() {
+        employee = new EmployeeBuilder().withDefaults().build();
+        employeeService.create(employee);
     }
     
+    @Test
+    public void createEmployee() {
+        sampleEmployee();
+        assertNotNull(employee);
+    }
+    
+    @Test
+    public void getEmployeeByCode() {
+        employee = employeeService.getEmployeeByCode("E006");
+        assertEquals("EMPLOYED",employee.getEmployeeStatus().toString());
+    }
+    
+    @Test
+    public void getEmployeeByType() {
+        List<Employee>employees = employeeService.getEmployeesByType(1l);
+        assertTrue(employees.size()>1);
+    }
+    
+    @Test
+    public void getEmployeeByUserName() {
+        employee = employeeService.getEmployeeByUserName("narasappa");
+        assertNotNull(employee);
+    }
 }

@@ -71,7 +71,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.BudgetFolioDetail;
@@ -100,7 +100,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private BudgetDetailsDAO budgetDetailsDAO;
     private @Autowired AppConfigValuesDAO appConfigValuesDAO;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private PersistenceService<TenderResponse, Long> tenderResponseService;
     private BudgetGroupDAO budgetGroupDAO;
     @Autowired

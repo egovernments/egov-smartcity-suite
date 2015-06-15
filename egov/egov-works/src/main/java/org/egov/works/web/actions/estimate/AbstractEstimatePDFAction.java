@@ -52,7 +52,7 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
@@ -66,7 +66,7 @@ public class AbstractEstimatePDFAction extends BaseFormAction{
 	private InputStream estimatePDF;
 	private AbstractEstimateService abstractEstimateService;
 	@Autowired
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeService;
 	@Autowired
         private CommonsService commonsService;
 	private WorksService worksService;
@@ -138,11 +138,11 @@ public class AbstractEstimatePDFAction extends BaseFormAction{
 		this.abstractEstimateService = abstractEstimateService;
 	}
 
-	public EmployeeService getemployeeService() {
+	public EmployeeServiceOld getemployeeService() {
 		return employeeService;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 

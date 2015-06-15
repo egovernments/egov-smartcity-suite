@@ -48,7 +48,7 @@ import org.egov.commons.service.CommonsService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.estimate.AssetsForEstimate;
@@ -70,7 +70,7 @@ public class CopyEstimateAction extends BaseFormAction {
     private AbstractEstimate copyEstimate = new AbstractEstimate();
     private AbstractEstimateService abstractEstimateService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private Date financialYearStartDate;
     @Autowired
     private CommonsService commonsService;
@@ -229,11 +229,11 @@ public class CopyEstimateAction extends BaseFormAction {
         this.abstractEstimateService = abstractEstimateService;
     }
 
-    public EmployeeService getEmployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

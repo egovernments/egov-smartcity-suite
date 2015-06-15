@@ -63,7 +63,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -110,7 +110,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
     private String arfInWorkFlowCheck;
     private ContractorAdvanceService contractorAdvanceService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private static final String ARF_IN_WORKFLOW_CHECK = "arfInWorkflowCheck";
     @Autowired
     private ScriptService scriptService;
@@ -484,7 +484,7 @@ public class AjaxWorkOrderAction extends BaseFormAction {
         this.contractorAdvanceService = contractorAdvanceService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

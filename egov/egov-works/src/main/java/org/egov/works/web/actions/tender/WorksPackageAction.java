@@ -71,7 +71,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.Money;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
@@ -93,7 +93,7 @@ public class WorksPackageAction extends BaseFormAction {
     private String createdBySelection = "no";
     private WorksService worksService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private DepartmentService departmentService;
     private WorksPackage worksPackage = new WorksPackage();
     private String designation;
@@ -155,7 +155,7 @@ public class WorksPackageAction extends BaseFormAction {
             worksPackage.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
                     .getDepartment().getId());
             if (worksPackage.getPreparedBy() == null)
-                loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
+                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
             else
                 loggedInUserEmployeeCode = worksPackage.getPreparedBy().getEmployeeCode();
             if (worksPackage.getDepartment() == null) {
@@ -453,7 +453,7 @@ public class WorksPackageAction extends BaseFormAction {
         this.createdBySelection = createdBySelection;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

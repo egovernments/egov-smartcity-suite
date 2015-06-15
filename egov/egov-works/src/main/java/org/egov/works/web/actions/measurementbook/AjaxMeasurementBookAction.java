@@ -59,7 +59,7 @@ import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -83,7 +83,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
 
     private MeasurementBookService measurementBookService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private Assignment assignment;
     private Integer empID;
     private Long executingDepartment;
@@ -303,7 +303,7 @@ public class AjaxMeasurementBookAction extends BaseFormAction {
         return "mblatestDateResult";
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

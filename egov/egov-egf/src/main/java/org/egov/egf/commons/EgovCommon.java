@@ -91,7 +91,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.masters.AccountCodePurpose;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.report.FundFlowService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -152,7 +152,7 @@ public class EgovCommon {
         }
 
         public Department getDepartmentForUser(User user, EisCommonService eisCommonService, 
-                EmployeeService employeeService, PersistenceService persistenceService) {
+                EmployeeServiceOld employeeService, PersistenceService persistenceService) {
                 try {
                         Query qry1 = 
                                         HibernateUtil.getCurrentSession()

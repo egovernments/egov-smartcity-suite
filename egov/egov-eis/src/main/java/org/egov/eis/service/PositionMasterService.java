@@ -96,6 +96,10 @@ public class PositionMasterService {
         return positionMasterRepository.findAllByDeptDesig_Id(deptDesigId);
     }
 
+    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId,final Long designationId,final String name) {
+        return positionMasterRepository.findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId, designationId, name);
+    }
+    
     public boolean validatePosition(final Position position) {
         if (position != null && position.getName() != null) {
             final List<Position> positionList = positionMasterRepository

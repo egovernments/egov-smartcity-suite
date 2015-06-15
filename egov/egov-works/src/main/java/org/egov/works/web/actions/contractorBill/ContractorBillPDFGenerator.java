@@ -59,7 +59,7 @@ import org.egov.infstr.utils.NumberToWord;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
@@ -85,7 +85,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator{
 	private static final Logger logger = Logger.getLogger(ContractorBillPDFGenerator.class);
 	private PersistenceService persistenceService = new PersistenceService();
 	@Autowired
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeService;
 	private final Map<String, String> pdfLabel;
 	private final ContractorBillRegister egBillRegister;
 	
@@ -955,11 +955,11 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator{
 		this.persistenceService = persistenceService;
 	}
 
-	public EmployeeService getEmployeeService() {
+	public EmployeeServiceOld getEmployeeService() {
 		return employeeService;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 	

@@ -118,10 +118,6 @@ public class Assignment extends AbstractAuditable {
     @NotNull
     private Date fromDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "oldemployee")
-    private PersonalInformation oldEmployee;
-
     @NotNull
     private Date toDate;
 
@@ -224,14 +220,6 @@ public class Assignment extends AbstractAuditable {
 
     public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
-    }
-
-    public PersonalInformation getOldEmployee() {
-        return oldEmployee;
-    }
-
-    public void setOldEmployee(final PersonalInformation employee) {
-        oldEmployee = employee;
     }
 
     public Date getToDate() {

@@ -66,7 +66,7 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.Activity;
@@ -99,7 +99,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
     private final CFinancialYear financialYear;
     private String headerText;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private BudgetDetailsDAO budgetDetailsDAO;
     private AbstractEstimateService abstractEstimateService;
     private static final String space1 = "\t  \t  \t  \t \t \t  \t  \t  \t \t \t \t"
@@ -966,11 +966,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         this.persistenceService = persistenceService;
     }
 
-    public EmployeeService getEmployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

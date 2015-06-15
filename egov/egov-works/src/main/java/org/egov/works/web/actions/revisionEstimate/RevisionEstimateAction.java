@@ -69,7 +69,7 @@ import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.estimate.NonSor;
@@ -113,7 +113,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
     private String departmentName;
     private Long id;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private Integer approverPositionId;
     @Autowired
     private CommonsService commonsService;
@@ -762,7 +762,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
         this.id = id;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

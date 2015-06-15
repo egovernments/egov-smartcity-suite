@@ -75,7 +75,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
@@ -158,7 +158,7 @@ public class TenderNegotiationAction extends SearchFormAction {
     private static final String ACTION_NAME = "actionName";
     private String sourcepage = "";
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
 
     private String nsActionName;
     private String option;
@@ -376,7 +376,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                     .getDepartment().getId());
             if (tenderResponse.getNegotiationPreparedBy() == null) {
                 setDesignationNegotiation(latestAssignment.getDesignation().getName());
-                loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
+                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
             } else
                 loggedInUserEmployeeCode = tenderResponse.getNegotiationPreparedBy().getEmployeeCode();
         }
@@ -1128,7 +1128,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.sourcepage = sourcepage;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

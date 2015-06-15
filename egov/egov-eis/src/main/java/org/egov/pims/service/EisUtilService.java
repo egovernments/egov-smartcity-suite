@@ -103,7 +103,7 @@ public class EisUtilService implements EISServeable {
         try {
             String mainStr = "";
 
-            mainStr = "select distinct(a.position) from Assignment a where a.oldEmployee.userMaster.id =?";
+            mainStr = "select distinct(a.position) from Assignment a where a.employee.id =?";
 
             if (date == null) {
                 date = new Date();

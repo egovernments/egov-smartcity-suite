@@ -57,12 +57,11 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeNamePoJo;
 import org.egov.pims.model.GenericMaster;
-import org.egov.pims.model.GradeMaster;
 import org.egov.pims.model.LangKnown;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.model.ServiceHistory;
-
-public interface EmployeeService 
+@Deprecated
+public interface EmployeeServiceOld 
 {
 
 	public abstract boolean checkDuplication(String name,String className);

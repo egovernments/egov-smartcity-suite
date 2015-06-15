@@ -76,7 +76,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -114,7 +114,7 @@ public class SearchEstimateAction extends SearchFormAction {
     private final List<AbstractEstimate> results = new LinkedList<AbstractEstimate>();
     private AbstractEstimate estimates = new AbstractEstimate();
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private Integer empId;
     private String wpdate;
 
@@ -589,7 +589,7 @@ public class SearchEstimateAction extends SearchFormAction {
         this.execDept = execDept;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

@@ -56,7 +56,7 @@ import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
@@ -86,7 +86,7 @@ public class SearchBillAction extends BaseFormAction {
     private String workorderid;
     private Long contractorId;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private ContractorBillService contractorBillService;
     private WorksService worksService;
     @Autowired
@@ -319,7 +319,7 @@ public class SearchBillAction extends BaseFormAction {
         this.contractorId = contractorId;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

@@ -52,6 +52,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.service.EmployeeService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -64,8 +65,9 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 //import org.egov.pims.service.EisManager;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.utils.EisManagersUtill;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("unchecked")
 
@@ -74,7 +76,10 @@ public class BpaPimsInternalExtnServiceFactory {
 	private EisUtilService eisService;	
 	private PersistenceService persistenceService;
 	//private EisManager eisMgr;//Phionix TODO
+	private EmployeeServiceOld employeeServiceOld;
+	@Autowired
 	private EmployeeService employeeService;
+	
 	private Logger logger=Logger.getLogger(BpaPimsInternalExtnServiceFactory.class);
    // <bean id="userDao" class="org.egov.lib.rjbac.user.dao.UserDAO" scope="prototype"/>
 	//private UserDAO userDao;
@@ -198,7 +203,7 @@ public class BpaPimsInternalExtnServiceFactory {
 		Assignment assignment=null;
 		if(personalInformation!=null){
 			//TODo Phionix : employeeService.getLatestAssignmentForEmployee(
-			assignment=employeeService.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
+			assignment=employeeServiceOld.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
 			//assignment=eisMgr.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());			
 		}
 		return assignment; 
@@ -248,7 +253,7 @@ public class BpaPimsInternalExtnServiceFactory {
 		Assignment assignment=null;
 		if(personalInformation!=null){
 			//TODo Phionix : employeeService.getLatestAssignmentForEmployee(
-			assignment=employeeService.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
+			assignment=employeeServiceOld.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());
 			
 			//assignment=eisMgr.getLatestAssignmentForEmployee(personalInformation.getIdPersonalInformation());			
 		}

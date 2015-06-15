@@ -56,7 +56,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.measurementbook.MBDetails;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -83,7 +83,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     private WorkOrderService workOrderService;
     public static final String MEASUREMENTBOOK_PDF_ERROR = "measurementbook.pdf.error";
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private final Map<String, String> pdfLabel;
     private final MBHeader mbHeader;
     private final NumberFormat formatter = new DecimalFormat("#0.00");
@@ -452,11 +452,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         this.persistenceService = persistenceService;
     }
 
-    public EmployeeService getEmployeeService() {
+    public EmployeeServiceOld getEmployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

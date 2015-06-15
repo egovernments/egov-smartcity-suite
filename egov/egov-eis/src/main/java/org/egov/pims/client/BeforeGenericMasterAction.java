@@ -55,13 +55,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 
 public class BeforeGenericMasterAction extends DispatchAction
 {
 
 	public final static Logger LOGGER = Logger.getLogger(BeforeGenericMasterAction.class.getClass());
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
     public BeforeGenericMasterAction()
     {
     }
@@ -264,14 +264,14 @@ public class BeforeGenericMasterAction extends DispatchAction
 	/**
 	 * @return the eisManagr
 	 */
-	public EmployeeService getEmployeeService() {
+	public EmployeeServiceOld getEmployeeService() {
 		return employeeService;
 	}
 
 	/**
 	 * @param eisManagr the eisManagr to set
 	 */
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 	

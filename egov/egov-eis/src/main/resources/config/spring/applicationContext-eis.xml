@@ -62,11 +62,7 @@
 		<property name="sequenceGenerator" ref="sequenceGenerator"/>
 	</bean>
 	
-	<bean id="empPositionPersistenceService" parent="persistenceService" scope="prototype">
-		  <property name="type" value="org.egov.pims.model.EmpPosition"/>
-	  </bean>
-	
-	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl">
+	<bean id="employeeServiceOld" class="org.egov.pims.service.EmployeeServiceImpl">
 	    <property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 </beans>

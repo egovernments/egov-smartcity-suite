@@ -111,7 +111,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -148,7 +148,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
         }
         private EISServeable eisService;
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeService;
         private ScriptService scriptExecutionService;
         private PersistenceService<EgBillregister, Long> billRegisterSer;
         public Boundary getBoundaryForUser(CVoucherHeader rv)
@@ -1277,7 +1277,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 this.financialYearDAO = financialYearDAO;
         }
        
-        public void setEmployeeService(EmployeeService employeeService) {
+        public void setEmployeeService(EmployeeServiceOld employeeService) {
             this.employeeService = employeeService;
         }
         public void setEisService(EISServeable eisService) {

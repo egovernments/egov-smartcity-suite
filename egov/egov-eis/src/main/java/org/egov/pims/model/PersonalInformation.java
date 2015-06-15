@@ -53,7 +53,7 @@ import org.egov.eis.entity.EmployeeType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.hibernate.Query;
 
 
@@ -68,7 +68,7 @@ public class PersonalInformation implements java.io.Serializable,EntityType
 	private static final long serialVersionUID = 1L;
 	public final static Logger LOGGER = Logger.getLogger(PersonalInformation.class.getClass());
 	private PersonalInformation employeeId;
-	private EmployeeService employeeService;
+	private EmployeeServiceOld employeeService;
 	User	userMaster =null;
 	private Integer idPersonalInformation;
 
@@ -510,7 +510,7 @@ public RecruimentMaster getModeOfRecruimentMstr() {
 public void setModeOfRecruimentMstr(RecruimentMaster modeOfRecruimentMstr) {
 	this.modeOfRecruimentMstr = modeOfRecruimentMstr;
 }
-public void setEmployeeService(EmployeeService employeeService) {
+public void setEmployeeService(EmployeeServiceOld employeeService) {
 	this.employeeService = employeeService;
 }
 public PersonalInformation getEmployeeId() {

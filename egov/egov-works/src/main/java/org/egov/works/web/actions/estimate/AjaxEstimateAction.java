@@ -68,7 +68,7 @@ import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.Overhead;
@@ -97,7 +97,7 @@ public class AjaxEstimateAction extends BaseFormAction {
     private Long executingDepartment;
     private Integer empID;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private List usersInExecutingDepartment;
     private Assignment assignment;
     private List subCategories;
@@ -428,7 +428,7 @@ public class AjaxEstimateAction extends BaseFormAction {
         return usersInExecutingDepartment;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

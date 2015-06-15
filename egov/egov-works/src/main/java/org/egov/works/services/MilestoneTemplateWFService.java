@@ -41,7 +41,7 @@ package org.egov.works.services;
 
 import org.egov.commons.service.CommonsService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,7 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MilestoneTemplateWFService extends PersistenceService<MilestoneTemplate,Long> {
 
         @Autowired
-        private EmployeeService employeeService;        
+        private EmployeeServiceOld employeeService;        
         @Autowired
         private CommonsService commonsService;
         

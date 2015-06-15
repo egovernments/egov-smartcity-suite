@@ -78,7 +78,7 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.model.bills.EgBillregister;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
@@ -98,7 +98,7 @@ public class SubledgerCodeAction extends BaseFormAction{
 	private DepositCode depositCode = new DepositCode(); 
 	private static final Logger logger = Logger.getLogger(SubledgerCodeAction.class);
 	@Autowired
-        private EmployeeService employeeService;
+        private EmployeeServiceOld employeeService;
 	@Autowired
         private CommonsService commonsService;
 	private static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
@@ -443,11 +443,11 @@ public class SubledgerCodeAction extends BaseFormAction{
 		return NEW; 
 	}
 
-	public EmployeeService getEmployeeService() {
+	public EmployeeServiceOld getEmployeeService() {
 		return employeeService;
 	}
 
-	public void setEmployeeService(EmployeeService employeeService) {
+	public void setEmployeeService(EmployeeServiceOld employeeService) {
 		this.employeeService = employeeService;
 	}
 

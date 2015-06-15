@@ -93,7 +93,7 @@ import org.egov.infstr.utils.NumberUtil;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -142,7 +142,7 @@ public class WorkOrderAction extends BaseFormAction {
     private AbstractEstimateService abstractEstimateService;
     private PersistenceService<SetStatus, Long> worksStatusService;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -369,7 +369,7 @@ public class WorkOrderAction extends BaseFormAction {
         else {
             final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
             if (latestAssignment != null)
-                loggedInUserEmployeeCode = latestAssignment.getOldEmployee().getCode();
+                loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
         }
         if (deptId != null)
             ajaxEstimateAction.setExecutingDepartment(deptId);
@@ -1092,7 +1092,7 @@ public class WorkOrderAction extends BaseFormAction {
         this.tenderResponse = tenderResponse;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

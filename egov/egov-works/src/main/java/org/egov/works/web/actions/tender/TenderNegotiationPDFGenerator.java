@@ -60,7 +60,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.masters.Contractor;
@@ -87,7 +87,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private static final Logger LOGGER = Logger.getLogger(TenderNegotiationPDFGenerator.class);
     private PersistenceService persistenceService = new PersistenceService();
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private final TenderResponse tenderResponse;
     public static final String TENDER_PDF_ERROR = "tenderresponse.pdf.error";
     private final String cityName;
@@ -916,11 +916,11 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
         this.persistenceService = persistenceService;
     }
 
-    public EmployeeService getemployeeService() {
+    public EmployeeServiceOld getemployeeService() {
         return employeeService;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

@@ -60,14 +60,15 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
@@ -96,7 +97,7 @@ import org.springframework.stereotype.Service;
  *         to Window - Preferences - Java - Code Style - Code Templates
  */
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     /*
      * (non-Javadoc)

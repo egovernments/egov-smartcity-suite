@@ -72,7 +72,7 @@ import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.services.WorkProgressAbstractReportService;
 import org.egov.works.services.WorksService;
@@ -112,7 +112,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
     private Integer scheme = -1;
     private Integer subScheme = -1;
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceOld employeeService;
     private PersonalInformationService personalInformationService;
     @Autowired
     private CommonsService commonsService;
@@ -983,7 +983,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         this.subScheme = subScheme;
     }
 
-    public void setEmployeeService(final EmployeeService employeeService) {
+    public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
 

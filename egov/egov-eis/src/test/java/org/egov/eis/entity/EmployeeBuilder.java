@@ -37,44 +37,66 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.web.controller.masters.employee;
+package org.egov.eis.entity;
 
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Field;
 
-import org.egov.eis.entity.EmployeeAssignmentDTO;
-import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.eis.repository.EmployeeTypeRepository;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+public class EmployeeBuilder {
 
-@Controller
-@RequestMapping(value="/employee")
-public class CreateEmployeeController {
+    private final Employee employee;
 
-    @Autowired
-    private DepartmentService departmentService;
-    
-    @Autowired
-    private EmployeeTypeRepository employeeTypeRepository;
+    private static long count = 0;
 
-    @ModelAttribute("employeeStatus")
-    public List<EmployeeStatus> employeeStatus() {
-        return Arrays.asList(EmployeeStatus.values());
+    public EmployeeBuilder() {
+        employee = new Employee();
+        count++;
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createForm(final Model model) {
-        model.addAttribute("employeeBean", new EmployeeAssignmentDTO());
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        return "employee-form";
+    public Employee build() {
+        return employee;
     }
-    
+
+    public EmployeeBuilder withCode(final String code) {
+        employee.setCode(code);
+        return this;
+    }
+
+    public EmployeeBuilder withUserName(final String userName) {
+        employee.setUsername(userName);
+        return this;
+    }
+
+    public EmployeeBuilder withName(final String name) {
+        employee.setName(name);
+        return this;
+    }
+
+    public EmployeeBuilder withId(final long id) {
+        try {
+            final Field idField = employee.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(employee, id);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    public EmployeeBuilder withDefaults() {
+        if (null == employee.getId())
+            withId(count);
+        if (null == employee.getName()){
+            withName("test-employee-" + count);
+            withCode("test-"+employee.getName());
+        }
+        return this;
+    }
+
+    public EmployeeBuilder withDbDefaults() {
+        if (null == employee.getName()){
+            withName("test-employee-" + count);
+            withCode("test-"+employee.getName());
+        }
+        return this;
+    }
 }
