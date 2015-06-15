@@ -57,7 +57,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
-@Table(name = "egwtr_donation_details")
+@Table(name = "egwtr_penalty_details")
 @SequenceGenerator(name = PenaltyDetails.SEQ_PENALTYDETAILS, sequenceName = PenaltyDetails.SEQ_PENALTYDETAILS, allocationSize = 1)
 public class PenaltyDetails extends AbstractPersistable<Long> {
 
