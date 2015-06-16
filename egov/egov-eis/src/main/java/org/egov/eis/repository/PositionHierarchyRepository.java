@@ -39,6 +39,8 @@
  */
 package org.egov.eis.repository;
 
+import java.util.List;
+
 import org.egov.eis.entity.PositionHierarchy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -57,5 +59,8 @@ public interface PositionHierarchyRepository extends JpaRepository<PositionHiera
     
     @Query(" from PositionHierarchy P where P.fromPosition.id=:fromPosition and P.objectType.id=:objectType and P.objectSubType=:objectSubType")
     PositionHierarchy getPosHirByPosAndObjectTypeAndObjectSubType(@Param("fromPosition")Long fromPosition,@Param("objectType")Integer objectType,@Param("objectSubType")String objectSubType);
+
+    @Query(" from PositionHierarchy P where  P.objectType.id=:objectType and P.objectSubType=:objectSubType")
+    public List < PositionHierarchy> getPosHirByObjectTypeAndObjectSubType(@Param("objectType")Integer objectType,@Param("objectSubType")String objectSubType);
     
 }
