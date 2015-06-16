@@ -40,19 +40,22 @@
 package org.egov.pgr.web.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -74,7 +77,13 @@ public class AjaxController {
 
     @Autowired
     private EISServeable eisService;
-
+    
+    @Autowired
+    private DesignationService designationService;
+   
+    @Autowired
+    private PositionMasterService positionMasterService;
+    
     @RequestMapping(value = "/ajax-getWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getWardsForZone(@RequestParam final Long id) {
         return boundaryService.getActiveChildBoundariesByBoundaryId(id);
@@ -88,6 +97,27 @@ public class AjaxController {
         designations.forEach(designation -> designation.toString());
         return designations;
     }
+    
+    @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getDesignationsByDepartmentId(
+            @ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
+        List<Designation> designations =  designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+         designations.forEach(designation -> designation.toString());
+        return designations;
+    }
+    
+    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position>  getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
+			@RequestParam final Long approvalDesignation,
+			final HttpServletResponse response) {
+		List<Position> positions = new ArrayList<Position>();
+		positions = positionMasterService.getPositionsByDepartmentAndDesignationForGivenRange(
+				approvalDepartment, approvalDesignation, new Date());
+
+		positions.forEach(position -> position.toString());
+		// }
+		return positions;
+	}
 
     /**
      * This api uses UserAdaptor to Construct Json

@@ -39,6 +39,7 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -205,4 +206,30 @@ public class AssignmentService {
     public Assignment getPrimaryAssignmentForGivenRange(final Long empId, final Date fromDate, final Date toDate) {
         return assignmentRepository.getPrimaryAssignmentForGivenRange(empId, fromDate, toDate);
     }
+    /**
+     * Get employee primary assignment for given department and designation
+     *
+     * @param departmentId
+     * @param designationId
+     * @param givenDate
+     * @return List of assignment objects if present, else return empty list.
+     */
+	public List<Assignment> getPositionsByDepartmentAndDesignationForGivenRange(
+			final Long departmentId, final Long designationId,
+			final Date givenDate) {
+		
+		if (departmentId != null && designationId != null)
+			return assignmentRepository.getPrimaryAssignmentForDepartmentAndDesignation(
+					departmentId, designationId, givenDate);
+		else if (designationId != null && departmentId == null) {
+			return assignmentRepository.getPrimaryAssignmentForDesignation(designationId,
+					givenDate);
+
+		} else if (designationId == null && departmentId != null) {
+			return assignmentRepository.getPrimaryAssignmentForDepartment(departmentId,
+					givenDate);
+		}
+		return new ArrayList<Assignment>();
+		
+	}
 }
