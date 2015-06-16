@@ -42,11 +42,11 @@
   	<%-- <td class="greybox2">&nbsp;</td>
 	<td class="greybox"><s:text name="OwnerName" /><span class="mandatory1">*</span> : </td>
     <td class="greybox"> --%>
-    <table width="" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
     <tr>
     <th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
-	<th class="bluebgheadtd"><s:text name="MobileNumber" /> : <span style="float: right;">+91</span></th>
+	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>

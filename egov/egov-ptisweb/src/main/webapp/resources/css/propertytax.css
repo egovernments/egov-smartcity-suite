@@ -116,7 +116,7 @@ td.blueborderfortd {
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #000000;
-	text-align: left;
+	text-align: center;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -140,7 +140,8 @@ th.bluebgheadtd {
 	color: #333333;
 	padding: 4px;
 	background-color: #f8f8f8;
-	}
+	text-align:center;
+}
 
 #floorDetails th.bluebgheadtd
 {
@@ -776,4 +777,9 @@ td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox 
 {
     background-color: #eceded;
     cursor: not-allowed;
+}
+
+table.tablebottom
+{
+	border-top: 1px solid #DFDFDF;
 }

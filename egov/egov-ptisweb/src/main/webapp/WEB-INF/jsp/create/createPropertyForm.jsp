@@ -113,7 +113,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  class="form-control datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="buildingPermissionDate"  class="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -337,6 +337,7 @@
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorForm.jsp"%>
+				<br/>
 			</div>
 		</td>
 	</tr>
