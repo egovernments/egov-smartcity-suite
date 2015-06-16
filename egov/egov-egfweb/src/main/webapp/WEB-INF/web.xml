@@ -200,7 +200,6 @@
 	</servlet-mapping>
 	<session-config>
 		<cookie-config>
-			<name>test</name>
 			<path>/</path>
 			<http-only>true</http-only>
 			<secure>false</secure>

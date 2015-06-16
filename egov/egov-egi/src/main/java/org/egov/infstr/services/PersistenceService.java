@@ -59,7 +59,6 @@ import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.dao.GenericDAO;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -79,7 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Transactional(readOnly = true)
-public class PersistenceService<T, ID extends Serializable> implements GenericDAO<T, ID> {
+public class PersistenceService<T, ID extends Serializable> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
     private static final String DEFAULT_FIELD = "_hibernate_class";
     protected org.hibernate.SessionFactory sessionFactory;
@@ -234,7 +233,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     }
 
     @Transactional
-    @Override
+  
     public T create(final T entity) {
         validate(entity);
         final Long id = (Long) getSession().save(entity);
@@ -242,23 +241,23 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     }
 
     @Transactional
-    @Override
+  
     public void delete(final T entity) {
         getSession().delete(entity);
     }
 
-    @Override
+  
     public List<T> findAll() {
         return getSession().createCriteria(this.type).list();
     }
 
-    @Override
+  
     public List<T> findByExample(final T exampleT) {
         final Criteria criteria = getSession().createCriteria(this.type);
         return criteria.add(Example.create(exampleT)).list();
     }
 
-    @Override
+  
     public T findById(final ID id, final boolean lock) {
         return findById(id);
     }
@@ -269,7 +268,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     }
 
     @Transactional
-    @Override
+  
     public T update(final T entity) {
         validate(entity);
         getSession().update(entity);
@@ -316,7 +315,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
 
     enum PagingStrategy {
         PAGE {
-            @Override
+          
             public void setup(final FullTextQuery query, final int pageNumber, final int pageSize) {
                 query.setFirstResult(pageNumber * pageSize + 1).setMaxResults(pageSize);
             }
