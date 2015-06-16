@@ -63,6 +63,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -79,11 +80,13 @@ public class SearchEscalationController {
 	 private final BoundaryTypeService boundaryTypeService;
 	 private final PositionMasterService  positionMasterService;
 	 private final ComplaintRouterService complaintRouterService;
-	@ModelAttribute
+	
+	 
+	 @ModelAttribute
 	public ComplaintRouter complaintRouter() {
 		return new ComplaintRouter();
 	}
-
+ 
 	@ModelAttribute("complaintTypes")
 	public List<ComplaintType> complaintTypes() {
 		return complaintTypeService.findAll();

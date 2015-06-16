@@ -59,7 +59,7 @@
 
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
-			alert('you canont delete this row ');
+			alert('you cannot delete this row ');
 			return false;
 		} else {
 			tb1.deleteRow(curRow);

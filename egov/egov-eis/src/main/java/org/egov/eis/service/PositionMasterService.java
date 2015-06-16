@@ -39,8 +39,11 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PositionMasterService {
 
     private final PositionMasterRepository positionMasterRepository;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Autowired
     public PositionMasterService(final PositionMasterRepository positionMasterRepository) {
@@ -96,14 +102,17 @@ public class PositionMasterService {
         return positionMasterRepository.findAllByDeptDesig_Id(deptDesigId);
     }
 
-    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId,final Long designationId,final String name) {
-        return positionMasterRepository.findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId, designationId, name);
+    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,
+            final String name) {
+        return positionMasterRepository
+                .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
+                        designationId, name);
     }
-    
+
     public boolean validatePosition(final Position position) {
         if (position != null && position.getName() != null) {
-            final List<Position> positionList = positionMasterRepository
-                    .findByNameContainingIgnoreCase(position.getName());
+            final List<Position> positionList = positionMasterRepository.findByNameContainingIgnoreCase(position
+                    .getName());
             if (positionList.size() > 0)
                 return false;
         }
@@ -153,4 +162,19 @@ public class PositionMasterService {
             return positionMasterRepository.getTotalSanctionedPosts();
 
     }
+
+    public List<Position> getPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
+            final Long designationId, final Date givenDate) {
+
+        final List<Position> positionList = new ArrayList<Position>();
+
+        List<Assignment> assignmentList = assignmentList = assignmentService
+                .getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, givenDate);
+
+        for (final Assignment assignmentObj : assignmentList)
+            positionList.add(assignmentObj.getPosition());
+
+        return positionList;
+    }
+
 }
