@@ -43,7 +43,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -74,25 +73,24 @@ public class WaterRatesHeader extends AbstractAuditable {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Column(name = "connection_type")
     private ConnectionType connectionType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "usage_type_id", nullable = false)
+    @JoinColumn(name = "usagetype", nullable = false)
     private UsageType usageType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "water_source_id", nullable = false)
+    @JoinColumn(name = "watersource", nullable = false)
     private WaterSource waterSource;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "pipe_size_id", nullable = false)
+    @JoinColumn(name = "pipesize", nullable = false)
     private PipeSize pipeSize;
 
-    private boolean isActive;
+    private boolean active;
 
     @OneToMany(mappedBy = "waterRatesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<WaterRatesDetails> waterRatesDetails = new HashSet<WaterRatesDetails>();
@@ -139,12 +137,12 @@ public class WaterRatesHeader extends AbstractAuditable {
         this.pipeSize = pipeSize;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public Set<WaterRatesDetails> getWaterRatesDetails() {

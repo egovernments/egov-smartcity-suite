@@ -53,12 +53,12 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_pipe_size")
+@Table(name = "egwtr_pipesize")
 @SequenceGenerator(name = PipeSize.SEQ_PIPESIZE, sequenceName = PipeSize.SEQ_PIPESIZE, allocationSize = 1)
 public class PipeSize extends AbstractAuditable {
 
     private static final long serialVersionUID = 1654115511608940161L;
-    public static final String SEQ_PIPESIZE = "SEQ_EGWTR_PIPE_SIZE";
+    public static final String SEQ_PIPESIZE = "SEQ_EGWTR_PIPESIZE";
 
     @Id
     @GeneratedValue(generator = SEQ_PIPESIZE, strategy = GenerationType.SEQUENCE)
@@ -69,14 +69,14 @@ public class PipeSize extends AbstractAuditable {
     @Length(min = 1, max = 25)
     @Column(name = "code", unique = true)
     private String code = "";
-
-    @Column(name = "size_inches")
+   
+    @NotNull
     private double sizeInInch;
-
-    @Column(name = "size_mm")
+    
+    @NotNull
     private double sizeInMilimeter;
 
-    private boolean isActive;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -112,12 +112,12 @@ public class PipeSize extends AbstractAuditable {
         this.sizeInMilimeter = sizeInMilimeter;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

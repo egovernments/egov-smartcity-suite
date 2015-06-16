@@ -41,7 +41,6 @@ package org.egov.wtms.masters.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -71,16 +70,14 @@ public class DonationDetails extends AbstractPersistable<Long> {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "donation_header_id", nullable = false)
+    @JoinColumn(name = "donationheader", nullable = false)
     private DonationHeader donationHeader;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "from_date")
     private Date fromDate;
 
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "to_date")
     private Date toDate;
 
     @NotNull

@@ -79,7 +79,7 @@ public class UsageType extends AbstractAuditable {
     @SafeHtml
     private String description;
 
-    private boolean isActive;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -115,12 +115,12 @@ public class UsageType extends AbstractAuditable {
         this.description = description;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

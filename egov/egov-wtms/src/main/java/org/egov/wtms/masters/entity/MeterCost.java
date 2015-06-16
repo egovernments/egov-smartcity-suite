@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,6 +47,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -55,12 +55,12 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_meter_cost")
+@Table(name = "egwtr_metercost")
 @SequenceGenerator(name = MeterCost.SEQ_METERCOST, sequenceName = MeterCost.SEQ_METERCOST, allocationSize = 1)
 public class MeterCost extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_METERCOST = "SEQ_EGWTR_METER_COST";
+    public static final String SEQ_METERCOST = "SEQ_EGWTR_METERCOST";
 
     @Id
     @GeneratedValue(generator = SEQ_METERCOST, strategy = GenerationType.SEQUENCE)
@@ -68,16 +68,19 @@ public class MeterCost extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "pipe_size_id", nullable = false)
+    @JoinColumn(name = "pipesize", nullable = false)
     private PipeSize pipeSize;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
-    @Column(name = "meter_make")
     private String meterMake;
 
-    private boolean isActive;
+    @NotNull
+    @Min(value = 1)
+    private double amount;
+
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -105,12 +108,20 @@ public class MeterCost extends AbstractAuditable {
         this.meterMake = meterMake;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setAmount(final double amount) {
+        this.amount = amount;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

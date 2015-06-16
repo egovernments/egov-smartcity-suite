@@ -39,49 +39,55 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_connectioncharges_header")
-@SequenceGenerator(name = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, sequenceName = ConnectionChargesHeader.SEQ_CONNECTIONCHARGESHEADER, allocationSize = 1)
-public class ConnectionChargesHeader extends AbstractAuditable {
+@Table(name = "egwtr_securitydeposit")
+@SequenceGenerator(name = SecurityDeposit.SEQ_SECURITYDEPOSIT, sequenceName = SecurityDeposit.SEQ_SECURITYDEPOSIT, allocationSize = 1)
+public class SecurityDeposit extends AbstractAuditable {
 
-    private static final long serialVersionUID = -3303152312586931035L;
-    public static final String SEQ_CONNECTIONCHARGESHEADER = "SEQ_EGWTR_CONNECTIONCHARGES_HEADER";
+    private static final long serialVersionUID = -8880566293275776557L;
+    public static final String SEQ_SECURITYDEPOSIT = "SEQ_EGWTR_SECURITYDEPOSIT";
 
     @Id
-    @GeneratedValue(generator = SEQ_CONNECTIONCHARGESHEADER, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_SECURITYDEPOSIT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    @Column(name = "type", unique = true)
-    private String type;
+    @JoinColumn(name = "usagetype", nullable = false)
+    private UsageType usageType;
 
-    @SafeHtml
-    private String description;
+    @NotNull
+    private Long noOfMonths;
 
-    private boolean isActive;
+    private boolean active;
 
-    @OneToMany(mappedBy = "connectionChargesHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<ConnectionChargesDetails> connectionChargesDetails = new HashSet<ConnectionChargesDetails>();
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
+    private Date fromDate;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date toDate;
+
+    @NotNull
+    @Min(value = 1)
+    private double amount;
 
     @Override
     public Long getId() {
@@ -93,40 +99,51 @@ public class ConnectionChargesHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public UsageType getUsageType() {
+        return usageType;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setUsageType(final UsageType usageType) {
+        this.usageType = usageType;
     }
 
-    public String getDescription() {
-        return description;
+    public Long getNoOfMonths() {
+        return noOfMonths;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setNoOfMonths(final Long noOfMonths) {
+        this.noOfMonths = noOfMonths;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
-    public Set<ConnectionChargesDetails> getConnectionChargesDetails() {
-        return connectionChargesDetails;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setConnectionChargesDetails(final Set<ConnectionChargesDetails> connectionChargesDetails) {
-        this.connectionChargesDetails = connectionChargesDetails;
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public void addConnectionChargesDetails(final ConnectionChargesDetails connectionChargesDetail) {
-        connectionChargesDetails.add(connectionChargesDetail);
+    public Date getToDate() {
+        return toDate;
     }
 
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final double amount) {
+        this.amount = amount;
+    }
 }

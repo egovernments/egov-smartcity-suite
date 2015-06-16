@@ -39,51 +39,47 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_penalty_details")
-@SequenceGenerator(name = PenaltyDetails.SEQ_PENALTYDETAILS, sequenceName = PenaltyDetails.SEQ_PENALTYDETAILS, allocationSize = 1)
-public class PenaltyDetails extends AbstractPersistable<Long> {
+@Table(name = "egwtr_category")
+@SequenceGenerator(name = ConnectionCategory.SEQ_CATEGORY, sequenceName = ConnectionCategory.SEQ_CATEGORY, allocationSize = 1)
+public class ConnectionCategory extends AbstractAuditable {
 
-    private static final long serialVersionUID = 6043433401898647303L;
-    public static final String SEQ_PENALTYDETAILS = "SEQ_EGWTR_PENALTY_DETAILS";
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_CATEGORY = "SEQ_EGWTR_CATEGORY";
 
     @Id
-    @GeneratedValue(generator = SEQ_PENALTYDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "penalty_header_id", nullable = false)
-    private PenaltyHeader penaltyHeader;
+    @SafeHtml
+    @Length(min = 1, max = 25)
+    @Column(name = "code", unique = true)
+    private String code;
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
-    @Column(name = "from_date")
-    private Date fromDate;
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    @Column(name = "name", unique = true)
+    private String name;
 
-    @Temporal(value = TemporalType.DATE)
-    @Column(name = "to_date")
-    private Date toDate;
+    @SafeHtml
+    private String description;
 
-    @NotNull
-    private double percentage;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -95,36 +91,36 @@ public class PenaltyDetails extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public PenaltyHeader getPenaltyHeader() {
-        return penaltyHeader;
+    public String getCode() {
+        return code;
     }
 
-    public void setPenaltyHeader(final PenaltyHeader penaltyHeader) {
-        this.penaltyHeader = penaltyHeader;
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public Date getFromDate() {
-        return fromDate;
+    public String getName() {
+        return name;
     }
 
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public double getPercentage() {
-        return percentage;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setPercentage(final double percentage) {
-        this.percentage = percentage;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

@@ -39,49 +39,53 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_securitydeposit_header")
-@SequenceGenerator(name = SecurityDepositHeader.SEQ_SECURITYDEPOSITHEADER, sequenceName = SecurityDepositHeader.SEQ_SECURITYDEPOSITHEADER, allocationSize = 1)
-public class SecurityDepositHeader extends AbstractAuditable {
+@Table(name = "egwtr_connectioncharges")
+@SequenceGenerator(name = ConnectionCharges.SEQ_CONNECTIONCHARGES, sequenceName = ConnectionCharges.SEQ_CONNECTIONCHARGES, allocationSize = 1)
+public class ConnectionCharges extends AbstractAuditable {
 
-    private static final long serialVersionUID = -8880566293275776557L;
-    public static final String SEQ_SECURITYDEPOSITHEADER = "SEQ_EGWTR_SECURITYDEPOSIT_HEADER";
+    private static final long serialVersionUID = -3303152312586931035L;
+    public static final String SEQ_CONNECTIONCHARGES = "SEQ_EGWTR_CONNECTIONCHARGES";
 
     @Id
-    @GeneratedValue(generator = SEQ_SECURITYDEPOSITHEADER, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CONNECTIONCHARGES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "usage_type_id", nullable = false, unique = true)
-    private UsageType usageType;
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String type;
+
+    @SafeHtml
+    private String description;
+
+    private boolean active;
 
     @NotNull
-    @Column(name = "no_of_months")
-    private Long noOfMonths;
+    @Temporal(value = TemporalType.DATE)
+    private Date fromDate;
 
-    private boolean isActive;
+    @Temporal(value = TemporalType.DATE)
+    private Date toDate;
 
-    @OneToMany(mappedBy = "securityDepositHeader", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<SecurityDepositDetails> securityDepositDetails = new HashSet<SecurityDepositDetails>();
+    @NotNull
+    private double amount;
 
     @Override
     public Long getId() {
@@ -93,40 +97,52 @@ public class SecurityDepositHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public UsageType getUsageType() {
-        return usageType;
+    public String getType() {
+        return type;
     }
 
-    public void setUsageType(final UsageType usageType) {
-        this.usageType = usageType;
+    public void setType(final String type) {
+        this.type = type;
     }
 
-    public Long getNoOfMonths() {
-        return noOfMonths;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNoOfMonths(final Long noOfMonths) {
-        this.noOfMonths = noOfMonths;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
-    public Set<SecurityDepositDetails> getSecurityDepositDetails() {
-        return securityDepositDetails;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setSecurityDepositDetails(final Set<SecurityDepositDetails> securityDepositDetails) {
-        this.securityDepositDetails = securityDepositDetails;
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public void addSecurityDepositDetails(final SecurityDepositDetails securityDepositDetail) {
-        securityDepositDetails.add(securityDepositDetail);
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final double amount) {
+        this.amount = amount;
     }
 
 }

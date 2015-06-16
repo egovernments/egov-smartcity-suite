@@ -67,11 +67,9 @@ public class DemandNoticePenaltyPeriod extends AbstractAuditable {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Column(name = "demandnotice_issue")
-    private DemandNoticeIssueFrequency frequencyOfDemandNoticeIssue;
+    private DemandNoticeIssueFrequency issueOfDamendNotice;
 
-    @Column(name = "penalty_days")
-    private Integer penaltyDays;
+    private Integer penaltyPeriod;
 
     @Column(name = "min_con_holding_months")
     private Integer minConnectionHoldingMonths;
@@ -86,20 +84,20 @@ public class DemandNoticePenaltyPeriod extends AbstractAuditable {
         this.id = id;
     }
 
-    public DemandNoticeIssueFrequency getFrequencyOfDemandNoticeIssue() {
-        return frequencyOfDemandNoticeIssue;
+    public DemandNoticeIssueFrequency getIssueOfDamendNotice() {
+        return issueOfDamendNotice;
     }
 
-    public void setFrequencyOfDemandNoticeIssue(final DemandNoticeIssueFrequency frequencyOfDemandNoticeIssue) {
-        this.frequencyOfDemandNoticeIssue = frequencyOfDemandNoticeIssue;
+    public void setIssueOfDamendNotice(final DemandNoticeIssueFrequency issueOfDamendNotice) {
+        this.issueOfDamendNotice = issueOfDamendNotice;
     }
 
-    public Integer getPenaltyDays() {
-        return penaltyDays;
+    public Integer getPenaltyPeriod() {
+        return penaltyPeriod;
     }
 
-    public void setPenaltyDays(final Integer penaltyDays) {
-        this.penaltyDays = penaltyDays;
+    public void setPenaltyPeriod(final Integer penaltyPeriod) {
+        this.penaltyPeriod = penaltyPeriod;
     }
 
     public Integer getMinConnectionHoldingMonths() {

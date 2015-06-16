@@ -43,7 +43,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,7 +53,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -71,33 +70,31 @@ public class DonationHeader extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @JoinColumn(name = "category", nullable = false)
+    private ConnectionCategory category;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "usage_type_id", nullable = false)
+    @JoinColumn(name = "usagetype", nullable = false)
     private UsageType usageType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "min_pipe_size_id", nullable = false)
+    @JoinColumn(name = "minpipesize", nullable = false)
     private PipeSize minPipeSize;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "max_pipe_size_id", nullable = false)
+    @JoinColumn(name = "maxpipesize", nullable = false)
     private PipeSize maxPipeSize;
 
     @NotNull
-    @Column(name = "min_sump_capacity")
     private Long minSumpCapacity;
 
     @NotNull
-    @Column(name = "max_sump_capacity")
     private Long maxSumpCapacity;
 
-    private boolean isActive;
+    private boolean active;
 
     @OneToMany(mappedBy = "donationHeader", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<DonationDetails> donationDetails = new HashSet<DonationDetails>();
@@ -112,11 +109,11 @@ public class DonationHeader extends AbstractAuditable {
         this.id = id;
     }
 
-    public Category getCategory() {
+    public ConnectionCategory getCategory() {
         return category;
     }
 
-    public void setCategory(final Category category) {
+    public void setCategory(final ConnectionCategory category) {
         this.category = category;
     }
 
@@ -160,12 +157,12 @@ public class DonationHeader extends AbstractAuditable {
         this.maxSumpCapacity = maxSumpCapacity;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public Set<DonationDetails> getDonationDetails() {

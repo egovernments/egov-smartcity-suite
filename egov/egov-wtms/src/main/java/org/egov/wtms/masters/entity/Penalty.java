@@ -46,44 +46,45 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egwtr_connectioncharges_details")
-@SequenceGenerator(name = ConnectionChargesDetails.SEQ_CONNECTIONCHARGESDETAILS, sequenceName = ConnectionChargesDetails.SEQ_CONNECTIONCHARGESDETAILS, allocationSize = 1)
-public class ConnectionChargesDetails extends AbstractPersistable<Long> {
+@Table(name = "egwtr_penalty")
+@SequenceGenerator(name = Penalty.SEQ_PENALTY, sequenceName = Penalty.SEQ_PENALTY, allocationSize = 1)
+public class Penalty extends AbstractAuditable {
 
-    private static final long serialVersionUID = -5096250692356322243L;
-    public static final String SEQ_CONNECTIONCHARGESDETAILS = "SEQ_EGWTR_CONNECTIONCHARGES_DETAILS";
+    private static final long serialVersionUID = -3851299107850036408L;
+    public static final String SEQ_PENALTY = "SEQ_EGWTR_PENALTY";
 
     @Id
-    @GeneratedValue(generator = SEQ_CONNECTIONCHARGESDETAILS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_PENALTY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "connectioncharges_header_id", nullable = false)
-    private ConnectionChargesHeader connectionChargesHeader;
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String penaltyType;
+
+    @SafeHtml
+    private String description;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "from_date")
     private Date fromDate;
 
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "to_date")
     private Date toDate;
 
     @NotNull
-    private double amount;
+    private double percentage;
 
     @Override
     public Long getId() {
@@ -93,38 +94,6 @@ public class ConnectionChargesDetails extends AbstractPersistable<Long> {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public ConnectionChargesHeader getConnectionChargesHeader() {
-        return connectionChargesHeader;
-    }
-
-    public void setConnectionChargesHeader(final ConnectionChargesHeader connectionChargesHeader) {
-        this.connectionChargesHeader = connectionChargesHeader;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(final double amount) {
-        this.amount = amount;
     }
 
 }

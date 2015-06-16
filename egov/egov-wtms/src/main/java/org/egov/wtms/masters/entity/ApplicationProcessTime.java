@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,12 +49,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "egwtr_application_process_time", uniqueConstraints = @UniqueConstraint(columnNames = {
-        "application_type_id", "category_id" }) )
+@Table(name = "egwtr_application_process_time", uniqueConstraints = @UniqueConstraint(columnNames = { "applicationtype",
+        "category" }) )
 @SequenceGenerator(name = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, sequenceName = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, allocationSize = 1)
 public class ApplicationProcessTime extends AbstractAuditable {
 
@@ -68,19 +67,18 @@ public class ApplicationProcessTime extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "application_type_id", nullable = false)
+    @JoinColumn(name = "applicationtype", nullable = false)
     private ApplicationType applicationType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @JoinColumn(name = "category", nullable = false)
+    private ConnectionCategory category;
 
     @NotNull
-    @Column(name = "processing_time")
-    private Integer processTime;
+    private Integer processingTime;
 
-    private boolean isActive;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -100,28 +98,28 @@ public class ApplicationProcessTime extends AbstractAuditable {
         this.applicationType = applicationType;
     }
 
-    public Category getCategory() {
+    public ConnectionCategory getCategory() {
         return category;
     }
 
-    public void setCategory(final Category category) {
+    public void setCategory(final ConnectionCategory category) {
         this.category = category;
     }
 
-    public Integer getProcessTime() {
-        return processTime;
+    public Integer getProcessingTime() {
+        return processingTime;
     }
 
-    public void setProcessTime(final Integer processTime) {
-        this.processTime = processTime;
+    public void setProcessingTime(final Integer processingTime) {
+        this.processingTime = processingTime;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

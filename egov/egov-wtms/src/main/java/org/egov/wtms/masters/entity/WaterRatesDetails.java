@@ -41,7 +41,6 @@ package org.egov.wtms.masters.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -70,33 +69,24 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "water_rates_header_id", nullable = false)
+    @JoinColumn(name = "waterratesheader", nullable = false)
     private WaterRatesHeader waterRatesHeader;
 
-    @Column(name = "starting_units")
     private Long startingUnits;
 
-    @Column(name = "ending_units")
     private Long endingUnits;
 
-    private Long quantity;
-
-    @Column(name = "unit_rate")
     private double unitRate;
 
-    @Column(name = "min_rate")
     private double minimumRate;
 
-    @Column(name = "rate_per_month")
     private double monthlyRate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "from_date")
     private Date fromDate;
 
     @Temporal(value = TemporalType.DATE)
-    @Column(name = "to_date")
     private Date toDate;
 
     @Override
@@ -131,14 +121,6 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     public void setEndingUnits(final Long endingUnits) {
         this.endingUnits = endingUnits;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final Long quantity) {
-        this.quantity = quantity;
     }
 
     public double getUnitRate() {

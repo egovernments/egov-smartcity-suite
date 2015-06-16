@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -68,21 +67,20 @@ public class DocumentNames extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "application_type_id", nullable = false)
+    @JoinColumn(name = "applicationtype", nullable = false)
     private ApplicationType applicationType;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
-    @Column(name = "document_name")
     private String documentName;
 
     @SafeHtml
     private String description;
 
-    private boolean isRequired;
+    private boolean required;
 
-    private boolean isActive;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -118,20 +116,20 @@ public class DocumentNames extends AbstractAuditable {
         this.description = description;
     }
 
-    public boolean getIsRequired() {
-        return isRequired;
+    public boolean isRequired() {
+        return required;
     }
 
-    public void setIsRequired(final boolean isRequired) {
-        this.isRequired = isRequired;
+    public void setRequired(final boolean required) {
+        this.required = required;
     }
 
-    public boolean setIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }

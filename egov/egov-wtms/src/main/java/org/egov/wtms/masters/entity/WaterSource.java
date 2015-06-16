@@ -73,14 +73,14 @@ public class WaterSource extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
-    @Column(name = "type", unique = true)
-    private String type;
+    @Column(name = "watersourcetype", unique = true)
+    private String waterSourceType;
 
     @NotNull
     @SafeHtml
     private String description;
 
-    private boolean isActive;
+    private boolean active;
 
     @Override
     public Long getId() {
@@ -100,12 +100,12 @@ public class WaterSource extends AbstractAuditable {
         this.code = code;
     }
 
-    public String getType() {
-        return type;
+    public String getWaterSourceType() {
+        return waterSourceType;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setWaterSourceType(final String waterSourceType) {
+        this.waterSourceType = waterSourceType;
     }
 
     public String getDescription() {
@@ -116,12 +116,12 @@ public class WaterSource extends AbstractAuditable {
         this.description = description;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
 }
