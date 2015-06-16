@@ -319,7 +319,7 @@
 									<label class="control-label">Old Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control" id="old-pass">
+									<input type="password" class="form-control" id="old-pass" required="required">
 								</div>
 							</div>
 							<div class="form-group">
@@ -327,7 +327,7 @@
 									<label class="control-label">New Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="new-pass">
+									<input type="password" class="form-control check-password" id="new-pass" minlength="8" maxlength="32">
 								</div>
 							</div>
 							<div class="form-group">
@@ -335,7 +335,7 @@
 									<label class="control-label">Re-type Password</label>
 								</div>
 								<div class="col-md-8 add-margin">
-									<input type="password" class="form-control check-password" id="retype-pass"><br>
+									<input type="password" class="form-control check-password" id="retype-pass" minlength="8" maxlength="32"><br>
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>

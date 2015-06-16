@@ -73,7 +73,9 @@ $(document).ready(function()
 	                		msg = "New password you have entered does not match with retyped password."
 	                	} else if (data == "CURRPWD_UNMATCH") {
 	                		msg = "Old password you have entered is incorrect."
-	                	} 
+	                	} else  if (data == "NEWPWD_INVALID") {
+	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]"
+	                	}
 	                	bootbox.alert(msg);
 	                },
 	                error: function() {

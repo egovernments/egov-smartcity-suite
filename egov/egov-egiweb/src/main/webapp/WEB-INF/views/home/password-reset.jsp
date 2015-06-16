@@ -56,7 +56,7 @@
 							New Password
 						</label>
 						<div class="col-sm-4" >
-							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required"/>
+							<input type="password" name="newPassword" class="form-control check-password" id="new-pass" required="required" minlength="8" maxlength="32"/>
 						</div>
 					</div>
 					
@@ -65,7 +65,7 @@
 							Confirm Password
 						</label>
 						<div class="col-sm-4" >
-							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required"/>
+							<input type="password" name="confirmPwd" class="form-control check-password" id="retype-pass" required="required" minlength="8" maxlength="32"/>
 							<div class="password-error error-msg display-hide">Password is mismatching</div>
 						</div>
 					</div>

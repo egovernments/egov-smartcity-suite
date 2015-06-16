@@ -43,6 +43,9 @@ $(document).ready(function()
 	if($('#mobInvalid').val() == "true"){
 		hideSigIn();
 	    $('#mobnumValid').show();
+	} else if($('#pwdInvalid').val() == "true"){
+		hideSigIn();
+	    $('#pwdValid').show();
 	} else if($('#emailInvalid').val() == "true"){
 		hideSigIn();
 	    $('#emailidValid').show();

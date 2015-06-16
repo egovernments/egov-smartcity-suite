@@ -40,6 +40,7 @@
 package org.egov.infra.web.controller;
 
 import org.egov.infra.admin.common.service.IdentityRecoveryService;
+import org.egov.infra.validation.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,6 +73,13 @@ public class LoginController {
             redirectAttrib.addAttribute("error", "Password entered is mismatching");
             return "redirect:/login/password/reset?token=" + token;
         }
+
+        if (!ValidatorUtils.isValidPassword(newPassword)) {
+            redirectAttrib.addAttribute("error",
+                    "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \\ and space]");
+            return "redirect:/login/password/reset?token=" + token;
+        }
+
         return "redirect:/login/secure?reset=" + identityRecoveryService.validateAndResetPassword(token, newPassword);
     }
 }

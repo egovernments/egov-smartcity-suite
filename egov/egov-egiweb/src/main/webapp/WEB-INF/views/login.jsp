@@ -48,6 +48,7 @@
 	String userAgentInfo = request.getHeader("User-Agent");
 %>
 <!DOCTYPE html>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html lang="en">
 	<head>
@@ -168,6 +169,9 @@
 						<input type="hidden" name="emailInvalid" id="emailInvalid"
 							value="true" />
 					</c:if>
+					<c:if test="${param.pwdInvalid}">
+						<input type="hidden" name="pwdInvalid" id="pwdInvalid" value="true" />
+					</c:if>
 					<c:if test="${param.citizenActivation}">
 						<input type="hidden" name="citizenActivation"
 							id="citizenActivation" value="true" />
@@ -192,9 +196,8 @@
 							</div>
 						</div>
 						<div class="login-body">
-							<form method="post" role="form" id="signupform"
+							<form:form method="post" role="form" id="signupform"
 								modelAttribute="citizen" class="display-hide">
-	
 								<div class="form-group">
 	
 									<div class="input-group">
@@ -230,7 +233,7 @@
 												<input type="password"
 													class="form-control style-form check-password"
 													name="password" id="password" placeholder="Password"
-													autocomplete="off" required="required" /> <span
+													autocomplete="off" required="required"  minlength="8" maxlength="32"/> <span
 													class="mandatory set-mandatory"></span>
 												<div id="passwordValid" style="display: none">
 													<div class="text-right add-margin error-msg">Password
@@ -248,11 +251,15 @@
 													class="form-control style-form check-password"
 													name="con-password" id="con-password"
 													placeholder="Confirm password" autocomplete="off"
-													required="required" /> <span
+													required="required" minlength="8" maxlength="32"/> <span
 													class="mandatory set-mandatory"></span>
 											</div>
 										</div>
-	
+									</div>
+									<div class="row" id="pwdValid" style="display: none">
+										<div  class="col-md-12 margin-sm-top">
+											<div class="text-left add-margin error-msg">Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]</div>
+										</div>
 									</div>
 									<div
 										class="text-right add-margin error-msg display-hide password-error">These
@@ -315,8 +322,7 @@
 										<i class="entypo-login"></i> Sign Up
 									</button>
 								</div>
-	
-							</form>
+							</form:form>
 							<form method="post" role="form" id="signinform"
 								action="${pageContext.request.contextPath}/j_security_check"
 								autocomplete="off">

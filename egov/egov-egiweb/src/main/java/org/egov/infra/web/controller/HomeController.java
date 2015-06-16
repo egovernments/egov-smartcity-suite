@@ -55,6 +55,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +87,10 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -103,7 +104,8 @@ public class HomeController {
     }
 
     @RequestMapping(value = "favourite/add", method = RequestMethod.POST)
-    public @ResponseBody boolean addFavourite(@Valid @ModelAttribute final Favourites favourites, final BindingResult bindResult) {
+    public @ResponseBody boolean addFavourite(@Valid @ModelAttribute final Favourites favourites,
+            final BindingResult bindResult) {
         return !bindResult.hasErrors() && favouritesService.addToCurrentUserFavourite(favourites).getId() != null;
     }
 
@@ -113,27 +115,29 @@ public class HomeController {
     }
 
     @RequestMapping(value = "password/update")
-    public @ResponseBody String changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd, 
-    		@RequestParam final String retypeNewPwd) {
-    	final User user = securityUtils.getCurrentUser();
-    	if (passwordEncoder.matches(currentPwd, user.getPassword())) {
-    		if (newPwd.equals(retypeNewPwd)) {
-    			user.setPassword(passwordEncoder.encode(newPwd));
-    			user.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
-    			userService.updateUser(user);
-    			return "SUCCESS";
-    		}
-    		return "NEWPWD_UNMATCH";
-    	} 
-    	return "CURRPWD_UNMATCH";
+    public @ResponseBody String changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd,
+            @RequestParam final String retypeNewPwd) {
+        final User user = securityUtils.getCurrentUser();
+        if (passwordEncoder.matches(currentPwd, user.getPassword())) {
+            if (!ValidatorUtils.isValidPassword(newPwd))
+                return "NEWPWD_INVALID";
+            if (newPwd.equals(retypeNewPwd)) {
+                user.setPassword(passwordEncoder.encode(newPwd));
+                user.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+                userService.updateUser(user);
+                return "SUCCESS";
+            }
+            return "NEWPWD_UNMATCH";
+        }
+        return "CURRPWD_UNMATCH";
     }
-    
+
     @RequestMapping(value = "feedback/sent")
     public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message) {
-    	//TODO
-    	return false;
+        // TODO
+        return false;
     }
-    
+
     @ModelAttribute("user")
     public User user() {
         return securityUtils.getCurrentUser();
@@ -145,7 +149,8 @@ public class HomeController {
     }
 
     @RequestMapping(value = "profile/edit", method = RequestMethod.POST)
-    public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder, final RedirectAttributes redirAttrib) {
+    public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder,
+            final RedirectAttributes redirAttrib) {
         if (binder.hasErrors())
             return "profile-edit";
         userService.updateUser(user);
@@ -162,8 +167,8 @@ public class HomeController {
     }
 
     private List<MenuLink> getEmployeeSelfService(final List<MenuLink> menuLinks, final User user) {
-        return menuLinks.parallelStream().filter(menuLink -> menuLink.getName().equals("EmployeeSelfService"))
-                .findFirst().map(menuLink -> moduleService.getMenuLinksByParentModuleId(menuLink.getId(), user.getId()))
+        return menuLinks.parallelStream().filter(menuLink -> menuLink.getName().equals("EmployeeSelfService")).findFirst()
+                .map(menuLink -> moduleService.getMenuLinksByParentModuleId(menuLink.getId(), user.getId()))
                 .orElse(Collections.emptyList());
 
     }
@@ -184,19 +189,12 @@ public class HomeController {
 
     private void createApplicationMenu(final List<MenuLink> menuLinks, final List<MenuLink> favourites, final User user,
             final Menu menu) {
-        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);", "fa fa-th floatLeft",
-                menu);
-        menuLinks.stream()
-                .filter(menuLink -> !menuLink.getName().equals("EmployeeSelfService"))
-                .forEach(
-                        menuLink -> {
-                            createSubmenuRoot(
-                                    menuLink,
-                                    favourites,
-                                    user,
-                                    createSubmenu(String.valueOf(menuLink.getId()), menuLink.getDisplayName(),
-                                            menuLink.getDisplayName(), "javascript:void(0);", "", applicationMenu));
-                        });
+        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);",
+                "fa fa-th floatLeft", menu);
+        menuLinks.stream().filter(menuLink -> !menuLink.getName().equals("EmployeeSelfService")).forEach(menuLink -> {
+            createSubmenuRoot(menuLink, favourites, user, createSubmenu(String.valueOf(menuLink.getId()),
+                    menuLink.getDisplayName(), menuLink.getDisplayName(), "javascript:void(0);", "", applicationMenu));
+        });
     }
 
     private void createFavouritesMenu(final List<MenuLink> favourites, final Menu menu) {
@@ -204,7 +202,7 @@ public class HomeController {
                 "fa fa-briefcase floatLeft", menu);
         favourites.stream().forEach(favourite -> {
             final Menu appLinks = new Menu();
-            appLinks.setId("fav-"+favourite.getId());
+            appLinks.setId("fav-" + favourite.getId());
             appLinks.setName(favourite.getName());
             appLinks.setLink("/" + favourite.getUrl());
             appLinks.setIcon("fa fa-times-circle remove-favourite");
@@ -235,22 +233,18 @@ public class HomeController {
         if (childMenuLink.isEnabled()) {
             final Menu appLink = new Menu();
             appLink.setId(childMenuLink.getId().toString());
-            appLink.setIcon("fa fa-star floatLeft "
-                    + (favourites.contains(childMenuLink) ? "added-as-fav" : "add-to-favourites"));
+            appLink.setIcon(
+                    "fa fa-star floatLeft " + (favourites.contains(childMenuLink) ? "added-as-fav" : "add-to-favourites"));
             appLink.setName(childMenuLink.getName());
             appLink.setLink("/" + childMenuLink.getContextRoot() + childMenuLink.getUrl());
             parent.getItems().add(appLink);
         } else
-            createSubmenuRoot(
-                    childMenuLink,
-                    favourites,
-                    user,
-                    createSubmenu(String.valueOf(childMenuLink.getId()), childMenuLink.getName(),
-                            childMenuLink.getName(), "javascript:void(0);", "", parent));
+            createSubmenuRoot(childMenuLink, favourites, user, createSubmenu(String.valueOf(childMenuLink.getId()),
+                    childMenuLink.getName(), childMenuLink.getName(), "javascript:void(0);", "", parent));
     }
 
-    private Menu createSubmenu(final String id, final String name, final String title, final String link,
-            final String icon, final Menu parent) {
+    private Menu createSubmenu(final String id, final String name, final String title, final String link, final String icon,
+            final Menu parent) {
         final Menu submenuItem = new Menu();
         submenuItem.setId(id);
         submenuItem.setName(name);
@@ -269,4 +263,3 @@ public class HomeController {
     }
 
 }
-

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -58,72 +58,66 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/citizen")
 public class CitizenRegistrationController {
-	private CitizenService citizenService;
+    private final CitizenService citizenService;
 
-	@Autowired
-	public CitizenRegistrationController(CitizenService citizenService) {
-		this.citizenService = citizenService;
-	}
+    @Autowired
+    public CitizenRegistrationController(final CitizenService citizenService) {
+        this.citizenService = citizenService;
+    }
 
-	@RequestMapping(value = "/register", method = POST)
-	public String registerCitizen(@Valid @ModelAttribute Citizen citizen,
-			final BindingResult errors,
-			final RedirectAttributes redirectAttributes) {
+    @RequestMapping(value = "/register", method = POST)
+    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        //TODO Rework this
+        String SUCCESS = "redirect:/../egi/login/secure";
+        if (errors.hasFieldErrors("password"))
+            return SUCCESS + "?pwdInvalid=true";
 
-		String SUCCESS = "redirect:/../egi/login/secure";
-		try {
-			citizenService.create(citizen);
-			citizenService.sendActivationMessage(citizen);
-			SUCCESS = SUCCESS + "?citizenActivation=true&citizenId="
-					+ citizen.getId();
+        try {
+            citizenService.create(citizen);
+            citizenService.sendActivationMessage(citizen);
+            SUCCESS = SUCCESS + "?citizenActivation=true&citizenId=" + citizen.getId();
 
-		} catch (DuplicateElementException e) {
+        } catch (final DuplicateElementException e) {
 
-			if (e.getMessage().equals("Mobile Number already exists")) {
-				SUCCESS = SUCCESS + "?mobInvalid=true";
-			} else if (e.getMessage().equals("Email already exists")) {
-				SUCCESS = SUCCESS + "?emailInvalid=true";
-			}
-		} catch (EGOVRuntimeException e) {
+            if (e.getMessage().equals("Mobile Number already exists"))
+                SUCCESS = SUCCESS + "?mobInvalid=true";
+            else if (e.getMessage().equals("Email already exists"))
+                SUCCESS = SUCCESS + "?emailInvalid=true";
+        } catch (final EGOVRuntimeException e) {
 
-			SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
+            SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
 
-		}
+        }
 
-		return SUCCESS;
-	}
+        return SUCCESS;
+    }
 
-	@RequestMapping(value = "/activation/{citizenId}", method = POST)
-	public String citizenActivation(@PathVariable Long citizenId,
-			@ModelAttribute Citizen model) {
-		Citizen citizen = citizenService.getCitizenById(citizenId);
-		if (citizen.getActivationCode().equals(model.getActivationCode())) {
-			citizen.setActive(true);
-			citizenService.update(citizen);
-			return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
-		} else {
-			return "redirect:/../egi/login/secure?citizenActivationFailed=true&citizenId="
-					+ citizenId;
-		}
+    @RequestMapping(value = "/activation/{citizenId}", method = POST)
+    public String citizenActivation(@PathVariable final Long citizenId, @ModelAttribute final Citizen model) {
+        final Citizen citizen = citizenService.getCitizenById(citizenId);
+        if (citizen.getActivationCode().equals(model.getActivationCode())) {
+            citizen.setActive(true);
+            citizenService.update(citizen);
+            return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
+        } else
+            return "redirect:/../egi/login/secure?citizenActivationFailed=true&citizenId=" + citizenId;
 
-	}
-	@RequestMapping(value = "/activation", method = POST)
-	public String citizenOTPActivation(@ModelAttribute Citizen model) {
-		Citizen citizen = citizenService.getCitizenByActivationCode(model.getActivationCode());
-		if(citizen!=null){
-			if (citizen.getActivationCode().equals(model.getActivationCode()) && !citizen.isActive()) {
-				citizen.setActive(true);
-				citizenService.update(citizen);
-				return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
-			} else {
-				return "redirect:/../egi/login/secure?citizenActivationFailed=true";
-			
-			}
-		}else {
-			return "redirect:/../egi/login/secure?citizenActivationFailed=true";
-					
-		}
+    }
 
-	}
+    @RequestMapping(value = "/activation", method = POST)
+    public String citizenOTPActivation(@ModelAttribute final Citizen model) {
+        final Citizen citizen = citizenService.getCitizenByActivationCode(model.getActivationCode());
+        if (citizen != null) {
+            if (citizen.getActivationCode().equals(model.getActivationCode()) && !citizen.isActive()) {
+                citizen.setActive(true);
+                citizenService.update(citizen);
+                return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
+            } else
+                return "redirect:/../egi/login/secure?citizenActivationFailed=true";
+        } else
+            return "redirect:/../egi/login/secure?citizenActivationFailed=true";
+
+    }
 
 }
