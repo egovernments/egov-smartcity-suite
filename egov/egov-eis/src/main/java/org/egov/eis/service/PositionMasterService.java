@@ -168,7 +168,7 @@ public class PositionMasterService {
 
         final List<Position> positionList = new ArrayList<Position>();
 
-        List<Assignment> assignmentList = assignmentList = assignmentService
+        List<Assignment> assignmentList = assignmentService
                 .getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, givenDate);
 
         for (final Assignment assignmentObj : assignmentList)
