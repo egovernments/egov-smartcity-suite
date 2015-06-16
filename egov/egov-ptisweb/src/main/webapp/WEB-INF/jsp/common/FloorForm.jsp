@@ -59,8 +59,6 @@
 			<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 		</s:if>
 	</tr>
-	size:
-	<s:property value="%{propertyDetail.floorDetailsProxy.size}" />
 	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
 		<tr id="Floorinfo">
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -166,17 +164,17 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield
-						name="propertyDetail.floorDetailsProxy[0].captialValue"
-						maxlength="100" size="10" id="tblcaptialvalue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
-						cssStyle="width:100%" />
+						<s:textfield
+							name="propertyDetail.floorDetailsProxy[0].capitalValue"
+							maxlength="100" size="10" id="propertyDetail.floorDetailsProxy[0].capitalValue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
+							cssStyle="width:100%" />
 				</div>
 			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
-							headerKey="0" list="#{'yes':'Yes','no':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
+							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
 							cssClass="selectwk">
 						</s:select>
 				</div>
@@ -209,7 +207,6 @@
 		</tr>
 	</s:if>
 	<s:else>
-     size:<s:property value="%{propertyDetail.floorDetailsProxy.size}" />
 		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}"
 			status="floorsstatus">
 			<tr id="Floorinfo">
@@ -351,7 +348,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
-							headerKey="0" list="#{'yes':'Yes','no':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
+							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
 							cssClass="selectwk">
 						</s:select>
 					</div>

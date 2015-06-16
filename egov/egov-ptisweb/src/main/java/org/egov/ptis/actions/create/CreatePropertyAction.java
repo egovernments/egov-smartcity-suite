@@ -318,16 +318,15 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@Action(value = "/createProperty-create")
 	public String create() {
-		/*LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
+		LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
 				+ wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
 				+ dateOfCompletion + ", chkIsTaxExempted: " + chkIsTaxExempted + ", taxExemptReason: "
 				+ taxExemptReason + ", isAuthProp: " + isAuthProp + ", propTypeId: " + propTypeId + ", propUsageId: "
-				+ propUsageId + ", propOccId: " + propOccId);*/
+				+ propUsageId + ", propOccId: " + propOccId);
 		long startTimeMillis = System.currentTimeMillis();
 		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
-		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
-				.getBoundaryNum().toString());
+		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
 		basicProperty.setUpicNo(indexNum);*/
 	    basicProperty.setUpicNo("1085561910");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);

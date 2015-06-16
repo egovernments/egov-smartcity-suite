@@ -90,7 +90,7 @@
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox">
-		  <s:textfield name="vacantLandNo" id="vacantLandNo" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="vacantLandNo" id="vacantLandNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -100,7 +100,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.appurtntland"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -109,7 +109,7 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
@@ -122,11 +122,11 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="regdDocNo" id="regdDocNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="regdDocNo" id="regdDocNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12" ></s:textfield>
 		</td>
 	</tr>
 	

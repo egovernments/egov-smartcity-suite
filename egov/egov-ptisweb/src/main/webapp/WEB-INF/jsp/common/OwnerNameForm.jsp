@@ -44,7 +44,6 @@
     <td class="greybox"> --%>
     <table width="" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable">
     <tr>
-    <td class="greybox" width="5%"> </td>
     <th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> : <span style="float: right;">+91</span></th>
@@ -54,28 +53,27 @@
     <s:if test="propertyOwnerProxy.size()==0">
       <tr id="nameRow" >
        <!-- <td class="greybox" width="10%"> </td>  -->
-      <td class="" align="center"></td>
       <%-- <td class="" align="center">
         	<s:textfield name="title" maxlength="512" size="20" id="title"  value="%{propertyOwnerProxy[0].name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td> --%>
-        <td class="" align="center">
+        <td class="blueborderfortd" align="center">
 		   <s:textfield name="propertyOwnerProxy[0].aadhaarNumber" id="propertyOwnerProxy[0].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 		</td>
-        <td class="" align="center">
+        <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerProxy[0].name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerProxy[0].name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td>
-        <td class="" align="center">
+        <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerProxy[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{propertyOwnerProxy[0].mobileNumber}" 
         		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
         </td>
-        <td class="" align="center">
+        <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerProxy[0].emailId" maxlength="64" size="20" id="emailId"  value="%{propertyOwnerProxy[0].emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);"/>
         </td>
         
-        <td class="greybox">
+        <td class="blueborderfortd">
         	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
         </td>
@@ -84,22 +82,22 @@
       <s:else>
         <s:iterator value="(propertyOwnerProxy.size).{#this}" status="ownerStatus">
 			<tr id="nameRow">
-			  <td class="greybox" align="center">
+			  <td class="blueborderfortd" align="center">
 			  <s:textfield name="propertyOwnerProxy[0].aadhaarNumber" id="propertyOwnerProxy[0].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 			  </td>
-        		<td class="greybox" align="center">
+        		<td class="blueborderfortd" align="center">
         			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerProxy[#ownerStatus.index].name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         		</td>
-        		<td class="greybox" align="center">
+        		<td class="blueborderfortd" align="center">
         			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].mobileNumber" maxlength="10" size="20" id="mobileNo" value="%{propertyOwnerProxy[#ownerStatus.index].mobileNumber}" 
         				onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
         		</td>
-        		<td class="greybox" align="center">
+        		<td class="blueborderfortd" align="center">
         			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].emailId" maxlength="64" size="20" id="emailId" value="%{propertyOwnerProxy[#ownerStatus.index].emailId}" 
         				onblur="trim(this,this.value);validateEmail(this);"/>
         		</td>
-        		<td class="greybox">
+        		<td class="blueborderfortd">
         			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       				<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
         		</td>
