@@ -130,8 +130,10 @@
         <property name="electricity" column="electricity" type="boolean" />			
         <property name="attachedBathRoom" column="attachedBathRoom" type="boolean" />
         <property name="waterHarvesting" column="waterHarvesting" type="boolean" />
+        <property name="cable" column="cable" type="boolean" />
         <property name="extentSite" column="extentsite" type="double" />
         <property name="extentAppartenauntLand" column="extent_appurtenant_land" type="double" />
+        <property name="siteOwner" column="siteowner" type="java.lang.String" />
         
 	<many-to-one name="floorType"
 		class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />

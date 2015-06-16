@@ -167,19 +167,18 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield
-						name="propertyDetail.floorDetailsProxy[0].captialvalue"
-						maxlength="100" size="10" id="tblcaptialvalue"
+						name="propertyDetail.floorDetailsProxy[0].captialValue"
+						maxlength="100" size="10" id="tblcaptialvalue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
 						cssStyle="width:100%" />
 				</div>
 			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<select name="propertyDetail.floorDetailsProxy[0].planApproved"
-						id="planApproved">
-						<option value="Yes">Yes</option>
-						<option value="No">No</option>
-					</select>
+					<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
+							headerKey="0" list="#{'yes':'Yes','no':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
+							cssClass="selectwk">
+						</s:select>
 				</div>
 			</td>
 
@@ -344,21 +343,15 @@
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetailsProxy[0].capitalValue"
-							maxlength="100" size="10" id="tblcaptialvalue"
+							maxlength="100" size="10" id="propertyDetail.floorDetailsProxy[0].capitalValue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<%-- 	<s:select headerKey="-10"
-						headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].planApproved" listKey="key"
-						id="planapproved"
-						listValue="value" list="floorNoMap" cssClass="selectnew"
-						cssStyle="width:100%" /> --%>
-						<s:select name="gender" id="gender" headerValue="Choose"
-							headerKey="0" list="#{'Yes':'Yes','No':'No' }"
+						<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
+							headerKey="0" list="#{'yes':'Yes','no':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
 							cssClass="selectwk">
 						</s:select>
 					</div>

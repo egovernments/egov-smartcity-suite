@@ -362,7 +362,7 @@ public class PropertyService  {
 	}
 
 	public PropertyStatusValues createPropStatVal(BasicProperty basicProperty, String statusCode,
-			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails, String parentPropId) {
+			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails, String parentPropId,Date buildingPermDate,Integer buildingPermNo) {
 		LOGGER.debug("Entered into createPropStatVal");
 		LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: " + statusCode
 				+ ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: " + courtOrdNum + ", orderDate: "
@@ -377,6 +377,8 @@ public class PropertyService  {
 			propStatVal.setIsActive("Y");
 		}
 
+		propStatVal.setBuildingPermissionDate(buildingPermDate);
+		propStatVal.setBuildingPermissionNo(buildingPermNo);
 		propStatVal.setPropertyStatus(propertyStatus);
 		if (orderDate != null || (courtOrdNum != null && !courtOrdNum.equals(""))
 				|| (judgmtDetails != null && !judgmtDetails.equals(""))) {
@@ -1403,7 +1405,7 @@ public class PropertyService  {
 		}
 		newProperty.getPropertyDetail().setFloorDetailsProxy(floorProxy);
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-				propCompletionDate, objectionNum, objectionDate, null, null));
+				propCompletionDate, objectionNum, objectionDate, null, null,null,null));
 		if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
 			propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
 		}
@@ -1959,7 +1961,7 @@ public class PropertyService  {
 		basicProperty.addProperty(newProperty);
 
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null));
+				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null,null,null));
 
 		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			createAttributeValues(newProperty, null);

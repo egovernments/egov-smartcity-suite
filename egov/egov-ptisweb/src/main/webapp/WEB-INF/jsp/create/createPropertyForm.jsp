@@ -17,51 +17,42 @@
 	    <s:textfield name="applicationDate" id="createdDate" value="%{#todaysDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
-	
-	 <tr>
+
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="gender"></s:text>:</td>
+		<td class="greybox" width=""><s:select name="gender" id="gender"
+				headerValue="Choose" headerKey="0"
+				list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+			</s:select></td>
+		<td class="greybox" width="25%"><s:text name="fatherhusbandname"></s:text>
+			:</td>
+		<td class="greybox"><s:textfield name="guardname" id="guardname"
+				maxlength="30"></s:textfield></td>
+	</tr>
+
+	<tr>
+	<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox" width=""><s:textfield
+				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
+	</tr>
+	<!-- Owner details section -->
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"> Owner details</span>
+			</div>
+		</td>
+	</tr>
+	<tr>
 		<td colspan="5">
 			<div id="OwnerNameDiv">
 				<%@ include file="../common/OwnerNameForm.jsp"%>
 			</div>
 		</td>
 	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="adharno"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="aadharNo" id="aadharNo" size="12" maxlength="12"></s:textfield>
-		</td>
-		<td class="greybox" width="25%"><s:text name="fatherhusbandname"></s:text> :</td>
-		<td class="greybox">
-		  <s:textfield name="guardname" id="guardname" maxlength="30"></s:textfield>
-		</td>
-	</tr>
-	
-	<%-- <tr>
-	   <td class="greybox" width="5%">&nbsp;</td>
-		<td class="bluebox"><s:text name="MobileNumber" /> : <span style="
-    float: right;
-">+91</span></td>
-		<td class="bluebox">
-				<s:textfield name="mobileNo" maxlength="10"
-					onblur="validNumber(this);checkZero(this,'Mobile Number');" />
-		</td>
-		<td class="bluebox"><s:text name="EmailAddress" /> :</td>
-		<td class="bluebox"><s:textfield name="email" maxlength="64"
-				onblur="trim(this,this.value);validateEmail(this);" />
-		</td>
-	</tr> --%>
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="gender"></s:text>:</td>
-		<td class="greybox" width=""><s:select name="gender" id="gender" headerValue="Choose" headerKey="0" 
-				list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
-              </s:select></td>
-		<td class="greybox" width="25%"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox" width=""><s:textfield
-				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
-	</tr>
+
 
 	<tr>
 		<td colspan="5">
@@ -109,7 +100,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.appurtntland"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -131,17 +122,13 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.regdDocNo" id="basicProperty.regdDocNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="regdDocNo" id="regdDocNo" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="basicProperty.regdDocDate" id="basicProperty.regdDocDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12"></s:textfield>
 		</td>
 	</tr>
-	
-	
-	<!-- Owner details section -->
-	
 	
 	
 	<!-- property address section -->
@@ -270,8 +257,8 @@
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="propTypeId"
-				id="ownershipType" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{mutationId}"
+				id="propTypeId" listKey="id" listValue="type"
+				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		

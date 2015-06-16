@@ -50,7 +50,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_RESD_CUM_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
@@ -96,6 +95,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
@@ -132,7 +132,6 @@ import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -243,6 +242,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	private Date currDate;
 	private Integer buildingPermissionNo;
 	private Date buildingPermissionDate;
+	private String regdDocNo;
+	private Date regdDocDate;
 	
 	@Autowired
 	private UserService userService;
@@ -328,7 +329,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber(basicProperty.getPropertyID().getWard()
 				.getBoundaryNum().toString());
 		basicProperty.setUpicNo(indexNum);*/
-		basicProperty.setUpicNo("1085567911");
+	    basicProperty.setUpicNo("1085561910");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 	
 		if (isNotBlank(getDocNumber())) {		
@@ -738,12 +739,14 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setVacantLandAssmtNo(getVacantLandNo());
 		basicProperty.setPropertyID(createPropertyID(basicProperty));
 		basicProperty.setStatus(propStatus);
+		basicProperty.setRegdDocDate(getRegdDocDate());
+		basicProperty.setRegdDocNo(getRegdDocNo());
 		basicProperty.setAllChangesCompleted(allChangesCompleted);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN, mutationId);
 		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
 		basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, "CREATE", null, null, null,
-				null, getParentIndex()));
+				null, getParentIndex(),getBuildingPermissionDate(),getBuildingPermissionNo()));
 		basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
 		property.setBasicProperty(basicProperty);
@@ -808,7 +811,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN, mutationId);
 		basicProp.setPropertyMutationMaster(propertyMutationMaster);
 		basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, "CREATE", null, null, null,
-				null, getParentIndex()));
+				null, getParentIndex(),null,null));
 		basicProp.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		/*
 		 * isfloorDetailsRequired is used to check if floor details have to be
@@ -924,7 +927,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				propertyOwner.setEmailId(owner.getEmailId());
 				propertyOwner.setPassword("NOT SET");
 				//Use Correspondence adress 
-				Address ownerAddr = new PropertyAddress();
+				Address ownerAddr = new CorrespondenceAddress();
 				addrStr1 = getCorrAddress1();
 				addrStr2 = getCorrAddress2();
 				addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
@@ -951,7 +954,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ getKhasraNumber() + ", Mauza:" + getMauza() + ", CitySurveyNumber: " + getCitySurveyNumber()
 				+ ", SheetNumber:" + getSheetNumber());*/
 
-		PropertyAddress propAddr = new PropertyAddress();
+		Address propAddr = new PropertyAddress();
 		StringBuffer addrStr1 = new StringBuffer();
 		StringBuffer addrStr2 = new StringBuffer();
 		propAddr.setHouseNoBldgApt(getHouseNumber());
@@ -969,7 +972,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (getPinCode() != null && !getPinCode().isEmpty()) {
 			propAddr.setPinCode((getPinCode()));
 		}
-		if (!isChkIsCorrIsDiff()) {
+		if (isChkIsCorrIsDiff()) {
 			setCorrAddress1(addrStr1.toString());
 			setCorrAddress2(addrStr2.toString());
 			if (getPinCode() != null && !getPinCode().isEmpty()) {
@@ -978,7 +981,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			
 		}
 		LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
-		return propAddr;
+		return (PropertyAddress) propAddr;
 	}
 
 	private PropertyID createPropertyID(BasicProperty basicProperty) {
@@ -1017,7 +1020,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} /*else if (houseNumber != null) {
 			validateHouseNumber(wardId, houseNumber, basicProp);
 		}*/
-		if (null == extentAppartenauntLand && extentAppartenauntLand == "") {
+		if (null == property.getPropertyDetail() && property.getPropertyDetail().getExtentAppartenauntLand() == 0.0) {
 			addActionError(getText("mandatory.extentAppartenauntLand"));
 		}
 		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
@@ -1856,6 +1859,22 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setBuildingPermissionDate(Date buildingPermissionDate) {
 		this.buildingPermissionDate = buildingPermissionDate;
+	}
+
+	public String getRegdDocNo() {
+		return regdDocNo;
+	}
+
+	public void setRegdDocNo(String regdDocNo) {
+		this.regdDocNo = regdDocNo;
+	}
+
+	public Date getRegdDocDate() {
+		return regdDocDate;
+	}
+
+	public void setRegdDocDate(Date regdDocDate) {
+		this.regdDocDate = regdDocDate;
 	}
 	
 }

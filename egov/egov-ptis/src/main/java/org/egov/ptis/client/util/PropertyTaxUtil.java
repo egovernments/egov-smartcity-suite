@@ -137,7 +137,10 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -154,8 +157,6 @@ import org.egov.infstr.utils.MoneyUtils;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.ApplicableFactor;
 import org.egov.ptis.client.model.MiscellaneousTax;
@@ -204,7 +205,9 @@ public class PropertyTaxUtil {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private EmployeeServiceOld employeeService;
+	private EmployeeService employeeService;
+	@Autowired
+	private AssignmentService assignmentService;
 	@Autowired
 	private EisCommonsService eisCommonsService;
 	private static final String HUNDRED = "100";
@@ -1058,9 +1061,8 @@ public class PropertyTaxUtil {
 	 *         <code> PersonalInformation </code>
 	 */
 	private Assignment getAssignment(Long userId) {
-		PersonalInformation empForUserId = employeeService.getEmpForUserId(userId);
-		Assignment assignmentByEmpAndDate = employeeService.getAssignmentByEmpAndDate(new Date(),
-				empForUserId.getIdPersonalInformation());
+		Employee  empForUserId = employeeService.getEmployeeById(userId);
+		Assignment assignmentByEmpAndDate = assignmentService.getPrimaryAssignmentForEmployeeByToDate(empForUserId.getId(),	new Date());
 		return assignmentByEmpAndDate;
 	}
 

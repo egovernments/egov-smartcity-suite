@@ -120,6 +120,8 @@
 		<property name="extraField7" column="EXTRA_FIELD7" />
 		<property name="manualAlv" column="MANUAL_ALV"/>
 		<property name="alv" column="ALV"/>
+		<property name="capitalValue" column="capitalvalue" type="java.lang.String"/>
+		<property name="planApproved" column="planapproved" type="boolean" />
 		<!--
 		EXTRA_FIELD1 varchar
 		

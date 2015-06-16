@@ -740,7 +740,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
 				PROPERTY_MODIFY_REASON_MODIFY, basicProp.getPropOccupationDate(), null, null, null,
-				null));
+				null,null,null));
 
 		basicPrpertyService.update(basicProp);
 
@@ -1188,19 +1188,19 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-					getModifyRsn(), propCompletionDate, null, null, null, null));
+					getModifyRsn(), propCompletionDate, null, null, null, null,null,null));
 			if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
 				propService.createAmalgPropStatVal(amalgPropIds, basicProp);
 			}
 			mutationCode = getModifyRsn();
 		} else if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)) { // MODIFY
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-					PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, null, null, null, null));
+					PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, null, null, null, null,null,null));
 			mutationCode = getReasonForModify();
 		} else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getReasonForModify())) { // COURT_RULE
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
 					PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, getCourtOrdNum(),
-					propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null));
+					propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null,null,null));
 			mutationCode = getReasonForModify();
 		} else if (PROPERTY_MODIFY_REASON_OBJ.equals(getModifyRsn())) { // OBJ
 			PropertyStatusValues wfPropStatVal = (PropertyStatusValues) persistenceService
@@ -1227,12 +1227,12 @@ public class ModifyPropertyAction extends WorkflowAction {
 					} else if (allChangesCompleted) {
 						basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
 								PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, null, null,
-								null, null));
+								null, null,null,null));
 					}
 				}
 			} else {
 				basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-						PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, null, null, null, null));
+						PROPERTY_MODIFY_REASON_MODIFY, propCompletionDate, null, null, null, null,null,null));
 			}
 
 			mutationCode = getModifyRsn();
