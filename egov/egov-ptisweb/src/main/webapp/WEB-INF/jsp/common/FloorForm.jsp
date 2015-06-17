@@ -126,7 +126,7 @@
 					<s:textfield
 						name="%{propertyDetail.floorDetailsProxy[0].createdDate}"
 						id="%{propertyDetail.floorDetailsProxy[0].createdDate}" size="10"
-						maxlength="10" cssStyle="width:100%"></s:textfield>
+						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -300,7 +300,7 @@
 						<s:textfield
 							name="%{propertyDetail.floorDetailsProxy[0].createdDate}"
 							id="%{propertyDetail.floorDetailsProxy[0].createdDate}" size="10"
-							maxlength="10" cssStyle="width:100%"></s:textfield>
+							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>
 

@@ -50,13 +50,28 @@
 	<sx:head/>	
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"></script>
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript">
 
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
+jQuery(function ($) {
+	try { 
+		$(".datepicker").datepicker({
+			format: "dd/mm/yyyy"
+		}); 
+		}catch(e){
+		console.warn("No Date Picker "+ e);
+	}
+
+		$('.datepicker').on('changeDate', function(ev){
+		    $(this).datepicker('hide');
+		});
+		
+    	
+});
 function loadOnStartUp() {
 	enableCorresAddr();
 	/* document.getElementById("plotArea").style.display = "";

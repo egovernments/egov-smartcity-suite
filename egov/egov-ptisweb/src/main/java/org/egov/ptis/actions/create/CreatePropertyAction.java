@@ -328,7 +328,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
 		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
 		basicProperty.setUpicNo(indexNum);*/
-	    basicProperty.setUpicNo("1085561910");
+	    basicProperty.setUpicNo("1085261911");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 	
 		if (isNotBlank(getDocNumber())) {		
@@ -939,7 +939,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				propertyOwner.addAddress(ownerAddr);
 				PropertyOwner.add(propertyOwner);
-				property.addPropertyOwners(owner);
+				property.addPropertyOwners(propertyOwner);
 			}
 		}
 		property.setPropertyOwnerSet(PropertyOwner);
