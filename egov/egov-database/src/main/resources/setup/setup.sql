@@ -12,7 +12,7 @@ delete from eg_boundary_type where name !='City';
 --------Clearing the HRMS module data -------------
 delete from egeis_assignment;
 delete from eg_employee;
-delete from egeis_employee;
+delete from egeis_employee where code not in('E099','E000');
 delete from eg_position;
 delete from egeis_deptdesig;
 delete from eg_designation;
