@@ -68,6 +68,7 @@
 	<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
 	
 	<script src="/egi/resources/global/js/jquery/jquery.js"></script>
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 	</head>
 	<body class="page-body">
 		<div class="page-container">
@@ -171,6 +172,9 @@
 					</c:if>
 					<c:if test="${param.pwdInvalid}">
 						<input type="hidden" name="pwdInvalid" id="pwdInvalid" value="true" />
+					</c:if>
+					<c:if test="${param.captchaInvalid}">
+						<input type="hidden" name="captchaInvalid" id="captchaInvalid" value="true" />
 					</c:if>
 					<c:if test="${param.citizenActivation}">
 						<input type="hidden" name="citizenActivation"
@@ -303,7 +307,7 @@
 										</div>
 									</div>
 								</div>
-	
+								
 								<div class="form-group text-left">
 	
 									<div class="checkbox">
@@ -315,7 +319,15 @@
 									</div>
 	
 								</div>
-	
+								<div class="form-group">
+									<div class="input-group">
+										<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
+									</div>
+									<div id="captchaValid" style="display: none">
+										<div class="text-left add-margin error-msg">Captcha verification failed</div>
+									</div>
+								</div>
+								
 								<div class="form-group">
 									<button type="submit" id="signup-submit"
 										class="btn btn-primary btn-block btn-login">

@@ -41,10 +41,12 @@ package org.egov.portal.web.controller.citizen;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/citizen")
@@ -67,12 +68,13 @@ public class CitizenRegistrationController {
 
     @RequestMapping(value = "/register", method = POST)
     public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
-            final RedirectAttributes redirectAttributes) {
+            final HttpServletRequest request) {
         //TODO Rework this
         String SUCCESS = "redirect:/../egi/login/secure";
         if (errors.hasFieldErrors("password"))
             return SUCCESS + "?pwdInvalid=true";
-
+        if(!ValidatorUtils.isCaptchaValid(request))
+            return SUCCESS + "?captchaInvalid=true";
         try {
             citizenService.create(citizen);
             citizenService.sendActivationMessage(citizen);

@@ -46,6 +46,9 @@ $(document).ready(function()
 	} else if($('#pwdInvalid').val() == "true"){
 		hideSigIn();
 	    $('#pwdValid').show();
+	} else if($('#captchaInvalid').val() == "true"){
+		hideSigIn();
+	    $('#captchaValid').show();
 	} else if($('#emailInvalid').val() == "true"){
 		hideSigIn();
 	    $('#emailidValid').show();

@@ -93,14 +93,20 @@ public class CityWebsite extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     private String logo;
-    
+
+    @SafeHtml
+    @NotBlank
+    private String recaptchaPK;
+
     @NotBlank
     private String code;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -153,6 +159,22 @@ public class CityWebsite extends AbstractAuditable {
         this.logo = logo;
     }
 
+    public String getRecaptchaPK() {
+        return recaptchaPK;
+    }
+
+    public void setRecaptchaPK(final String recaptchaPK) {
+        this.recaptchaPK = recaptchaPK;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -184,11 +206,4 @@ public class CityWebsite extends AbstractAuditable {
         return true;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }
