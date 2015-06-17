@@ -37,144 +37,146 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="errorstyle" id="egi_error_area" style="display: none;"></div>
-	
-		<div class="errorstyle">
-			
-		</div>
-	
+
+	<div class="errorstyle"></div>
+
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
-				 <c:if test="${not empty message}">
-                    <div id="message" class="success">${message}</div>
-                </c:if>
-		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="appConfig" id="appConfigForm" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.createAppconfig"/></strong>
-					</div>
-				</div> 
-			
-				<div class="panel-body custom-form">
-				<div class="form-group">
+				<c:if test="${not empty message}">
+					<div id="message" class="success">${message}</div>
+				</c:if>
+				<form:form mothod="post"
+					class="form-horizontal form-groups-bordered"
+					modelAttribute="appConfig" id="appConfigForm">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<strong><spring:message code="lbl.hdr.createAppconfig" /></strong>
+							</div>
+						</div>
+						<div class="panel-body custom-form">
+							<div class="form-group">
 								<label class="col-sm-3 control-label">Module<small><i
-									class="entypo-star error-msg"></i></small></label>
-								<div class="col-sm-6">
-									<input id="module" name="appConfig.module.name"  type="text" value="${appConfig.module.name}"  class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
-									<form:hidden path="module" id="moduleid"/>
-									<form:errors path="module" cssClass="add-margin error-msg"/>
+										class="entypo-star error-msg"></i></small></label>
+								<div class="col-sm-6 add-margin">
+									<form:select path="module" id="appModuleName"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${modulesList}" itemValue="id"
+											itemLabel="name" />
+									</form:select>
+									<form:errors path="module" cssClass="add-margin error-msg" />
 									<div class="error-msg positionerror all-errors display-hide"></div>
 								</div>
-								
-								</div>
-					<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">Key Name<span class="mandatory"></span></label></label>
-								
-								<div class="col-sm-6">
-							<form:input path="keyName" id="keyName" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
-                         <form:errors path="keyName" cssClass="add-margin error-msg"/>
-						</div>
-								
 							</div>
-							
 							<div class="form-group">
-								
-								<label class="col-sm-3 control-label">Description<span class="mandatory"></span></label>
+								<label for="field-1" class="col-sm-3 control-label">Key
+									Name<small><i class="entypo-star error-msg"></i></small></span>
+								</label></label>
+
 								<div class="col-sm-6">
-							<form:input path="description" id="description" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required" />
-                            <form:errors path="description" cssClass="add-margin error-msg"/>
-						</div>
+									<form:input path="keyName" id="keyName" type="text"
+										class="form-control low-width" placeholder=""
+										autocomplete="off" required="required" />
+									<form:errors path="keyName" cssClass="add-margin error-msg" />
+								</div>
+
 							</div>
-							
-						
-					
-					<div class="col-md-12">
-					 <table class="table table-bordered"   id="floorDetails" >
-      				  <tr>
-      				 <th>Date<span class="mandatory"></span></th>
-							<th>Values<span class="mandatory"></span></th>
-								<th>Operation</th>
-								
-							  </tr>
-						
-										<c:choose>
-											<c:when test="${!appConfig.appDataValues.isEmpty()}">
-												<c:forEach items="${appConfig.appDataValues}" var="var1" varStatus="counter">
-													<tr id="Floorinfo">
-													
-													<td class="blueborderfortd">	
-											
-											
-							<fmt:formatDate value="${var1.effectiveFrom}" var="historyDate"
-											pattern="dd/MM/yyyy" />
-							 <input type="text"  class="form-control datepicker" value="${historyDate}" 
-											 name="appDataValues[${counter.index}].effectiveFrom"  
-											name="appDataValues[${counter.index}].effectiveFrom"   required="required" onblur="validateDate(this);" />
-											</td>
-											<td class="blueborderfortd">	
-											
-											 <input type="text" class="form-control low-width"  value="${var1.value}" name="appDataValues[${counter.index}].value" 
-											 id="appDataValues[${counter.index}].value" required="required" onblur="checkSplCharIncludingFewSplchar(this)" >
-											 <input type="hidden"
-														id="cmdaddListId" value="appDataValues[${counter.index}].id" />
-												</td>
-												
-												 	
-										<td id="rowadddelete">
-										 <input type="button" class="btn btn-success"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
-									<input type="button" class="btn btn-success"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;"></td>
-								
-														
-													</tr>
-												</c:forEach>
-											</c:when>
-
-										</c:choose>
-					  </table>
-					
-					</div>
-					
-					<div class="col-md-12 text-center">
-						<div class="add-margin">
-							<button type="submit" class="btn btn-primary">Submit</button>
-							   <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Description<small><i
+										class="entypo-star error-msg"></i></small></label>
+								<div class="col-sm-6">
+									<form:input path="description" id="description" type="text"
+										class="form-control low-width" placeholder=""
+										autocomplete="off" required="required" />
+									<form:errors path="description" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="col-md-12">
+								<table class="table table-bordered" id="floorDetails">
+									<tr>
+										<th>Date<small><i class="entypo-star error-msg"></i></small></span></th>
+										<th>Values<small><i class="entypo-star error-msg"></i></small></span></th>
+										<th>Operation</th>
+									</tr>
+									<c:choose>
+										<c:when test="${!appConfig.appDataValues.isEmpty()}">
+											<c:forEach items="${appConfig.appDataValues}" var="var1"
+												varStatus="counter">
+												<tr id="Floorinfo">
+													<td class="blueborderfortd"><fmt:formatDate
+															value="${var1.effectiveFrom}" var="historyDate"
+															pattern="dd/MM/yyyy" /> <input type="text"
+														class="form-control datepicker" value="${historyDate}"
+														name="appDataValues[${counter.index}].effectiveFrom"
+														name="appDataValues[${counter.index}].effectiveFrom"
+														required="required" onblur="validateDate(this);" /></td>
+													<td class="blueborderfortd"><input type="text"
+														class="form-control low-width" value="${var1.value}"
+														name="appDataValues[${counter.index}].value"
+														id="appDataValues[${counter.index}].value"
+														required="required"
+														onblur="checkSplCharIncludingFewSplchar(this)"> <input
+														type="hidden" id="cmdaddListId"
+														value="appDataValues[${counter.index}].id" /></td>
+													<td id="rowadddelete"><input type="button"
+														class="btn btn-success" value="Add" name="Add" id="add"
+														onclick="javascript:addRow1(); return false;"> <input
+														type="button" class="btn btn-success" name="Delete"
+														value="Delete" id="delete"
+														onclick="javascript:delFloor(this);return false;"></td>
+												</tr>
+											</c:forEach>
+										</c:when>
+									</c:choose>
+								</table>
+							</div>
+							<div class="col-md-12 text-center">
+								<div class="add-margin">
+									<button type="submit" class="btn btn-primary">Submit</button>
+									<button type="reset" class="btn btn-default">
+										<spring:message code="lbl.reset" />
+									</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal" onclick="self.close()">
+										<spring:message code="lbl.close" />
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
-					</div>
-					</div>
-					</form:form>
-				</div>
-				</div>
+				</form:form>
 			</div>
-		
-		
-		
-		</div>	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-	
-	<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+		</div>
+	</div>
+</div>
+<script	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
 
-
-<script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
-			<script>
+<script>
 			var cmdaindex=0;
 			var count=0;
 	var moduleid = '${appConfig.module.id}';
@@ -217,8 +219,6 @@
              houseNo.setAttribute("onblur", "validateDate(this);");
             houseNo.name = "appDataValues[" + counts + "].effectiveFrom";
             cell1.appendChild(houseNo);
-           
-         
              
              var newCol = document.createElement("td");
  			newRow.appendChild(newCol);
@@ -260,6 +260,10 @@
             // hiddenId.name = "appDataValues[" + counts + "].id";
              hiddenId.setAttribute("value", "${appDataValues[" + counts + "].id}");
              cell3.appendChild(hiddenId);
+             
+             $(".datepicker").datepicker({
+     			format: "dd/mm/yyyy"
+     		}); 
 
      }
 
@@ -273,7 +277,7 @@
 		        var counts = lastRow - 1;
 		         if(lastRow ==1)
 		      	{
-		     		 alert('you canont delete this row ');
+		     		 alert('Cannot delete this row');
 		   			
 		      	     return false;
 		        }
@@ -294,4 +298,4 @@
 	}
 	
 	
-</script>	
+</script>

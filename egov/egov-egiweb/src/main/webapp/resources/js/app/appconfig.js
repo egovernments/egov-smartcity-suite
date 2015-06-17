@@ -40,7 +40,7 @@
 $(document).ready(function(){
 	
 	// Instantiate the Bloodhound suggestion engine
-	var complaintlocation = new Bloodhound({
+	/*var complaintlocation = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
@@ -74,7 +74,7 @@ $(document).ready(function(){
 		$("#module").val(data.name);    
 		$("#moduleid").val(data.value);    
     });
-	
+	*/
 	$('#appModuleName').change(function(){
 		$.ajax({
 			url: "/egi/appConfig/ajax-appConfigpopulate",     

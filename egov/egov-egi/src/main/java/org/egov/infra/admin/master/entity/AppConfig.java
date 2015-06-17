@@ -67,7 +67,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @CompositeUnique(id = "id", tableName = "eg_appconfig", compositefields = { "keyName", "module" }, compositecolumnName = {
-        "key_name", "module" }, enableDfltMsg = true, message = "KeyName and Module combination allready exists")
+        "key_name", "module" }, enableDfltMsg = true, message = "KeyName and Module combination already exists")
 
 @Table(name = "eg_appconfig")
 @Searchable

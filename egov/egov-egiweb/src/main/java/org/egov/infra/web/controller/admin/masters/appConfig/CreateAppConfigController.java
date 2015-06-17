@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -47,6 +47,7 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -65,62 +66,59 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/appConfig/create")
 public class CreateAppConfigController {
 
-	private AppConfigService appConfigValueService;
+    private final AppConfigService appConfigValueService;
 
-	@Autowired
-	public CreateAppConfigController(AppConfigService appConfigValueService) {
-		this.appConfigValueService = appConfigValueService;
-	}
+    @Autowired
+    public CreateAppConfigController(final AppConfigService appConfigValueService) {
+        this.appConfigValueService = appConfigValueService;
+    }
 
-	@ModelAttribute
-	public AppConfig appConfigModel() {
-		return new AppConfig();
-	}
+    @ModelAttribute
+    public AppConfig appConfig() {
+        return new AppConfig();
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String createAppConfigValueForm(@ModelAttribute AppConfig appConfig,
-			Model model) {
-		if (appConfig.getAppDataValues().isEmpty()) {
-			appConfig.addAppDataValues(new AppConfigValues());
-		}
-		model.addAttribute("mode", "new");
-		return "appConfig-form";
-	}
+    @ModelAttribute(value = "modulesList")
+    public List<Module> findAllModules() {
+        return appConfigValueService.findAllModules();
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String createAppConfigValue(
-			@Valid @ModelAttribute AppConfig appConfig,
-			final BindingResult errors, final RedirectAttributes redirectAttrs,
-			Model model) {
-		if (errors.hasErrors()) {
-			return "appConfig-form";
-		}
-		appConfig=buildappConfigDetails(appConfig,appConfig.getAppDataValues());
-		appConfigValueService.createAppConfigValues(appConfig);
-		model.addAttribute("mode", "new");
-		redirectAttrs.addFlashAttribute("appConfig", appConfig);
-		model.addAttribute("message", "AppConfig Value Successfully Created!");
-		return "appConfig-success";
+    @RequestMapping(method = RequestMethod.GET)
+    public String createAppConfigValueForm(@ModelAttribute final AppConfig appConfig, final Model model) {
+        if (appConfig.getAppDataValues().isEmpty())
+            appConfig.addAppDataValues(new AppConfigValues());
+        model.addAttribute("mode", "new");
+        return "appConfig-form";
+    }
 
-	}
+    @RequestMapping(method = RequestMethod.POST)
+    public String createAppConfigValue(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
+            return "appConfig-form";
+        appConfig = buildappConfigDetails(appConfig, appConfig.getAppDataValues());
+        appConfigValueService.createAppConfigValues(appConfig);
+        model.addAttribute("mode", "new");
+        redirectAttrs.addFlashAttribute("appConfig", appConfig);
+        model.addAttribute("message", "AppConfig Value Successfully Created!");
+        return "appConfig-success";
 
-	private AppConfig buildappConfigDetails(AppConfig appConfig,List<AppConfigValues> unitDetail)
-	{
-		Set<AppConfigValues> unitSet=new HashSet<AppConfigValues>();
-    	
-			for(AppConfigValues unitdetail:unitDetail)
-	    	{
-				if(unitdetail.getEffectiveFrom() != null && !"".equals(unitdetail.getValue())){
-	    		unitdetail.setKey(appConfig);
-	    		unitSet.add(unitdetail);
-				}
-	    	}	
-			appConfig.getAppDataValues().clear();
-			
-			appConfig.getAppDataValues().addAll(unitSet);
-   	
-    	return appConfig;
-    	
-	}
+    }
+
+    private AppConfig buildappConfigDetails(final AppConfig appConfig, final List<AppConfigValues> unitDetail) {
+        final Set<AppConfigValues> unitSet = new HashSet<AppConfigValues>();
+
+        for (final AppConfigValues unitdetail : unitDetail)
+            if (unitdetail.getEffectiveFrom() != null && !"".equals(unitdetail.getValue())) {
+                unitdetail.setKey(appConfig);
+                unitSet.add(unitdetail);
+            }
+        appConfig.getAppDataValues().clear();
+
+        appConfig.getAppDataValues().addAll(unitSet);
+
+        return appConfig;
+
+    }
 
 }
