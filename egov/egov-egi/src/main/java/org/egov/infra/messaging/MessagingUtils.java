@@ -37,12 +37,13 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.utils;
+package org.egov.infra.messaging;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.notification.HTTPSMS;
+import org.egov.infra.messaging.email.EmailService;
+import org.egov.infra.messaging.sms.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,15 +51,16 @@ import org.springframework.stereotype.Service;
 public class MessagingUtils {
 
     @Autowired
-    private HTTPSMS httpSMS;
+    private SMSService httpSMS;
 
     @Autowired
-    private EmailUtils emailUtils;
+    private EmailService emailUtils;
 
     @Autowired
     private MessageTemplateService messageTemplateService;
 
-    public boolean sendEmailAndSMS(final User user, final String subject, final String templateName, final Object... messageValues) {
+    public boolean sendEmailAndSMS(final User user, final String subject, final String templateName,
+            final Object... messageValues) {
         return sendEmail(user, subject, templateName, messageValues) || sendSMS(user, templateName, messageValues);
     }
 

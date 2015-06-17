@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.utils;
+package org.egov.infra.messaging.email;
 
 import java.util.Properties;
 
@@ -51,7 +51,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EmailUtils {
+public class EmailService {
 
     public static final String MAILSENDER = "mailSender";
 

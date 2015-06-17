@@ -47,7 +47,7 @@ import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.MessagingUtils;
+import org.egov.infra.messaging.MessagingUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

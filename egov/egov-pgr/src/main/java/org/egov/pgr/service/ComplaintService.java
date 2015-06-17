@@ -64,15 +64,14 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.messaging.email.EmailService;
+import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EmailUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.notification.HTTPSMS;
-import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -126,10 +125,10 @@ public class ComplaintService {
     private BoundaryService boundaryService;
 
     @Autowired
-    private EmailUtils emailUtils;
+    private EmailService emailService;
 
     @Autowired
-    private HTTPSMS httpSMS;
+    private SMSService smsService;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -353,9 +352,9 @@ public class ComplaintService {
                 .append(", Thank you for registering a complaint (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
         if (complaint.getComplainant().getEmail() != null)
-            emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
+            emailService.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
         if (complaint.getComplainant().getMobile() != null)
-            httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
+            smsService.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
 
     }
     

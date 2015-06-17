@@ -48,10 +48,10 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.messaging.email.EmailService;
+import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.notification.HTTPSMS;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
@@ -76,7 +76,7 @@ public class EscalationService {
     private final EscalationRepository escalationRepository;
 
     @Autowired
-    private EmailUtils emailUtils;
+    private EmailService emailService;
 
     @Autowired
     private AppConfigValuesDAO appConfigValuesDAO;
@@ -94,7 +94,7 @@ public class EscalationService {
     private ComplaintRepository complaintRepository;
 
     @Autowired
-    private HTTPSMS httpSMS;
+    private SMSService smsService;
 
     @Autowired
     private PgrApplicationProperties pgrApplicationProperties;
@@ -174,9 +174,9 @@ public class EscalationService {
                         .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
                         .append(formattedEscalationDate);
                 if (superiorUser != null && superiorUser.getEmailId() != null)
-                    emailUtils.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
+                    emailService.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
                 if (superiorUser != null && superiorUser.getMobileNumber() != null)
-                    httpSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
+                    smsService.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
             }
         }
     }
