@@ -37,62 +37,20 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.entity;
+package org.egov.wtms.masters.repository;
 
-import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.DocumentNames;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+@Repository
+public interface DocumentNamesRepository extends JpaRepository<DocumentNames, Long> {
 
-@Entity
-@Table(name = "egwtr_penalty")
-@SequenceGenerator(name = Penalty.SEQ_PENALTY, sequenceName = Penalty.SEQ_PENALTY, allocationSize = 1)
-public class Penalty extends AbstractAuditable {
+	DocumentNames findByDocumentName(String name);
 
-    private static final long serialVersionUID = -3851299107850036408L;
-    public static final String SEQ_PENALTY = "SEQ_EGWTR_PENALTY";
-
-    @Id
-    @GeneratedValue(generator = SEQ_PENALTY, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotNull
-    @SafeHtml
-    @Length(min = 3, max = 50)
-    private String penaltyType;
-
-    @SafeHtml
-    private String description;
-
-    @NotNull
-    @Temporal(value = TemporalType.DATE)
-    private Date fromDate;
-
-    @Temporal(value = TemporalType.DATE)
-    private Date toDate;
-
-    @NotNull
-    private double percentage;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	List<DocumentNames> findByApplicationType(ApplicationType applicationType);
 
 }
