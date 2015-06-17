@@ -765,7 +765,7 @@ td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"],
   font-size:12px;
 }
 
-td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[type="text"]:focus, td.bluebox select:focus
+td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[type="text"]:focus, td.bluebox select:focus, textarea:focus
 {
   border-color: #FBA81A;
   outline: 0;
@@ -773,7 +773,7 @@ td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[t
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(253, 154, 10, 0.6);
 }	
 
-td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox input[type="text"]:read-only, td.bluebox select:disabled
+td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox input[type="text"]:read-only, td.bluebox select:disabled, textarea:read-only
 {
     background-color: #eceded;
     cursor: not-allowed;
@@ -782,4 +782,17 @@ td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox 
 table.tablebottom
 {
 	border-top: 1px solid #DFDFDF;
+}
+
+textarea
+{
+  padding: 6px 12px;
+  line-height: 1.42857143;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }

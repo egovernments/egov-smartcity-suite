@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,13 +36,15 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 	<head>
 		<title><s:text name='transferProperty' /></title>
+		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+        <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script type="text/javascript">
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
@@ -61,6 +63,20 @@
 		if (deedDate == "" || deedDate == "DD/MM/YYYY" || deedDate == undefined) {
 			waterMarkInitialize('deedDate', 'DD/MM/YYYY');
 		}
+
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy"
+			}); 
+		}catch(e){
+			console.warn("No Date Picker "+ e);
+		}
+
+		jQuery('.datepicker').on('changeDate', function(ev){
+			jQuery(this).datepicker('hide');
+		});
+		
+		
 	}
 </script>
 	</head>
@@ -78,7 +94,6 @@
 				<s:push value="model">
 				<s:token/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<div class="formheading"></div>
 					<div class="headingbg">
 						<s:text name="transferProperty" />
 					</div>
@@ -135,9 +150,9 @@
 						<td class="bluebox2">
 							&nbsp;
 						</td>
-						<td class="bluebox">
+						<td class="bluebox" style="width: 20%;">
 							<s:text name="application.date"></s:text>
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
 							<s:date name="noticeDate" var="applDate" format="dd/MM/yyyy" />
@@ -145,11 +160,12 @@
 								value="%{applDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onfocus="waterMarkTextIn('noticeDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('noticeDate','DD/MM/YYYY');" />
+								onblur="validateDateFormat(this);waterMarkTextOut('noticeDate','DD/MM/YYYY');"
+								cssClass="datepicker" />
 						</td>
 						<td class="bluebox">
 							<s:text name="applicant.name"/>
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
 							<s:textfield name="applicantName" value="%{applicantName}" id="applicantName"/>
@@ -161,7 +177,7 @@
 						</td>
 						<td class="greybox">
 							<s:text name="transferreason"></s:text>
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
 							<s:select name="propMutationMstr.idMutation" id="transRsnId"
@@ -173,7 +189,7 @@
 						</td>
 						<td class="greybox">
 							<s:text name="saleDetls" />
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
 							<s:textarea cols="50" rows="2" name="extraField3" id="saleDtls"
@@ -185,7 +201,7 @@
 						<td class="bluebox2" colspan="1">&nbsp;</td>
 						<td class="bluebox" colspan="1">
 							<s:text name="othertransreason"></s:text>
-							<span class="mandatory">*</span>
+							<span class="mandatory1">*</span>
 						</td>
 						<td class="bluebox">
 							<s:textfield id="mutationRsn" name="extraField4" value="%{extraField4}" size="40" maxlength="128"></s:textfield>
@@ -198,7 +214,7 @@
 						</td>
 						<td class="bluebox">
 							<s:text name="subregoffName" />
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
 							<s:textfield name="extraField2" id="subRegName"
@@ -206,7 +222,7 @@
 						</td>
 						<td class="bluebox">
 							<s:text name="crtOrderNum" />
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
 							<s:textfield name="mutationNo" id="crtOrderNum"
@@ -232,7 +248,8 @@
 								value="%{docDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onfocus="waterMarkTextIn('deedDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('deedDate','DD/MM/YYYY');" />
+								onblur="validateDateFormat(this);waterMarkTextOut('deedDate','DD/MM/YYYY');"
+								cssClass="datepicker" />
 						</td>
 					</tr>
 					<tr>
@@ -262,7 +279,7 @@
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox">
 							<s:text name="mutationFee"></s:text>
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
 							<s:textfield name="mutationFee" id="mutationFee" value="%{mutationFee}" maxlength="12"></s:textfield>
@@ -303,7 +320,7 @@
 				</tr>
 				</s:push>
 			</s:form>
-			<div align="left" class="mandatory" style="font-size: 11px">
+			<div align="left" class="mandatory1" style="font-size: 11px">
 				* Mandatory Fields
 			</div>
 		</div>
