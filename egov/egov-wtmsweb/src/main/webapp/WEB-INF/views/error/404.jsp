@@ -37,5 +37,6 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:redirect context="/egi" url="/login/secure"></c:redirect>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<h1>404</h1>
+<p><spring:message code="error.404"/></p>
