@@ -1989,3 +1989,11 @@ border-top: 1px solid #ccc;
  padding:0 5px;
  cursor:pointer;
 }
+
+.form-group .input-group .input-group-addon{
+	cursor:pointer;
+}
+
+.form-group .input-group .input-group-addon i{
+	color:#fff;
+}
