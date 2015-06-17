@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -67,8 +67,8 @@
 		<s:form action="searchProperty" method="post" name="indexform"
 				theme="simple" >
 		<div class="formmainbox">
-			<div class="formheading"></div>
 			<div class="headingbg"><s:text name="PropertyDetail" /></div>
+			<br/>
 			<jsp:include page="viewProperty.jsp"/>
 			<jsp:include page="viewObjection.jsp"/>
 			<jsp:include page="../recovery/viewRecovery.jsp"/>
@@ -165,7 +165,7 @@
 					id="btnTrnsProperty" value="Mutation"
 					onclick="window.location='../transfer/transferProperty!transferForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />				
 			</c:if>	
-			<br>
+		
 			<input type="button" class="button" name="SearchProperty"
 				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty!searchForm.action';" />
 			<input type="button" class="button" name="btnViewDCB"

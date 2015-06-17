@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
@@ -45,7 +45,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<!-- Body Begins -->
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="prop.Id" />
 			:
@@ -56,7 +56,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="Zone" />
 			:
@@ -68,7 +68,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="Ward" />
 			:
@@ -80,7 +80,7 @@
 		</td>
 	</tr>
 		<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="partNo" />
 			:
@@ -92,7 +92,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="ParcelID" />
 			:
@@ -103,7 +103,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="OwnerName" />
 			:
@@ -114,7 +114,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="PropertyAddress" />
 			:
@@ -125,7 +125,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="CorrAddr" />
 			:
@@ -138,7 +138,7 @@
 	<s:if test="%{basicProperty.property.isExemptedFromTax}">
 	
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="TaxExmRsn" />
 			:
@@ -148,53 +148,8 @@
 		</td>
 	</tr>
 	</s:if>
-	<tr>
-		<td class="bluebox" width="15%"></td>
-		<td class="bluebox" colspan="2">
-			<s:text name="NorthWard" />
-			:
-		</td>
-		<td class="bluebox" colspan="2">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.propertyID.northBoundary}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox" width="15%"></td>
-		<td class="greybox" colspan="2">
-			<s:text name="SouthWard" />
-			:
-		</td>
-		<td class="greybox" colspan="2">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.propertyID.southBoundary}" /> </span>
-		</td>
-	</tr>
-
-	<tr>
-		<td class="bluebox" width="15%"></td>
-		<td class="bluebox" colspan="2">
-			<s:text name="EastWard" />
-			:
-		</td>
-		<td class="bluebox" colspan="2">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.propertyID.eastBoundary}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox" width="15%"></td>
-		<td class="greybox" colspan="2">
-			<s:text name="WestWard" />
-			:
-		</td>
-		<td class="greybox" colspan="2">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.propertyID.westBoundary}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td class="bluebox" width="15%"></td>
+	 <tr>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="PropertyType" />
 			:
@@ -234,7 +189,7 @@
 		</tr>
 	</s:if>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<s:if test="%{basicProperty.property.propertyDetail.extra_field5 == 'RESIDENTIAL_FLATS'}">
 			<td class="bluebox" colspan="2">
 				<s:text name="undivArea" />
@@ -254,7 +209,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="locationFactor" />
 			:
@@ -283,7 +238,7 @@
 					|| basicProperty.property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
 					|| basicProperty.property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
 		<tr>
-			<td class="bluebox" width="15%"></td>
+			<td class="bluebox" width="5%"></td>
 			<td class="bluebox" colspan="2"><s:text name="GenWaterRate" />
 				:</td>
 			<td class="bluebox" colspan="2"><span class="bold"><s:property
@@ -293,7 +248,7 @@
 	<s:if
 		test="%{basicProperty.property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) }">
 		<tr>
-			<td class="greybox" width="15%"></td>
+			<td class="greybox" width="5%"></td>
 			<td class="greybox" colspan="2">
 				<s:text name="Usage" />
 				:
@@ -305,7 +260,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="bluebox" width="15%"></td>
+			<td class="bluebox" width="5%"></td>
 			<td class="bluebox" colspan="2">
 				<s:text name="Occupancy" />
 				:
@@ -318,7 +273,7 @@
 
 		</tr>
 		<tr>
-			<td class="greybox" width="15%"></td>
+			<td class="greybox" width="5%"></td>
 			<td class="greybox" colspan="2">
 				<s:text name="OccupationDate" />
 				:
@@ -332,17 +287,17 @@
 		</tr>
 		
 		<tr>
-			<td class="bluebox" width="15%"></td>
+			<td class="bluebox" width="5%"></td>
 			<td class="bluebox" colspan="2">
 				<s:text name="openPLotManualAlv" />
 				:
 			</td>
 			<td class="bluebox" colspan="2">
 				<span class="bold">
-				<s:if test="%{basicProperty.property.propertyDetail.manualAlv == null}" >
+				<s:if test="%{basicProperty.property.propertyDetail.manualAlv == null}">
 					<s:property default="N/A" value="%{basicProperty.property.propertyDetail.alv}" />
 				</s:if>
-				<s:else>
+				< s:else>
 					<s:property default="N/A" value="%{basicProperty.property.propertyDetail.manualAlv}" />
 				</s:else>				
 				</span>
@@ -350,7 +305,7 @@
 
 		</tr>
 		<tr>
-			<td class="greybox" width="15%"></td>
+			<td class="greybox" width="5%"></td>
 			<td class="greybox" colspan="2">
 				<s:text name="OccupierName" />
 				:
@@ -369,7 +324,7 @@
 		|| basicProperty.property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT)}">
 		<s:if test="basicProperty.property.propertyDetail.floorDetailsProxy.size() == 0">
 			<tr>
-			<td class="greybox" width="15%"></td>
+			<td class="greybox" width="5%"></td>
 			<td class="greybox" colspan="2">
 				<s:text name="OccupationDate" />
 				:
@@ -383,7 +338,7 @@
 			</tr>
 		</s:if>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="bldngCost" />
 			:
@@ -442,28 +397,19 @@
 
 				<table width="100%" border="0" align="center" cellpadding="0"
 					cellspacing="0" class="tablebottom">
+					
 					<tr>
-						<th class="bluebgheadtd">
-							<s:text name="UnitNo" />
-						</th>
-						<th class="bluebgheadtd"><s:text name="unitType"/></th>
-						<th class="bluebgheadtd"><s:text name="unitTypeCategory"/></th>
-						<th class="bluebgheadtd"><s:text name="FloorNo" /></th>
-						<th class="bluebgheadtd"><s:text name="TaxExmRsn" /></th>
-						<th class="bluebgheadtd"><s:text name="type" /></th>
-						<th class="bluebgheadtd"><s:text name="OccupierName" /></th>
-						<th class="bluebgheadtd"><s:text name="AssableArea" /></th>
-						<th class="bluebgheadtd"><s:text name="Usage" /></th>
-						<th class="bluebgheadtd"><s:text name="Occupancy" /></th>
-						<th class="bluebgheadtd"><s:text name="GenWaterRate" /></th>
-						<th class="bluebgheadtd"><s:text name="ConstructionType" /></th>
-						<th class="bluebgheadtd"><s:text name="ConstructionYear" /></th>
-						<th class="bluebgheadtd"><s:text name="OccupationDate" /></th>
-						<th class="bluebgheadtd"><s:text name="Rent" /></th>
+						<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span></th>
+						<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
+						<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
+						<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 						<th class="bluebgheadtd"><s:text name="Width" /></th>
 						<th class="bluebgheadtd"><s:text name="Length" /></th>
-						<th class="bluebgheadtd"><s:text name="BuiltUpArea" /></th>
-						<th class="bluebgheadtd"><s:text name="manualAlv" /></th>
+						<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
+						<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
+						<th class="bluebgheadtd"><s:text name="planappr" /></th>
 					</tr>
 					<s:iterator
 						value="basicProperty.property.propertyDetail.floorDetailsProxy"
@@ -576,7 +522,7 @@
 							</td>
 							<td class="greybox">
 								<div align="center">																									
-									<s:if test="%{#floor.manualAlv == null}" >
+									<s:if test="%{#floor.manualAlv == null}">
 										<s:property default="N/A" value="%{#floor.alv}" />
 									</s:if>
 									<s:else>									
@@ -587,12 +533,13 @@
 						</tr>
 					</s:iterator>
 				</table>
+				<br/>
 			</td>
 		</tr>
 	</s:if>
 
 	<tr>
-		<td class="greybox" width="15%"></td>
+	   <td class="bluebox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="CurrentTax" />
 			:
@@ -603,7 +550,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="15%"></td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" colspan="2">
 			<s:text name="CurrentTaxDue" />
 			:
@@ -614,7 +561,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="15%"></td>
+		<td class="greybox" width="5%"></td>
 		<td class="greybox" colspan="2">
 			<s:text name="ArrearsDue" />
 			:
