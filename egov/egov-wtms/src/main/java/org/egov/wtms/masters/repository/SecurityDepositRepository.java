@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.masters.repository;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.SecurityDeposit;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,9 +48,4 @@ import org.springframework.stereotype.Repository;
 public interface SecurityDepositRepository extends JpaRepository<SecurityDeposit, Long> {
 
 	ApplicationType findByUsageType(String name);
-
-    List<ApplicationType> findByNameContainingIgnoreCase(String name);
-
-    ApplicationType findByCode(String code);
-
 }
