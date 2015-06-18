@@ -41,8 +41,8 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.repository.ApplicationTypeRepository;
+import org.egov.wtms.masters.entity.WaterSource;
+import org.egov.wtms.masters.repository.WaterSourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,52 +53,48 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ApplicationTypeService {
+public class WaterSourceService {
 
-    private final ApplicationTypeRepository applicationTypeRepository;
+    private final WaterSourceRepository waterSourceRepository;
 
     @Autowired
-    public ApplicationTypeService(final ApplicationTypeRepository applicationTypeRepository) {
-        this.applicationTypeRepository = applicationTypeRepository;
+    public WaterSourceService(final WaterSourceRepository waterSourceRepository) {
+        this.waterSourceRepository = waterSourceRepository;
     }
 
-    public ApplicationType findBy(final Long applicationTypeId) {
-        return applicationTypeRepository.findOne(applicationTypeId);
-    }
-
-    @Transactional
-    public ApplicationType createApplicationType(final ApplicationType applicationType) {
-        return applicationTypeRepository.save(applicationType);
+    public WaterSource findBy(final Long waterSourceId) {
+        return waterSourceRepository.findOne(waterSourceId);
     }
 
     @Transactional
-    public void updateComplaintType(final ApplicationType applicationType) {
-    	applicationTypeRepository.save(applicationType);
+    public WaterSource createWaterSource(final WaterSource waterSource) {
+        return waterSourceRepository.save(waterSource);
     }
 
-    public List<ApplicationType> findAll() {
-        return applicationTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    @Transactional
+    public void updateWaterSource(final WaterSource waterSource) {
+    	waterSourceRepository.save(waterSource);
     }
 
-    public List<ApplicationType> findAllByNameLike(final String name) {
-        return applicationTypeRepository.findByNameContainingIgnoreCase(name);
+    public List<WaterSource> findAll() {
+        return waterSourceRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public ApplicationType findByName(final String name) {
-        return applicationTypeRepository.findByName(name);
+    public WaterSource findByWaterSourceType(final String waterSourceType) {
+        return waterSourceRepository.findByWaterSourceType(waterSourceType);
     }
 
-    public ApplicationType load(final Long id) {
-        return applicationTypeRepository.getOne(id);
+    public WaterSource load(final Long id) {
+        return waterSourceRepository.getOne(id);
     }
 
-    public Page<ApplicationType> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
+    public Page<WaterSource> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return applicationTypeRepository.findAll(pageable);
+        return waterSourceRepository.findAll(pageable);
     }
 
-    public ApplicationType findByCode(final String code) {
-    	return applicationTypeRepository.findByCode(code);
+    public WaterSource findByCode(final String code) {
+    	return waterSourceRepository.findByCode(code);
     }
 
  }
