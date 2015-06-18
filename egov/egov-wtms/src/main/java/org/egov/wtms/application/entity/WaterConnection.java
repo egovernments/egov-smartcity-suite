@@ -53,8 +53,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_connection")
-@SequenceGenerator(name = Connection.SEQ_CONNECTION, sequenceName = Connection.SEQ_CONNECTION, allocationSize = 1)
-public class Connection extends AbstractAuditable {
+@SequenceGenerator(name = WaterConnection.SEQ_CONNECTION, sequenceName = WaterConnection.SEQ_CONNECTION, allocationSize = 1)
+public class WaterConnection extends AbstractAuditable {
 
     private static final long serialVersionUID = -361205348191992865L;
     public static final String SEQ_CONNECTION = "SEQ_EGWTR_CONNECTION";
@@ -81,7 +81,7 @@ public class Connection extends AbstractAuditable {
     @SafeHtml
     private String meterNumber;
 
-    private Connection parentConnection;
+    private WaterConnection parentConnection;
 
     @Override
     public Long getId() {
@@ -133,11 +133,11 @@ public class Connection extends AbstractAuditable {
         this.meterNumber = meterNumber;
     }
 
-    public Connection getParentConnection() {
+    public WaterConnection getParentConnection() {
         return parentConnection;
     }
 
-    public void setParentConnection(final Connection parentConnection) {
+    public void setParentConnection(final WaterConnection parentConnection) {
         this.parentConnection = parentConnection;
     }
 

@@ -67,8 +67,8 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 
 @Entity
 @Table(name = "egwtr_connectiondetails")
-@SequenceGenerator(name = ConnectionDetails.SEQ_CONNECTIONDETAILS, sequenceName = ConnectionDetails.SEQ_CONNECTIONDETAILS, allocationSize = 1)
-public class ConnectionDetails extends StateAware {
+@SequenceGenerator(name = WaterConnectionDetails.SEQ_CONNECTIONDETAILS, sequenceName = WaterConnectionDetails.SEQ_CONNECTIONDETAILS, allocationSize = 1)
+public class WaterConnectionDetails extends StateAware {
 
     private static final long serialVersionUID = -4667948558401042849L;
     public static final String SEQ_CONNECTIONDETAILS = "SEQ_EGWTR_CONNECTIONDETAILS";
@@ -84,7 +84,7 @@ public class ConnectionDetails extends StateAware {
 
     @NotNull
     @JoinColumn(name = "connection", nullable = false)
-    private Connection connection;
+    private WaterConnection connection;
 
     // @Column(name = "applicationNumber", unique = true)
     private String applicationNumber;
@@ -166,11 +166,11 @@ public class ConnectionDetails extends StateAware {
         this.applicationType = applicationType;
     }
 
-    public Connection getConnection() {
+    public WaterConnection getConnection() {
         return connection;
     }
 
-    public void setConnection(final Connection connection) {
+    public void setConnection(final WaterConnection connection) {
         this.connection = connection;
     }
 
