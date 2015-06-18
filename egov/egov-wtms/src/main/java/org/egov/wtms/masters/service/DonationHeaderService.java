@@ -37,23 +37,61 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.UsageType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.repository.DonationHeaderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface DonationHeaderRepository extends JpaRepository<DonationHeader, Long> {
+@Service
+@Transactional(readOnly = true)
+public class DonationHeaderService {
 
-    List<DonationHeader> findAllByCategory(ConnectionCategory category);
+    private final DonationHeaderRepository donationHeaderRepository;
 
-    List<DonationHeader> findAllByUsageType(UsageType usageType);
-    
-    DonationHeader findByCategoryandUsage(ConnectionCategory category,UsageType usageType);
+    @Autowired
+    public DonationHeaderService(final DonationHeaderRepository donationHeaderRepository) {
+        this.donationHeaderRepository = donationHeaderRepository;
+    }
 
-}
+    public DonationHeader findBy(final Long donationHeaderId) {
+        return donationHeaderRepository.findOne(donationHeaderId);
+    }
+
+    @Transactional
+    public DonationHeader createDonationHeader(final DonationHeader donationHeader) {
+        return donationHeaderRepository.save(donationHeader);
+    }
+
+    @Transactional
+    public void updateDonationHeader(final DonationHeader donationHeader) {
+    	donationHeaderRepository.save(donationHeader);
+    }
+
+    public List<DonationHeader> findAll() {
+        return donationHeaderRepository.findAll();
+    }
+
+    public List<DonationHeader> findAllByCategory(final ConnectionCategory category) {
+        return donationHeaderRepository.findAllByCategory(category);
+    }
+
+    public List<DonationHeader> findAllByUsageType(final UsageType usageType) {
+        return donationHeaderRepository.findAllByUsageType(usageType);
+    }
+
+    public DonationHeader load(final Long id) {
+        return donationHeaderRepository.getOne(id);
+    }
+
+    public DonationHeader findByCategoryandUsage(final ConnectionCategory category, final UsageType usageType) {
+    	return donationHeaderRepository.findByCategoryandUsage(category, usageType);
+    }
+
+ }

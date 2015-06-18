@@ -37,16 +37,40 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
-import org.egov.wtms.masters.entity.DemandNoticePenaltyPeriod;
-import org.egov.wtms.masters.entity.enums.DemandNoticeIssueFrequency;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.repository.DonationDetailsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface DemandNoticePenaltyPeriodRepository extends JpaRepository<DemandNoticePenaltyPeriod, Long> {
+@Service
+@Transactional(readOnly = true)
+public class DonationDetailsService {
 
-	DemandNoticePenaltyPeriod findByIssueOfDamendNotice(DemandNoticeIssueFrequency issueOfDamendNotice);
+    private final DonationDetailsRepository donationDetailsRepository;
 
+    @Autowired
+    public DonationDetailsService(final DonationDetailsRepository donationDetailsRepository) {
+        this.donationDetailsRepository = donationDetailsRepository;
+    }
+
+    public DonationDetails findBy(final Long donationDetailsId) {
+        return donationDetailsRepository.findOne(donationDetailsId);
+    }
+
+    @Transactional
+    public DonationDetails createDonationDetails(final DonationDetails donationDetails) {
+        return donationDetailsRepository.save(donationDetails);
+    }
+
+    @Transactional
+    public void updateDonationDetails(final DonationDetails donationDetails) {
+    	donationDetailsRepository.save(donationDetails);
+    }
+
+    public DonationDetails load(final Long id) {
+        return donationDetailsRepository.getOne(id);
+    }
 }
