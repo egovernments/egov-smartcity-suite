@@ -37,17 +37,59 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
 import org.egov.wtms.masters.entity.Penalty;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.repository.PenaltyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface PenaltyRepository extends JpaRepository<Penalty, Long> {
+@Service
+@Transactional(readOnly = true)
+public class PenaltyService {
 
-	List<Penalty> findAllByPenaltyType(String penaltyType);
+    private final PenaltyRepository penaltyRepository;
 
+    @Autowired
+    public PenaltyService(final PenaltyRepository penaltyRepository) {
+        this.penaltyRepository = penaltyRepository;
+    }
+
+    public Penalty findBy(final Long penaltyId) {
+        return penaltyRepository.findOne(penaltyId);
+    }
+
+    @Transactional
+    public Penalty createPenalty(final Penalty penalty) {
+        return penaltyRepository.save(penalty);
+    }
+
+    @Transactional
+    public void updatePenalty(final Penalty penalty) {
+    	penaltyRepository.save(penalty);
+    }
+
+    public List<Penalty> findAll() {
+        return penaltyRepository.findAll(new Sort(Sort.Direction.ASC, "penaltyType"));
+    }
+
+    public List<Penalty> findAllByPenaltyType(final String penaltyType) {
+        return penaltyRepository.findAllByPenaltyType(penaltyType);
+    }
+
+    public Penalty load(final Long id) {
+        return penaltyRepository.getOne(id);
+    }
+
+    public Page<Penalty> getListOfPenalty(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "penaltyType");
+        return penaltyRepository.findAll(pageable);
+    }
 }

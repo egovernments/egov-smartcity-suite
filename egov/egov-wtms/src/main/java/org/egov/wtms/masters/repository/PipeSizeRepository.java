@@ -46,6 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
-	PipeSize findByCode(String name);
+	PipeSize findByCode(String code);
 
 }

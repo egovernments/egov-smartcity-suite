@@ -37,17 +37,60 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.Penalty;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.repository.PipeSizeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface PenaltyRepository extends JpaRepository<Penalty, Long> {
+@Service
+@Transactional(readOnly = true)
+public class PipeSizeService {
 
-	List<Penalty> findAllByPenaltyType(String penaltyType);
+    private final PipeSizeRepository pipeSizeRepository;
 
-}
+    @Autowired
+    public PipeSizeService(final PipeSizeRepository pipeSizeRepository) {
+        this.pipeSizeRepository = pipeSizeRepository;
+    }
+
+    public PipeSize findBy(final Long pipeSizeId) {
+        return pipeSizeRepository.findOne(pipeSizeId);
+    }
+
+    @Transactional
+    public PipeSize createPipeSize(final PipeSize pipeSize) {
+        return pipeSizeRepository.save(pipeSize);
+    }
+
+    @Transactional
+    public void updatePipeSize(final PipeSize pipeSize) {
+    	pipeSizeRepository.save(pipeSize);
+    }
+
+    public List<PipeSize> findAll() {
+        return pipeSizeRepository.findAll(new Sort(Sort.Direction.ASC, "code"));
+    }
+
+    public PipeSize load(final Long id) {
+        return pipeSizeRepository.getOne(id);
+    }
+
+    public Page<PipeSize> getListOfPipeSizes(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "code");
+        return pipeSizeRepository.findAll(pageable);
+    }
+
+    public PipeSize findByCode(final String code) {
+    	return pipeSizeRepository.findByCode(code);
+    }
+
+ }
