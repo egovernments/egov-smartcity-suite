@@ -77,7 +77,7 @@ public class WaterSourceService {
     }
 
     public List<WaterSource> findAll() {
-        return waterSourceRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return waterSourceRepository.findAll(new Sort(Sort.Direction.ASC, "waterSourceType"));
     }
 
     public WaterSource findByWaterSourceType(final String waterSourceType) {
@@ -88,8 +88,8 @@ public class WaterSourceService {
         return waterSourceRepository.getOne(id);
     }
 
-    public Page<WaterSource> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
+    public Page<WaterSource> getListOfWaterSources(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "waterSourceType");
         return waterSourceRepository.findAll(pageable);
     }
 

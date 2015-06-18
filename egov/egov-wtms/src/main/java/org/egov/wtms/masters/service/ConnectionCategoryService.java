@@ -41,8 +41,8 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.repository.ApplicationTypeRepository;
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,52 +53,52 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ApplicationTypeService {
+public class ConnectionCategoryService {
 
-    private final ApplicationTypeRepository applicationTypeRepository;
+    private final ConnectionCategoryRepository connectionCategoryRepository;
 
     @Autowired
-    public ApplicationTypeService(final ApplicationTypeRepository applicationTypeRepository) {
-        this.applicationTypeRepository = applicationTypeRepository;
+    public ConnectionCategoryService(final ConnectionCategoryRepository connectionCategoryRepository) {
+        this.connectionCategoryRepository = connectionCategoryRepository;
     }
 
-    public ApplicationType findBy(final Long applicationTypeId) {
-        return applicationTypeRepository.findOne(applicationTypeId);
-    }
-
-    @Transactional
-    public ApplicationType createApplicationType(final ApplicationType applicationType) {
-        return applicationTypeRepository.save(applicationType);
+    public ConnectionCategory findBy(final Long waterSourceId) {
+        return connectionCategoryRepository.findOne(waterSourceId);
     }
 
     @Transactional
-    public void updateApplicationType(final ApplicationType applicationType) {
-    	applicationTypeRepository.save(applicationType);
+    public ConnectionCategory createConnectionCategory(final ConnectionCategory connectionCategory) {
+        return connectionCategoryRepository.save(connectionCategory);
     }
 
-    public List<ApplicationType> findAll() {
-        return applicationTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    @Transactional
+    public void updateConnectionCategory(final ConnectionCategory connectionCategory) {
+    	connectionCategoryRepository.save(connectionCategory);
     }
 
-    public List<ApplicationType> findAllByNameLike(final String name) {
-        return applicationTypeRepository.findByNameContainingIgnoreCase(name);
+    public List<ConnectionCategory> findAll() {
+        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public ApplicationType findByName(final String name) {
-        return applicationTypeRepository.findByName(name);
+    public List<ConnectionCategory> findAllByNameLike(final String name) {
+        return connectionCategoryRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public ApplicationType load(final Long id) {
-        return applicationTypeRepository.getOne(id);
+    public ConnectionCategory findByName(final String name) {
+        return connectionCategoryRepository.findByName(name);
     }
 
-    public Page<ApplicationType> getListOfApplicationTypes(final Integer pageNumber, final Integer pageSize) {
+    public ConnectionCategory load(final Long id) {
+        return connectionCategoryRepository.getOne(id);
+    }
+
+    public Page<ConnectionCategory> getListOfConnectionCategory(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return applicationTypeRepository.findAll(pageable);
+        return connectionCategoryRepository.findAll(pageable);
     }
 
-    public ApplicationType findByCode(final String code) {
-    	return applicationTypeRepository.findByCode(code);
+    public ConnectionCategory findByCode(final String code) {
+    	return connectionCategoryRepository.findByCode(code);
     }
 
  }

@@ -41,8 +41,8 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.repository.ApplicationTypeRepository;
+import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.repository.UsageTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,52 +53,52 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ApplicationTypeService {
+public class UsageTypeService {
 
-    private final ApplicationTypeRepository applicationTypeRepository;
+    private final UsageTypeRepository usageTypeRepository;
 
     @Autowired
-    public ApplicationTypeService(final ApplicationTypeRepository applicationTypeRepository) {
-        this.applicationTypeRepository = applicationTypeRepository;
+    public UsageTypeService(final UsageTypeRepository usageTypeRepository) {
+        this.usageTypeRepository = usageTypeRepository;
     }
 
-    public ApplicationType findBy(final Long applicationTypeId) {
-        return applicationTypeRepository.findOne(applicationTypeId);
-    }
-
-    @Transactional
-    public ApplicationType createApplicationType(final ApplicationType applicationType) {
-        return applicationTypeRepository.save(applicationType);
+    public UsageType findBy(final Long applicationTypeId) {
+        return usageTypeRepository.findOne(applicationTypeId);
     }
 
     @Transactional
-    public void updateApplicationType(final ApplicationType applicationType) {
-    	applicationTypeRepository.save(applicationType);
+    public UsageType createUsageType(final UsageType usageType) {
+        return usageTypeRepository.save(usageType);
     }
 
-    public List<ApplicationType> findAll() {
-        return applicationTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    @Transactional
+    public void updateUsageType(final UsageType usageType) {
+    	usageTypeRepository.save(usageType);
     }
 
-    public List<ApplicationType> findAllByNameLike(final String name) {
-        return applicationTypeRepository.findByNameContainingIgnoreCase(name);
+    public List<UsageType> findAll() {
+        return usageTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public ApplicationType findByName(final String name) {
-        return applicationTypeRepository.findByName(name);
+    public List<UsageType> findAllByNameLike(final String name) {
+        return usageTypeRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public ApplicationType load(final Long id) {
-        return applicationTypeRepository.getOne(id);
+    public UsageType findByName(final String name) {
+        return usageTypeRepository.findByName(name);
     }
 
-    public Page<ApplicationType> getListOfApplicationTypes(final Integer pageNumber, final Integer pageSize) {
+    public UsageType load(final Long id) {
+        return usageTypeRepository.getOne(id);
+    }
+
+    public Page<UsageType> getListOfUsageType(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return applicationTypeRepository.findAll(pageable);
+        return usageTypeRepository.findAll(pageable);
     }
 
-    public ApplicationType findByCode(final String code) {
-    	return applicationTypeRepository.findByCode(code);
+    public UsageType findByCode(final String code) {
+    	return usageTypeRepository.findByCode(code);
     }
 
  }
