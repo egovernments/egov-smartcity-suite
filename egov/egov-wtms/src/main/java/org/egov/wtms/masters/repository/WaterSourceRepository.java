@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.masters.repository;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.WaterSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -49,8 +47,6 @@ import org.springframework.stereotype.Repository;
 public interface WaterSourceRepository extends JpaRepository<WaterSource, Long> {
 
 	WaterSource findByCode(String Code);
-
-    List<WaterSource> findByNameContainingIgnoreCase(String name);
 
     WaterSource findByWaterSourceType(String waterSourceType);
 
