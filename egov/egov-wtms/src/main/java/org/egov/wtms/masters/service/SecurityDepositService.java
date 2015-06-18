@@ -37,17 +37,53 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
 import org.egov.wtms.masters.entity.SecurityDeposit;
 import org.egov.wtms.masters.entity.UsageType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.repository.SecurityDepositRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface SecurityDepositRepository extends JpaRepository<SecurityDeposit, Long> {
+@Service
+@Transactional(readOnly = true)
+public class SecurityDepositService {
 
-	List<SecurityDeposit> findAllByUsageType(UsageType usageType);
+    private final SecurityDepositRepository securityDepositRepository;
+
+    @Autowired
+    public SecurityDepositService(final SecurityDepositRepository securityDepositRepository) {
+        this.securityDepositRepository = securityDepositRepository;
+    }
+
+    public SecurityDeposit findBy(final Long securityDepositId) {
+        return securityDepositRepository.findOne(securityDepositId);
+    }
+
+    @Transactional
+    public SecurityDeposit createSecurityDeposit(final SecurityDeposit securityDeposit) {
+        return securityDepositRepository.save(securityDeposit);
+    }
+
+    @Transactional
+    public void updateSecurityDeposit(final SecurityDeposit securityDeposit) {
+    	securityDepositRepository.save(securityDeposit);
+    }
+
+    public List<SecurityDeposit> findAll() {
+        return securityDepositRepository.findAll(new Sort(Sort.Direction.ASC, ""));
+    }
+
+    public List<SecurityDeposit> findAllByUsageType(final UsageType usageType) {
+        return securityDepositRepository.findAllByUsageType(usageType);
+    }
+
+    public SecurityDeposit load(final Long id) {
+        return securityDepositRepository.getOne(id);
+    }
+
 }
