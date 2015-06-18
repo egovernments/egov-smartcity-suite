@@ -44,12 +44,12 @@
 		    <artifactId>egov-ptisweb</artifactId>
 		   <version>${project.parent.version}</version>
 		    <type>war</type>
-	   </dependency>-->
+	   </dependency>
 	   <dependency>
 		    <groupId>org.egov</groupId>
 		    <artifactId>egov-wtmsweb</artifactId>
 		   <version>${project.parent.version}</version>
-		    <type>war</type>
+		    <type>war</type>-->
 	   </dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
@@ -109,12 +109,12 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-ptis</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-wtms</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
@@ -200,12 +200,12 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-ptisweb</artifactId>
 							<contextRoot>/ptis</contextRoot>
-						</webModule>-->
+						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-wtmsweb</artifactId>
 							<contextRoot>/wtms</contextRoot>
-						</webModule>
+						</webModule>-->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-pgrweb</artifactId>
