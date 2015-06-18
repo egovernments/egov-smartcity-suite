@@ -39,14 +39,19 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationProcessTimeRepository extends JpaRepository<ApplicationProcessTime, Long> {
 
-	ApplicationProcessTime findByApplicationType(ApplicationType applicationType);
+	List<ApplicationProcessTime> findByApplicationType(ApplicationType applicationType);
+	List<ApplicationProcessTime> findByCategory(ConnectionCategory category);
+	ApplicationProcessTime findByApplicationTypeandCategory(ApplicationType applicationType,ConnectionCategory category);
 
 }

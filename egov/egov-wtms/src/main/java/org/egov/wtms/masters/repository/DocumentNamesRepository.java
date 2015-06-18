@@ -49,7 +49,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DocumentNamesRepository extends JpaRepository<DocumentNames, Long> {
 
-	DocumentNames findByDocumentName(String name);
+	DocumentNames findByDocumentName(String documentName);
 
 	List<DocumentNames> findByApplicationType(ApplicationType applicationType);
 
