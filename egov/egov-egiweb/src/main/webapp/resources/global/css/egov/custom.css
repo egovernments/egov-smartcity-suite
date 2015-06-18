@@ -1997,3 +1997,4 @@ border-top: 1px solid #ccc;
 .form-group .input-group .input-group-addon i{
 	color:#fff;
 }
+.g-recaptcha div { margin: auto}

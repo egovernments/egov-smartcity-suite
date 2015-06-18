@@ -42,9 +42,11 @@ package org.egov.pgr.web.controller.complaint.citizen;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.validation.ValidatorUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.stereotype.Controller;
@@ -88,8 +90,11 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request, @RequestParam("files") final MultipartFile[] files) {
 
+        if (!ValidatorUtils.isCaptchaValid(request))
+            resultBinder.reject("captcha.not.valid");
+                
         if (StringUtils.isBlank(complaint.getComplainant().getEmail())
                 && StringUtils.isBlank(complaint.getComplainant().getMobile()))
             resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");

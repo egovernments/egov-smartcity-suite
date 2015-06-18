@@ -41,6 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -152,7 +153,14 @@
 						</div>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-sm-12 col-md-12 text-center">
+						<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
+						<form:errors cssClass="add-margin error-msg"/>
+					</div>
+				</div>
 			</div>
+			
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="title.complaint.reg"/></button>
