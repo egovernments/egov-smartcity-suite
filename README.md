@@ -48,7 +48,7 @@ $ git clone https://github.com/egovernments/eGov.git
  search.port=9300
  search.clusterName=elasticsearch-<username>
 
- email.enabled=false ##Enables or disabled email sending, this is enabled (true) by default
+ mail.enabled=false ##Enables or disabled email sending, this is enabled (true) by default
  mail.port=465
  mail.host=smtp.gmail.com
  mail.protocol=smtps
@@ -56,10 +56,28 @@ $ git clone https://github.com/egovernments/eGov.git
  mail.sender.password=12345
 
  sms.enabled=false  ##Enables or disables SMS sending, this is enabled (true) by default
- sms.provider.url=
- sms.sender.username=
- sms.sender.password=
- sms.sender=
+ sms.provider.url=http://some.sms.provider.url
+ sms.sender.username=sms_username
+ sms.sender.password=sms_user_password
+ sms.sender=sms_sender_id
+
+ #Following are the http sms request parameter names, replace with sms provider specific request param name.
+ sms.sender.req.param.name=senderid
+ sms.sender.username.req.param.name=username
+ sms.sender.password.req.param.name=password
+ sms.destination.mobile.req.param.name=mobileno
+ sms.message.req.param.name=content
+
+ #In addition to the above standard parameters, any additional static parameters can be added here with 
+ #respective key=value, delimit with &
+ sms.extra.req.params=foo=bar
+
+ #SMS response error codes, replace with sms provider specific error code
+ sms.error.codes=401,403,404,405,406,407,408,409,410,411,412,413,414
+
+#If sms gategway response doesn't contain error message, to log error messages for the above code then add error message entry like following
+#<sms_errorcode>=<sms_error_message>
+#eg:401=Invalid Username or Password
 
  ```
 One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
