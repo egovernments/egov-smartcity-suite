@@ -62,8 +62,8 @@ public class UsageTypeService {
         this.usageTypeRepository = usageTypeRepository;
     }
 
-    public UsageType findBy(final Long applicationTypeId) {
-        return usageTypeRepository.findOne(applicationTypeId);
+    public UsageType findBy(final Long usageTypeId) {
+        return usageTypeRepository.findOne(usageTypeId);
     }
 
     @Transactional

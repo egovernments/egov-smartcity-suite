@@ -41,8 +41,8 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
+import org.egov.wtms.masters.entity.PropertyType;
+import org.egov.wtms.masters.repository.PropertyTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,52 +53,52 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ConnectionCategoryService {
+public class PropertyTypeService {
 
-    private final ConnectionCategoryRepository connectionCategoryRepository;
+    private final PropertyTypeRepository propertyTypeRepository;
 
     @Autowired
-    public ConnectionCategoryService(final ConnectionCategoryRepository connectionCategoryRepository) {
-        this.connectionCategoryRepository = connectionCategoryRepository;
+    public PropertyTypeService(final PropertyTypeRepository propertyTypeRepository) {
+        this.propertyTypeRepository = propertyTypeRepository;
     }
 
-    public ConnectionCategory findBy(final Long connectionCategoryId) {
-        return connectionCategoryRepository.findOne(connectionCategoryId);
-    }
-
-    @Transactional
-    public ConnectionCategory createConnectionCategory(final ConnectionCategory connectionCategory) {
-        return connectionCategoryRepository.save(connectionCategory);
+    public PropertyType findBy(final Long propertyTypeId) {
+        return propertyTypeRepository.findOne(propertyTypeId);
     }
 
     @Transactional
-    public void updateConnectionCategory(final ConnectionCategory connectionCategory) {
-    	connectionCategoryRepository.save(connectionCategory);
+    public PropertyType createPropertyType(final PropertyType propertyType) {
+        return propertyTypeRepository.save(propertyType);
     }
 
-    public List<ConnectionCategory> findAll() {
-        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    @Transactional
+    public void updatePropertyType(final PropertyType propertyType) {
+    	propertyTypeRepository.save(propertyType);
     }
 
-    public List<ConnectionCategory> findAllByNameLike(final String name) {
-        return connectionCategoryRepository.findByNameContainingIgnoreCase(name);
+    public List<PropertyType> findAll() {
+        return propertyTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public ConnectionCategory findByName(final String name) {
-        return connectionCategoryRepository.findByName(name);
+    public List<PropertyType> findAllByNameLike(final String name) {
+        return propertyTypeRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public ConnectionCategory load(final Long id) {
-        return connectionCategoryRepository.getOne(id);
+    public PropertyType findByName(final String name) {
+        return propertyTypeRepository.findByName(name);
     }
 
-    public Page<ConnectionCategory> getListOfConnectionCategory(final Integer pageNumber, final Integer pageSize) {
+    public PropertyType load(final Long id) {
+        return propertyTypeRepository.getOne(id);
+    }
+
+    public Page<PropertyType> getListOfPropertyTypes(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return connectionCategoryRepository.findAll(pageable);
+        return propertyTypeRepository.findAll(pageable);
     }
 
-    public ConnectionCategory findByCode(final String code) {
-    	return connectionCategoryRepository.findByCode(code);
+    public PropertyType findByCode(final String code) {
+    	return propertyTypeRepository.findByCode(code);
     }
 
  }
