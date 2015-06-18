@@ -37,18 +37,55 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.repository.WaterRatesDetailsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface WaterRatesDetailsRepository extends JpaRepository<WaterRatesDetails, Long> {
+@Service
+@Transactional(readOnly = true)
+public class WaterRatesDetailsService {
 
-	List<WaterRatesDetails> findAllByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
+    private final WaterRatesDetailsRepository waterRatesDetailsRepository;
 
+    @Autowired
+    public WaterRatesDetailsService(final WaterRatesDetailsRepository waterRatesDetailsRepository) {
+        this.waterRatesDetailsRepository = waterRatesDetailsRepository;
+    }
+
+    public WaterRatesDetails findBy(final Long waterRatesDetailsId) {
+        return waterRatesDetailsRepository.findOne(waterRatesDetailsId);
+    }
+
+    @Transactional
+    public WaterRatesDetails createWaterRatesDetails(final WaterRatesDetails waterRatesDetails) {
+        return waterRatesDetailsRepository.save(waterRatesDetails);
+    }
+
+    @Transactional
+    public void updateWaterRatesDetails(final WaterRatesDetails waterRatesDetails) {
+    	waterRatesDetailsRepository.save(waterRatesDetails);
+    }
+
+    public List<WaterRatesDetails> findAll() {
+        return waterRatesDetailsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
+    }
+
+    public List<WaterRatesDetails> findAllByWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
+        return waterRatesDetailsRepository.findAllByWaterRatesHeader(waterRatesHeader);
+    }
+
+    public WaterRatesDetails load(final Long id) {
+        return waterRatesDetailsRepository.getOne(id);
+    }
 }

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.masters.service;
 
 import java.util.List;
 
@@ -45,16 +45,55 @@ import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.masters.repository.WaterRatesHeaderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface WaterRatesHeaderRepository extends JpaRepository<WaterRatesHeader, Long> {
+@Service
+@Transactional(readOnly = true)
+public class WaterRatesHeaderService {
 
-	List<WaterRatesHeader> findAllByConnectionType(ConnectionType connectionType);
+    private final WaterRatesHeaderRepository waterRatesHeaderRepository;
 
-    List<WaterRatesHeader> findAllByUsageType(UsageType usageType);
+    @Autowired
+    public WaterRatesHeaderService(final WaterRatesHeaderRepository waterRatesHeaderRepository) {
+        this.waterRatesHeaderRepository = waterRatesHeaderRepository;
+    }
 
-    List<WaterRatesHeader> findAllByWaterSource(WaterSource waterSource);
+    public WaterRatesHeader findBy(final Long waterRatesHeaderId) {
+        return waterRatesHeaderRepository.findOne(waterRatesHeaderId);
+    }
+
+    @Transactional
+    public WaterRatesHeader createWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
+        return waterRatesHeaderRepository.save(waterRatesHeader);
+    }
+
+    @Transactional
+    public void updateWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
+    	waterRatesHeaderRepository.save(waterRatesHeader);
+    }
+
+    public List<WaterRatesHeader> findAll() {
+        return waterRatesHeaderRepository.findAll(new Sort(Sort.Direction.ASC, ""));
+    }
+
+    public List<WaterRatesHeader> findAllByConnectionType(final ConnectionType connectionType) {
+        return waterRatesHeaderRepository.findAllByConnectionType(connectionType);
+    }
+
+    public List<WaterRatesHeader> findAllByUsageType(final UsageType usageType) {
+        return waterRatesHeaderRepository.findAllByUsageType(usageType);
+    }
+    
+    public List<WaterRatesHeader> findAllByWaterSource(final WaterSource waterSource) {
+        return waterRatesHeaderRepository.findAllByWaterSource(waterSource);
+    }
+
+    public WaterRatesHeader load(final Long id) {
+        return waterRatesHeaderRepository.getOne(id);
+    }
 
 }
