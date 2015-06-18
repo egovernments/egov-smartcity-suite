@@ -131,12 +131,12 @@
 
 		<property name="propOccupationDate" column="PROP_OCCUPANCY_DATE" />
 
-		<one-to-one name="propertyReference" lazy="proxy"
+		<!-- <one-to-one name="propertyReference" lazy="proxy"
 			class="org.egov.ptis.domain.entity.property.PropertyReference" property-ref="defaultPropertyReference"
 			cascade="all" constrained="false">
 			<formula>ID</formula>
 			<formula>'N'</formula>
-		</one-to-one>
+		</one-to-one> -->
 
 		<set name="propMutationSet" cascade="all" table="EGPT_PROPERTY_MUTATION"
 			order-by="ID_PROP_MUTATION">

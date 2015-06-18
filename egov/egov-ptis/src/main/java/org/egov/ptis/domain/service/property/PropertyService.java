@@ -318,11 +318,6 @@ public class PropertyService  {
 						totBltUpArea.setArea(totBltUpAreaVal);
 						property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
 
-						if (occupancy.getOccupancyCode().equalsIgnoreCase(PropertyTaxConstants.TENANT)) {
-							floor.getRentAgreementDetail().setFloor(floor);
-						} else {
-							floor.setRentAgreementDetail(null);
-						}
 					}
 				}
 			} else {

@@ -728,7 +728,7 @@ public class PropertyImpl extends StateAware implements Property,Auditable {
 					flr.getRentPerMonth(), flr.getExtraField1(), flr.getExtraField2(), flr.getExtraField3(),
 					flr.getExtraField4(), flr.getExtraField5(), flr.getExtraField6(), flr.getExtraField7(),
 					flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
-					flr.getTaxExemptedReason(), flr.getRentAgreementDetail());
+					flr.getTaxExemptedReason());
 			flrDtlsSet.add(floor);
 		}
 		return flrDtlsSet;

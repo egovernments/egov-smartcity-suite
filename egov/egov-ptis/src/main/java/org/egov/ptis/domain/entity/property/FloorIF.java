@@ -177,11 +177,6 @@ public interface FloorIF {
 	public String getTaxExemptedReason();
 
 	public void setTaxExemptedReason(String taxExemptedReason);
-
-	public UnitRentAgreementDetail getRentAgreementDetail();
-
-	public void setRentAgreementDetail(
-			UnitRentAgreementDetail rentAgreementDetail);
 	
 	public String getCapitalValue();
 	

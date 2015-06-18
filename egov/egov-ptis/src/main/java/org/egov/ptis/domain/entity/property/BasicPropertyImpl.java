@@ -312,10 +312,10 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		this.extraField2 = extraField2;
 	}
 
-	@Override
+	/*@Override
 	public PropertyReference getPropertyReference() {
 		return propertyReference;
-	}
+	}*/
 
 	@Override
 	public void setPropertyReference(PropertyReference propertyReference) {

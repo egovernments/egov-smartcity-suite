@@ -100,7 +100,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 
 	private String taxExemptedReason;
 
-	private UnitRentAgreementDetail rentAgreementDetail;
+	//private UnitRentAgreementDetail rentAgreementDetail;
 	
 	private String capitalValue;
 	private boolean planApproved;
@@ -116,8 +116,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 			String extraField5, String extraField6, String extraField7,
 			BigDecimal manualAlv, PropertyTypeMaster unitType,
 			String unitTypeCategory, String waterRate, BigDecimal alv,
-			String taxExemptedReason,
-			UnitRentAgreementDetail rentAgreementDetail) {
+			String taxExemptedReason) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
@@ -146,7 +145,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.waterRate = waterRate;
 		this.alv = alv;
 		this.taxExemptedReason = taxExemptedReason;
-		this.rentAgreementDetail = rentAgreementDetail;
 	}
 
 	public FloorImpl() {
@@ -560,17 +558,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	}
 
 	@Override
-	public UnitRentAgreementDetail getRentAgreementDetail() {
-		return rentAgreementDetail;
-	}
-
-	@Override
-	public void setRentAgreementDetail(
-			UnitRentAgreementDetail rentAgreementDetail) {
-		this.rentAgreementDetail = rentAgreementDetail;
-	}
-	
-	@Override
 	public String getCapitalValue() {
 		return capitalValue;
 	}
@@ -605,7 +592,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 				.append(getDepreciationMaster()).append(", WaterRate=")
 				.append(getWaterRate()).append(", alv=").append(getAlv())
 				.append(", taxExemptedReason=").append(taxExemptedReason)
-				.append(", rentAgreementDetail=").append(rentAgreementDetail)
 				.append("]").toString();
 
 	}

@@ -104,6 +104,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
@@ -159,6 +160,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@ResultPath(value="/WEB-INF/jsp")
 @Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
 		"/workflow", "method", "workFlowError" }) })
 @Transactional(readOnly = true)
@@ -288,7 +290,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/modifyProperty-modifyForm", results = { @Result(name = NEW, location = "/modifyProperty-new.jsp") })
+	@Action(value = "/modifyProperty-modifyForm", results = { @Result(name = NEW, location = "modify/modifyProperty-new.jsp") })
 	public String modifyForm() {
 		LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: "
 				+ basicProp + ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
@@ -304,17 +306,18 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return target;
 	}
 
+	//FIX ME
 	private String populateFormData() {
 		LOGGER.debug("Entered into populateFormData");
 		String target = "";
-		Map<String, String> wfMap = basicProp.getPropertyWfStatus();
+		//Map<String, String> wfMap = basicProp.getPropertyWfStatus();
 		PropertyImpl propertyImpl = null;
-		String wfStatus = wfMap.get(WFSTATUS);
+		String wfStatus = "FALSE";//wfMap.get(WFSTATUS);
 		if (wfStatus.equalsIgnoreCase("TRUE")
 				&& modifyRsn != null
 				&& (!PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn) && !PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ
 						.equalsIgnoreCase(modifyRsn))) {
-			getSession().put(WFOWNER, wfMap.get(WFOWNER));
+			//getSession().put(WFOWNER, wfMap.get(WFOWNER));
 			target = "workFlowError";
 		} else {
 
@@ -339,8 +342,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 				// setReasonForModify is only for work flow revert changes
 				setReasonForModify(propertyImpl.getPropertyDetail().getPropertyMutationMaster()
 						.getCode());
-				if (!modifyRsn.equals(PROPERTY_MODIFY_REASON_BIFURCATE)
-						&& !modifyRsn.equals(PROPERTY_MODIFY_REASON_AMALG)) {
+				if (!PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
+						&& !PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
 					if (propWF.getAreaBndry() != null) {
 						setAreaId(propWF.getAreaBndry().getId().toString());
 					} else {
@@ -421,7 +424,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 					.getPropertyTypeMaster();
 			propTypeId = propertyType.getId().toString();
 			prepareCategoryMap(propertyModel.getPropertyDetail().getPropertyTypeMaster());
-			prepareUsageList(propTypeId);
+			//prepareUsageList(propTypeId);
 
 			if (propertyModel.getPropertyDetail().getExtra_field5() != null) {
 				setPropTypeCategoryId(propertyModel.getPropertyDetail().getExtra_field5()
@@ -438,8 +441,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 						.toString();
 			}
 
-			setDateOfCompletion(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
-					.format(basicProp.getPropOccupationDate()));
+			/*setDateOfCompletion(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
+					.format(basicProp.getPropOccupationDate()));*/
 
 			setDocNumber(propertyModel.getDocNumber());
 			target = NEW;
@@ -1095,7 +1098,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			propTypeId = propType.getId().toString();
 			prepareCategoryMap(propType);
 		}
-		prepareUsageList(propTypeId);
+		//prepareUsageList(propTypeId);
 
 		if (getBasicProp() != null) {
 			setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
@@ -1107,8 +1110,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			Set<PropertyOwner> ownerSet = propWF.getPropertyOwnerSet();
 			if (ownerSet != null && !ownerSet.isEmpty()) {
 				for (PropertyOwner owner : ownerSet) {
-					Set<Address> addrSet = (Set<Address>) owner.getAddress();
-					for (Address address : addrSet) {
+					for (Address address : owner.getAddress()) {
 						corrsAddress = ptisCacheMgr.buildAddressByImplemetation(address);
 						break;
 					}
@@ -1124,7 +1126,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		// tax exempted properties
 		addDropdownData("taxExemptedList", CommonServices.getTaxExemptedList());
 		setupWorkflowDetails();
-		setUserInfo();
+		//setUserInfo();
 		LOGGER.debug("Exiting from preapre, ModelId: " + getModelId());
 
 	}

@@ -113,7 +113,7 @@ public interface BasicProperty {
 
 	public void removePropertyStatusValues(PropertyStatusValues propertyStatusValues);
 
-	public PropertyReference getPropertyReference();
+	//public PropertyReference getPropertyReference();
 
 	public void setPropertyReference(PropertyReference propertyReference);
 

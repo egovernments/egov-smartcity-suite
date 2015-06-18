@@ -133,9 +133,6 @@
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="waterRate" column="WATER_RATE" />
-		<property name="taxExemptedReason" column="TAX_EXEMPTED_REASON" type="java.lang.String" />
-		<one-to-one name="rentAgreementDetail"  
-			class="org.egov.ptis.domain.entity.property.UnitRentAgreementDetail" property-ref="floor"
-			cascade="all" />		
+		<property name="taxExemptedReason" column="TAX_EXEMPTED_REASON" type="java.lang.String" />		
 	</class>
 </hibernate-mapping>
