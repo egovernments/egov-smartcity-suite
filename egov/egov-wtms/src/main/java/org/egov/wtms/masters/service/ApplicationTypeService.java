@@ -44,7 +44,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.repository.ApplicationTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
