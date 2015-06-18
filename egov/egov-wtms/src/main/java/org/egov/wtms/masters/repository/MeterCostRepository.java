@@ -41,7 +41,6 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,8 +51,7 @@ public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
 
 	List<MeterCost> findByMeterMake(String name);
 
-    List<MeterCost> findByPipeSize(PipeSize pipeSize);
-
-    ApplicationType findByCode(String code);
+	List<MeterCost> findByPipeSize(PipeSize pipeSize);
 
 }
+																																																																																																
