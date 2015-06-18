@@ -114,8 +114,8 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-wtms</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>-->
+		</dependency>-->
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
 			<version>${project.parent.version}</version>
