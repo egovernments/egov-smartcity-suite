@@ -203,6 +203,7 @@ div.formmainbox {
 	margin-right: 8px;
 	border:1px solid #F2851F;
 	border-radius:3px;
+	display:inline-block;
 	}	
 
 td.greybox {
