@@ -100,7 +100,7 @@ public class ApplicationProcessTimeService {
     }
 
     public ApplicationProcessTime findByApplicationTypeandCategory(final ApplicationType applicationType, final ConnectionCategory category) {
-    	return applicationProcessTimeRepository.findByApplicationTypeandCategory(applicationType,category);
+    	return applicationProcessTimeRepository.findByApplicationTypeAndCategory(applicationType,category);
     }
 
  }

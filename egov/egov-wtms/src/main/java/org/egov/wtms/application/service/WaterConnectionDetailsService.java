@@ -39,13 +39,19 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,10 +64,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WaterConnectionDetailsService {
 
-    private final WaterConnectionDetailsRepository waterConnectionDetailsRepository;
+    protected WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -89,5 +101,21 @@ public class WaterConnectionDetailsService {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "applicationNumber");
         return waterConnectionDetailsRepository.findAll(pageable);
     }
+    
+    @Transactional
+    public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
+        if (waterConnectionDetails.getApplicationNumber().isEmpty())
+            waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
+        final User user = securityUtils.getCurrentUser();
+       
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+
+        final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
+        return savedWaterConnectionDetails;
+    }
+    
+    public List<ConnectionType> getAllConnectionTypes() {
+        return Arrays.asList(ConnectionType.values());
+     }
 
 }

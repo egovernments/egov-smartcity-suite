@@ -37,21 +37,25 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.web.controller.application;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ApplicationProcessTime;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-@Repository
-public interface ApplicationProcessTimeRepository extends JpaRepository<ApplicationProcessTime, Long> {
+public abstract class GenericConnectionController {
 
-	List<ApplicationProcessTime> findByApplicationType(ApplicationType applicationType);
-	List<ApplicationProcessTime> findByCategory(ConnectionCategory category);
-	ApplicationProcessTime findByApplicationTypeAndCategory(ApplicationType applicationType,ConnectionCategory category);
+    public static final String ERROR = "error";
+    public static final String MESSAGE = "message";
+
+    @Autowired(required = true)
+    protected WaterConnectionDetailsService waterConnectionDetailsService;
+
+    public @ModelAttribute("connectionTypes") List<ConnectionType> connectionTypes() {
+        return waterConnectionDetailsService.getAllConnectionTypes();
+    }
 
 }

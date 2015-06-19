@@ -91,7 +91,7 @@ public class DonationHeaderService {
     }
 
     public DonationHeader findByCategoryandUsage(final ConnectionCategory category, final UsageType usageType) {
-    	return donationHeaderRepository.findByCategoryandUsage(category, usageType);
+    	return donationHeaderRepository.findByCategoryAndUsageType(category, usageType);
     }
 
  }

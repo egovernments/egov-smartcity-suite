@@ -37,21 +37,11 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.repository;
+package org.egov.wtms.web.controller;
 
-import java.util.List;
+import org.springframework.stereotype.Controller;
 
-import org.egov.wtms.masters.entity.ApplicationProcessTime;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface ApplicationProcessTimeRepository extends JpaRepository<ApplicationProcessTime, Long> {
-
-	List<ApplicationProcessTime> findByApplicationType(ApplicationType applicationType);
-	List<ApplicationProcessTime> findByCategory(ConnectionCategory category);
-	ApplicationProcessTime findByApplicationTypeAndCategory(ApplicationType applicationType,ConnectionCategory category);
+@Controller
+public class AjaxConnectionController {
 
 }

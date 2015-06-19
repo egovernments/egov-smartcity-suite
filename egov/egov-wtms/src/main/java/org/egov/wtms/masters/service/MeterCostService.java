@@ -99,7 +99,7 @@ public class MeterCostService {
     }
 
     public MeterCost findByMeterMakeandPipeSize(final String meterMake, final PipeSize pipeSize) {
-    	return meterCostRepository.findByMeterMakeandPipeSize(meterMake, pipeSize);
+    	return meterCostRepository.findByMeterMakeAndPipeSize(meterMake, pipeSize);
     }
 
  }

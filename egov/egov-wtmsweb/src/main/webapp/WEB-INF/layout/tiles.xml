@@ -55,5 +55,14 @@
 	<definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
+	<definition name="newconnection-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/newConnection-form.jsp"/>
+    </definition>
+    
+	 <definition name="application-success" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/application-success.jsp"/>
+    </definition>
 	
 </tiles-definitions>

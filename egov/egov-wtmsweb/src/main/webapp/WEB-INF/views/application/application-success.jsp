@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,6 +36,24 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-msg.newapplication.create.success=Your application for new water tap connection has been successfully created
-msg.application.number.info=Please use this number for all future references
+#------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+					<strong><spring:message code="msg.newapplication.create.success"/></strong>
+					<div><spring:message code="lbl.application.no"/> : <span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span>.<spring:message code="msg.application.number.info"/></div>
+				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+</div>
+<script src="<c:url value='/resources/js/app/complaintsuccess.js'/>"></script>

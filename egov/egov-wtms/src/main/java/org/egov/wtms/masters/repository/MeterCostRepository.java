@@ -53,6 +53,6 @@ public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
 
 	List<MeterCost> findByPipeSize(PipeSize pipeSize);
 		
-	MeterCost findByMeterMakeandPipeSize(String meterMake,PipeSize pipeSize);
+	MeterCost findByMeterMakeAndPipeSize(String meterMake,PipeSize pipeSize);
 }
 																																																																																																
