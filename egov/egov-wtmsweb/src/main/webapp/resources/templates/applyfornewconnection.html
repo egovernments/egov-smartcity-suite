@@ -98,7 +98,6 @@
 			<div class="main-content">
 				<div class="row">
 						<div class="col-md-12">
-							<div class="text-right error-msg">Date of Application : 23/01/2015</div>
 							<div class="panel panel-primary" data-collapsed="0">
 								<div class="panel-heading">
 									<div class="panel-title">
@@ -107,7 +106,13 @@
 									
 								</div>
 								<div class="panel-body custom-form">
-									<form role="form" class="form-horizontal form-groups-bordered">
+									<form role="form" class="form-horizontal form-groups-bordered">	
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Date of Application</label>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control datepicker today" data-inputmask="'mask': 'd/m/y'">
+											</div>
+										</div>
 										<div class="form-group">
 											<label class="col-sm-3 control-label text-right">PT Assessment Number</label>
 											<div class="col-sm-3 add-margin">
@@ -130,7 +135,7 @@
 											</div>
 											<label class="col-sm-2 control-label text-right">Mobile</label>
 											<div class="col-sm-3 add-margin">
-												<input type="text" class="form-control" disabled>
+												<input type="text" class="form-control">
 											</div>
 										</div>
 										<div class="form-group">
@@ -141,6 +146,12 @@
 											<label class="col-sm-2 control-label text-right">Zone / Ward / Block</label>
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control" disabled>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Property Tax Due</label>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control text-right" disabled value="25412.34">
 											</div>
 										</div>
 										<div class="panel-heading custom_form_panel_heading">
@@ -175,7 +186,7 @@
 											</div>
 											<label class="col-sm-2 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
-												<select class="form-control"><option value="">Select from below</option></select>
+												<input type="text" class="form-control">
 											</div>
 										</div>
 										<div class="panel-heading custom_form_panel_heading">
@@ -229,7 +240,9 @@
 					
 			</footer> 
 		</div>
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	<script src="../js/app/newconnection.js"></script>
 	</body>

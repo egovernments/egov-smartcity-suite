@@ -105,6 +105,14 @@ $(document).ready(function()
 		$(".datepicker").datepicker({
 			format: "dd/mm/yyyy"
 		}); 
+
+		var d = new Date();
+		var currDate = d.getDate();
+		var currMonth = d.getMonth();
+		var currYear = d.getFullYear();
+		var startDate = new Date(currYear,currMonth,currDate);
+		$('.today').datepicker('setDate',startDate);
+
 		}catch(e){
 		console.warn("No Date Picker");
 	}
