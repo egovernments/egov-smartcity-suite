@@ -37,45 +37,35 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<div class="row">
-	<div class="col-md-12">
-		<form:form role="form" action="application"
-			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.applicant.details" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-					<jsp:include page="applicantdetails.jsp"></jsp:include>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>			
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button class="btn btn-primary">
-						<spring:message code="lbl.createapplication" />
-					</button>
-					<button class="btn btn-primary">
-						<spring:message code="lbl.clear" />
-					</button>
-					<a href="javascript:void(0);" id="closeComplaints"
-						class="btn btn-primary" onclick="self.close()"><spring:message
-							code='lbl.close' /></a>
-				</div>
-			</div>
-		</form:form>
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 	</div>
 </div>
-
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
-<script>
-	
-</script>
+<div class="col-sm-12 view-content header-color hidden-xs">
+	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentname"/></div>											
+	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
+	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>																					
+</div>
+<div class="form-group">
+	<div class="col-sm-4 add-margin">
+		<input type="checkbox"> House Tax Registration Document
+	</div>
+	<div class="col-sm-4 add-margin">
+		<input type="textbox" class="form-control">
+	</div>
+	<div class="col-sm-4 add-margin">
+		<input type="date" class="form-control">
+	</div>
+	<div class="col-sm-4 add-margin">
+		<input type="checkbox"> House Tax Registration Document
+	</div>
+	<div class="col-sm-4 add-margin">
+		<input type="textbox" class="form-control">
+	</div>
+	<div class="col-sm-4 add-margin">
+		<input type="date" class="form-control">
+	</div>
+</div>

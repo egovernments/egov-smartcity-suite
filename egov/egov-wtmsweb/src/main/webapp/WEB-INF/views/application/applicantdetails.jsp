@@ -37,45 +37,59 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<div class="row">
-	<div class="col-md-12">
-		<form:form role="form" action="application"
-			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.applicant.details" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-					<jsp:include page="applicantdetails.jsp"></jsp:include>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>			
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button class="btn btn-primary">
-						<spring:message code="lbl.createapplication" />
-					</button>
-					<button class="btn btn-primary">
-						<spring:message code="lbl.clear" />
-					</button>
-					<a href="javascript:void(0);" id="closeComplaints"
-						class="btn btn-primary" onclick="self.close()"><spring:message
-							code='lbl.close' /></a>
-				</div>
-			</div>
-		</form:form>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.application.date" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control datepicker today" data-inputmask="'mask': 'd/m/y'">
 	</div>
 </div>
-
-<script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
-<script>
-	
-</script>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.ptassesmentnumber" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<div class="input-group">
+			<input type="text" class="form-control" /> <span
+				class="input-group-addon"> <i class="fa fa-search"></i>
+			</span>
+		</div>
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.bpanumber" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.applicantname" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control" disabled>
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.mobilenumber" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.address" /></label>
+	<div class="col-sm-3 add-margin">
+		<textarea class="form-control" disabled></textarea>
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.zonewardblock" /></label>
+	<div class="col-sm-3 add-margin">
+		<textarea class="form-control" disabled></textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.pt.due" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-right" disabled value="0.00"> 
+	</div>
+</div>				
