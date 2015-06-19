@@ -100,5 +100,9 @@ public class UsageTypeService {
     public UsageType findByCode(final String code) {
     	return usageTypeRepository.findByCode(code);
     }
+    
+    public List<UsageType> getActiveUsageTypes() {
+        return usageTypeRepository.findByActiveTrueOrderByNameAsc();
+    }
 
  }

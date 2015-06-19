@@ -73,7 +73,7 @@ public class WaterSourceService {
 
     @Transactional
     public void updateWaterSource(final WaterSource waterSource) {
-    	waterSourceRepository.save(waterSource);
+        waterSourceRepository.save(waterSource);
     }
 
     public List<WaterSource> findAll() {
@@ -94,7 +94,11 @@ public class WaterSourceService {
     }
 
     public WaterSource findByCode(final String code) {
-    	return waterSourceRepository.findByCode(code);
+        return waterSourceRepository.findByCode(code);
     }
 
- }
+    public List<WaterSource> getAllActiveWaterSourceTypes() {
+        return waterSourceRepository.findByActiveTrueOrderByWaterSourceTypeAsc();
+    }
+
+}

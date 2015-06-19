@@ -72,6 +72,7 @@ public class NewConnectionController extends GenericConnectionController {
         return "newconnection-form";
     }
 
+    //TODO - This is just a skeleton method. Persist is not yet implemented
     @RequestMapping(value = "/application", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {

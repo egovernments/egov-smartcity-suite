@@ -42,6 +42,7 @@ package org.egov.wtms.masters.service;
 import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -99,6 +100,10 @@ public class ConnectionCategoryService {
 
     public ConnectionCategory findByCode(final String code) {
     	return connectionCategoryRepository.findByCode(code);
+    }
+    
+    public List<ConnectionCategory> getAllActiveConnectionCategory() {
+        return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
 
  }

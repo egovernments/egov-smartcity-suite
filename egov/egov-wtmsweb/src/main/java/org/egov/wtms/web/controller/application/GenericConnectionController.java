@@ -42,7 +42,15 @@ package org.egov.wtms.web.controller.application;
 import java.util.List;
 
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PipeSize;
+import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.PipeSizeService;
+import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.masters.service.WaterSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -53,9 +61,37 @@ public abstract class GenericConnectionController {
 
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;
+    
+    @Autowired
+    protected UsageTypeService usageTypeService;
+    
+    @Autowired
+    protected ConnectionCategoryService connectionCategoryService;
+    
+    @Autowired
+    protected WaterSourceService waterSourceService;
+    
+    @Autowired
+    protected PipeSizeService pipeSizeService;
 
     public @ModelAttribute("connectionTypes") List<ConnectionType> connectionTypes() {
         return waterConnectionDetailsService.getAllConnectionTypes();
     }
-
+    
+    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+        return usageTypeService.getActiveUsageTypes();
+    }
+    
+    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+        return connectionCategoryService.getAllActiveConnectionCategory();
+    }
+    
+    public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
+        return waterSourceService.getAllActiveWaterSourceTypes();
+    }
+    
+    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+        return pipeSizeService.getAllActivePipeSize();
+    }
+    
 }

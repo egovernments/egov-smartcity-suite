@@ -73,7 +73,7 @@ public class PipeSizeService {
 
     @Transactional
     public void updatePipeSize(final PipeSize pipeSize) {
-    	pipeSizeRepository.save(pipeSize);
+        pipeSizeRepository.save(pipeSize);
     }
 
     public List<PipeSize> findAll() {
@@ -90,7 +90,11 @@ public class PipeSizeService {
     }
 
     public PipeSize findByCode(final String code) {
-    	return pipeSizeRepository.findByCode(code);
+        return pipeSizeRepository.findByCode(code);
     }
 
- }
+    public List<PipeSize> getAllActivePipeSize() {
+        return pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
+    }
+
+}

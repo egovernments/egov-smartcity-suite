@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.PipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -46,6 +48,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PipeSizeRepository extends JpaRepository<PipeSize, Long> {
 
-	PipeSize findByCode(String code);
+    PipeSize findByCode(String code);
 
+    List<PipeSize> findByActiveTrueOrderBySizeInInchAsc();
 }

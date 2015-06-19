@@ -37,97 +37,139 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="application" modelAttribute="waterConnectionDetails"  id="newWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+		<form:form role="form" action="application"
+			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.applicant.details"/>
+						<spring:message code="lbl.applicant.details" />
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.ptassesmentnumber"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.ptassesmentnumber" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
-							    <input type="text" class="form-control"/>
-							    <span class="input-group-addon">
-								<i class="fa fa-search"></i>
-							    </span>
+								<input type="text" class="form-control" /> <span
+									class="input-group-addon"> <i class="fa fa-search"></i>
+								</span>
 							</div>
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bpanumber"/></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.bpanumber" /></label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" class="form-control">
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicantname"/></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.applicantname" /></label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" class="form-control" disabled>
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mobilenumber"/></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.mobilenumber" /></label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" class="form-control">
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.address"/></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.address" /></label>
 						<div class="col-sm-3 add-margin">
 							<textarea class="form-control" disabled></textarea>
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.zonewardblock"/></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.zonewardblock" /></label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" class="form-control" disabled>
 						</div>
 					</div>
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.connection.details"/>
+							<spring:message code="lbl.connection.details" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiontype"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.connectiontype" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="connectionType" path="" data-first-option="false" 
-								cssClass="form-control" >
+							<form:select name="connectionType" path=""
+								data-first-option="false" cssClass="form-control">
 								<form:option value="">
-									<spring:message code="lbl.connectiontype" />
+									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${connectionTypes}"  />  
+								<form:options items="${connectionTypes}" />
 							</form:select>
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usagetype"/><span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.usagetype" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select class="form-control"><option value=""><spring:message code="lbl.select"/></option></select>
+							<form:select name="usageType" path="" data-first-option="false"
+								cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${usageTypes}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.category"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.category" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select class="form-control"><option value=""><spring:message code="lbl.select"/></option></select>
+							<form:select name="category" path="" data-first-option="false"
+								cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${connectionCategories}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.watersourcetype"/><span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select class="form-control"><option value=""><spring:message code="lbl.select"/></option></select>
+							<form:select name="waterSource" path="" data-first-option="false"
+								cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${waterSourceTypes}" itemValue="id"
+									itemLabel="waterSourceType" />
+							</form:select>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.hscpipesize.inches"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select class="form-control"><option value=""><spring:message code="lbl.select"/></option></select>
+							<form:select name="pipeSize" path="" data-first-option="false"
+								cssClass="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${pipeSizes}" itemValue="id"
+									itemLabel="code" />
+							</form:select>							
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sumpcapacity.litres"/><span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select class="form-control"><option value=""><spring:message code="lbl.select"/></option></select>
+							<input type="text" class="form-control">
 						</div>
 					</div>
-				<!-- <div class="panel-heading custom_form_panel_heading">
+					<!-- <div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
 							<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 						</div>
@@ -156,22 +198,28 @@
 						<div class="col-sm-4 add-margin">
 							<input type="date" class="form-control">
 						</div>
-					</div> -->	 
+					</div> -->
 				</div>
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
-					<button class="btn btn-primary"><spring:message code="lbl.clear"/></button>
+					<button class="btn btn-primary">
+						<spring:message code="lbl.createapplication" />
+					</button>
+					<button class="btn btn-primary">
+						<spring:message code="lbl.clear" />
+					</button>
 					<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-primary" onclick="self.close()"><spring:message code='lbl.close' /></a>
+						class="btn btn-primary" onclick="self.close()"><spring:message
+							code='lbl.close' /></a>
 				</div>
 			</div>
 		</form:form>
 	</div>
 </div>
 
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
 <script>
 	

@@ -102,6 +102,7 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findAll(pageable);
     }
     
+    //TODO - This is just a skeleton method. Persist is not yet implemented
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
         if (waterConnectionDetails.getApplicationNumber().isEmpty())

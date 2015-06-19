@@ -48,10 +48,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
 
-	UsageType findByName(String name);
+    UsageType findByName(String name);
 
     List<UsageType> findByNameContainingIgnoreCase(String name);
 
     UsageType findByCode(String code);
+    
+    List<UsageType> findByActiveTrueOrderByNameAsc();
 
 }

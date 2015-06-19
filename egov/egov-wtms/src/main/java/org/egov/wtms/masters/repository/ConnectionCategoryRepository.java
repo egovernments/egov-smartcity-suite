@@ -48,10 +48,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConnectionCategoryRepository extends JpaRepository<ConnectionCategory, Long> {
 
-	ConnectionCategory findByName(String name);
+    ConnectionCategory findByName(String name);
 
     List<ConnectionCategory> findByNameContainingIgnoreCase(String name);
 
     ConnectionCategory findByCode(String code);
+
+    List<ConnectionCategory> findByActiveTrueOrderByNameAsc();
 
 }
