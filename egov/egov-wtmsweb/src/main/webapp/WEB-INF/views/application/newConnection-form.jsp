@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="application"
+		<form:form role="form" action="newConnection-create"
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -60,9 +60,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button class="btn btn-primary">
-						<spring:message code="lbl.createapplication" />
-					</button>
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
 					<button class="btn btn-primary">
 						<spring:message code="lbl.clear" />
 					</button>

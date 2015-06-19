@@ -45,7 +45,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -68,10 +67,10 @@ public class WaterConnectionDetailsService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -101,22 +100,23 @@ public class WaterConnectionDetailsService {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "applicationNumber");
         return waterConnectionDetailsRepository.findAll(pageable);
     }
-    
-    //TODO - This is just a skeleton method. Persist is not yet implemented
+
+    // TODO - This is just a skeleton method. Persist is not yet implemented
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
-        if (waterConnectionDetails.getApplicationNumber().isEmpty())
+        if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
-        final User user = securityUtils.getCurrentUser();
-       
+        securityUtils.getCurrentUser();
+
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
 
-        final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
+        final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
+                .save(waterConnectionDetails);
         return savedWaterConnectionDetails;
     }
-    
+
     public List<ConnectionType> getAllConnectionTypes() {
         return Arrays.asList(ConnectionType.values());
-     }
+    }
 
 }

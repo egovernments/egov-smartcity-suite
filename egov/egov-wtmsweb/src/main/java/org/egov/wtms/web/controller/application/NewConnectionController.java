@@ -46,6 +46,9 @@ import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.masters.service.PropertyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -59,11 +62,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class NewConnectionController extends GenericConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
+    private final ApplicationTypeService applicationTypeService;
+    private final PropertyTypeService propertyTypeService;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
+            final ApplicationTypeService applicationTypeService, final PropertyTypeService propertyTypeService,
             final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
+        this.applicationTypeService = applicationTypeService;
+        this.propertyTypeService = propertyTypeService;
 
     }
 
@@ -72,14 +80,17 @@ public class NewConnectionController extends GenericConnectionController {
         return "newconnection-form";
     }
 
-    //TODO - This is just a skeleton method. Persist is not yet implemented
-    @RequestMapping(value = "/application", method = POST)
+    // TODO - This is just a skeleton method. Persist is not yet implemented
+    // properly
+    @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
 
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode("NEWCONNECTION"));
+        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode("GROUNDFLOOR"));
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         if (resultBinder.hasErrors())
             return "newconnection-form";
-
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
         return "redirect:/application-success";
