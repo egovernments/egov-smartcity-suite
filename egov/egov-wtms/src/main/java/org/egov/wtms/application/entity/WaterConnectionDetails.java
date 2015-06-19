@@ -44,6 +44,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,6 +56,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -142,11 +144,9 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    private double donationCharges;
-
-    private double connectionCharges;
-
-    private double securityDeposit;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
 
     @Override
     public Long getId() {
@@ -302,28 +302,12 @@ public class WaterConnectionDetails extends StateAware {
         this.approvalDate = approvalDate;
     }
 
-    public double getDonationCharges() {
-        return donationCharges;
+    public EgDemand getDemand() {
+        return demand;
     }
 
-    public void setDonationCharges(final double donationCharges) {
-        this.donationCharges = donationCharges;
-    }
-
-    public double getConnectionCharges() {
-        return connectionCharges;
-    }
-
-    public void setConnectionCharges(final double connectionCharges) {
-        this.connectionCharges = connectionCharges;
-    }
-
-    public double getSecurityDeposit() {
-        return securityDeposit;
-    }
-
-    public void setSecurityDeposit(final double securityDeposit) {
-        this.securityDeposit = securityDeposit;
+    public void setDemand(final EgDemand demand) {
+        this.demand = demand;
     }
 
     @Override

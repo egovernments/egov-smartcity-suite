@@ -39,15 +39,18 @@
  */
 package org.egov.wtms.application.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.wtms.masters.entity.MeterCost;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -64,9 +67,11 @@ public class WaterConnection extends AbstractAuditable {
     private Long id;
 
     @SafeHtml
-    @Column(name = "consumerCode", unique = true)
+    // @Column(name = "consumerCode", unique = true)
+    @Length(min = 3, max = 50)
     private String consumerCode;
 
+    @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
     private String propertyIdentifier;
@@ -79,9 +84,16 @@ public class WaterConnection extends AbstractAuditable {
     private Integer mobileNumber;
 
     @SafeHtml
+    @Length(min = 3, max = 50)
     private String meterNumber;
 
+    @ManyToOne
+    @JoinColumn(name = "parentConnection")
     private WaterConnection parentConnection;
+
+    @ManyToOne
+    @JoinColumn(name = "meter")
+    private MeterCost meter;
 
     @Override
     public Long getId() {
@@ -139,6 +151,14 @@ public class WaterConnection extends AbstractAuditable {
 
     public void setParentConnection(final WaterConnection parentConnection) {
         this.parentConnection = parentConnection;
+    }
+
+    public MeterCost getMeter() {
+        return meter;
+    }
+
+    public void setMeter(final MeterCost meter) {
+        this.meter = meter;
     }
 
 }
