@@ -41,7 +41,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 	<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
-<hibernate-mapping auto-import="false">
+<hibernate-mapping>
 	<class name="org.egov.collection.entity.ReceiptHeader" table="EGCL_COLLECTIONHEADER">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
@@ -126,8 +126,7 @@
 			<key>
 				<column name="collectionheader" precision="22" scale="0" />
 			</key>
-			<many-to-many class="org.egov.model.instrument.InstrumentHeader"
-				column="instrumentheader" />
+			<many-to-many class="org.egov.model.instrument.InstrumentHeader" column="instrumentheader" />
 		</set>
 
 		<many-to-one name="location"

@@ -75,7 +75,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
-import org.egov.commons.ReceiptHeader;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.VoucherDetail;
@@ -245,7 +244,6 @@ public class CreateVoucher {
         private  EisCommonService eisCommonService;
         private MastersService masters;
         CommonMethodsI cmImpl=new CommonMethodsImpl();
-        PersistenceService<ReceiptHeader, Integer> rcptHeaderService;
         PersistenceService<Chequedetail, Integer> chequeDetailSer;
         PersistenceService<Bankreconciliation, Integer> bankReconSer;
         PersistenceService<EgBillregistermis, Integer>  billMisSer;
@@ -2116,7 +2114,7 @@ public class CreateVoucher {
 
          }
 
-         protected void postInReceiptHeader(final HashMap<String, Object> receiptdetails,Object CVoucherHeader,Chequedetail chequeDetail){
+        /* protected void postInReceiptHeader(final HashMap<String, Object> receiptdetails,Object CVoucherHeader,Chequedetail chequeDetail){
 
                  rcptHeaderService = new PersistenceService<ReceiptHeader, Integer>();
                 // rcptHeaderService.setSessionFactory(new SessionFactory());
@@ -2158,7 +2156,7 @@ public class CreateVoucher {
                  }
                  rcptHeaderService.persist(receiptHeader);
 
-         }
+         }*/
 
          enum modeOfCollectionEnum {
                  Cheque, Cash, Bank;

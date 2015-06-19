@@ -38,11 +38,8 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- 
-     Mapping file created by Mani
--->
 <hibernate-mapping>
     <class name="org.egov.model.instrument.InstrumentHeader" table="EGF_INSTRUMENTHEADER">
         <id
@@ -128,7 +125,7 @@
             <one-to-many class="org.egov.model.instrument.InstrumentVoucher" />
         </set>         
     </class>
-    <query name="INSTRUMENTHEADERBYID">from InstrumentHeader where id=?</query>
+    <query name="INSTRUMENTHEADERBYID">from org.egov.model.instrument.InstrumentHeader where id=?</query>
     <query name="INSTRUMENT_STATUS_FOR_DISHONOR">from EgwStatus where moduletype = 'Instrument' and description in('Dishonored','dishonour cheque in workflow')</query>
     <query name="DISHONOR_STATE_OWNERS">
     <![CDATA[select dc.state.ownerPosition from org.egov.model.instrument.DishonorCheque dc where dc.status.moduletype = 'Instrument' and dc.status.description in('Dishonored','dishonour cheque in workflow')]]>
