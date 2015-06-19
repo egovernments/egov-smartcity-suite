@@ -64,8 +64,8 @@ public class WaterConnection extends AbstractAuditable {
     private Long id;
 
     @SafeHtml
-    @Column(name = "comsumerCode", unique = true)
-    private String comsumerCode;
+    @Column(name = "consumerCode", unique = true)
+    private String consumerCode;
 
     @SafeHtml
     @Length(min = 3, max = 50)
@@ -93,12 +93,12 @@ public class WaterConnection extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getComsumerCode() {
-        return comsumerCode;
+    public String getConsumerCode() {
+        return consumerCode;
     }
 
-    public void setComsumerCode(final String comsumerCode) {
-        this.comsumerCode = comsumerCode;
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
     }
 
     public String getPropertyIdentifier() {

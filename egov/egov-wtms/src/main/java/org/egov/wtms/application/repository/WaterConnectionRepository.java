@@ -46,5 +46,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaterConnectionRepository extends JpaRepository<WaterConnection, Long> {
 
-    WaterConnection findByComsumerCode(String comsumerCode);
+    WaterConnection findByConsumerCode(String consumerCode);
 }

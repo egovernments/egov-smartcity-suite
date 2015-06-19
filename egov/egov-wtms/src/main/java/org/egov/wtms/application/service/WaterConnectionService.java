@@ -73,11 +73,11 @@ public class WaterConnectionService {
     }
 
     public List<WaterConnection> findAll() {
-        return waterConnectionRepository.findAll(new Sort(Sort.Direction.ASC, "comsumerCode"));
+        return waterConnectionRepository.findAll(new Sort(Sort.Direction.ASC, "consumerCode"));
     }
 
-    public WaterConnection findByName(final String comsumerCode) {
-        return waterConnectionRepository.findByComsumerCode(comsumerCode);
+    public WaterConnection findByName(final String consumerCode) {
+        return waterConnectionRepository.findByConsumerCode(consumerCode);
     }
 
     public WaterConnection load(final Long id) {
@@ -85,7 +85,7 @@ public class WaterConnectionService {
     }
 
     public Page<WaterConnection> getListWaterConnections(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "comsumerCode");
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "consumerCode");
         return waterConnectionRepository.findAll(pageable);
     }
 
