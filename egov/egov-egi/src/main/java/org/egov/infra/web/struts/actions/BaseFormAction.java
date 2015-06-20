@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.RequestAware;
 import org.apache.struts2.interceptor.SessionAware;
@@ -58,6 +59,7 @@ import com.opensymphony.xwork2.ModelDriven;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.interceptor.ParameterNameAware;
 
+@ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
 	private static final long serialVersionUID = 1L;
 	private Map<String, Object> session;

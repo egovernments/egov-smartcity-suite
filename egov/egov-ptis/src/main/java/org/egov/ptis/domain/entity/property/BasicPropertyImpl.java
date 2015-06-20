@@ -484,12 +484,9 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		String wfOwner = "";
 		PropertyImpl wfProperty = null;
 		for (Property property : getPropertySet()) {
-			wfProperty = (PropertyImpl) property;
-			if (wfProperty.getStatus().equals(
-					PropertyTaxConstants.STATUS_WORKFLOW)
-					|| !wfProperty.getState().getValue()
-							.equalsIgnoreCase("END")) {
-				break;
+		        wfProperty = (PropertyImpl) property;
+			if (wfProperty.hasState() && (wfProperty.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW) || !wfProperty.stateIsEnded())) {
+			    break;
 			}
 			wfProperty = null;
 		}

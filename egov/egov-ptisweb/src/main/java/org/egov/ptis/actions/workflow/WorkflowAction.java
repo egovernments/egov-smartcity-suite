@@ -61,7 +61,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.transaction.annotation.Transactional;
 
-@ParentPackage("egov")
 /*
  * @Results( {
  * 
@@ -180,7 +179,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		Position position = null;
 		// propertyWorkflowService.start(workflowAction.getPropertyModel(),
 		// position, "Property Workflow Started");
-		workflowAction.getPropertyModel().transition(true).start().withOwner(position)
+		workflowAction.getPropertyModel().transition().start().withOwner(position)
 				.withComments("Property Workflow Started");
 
 		LOGGER.debug("Exiting from startWorkFlow, Workflow started");

@@ -98,7 +98,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@ParentPackage("egov")
 @Namespace("/common")
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);

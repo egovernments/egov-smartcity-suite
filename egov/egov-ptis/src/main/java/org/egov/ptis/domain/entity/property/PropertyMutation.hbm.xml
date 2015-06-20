@@ -72,6 +72,7 @@
 		<property name="mutationNo" column="MUTATION_NO" />
 		<property name="mutationDate" column="MUTATION_DATE" />
 		<property name="mutationFee" column="MUTATION_FEE"/>
+		<property name="marketValue" column="MARKET_VALUE"/>
 		<property name="receiptNum" column="RECEIPT_NUMBER"/>
 		<property name="applicationNo" column="APPLICATION_NO" />
 		<property name="applicantName" column="APPLICANT_NAME"/>

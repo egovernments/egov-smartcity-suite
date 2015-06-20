@@ -271,6 +271,20 @@
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
+								<span class="bold"> Owner details</span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="5">
+							<div id="OwnerNameDiv">
+								<%@ include file="../common/OwnerNameForm.jsp"%>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="5">
+							<div class="headingsmallbg">
 								<s:text name="feeDtls" />
 							</div>
 						</td>

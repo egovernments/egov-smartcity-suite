@@ -59,6 +59,7 @@ public class PropertyMutation extends BaseModel {
 	private String mutationNo;
 	private Date mutationDate;
 	private BigDecimal mutationFee;
+	private BigDecimal marketValue;
 	private BigDecimal otherFee;
 	private String receiptNum;
 	private Date noticeDate;
@@ -258,7 +259,15 @@ public class PropertyMutation extends BaseModel {
 		this.mutationFee = mutationFee;
 	}
 
-	public String getReceiptNum() {
+	public BigDecimal getMarketValue() {
+        return marketValue;
+    }
+
+    public void setMarketValue(BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
+
+    public String getReceiptNum() {
 		return receiptNum;
 	}
 
