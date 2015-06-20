@@ -46,12 +46,23 @@ import org.egov.eis.entity.PositionHierarchy;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pims.commons.Position;
 
 public class EscalationForm {
     private ComplaintType complaintType;
     private List<Escalation> escalationList = new ArrayList<Escalation>();
     private List<PositionHierarchy> positionHierarchyList = new ArrayList<PositionHierarchy>();
     private ComplaintRouter complaintRouter;
+    private Position  position;
+    
+    
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
     public ComplaintRouter getComplaintRouter() {
         return complaintRouter;  
@@ -84,7 +95,9 @@ public class EscalationForm {
     public List<PositionHierarchy> getPositionHierarchyList() {
         return positionHierarchyList;
     }
-
+    public void  addPositionHierarchyList(final PositionHierarchy positionHierarchyObj) {
+        positionHierarchyList.add(positionHierarchyObj);
+    }
     public void setPositionHierarchyList(final List<PositionHierarchy> positionHierarchyList) {
         this.positionHierarchyList = positionHierarchyList;
     }

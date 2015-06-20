@@ -172,11 +172,11 @@
     </definition>
      <definition name="escalation-searchView" extends="base_layout">
     	<put-attribute name="page-title" value="title.escalation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-view.jsp"/>
     </definition>
     <definition name="escalation-view" extends="base_layout">
     	<put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
     </definition>
    <definition name="escalation-success" extends="base_layout">
     	<put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>

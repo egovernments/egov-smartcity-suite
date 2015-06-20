@@ -41,23 +41,45 @@ jQuery(document)
 		.ready(
 				function($) {
 
-					tableContainer1 = $("#escalation-table");
-
-					$('#escalationSearch').click(function() {
-						callajaxdatatable();
+					
+					if ($('#mode').val() == 'duplicateOrError') {
+						jQuery('#escalationDiv').removeClass('hidden');
+					}
+					if ($('#mode').val() == 'dataFound') {
+						jQuery('#escalationDiv').removeClass('hidden');
+					}
+					$("#escalationnewEscalation").click(function() {
+						$("#noescalationDataFoundDiv").hide();
+						$("#escalationDiv").show();
+						jQuery('#escalationDiv').removeClass('hidden');
 					});
 
-					function callajaxdatatable() {
+										
+					tableContainer1 = $("#escalation-table");
+
+					$('#escalationSearch').click(function(e) {
+						callajaxdatatable(e);
+					});
+
+					function callajaxdatatable(e) {
+						var cmTypeId=0;var posId=0;
+						if($('#objectSubType').val()=="")
+							 cmTypeId=0;
+						else
+							 cmTypeId=$('#objectSubType').val();
+						
+						if($('#positionId').val()=="")
+							 posId=0;
+						else 
+							 posId=$('#positionId').val();
 						$('.report-section').removeClass('display-hide');
 						tableContainer1
 								.dataTable({
 									ajax : {
 										url : "/pgr/escalation/resultList-update",
 										data : {
-											complaintTypeId : $('#complaintTypeId').val(),
-											boundaryId : $('#boundaryId').val(),	
-											boundaryTypeId : $('#boundary_type_id').val(),
-											positionId : $('#positionId').val()
+											complaintTypeId : cmTypeId,
+											positionId : posId
 										}
 									},
 									"sPaginationType" : "bootstrap",
@@ -68,20 +90,19 @@ jQuery(document)
 									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 									
 									columns : [ {
-										"data" : "complaintType"
+										"data" : "objectSubType"
 									}, {
-										"data" : "boundaryType"
+										"data" : "positionFrom"
 									}, {
-										"data" : "boundary"
+										"data" : "positionTo"
 									}, {
-										"data" : "position"
-									}, {
-										"targets": -1,
-										"mData" : null,
-										"defaultContent": '<button type="button" class="btn btn-xs btn-secondary edit-escalation"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'
-										
+										"data" : "objectType",
+										"visible": false
 									},{
-										"data" : "routerId",
+										"data" : "positionFromId",
+										"visible": false
+									},{
+										"data" : "id",
 										"visible": false
 									}	
 									]
@@ -139,7 +160,21 @@ jQuery(document)
 
 						}
 					});
+					$('#com_subtype').typeahead({
+						hint : true,
+						highlight : true,
+						minLength : 3
+					}, {
+						displayKey : 'name',
+						source : complaintType.ttAdapter()
+					}).on('typeahead:selected', function(event, data) {
+						$("#objectSubType").val(data.value);
+					}).on('change', function(event, data) {
+						if ($('#com_subtype').val() == '') {
+							$("#objectSubType").val('');
 
+						}
+					});
 
 	// Position auto-complete
 	var position = new Bloodhound({
@@ -169,7 +204,7 @@ jQuery(document)
 		}, {
 		displayKey: 'name',
 		source: position.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		}).on('typeahead:selected', function(event, data){ 
 			$("#positionId").val(data.value);    
 	    }).on('change',function(event,data){
 			if($('#com_position').val() == ''){
@@ -247,20 +282,32 @@ jQuery(document)
 			    }
 				//numericonstraint();
 			});
+
+	$('#escalationCreateSearch').click(function() {
+		//alert('before submit'+$("#positionId").val());
+	 	$('#viewEscalation').attr('method', 'post');
+	 	$('#viewEscalation').attr('action', '/pgr/escalation/search-view');
+	 //	$('#viewEscalation').submit(); 
+	});
+
+	
 	 });
 
 
 function calltypeahead(currentIndex) {
-$(".approvalDepartment"+ currentIndex).change(function(){
+	
+	 $(".approvalDepartment"+ currentIndex).change(function(){
 	$.ajax({
 		url: "/pgr/ajax-designationsByDepartment",     
 		type: "GET",
-		data: {
-			approvalDepartment : $(".approvalDepartment"+ currentIndex).val()   
-		},
 		dataType: "json",
+		data: {
+		//	approvalDepartment : $(".approvalDepartment"+ currentIndex).val()
+			approvalDepartment :   $(".approvalDepartment"+currentIndex+" option:selected").val()
+		},
+		async:"false",
 		success: function (response) {
-			console.log("success"+response);
+			//console.log("success"+response);
 			$(".approvalDesignation"+ currentIndex).empty();
 			$(".positionHierarchyToPositionid"+ currentIndex).empty();
 			$(".approvalDesignation"+ currentIndex).append($("<option value=''>Select</option>"));
@@ -281,19 +328,24 @@ $(".approvalDesignation"+ currentIndex).change(function(){
 	$.ajax({
 		url: "/pgr/ajax-positionsByDepartmentAndDesignation",     
 		type: "GET",
-		data: {
-			approvalDesignation : $(".approvalDesignation"+ currentIndex).val(),
-			approvalDepartment : $(".approvalDepartment"+ currentIndex).val()    
-		},
 		dataType: "json",
+		data: {
+			//approvalDesignation : $(".approvalDesignation"+ currentIndex).val(),
+			//approvalDepartment : $(".approvalDepartment"+ currentIndex).val()
+			  approvalDepartment :   $(".approvalDepartment"+currentIndex+ " option:selected").val(),
+			  approvalDesignation : $(".approvalDesignation"+currentIndex+ " option:selected").val()
+		},
+		async:"false",
 		success: function (response) { 
-			console.log("success"+response);
+		//console.log(JSON.stringify(response));
 			$(".positionHierarchyToPositionid"+ currentIndex).empty();
-			$(".positionHierarchyToPositionid"+ currentIndex).append($("<option value=''>Select</option>"));
-			$.each(response, function(index, value) {
-				$(".positionHierarchyToPositionid"+currentIndex).append($('<option>').text(value.name).attr('value', value.id));  
+			$(".positionHierarchyToPositionid"+currentIndex).append($("<option value=''>Select</option>"));
+			$.each(response, function(index, item) {
+				console.log("success"+JSON.stringify(item));
+				//setTimeout($(".positionHierarchyToPositionid"+currentIndex).append($('<option>', { value: item.id, text : item.name  })) , 4000);
+				$(".positionHierarchyToPositionid"+currentIndex).append($('<option>', { value: item.id, text : item.name  }));
 			});
-			$(".positionHierarchyToPositionid"+ currentIndex).val($(".positionHierarchyToPositionid"+ currentIndex).attr("data-optvalue"));
+			$(".positionHierarchyToPositionid"+currentIndex).val($(".positionHierarchyToPositionid"+currentIndex).attr("data-optvalue"));
 		}, 
 		error: function (response) {
 			console.log("failed");
@@ -306,8 +358,8 @@ $(".positionHierarchyToPositionid"+ currentIndex).change(function(){
 	
 	if(currentIndex<(totalTableRows-2))
 	{	
-		$('#positionHierarchyFromPositionId'+(currentIndex + 1)).val($('#positionHierarchyToPositionid'+(currentIndex)).val());
-		$('#positionHierarchyfromPositionName'+(currentIndex + 1)).val($('#positionHierarchyToPositionid'+(currentIndex)+' option:selected').text());
+		$('#positionHierarchyFromPositionId'+(currentIndex + 1)).val($('#positionHierarchyFromPositionId'+(currentIndex)).val());
+		$('#positionHierarchyfromPositionName'+(currentIndex + 1)).val($('#positionHierarchyfromPositionName'+(currentIndex)).val());
 	}
 	
 });
@@ -319,20 +371,20 @@ function addNewRowToTable(currentIndex)
 {
 	$("#escalationTable tbody")
 	.append(
-			'<tr> <td> '
-					+ currentIndex
-						+ '</td> <td> <input id="positionHierarchyFromPositionId'+(currentIndex - 1)+'" name="positionHierarchyList['+(currentIndex - 1)+'].fromPosition.id"  type="hidden"> <input class="form-control is_valid_alphabet" id="positionHierarchyfromPositionName'+(currentIndex - 1)+'"  autocomplete="off"  name="positionHierarchyList['+(currentIndex - 1)+'].fromPosition.name"  readonly="readonly" required="required" type="text"> <input id="positionHierarchyId'+(currentIndex - 1)+'" name="positionHierarchyList['+(currentIndex - 1)+'].id"  type="hidden"></td> <td><input id="positionHierarchySubType'+(currentIndex - 1)+'" class="form-control is_valid_alphanumeric positionHierarchySubType'+(currentIndex - 1)+'" 	name="positionHierarchyList['+(currentIndex - 1)+'].objectSubType"  autocomplete="off"  type="hidden">	<input id="positionHierarchyobjectType'+(currentIndex - 1)+'" class="form-control is_valid_alphanumeric positionHierarchyobjectType'+(currentIndex - 1)+'" 	name="positionHierarchyList['+(currentIndex - 1)+'].objectType.id"  type="hidden"><select path="" data-first-option="false" id="approvalDepartment'+(currentIndex - 1)+'" class="form-control approvalDepartment'+(currentIndex - 1)+'"  > <option value="">Select </option> </select>	</td> <td><select path="" data-first-option="false" id="approvalDesignation'+(currentIndex - 1)+'" class="form-control approvalDesignation'+(currentIndex - 1)+'"  > <option value="">Select </option> </select></td>	<td> <select  path="" data-first-option="false"  name="positionHierarchyList['+(currentIndex - 1)+'].toPosition.id" id="positionHierarchyToPositionid'+(currentIndex - 1)+'" class="form-control positionHierarchyToPositionid'+(currentIndex - 1)+'"  required="required"> <option value="">Select</option> </select></td> </tr>');
+			'<tr> <td> <input id="positionHierarchyFromPositionId'+(currentIndex - 1)+'" name="positionHierarchyList['+(currentIndex - 1)+'].fromPosition.id"  type="hidden"> <input class="form-control is_valid_alphabet" id="positionHierarchyfromPositionName'+(currentIndex - 1)+'"  autocomplete="off"  name="positionHierarchyList['+(currentIndex - 1)+'].fromPosition.name"  readonly="readonly" required="required" type="text"> <input id="positionHierarchyId'+(currentIndex - 1)+'" name="positionHierarchyList['+(currentIndex - 1)+'].id"  type="hidden"></td> <td><select  data-first-option="false" id="positionHierarchySubType'+(currentIndex - 1)+'" class="form-control positionHierarchySubType'+(currentIndex - 1)+'" name="positionHierarchyList['+(currentIndex - 1)+'].objectSubType"  > <option value="">Select </option>  </select>	</td> <td><input id="positionHierarchyobjectType'+(currentIndex - 1)+'"  class="form-control is_valid_alphanumeric positionHierarchyobjectType'+(currentIndex - 1)+'" 	name="positionHierarchyList['+(currentIndex - 1)+'].objectType.id"  type="hidden"><select path="" data-first-option="false" id="approvalDepartment'+(currentIndex - 1)+'" class="form-control approvalDepartment'+(currentIndex - 1)+'"  > <option value="">Select </option> </select>	</td> <td><select path="" data-first-option="false" id="approvalDesignation'+(currentIndex - 1)+'" class="form-control approvalDesignation'+(currentIndex - 1)+'"  > <option value="">Select </option> </select></td>	<td> <select  path="" data-first-option="false"  name="positionHierarchyList['+(currentIndex - 1)+'].toPosition.id" id="positionHierarchyToPositionid'+(currentIndex - 1)+'" class="form-control positionHierarchyToPositionid'+(currentIndex - 1)+'"  required="required"> <option value="">Select</option> </select></td> <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-success">Delete </button> </td></tr>');
 					
 		var currentRowFromPositionname=	$('#positionHierarchyfromPositionName'+(currentIndex - 1));
 		var currentRowFromPositionId=	$('#positionHierarchyFromPositionId'+(currentIndex - 1));
-		currentRowFromPositionId.val($('#positionHierarchyToPositionid'+(currentIndex - 2)).val());
-		currentRowFromPositionname.val($('#positionHierarchyToPositionid'+(currentIndex - 2)+' option:selected').text());
+		currentRowFromPositionId.val($('#positionHierarchyFromPositionId'+(currentIndex - 2)).val());
+		currentRowFromPositionname.val($('#positionHierarchyfromPositionName'+(currentIndex - 2)).val());
 		
 		
 		$('#positionHierarchyobjectType'+(currentIndex - 1)).val($('#positionHierarchyobjectType'+(currentIndex - 2)).val());
-		$('#positionHierarchySubType'+(currentIndex - 1)).val($('#positionHierarchySubType'+(currentIndex - 2)).val());
+	
+		$('#positionHierarchySubType'+(currentIndex - 1)).html($('#positionHierarchySubType'+(currentIndex - 2)).html());
 		$('#approvalDepartment'+(currentIndex -1)).html($('#approvalDepartment'+(currentIndex -2)).html());
 		$('#approvalDepartment'+(currentIndex -1)).val("");
+		$('#positionHierarchySubType'+(currentIndex -1)).val("");
 
 }
 
@@ -340,30 +392,33 @@ function addNewRowToTable(currentIndex)
 function checkUniqueDesignationSelected() {
 	var u = {}, a = [];
 	var totalTableRows = $("#escalationTable tr").length;
-
+//alert('inside checkUniqueDesignationSelected');
 	if (totalTableRows == 1)
 		return false;
 
-	var i;
+	var i; var subtypeval;
 	for (i = 0; i < (totalTableRows - 1); i++) {
-
+		if($("#positionHierarchySubType" + i).val()=='')
+			subtypeval='NA';
+		else
+			subtypeval=$("#positionHierarchySubType" + i).val();
 		if (u.hasOwnProperty($("#positionHierarchyFromPositionId" + i)
-				.val())) {
+				.val()+subtypeval)) {
 			continue;
 		}
-		a.push($("#positionHierarchyFromPositionId" + i).val());
-		u[$("#positionHierarchyFromPositionId" + i).val()] = 1;
+		a.push($("#positionHierarchyFromPositionId" + i).val()+subtypeval);
+		u[$("#positionHierarchyFromPositionId" + i).val()+subtypeval] = 1;
 	}
 	
 	
 	if (a.length != (totalTableRows - 1)) {
-		alert("From Position is same in multiple row. Please redefine.");
+		alert("From Position and complaint type should be unique.\nPosition and complaint type is same in multiple rows. Please redefine.");
 		return false;
 	}
 
 	var j;
 	for (j = 0; j < (totalTableRows - 1); j++) {
-	
+//	alert(totalTableRows - 1);
 		if($("#positionHierarchyFromPositionId"+j).val()==$("#positionHierarchyToPositionid"+j).val()){
 			alert('Heirarchy from position and To position are same in single line.');
 		return false;
@@ -371,12 +426,11 @@ function checkUniqueDesignationSelected() {
 		
 	}
 	
-		var url = '/pgr/escalation/update/'+ $('#routerId').val();
+		var url = '/pgr/escalation/update/'+ $('#formpositionId').val();
 		//alert(url);
-		$('#viewEscalation').attr('method', 'post');
-		$('#viewEscalation').attr('action', url);
-	
-
+		$('#saveEscalationForm').attr('method', 'post');
+		$('#saveEscalationForm').attr('action', url);
+    	//$('#viewEscalation').submit(); 
 	return true;
 }
 

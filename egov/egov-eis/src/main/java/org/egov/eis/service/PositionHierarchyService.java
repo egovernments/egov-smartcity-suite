@@ -39,6 +39,7 @@
  */
 package org.egov.eis.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.egov.eis.entity.PositionHierarchy;
@@ -94,4 +95,21 @@ public class PositionHierarchyService {
         positionHierarchyRepository.deleteInBatch(existingPosHierarchy);
 
     }
+
+    public List<PositionHierarchy> getPositionHeirarchyByFromPositionAndObjectType(Long fromPositionId, Integer objectId) {
+        return positionHierarchyRepository.getListOfPositionHeirarchyByFromPositionAndObjectType(fromPositionId, objectId);
+    }
+    public List<PositionHierarchy> getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(Long fromPositionId, Integer objectId,final String objectSubType) {
+       
+        if(fromPositionId!=0 && objectId!=0 && objectSubType!=null) 
+        return positionHierarchyRepository.getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(fromPositionId, objectId,objectSubType);
+        else if(fromPositionId==0 && objectId!=0 && objectSubType!=null) 
+        return positionHierarchyRepository.getPosHirByObjectTypeAndObjectSubType( objectId,objectSubType);
+        else if(fromPositionId!=0 && objectId!=0 && objectSubType==null) 
+            return positionHierarchyRepository.getListOfPositionHeirarchyByFromPositionAndObjectType( fromPositionId,objectId);
+        else if(fromPositionId==0 && objectId!=0 && objectSubType==null) 
+            return positionHierarchyRepository.getListOfPositionHeirarchyByObjectType(objectId);
+        else return Collections.emptyList();
+    }
+    
 }

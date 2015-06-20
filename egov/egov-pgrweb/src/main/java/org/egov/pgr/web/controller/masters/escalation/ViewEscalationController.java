@@ -50,12 +50,8 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.service.ComplaintRouterService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.masters.escalationTime.EscalationForm;
@@ -67,6 +63,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -75,9 +72,8 @@ public class ViewEscalationController {
     public static final String CONTENTTYPE_JSON = "application/json";
 
     protected final ComplaintTypeService complaintTypeService;
-    private final BoundaryTypeService boundaryTypeService;
     private final PositionMasterService positionMasterService;
-    private final ComplaintRouterService complaintRouterService;
+
     private final ObjectTypeService objectTypeService;
     @Autowired
     private DepartmentService departmentService;
@@ -95,82 +91,109 @@ public class ViewEscalationController {
         return complaintTypeService.findAll();
     }
 
-    @ModelAttribute("boundaryTypes")
-    public List<BoundaryType> boundaryTypes() {
-        return boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION");
-    }
-
     @ModelAttribute("positionMasterList")
     public List<Position> positionMasterList() {
         return positionMasterService.getAllPositions();
     }
 
+    @RequestMapping(value = "/search-view", method = GET)
+    public String searchEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model) {
+        if (escalationForm.getPosition() != null) {
+            final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+
+            final List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
+                    .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(),
+                            objectType.getId());
+            if (positionHeirarchyList.size() > 0)
+                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+            else {
+                escalationForm.addPositionHierarchyList(new PositionHierarchy());
+                model.addAttribute("mode", "noDataFound");
+            }
+        } else
+            escalationForm.addPositionHierarchyList(new PositionHierarchy());
+        return "escalation-searchView";
+    }
+
+    @RequestMapping(value = "/search-view", method = RequestMethod.POST)
+    public String searchForm(@ModelAttribute final EscalationForm escalationForm,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (escalationForm.getPosition() != null && escalationForm.getPosition().getId()!=null) {
+            final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+
+            List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
+                    .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(),
+                            objectType.getId());
+            if (positionHeirarchyList.size() > 0) {
+                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                model.addAttribute("mode", "dataFound");
+
+            } else {
+                // escalationForm.getPositionHierarchyList().clear();
+                // escalationForm.addPositionHierarchyList(new
+                // PositionHierarchy());
+
+                positionHeirarchyList = new ArrayList<PositionHierarchy>();
+                final PositionHierarchy posHierarchy = new PositionHierarchy();
+                posHierarchy.setFromPosition(positionMasterService
+                        .getPositionById(escalationForm.getPosition().getId()));
+                posHierarchy.setObjectType(objectType);
+                posHierarchy.setObjectSubType("");
+                positionHeirarchyList.add(posHierarchy);
+                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                model.addAttribute("mode", "noDataFound");
+                model.addAttribute("escalationForm", escalationForm);
+            }
+        } else {
+            final String message = "Position is mandatory. Please enter correct position name.";
+            redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
+            model.addAttribute("message", message);
+
+        }
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        return "escalation-searchView";
+    }
+
     @Autowired
     public ViewEscalationController(final ComplaintTypeService complaintTypeService,
-            final PositionMasterService positionMasterService, final BoundaryTypeService boundaryTypeService,
-            final ComplaintRouterService complaintRouterService, final ObjectTypeService objectTypeService) {
+            final PositionMasterService positionMasterService, final ObjectTypeService objectTypeService) {
         this.complaintTypeService = complaintTypeService;
         this.positionMasterService = positionMasterService;
-        this.boundaryTypeService = boundaryTypeService;
-        this.complaintRouterService = complaintRouterService;
         this.objectTypeService = objectTypeService;
     }
 
-    @RequestMapping(value = "/view/{id}", method = GET)
-    public String viewEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model,
-            @PathVariable final Long id) {
-
-        if (id != null) {
-            final ComplaintRouter complaintRouter = complaintRouterService.getRouterById(id);
-            escalationForm.setComplaintRouter(complaintRouter);
-
-            final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-
-            if (complaintRouter != null && complaintRouter.getComplaintType() != null) {
-                final List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
-                        .getPosHirByObjectTypeAndObjectSubType(objectType.getId(), complaintRouter.getComplaintType()
-                                .getName());
-
-                if (existingPosHierarchy != null && existingPosHierarchy.size() > 0)
-                    escalationForm.setPositionHierarchyList(existingPosHierarchy);
-                else {
-
-                    final List<PositionHierarchy> positionHeirarchyList = new ArrayList<PositionHierarchy>();
-                    final PositionHierarchy posHierarchy = new PositionHierarchy();
-                    posHierarchy.setFromPosition(complaintRouter.getPosition());
-                    posHierarchy.setObjectType(objectType);
-                    posHierarchy.setObjectSubType(complaintRouter.getComplaintType().getName());
-                    positionHeirarchyList.add(posHierarchy);
-                    escalationForm.setPositionHierarchyList(positionHeirarchyList);
-                }
-            }
-        }
-        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-
-        return "escalation-view";
-    }
+  
 
     @RequestMapping(value = "/update/{id}", method = POST)
     public String saveEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
 
+        if(id==null)
+        {
+            redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
+            model.addAttribute("message", "Please select position");
+            return "escalation-searchView";
+        }
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
-                .getPosHirByObjectTypeAndObjectSubType(objectType.getId(), escalationForm.getComplaintRouter()
-                        .getComplaintType().getName());
+                .getPositionHeirarchyByFromPositionAndObjectType(id, objectType.getId());
 
         if (existingPosHierarchy != null && existingPosHierarchy.size() > 0)
             positionHierarchyService.deleteAllInBatch(existingPosHierarchy);
-
         for (final PositionHierarchy posHierarchy : escalationForm.getPositionHierarchyList())
-            if (posHierarchy.getFromPosition().getId() != null) {
+            if (posHierarchy.getFromPosition() != null && posHierarchy.getFromPosition().getId() != null
+            && posHierarchy.getToPosition() != null && posHierarchy.getToPosition().getId() != null) {
+
                 posHierarchy.setFromPosition(positionMasterService.getPositionById(posHierarchy.getFromPosition()
                         .getId()));
                 posHierarchy.setToPosition(positionMasterService.getPositionById(posHierarchy.getToPosition().getId()));
-                posHierarchy
-                        .setObjectType(objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT));
+                posHierarchy.setObjectType(objectType);
                 posHierarchy.setObjectSubType(posHierarchy.getObjectSubType());
                 positionHierarchyService.createPositionHierarchy(posHierarchy);
+            } else {
+                redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
+                model.addAttribute("message", "Position from and position to fields are mandatory. Please try again.");
+                return "escalation-searchView";
             }
 
         final String message = "Escalation details updated successfully.";

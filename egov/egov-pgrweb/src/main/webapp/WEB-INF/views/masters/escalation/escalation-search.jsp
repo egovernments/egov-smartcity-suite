@@ -63,7 +63,7 @@
 			<div class="panel-body">
 				<form:form id="searchEscalationForm" method="post"
 					class="form-horizontal form-groups-bordered"
-					modelAttribute="complaintRouter">
+					modelAttribute="positionHierarchy">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading ">
 							<div class="panel-title">
@@ -73,47 +73,22 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.escalation.complaintType" /> </label>
-								<div class="col-sm-6">
-
-									<form:input id="com_type" path="complaintType.name" type="text"
-										class="form-control typeahead is_valid_alphabet"
-										placeholder="" autocomplete="off"  />
-									<input type=hidden id="mode" value="${mode}">
-									<form:hidden path="complaintType.id" id="complaintTypeId"
-										value="${complaintType.id}" />
-									<form:errors path="complaintType.id"
-										cssClass="add-margin error-msg" />
-								</div>
+							<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
+							</label>
+							<div class="col-sm-6">
+								<input id="com_subtype" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+								<form:hidden path="objectSubType" id="objectSubType" />
+								<form:errors path="objectSubType" cssClass="add-margin error-msg"/>
+								<div class="error-msg subtypeerror all-errors display-hide"></div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundaryType" /></label>
-								<div class="col-sm-6 add-margin">
-                     				<select id="boundary_type_id" class="form-control">
-                         				<option value="0"> <spring:message code="lbl.select"/> </option>
-                         				<c:forEach items="${boundaryTypes}" var="boundaryType">
-                         					<option value="${boundaryType.id}"> ${boundaryType.name}</option>
-                         				</c:forEach>
-                     				</select>
-		                   		</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundary"/>
-								</label>
-								<div class="col-sm-6">
-									<input id="com_boundry" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
-									<form:hidden path="boundary" id="boundaryId"/>
-									<form:errors path="boundary" cssClass="error-msg"/>
-			                    	<div class="error-msg boundaryerror all-errors display-hide"></div>
-								</div>
-			                 </div>
+						  </div>
+							
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /></label>
 								<div class="col-sm-6">
-									<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
-									<form:hidden path="position" id="positionId"/>
-									<form:errors path="position" cssClass="error-msg" />
+									<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required" />
+									<form:hidden path="fromPosition.id" id="positionId"/>
+									<form:errors path="fromPosition.id" cssClass="error-msg" />
 									<div class="error-msg positionerror all-errors display-hide"></div>
 								</div>
 							</div>
@@ -137,10 +112,8 @@
 							<table class="table table-bordered datatable" id="escalation-table">
 							<thead>
 								<th><spring:message code="lbl.escalation.complaintType" /></th>
-								<th><spring:message code="lbl.escalation.BoundaryType" /></th>
-								<th><spring:message code="lbl.escalation.Boundary" /></th>
-								<th><spring:message code="lbl.escalation.position" /></th>
-								<th><spring:message code="lbl.escalation.action" /></th>
+								<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
+								<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
 							</thead>
 						</table>
 						</div>

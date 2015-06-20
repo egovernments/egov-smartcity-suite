@@ -56,7 +56,7 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
-							Complaint type: <c:out value="${escalationForm.complaintRouter.complaintType.name }"></c:out>
+							Position: <c:out value="${escalationForm.position.name }"></c:out>
 						</div>
 					</div>
 					<div class="row text-center">
