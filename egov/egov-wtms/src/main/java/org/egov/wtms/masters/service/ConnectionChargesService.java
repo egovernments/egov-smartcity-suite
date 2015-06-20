@@ -88,7 +88,7 @@ public class ConnectionChargesService {
         return connectionChargesRepository.getOne(id);
     }
 
-    public Page<ConnectionCharges> getListOfApplicationTypes(final Integer pageNumber, final Integer pageSize) {
+    public Page<ConnectionCharges> getListOfConnectionCharges(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "type");
         return connectionChargesRepository.findAll(pageable);
     }

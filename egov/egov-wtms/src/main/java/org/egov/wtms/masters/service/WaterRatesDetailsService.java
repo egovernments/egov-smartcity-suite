@@ -41,9 +41,6 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.repository.WaterRatesDetailsRepository;
