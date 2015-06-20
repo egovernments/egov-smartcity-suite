@@ -1967,6 +1967,17 @@ public class PropertyService  {
 
 	}
 
+	/**
+	 * Gives the current installment
+	 *
+	 * @return Installment the current installment for PT module
+	 */
+	public Installment getCurrentInstallment() {
+		Installment currentInstallment = (Installment) getPropPerServ().find("from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ",
+				PTMODULENAME, new Date(), new Date());
+		return currentInstallment;
+	}
+	
 	public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
 		return excessCollAmtMap;
 	}

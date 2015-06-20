@@ -38,14 +38,34 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
- 
-    <import resource="applicationSecurityContext-ptis.xml"/>
-    <import resource="classpath*:config/spring/applicationContext-ptis.xml"/>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+  <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+        <put-attribute name="title" value="eGov Urban Portal"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+	
+	<definition name="error/*" extends="error">
+		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
+	</definition>
+    <definition name="index" extends="base_layout">
+        <put-attribute name="body" value="/WEB-INF/index.jsp"/>
+    </definition>
     
-</beans>
+    <definition name="rebatePeriod-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.rebate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-form.jsp"/>
+    </definition>
+    <definition name="rebatePeriod-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.rebate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/rebatePeriod/rebatePeriod-success.jsp"/>
+    </definition>
+    
+</tiles-definitions>
