@@ -95,10 +95,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 @Results({
     @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
-    @Result(name = BaseFormAction.EDIT, location = "/transferProperty-edit.jsp"),
-    @Result(name = "workFlowError", location = "workflow", params = { "namespace", "/workflow", "method", "workFlowError" }),
+    @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
+    @Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
     @Result(name = TransferPropertyAction.ACK, location = "transfer/transferProperty-ack.jsp"),
-    @Result(name = "balance", location = "/transferProperty-balance.jsp")
+    @Result(name = "balance", location = "transfer/transferProperty-balance.jsp")
 })
 @Namespace("/transfer")
 public class TransferPropertyAction extends WorkflowAction {

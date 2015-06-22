@@ -49,10 +49,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
@@ -106,7 +106,7 @@ public abstract class WorkflowDetails {
 	 * @param eisCommonsManager
 	 */
 	public void setWorkflowActionStep(PropertyTaxUtil propertyTaxUtil,
-			EisCommonsService eisCommonsService) {
+			EisCommonService eisCommonService) {
 		LOGGER.debug("Entered into setWorkflowActionStep");
 
 		String beanActionName[] = null;
@@ -145,7 +145,7 @@ public abstract class WorkflowDetails {
 
 			workflowActionStep.setActionName(beanActionName[0] + ":");
 			workflowActionStep.setPropertyTaxUtil(propertyTaxUtil);
-			workflowActionStep.setEisCommonsService(eisCommonsService);
+			workflowActionStep.setEisCommonService(eisCommonService);
 		}
 
 		LOGGER.debug("Exiting from setWorkflowActionStep");

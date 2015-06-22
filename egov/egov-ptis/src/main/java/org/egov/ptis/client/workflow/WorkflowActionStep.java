@@ -39,8 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.client.workflow;
 
+import org.egov.eis.service.EisCommonService;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -49,7 +49,7 @@ public abstract class WorkflowActionStep {
 
 
 	protected PropertyImpl propertyModel;
-	protected EisCommonsService eisCommonsService;
+	protected EisCommonService eisCommonService;
 	protected Long userId;
 	protected PropertyTaxUtil propertyTaxUtil;
 	protected String actionName;
@@ -80,7 +80,7 @@ public abstract class WorkflowActionStep {
 	 * @return
 	 */
 	public Position getPosition()  {
-		return eisCommonsService.getPositionByUserId(userId);
+		return eisCommonService.getPositionByUserId(userId);
 	}
 
 	/**
@@ -118,8 +118,8 @@ public abstract class WorkflowActionStep {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setEisCommonsService(EisCommonsService eisCommonsService) {
-		this.eisCommonsService = eisCommonsService;
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
 	}
 
 }

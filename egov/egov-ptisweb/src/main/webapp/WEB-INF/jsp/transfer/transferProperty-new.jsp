@@ -414,17 +414,6 @@
 				}
 			}
 		}
-		function showDocumentManager(){
-			var docNum= document.getElementById("docNumber").value;
-  			var url;
-  			if(docNum==null||docNum==''||docNum=='To be assigned'){
-       			 url="/egi/docmgmt/basicDocumentManager.action?moduleName=ptis";
-  			} else {
-       			 url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="+docNum+"&moduleName=ptis";
- 		 	}
-     		window.open(url,'docupload','width=1000,height=400');
-		}
-
 		/**
 		 * this resetting of date fields is performed because, the watermark(String) 
 		 * is used in jsp and data type of the property is Date. So the default error messages are 

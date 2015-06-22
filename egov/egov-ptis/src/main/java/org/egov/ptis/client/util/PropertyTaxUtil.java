@@ -156,7 +156,6 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.ApplicableFactor;
 import org.egov.ptis.client.model.MiscellaneousTax;
@@ -209,7 +208,7 @@ public class PropertyTaxUtil {
 	@Autowired
 	private AssignmentService assignmentService;
 	@Autowired
-	private EisCommonsService eisCommonsService;
+	private EisCommonService eisCommonService;
 	private static final String HUNDRED = "100";
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	@Autowired
@@ -1209,7 +1208,7 @@ public class PropertyTaxUtil {
 		Position position = null;
 		Designation designation = null;
 		if (userId != null && userId.intValue() != 0) {
-			position = eisCommonsService.getPositionByUserId(userId);
+			position = eisCommonService.getPositionByUserId(userId);
 			designation = position.getDeptDesig().getDesignation();
 		}
 		return designation;
@@ -1843,7 +1842,7 @@ public class PropertyTaxUtil {
 			workflowAction = new ActionNameTransfer(propertyModel, workflowBean, loggedInUserId);
 		}
 
-		workflowAction.setWorkflowActionStep(this, eisCommonsService);
+		workflowAction.setWorkflowActionStep(this, eisCommonService);
 
 		LOGGER.debug("initWorkflowAction - workflowAction=" + workflowAction);
 		LOGGER.debug("Exiting from initWorkflowAction");
