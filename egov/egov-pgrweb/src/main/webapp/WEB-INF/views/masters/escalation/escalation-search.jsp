@@ -136,8 +136,3 @@
 <script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
 
 <script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js'/>"></script>
-<style>
-table.dataTable.nopointer tbody tr:hover {
-cursor:
-}
-</style>
