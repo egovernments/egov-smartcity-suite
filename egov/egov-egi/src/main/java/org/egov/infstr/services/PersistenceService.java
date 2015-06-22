@@ -57,6 +57,9 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.BaseModel;
@@ -70,6 +73,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -350,6 +354,20 @@ public class PersistenceService<T, ID extends Serializable> {
                 c.add(Restrictions.eq(entry.getKey(), entry.getValue().get(0)));
         for (final String orderBy : orderbyFields)
             c.addOrder(Order.asc(orderBy).ignoreCase());
+    }
+    
+    /**
+     * This method is a workaround to apply auditing field values for JPA entity when JPA mixed with hbm based
+     * entities, this will be removed in future once modules are migrated to JPA annotation.
+     **/
+    public void applyAuditing(AbstractAuditable auditable) {
+        DateTime currentDate = new DateTime();
+        if (auditable.isNew()) {
+            auditable.setCreatedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+            auditable.setCreatedDate(currentDate);
+        } 
+        auditable.setLastModifiedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+        auditable.setLastModifiedDate(currentDate);
     }
 
 }
