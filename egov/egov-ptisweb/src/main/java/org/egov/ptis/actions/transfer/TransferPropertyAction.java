@@ -70,6 +70,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
@@ -92,9 +93,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Validations
-@Results({ 
+@Results({
+    @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
+    @Result(name = BaseFormAction.EDIT, location = "/transferProperty-edit.jsp"),
     @Result(name = "workFlowError", location = "workflow", params = { "namespace", "/workflow", "method", "workFlowError" }),
-    @Result(name = TransferPropertyAction.ACK, location = "transfer/transferProperty-ack.jsp")
+    @Result(name = TransferPropertyAction.ACK, location = "transfer/transferProperty-ack.jsp"),
+    @Result(name = "balance", location = "/transferProperty-balance.jsp")
 })
 @Namespace("/transfer")
 public class TransferPropertyAction extends WorkflowAction {
@@ -155,8 +159,7 @@ public class TransferPropertyAction extends WorkflowAction {
     }
 
     @SkipValidation
-    @Action(value = "/transferProperty-transferForm", results = { @Result(name = "new", location = "transfer/transferProperty-new.jsp"),
-            @Result(name = "balance", location = "/transferProperty-balance.jsp") })
+    @Action(value = "/transferProperty-transferForm")
     public String transferForm() {
         LOGGER.debug("Entered into transferForm method");
         LOGGER.debug("transferForm : Index Number : " + indexNumber);
@@ -182,7 +185,7 @@ public class TransferPropertyAction extends WorkflowAction {
 
     @ValidationErrorPage(value = "new")
     @SkipValidation
-    @Action(value = "/transferProperty-approve", results = { @Result(name = EDIT, location = "/transferProperty-edit.jsp")})
+    @Action(value = "/transferProperty-approve")
     public String approve() {
         String target = "failure";
         LOGGER.debug("Entered into approve method");

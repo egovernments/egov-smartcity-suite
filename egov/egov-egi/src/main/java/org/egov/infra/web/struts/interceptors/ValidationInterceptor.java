@@ -49,7 +49,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.utils.HibernateUtil;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ValidationAware;

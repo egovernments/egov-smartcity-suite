@@ -77,7 +77,7 @@
 	<bean type="org.apache.struts2.convention.ActionNameBuilder" name="defaultActionNameBuilder" class="org.apache.struts2.convention.DefaultActionNameBuilder" />
 	<constant name="struts.convention.actionNameBuilder" value="defaultActionNameBuilder" />
 	<constant name="struts.convention.action.name.lowercase" value="true"/>
-
+	<constant name="struts.convention.action.alwaysMapExecute" value="false"/>
 	<package name="egov" extends="struts-default">
 		<interceptors>
 			<interceptor name="egov-validator" class="org.egov.infra.web.struts.interceptors.ValidationInterceptor" />
@@ -85,9 +85,11 @@
 			<interceptor name="egov-exception" class="org.egov.infra.web.struts.interceptors.ExceptionInterceptor" />
 
 			<interceptor-stack name="egov-interceptors">
+				<!-- 
+				Commenting out for now since this interceptor creating problem
 				<interceptor-ref name="token">
 					<param name="includeMethods">saveOrupdate,save,create,approve,forward,moveEstimate,createFile,saveFile,saveAsDraft,createFileNotification</param>
-				</interceptor-ref>
+				</interceptor-ref> -->
 				<interceptor-ref name="egov-exception">
 					<param name="logEnabled">true</param>
 					<param name="logLevel">ERROR</param>

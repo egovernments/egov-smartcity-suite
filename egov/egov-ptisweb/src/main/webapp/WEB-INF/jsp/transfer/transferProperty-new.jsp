@@ -83,13 +83,12 @@
 	<body onload="loadOnStartUp();">
 		<div class="formmainbox">
 			<s:if test="%{hasErrors()}">
-				<div align="left">
-					<s:actionerror />
-					<s:fielderror></s:fielderror>
+				<div class="errorstyle" id="property_error_area">
+					<div class="errortext">
+						<s:actionerror />
+					</div>
 				</div>
 			</s:if>
-			<!-- Area for error display -->
-			<div class="errorstyle" id="property_error_area" style="display:none;"></div>
 			<s:form action="transferProperty" name="transferform" theme="simple">
 				<s:push value="model">
 				<s:token/>
@@ -261,22 +260,21 @@
 							
 						</td>
 						<td class="bluebox">
-							<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();" />
-							<s:hidden name="docNumber" id="docNumber" />
+							<input type="file" class="button" width="500px" value="Upload Document"/>
 						</td>
 						<td class="bluebox" colspan="2">
 							&nbsp;
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
+						<td colspan="6">
 							<div class="headingsmallbg">
 								<span class="bold"> Owner details</span>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
+						<td class="bluebox" colspan="6">
 							<div id="OwnerNameDiv">
 								<%@ include file="../common/OwnerNameForm.jsp"%>
 							</div>
@@ -287,6 +285,16 @@
 							<div class="headingsmallbg">
 								<s:text name="feeDtls" />
 							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox">
+							<s:text name="marketValue"></s:text>
+							<span class="mandatory1">*</span> :
+						</td>
+						<td class="bluebox">
+							<s:textfield name="marketValue" id="marketValue" value="%{marketValue}" maxlength="12"></s:textfield>
 						</td>
 					</tr>
 					<tr>
@@ -339,6 +347,10 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+		jQuery("#marketValue").blur(function(){
+			var marketVal = parseInt(jQuery("#marketValue").val());
+			jQuery("#mutationFee").val((1/100)*marketVal);
+		});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {

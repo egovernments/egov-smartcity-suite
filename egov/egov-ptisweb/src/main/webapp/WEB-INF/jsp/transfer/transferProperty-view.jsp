@@ -59,12 +59,10 @@
 	</head>
 		<div class="formmainbox">
 			<s:if test="%{hasErrors()}">
-				<div align="left">
-					<s:actionerror />
-				</div>
+			<div class="errorstyle" id="property_error_area">
+				<s:actionerror />
+			</div>
 			</s:if>
-			<!-- Area for error display -->
-			<div class="errorstyle" id="property_error_area" style="display:none;"></div>
 			<s:form action="transferProperty" name="transferform" theme="simple">
 			 	<s:push value="model">
 			 	<s:token/>
