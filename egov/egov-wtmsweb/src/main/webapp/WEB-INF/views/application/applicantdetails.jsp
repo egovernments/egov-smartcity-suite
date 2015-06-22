@@ -61,7 +61,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.bpanumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="bpaIdentifier" name="connection.bpaIdentifier">
+		<input type="text" class="form-control" id="bpaIdentifier" name="connection.bpaIdentifier" min="3" maxlength="50" >
 		<form:errors path="connection.bpaIdentifier" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -74,7 +74,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="mobileNumber" name="connection.mobileNumber">
+		<input type="text" class="form-control" id="mobileNumber" name="connection.mobileNumber" min="10" maxlength="15" >
 		<form:errors path="connection.mobileNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>

@@ -37,23 +37,22 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 					<strong><spring:message code="msg.newapplication.create.success"/></strong>
-					<div><spring:message code="lbl.application.no"/> : <span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span>.<spring:message code="msg.application.number.info"/></div>
+					<div><spring:message code="lbl.application.no"/> : <span id="app_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span>. <spring:message code="msg.application.number.info"/></div>
 				</div>
 			</div>			
 		</div>
 	</div>
 </div>
-
-<div class="modal-footer">
-	<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+<div class="row text-center">
+	<div class="add-margin">
+		<!-- <button type="submit" class="btn btn-default"><spring:message code="lbl.print"/></button> -->
+		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+	</div>
 </div>
-<script src="<c:url value='/resources/js/app/complaintsuccess.js'/>"></script>

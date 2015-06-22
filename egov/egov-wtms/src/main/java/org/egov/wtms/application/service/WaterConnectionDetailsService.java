@@ -101,14 +101,17 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findAll(pageable);
     }
 
-    // TODO - This is just a skeleton method. Persist is not yet implemented
+    // TODO - Simple Save. Need to handle different use cases and validations
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
+        // TODO - Application number logic needs to be confirmed by BA
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
         securityUtils.getCurrentUser();
 
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails.getState() != null
+                && waterConnectionDetails.getState().getValue().equals("APPROVED"))
+            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
 
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);

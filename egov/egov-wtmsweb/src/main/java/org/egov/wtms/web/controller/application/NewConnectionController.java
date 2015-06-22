@@ -77,22 +77,21 @@ public class NewConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        return "newconnection-form";
-    }
-
-    // TODO - This is just a skeleton method. Persist is not yet implemented
-    // properly
-    @RequestMapping(value = "/newConnection-create", method = POST)
-    public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
-
+        // TODO - Setting the values temporarily.
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode("NEWCONNECTION"));
         waterConnectionDetails.setPropertyType(propertyTypeService.findByCode("GROUNDFLOOR"));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        return "newconnection-form";
+    }
+
+    // TODO - Simple save. Need to handle validations and different use cases
+    @RequestMapping(value = "/newConnection-create", method = POST)
+    public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
         if (resultBinder.hasErrors())
             return "newconnection-form";
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
-        return "redirect:/application-success";
+        return "application-success";
     }
 }
