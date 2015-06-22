@@ -44,6 +44,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infstr.dao.GenericHibernateDAO;
@@ -53,6 +56,13 @@ import org.hibernate.Session;
 
 public class InstallmentHibDao<T, id extends Serializable> extends GenericHibernateDAO implements InstallmentDao {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    protected Session getCurrentSession() {
+            return entityManager.unwrap(Session.class);
+    }
+    
 	public InstallmentHibDao() {
 		super(Installment.class, null);
 	}

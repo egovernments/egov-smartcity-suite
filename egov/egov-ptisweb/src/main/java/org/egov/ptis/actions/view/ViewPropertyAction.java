@@ -58,7 +58,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
@@ -80,11 +82,12 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Namespace("/view")
-@Transactional(readOnly = true)
-@Results({ @Result(name = "view", location = "/viewProperty-view.jsp") })
+
+@SuppressWarnings("serial")
+@ParentPackage("egov")
+
+@Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;
@@ -133,7 +136,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	}
 
 	
-	@Action(value = "/viewProperty-viewForm")
+	@Action(value = "/view/viewProperty-viewForm")
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm method");
 		String target = "";
@@ -186,7 +189,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
 			if (ownerSet != null && !ownerSet.isEmpty()) {
 				for (PropertyOwner owner : ownerSet) {
-					Set<Address> addrSet = (Set<Address>) owner.getAddress();
+					List<Address> addrSet =  (List<Address>) owner.getAddress();
 					for (Address address : addrSet) {
 						ownerAddress = ptisCacheMgr.buildAddressByImplemetation(address);
 						break;

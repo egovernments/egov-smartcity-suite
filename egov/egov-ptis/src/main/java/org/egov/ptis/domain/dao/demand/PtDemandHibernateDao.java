@@ -356,6 +356,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 	public Map<String, BigDecimal> getDemandCollMap(Property property) {
 		Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
 		Installment installment = null;
+		List dmdCollList =new ArrayList();
 		Installment currInst = null;
 		Integer instId = null;
 		BigDecimal currDmd = BigDecimal.ZERO;
@@ -363,7 +364,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
 		BigDecimal currCollection = BigDecimal.ZERO;
 		BigDecimal arrColelection = BigDecimal.ZERO;
 		Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
-		List dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
+		
+		 if(currDemand!=null)       
+		     dmdCollList=  propertyDAO.getDmdCollAmtInstWise(currDemand);
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		for (Object object : dmdCollList) {
@@ -431,11 +434,16 @@ public class PtDemandHibernateDao implements PtDemandDao {
 			qry.setEntity(PROPERTY, property);
 			qry.setDate("fromYear", new Date());
 			qry.setDate("toYear", new Date());
-			if (qry.list().size() == 1) {
+			/*if (qry.list().size() == 1) {
 				egptPtdemand = (Ptdemand) qry.uniqueResult();
 			} else {
 				egptPtdemand = (Ptdemand) qry.list().get(0);
-			}
+			}*/
+			
+			List<Ptdemand> ptDemandResult=qry.list();
+                        if (ptDemandResult!=null && ptDemandResult.size()>0) {
+                                egptPtdemand = ptDemandResult.get(0);
+                        }
 		}
 		return egptPtdemand;
 	}

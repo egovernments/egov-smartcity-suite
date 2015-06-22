@@ -50,7 +50,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -66,6 +70,7 @@ import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.objection.Objection;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -77,7 +82,14 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+@SuppressWarnings("serial")
 @ParentPackage("egov")
+@Results({ @Result(name = "new", location = "objection-new.jsp"),
+    @Result(name = "message", location = "objection-message.jsp"),
+    @Result(name = "view", location = "objection-view.jsp"),
+    @Result(name = "ack", location = "objection-ack.jsp")})
+
 public class ObjectionAction extends PropertyTaxBaseAction {
 
 	private static final long serialVersionUID = 1L;
@@ -100,7 +112,9 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	private BasicPropertyDAO basicPropertyDAO;
 
 	private boolean isShowAckMessage;
-
+	@Autowired
+        private PtDemandDao ptDemandDAO;
+	
 	@Autowired
 	private UserService userService;
 
@@ -125,7 +139,8 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		setUserInfo();
 		setupWorkflowDetails();
 	}
-
+	@SkipValidation
+        @Action(value = "/objection/objection-newForm")
 	public String newForm() {
 		LOGGER.debug("Entered into newForm");
 
@@ -150,7 +165,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 
 		return NEW;
 	}
-
+	@Action(value = "/objection/objection") 
 	public String create() {
 		LOGGER.debug("ObjectionAction | Create | start " + objection);
 		setupWorkflowDetails();
@@ -317,7 +332,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		LOGGER.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
 		return STRUTS_RESULT_MESSAGE;
 	}
-
+	@Action(value = "/objection/objection-view") 
 	public String view() {
 		LOGGER.debug("ObjectionAction | view | Start");
 		objection = objectionService
@@ -391,6 +406,8 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	private void getPropertyView(String propertyId) {
 		LOGGER.debug("ObjectionAction | getPropertyView | Start");
 		viewPropertyAction.setPersistenceService(persistenceService);
+		viewPropertyAction.setBasicPropertyDAO(basicPropertyDAO);
+		viewPropertyAction.setPtDemandDAO(ptDemandDAO);
 		viewPropertyAction.setPropertyId(propertyId);
 		viewPropertyAction.setPropertyTaxUtil(new PropertyTaxUtil());
 		viewPropertyAction.setSession(this.getSession());
@@ -465,4 +482,13 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	public void setIsShowAckMessage(boolean isShowAckMessage) {
 		this.isShowAckMessage = isShowAckMessage;
 	}
+
+    public void setBasicPropertyDAO(BasicPropertyDAO basicPropertyDAO) {
+        this.basicPropertyDAO = basicPropertyDAO;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+	
 }
