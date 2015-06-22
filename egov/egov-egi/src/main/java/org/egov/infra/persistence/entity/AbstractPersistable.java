@@ -5,8 +5,10 @@ import java.io.Serializable;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import org.egov.infra.search.elastic.Indexable;
+
 @MappedSuperclass
-public abstract class AbstractPersistable<PK extends Serializable> implements Serializable {
+public abstract class AbstractPersistable<PK extends Serializable> implements Serializable, Indexable {
 
     private static final long serialVersionUID = 7094572260034458544L;
 
@@ -14,9 +16,9 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     private Long version;
 
     protected abstract void setId(PK id);
-    
+
     public abstract PK getId();
-    
+
     public Long getVersion() {
         return version;
     }
@@ -51,5 +53,10 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
         int hashCode = 17;
         hashCode += null == getId() ? 0 : getId().hashCode() * 31;
         return hashCode;
+    }
+
+    @Override
+    public String getIndexId() {
+        return getId().toString();
     }
 }
