@@ -109,7 +109,7 @@
 				<div class="row display-hide report-section">
 						<div class="col-md-6 col-xs-6 table-header">Escalation Details</div>
 						<div class="col-md-12">
-							<table class="table table-bordered datatable" id="escalation-table">
+							<table class="table table-bordered datatable nopointer" id="escalation-table">
 							<thead>
 								<th><spring:message code="lbl.escalation.complaintType" /></th>
 								<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
@@ -136,3 +136,8 @@
 <script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
 
 <script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js'/>"></script>
+<style>
+table.dataTable.nopointer tbody tr:hover {
+cursor:
+}
+</style>

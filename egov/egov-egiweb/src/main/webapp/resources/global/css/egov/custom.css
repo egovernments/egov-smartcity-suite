@@ -1998,3 +1998,7 @@ border-top: 1px solid #ccc;
 	color:#fff;
 }
 .g-recaptcha div { margin: auto}
+
+table.dataTable.nopointer tbody tr:hover {
+cursor:auto;
+}
