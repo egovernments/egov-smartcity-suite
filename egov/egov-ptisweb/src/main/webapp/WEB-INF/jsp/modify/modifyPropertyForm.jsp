@@ -145,7 +145,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="form-control datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -317,7 +317,7 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" cssClass="form-control " size="10" maxlength="10"></s:textfield>
+		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
 </table>

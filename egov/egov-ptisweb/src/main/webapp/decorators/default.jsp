@@ -90,8 +90,8 @@
 		<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/animation/animation-min.js' context='/egi'/>"></script>
 		<%-- <script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script> --%>
 		
-		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/jquery/jquery-ui-1.8.4.custom.css'/>" />
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/jquery-ui-1.8.22.custom.min.js'/>"></script>
+		<!-- link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/jquery/jquery-ui-1.8.4.custom.css'/>" />
+	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/jquery-ui-1.8.22.custom.min.js'/>"></script-->
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/ajax-script.js'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
     	<decorator:head/>

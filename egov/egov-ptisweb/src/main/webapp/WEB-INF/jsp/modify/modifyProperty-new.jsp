@@ -46,6 +46,9 @@
 		<title><s:text name='ModProp.title' />--</title>
 		<sx:head />
 
+       <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+       <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+       
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -62,6 +65,7 @@
 						jQuery(this).datepicker('hide');
 					});
 			}); 
+			
 			function loadOnStartUp() {
 				/* document.getElementById("rentBox").className = "hiddentext";
 				document.getElementById("bldngCostId").className = "hiddentext";
@@ -439,16 +443,10 @@
 		<s:push value="model">
 			<s:token />
 			<div class="formmainbox">
-				<div class="formheading"></div>
 				<div class="headingbg" id="modPropHdr">
 					<s:text name="ModProp.title" />
 				</div>
-
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<%@ include file="modifyPropertyForm.jsp"%>
-					<%-- <tr id="approverdetails">
-						<%@ include file="../workflow/property-workflow.jsp"%>
-					</tr> --%>
+ 					   <%@ include file="modifyPropertyForm.jsp"%>
 					<!-- <div id="loadingMask" style="display: none">
 						<p align="center">
 							<img src="/egi/resources/erp2/images/bar_loader.gif"> <span
@@ -467,9 +465,7 @@
 							value="%{corrsAddress}" />
 						<s:hidden id="fromDataEntry" name="fromDataEntry"
 							value="%{fromDataEntry}" />--%>
-						<td><s:submit value="Approve" name="Approve"
-								id="Modify:Approve" method="save" cssClass="buttonsubmit"
-								onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
+					  
 						<%--<td><s:submit value="Data Entry" name="Save"
 								id="Modify:Save" method="save" cssClass="buttonsubmit"
 								onclick="setModificationType();setWorkFlowInfo(this);return submitMsg();doLoadingMask();" /></td>
@@ -480,8 +476,15 @@
 						<td><input type="button" name="button2" id="button2"
 							value="Close" class="button" onclick="window.close();" /></td>
 					</tr> --%>
-				</table>
+					
+				<%@ include file="../workflow/property-workflow.jsp"%>
+				<div class="buttonbottom" align="center">		   
+				 <s:submit value="Approve" name="Approve"
+								id="Modify:Approve" method="save" cssClass="buttonsubmit"
+								onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
+				</div>
 			</div>
+			
 		</s:push>
 	</s:form>
 </body>

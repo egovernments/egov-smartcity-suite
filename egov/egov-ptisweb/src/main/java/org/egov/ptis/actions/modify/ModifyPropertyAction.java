@@ -1038,7 +1038,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	public void prepare() {
 
 		LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
-		// super.prepare();
+		super.prepare();
 		if (getModelId() != null && !getModelId().isEmpty()) {
 			setBasicProp((BasicProperty) getPersistenceService().find(
 					"select prop.basicProperty from PropertyImpl prop where prop.id=?",
