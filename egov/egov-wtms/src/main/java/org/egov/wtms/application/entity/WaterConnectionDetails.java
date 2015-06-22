@@ -41,6 +41,7 @@ package org.egov.wtms.application.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -54,6 +55,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.demand.model.EgDemand;
@@ -84,6 +86,8 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "applicationtype", nullable = false)
     private ApplicationType applicationType;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
     @NotNull
     @JoinColumn(name = "connection", nullable = false)
     private WaterConnection connection;

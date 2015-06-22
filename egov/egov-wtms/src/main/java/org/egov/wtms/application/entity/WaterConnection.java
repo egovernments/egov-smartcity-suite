@@ -48,8 +48,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.regex.Constants;
 import org.egov.wtms.masters.entity.MeterCost;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -80,8 +82,10 @@ public class WaterConnection extends AbstractAuditable {
     @Length(min = 3, max = 50)
     private String bpaIdentifier;
 
-    @Length(max = 12)
-    private Integer mobileNumber;
+    @Pattern(regexp = Constants.MOBILE_NUM)
+    @SafeHtml
+    @Length(max = 15)
+    private String mobileNumber;
 
     @SafeHtml
     @Length(min = 3, max = 50)
@@ -129,11 +133,11 @@ public class WaterConnection extends AbstractAuditable {
         this.bpaIdentifier = bpaIdentifier;
     }
 
-    public Integer getMobileNumber() {
+    public String getMobileNumber() {
         return mobileNumber;
     }
 
-    public void setMobileNumber(final Integer mobileNumber) {
+    public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
