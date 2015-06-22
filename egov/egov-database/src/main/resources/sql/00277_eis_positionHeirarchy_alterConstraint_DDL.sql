@@ -1,0 +1,6 @@
+delete from egeis_position_hierarchy; 
+
+alter table egeis_position_hierarchy drop constraint eg_position_hir_position_from_position_to_object_type_subType;
+
+alter table egeis_position_hierarchy add CONSTRAINT eg_position_hir_position_from_position_to_object_type_subType 
+UNIQUE (position_from, position_to, object_type_id,object_sub_type);
