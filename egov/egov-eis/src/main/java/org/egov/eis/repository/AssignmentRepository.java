@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.entity.Assignment;
-import org.egov.pims.commons.Position;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,7 +50,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * This repository intends to serve all required API(s) wrt employee assignment
- * 
+ *
  * @author Vaibhav.K
  */
 @Repository
@@ -90,17 +89,25 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             @Param("givenDate") Date givenDate);
 
     @Query(" from Assignment A where A.employee.id=:empId and A.primary=true and A.fromDate<=:fromDate and A.toDate<=:toDate")
-    public Assignment getPrimaryAssignmentForGivenRange(@Param("empId") Long empId,
+    public Assignment getPrimaryAssignmentForGivenRange(@Param("empId") Long empId, @Param("fromDate") Date fromDate,
+            @Param("toDate") Date toDate);
+
+    @Query(" from Assignment A where A.designation.id=:designationId  and A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
+    public List<Assignment> getPrimaryAssignmentForDepartmentAndDesignation(@Param("departmentId") Long departmentId,
+            @Param("designationId") Long designationId, @Param("givenDate") Date givenDate);
+
+    @Query(" from Assignment A where A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
+    public List<Assignment> getPrimaryAssignmentForDepartment(@Param("departmentId") Long departmentId,
+            @Param("givenDate") Date givenDate);
+
+    @Query(" from Assignment A where A.designation.id=:designationId  and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
+    public List<Assignment> getPrimaryAssignmentForDesignation(@Param("designationId") Long designationId,
+            @Param("givenDate") Date givenDate);
+
+    @Query(" from Assignment A where A.department.id=:deptId and A.designation.id=:desigId and "
+            + "((:fromDate between A.fromDate and A.toDate) or (:toDate between A.fromDate and A.toDate) or (A.fromDate<=:fromDate and A.toDate>=:toDate))"
+            + " and A.primary=true")
+    public List<Assignment> findByDeptDesigAndDates(@Param("deptId") Long deptId, @Param("desigId") Long desigId,
             @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
-  
-	@Query(" from Assignment A where A.designation.id=:designationId  and A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-	public List<Assignment> getPrimaryAssignmentForDepartmentAndDesignation(@Param("departmentId") Long departmentId,@Param("designationId") Long designationId,@Param("givenDate") Date givenDate);
-
-	@Query(" from Assignment A where A.department.id=:departmentId and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-	public List<Assignment> getPrimaryAssignmentForDepartment(@Param("departmentId") Long departmentId,@Param("givenDate") Date givenDate);
-
-	@Query(" from Assignment A where A.designation.id=:designationId  and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-	public List<Assignment> getPrimaryAssignmentForDesignation(@Param("designationId") Long designationId,@Param("givenDate") Date givenDate);
-
 
 }

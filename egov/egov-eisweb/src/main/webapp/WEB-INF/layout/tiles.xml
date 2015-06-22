@@ -91,4 +91,14 @@
 		<put-attribute name="page-title" value="title.createemployee" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form.jsp"/>
 	</definition>
+	
+    <definition name="employee-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.viewemployee" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-success.jsp"/>
+	</definition>
+	
+    <definition name="employeesearch-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchemployee" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeesearch-form.jsp"/>
+	</definition>
 </tiles-definitions>

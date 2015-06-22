@@ -55,6 +55,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -76,6 +77,7 @@ public class Designation extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
+    @Field
     private String name;
 
     @SafeHtml

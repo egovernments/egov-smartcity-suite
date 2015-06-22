@@ -39,9 +39,9 @@
  */
 package org.egov.eis.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,6 +52,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -63,9 +64,17 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
+import org.springframework.core.annotation.Order;
 
+@Indexed
 @Entity
 @Table(name = "egeis_employee")
 public class Employee extends User {
@@ -76,7 +85,11 @@ public class Employee extends User {
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
+    @Field(index=Index.YES, analyze=Analyze.YES, store=Store.NO)
     private String code;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date dateOfBirth;
 
     @Temporal(value = TemporalType.DATE)
     private Date dateOfAppointment;
@@ -92,11 +105,14 @@ public class Employee extends User {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
+    @IndexedEmbedded
     private EmployeeType employeeType;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Assignment> assignments = new HashSet<Assignment>(0);
-
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
+    @IndexedEmbedded
+    @OrderBy(" primary,id DESC ")
+    private List<Assignment> assignments = new ArrayList<Assignment>(0);
+    
     public Employee() {
         setType(UserType.EMPLOYEE);
     }
@@ -117,6 +133,13 @@ public class Employee extends User {
         this.dateOfAppointment = null == dateOfAppointment ? null : dateOfAppointment.toDate();
     }
 
+    public DateTime getDateOfBirth() {
+        return null == dateOfBirth ? null : new DateTime(dateOfBirth);
+    }
+
+    public void setDateOfBirth(final DateTime dateOfBirth) {
+        this.dateOfBirth = null == dateOfBirth ? null : dateOfBirth.toDate();
+    }
     public DateTime getDateOfRetirement() {
         return null == dateOfRetirement ? null : new DateTime(dateOfRetirement);
     }
@@ -141,12 +164,16 @@ public class Employee extends User {
         this.employeeType = employeeType;
     }
 
-    public Set<Assignment> getAssignments() {
+    public List<Assignment> getAssignments() {
         return assignments;
     }
 
-    public void setAssignments(final Set<Assignment> assignments) {
-        this.assignments = assignments;
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments.clear();
+        if(assignments !=null ){
+            this.assignments.addAll(assignments);
+        }
     }
+
 
 }

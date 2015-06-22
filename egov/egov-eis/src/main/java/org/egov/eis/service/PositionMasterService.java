@@ -40,6 +40,7 @@
 package org.egov.eis.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -102,11 +103,18 @@ public class PositionMasterService {
         return positionMasterRepository.findAllByDeptDesig_Id(deptDesigId);
     }
 
-    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,
-            final String name) {
-        return positionMasterRepository
+    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,final Date fromDate,final Date toDate,
+            final String posName) {
+        List<Position> posList = new ArrayList<Position>();
+        List<Assignment> assignList = assignmentService.getAssignmentsByDeptDesigAndDates(departmentId, designationId, fromDate, toDate);
+        posList = positionMasterRepository
                 .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
-                        designationId, name);
+                        designationId, posName);
+        for(Assignment assign:assignList)
+        {
+            posList.removeIf( m -> m.getId() == assign.getPosition().getId());
+        }
+        return posList;
     }
 
     public boolean validatePosition(final Position position) {

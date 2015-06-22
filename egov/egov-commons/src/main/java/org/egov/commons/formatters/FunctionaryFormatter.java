@@ -37,55 +37,32 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.service;
+package org.egov.commons.formatters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.text.ParseException;
+import java.util.Locale;
 
-import java.util.List;
-
-import org.egov.eis.EISAbstractSpringIntegrationTest;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.EmployeeBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.Functionary;
+import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 
-@Ignore
-public class EmployeeServiceTest extends EISAbstractSpringIntegrationTest {
+@Component("functionaryFormatter")
+public class FunctionaryFormatter implements Formatter<Functionary> {
 
     @Autowired
-    private EmployeeService employeeService;
+    private PersistenceService<Functionary, Integer> persistenceService;
 
-    private Employee employee;
-
-    private void sampleEmployee() {
-        employee = new EmployeeBuilder().withDefaults().build();
-        employeeService.create(employee);
+    @Override
+    public String print(final Functionary object, final Locale locale) {
+        return object.getName();
     }
 
-    @Test
-    public void createEmployee() {
-        sampleEmployee();
-        assertNotNull(employee);
+    @Override
+    public Functionary parse(final String id, final Locale locale) throws ParseException {
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Integer.valueOf(id), Functionary.class) : null;
     }
 
-    @Test
-    public void getEmployeeByCode() {
-        employee = employeeService.getEmployeeByCode("E006");
-        assertEquals("EMPLOYED", employee.getEmployeeStatus().toString());
-    }
-
-    @Test
-    public void getEmployeeByType() {
-        final List<Employee> employees = employeeService.getEmployeesByType(1l);
-        assertTrue(employees.size() > 1);
-    }
-
-    @Test
-    public void getEmployeeByUserName() {
-        employee = employeeService.getEmployeeByUserName("narasappa");
-        assertNotNull(employee);
-    }
 }

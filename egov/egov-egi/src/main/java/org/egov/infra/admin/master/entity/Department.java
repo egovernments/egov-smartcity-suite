@@ -50,6 +50,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -76,6 +77,7 @@ public class Department extends AbstractAuditable {
     @Length(min = 1, max = 128)
     @Searchable(name = "name")
     @SafeHtml
+    @Field
     private String name;
 
     @NotBlank

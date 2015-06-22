@@ -42,6 +42,8 @@ package org.egov.commons;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.hibernate.search.annotations.Field;
+
 public class Functionary implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -49,7 +51,7 @@ public class Functionary implements java.io.Serializable {
 	private Integer id;
 
 	private BigDecimal code;
-
+	@Field
 	private String name;
 
 	private Date createtimestamp;

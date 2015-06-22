@@ -41,6 +41,8 @@ package org.egov.eis.web.controller.masters.employee;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.service.DesignationService;
@@ -63,7 +65,7 @@ public class EmployeeAjaxController {
     private DesignationService designationService;
     
     @Autowired
-    PositionMasterService positionMasterService;
+    private PositionMasterService positionMasterService;
     
     @RequestMapping(value= "/ajax/designations",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getAllDesignationsByNameLike(
@@ -73,8 +75,15 @@ public class EmployeeAjaxController {
     
     @RequestMapping(value= "/ajax/positions",method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Position> getPositionForDeptAndDesig(
-            @ModelAttribute("employeeBean") @RequestParam final Long deptId,@RequestParam final Long desigId,@RequestParam final String positionName) {
-        return positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, positionName);
+            @ModelAttribute("employeeBean") @RequestParam final Long deptId,@RequestParam final Long desigId,
+            @RequestParam final Date fromDate,@RequestParam final Date toDate,@RequestParam final String positionName,
+            @RequestParam final boolean primary) {
+        List<Position> posList = new ArrayList<Position>();
+        if(primary)
+            posList = positionMasterService.getPositionsForDeptDesigAndName(deptId, desigId, fromDate,toDate,positionName);
+        else
+            posList = positionMasterService.getAllPositionsByNameLike(positionName);
+        return posList;
     }
     
 

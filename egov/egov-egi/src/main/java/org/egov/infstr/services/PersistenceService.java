@@ -244,6 +244,9 @@ public class PersistenceService<T, ID extends Serializable> {
         return (T) getSession().load(this.type, id);
     }
 
+    public T load(final Serializable id, Class cls) {
+        return (T) getSession().load(cls, id);
+    }
     @Transactional
   
     public void delete(final T entity) {

@@ -39,11 +39,21 @@
  */
 package org.egov.eis.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeRepository;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +62,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EmployeeService {
 
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
@@ -61,12 +74,59 @@ public class EmployeeService {
 
     @Transactional
     public void create(final Employee employee) {
+        employee.setPwdExpiryDate(new DateTime().plus(90).toDate());
+        // Following is added to prevent null values and empty assignment objects getting persisted
+        employee.setAssignments(employee.getAssignments().parallelStream()
+                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        for (final Assignment assign : employee.getAssignments()) {
+            assign.setEmployee(employee);
+            for(HeadOfDepartments hod:assign.getDeptSet()){
+                hod.setAssignment(assign);
+            }
+        }
         employeeRepository.save(employee);
     }
 
     @Transactional
     public void update(final Employee employee) {
+        //Following is added to prevent null values and empty assignment objects getting persisted
+        employee.setAssignments(employee.getAssignments().parallelStream()
+                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        for (final Assignment assign : employee.getAssignments()){
+            assign.setEmployee(employee);
+            for(HeadOfDepartments hod:assign.getDeptSet()){
+                hod.setAssignment(assign);
+            }
+        }
+        //employee.getAssignments().retainAll(employee.getAssignments());
+        
         employeeRepository.saveAndFlush(employee);
+    }
+    
+    @Transactional
+    public List<Employee> searchEmployee(final String searchText) {
+       
+        FullTextEntityManager fullTextEntityManager =
+                org.hibernate.search.jpa.Search.getFullTextEntityManager(entityManager);
+            // create native Lucene query unsing the query DSL
+            // alternatively you can write the Lucene query using the Lucene query parser
+            // or the Lucene programmatic API. The Hibernate Search DSL is recommended though
+            QueryBuilder qb = fullTextEntityManager.getSearchFactory()
+                .buildQueryBuilder().forEntity(Employee.class).get();
+            org.apache.lucene.search.Query luceneQuery = qb
+              .keyword()
+              .onFields("name","code","mobileNumber","aadhaarNumber","emailId","pan",
+                      "assignments.department.name", "assignments.designation.name","assignments.position.name",
+                      "assignments.fund.name","assignments.function.name","assignments.functionary.name")
+              .matching(searchText)
+              .createQuery();
+
+            // wrap Lucene query in a javax.persistence.Query
+            javax.persistence.Query jpaQuery =
+                fullTextEntityManager.createFullTextQuery(luceneQuery, Employee.class);
+
+            // execute search
+            return jpaQuery.getResultList();
     }
 
     @Transactional

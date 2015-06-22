@@ -53,6 +53,7 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
 
 @Entity
 @Table(name = "eg_position")
@@ -68,6 +69,7 @@ public class Position extends AbstractAuditable {
     private Long id;
 
     @Column(name = "name", unique = true)
+    @Field
     private String name;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "deptDesig")

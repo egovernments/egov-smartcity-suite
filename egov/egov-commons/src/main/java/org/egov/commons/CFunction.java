@@ -41,9 +41,12 @@ package org.egov.commons;
 
 import java.util.Date;
 
+import org.hibernate.search.annotations.Field;
+
 public class CFunction {
 
 	private Long id = null;
+	@Field
 	private String name;
 	private String code;
 	private String type;

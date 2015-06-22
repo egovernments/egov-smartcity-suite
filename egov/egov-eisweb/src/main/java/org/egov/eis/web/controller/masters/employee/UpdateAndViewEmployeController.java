@@ -56,52 +56,84 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value="/employee")
-public class CreateEmployeeController {
+public class UpdateAndViewEmployeController {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session  getCurrentSession() {
-         return entityManager.unwrap(Session.class);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private EmployeeTypeRepository employeeTypeRepository;
-    
+
     @Autowired
     private EmployeeService employeeService;
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createForm(final Model model) {
-        model.addAttribute("employee", new Employee());
+    @ModelAttribute
+    public Employee employeeModel(@PathVariable final String code) {
+        return employeeService.getEmployeeByCode(code);
+    }
+
+    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
+    public String updateForm(final Model model,@PathVariable final String code) {
         model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
         model.addAttribute("department", departmentService.getAllDepartments());
         model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        model.addAttribute("fundList",getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)").list());
-        model.addAttribute("functionaryList",getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
-        model.addAttribute("functionList",getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
-        model.addAttribute("gradeList",getCurrentSession().createQuery("from GradeMaster order by name").list());
-        model.addAttribute("mode", "create");
+        model.addAttribute("fundList",
+                getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+                .list());
+        model.addAttribute("functionaryList",
+                getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
+        model.addAttribute(
+                "functionList",
+                getCurrentSession().createQuery(
+                        "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
+        model.addAttribute("gradeList", getCurrentSession().createQuery("from GradeMaster order by name").list());
+        model.addAttribute("mode", "update");
         return "employee-form";
     }
-    
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
+
+    @RequestMapping(value = "/update/{code}",method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()){
+            model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
+            model.addAttribute("department", departmentService.getAllDepartments());
+            model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
+            model.addAttribute("fundList",
+                    getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+                    .list());
+            model.addAttribute("functionaryList",
+                    getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
+            model.addAttribute(
+                    "functionList",
+                    getCurrentSession().createQuery(
+                            "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
+            model.addAttribute("gradeList", getCurrentSession().createQuery("from GradeMaster order by name").list());
+            model.addAttribute("mode", "update");
             return "employee-form";
-        employeeService.create(employee);
+        }
+        employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
-        model.addAttribute("message", "Employee created successfully");
+        model.addAttribute("message", "Employee updated successfully");
         return "employee-success";
     }
+
+    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
+    public String view(@PathVariable final String code,final Model model) {
+        return "employee-success";
+    }
+
 }

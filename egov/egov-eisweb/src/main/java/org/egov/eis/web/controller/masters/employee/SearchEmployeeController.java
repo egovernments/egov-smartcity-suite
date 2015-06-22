@@ -43,65 +43,71 @@ import java.util.Arrays;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.Valid;
 
-import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping(value="/employee")
-public class CreateEmployeeController {
+@RequestMapping(value = "/employee")
+public class SearchEmployeeController {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session  getCurrentSession() {
-         return entityManager.unwrap(Session.class);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
-    @Autowired
-    private EmployeeTypeRepository employeeTypeRepository;
-    
+
     @Autowired
     private EmployeeService employeeService;
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createForm(final Model model) {
-        model.addAttribute("employee", new Employee());
+    @Autowired
+    private EmployeeTypeRepository employeeTypeRepository;
+
+    @Autowired
+    private DesignationService designationService;
+
+    @RequestMapping(value="search",method = RequestMethod.GET)
+    public String searchForm(final Model model) {
+        loadDropDownValues(model);
+        return "employeesearch-form";
+    }
+
+    @RequestMapping(value="search",method = RequestMethod.POST)
+    public String searchEmployee(@RequestParam final String searchText, final Model model) {
+        model.addAttribute("employees",
+                employeeService.searchEmployee(null == searchText || searchText.isEmpty() ? "" : searchText));
+        loadDropDownValues(model);
+        return "employeesearch-form";
+    }
+
+    private void loadDropDownValues(final Model model) {
         model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
         model.addAttribute("department", departmentService.getAllDepartments());
         model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        model.addAttribute("fundList",getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)").list());
-        model.addAttribute("functionaryList",getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
-        model.addAttribute("functionList",getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
-        model.addAttribute("gradeList",getCurrentSession().createQuery("from GradeMaster order by name").list());
-        model.addAttribute("mode", "create");
-        return "employee-form";
+        model.addAttribute("fundList",
+                getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+                        .list());
+        model.addAttribute("functionaryList",
+                getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
+        model.addAttribute(
+                "functionList",
+                getCurrentSession().createQuery(
+                        "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
+        model.addAttribute("desigList", designationService.getAllDesignations());
     }
-    
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
-            return "employee-form";
-        employeeService.create(employee);
-        redirectAttrs.addFlashAttribute("employee", employee);
-        model.addAttribute("message", "Employee created successfully");
-        return "employee-success";
-    }
+
 }

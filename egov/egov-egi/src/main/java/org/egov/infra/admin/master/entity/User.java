@@ -73,7 +73,12 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -87,6 +92,7 @@ import com.google.gson.annotations.Expose;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
+@Indexed
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";
@@ -112,6 +118,7 @@ public class User extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Field
     private String name;
 
     @Enumerated(EnumType.ORDINAL)
@@ -120,11 +127,13 @@ public class User extends AbstractAuditable {
     @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
     @Length(max = 15)
+    @Field
     private String mobileNumber;
 
     @Email(regexp = Constants.EMAIL)
     @SafeHtml
     @Length(max = 128)
+    @Field
     private String emailId;
 
     @SafeHtml
@@ -132,10 +141,12 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 10)
+    @Field
     private String pan;
 
     @SafeHtml
     @Length(max = 20)
+    @Field
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)

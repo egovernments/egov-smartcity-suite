@@ -37,36 +37,31 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.entity;
+package org.egov.commons.formatters;
 
-public class EmployeeAssignmentDTO {
+import java.text.ParseException;
+import java.util.Locale;
 
-    private Employee employee;
-    private Assignment assignment;
-    private HeadOfDepartments headOfDepartments;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.Fund;
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 
-    public HeadOfDepartments getHeadOfDepartments() {
-        return headOfDepartments;
+@Component("fundFormatter")
+public class FundFormatter implements Formatter<Fund> {
+
+    @Autowired
+    private PersistenceService<Fund, Integer> persistenceService;
+
+    @Override
+    public String print(final Fund object, final Locale locale) {
+        return object.getName();
     }
 
-    public void setHeadOfDepartments(final HeadOfDepartments headOfDepartments) {
-        this.headOfDepartments = headOfDepartments;
+    @Override
+    public Fund parse(final String id, final Locale locale) throws ParseException {
+        return StringUtils.isNotBlank(id) ? persistenceService.load(Integer.valueOf(id), Fund.class) : null;
     }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(final Employee employee) {
-        this.employee = employee;
-    }
-
-    public Assignment getAssignment() {
-        return assignment;
-    }
-
-    public void setAssignment(final Assignment assignment) {
-        this.assignment = assignment;
-    }
-
 }

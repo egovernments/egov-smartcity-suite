@@ -41,9 +41,7 @@ package org.egov.eis.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,7 +55,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFunction;
@@ -68,8 +65,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.GradeMaster;
-import org.egov.pims.model.PersonalInformation;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 @Entity
 @Table(name = "egeis_assignment")
@@ -88,28 +85,34 @@ public class Assignment extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
+    @IndexedEmbedded
     private Position position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "functionary")
+    @IndexedEmbedded
     private Functionary functionary;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fund")
+    @IndexedEmbedded
     private Fund fund;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "function")
+    @IndexedEmbedded
     private CFunction function;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
+    @IndexedEmbedded
     private Designation designation;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
+    @IndexedEmbedded
     private Department department;
 
     @Column(name = "isprimary")
@@ -130,11 +133,8 @@ public class Assignment extends AbstractAuditable {
     @JoinColumn(name = "employee")
     private Employee employee;
 
-    @Transient
-    private final List<Long> hodDeptIds = new ArrayList<Long>();
-
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<HeadOfDepartments> deptSet = new HashSet<HeadOfDepartments>(0);
+    private List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
 
     public Long getId() {
         return id;
@@ -142,12 +142,6 @@ public class Assignment extends AbstractAuditable {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public List<Long> getHodDeptIds() {
-        for (final HeadOfDepartments dep : deptSet)
-            hodDeptIds.add(dep.getHod().getId());
-        return hodDeptIds;
     }
 
     public Designation getDesignation() {
@@ -238,11 +232,11 @@ public class Assignment extends AbstractAuditable {
         this.employee = employee;
     }
 
-    public Set<HeadOfDepartments> getDeptSet() {
+    public List<HeadOfDepartments> getDeptSet() {
         return deptSet;
     }
 
-    public void setDeptSet(final Set<HeadOfDepartments> deptSet) {
+    public void setDeptSet(final List<HeadOfDepartments> deptSet) {
         this.deptSet = deptSet;
     }
 
