@@ -75,6 +75,10 @@ public interface PropertyTaxConstants {
 	public static final String PROP_ADDR_TYPE = "PROPERTY";
 	public static final String OWNER_ADDR_TYPE = "OWNER";
 	public static final String TRANSFER = "TRANSFER";
+	
+	//Workflow statuses
+	public static final String PROPERTY_STATUS_WORKFLOW = "WORKFLOW";
+	public static final String PROPERTY_STATUS_APPROVED = "APPROVED";
 
 	// Demand Category Constants used across Clients
 	public static final String REASON_CATEGORY_CODE_TAX = "TAX";
@@ -1012,5 +1016,15 @@ public interface PropertyTaxConstants {
 			put("Mrs", "Mrs");
 		}
 	};
+
+	public static final String PROPERTY_NOT_EXIST_ERR_CODE = "PTAX100";
+	public static final String PROPERTY_DEACTIVATE_ERR_CODE = "PTAX101";
+	public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
+	
+	public static final String PROPERTY_NOT_EXIST_ERR_MSG = "Property does not exist";
+	public static final String PROPERTY_DEACTIVATE_ERR_MSG = "Property is decativated";
+	public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
+	
+	public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
 
 }

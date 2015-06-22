@@ -40,26 +40,22 @@
 package org.egov.ptis.actions.workflow;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.workflow.WorkflowDetails;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.springframework.transaction.annotation.Transactional;
 
 /*
  * @Results( {
@@ -84,9 +80,11 @@ import org.springframework.transaction.annotation.Transactional;
  * "changePropertyAddress", params = { "namespace", "/modify", "method", "view",
  * "modelId", "${workFlowPropId}" }) })
  */
-// @Namespace("/workflow")
+@Namespace("/workflow")
+@ResultPath("/WEB-INF/jsp/")
+@Results({ @Result(name = "modifyView", location = "workflow/workflow-modifyForm.jsp"),
+	@Result(name = "modifyView", location = "workflow/workflow-view.jsp")})
 public class WorkflowAction extends PropertyTaxBaseAction {
-
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	protected String modelId;
 	private String workFlowPropId;
@@ -119,15 +117,14 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	}
 
 	@SkipValidation
-	// @Action(value = "/workFLow-viewProperty", results = { @Result(name =
-	// "target") })
+	@Action(value = "/workflow-viewProperty")
 	public String viewProperty() {
 		LOGGER.debug("Entered into method viewProperty");
 		LOGGER.debug("viewProperty : Property : " + propertyModel);
 		String target = "";
 		String currState = propertyModel.getState().getValue();
 
-		if (currState.contains(WFLOW_ACTION_NAME_CREATE)) {
+		/*if (currState.contains(WFLOW_ACTION_NAME_CREATE)) {
 			target = "createView";
 		} else if (currState.contains(WFLOW_ACTION_NAME_MODIFY)) {
 			if (currState.contains(WF_STATE_NOTICE_GENERATION_PENDING)
@@ -146,7 +143,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 			target = "transferView";
 		} else if (currState.contains(PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS)) {
 			target = "changePropAddressView";
-		}
+		}*/
 		LOGGER.debug("Exit from method viewProperty with return value : " + target);
 		return target;
 	}

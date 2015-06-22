@@ -49,11 +49,11 @@ public class WorkflowBean {
 	private String actionName;
 	private String actionState;
 	private List<User> appoverUserList;
-	private Integer approverUserId;
+	private Long approverUserId;
 	private String comments;
-	private Integer departmentId;
+	private Long departmentId;
 	private List<Department> departmentList;
-	private Integer designationId;
+	private Long designationId;
 	private List<Designation> designationList;
 
 	public String getActionName() {
@@ -64,8 +64,12 @@ public class WorkflowBean {
 		return actionState;
 	}
 
-	public Integer getApproverUserId() {
+	public Long getApproverUserId() {
 		return approverUserId;
+	}
+
+	public void setApproverUserId(Long approverUserId) {
+		this.approverUserId = approverUserId;
 	}
 
 	public String getComments() {
@@ -96,9 +100,6 @@ public class WorkflowBean {
 		this.appoverUserList = appoverUserList;
 	}
 
-	public void setApproverUserId(Integer approverUserId) {
-		this.approverUserId = approverUserId;
-	}
 
 	public void setComments(String comments) {
 		this.comments = comments;
@@ -108,19 +109,19 @@ public class WorkflowBean {
 		this.departmentList = departmentList;
 	}
 
-	public Integer getDepartmentId() {
+	public Long getDepartmentId() {
 		return departmentId;
 	}
 
-	public void setDepartmentId(Integer departmentId) {
+	public void setDepartmentId(Long departmentId) {
 		this.departmentId = departmentId;
 	}
 
-	public Integer getDesignationId() {
+	public Long getDesignationId() {
 		return designationId;
 	}
 
-	public void setDesignationId(Integer designationId) {
+	public void setDesignationId(Long designationId) {
 		this.designationId = designationId;
 	}
 

@@ -429,7 +429,8 @@ function finishAllChangesMsg(button) {
 						value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
 						<td><s:submit value="Approve" name="Approve"
 						id='approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action');"
-						/></td>				
+						/></td>			
+						<button type="button" class="btn btn-default" onclick="window.close();">Close</button>	
 			</div>
 		</tr> 
 		</table>

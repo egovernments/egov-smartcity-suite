@@ -66,6 +66,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -89,7 +91,10 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -132,6 +137,7 @@ import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -248,6 +254,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Autowired
 	private UserService userService;
 	
+	private AssignmentService assignmentService;
+	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -328,17 +336,22 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
 		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
 		basicProperty.setUpicNo(indexNum);*/
-	    basicProperty.setUpicNo("1085261911");
+	    basicProperty.setUpicNo("1085001951");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 	
 		if (isNotBlank(getDocNumber())) {		
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
 			basicProperty.addDocs(pd);
 		}
-		
+		Assignment assignment = assignmentService.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
+		property.transition().start().withSenderName(securityUtils.getCurrentUser().getName())
+				.withComments("Property created with property id" + property.getBasicProperty().getUpicNo())
+				.withDateInfo(new Date())
+                .withStateValue(PROPERTY_STATUS_WORKFLOW)
+		        .withOwner(assignment.getPosition());
 		basicPrpertyService.persist(basicProperty);
 		
-		//setBasicProp(basicProperty);
+		setBasicProp(basicProperty);
 		/*if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((property.getPropertyDetail().getPropertyTypeMaster().getCode()
 					.equalsIgnoreCase(PROPTYPE_STATE_GOVT) && !isfloorDetailsRequired)
@@ -416,7 +429,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Action(value = "/createProperty-forward")
 	public String forward() {
 		LOGGER.debug("forward: Property forward started " + property);
-		long startTimeMillis = System.currentTimeMillis();		
+		long startTimeMillis = System.currentTimeMillis();	
 		if (userRole.equalsIgnoreCase(ASSISTANT_ROLE) && isBlank(getModelId())) {
 			this.validate();
 			if (hasErrors()) {
@@ -727,7 +740,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		BasicProperty basicProperty = new BasicPropertyImpl();
 		PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
-				"from PropertyStatus where statusCode=?", "ASSESSED");
+				"from PropertyStatus where statusCode=?",PROPERTY_STATUS_WORKFLOW);
 
 		//saving partno by removing preceding zeros ("0")
 		basicProperty.setPartNo(removeStart(partNo, "0"));
@@ -1874,6 +1887,14 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setRegdDocDate(Date regdDocDate) {
 		this.regdDocDate = regdDocDate;
+	}
+
+	public AssignmentService getAssignmentService() {
+		return assignmentService;
+	}
+
+	public void setAssignmentService(AssignmentService assignmentService) {
+		this.assignmentService = assignmentService;
 	}
 	
 }

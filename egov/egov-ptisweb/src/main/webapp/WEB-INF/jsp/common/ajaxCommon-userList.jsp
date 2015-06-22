@@ -3,9 +3,9 @@
 {
 "ResultSet": {
     "Result":[
-	<s:iterator var="s" value="userList" status="status">  
-    {"Value":"<s:property value="%{id}" />",
-    "Text":"<s:property value="%{userName}" />"
+	<s:iterator var="s" value="assignmentList" status="status">  
+    {"Value":"<s:property value="%{employee.id}" />",
+    "Text":"<s:property value="%{employee.username}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

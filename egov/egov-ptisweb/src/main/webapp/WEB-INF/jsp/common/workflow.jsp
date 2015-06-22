@@ -95,7 +95,7 @@ function populateDesignations(){
 }
 
 function populateUser(){
-   	populateapproverUserId({designationId:document.getElementById("designationId").value})
+   	populateapproverUserId({designationId:document.getElementById("designationId").value,departmentId:document.getElementById("departmentId").value})
 		
 }
 

@@ -74,6 +74,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -96,9 +98,7 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Namespace("/common")
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;
@@ -121,6 +121,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	protected boolean allChangesCompleted;
 	protected String fromDataEntry;
 	protected String userRole;
+	private AssignmentService assignmentService;
 	
 	public PropertyTaxBaseAction() {
 	}
@@ -166,11 +167,14 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		}
 		AjaxCommonAction ajaxCommonAction = new AjaxCommonAction();
 		ajaxCommonAction.setPersistenceService(persistenceService);
+		ajaxCommonAction.setDesignationService(new DesignationService());
+		ajaxCommonAction.setAssignmentService(getAssignmentService());
 		List<Department> departmentsForLoggedInUser = Collections.EMPTY_LIST;
-		//TO DO FIX ME
-		//departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser(securityUtils.getCurrentUser());
+		departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser(securityUtils.getCurrentUser());
 		workflowBean.setDepartmentList(departmentsForLoggedInUser);
-		if (workflowBean.getDepartmentId() != null && workflowBean.getDepartmentId() != -1) {
+		workflowBean.setDesignationList(Collections.EMPTY_LIST);
+		workflowBean.setAppoverUserList(Collections.EMPTY_LIST);
+		/*if (workflowBean.getDepartmentId() != null && workflowBean.getDepartmentId() != -1) {
 			ajaxCommonAction.setDepartmentId(workflowBean.getDepartmentId());
 			ajaxCommonAction.populateDesignationsByDept();
 			workflowBean.setDesignationList(ajaxCommonAction.getDesignationMasterList());
@@ -179,7 +183,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		}
 		if (workflowBean.getDesignationId() != null && workflowBean.getDesignationId() != -1) {
 			ajaxCommonAction.setDesignationId(workflowBean.getDesignationId());
-			ajaxCommonAction.populateUsersByDesignation();
+			ajaxCommonAction.populateUsersByDeptAndDesignation();
 			workflowBean.setAppoverUserList(ajaxCommonAction.getUserList());
 		} else {
 			workflowBean.setAppoverUserList(Collections.EMPTY_LIST);
@@ -189,7 +193,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					+ ((workflowBean.getDepartmentList() != null) ? workflowBean.getDepartmentList().size() : ZERO)
 					+ "\nNo of Designations: "
 					+ ((workflowBean.getDesignationList() != null) ? workflowBean.getDesignationList().size() : ZERO));
-		}
+		}*/
 		LOGGER.debug("Exiting from setupWorkflowDetails | End");
 	}
 
@@ -604,9 +608,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 		Long userId = securityUtils.getCurrentUser().getId();
 		LOGGER.debug("setUserInfo: Logged in userId" + userId);
-                //TODO FIX ME
-		/*DesignationMaster desgn = propertyTaxUtil.getDesignationForUser(userId);
-		setUserDesgn(desgn.getDesignationName());*/
+		Designation designation = propertyTaxUtil.getDesignationForUser(userId);
+		setUserDesgn(designation.getName());
 		User user = userService.getUserById(userId);
 		for (Role role : user.getRoles()) {
 			if (role.getName().equalsIgnoreCase(PropertyTaxConstants.ASSISTANT_ROLE)) {
@@ -700,5 +703,14 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
+
+	public AssignmentService getAssignmentService() {
+		return assignmentService;
+	}
+
+	public void setAssignmentService(AssignmentService assignmentService) {
+		this.assignmentService = assignmentService;
+	}
+	
 	
 }

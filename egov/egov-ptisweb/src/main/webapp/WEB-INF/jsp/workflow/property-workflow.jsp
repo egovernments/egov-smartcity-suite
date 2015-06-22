@@ -60,13 +60,13 @@
 			<td class="bluebox" width="8%">
 				<s:select name="workflowBean.departmentId" id="departmentId"
 					list="workflowBean.departmentList" listKey="id"
-					listValue="deptName" headerKey="-1" headerValue="----Choose----"
+					listValue="name" headerKey="-1" headerValue="----Choose----"
 					value="%{workflowBean.departmentId}"
 					onchange="populateDesignations()" />
 			</td>
 			<egov:ajaxdropdown id="designationId" fields="['Text','Value']"
 				dropdownId="designationId"
-				url="common/ajaxCommon!populateDesignationsByDept.action" />
+				url="common/ajaxCommon-populateDesignationsByDept.action" />
 			<td class="bluebox" width="8%">
 				<s:text name='approver.designation' />
 				<span class="mandatory1">*</span>
@@ -94,7 +94,7 @@
 					value="%{workflowBean.approverUserId}" />
 				<egov:ajaxdropdown id="approverUserId" fields="['Text','Value']"
 					dropdownId="approverUserId"
-					url="common/ajaxCommon!populateUsersByDesignation.action" />
+					url="common/ajaxCommon-populateUsersByDeptAndDesignation.action" />
 			</td>
 			<td class="greybox" colspan="2" width="20%">
 				&nbsp;
@@ -128,7 +128,8 @@
 	}
 	function populateUser() {
 		populateapproverUserId( {
-			designationId : document.getElementById("designationId").value
+			designationId : document.getElementById("designationId").value,
+			departmentId : document.getElementById("departmentId").value
 		})
 	}
 </script>

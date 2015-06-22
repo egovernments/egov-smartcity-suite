@@ -53,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -69,24 +68,22 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletResponseAware;
-import org.egov.commons.Functionary;
-import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
-import org.egov.pims.service.EisUtilService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -111,6 +108,8 @@ import net.sf.json.JSONObject;
     @Result(name="area",location="ajaxCommon-area.jsp") ,
     @Result(name="category",location="ajaxCommon-category.jsp")  ,
     @Result(name="structural",location="ajaxCommon-structural.jsp"),
+    @Result(name="designationList",location="ajaxCommon-designationList.jsp"),
+    @Result(name="userList",location="ajaxCommon-userList.jsp")
    /* @Result(name = "AJAX_RESULT", type = "Stream", location = "returnStream", params = { "contentType", "application/json" })*/
   })
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
@@ -129,8 +128,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private Long wardId;
 	private Long areaId;
 	private Long locality;
-	private Integer departmentId;
-	private Integer designationId;
+	private Long departmentId;
+	private Long designationId;
 	private Integer propTypeId;
 	private String usageFactor;
 	private String structFactor;
@@ -149,12 +148,16 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private Logger LOGGER = Logger.getLogger(getClass());
 	private List<String> partNumbers;
 	private HttpServletResponse response;
+	private List<Assignment> assignmentList;
 	
 	@Autowired
 	private CategoryDao categoryDAO;
 	@Autowired
     private BoundaryService boundaryService;
-	
+	@Autowired
+	private DesignationService designationService;
+	@Autowired
+	private AssignmentService assignmentService;
 	@Override
 	public Object getModel() {
 		return null;
@@ -223,13 +226,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	}
 
 	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-populateDesignationsByDept")
 	public String populateDesignationsByDept() {
 		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
 		if (departmentId != null) {
-			// FIX ME
-			// designationMasterList =
-			// eisManager.getAllDesignationByDept(departmentId);
-			designationMasterList = null;
+			designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
 		}
 
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
@@ -238,24 +239,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		return "designationList";
 	}
 
-	public String populateUsersByDesignation() {
+	@Action(value = "/ajaxCommon-populateUsersByDeptAndDesignation")
+	public String populateUsersByDeptAndDesignation() {
 		LOGGER.debug("Entered into populateUsersByDesignation : designationId : " + designationId);
-		if (designationId != null) {
-			Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Functionary.class);
-			criteria.add(Restrictions.eq("name", "Assessment"));
-			Functionary functionary = (Functionary) criteria.list().get(0);
-			HashMap<String, String> paramMap = new HashMap<String, String>();
-			paramMap.put("designationId", designationId.toString());
-			paramMap.put("functionaryId", functionary.getId().toString());
-			EisUtilService eisService = new EisUtilService();
-			eisService.setPersistenceService(persistenceService);
-			List<EmployeeView> empInfoList = eisService.getEmployeeInfoList(paramMap);
-			for (EmployeeView employeeView : empInfoList) {
-				userList.add((User)employeeView.getEmployee());
-			}
+		if (designationId != null && departmentId != null) {
+			assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId,new Date());
 		}
-		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : "
-				+ ((userList != null) ? userList : ZERO));
+		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : " + ((userList != null) ? userList : ZERO));
 		return "userList";
 	}
 
@@ -465,11 +455,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		this.streetList = streetList;
 	}
 
-	public Integer getDepartmentId() {
+	public Long getDepartmentId() {
 		return departmentId;
 	}
 
-	public void setDepartmentId(Integer departmentId) {
+	public void setDepartmentId(Long departmentId) {
 		this.departmentId = departmentId;
 	}
 
@@ -481,11 +471,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		this.designationMasterList = designationMasterList;
 	}
 
-	public Integer getDesignationId() {
+	public Long getDesignationId() {
 		return designationId;
 	}
 
-	public void setDesignationId(Integer designationId) {
+	public void setDesignationId(Long designationId) {
 		this.designationId = designationId;
 	}
 
@@ -562,4 +552,28 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		this.response = httpServletResponse;
 	}
 
+	public DesignationService getDesignationService() {
+		return designationService;
+	}
+
+	public void setDesignationService(DesignationService designationService) {
+		this.designationService = designationService;
+	}
+
+	public AssignmentService getAssignmentService() {
+		return assignmentService;
+	}
+
+	public void setAssignmentService(AssignmentService assignmentService) {
+		this.assignmentService = assignmentService;
+	}
+
+	public List<Assignment> getAssignmentList() {
+		return assignmentList;
+	}
+
+	public void setAssignmentList(List<Assignment> assignmentList) {
+		this.assignmentList = assignmentList;
+	}
+	
 }
