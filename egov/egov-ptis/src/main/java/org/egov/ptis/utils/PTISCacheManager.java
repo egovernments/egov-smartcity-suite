@@ -532,100 +532,18 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 
 	}
 
-	// changes done by Evlyn for Proper Property Address Format
-	/**
-	 * houseno/sunno(old door num), street1, street2, locality, block - pincode
-	 */
 	@Override
 	public String buildAddressByImplemetation(Address address) {
-		String impName = EGovConfig.getProperty("ptis_egov_config.xml", "IMPLEMENTATION_NAME", "",
-				"PT");
-		if (impName == null || impName.trim().equals("")) {
-			throw new EGOVRuntimeException("Implementation Name is null");
-		}
-
-		String addressStr = "";
-		if (address != null) {
-			if (impName.equals("CHENNAI")) {
-				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
-						.getHouseNoBldgApt());
-				CharSequence cs = "PropertyAddress";
-				/*if (address.getClass().getName().contains(cs)) {
-					PropertyAddress propAddr = (PropertyAddress) address;
-					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
-						addressStr = addressStr + "/" + propAddr.getSubNumber();
-					}
-					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
-						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
-					}
-				}*/
-				if (!addressStr.trim().equals("")) {
-					addressStr = addressStr
-							+ (address.getLandmark() == null ? " " : ", " + address.getLandmark());
-				} else {
-					addressStr = (address.getLandmark() == null ? " " : address.getLandmark());
-				}
-
-				addressStr = addressStr
-						+ (address.getAreaLocalitySector() == null ? "" : ", "
-								+ address.getAreaLocalitySector());
-				addressStr = addressStr
-						+ (address.getCityTownVillage() == null ? "" : ", "
-								+ address.getCityTownVillage());
-				addressStr = addressStr
-						+ (address.getPinCode() == null ? "" : " -  "
-								+ address.getPinCode().toString());
-			}
-		}
-		if (address != null) {
-			if (impName.equals("Chennai")) {
-				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
-						.getHouseNoBldgApt());
-				CharSequence cs = "PropertyAddress";
-				/*if (address.getClass().getName().contains(cs)) {
-					PropertyAddress propAddr = (PropertyAddress) address;
-					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
-						addressStr = addressStr + "/" + propAddr.getSubNumber();
-					}
-					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
-						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
-					}
-				}*/
-				if (!addressStr.trim().equals("")) {
-					addressStr = addressStr
-							+ (StringUtils.isBlank(address.getLandmark()) ? "" : ", "
-									+ address.getLandmark());
-				} else {
-					addressStr = (StringUtils.isBlank(address.getLandmark()) ? "" : address
-							.getLandmark());
-				}
-
-				/*if (address.getClass().getName().contains(cs)) {
-					PropertyAddress propAddr = (PropertyAddress) address;
-					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField1()) ? "" : ", "
-									+ propAddr.getExtraField1());
-
-					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField2()) ? "" : ", "
-									+ propAddr.getExtraField2());
-
-					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField3()) ? "" : ", "
-									+ propAddr.getExtraField3());
-
-					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField4()) ? "" : ", "
-									+ propAddr.getExtraField4());
-				}
-*/
-				addressStr = addressStr
-						+ (address.getPinCode() == null ? "" : " -  "
-								+ address.getPinCode().toString());
-			}
-		}
-
-		return addressStr;
+		StringBuilder addressStr = new StringBuilder("");
+		addressStr.append(address.getHouseNoBldgApt() != null ? address.getHouseNoBldgApt() : " ");
+		addressStr.append(
+				address.getAreaLocalitySector() != null ? address.getAreaLocalitySector() : " ");
+		addressStr
+				.append(address.getCityTownVillage() != null ? address.getCityTownVillage() : " ");
+		addressStr.append(address.getLandmark() != null ? address.getLandmark() : " ");
+		addressStr.append(
+				address.getPinCode() != null ? " -  " + address.getPinCode().toString() : " ");
+		return addressStr.toString();
 	}
 
 }

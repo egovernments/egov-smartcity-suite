@@ -76,7 +76,7 @@
 		<property name="status" column="STATUS" />
 
 		<many-to-one name="basicProperty"
-			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY"
 			insert="false" update="false" />
 
 		<one-to-one name="propertyDetail"
