@@ -52,6 +52,7 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,7 +86,8 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> findAll() {
-        return waterConnectionDetailsRepository.findAll(new Sort(Sort.Direction.ASC, "applicationNumber"));
+        return waterConnectionDetailsRepository
+                .findAll(new Sort(Sort.Direction.ASC, WaterTaxConstants.APPLICATION_NUMBER));
     }
 
     public WaterConnectionDetails findByApplicationNumber(final String applicationNumber) {
@@ -98,20 +100,22 @@ public class WaterConnectionDetailsService {
 
     public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
             final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "applicationNumber");
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,
+                WaterTaxConstants.APPLICATION_NUMBER);
         return waterConnectionDetailsRepository.findAll(pageable);
     }
 
     // TODO - Simple Save. Need to handle different use cases and validations
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
-        // TODO - Application number logic needs to be confirmed by BA
+
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
         if (waterConnectionDetails.getState() != null
-                && waterConnectionDetails.getState().getValue().equals("APPROVED"))
+                && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED))
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
         if (appProcessTime != null) {

@@ -48,7 +48,6 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
-			<form:hidden path="propertyType" id="propertyType.id" value="${waterConnectionDetails.propertyType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -64,7 +63,7 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
-					<button class="btn btn-primary">
+					<button type="reset" class="btn btn-primary">
 						<spring:message code="lbl.clear" />
 					</button>
 					<a href="javascript:void(0);" id="closeComplaints"

@@ -73,7 +73,7 @@ public class PropertyTypeService {
 
     @Transactional
     public void updatePropertyType(final PropertyType propertyType) {
-    	propertyTypeRepository.save(propertyType);
+        propertyTypeRepository.save(propertyType);
     }
 
     public List<PropertyType> findAll() {
@@ -98,7 +98,11 @@ public class PropertyTypeService {
     }
 
     public PropertyType findByCode(final String code) {
-    	return propertyTypeRepository.findByCode(code);
+        return propertyTypeRepository.findByCode(code);
     }
 
- }
+    public List<PropertyType> getAllActivePropertyTypes() {
+        return propertyTypeRepository.findByActiveTrueOrderByNameAsc();
+    }
+
+}

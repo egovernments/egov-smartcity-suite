@@ -43,7 +43,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.application.date" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" id="applicationdate" name="applicationDate" class="form-control datepicker today" required="required" data-inputmask="'mask': 'd/m/y'">
+		<input type="text" id="applicationdate" name="applicationDate" value="${waterConnectionDetails.applicationDate}" class="form-control datepicker today" required="required" data-inputmask="'mask': 'd/m/y'">
 		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -52,7 +52,7 @@
 			code="lbl.ptassesmentnumber" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<div class="input-group">
-			<input type="text" id="propertyIdentifier" name="connection.propertyIdentifier" class="form-control" min="3" maxlength="50" required="required" /> <span
+			<input type="text" id="propertyIdentifier" name="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}" class="form-control" min="3" maxlength="50" required="required" /> <span
 				class="input-group-addon"> <i class="fa fa-search"></i>
 			</span>
 			<form:errors path="connection.propertyIdentifier" cssClass="add-margin error-msg" />
@@ -61,7 +61,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.bpanumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="bpaIdentifier" name="connection.bpaIdentifier" min="3" maxlength="50" >
+		<input type="text" class="form-control" id="bpaIdentifier" name="connection.bpaIdentifier" value="${waterConnectionDetails.connection.bpaIdentifier}" min="3" maxlength="50" >
 		<form:errors path="connection.bpaIdentifier" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -74,7 +74,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="mobileNumber" name="connection.mobileNumber" min="10" maxlength="15" >
+		<input type="text" class="form-control" id="mobileNumber" name="connection.mobileNumber" min="10" maxlength="15" value="${waterConnectionDetails.connection.mobileNumber}" >
 		<form:errors path="connection.mobileNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>

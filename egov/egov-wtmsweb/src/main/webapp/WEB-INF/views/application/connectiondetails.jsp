@@ -48,8 +48,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select name="connectionType" path=""
-			data-first-option="false" cssClass="form-control" required="required"> 
+		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
@@ -60,7 +59,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.usagetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select name="usageType" path="" data-first-option="false"
+		<form:select path="usageType" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -75,7 +74,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.category" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select name="category" path="" data-first-option="false"
+		<form:select path="category" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -88,7 +87,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select name="waterSource" path="" data-first-option="false"
+		<form:select path="waterSource" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -101,9 +100,22 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.propertytype" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="propertyType" data-first-option="false"
+			cssClass="form-control" required="required" >
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${propertyTypes}" itemValue="id"
+				itemLabel="name" />
+		</form:select>		
+		<form:errors path="propertyType" cssClass="add-margin error-msg" />					
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select name="pipeSize" path="" data-first-option="false"
+		<form:select path="pipeSize" data-first-option="false"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -113,10 +125,12 @@
 		</form:select>		
 		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="sumpCapacity" name="sumpCapacity" required="required">
+		<input type="text" class="form-control" id="sumpCapacity" name="sumpCapacity" value="${waterConnectionDetails.sumpCapacity}" required="required">
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 	</div>
 </div>

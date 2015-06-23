@@ -48,7 +48,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
-import org.egov.wtms.masters.service.PropertyTypeService;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -63,23 +63,18 @@ public class NewConnectionController extends GenericConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
-    private final PropertyTypeService propertyTypeService;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ApplicationTypeService applicationTypeService, final PropertyTypeService propertyTypeService,
-            final SmartValidator validator) {
+            final ApplicationTypeService applicationTypeService, final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
-        this.propertyTypeService = propertyTypeService;
 
     }
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        // TODO - Setting the values temporarily.
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode("NEWCONNECTION"));
-        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode("GROUNDFLOOR"));
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         return "newconnection-form";
     }
