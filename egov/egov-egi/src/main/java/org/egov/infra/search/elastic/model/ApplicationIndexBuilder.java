@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.application.model;
+package org.egov.infra.search.elastic.model;
 
 import java.util.Date;
 

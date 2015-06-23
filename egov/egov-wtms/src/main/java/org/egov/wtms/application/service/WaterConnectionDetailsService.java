@@ -46,6 +46,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.search.elastic.model.ApplicationIndex;
+import org.egov.infra.search.elastic.model.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -75,6 +78,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
+    
+    @Autowired
+    private ApplicationIndexService applicationIndexService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -125,9 +131,21 @@ public class WaterConnectionDetailsService {
         }
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        createApplicationIndex(savedWaterConnectionDetails);
         return savedWaterConnectionDetails;
     }
 
+    private void createApplicationIndex(WaterConnectionDetails waterConnectionDetails) {
+	    final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(waterConnectionDetails.getApplicationNumber(),
+	    		waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName() ,
+	    		"Mr. Bean", waterConnectionDetails.getConnectionStatus().toString(),"/wtms/test.action");
+	    	
+	    applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+	
+	    final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
+	    applicationIndexService.createApplicationIndex(applicationIndex);
+    }
+    
     public List<ConnectionType> getAllConnectionTypes() {
         return Arrays.asList(ConnectionType.values());
     }
