@@ -113,7 +113,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"/> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProperty.vacantLandAssmtNo}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{basicProp.vacantLandAssmtNo}" default="N/A"/></span>
 		</td>
 	</tr>
 	
@@ -129,11 +129,11 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProperty.regdDocDate}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
 	
@@ -204,17 +204,17 @@
 		<td class="greybox" width="25%"><s:text name="floortype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.floorType.id"
+				headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name"
-				list="dropdownData.floorType" value="%{propertyDetail.floorType.id}"
+				list="dropdownData.floorType" value="%{floorTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.roofType.id"
+				headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name"
-				list="dropdownData.roofType" value="%{propertyDetail.roofType.id}"
+				list="dropdownData.roofType" value="%{roofTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
@@ -224,17 +224,17 @@
 		<td class="greybox" width="25%"><s:text name="walltype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.wallType.id"
+				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
-				list="dropdownData.wallType" value="%{propertyDetail.wallType.id}"
+				list="dropdownData.wallType" value="%{wallTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.woodType.id"
+				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
-				list="dropdownData.woodType" value="%{propertyDetail.woodType.id}"
+				list="dropdownData.woodType" value="%{woodTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
@@ -250,13 +250,25 @@
 	</tr>
 	
 	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="reasonForModify"
+				id="reasonForModify" listKey="code" listValue="mutationName"
+				list="dropdownData.MutationList" value="%{reasonForModify}"
+				cssClass="selectnew" onchange="return enableCourtRulingDets();" />
+		</td>
+	</tr>
+	
+	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.propertyTypeMaster.id"
+				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
+				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		
@@ -274,7 +286,7 @@
 				<span class="mandatory1">*</span> :
 			</div>
 		</td>
-		<td class="bluebox" colspan="2"><s:textfield name="propertyDetail.sitalArea.area"
+		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot"
 				maxlength="15"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
 			<span class="highlight2"><s:text
@@ -284,13 +296,13 @@
 	</tr>
 	
 	<tr>
-		<td class="bluebox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="basicProperty.propertyMutationMaster.id"
-				id="sbapartcomplex" listKey="idMutation" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{basicProperty.propertyMutationMaster.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+			headerValue="%{getText('default.select')}" name="appartmentId"
+			id="sbapartcomplex" listKey="id" listValue="name"
+			list="dropdownData.Appartments" value="%{appartmentId}"
+			cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
 	<tr id="floorHeaderRow">

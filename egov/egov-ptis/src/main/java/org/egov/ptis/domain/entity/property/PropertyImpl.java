@@ -237,7 +237,7 @@ public class PropertyImpl extends StateAware implements Property {
 		return true;
 	}
 
-	@Override
+	/*@Override
 	public Set<Citizen> getPropertyTenantSet() {
 		return propertyTenantSet;
 	}
@@ -245,7 +245,7 @@ public class PropertyImpl extends StateAware implements Property {
 	@Override
 	public void setPropertyTenantSet(Set<Citizen> propertyTenantSet) {
 		this.propertyTenantSet = propertyTenantSet;
-	}
+	}*/
 
 	@Override
 	public Character getStatus() {
@@ -344,7 +344,7 @@ public class PropertyImpl extends StateAware implements Property {
 		getPropertyOwnerSet().remove(owner);
 	}
 
-	@Override
+	/*@Override
 	public void addPropertyTenants(Citizen citizen) {
 		getPropertyTenantSet().add(citizen);
 	}
@@ -352,7 +352,7 @@ public class PropertyImpl extends StateAware implements Property {
 	@Override
 	public void removePropertyTenants(Citizen citizen) {
 		getPropertyTenantSet().remove(citizen);
-	}
+	}*/
 
 	@Override
 	public Installment getInstallment() {

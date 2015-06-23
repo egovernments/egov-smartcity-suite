@@ -128,11 +128,11 @@
 			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyOwner"/>
 		</set>
 
-		<set name="propertyTenantSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_TENANTS">
+		<!-- <set name="propertyTenantSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_TENANTS">
 			<key column="ID_PROPERTY" not-null="true" />
 			<many-to-many class="org.egov.portal.entity.Citizen"
 				column="CITIZENID" />
-		</set>
+		</set> -->
 		<property name="isChecked" column="ISCHECKED" />
 		<property name="remarks" column="REMARKS" type="string" />
 

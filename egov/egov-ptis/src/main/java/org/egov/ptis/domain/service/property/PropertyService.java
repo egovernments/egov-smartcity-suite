@@ -100,7 +100,9 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -154,6 +156,8 @@ public class PropertyService  {
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
+	@Autowired
+	private UserService userService;
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	protected PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
@@ -195,7 +199,7 @@ public class PropertyService  {
 		
 		property.getPropertyDetail().setFieldVerified('Y');
 		property.getPropertyDetail().setProperty(property);
-		PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
+		PropertyMutationMaster	propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
 				"from PropertyMutationMaster PM where upper(PM.code) = ?", mutationCode);
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ().find(
 				"from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
@@ -251,10 +255,10 @@ public class PropertyService  {
 					|| !(property.getPropertyDetail().getPropertyTypeMaster().getCode()
 							.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property.getPropertyDetail()
 							.getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))) {
-				if (!mutationCode.equals("NEW") || STATUS_WORKFLOW.equals(property.getStatus())) {
+				if ((mutationCode != null && "NEW".equals(mutationCode)) || STATUS_WORKFLOW.equals(property.getStatus())) {
 					property.getPropertyDetail().setFloorDetails(new HashSet<FloorIF>());
 				}
-				for (FloorIF floor : property.getPropertyDetail().getFloorDetailsProxy()) {
+				for (FloorImpl floor : property.getPropertyDetail().getFloorDetailsProxy()) {
 					if (floor != null) {
 						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
 						floor.setCreatedTimeStamp(new Date());
@@ -371,7 +375,11 @@ public class PropertyService  {
 		} else {
 			propStatVal.setIsActive("Y");
 		}
-
+		User user = userService.getUserById(EgovThreadLocals.getUserId());
+		propStatVal.setCreatedDate(new Date());
+		propStatVal.setModifiedDate(new Date());
+		propStatVal.setCreatedBy(user);
+		propStatVal.setModifiedBy(user);
 		propStatVal.setBuildingPermissionDate(buildingPermDate);
 		propStatVal.setBuildingPermissionNo(buildingPermNo);
 		propStatVal.setPropertyStatus(propertyStatus);

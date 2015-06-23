@@ -74,7 +74,7 @@
 			column="ELEC_METER_NUM"
 		/>
 		<property
-			name="createdDate"
+			name="createdTimeStamp"
 			column="CRT_TIMESTAMP"
 			update="false"
 		/>

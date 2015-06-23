@@ -85,10 +85,6 @@
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<%-- 	<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']"
-						dropdownId="floorUsage"
-						url="common/ajaxCommon!usageByPropType.action"
-						afterSuccess="copyDropdown" /> --%>
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
 						name="propertyDetail.floorDetailsProxy[0].propertyUsage.id"
 						listKey="id" id="floorUsage"
@@ -135,8 +131,8 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield
-						name="%{propertyDetail.floorDetailsProxy[0].createdDate}"
-						id="%{propertyDetail.floorDetailsProxy[0].createdDate}" size="10"
+						name="propertyDetail.floorDetailsProxy[0].extraField3"
+						id="constructionDate" size="10"
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
@@ -256,10 +252,6 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:if test="%{#floorsstatus.index==0}">
-							<%-- 	<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']"
-								dropdownId="floorUsage"
-								url="common/ajaxCommon!usageByPropType.action"
-								afterSuccess="copyDropdown" /> --%>
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
 								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
@@ -320,8 +312,8 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="%{propertyDetail.floorDetailsProxy[0].createdDate}"
-							id="%{propertyDetail.floorDetailsProxy[0].createdDate}" size="10"
+							name="propertyDetail.floorDetailsProxy[0].extraField3"
+							id="constructionDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>

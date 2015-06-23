@@ -66,6 +66,13 @@
 					});
 			}); 
 			
+
+			function onSubmit(action) {
+				document.forms[0].action = action;
+				document.forms[0].submit;
+				return true;
+			}
+
 			function loadOnStartUp() {
 				/* document.getElementById("rentBox").className = "hiddentext";
 				document.getElementById("bldngCostId").className = "hiddentext";
@@ -131,27 +138,27 @@
 					populateUnitTypeCatAndUsageOnValidationErrors();
 				}
 			}
-		
+		*/
 			var modifyReason = "";
 			function enableCourtRulingDets() {
 				if (document.forms[0].reasonForModify != undefined) {
 					modifyReason = document.forms[0].reasonForModify.options[document.forms[0].reasonForModify.selectedIndex].text;
 				}
 				if (modifyReason == "COURT RULING") {
-					document.getElementById("courtOrdNo").readOnly = false;
+					/* document.getElementById("courtOrdNo").readOnly = false;
 					document.getElementById("courtOrdNo").className = "";
 					document.getElementById("orderDate").readOnly = false;
 					document.getElementById("orderDate").className = "";
 					document.getElementById("judgeDet").readOnly = false;
 					document.getElementById("judgeDet").className = "";
 					document.getElementById("courtOrdNoRow").style.display = "";
-					document.getElementById("JudgmtDetsRow").style.display = "";
+					document.getElementById("JudgmtDetsRow").style.display = ""; */
 				} else {
-					document.getElementById("courtOrdNoRow").style.display = "none";
-					document.getElementById("JudgmtDetsRow").style.display = "none";
+					/* document.getElementById("courtOrdNoRow").style.display = "none";
+					document.getElementById("JudgmtDetsRow").style.display = "none"; */
 				}
 			}
-		
+		/*
 			var targetitem = "";
 			function getAmalgPropStatus(obj) {
 				var index = getRow(obj).rowIndex;
@@ -433,7 +440,7 @@
 </head>
 
 <body onload="loadOnStartUp();">
-	<div align="left">
+	<div align="left" class="errortext">
 		<s:actionerror />
 	</div>
 	<!-- Area for error display -->
@@ -453,35 +460,30 @@
 								id="message"><p style="color: red">Please wait....</p></span>
 						</p>
 					</div> -->
-					<%-- <tr>
-						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
-						<s:hidden id="indexNumber" name="indexNumber"
-							value="%{indexNumber}" />
-						<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
-						<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
-						<s:hidden id="propAddress" name="propAddress"
-							value="%{propAddress}" />
-						<s:hidden id="corrsAddress" name="corrsAddress"
-							value="%{corrsAddress}" />
-						<s:hidden id="fromDataEntry" name="fromDataEntry"
-							value="%{fromDataEntry}" />--%>
-					  
-						<%--<td><s:submit value="Data Entry" name="Save"
-								id="Modify:Save" method="save" cssClass="buttonsubmit"
-								onclick="setModificationType();setWorkFlowInfo(this);return submitMsg();doLoadingMask();" /></td>
-						<td><s:submit value="Forward" name="Forward"
-								id="Modify:Forward" method="forwardModify"
-								cssClass="buttonsubmit"
-								onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
-						<td><input type="button" name="button2" id="button2"
-							value="Close" class="button" onclick="window.close();" /></td>
-					</tr> --%>
+					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<s:hidden id="indexNumber" name="indexNumber"
+						value="%{indexNumber}" />
+					<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
+					<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
+					<s:hidden id="propAddress" name="propAddress"
+						value="%{propAddress}" />
+					<%--<tr>
+							<td><s:submit value="Data Entry" name="Save"
+									id="Modify:Save" method="save" cssClass="buttonsubmit"
+									onclick="setModificationType();setWorkFlowInfo(this);return submitMsg();doLoadingMask();" /></td>
+							<td><s:submit value="Forward" name="Forward"
+									id="Modify:Forward" method="forwardModify"
+									cssClass="buttonsubmit"
+									onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
+							<td><input type="button" name="button2" id="button2"
+								value="Close" class="button" onclick="window.close();" /></td>
+						</tr> --%>
 					
 				<%@ include file="../workflow/property-workflow.jsp"%>
-				<div class="buttonbottom" align="center">		   
-				 <s:submit value="Approve" name="Approve"
-								id="Modify:Approve" method="save" cssClass="buttonsubmit"
-								onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
+				<div class="buttonbottom" align="center">
+				 	<s:submit value="Approve" name="Approve"
+						id="Modify:Approve"  cssClass="buttonsubmit"
+						onclick="return onSubmit('modifyProperty-save.action');"/>
 				</div>
 			</div>
 			
