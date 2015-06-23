@@ -45,17 +45,18 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  * @Results( {
@@ -96,6 +97,9 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	protected WorkflowDetails workflowAction;
 	private WorkflowService<PropertyImpl> propertyWorkflowService;
 
+	@Autowired
+	protected EisCommonService eisCommonService;
+	 
 	@SkipValidation
 	@Override
 	public Object getModel() {
@@ -171,11 +175,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		LOGGER.debug("Entered into startWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("startWorkFlow: Workflow is starting for Property: "
 				+ workflowAction.getPropertyModel());
-		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-		Position position = null;
-		// propertyWorkflowService.start(workflowAction.getPropertyModel(),
-		// position, "Property Workflow Started");
+		Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 		workflowAction.getPropertyModel().transition().start().withOwner(position)
 				.withComments("Property Workflow Started");
 
@@ -189,11 +189,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EgovThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: "
 				+ workflowAction.getPropertyModel());
-		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-		Position position = null;
-		// propertyWorkflowService.end(workflowAction.getPropertyModel(),
-		// position, "Property Workflow End");
+		Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 		workflowAction.getPropertyModel().transition(true).end().withOwner(position)
 				.withComments("Property Workflow End");
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");

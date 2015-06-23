@@ -140,7 +140,6 @@ import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
-import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -627,12 +626,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		oldProperty = (PropertyImpl) basicProp.getProperty();
 
 		// docs upload
-
-		if (getDocNumber() != null && !getDocNumber().equals("")) {
-			PropertyDocs pd = createPropertyDocs(basicProp, getDocNumber(), modifyRsn);
-			basicProp.addDocs(pd);
-		}
-
+		processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
 		if (propWF != null && propWF.getStatus().equals(STATUS_WORKFLOW)) {
 			propWF.setStatus(STATUS_ISHISTORY);
 			endWorkFlow(propWF);
@@ -933,11 +927,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			endWorkFlow(oldProperty);
 		}
 		// upload docs
-		if (propertyModel.getDocNumber() != null && !propertyModel.getDocNumber().equals("")) {
-			PropertyDocs pd = createPropertyDocs(basicProp, propertyModel.getDocNumber(),
-					modifyRsn);
-			basicProp.addDocs(pd);
-		}
+		processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(getModifyRsn())) {
 			updateAddress();
 			String[] addFields = propertyModel.getExtra_field6().split("\\|");
@@ -1948,22 +1938,18 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from createVoucher");
 	}
 
-	private PropertyDocs createPropertyDocs(BasicProperty basicProperty, String docNumber,
-			String modifyReason) {
-		PropertyDocs pd = new PropertyDocs();
-		pd.setDocNumber(docNumber);
-		pd.setBasicProperty(basicProperty);
+	private String getReason(String modifyReason) {
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
-			pd.setReason(DOCS_MODIFY_PROPERTY);
+			return DOCS_MODIFY_PROPERTY;
 		} else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
-			pd.setReason(DOCS_BIFURCATE_PROPERTY);
+			return DOCS_BIFURCATE_PROPERTY;
 		} else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
-			pd.setReason(DOCS_AMALGAMATE_PROPERTY);
+			return DOCS_AMALGAMATE_PROPERTY;
 		}
 
-		return pd;
+		return StringUtils.EMPTY;
 	}
 
 	private void transitionWorkFlow() {
@@ -2186,11 +2172,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (ASSISTANT_ROLE.equals(userRole)) {
 
 			PropertyImpl nonHistoryProperty = (PropertyImpl) basicProp.getProperty();
-			if (getDocNumber() != null && !getDocNumber().equals("")) {
-				PropertyDocs pd = createPropertyDocs(basicProp, getDocNumber(), modifyRsn);
-				basicProp.addDocs(pd);
-			}
-
+			processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
 			updateBasicPropForMigratedProp(getDocNumber(), nonHistoryProperty);
 			setAckMessage("Migrated Property updated Successfully in System with Index Number: ");
 

@@ -276,12 +276,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			basicProp.addPropertyStatusValues(propStatusVal);
 
 			// docs upload
-
-			if (getDocNumber() != null && !getDocNumber().equals("")) {
-				PropertyDocs pd = createPropertyDocs(basicProp, getDocNumber());
-				basicProp.addDocs(pd);
-			}
-
+			processAndStoreDocumentsWithReason(basicProp, DOCS_DEACTIVATE_PROPERTY);
 			basicProp = basicPrpertyService.update(basicProp);
 			LOGGER.debug("Exit from save method");
 		} catch (Exception e) {
@@ -397,10 +392,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			property.getBasicProperty().setActive(false);
 
 			// upload docs
-			if (property.getDocNumber() != null && !property.getDocNumber().equals("")) {
-				PropertyDocs pd = createPropertyDocs(basicProp, property.getDocNumber());
-				basicProp.addDocs(pd);
-			}
+			processAndStoreDocumentsWithReason(basicProp, DOCS_DEACTIVATE_PROPERTY);
 			basicProp = basicPrpertyService.update(basicProp);
 
 		} catch (Exception e) {
@@ -485,14 +477,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		}
 		super.validate();
 		LOGGER.debug("Exit from validate method");
-	}
-
-	private PropertyDocs createPropertyDocs(BasicProperty basicProperty, String docNumber) {
-		PropertyDocs pd = new PropertyDocs();
-		pd.setDocNumber(docNumber);
-		pd.setBasicProperty(basicProperty);
-		pd.setReason(DOCS_DEACTIVATE_PROPERTY);
-		return pd;
 	}
 
 	@Transactional

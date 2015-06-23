@@ -89,7 +89,7 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="transferProperty" name="transferform" theme="simple">
+			<s:form action="transferProperty" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
 				<s:token/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -260,7 +260,7 @@
 							
 						</td>
 						<td class="bluebox">
-							<input type="file" class="button" width="500px" value="Upload Document"/>
+							<input type="file" name="upload" class="button" width="500px" value="Upload Document"/>
 						</td>
 						<td class="bluebox" colspan="2">
 							&nbsp;

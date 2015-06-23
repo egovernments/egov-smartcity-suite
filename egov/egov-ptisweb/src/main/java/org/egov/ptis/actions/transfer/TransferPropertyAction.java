@@ -66,7 +66,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -80,7 +79,6 @@ import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
-import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -137,15 +135,12 @@ public class TransferPropertyAction extends WorkflowAction {
     private String statvalue;
     private String nextUser;
     private PropertyImpl nonHistProperty;
-    private String docNumber;
     private String transRsnId;
     private String ackMessage;
     private Integer idMutationMaster;
     private BillReceiptInfo billReceiptInfo;
     @Autowired
     private UserService UserService;
-    @Autowired
-    private EisCommonService eisCommonService;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -175,7 +170,7 @@ public class TransferPropertyAction extends WorkflowAction {
             // boolean dmdBalNotExist = checkForDemandBal();
             if (dmdBalNotExist) {
             populateExistingPropertyDetails();
-            setDocNumber(nonHistProperty.getDocNumber());
+           // setDocNumber(nonHistProperty.getDocNumber());
             target = "new";
         } else
             target = "balance";
@@ -203,11 +198,8 @@ public class TransferPropertyAction extends WorkflowAction {
             property.setStatus(STATUS_ISACTIVE);
             // docs upload
             final BasicProperty basicProperty = property.getBasicProperty();
-            if (property.getDocNumber() != null && !property.getDocNumber().equals("")) {
-                final PropertyDocs pd = createPropertyDocs(basicProperty, property.getDocNumber());
-                basicProperty.addDocs(pd);
-                basicPrpertyService.update(basicProperty);
-            }
+            processAndStoreDocumentsWithReason(basicProperty, DOCS_MUTATION_PROPERTY);
+            basicPrpertyService.update(basicProperty);
             final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
                     corrAddress2, corrPinCode, propertyOwnerProxy);
             for (final PropertyOwner owner : property.getPropertyOwnerSet())
@@ -236,13 +228,9 @@ public class TransferPropertyAction extends WorkflowAction {
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
         LOGGER.debug("save : BasicProperty : " + basicProp);
         // upload docs
-        if (getDocNumber() != null && !getDocNumber().equals("")) {
-            final PropertyDocs pd = createPropertyDocs(basicProp, getDocNumber());
-            basicProp.addDocs(pd);
-        }
-
+        processAndStoreDocumentsWithReason(basicProp, DOCS_MUTATION_PROPERTY);
         property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerProxy, chkIsCorrIsDiff,
-                corrAddress1, corrAddress2, corrPinCode, email, mobileNo, getDocNumber());
+                corrAddress1, corrAddress2, corrPinCode, email, mobileNo, "FIXME" );//FIXME getDocNumber());
         property.setStatus(STATUS_WORKFLOW);
         propertyMutation.setExtraField1(getWorkflowBean().getComments());
         propertyMutation.setOwnerNameOld(oldOwnerName);
@@ -288,7 +276,8 @@ public class TransferPropertyAction extends WorkflowAction {
         for (final PropertyMutation pm : propMutSet)
             pm1 = pm;
         setPropertyMutation(pm1);
-        setDocNumber(property.getDocNumber());
+        //FIXME
+        //setDocNumber(property.getDocNumber());
         LOGGER.debug("view : Property : " + property);
         LOGGER.debug("Exit from view method");
         if (PTCREATOR_ROLE.equals(userRole) && !currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
@@ -334,11 +323,13 @@ public class TransferPropertyAction extends WorkflowAction {
             final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
             LOGGER.debug("forward : BasicProperty : " + basicProp);
 
-            if (getDocNumber() != null && getDocNumber() != "")
+            /*
+             * FIXME
+             * if (getDocNumber() != null && getDocNumber() != "")
                 propDocNum = getDocNumber();
             else
                 propDocNum = basicProp.getProperty().getDocNumber();
-
+*/
             // if there is a workflow property then set the status as history
             if (getModelId() != null && !getModelId().equals("")) {
                 final PropertyImpl propWF = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -370,8 +361,10 @@ public class TransferPropertyAction extends WorkflowAction {
                     Long.valueOf(getModelId()));
             LOGGER.debug("forward : Property : " + property);
             final BasicProperty basicProp = property.getBasicProperty();
-            if (getDocNumber() != null && getDocNumber() != "")
-                property.setDocNumber(docNumber);
+            /*
+             * FIXME
+             * if (getDocNumber() != null && getDocNumber() != "")
+                property.setDocNumber(docNumber);*/
             final Set<PropertyMutation> propMutSet = basicProp.getPropMutationSet();
             for (final PropertyMutation pm : propMutSet)
                 if (pm.getId().equals(propertyMutation.getId())) {
@@ -531,15 +524,6 @@ public class TransferPropertyAction extends WorkflowAction {
 
         super.validate();
         LOGGER.debug("Exit from validate method");
-    }
-
-    private PropertyDocs createPropertyDocs(final BasicProperty basicProperty, final String docNumber) {
-        final PropertyDocs pd = new PropertyDocs();
-        pd.setDocNumber(docNumber);
-        pd.setBasicProperty(basicProperty);
-        pd.setReason(DOCS_MUTATION_PROPERTY);
-
-        return pd;
     }
 
     private void transitionWorkFlow() {
@@ -791,14 +775,6 @@ public class TransferPropertyAction extends WorkflowAction {
 
     public Address getCorrAddress() {
         return corrAddress;
-    }
-
-    public String getDocNumber() {
-        return docNumber;
-    }
-
-    public void setDocNumber(final String docNumber) {
-        this.docNumber = docNumber;
     }
 
     @Override

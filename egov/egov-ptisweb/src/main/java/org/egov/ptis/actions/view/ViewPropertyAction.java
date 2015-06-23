@@ -57,10 +57,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
@@ -228,7 +226,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			if (!getBasicProperty().getPropertyDocsSet().isEmpty()
 					&& getBasicProperty().getPropertyDocsSet() != null) {
 				for (PropertyDocs propDocs : getBasicProperty().getPropertyDocsSet()) {
-					setDocNumber(propDocs.getDocNumber());
+					setDocNumber(propDocs.getSupportDoc().getFileStoreId());
 				}
 			}
 			// setPropDocsSet(getBasicProperty().getPropertyDocsSet());

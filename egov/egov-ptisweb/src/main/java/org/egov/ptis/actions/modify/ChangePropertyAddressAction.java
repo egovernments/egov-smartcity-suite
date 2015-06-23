@@ -74,7 +74,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
-import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -200,10 +199,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		basicProperty.setAddress(address);
 
 		// docs upload
-		if (getDocNumber() != null && !getDocNumber().equals("")) {
-			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
-			basicProperty.addDocs(pd);
-		}
+		processAndStoreDocumentsWithReason(basicProperty, DOCS_ADDRESS_CHANGE_PROPERTY);
 
 		// propertyImplService.update(property);
 		basicProperty = basicPrpertyService.update(basicProperty);
@@ -307,11 +303,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			basicProperty.setAddress(address);
 
 			// upload docs
-			if (property.getDocNumber() != null && !property.getDocNumber().equals("")) {
-				PropertyDocs pd = createPropertyDocs(basicProperty, property.getDocNumber());
-				basicProperty.addDocs(pd);
-			}
-
+			processAndStoreDocumentsWithReason(basicProperty, DOCS_ADDRESS_CHANGE_PROPERTY);
 			propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
 			basicProperty = basicPrpertyService.update(basicProperty);
 
@@ -411,14 +403,6 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		LOGGER.debug("Exit from validate method");
 
-	}
-
-	private PropertyDocs createPropertyDocs(BasicProperty basicProperty, String docNumber) {
-		PropertyDocs pd = new PropertyDocs();
-		pd.setDocNumber(docNumber);
-		pd.setBasicProperty(basicProperty);
-		pd.setReason(DOCS_ADDRESS_CHANGE_PROPERTY);
-		return pd;
 	}
 
 	private void transitionWorkFlow() {

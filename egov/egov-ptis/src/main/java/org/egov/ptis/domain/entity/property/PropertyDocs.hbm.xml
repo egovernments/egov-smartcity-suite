@@ -51,11 +51,6 @@
 			</generator>
 		</id>
 		<property name="modifiedDate" column="MODIFIED_DATE" />  
-		<property
-			name="docNumber"
-			column="DOC_NUMBER"
-			type="string"
-		/>
 		
 		<property
 			name="reason"
@@ -67,6 +62,8 @@
         </many-to-one>
 			
 		<property name="createdDate" column="CREATED_DATE" update="false"/>  
-		
+		<many-to-one name="supportDoc" class="org.egov.infra.filestore.entity.FileStoreMapper" cascade="all">
+			<column name="supportDoc" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

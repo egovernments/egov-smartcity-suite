@@ -338,11 +338,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setUpicNo(indexNum);*/
 	    basicProperty.setUpicNo("1085001951");
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-	
-		if (isNotBlank(getDocNumber())) {		
-			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
-			basicProperty.addDocs(pd);
-		}
+		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
 		Assignment assignment = assignmentService.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
 		property.transition().start().withSenderName(securityUtils.getCurrentUser().getName())
 				.withComments("Property created with property id" + property.getBasicProperty().getUpicNo())
@@ -515,11 +511,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_CREATE);
 		}
 		
-		if (property.getDocNumber() != null && !property.getDocNumber().equals("")) {
-			PropertyDocs pd = createPropertyDocs(basicProp, property.getDocNumber());
-			basicProp.addDocs(pd);
-		}
-		
+		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
 		basicPrpertyService.update(basicProp);
 		transitionWorkFlow();
 		setAckMessage("Property Created Successfully in System with Index Number : ");
@@ -544,14 +536,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("reject: Property rejection ended");
 		
 		return RESULT_ACK;
-	}
-
-	private PropertyDocs createPropertyDocs(BasicProperty basicProperty, String docNumber) {
-		PropertyDocs pd = new PropertyDocs();
-		pd.setDocNumber(docNumber);
-		pd.setBasicProperty(basicProperty);
-		pd.setReason(DOCS_CREATE_PROPERTY);
-		return pd;
 	}
 
 	private boolean checkCorrespondingAddress() {
