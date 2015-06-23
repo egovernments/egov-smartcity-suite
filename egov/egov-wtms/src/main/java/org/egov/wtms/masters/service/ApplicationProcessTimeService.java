@@ -75,11 +75,11 @@ public class ApplicationProcessTimeService {
 
     @Transactional
     public void updateApplicationProcessTime(final ApplicationProcessTime applicationProcessTime) {
-    	applicationProcessTimeRepository.save(applicationProcessTime);
+        applicationProcessTimeRepository.save(applicationProcessTime);
     }
 
     public List<ApplicationProcessTime> findAll() {
-        return applicationProcessTimeRepository.findAll(new Sort(Sort.Direction.ASC, "applicationType","category"));
+        return applicationProcessTimeRepository.findAll(new Sort(Sort.Direction.ASC, "applicationType", "category"));
     }
 
     public List<ApplicationProcessTime> findByApplicationType(final ApplicationType applicationType) {
@@ -94,13 +94,25 @@ public class ApplicationProcessTimeService {
         return applicationProcessTimeRepository.getOne(id);
     }
 
-    public Page<ApplicationProcessTime> getListOfApplicationProcessTime(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "applicationType", "category");
+    public Page<ApplicationProcessTime> getListOfApplicationProcessTime(final Integer pageNumber,
+            final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "applicationType",
+                "category");
         return applicationProcessTimeRepository.findAll(pageable);
     }
 
-    public ApplicationProcessTime findByApplicationTypeandCategory(final ApplicationType applicationType, final ConnectionCategory category) {
-    	return applicationProcessTimeRepository.findByApplicationTypeAndCategory(applicationType,category);
+    public ApplicationProcessTime findByApplicationTypeandCategory(final ApplicationType applicationType,
+            final ConnectionCategory category) {
+        return applicationProcessTimeRepository.findByApplicationTypeAndCategory(applicationType, category);
     }
 
- }
+    public Integer getApplicationProcessTime(final ApplicationType applicationType, final ConnectionCategory category) {
+        final ApplicationProcessTime applicationProcessTime = applicationProcessTimeRepository
+                .findByActiveTrueAndApplicationTypeAndCategory(applicationType, category);
+        if (applicationProcessTime != null)
+            return applicationProcessTime.getProcessingTime();
+        else
+            return null;
+    }
+
+}

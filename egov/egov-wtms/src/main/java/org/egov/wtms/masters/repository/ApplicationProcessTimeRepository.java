@@ -50,8 +50,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationProcessTimeRepository extends JpaRepository<ApplicationProcessTime, Long> {
 
-	List<ApplicationProcessTime> findByApplicationType(ApplicationType applicationType);
-	List<ApplicationProcessTime> findByCategory(ConnectionCategory category);
-	ApplicationProcessTime findByApplicationTypeAndCategory(ApplicationType applicationType,ConnectionCategory category);
+    List<ApplicationProcessTime> findByApplicationType(ApplicationType applicationType);
+
+    List<ApplicationProcessTime> findByCategory(ConnectionCategory category);
+
+    ApplicationProcessTime findByApplicationTypeAndCategory(ApplicationType applicationType,
+            ConnectionCategory category);
+
+    ApplicationProcessTime findByActiveTrueAndApplicationTypeAndCategory(ApplicationType applicationType,
+            ConnectionCategory category);
 
 }

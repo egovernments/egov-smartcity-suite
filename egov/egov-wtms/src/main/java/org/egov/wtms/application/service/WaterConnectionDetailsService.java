@@ -40,17 +40,18 @@
 package org.egov.wtms.application.service;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,7 +73,7 @@ public class WaterConnectionDetailsService {
     private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
-    private SecurityUtils securityUtils;
+    private ApplicationProcessTimeService applicationProcessTimeService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -107,12 +108,18 @@ public class WaterConnectionDetailsService {
         // TODO - Application number logic needs to be confirmed by BA
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
-        securityUtils.getCurrentUser();
 
         if (waterConnectionDetails.getState() != null
                 && waterConnectionDetails.getState().getValue().equals("APPROVED"))
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-
+        final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
+        if (appProcessTime != null) {
+            final Calendar c = Calendar.getInstance();
+            c.setTime(waterConnectionDetails.getApplicationDate());
+            c.add(Calendar.DATE, appProcessTime);
+            waterConnectionDetails.setDisposalDate(c.getTime());
+        }
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         return savedWaterConnectionDetails;
