@@ -157,27 +157,27 @@
 
 	<filter-mapping>
 		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Prepare</filter-name>
@@ -282,4 +282,26 @@
 		</cookie-config>
 		<tracking-mode>COOKIE</tracking-mode>
 	</session-config>
+	
+	<!-- RESTFUL WEBSERVICE START -->
+	
+	<servlet>
+		<servlet-name>ptisRestServlet</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>org.egov.ptis</param-value>
+		</init-param>
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ptisRestServlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- RESTFUL WEBSERVICE END -->
+	
 </web-app>
