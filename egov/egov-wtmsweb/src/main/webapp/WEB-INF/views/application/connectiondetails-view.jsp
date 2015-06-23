@@ -40,62 +40,71 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div id="main">
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<spring:message code="msg.newconnection.ack.success" /> <span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span> on 
-					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></strong>
-						
+				<div class="panel-title">
+					<spring:message code="lbl.connection.details"/>
 				</div>
 			</div>
-				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
-		</div>
-			
+			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.category"/>
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<strong><c:out value="${waterConnectionDetails.category.name}" /></strong>
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.watersourcetype"/>
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<strong><c:out value="${waterConnectionDetails.waterSource.code}" /></strong>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.hscpipesize.inches" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<strong><c:out value="${waterConnectionDetails.pipeSize.code}" /></strong>
+					</div>
+				
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.sumpcapacity.litres" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<strong><c:out value="${waterConnectionDetails.sumpCapacity}" /></strong>
+					</div>
+				</div>
+			</div>
 		</div>					
-</div>
-<jsp:include page="connectiondetails-view.jsp"></jsp:include>
-<div class="row">
-<div class="col-md-12">
-	<div class="panel panel-default" data-collapsed="0">
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.disposal.date" />
-				</div>
-				<div class="col-xs-3 add-margin view-content">
-					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" /></strong>
-				</div>
-			</div>
-			<div class="row text-right">
-				<div class="col-xs-12 view-content">
-					Signature<br>Service Center Assistant<br>Andhra Municipality
-				</div>
-			</div>
-		</div>
-	</div>					
-</div>
-</div>
-</div>
-<div class="row text-center">
-	<div class="add-margin">
-		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
-		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>
-
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.slno" /></th>
+				<th><spring:message code="lbl.documentname" /></th>
+				<th><spring:message code="lbl.documentnumber" /></th>
+				<th><spring:message code="lbl.documentdate" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>Mohammed Aslam AR</td>
+				<td>4560</td>
+				<td>23/01/2014</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Dinesh</td>
+				<td>6541</td>
+				<td>23/01/2014</td>
+			</tr>
+		</tbody>
+	</table>
 <script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
-<script type="text/javascript">
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
-</script>
