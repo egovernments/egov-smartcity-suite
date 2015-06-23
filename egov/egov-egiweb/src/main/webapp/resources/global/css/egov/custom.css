@@ -1750,10 +1750,13 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .multilevelpushmenu_wrapper a {
-	font-size: 14px;
+	font-size: 13px;
 	padding:5px 10px;
 	vertical-align: top;
 }
+
+.multilevelpushmenu_wrapper a[href$='javascript:void(0);'] { font-size:14px}
+.multilevelpushmenu_wrapper a[href$='#'] { font-size:14px}
 
 .home-container{
 	display:block;

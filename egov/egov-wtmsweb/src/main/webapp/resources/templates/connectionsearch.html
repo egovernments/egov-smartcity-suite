@@ -75,7 +75,7 @@
 								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
 									
-									<span class="title2">New Water Tap Connection Application Acknowledgement</span>
+									<span class="title2">Search Connection</span>
 								</div>
 							</a>
 						</div>
@@ -101,205 +101,97 @@
 							<div class="panel panel-primary" data-collapsed="0">
 								
 								<div class="panel-heading">
-									<div class="panel-title text-center no-float">
-										Application for new water tap connection received and registered with 
-										<div>Acknowledgement number : <span id="ctn_no">A23XDER!</span> from sri/smt Aslam as on 31/01/2014</div>
-									</div>
-									
-								</div>
-								<div class="panel-body">
-									
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Consumer No.
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											45906
-										</div>
-										<div class="col-xs-3 add-margin">
-											PT Assessment Number 
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											2341.56
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Name  
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Manu Srivastava
-										</div>
-										<div class="col-xs-3 add-margin">
-											Mobile 
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											8908908908
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Address
-										</div>
-										<div class="col-xs-9 add-margin view-content">
-											81 Eidhuga street, Near Sandhai Pet, B.P.Agraharam, Erode - 638005
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Connection Type 
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Meter Connection
-										</div>
-									
-										<div class="col-xs-3 add-margin">
-											Usage Type
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Commercial
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Zone/Ward/Block
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Zone1
-										</div>
-										<div class="col-xs-3 add-margin">
-											Property Tax Due
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											45906
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-xs-3 add-margin">
-											Current Water Tax Due
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											45906
-										</div>
-										<div class="col-xs-3 add-margin">
-											Arrear Water Tax Due
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											2341.56
-										</div>
-									</div>
-								</div>
-							</div>					
-						</div>
-				</div>
-
-				<div class="row">
-						<div class="col-md-12">
-							<div class="panel panel-primary" data-collapsed="0">
-								
-								<div class="panel-heading">
 									<div class="panel-title">
-										Connection Details
+										Search Connection
 									</div>
 									
 								</div>
-								<div class="panel-body">
-									<div class="row add-border">
-											<div class="col-xs-3 add-margin">
-												Building Permission No.
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered" method="POST">
+										<!--div class="form-group">
+											<div class="col-md-6 add-margin">
+												<input type="text" name="" class="form-control" id="ct-search" placeholder="Search consumer no. , name, mobile no." />
 											</div>
-											<div class="col-xs-3 add-margin view-content">
-												12543
+										
+											<div class="col-md-6 add-margin">
+												<input type="text" name="" class="form-control" id="ct-location" placeholder="Address" />
 											</div>
-									</div>
-								
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Category
+										</div-->
+										<div class="form-group">
+											<label for="field-1" class="col-sm-4 control-label">Consumer No.</label>
+				
+											<div class="col-sm-4 add-margin">
+												<input type="text" class="form-control">
+											</div>
+				
 										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Commercial
+										<div class="form-group">
+											<label for="field-1" class="col-sm-4 control-label">Mobile</label>
+				
+											<div class="col-sm-4 add-margin">
+												<input type="text" class="form-control">
+											</div>
+				
 										</div>
-										<div class="col-xs-3 add-margin">
-											Water Source Type 
+										<div class="form-group">
+											<label for="field-1" class="col-sm-4 control-label">Name</label>
+				
+											<div class="col-sm-4 add-margin">
+												<input type="text" class="form-control">
+											</div>
+				
 										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Ground Water
+										<div class="form-group">
+											<label for="field-1" class="col-sm-4 control-label">Locality</label>
+				
+											<div class="col-sm-4 add-margin">
+												<input type="text" class="form-control">
+											</div>
+				
 										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-xs-3 add-margin">
-											H.S.C Pipe Size (Inches)
+										<div class="form-group">
+											<div class="text-center">
+												<button type="submit" class="btn btn-primary">Search</button>
+												<button class="btn btn-danger" type="reset">Reset</button>
+												<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+											</div>
 										</div>
-										<div class="col-xs-3 add-margin view-content">
-											1/2 Inch
-										</div>
-										<div class="col-xs-3 add-margin">
-											Sump Capacity (Litres) 
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											12.56
-										</div>
-									</div>
+									</form>
 								</div>
 							</div>					
 						</div>
 				</div>
-
+				<h4>The Search result is</h4>
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th>S. No.</th>
-							<th>Document Name</th>
-							<th>Document Number</th>
-							<th>Document Date</th>
+							<th>Consumer No.</th>
+							<th>Name</th>
+							<th style="width:30%">Address</th>
+							<th>Usage Type</th>
+							<th>Total Due</th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>1</td>
-							<td>Mohammed Aslam AR</td>
-							<td>4560</td>
-							<td>23/01/2014</td>
+							<td>45906</td>
+							<td>Manu</td>
+							<td>81 Eidhuga street, Near Sandhai Pet, B.P.Agraharam, Erode - 638005</td>
+							<td>Used</td>
+							<td>234500</td>
+							<td><select class="dropchange"><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select></td>
 						</tr>
 						<tr>
-							<td>2</td>
+							<td>3456789</td>
 							<td>Dinesh</td>
-							<td>6541</td>
-							<td>23/01/2014</td>
+							<td>203/1 , Ashokapuram, Erode - 638004</td>
+							<td>Used</td>
+							<td>234500</td>
+							<td><select class="dropchange"><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select></td>
 						</tr>
 					</tbody>
 				</table>
-				<div class="row">
-						<div class="col-md-12">
-							<div class="panel panel-default" data-collapsed="0">
-								<div class="panel-body">
-									<div class="row">
-										<div class="col-md-3 col-xs-3 add-margin">
-											Probable Disposal on
-										</div>
-										<div class="col-md-3 col-xs-3 add-margin view-content">
-											29/01/2014
-										</div>
-									</div>
-									<div class="row text-right">
-										<div class="col-md-12 col-xs-12 view-content">
-											Signature<br>Service Center Assistant<br>Andhra Municipality
-										</div>
-									</div>
-								</div>
-							</div>					
-						</div>
-				</div>
-
-				<div class="row text-center">
-					<div class="add-margin">
-						<button type="submit" class="btn btn-default" onclick="window.print()">Print</button>
-						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
-					</div>
-				</div>
-
 			</div>
 			<footer class="main">
 					
@@ -307,6 +199,21 @@
 					
 			</footer> 
 		</div>
+	<script>
+		$('.dropchange').change(function(){
+			 if( this.value == 0){
+				window.location.href="applyforadditionalconnection.html"
+			}else if( this.value == 2){
+				window.location.href="closingwatertap.html"
+			}else if( this.value == 6){
+				window.location.href="disconnectionotice.html"
+			}else if( this.value == 1){
+				window.location.href="changeofuse.html"
+			}else if( this.value == 3){
+				window.location.href="reconnection.html"
+			}
+		});
+	</script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	</body>
