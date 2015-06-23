@@ -48,6 +48,7 @@
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span><a
 			onclick="openWindow('UsageMaster.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
+		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Width" /></th>
@@ -108,6 +109,16 @@
 						cssClass="selectnew"
 						onchange="resetDetailsForTenant(this); toggleDisplayOfRentAgreementFields(this);"
 						cssStyle="width:100%" />
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantname"
+						id="width" size="20" maxlength="20"
+						cssStyle="width:100%" />
+					
 				</div>
 			</td>
 
@@ -284,6 +295,17 @@
 							cssStyle="width:100%" />
 					</div>
 				</td>
+				
+				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
+						
+						<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantname"
+							id="width" size="25" maxlength="25"
+							cssStyle="width:100%" />
+						
+					</div>
+				</td>
+				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:select headerKey="-1"
