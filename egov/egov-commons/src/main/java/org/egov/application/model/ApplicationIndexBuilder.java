@@ -39,7 +39,9 @@
  */
 package org.egov.application.model;
 
-import org.joda.time.DateTime;
+import java.util.Date;
+
+import org.egov.exceptions.EGOVRuntimeException;
 
 /**
  * Builder class for Application Index
@@ -51,7 +53,7 @@ public class ApplicationIndexBuilder {
 
 	private ApplicationIndex applicationIndex;
 
-	public ApplicationIndexBuilder(String applicationNumber, DateTime applicationDate, String applicationType, String applicantName, String status, String url) {
+	public ApplicationIndexBuilder(String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
 		applicationIndex =  new ApplicationIndex();
 		applicationIndex.setApplicationNumber(applicationNumber);
 		applicationIndex.setApplicationDate(applicationDate);
@@ -66,7 +68,7 @@ public class ApplicationIndexBuilder {
 		return this;
 	}
 	
-	public ApplicationIndexBuilder disposalDate(DateTime disposalDate) {
+	public ApplicationIndexBuilder disposalDate(Date disposalDate) {
 		applicationIndex.setDisposalDate(disposalDate);
 		return this;
 	}
@@ -74,5 +76,31 @@ public class ApplicationIndexBuilder {
 	public ApplicationIndexBuilder consumerCode(String consumerCode) {
 		applicationIndex.setConsumerCode(consumerCode);
 		return this;
+	}
+	
+	public ApplicationIndex build() throws EGOVRuntimeException {
+		validate();
+		return applicationIndex;
+	}
+
+	private void validate() throws EGOVRuntimeException {
+		if (applicationIndex.getApplicationNumber() == null) {
+			throw new EGOVRuntimeException("Application Number is mandatory");
+		}
+		if (applicationIndex.getApplicationDate() == null) {
+			throw new EGOVRuntimeException("Application Date is mandatory");
+		}
+		if (applicationIndex.getApplicationType() == null) {
+			throw new EGOVRuntimeException("Application Type is mandatory");
+		}
+		if (applicationIndex.getApplicantName() == null) {
+			throw new EGOVRuntimeException("Applicant Name is mandatory");
+		}
+		if (applicationIndex.getStatus() == null) {
+			throw new EGOVRuntimeException("Application Status is mandatory");
+		}
+		if (applicationIndex.getUrl() == null) {
+			throw new EGOVRuntimeException("URL is required");
+		}
 	}
 }

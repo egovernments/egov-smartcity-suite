@@ -39,9 +39,10 @@
  */
 package org.egov.application.model;
 
+import java.util.Date;
+
 import org.egov.infra.search.elastic.Indexable;
 import org.egov.search.domain.Searchable;
-import org.joda.time.DateTime;
 
 public class ApplicationIndex implements Indexable {
 
@@ -51,7 +52,7 @@ public class ApplicationIndex implements Indexable {
 	private String applicationNumber;
 
 	@Searchable(name = "applicationdate")
-	private DateTime applicationDate;
+	private Date applicationDate;
 
 	@Searchable(name = "applicationtype")
 	private String applicationType;
@@ -61,7 +62,7 @@ public class ApplicationIndex implements Indexable {
 
 	private String applicantAddress;
 
-	private DateTime disposalDate;
+	private Date disposalDate;
 
 	@Searchable(name = "uldcode")
 	private String ulbCode;
@@ -93,11 +94,11 @@ public class ApplicationIndex implements Indexable {
 		this.applicationNumber = applicationNumber;
 	}
 
-	public DateTime getApplicationDate() {
+	public Date getApplicationDate() {
 		return applicationDate;
 	}
 
-	public void setApplicationDate(DateTime applicationDate) {
+	public void setApplicationDate(Date applicationDate) {
 		this.applicationDate = applicationDate;
 	}
 
@@ -125,11 +126,11 @@ public class ApplicationIndex implements Indexable {
 		this.applicantAddress = applicantAddress;
 	}
 
-	public DateTime getDisposalDate() {
+	public Date getDisposalDate() {
 		return disposalDate;
 	}
 
-	public void setDisposalDate(DateTime disposalDate) {
+	public void setDisposalDate(Date disposalDate) {
 		this.disposalDate = disposalDate;
 	}
 
