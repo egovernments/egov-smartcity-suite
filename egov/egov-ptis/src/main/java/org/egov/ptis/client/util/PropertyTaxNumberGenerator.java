@@ -52,12 +52,12 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +70,9 @@ public class PropertyTaxNumberGenerator {
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
+	
+	@Autowired
+	private ApplicationNumberGenerator applicationNumberGenerator;
 
 	public String generateNoticeNumber(String noticeType) {
 		StringBuffer noticeNo = new StringBuffer();
@@ -230,12 +233,7 @@ public class PropertyTaxNumberGenerator {
 	}
 
 	public String generateNameTransApplNo(Boundary wardBndry) {
-		StringBuffer applNum = new StringBuffer();
-		applNum.append(wardBndry.getBoundaryNum().toString());
-		Long index = sequenceNumberGenerator.getNextNumber(
-				PropertyTaxConstants.MUTATIONAPPLNO_SEQ_STR).getNumber();
-		applNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));
-		return applNum.toString();
+		return applicationNumberGenerator.generate();
 	}
 
 	public String generateMemoNumber() {

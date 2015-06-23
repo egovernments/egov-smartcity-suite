@@ -51,10 +51,10 @@
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
+			<column name="CREATED_DATE" />
 		</property>
 		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
+			<column name="MODIFIED_DATE" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
@@ -65,7 +65,7 @@
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 
-		<many-to-one name="propMutationMstr" column="ID_MUTATION"
+		<many-to-one name="propMutationMstr" column="mutationreason"
 			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" cascade="all"
 			unique="true" />
 
@@ -75,7 +75,7 @@
 		<property name="marketValue" column="MARKET_VALUE"/>
 		<property name="receiptNum" column="RECEIPT_NUMBER"/>
 		<property name="applicationNo" column="APPLICATION_NO" />
-		<property name="applicantName" column="APPLICANT_NAME"/>
+		<property name="applicantName" column="applicantname"/>
 		<property name="otherFee" column="OTHER_FEE"/>
 		<property name="noticeDate" column="NOTICE_DATE" />
 		<many-to-one name="applnStatus" column="ID_APPLN_STATUS"

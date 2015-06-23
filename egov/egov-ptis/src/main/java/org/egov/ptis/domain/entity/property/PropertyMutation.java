@@ -69,8 +69,6 @@ public class PropertyMutation extends BaseModel {
 	private EgwStatus applnStatus;
 	private String refPid;
 	private Set<PropertyMutationOwner> mutationOwnerSet = new HashSet<PropertyMutationOwner>();
-	private Date lastUpdatedTimeStamp;
-	private Date createTimeStamp;
 	private Integer userId;
 	private BigDecimal consTransfee;
 	private Character isTfPayable;
@@ -153,22 +151,6 @@ public class PropertyMutation extends BaseModel {
 
 	public void setMutationOwnerSet(Set<PropertyMutationOwner> mutationOwnerSet) {
 		this.mutationOwnerSet = mutationOwnerSet;
-	}
-
-	public Date getLastUpdatedTimeStamp() {
-		return lastUpdatedTimeStamp;
-	}
-
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-	}
-
-	public Date getCreateTimeStamp() {
-		return createTimeStamp;
-	}
-
-	public void setCreateTimeStamp(Date createTimeStamp) {
-		this.createTimeStamp = createTimeStamp;
 	}
 
 	public Integer getUserId() {

@@ -59,7 +59,6 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -192,8 +191,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	 */
 	public Set<PropertyOwner> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
 			String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
-		AddressType addrTypeMstr = (AddressType) trnsfOwnerPerService.find(
-				"from AddressTypeMaster where addressTypeName = ?", "OWNER_ADDR_TYPE");
 		Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 		Address ownerAddr = null;
@@ -205,7 +202,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			if (corrAddress2 != null && !corrAddress2.isEmpty()) {
 				corrAddress2 = propertyTaxUtil.antisamyHackReplace(corrAddress2);
 			}
-			ownerAddr.setType(addrTypeMstr);
 			ownerAddr.setLandmark(corrAddress1);
 			if (StringUtils.isNotEmpty(corrPinCode) || StringUtils.isNotBlank(corrPinCode)) {
 				ownerAddr.setPinCode(corrPinCode);
@@ -221,6 +217,11 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
 			newOwner.setName(ownerName);
 			newOwner.setOrderNo(orderNo);
+                        newOwner.setAadhaarNumber(owner.getAadhaarNumber());
+                        newOwner.setUsername(owner.getMobileNumber());
+                        newOwner.setMobileNumber(owner.getMobileNumber());
+                        newOwner.setEmailId(owner.getEmailId());
+                        newOwner.setPassword("NOT SET");
 			newOwner.addAddress(ownerAddr);
 			ownSet.add(newOwner);
 			orderNo++;
