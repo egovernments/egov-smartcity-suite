@@ -39,7 +39,9 @@
  ******************************************************************************/
 package org.egov.services.receipt;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.egov.egf.commons.EgovCommon;
@@ -110,5 +112,39 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	
     public void setEmployeeServiceOld(EmployeeServiceOld employeeServiceOld) {
         this.employeeServiceOld = employeeServiceOld;
+    }
+    //TODO : Need to move to collection
+    public HashMap<String, Object> getReceiptHeaderforDishonor(String mode, Long bankAccId,  Long bankId, String chequeDDNo,String chqueDDDate) {
+        final StringBuilder sb = new StringBuilder(300);
+        final List<Object> paramList = new ArrayList<Object>();
+        sb.append("from org.egov.collection.entity.ReceiptHeader rpt join "
+            + "rpt.receiptInstrument ih where ih.instrumentType.type=? "
+            + "and ((ih.isPayCheque=0 and ih.statusId.moduletype='Instrument' and ih.statusId.description='Deposited') or "
+            + "(ih.isPayCheque=1 and ih.statusId.moduletype='Instrument' and ih.statusId.description='New'))");
+        paramList.add(mode);
+        
+        if (bankAccId != null && bankAccId != 0) {
+            sb.append(" AND ih.bankAccountId.id=? ");
+            paramList.add(bankAccId);
+        }
+        if ((bankAccId == null || bankAccId == 0) && bankId != null
+                        && bankId != 0) {
+            sb.append(" AND ih.bankId.id=? ");
+            paramList.add(bankAccId);
+        }
+        if (!("").equals(chequeDDNo) && chequeDDNo!=null) {
+            sb.append(" AND ih.instrumentnumber=trim(?) ");
+            paramList.add(chequeDDNo);
+        }
+        if (!("").equals(chqueDDDate) && chqueDDDate!=null) {
+               sb.append(" AND ih.instrumentdate >= ? ");
+               paramList.add(chqueDDDate);
+        }
+        sb.append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
+   
+        HashMap<String, Object> searchQuery = new HashMap<String, Object>();
+        searchQuery.put("query", sb.toString());
+        searchQuery.put("paramList",paramList);
+        return searchQuery;
     }
 }
