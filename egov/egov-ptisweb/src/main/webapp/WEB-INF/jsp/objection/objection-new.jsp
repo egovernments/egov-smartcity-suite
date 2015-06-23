@@ -44,13 +44,14 @@
 
 <html>
 	<head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/objection.js"></script>
+		<script src="<c:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
 		<title><s:text name="recordObjection.title"></s:text></title>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
 		</script>
-		<link href="<c:url value='/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+	
 	</head>
 	<body class="yui-skin-sam">
 	<s:form action="objection" method="post" name="objectionViewForm" theme="simple">
