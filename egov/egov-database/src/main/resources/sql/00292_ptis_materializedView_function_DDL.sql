@@ -40,6 +40,7 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql;
 
+/*
 ------------ view egpt_mv_current_property ------------------ 
 CREATE MATERIALIZED VIEW egpt_mv_current_property AS
 SELECT bp.id as id_basic_property,
@@ -221,3 +222,4 @@ SELECT bp.id  AS basicpropertyid,
   AND propid.id                = bp.id_propertyid
   AND mv2.basicpropertyid   = bp.id
   AND dmdcalc.id_basic_property = bp.id;
+*/
