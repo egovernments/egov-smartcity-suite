@@ -75,7 +75,7 @@ import org.joda.time.DateTime;
  * @version 2.00
  * @see org.egov.ptis.domain.entity.property.Property
  */
-public class PropertyImpl extends StateAware implements Property,Auditable {
+public class PropertyImpl extends StateAware implements Property {
 	private static final Logger LOGGER = Logger.getLogger(PropertyImpl.class);
 	
 	private Long id;

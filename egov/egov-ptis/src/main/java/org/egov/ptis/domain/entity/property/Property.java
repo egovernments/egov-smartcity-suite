@@ -55,6 +55,7 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 import org.egov.portal.entity.Citizen;
@@ -68,7 +69,7 @@ import org.egov.portal.entity.Citizen;
  * @author Neetu
  * @version 2.00
  */
-public interface Property {
+public interface Property extends Auditable {
 
 	public User getCreatedBy();
 
