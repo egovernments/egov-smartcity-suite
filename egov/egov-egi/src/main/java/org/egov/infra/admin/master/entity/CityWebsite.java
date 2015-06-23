@@ -100,6 +100,10 @@ public class CityWebsite extends AbstractAuditable {
 
     @NotBlank
     private String code;
+    
+    private String districtCode;
+    
+    private String districtName;
 
     @Override
     public Long getId() {
@@ -175,7 +179,23 @@ public class CityWebsite extends AbstractAuditable {
         this.code = code;
     }
 
-    @Override
+    public String getDistrictCode() {
+		return districtCode;
+	}
+
+	public void setDistrictCode(String districtCode) {
+		this.districtCode = districtCode;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

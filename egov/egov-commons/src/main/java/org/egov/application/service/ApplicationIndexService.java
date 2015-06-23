@@ -37,13 +37,41 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.config.search;
+package org.egov.application.service;
 
-public enum Index {
-    PGR,APPLICATION;
+import org.egov.application.model.ApplicationIndex;
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.search.elastic.annotation.Indexing;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
+/**
+ * Service for the Application Index
+ * 
+ * @author rishi
+ *
+ */
+@Service
+@Transactional(readOnly = true)
+public class ApplicationIndexService {
+
+	@Autowired
+    private CityWebsiteService cityWebsiteService;
+	
+	@Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
+	public ApplicationIndex createApplicationIndex(ApplicationIndex applicationIndex) {
+		
+		CityWebsite cityWebsite = cityWebsiteService.getCityWebsiteByCode(EgovThreadLocals.getCityCode());
+		applicationIndex.setIndexId(applicationIndex.getApplicationNumber().concat(cityWebsite.getCode()));
+		applicationIndex.setUlbCode(cityWebsite.getCode());
+		applicationIndex.setDistrictCode(cityWebsite.getDistrictCode());
+		return applicationIndex;
+		
+	}
+
 }

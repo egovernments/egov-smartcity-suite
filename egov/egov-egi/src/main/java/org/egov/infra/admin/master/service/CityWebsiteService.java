@@ -80,4 +80,9 @@ public class CityWebsiteService {
     public CityWebsite getCityWebsiteByCityName(String cityName) {
         return cityWebsiteRepository.findByCityName(cityName);   
     }
+    
+    @Transactional
+    public CityWebsite getCityWebsiteByCode(String code) {
+        return cityWebsiteRepository.findByCode(code);   
+    }
 }

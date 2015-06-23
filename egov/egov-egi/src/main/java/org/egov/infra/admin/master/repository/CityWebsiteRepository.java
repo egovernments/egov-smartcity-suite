@@ -49,6 +49,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CityWebsiteRepository extends JpaRepository<CityWebsite, Long> {
+	
+	CityWebsite findByCode(String code);
     CityWebsite findByCityName(String cityName);
     List<CityWebsite> findByCityNameContainingIgnoreCase(String cityName);
     
