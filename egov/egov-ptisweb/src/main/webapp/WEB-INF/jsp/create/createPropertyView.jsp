@@ -426,7 +426,7 @@
 			<td class="bluebox">
 				<s:text name="Usage" />
 				<a onclick=openWindow('UsageMaster.jsp');> 
-					<img src="../image/help.gif" style="border: none" /> 
+					<img src="../resources/image/help.gif" style="border: none" /> 
 				</a> :
 			</td>
 			<td class="bluebox">

@@ -828,5 +828,11 @@ public class PropertyImpl extends StateAware implements Property {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    @Override
+    public String myLinkId() {
+    	return "/ptis/create/createProperty-view.action"+"?modelId="+getId();
+    	
+    }
 
 }

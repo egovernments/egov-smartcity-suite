@@ -78,6 +78,7 @@ public interface PropertyTaxConstants {
 	
 	//Workflow statuses
 	public static final String PROPERTY_STATUS_WORKFLOW = "WORKFLOW";
+	public static final String PROPERTY_STATUS_APPROVEL_PENDING = "APPROVAL PENDING";
 	public static final String PROPERTY_STATUS_APPROVED = "APPROVED";
 
 	// Demand Category Constants used across Clients
@@ -674,6 +675,7 @@ public interface PropertyTaxConstants {
 	public static final String DEPT_CODE_TAX = "T";
 
 	// Roles
+	public static final String PROPERTY_CSC_OPERATOR = "CSC Operator";
 	public static final String ASSISTANT_ROLE = "ASSISTANT";
 	public static final String PTCREATOR_ROLE = "PTCreator";
 	public static final String PTVALIDATOR_ROLE = "PTValidator";

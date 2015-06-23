@@ -49,7 +49,7 @@
 		<title><s:text name='NewProp.title' />
 		</title>
 		<sx:head />
-		<script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script>
+		<!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 		
 		<script type="text/javascript">
 		jQuery.noConflict();
@@ -69,7 +69,12 @@
 			document.getElementById("chkIsCorrIsDiff").checked=true;
 	</s:if>
    }
-  
+
+ function onSubmit(obj) {
+		document.forms[0].action=obj;
+		document.forms[0].submit;
+	   return true;
+	}
  function generatenotice(){
 	doLoadingMask();
    	document.CreatePropertyForm.action="../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&isPreviewPVR=false";
@@ -159,7 +164,7 @@
 								</div>
 							</font>
 						</tr>
-						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 						<div class="buttonbottom" align="center">
 						<tr>
 							<s:if
@@ -181,25 +186,25 @@
 									<td>
 										<s:submit value="Approve" name="Approve" id='Create:Approve'
 											cssClass="buttonsubmit" method="approve"
-											onclick="setWorkFlowInfo(this);doLoadingMask();" />
+											onclick="return onSubmit('createProperty-approve.action');" />
 									</td>									
 									<s:if test="%{isApprPageReq}">
 										<td>
 											<s:submit value="Forward" name="Forward" id='Create:Forward'
 												cssClass="buttonsubmit" method="forward"
-												onclick="setWorkFlowInfo(this);doLoadingMask();" />
+												onclick="return onSubmit('createProperty-forward.action');" />
 										</td>
 									</s:if>																	
 									<td>
-										<s:submit value="Reject" name="Reject" id='Create:Reject'
+										<s:submit value="Reject" name="Reject" id='Reject'
 											cssClass="buttonsubmit" method="reject"
-											onclick="setWorkFlowInfo(this);doLoadingMask();" />
+											 onclick="return onSubmit('createProperty-reject.action');"/>
 									</td>	
-									<td>
+									<!-- <td>
 										<input type="button" name="PreviewPrativrutta"
 											id="PreviewPrativrutta" value="Preview Prativrutta"
 											class="button" onclick="return previewPrativrutta();" />
-									</td>
+									</td> -->
 							</s:else>
 									<td>
 										<input type="button" name="button2" id="button2" value="Close"

@@ -100,10 +100,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
-		"/workflow", "method", "workFlowError" }) })
+/*@Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
+		"/workflow", "method", "workFlowError" }) })*/
 @Namespace("/deactivate")
-@Transactional(readOnly = true)
 public class DeactivatePropertyAction extends WorkflowAction {
 
 	private BasicProperty basicProp;
