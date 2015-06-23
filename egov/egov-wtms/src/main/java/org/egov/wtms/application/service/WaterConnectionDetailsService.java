@@ -105,7 +105,6 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findAll(pageable);
     }
 
-    // TODO - Simple Save. Need to handle different use cases and validations
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
 

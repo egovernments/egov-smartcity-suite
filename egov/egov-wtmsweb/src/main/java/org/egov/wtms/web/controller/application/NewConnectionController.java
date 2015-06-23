@@ -79,7 +79,6 @@ public class NewConnectionController extends GenericConnectionController {
         return "newconnection-form";
     }
 
-    // TODO - Simple save. Need to handle validations and different use cases
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {

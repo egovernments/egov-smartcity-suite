@@ -84,7 +84,7 @@ public class WaterConnection extends AbstractAuditable {
 
     @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
-    @Length(max = 15)
+    @Length(min = 10, max = 15)
     private String mobileNumber;
 
     @SafeHtml

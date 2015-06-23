@@ -22,7 +22,7 @@ $(document).ready(function(){
 	var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 
 	//This will allow you to enter numbers and plus. (eg: data-pattern="mobilenumber")
-	var regexp_mobilenumber = /[^0-9+]/g ;
+	var regexp_mobilenumber = /[^0-9+-]/g ;
 
 	//This will allow you to enter numbers and dot. (eg: data-pattern="decimalvalue")
 	var regexp_decimalvalue = /[^0-9.]/g ;
