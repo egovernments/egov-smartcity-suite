@@ -237,7 +237,10 @@ public class Assignment extends AbstractAuditable {
     }
 
     public void setDeptSet(final List<HeadOfDepartments> deptSet) {
-        this.deptSet = deptSet;
+        this.deptSet.clear();
+        if(deptSet !=null ){
+            this.deptSet.addAll(deptSet);
+        }
     }
 
 }

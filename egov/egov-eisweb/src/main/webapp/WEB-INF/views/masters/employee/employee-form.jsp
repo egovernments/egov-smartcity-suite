@@ -163,7 +163,7 @@
 										</div>
 										
 										<div class="col-sm-3 add-margin">
-											<form:input id="DOB" path="dateOfBirth" type="text" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
+											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
 										</div>
 									</div>
 

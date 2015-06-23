@@ -89,9 +89,6 @@ public class Employee extends User {
     private String code;
     
     @Temporal(value = TemporalType.DATE)
-    private Date dateOfBirth;
-
-    @Temporal(value = TemporalType.DATE)
     private Date dateOfAppointment;
 
     @Temporal(value = TemporalType.DATE)
@@ -133,13 +130,6 @@ public class Employee extends User {
         this.dateOfAppointment = null == dateOfAppointment ? null : dateOfAppointment.toDate();
     }
 
-    public DateTime getDateOfBirth() {
-        return null == dateOfBirth ? null : new DateTime(dateOfBirth);
-    }
-
-    public void setDateOfBirth(final DateTime dateOfBirth) {
-        this.dateOfBirth = null == dateOfBirth ? null : dateOfBirth.toDate();
-    }
     public DateTime getDateOfRetirement() {
         return null == dateOfRetirement ? null : new DateTime(dateOfRetirement);
     }

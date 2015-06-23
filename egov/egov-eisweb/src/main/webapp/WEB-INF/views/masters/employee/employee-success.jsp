@@ -101,8 +101,8 @@
 											<spring:message code="lbl.DOB"/>
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin view-content">
-										<joda:format value="${employee.dateOfBirth}" var="DOB"
-											pattern="dd-MM-yyyy" />
+										<fmt:formatDate value="${employee.dob}" var="DOB"
+															pattern="dd/MM/yyyy" />
 											<c:out value="${DOB}"/>
 										</div>
 									</div>
