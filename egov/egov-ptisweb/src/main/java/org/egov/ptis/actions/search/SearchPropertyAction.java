@@ -94,18 +94,14 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
-@Transactional(readOnly = true)
 @Namespace("/search")
-@ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = NEW, location = "search/searchProperty-new.jsp") ,
-	@Result(name = "result", location = "/searchProperty-result.jsp") })
+@Results({ @Result(name = SearchPropertyAction.NEW, location = "searchProperty-new.jsp") ,
+	@Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	public static final String TARGET = "result";
