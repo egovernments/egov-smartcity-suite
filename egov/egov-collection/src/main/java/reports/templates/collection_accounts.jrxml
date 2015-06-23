@@ -38,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection_accounts" pageWidth="160" pageHeight="20" columnWidth="160" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection_accounts" language="groovy" pageWidth="160"   pageHeight="20" columnWidth="160" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<parameter name="EGOV_COLLECTIONHEADER_ID" class="java.math.BigDecimal">
 		<parameterDescription><![CDATA[Collection Header id]]></parameterDescription>
 		<defaultValueExpression><![CDATA[BigDecimal.valueOf(2354L)]]></defaultValueExpression>

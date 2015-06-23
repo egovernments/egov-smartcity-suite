@@ -49,8 +49,6 @@
 		<property name="userService" ref="userService" />
 		<property name="scriptService" ref="scriptService" />
 		<property name="beanProvider" ref="beanProvider" />
-		<property name="eisCommonsService" ref="eisCommonsService" />
-		<!-- <property name="searchPositionService" ref="searchPositionService" /> -->
 	</bean>
 	
 	<bean class="org.egov.collection.utils.CollectionsNumberGenerator"
@@ -83,9 +81,9 @@
 	</bean>
 	
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil" scope="prototype">
-		<!-- <property name="instrumentService" ref="instrumentService" />
+		<property name="instrumentService" ref="instrumentService" />
 		<property name="contraService" ref="contraService" />
-		<property name="voucherCreator" ref="voucherCreator" /> -->
+		<!-- <property name="voucherCreator" ref="voucherCreator" /> --> 
 	</bean>
 	
 	<bean id="collectionIntegrationService" 
@@ -100,6 +98,13 @@
 	
 	<!-- <bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
+    <bean id="CLCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
     </bean> -->
+    
+    	<bean id="PTCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
+    </bean>
 
 </beans>

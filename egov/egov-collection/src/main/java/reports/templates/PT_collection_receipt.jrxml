@@ -38,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt" language="groovy" pageWidth="595" pageHeight="800" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" resourceBundle="custom" whenResourceMissingType="Key">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt"  language="groovy" pageWidth="595" pageHeight="800" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" resourceBundle="custom" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="127"/>
@@ -48,7 +48,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/EclipseWorkspace/PTIS/modules/ptis/PTJAVA/src/reports/templates/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="EGOV_COLLECTIONS_UTIL" class="org.egov.erpcollection.util.CollectionsUtil" isForPrompting="false"/>
+	<parameter name="EGOV_COLLECTIONS_UTIL" class="org.egov.collection.util.CollectionsUtil" isForPrompting="false"/>
 	<field name="receiptNum" class="java.lang.String">
 		<fieldDescription><![CDATA[Receipt Number]]></fieldDescription>
 	</field>

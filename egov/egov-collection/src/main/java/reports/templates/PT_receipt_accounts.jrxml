@@ -38,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_receipt_accounts" language="groovy" pageWidth="488" pageHeight="800" columnWidth="488" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_receipt_accounts"  language="groovy" pageWidth="488" pageHeight="800" columnWidth="488" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="78"/>
@@ -46,11 +46,11 @@
 	<import value="java.math.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="java.util.Arrays"/>
-	<import value="org.egov.erpcollection.util.CollectionsUtil"/>
+	<import value="org.egov.collection.util.CollectionsUtil"/>
 	<style name="paddingStyle">
 		<box rightPadding="10"/>
 	</style>
-	<parameter name="EGOV_COLLECTIONS_UTIL" class="org.egov.erpcollection.util.CollectionsUtil" isForPrompting="false"/>
+	<parameter name="EGOV_COLLECTIONS_UTIL" class="org.egov.collection.util.CollectionsUtil" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>

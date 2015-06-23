@@ -93,8 +93,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 			setFundName(fund.getName());
 		}
 		String bankBranchQueryString="select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba," +
-		"EG_BANKACCOUNTSERVICEMAPPING asm,EG_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNTID=ba.ID and asm.SERVICEID=sd.ID and " +
-		"ba.BRANCHID=bb.ID and bb.BANKID=b.ID and fd.ID=ba.FUNDID and sd.SERVICENAME='"+serviceName+"' and fd.NAME='"+getFundName()+"'";
+		"EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and " +
+		"ba.BRANCHID=bb.ID and bb.BANKID=b.ID and fd.ID=ba.FUNDID and sd.NAME='"+serviceName+"' and fd.NAME='"+getFundName()+"'";
 
 		Query bankBranchQuery=HibernateUtil.getCurrentSession().createSQLQuery(bankBranchQueryString);
 		List<Object[]> queryResults=bankBranchQuery.list();
@@ -123,8 +123,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 			setFundName(fund.getName());
 		}
 		String bankAccountQueryString="select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba," +
-		"EG_BANKACCOUNTSERVICEMAPPING asm,EG_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNTID=ba.ID and asm.SERVICEID=sd.ID and fd.ID=ba.FUNDID and " +
-		"ba.BRANCHID="+branchId+" and sd.SERVICENAME='"+serviceName+"' and fd.NAME='"+fundName+"'";
+		"EG_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and " +
+		"ba.BRANCHID="+branchId+" and sd.NAME='"+serviceName+"' and fd.NAME='"+fundName+"'";
 		
 		Query bankAccountQuery=HibernateUtil.getCurrentSession().createSQLQuery(bankAccountQueryString);
 		List<Object[]> queryResults=bankAccountQuery.list();

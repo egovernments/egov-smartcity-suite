@@ -383,7 +383,7 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
         return listChartOfAcc;
     }
     
-    public List<CChartOfAccounts> getBankChartofAccountCodeList() {
+	public List<CChartOfAccounts> getBankChartofAccountCodeList() {
         return HibernateUtil.getCurrentSession().createQuery("select chartofaccounts from Bankaccount").setCacheable(true).list();
     }
 }

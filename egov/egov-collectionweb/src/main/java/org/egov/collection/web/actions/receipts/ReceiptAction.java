@@ -54,10 +54,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
@@ -75,6 +73,7 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccountDetail;
@@ -87,11 +86,22 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.BankBranchHibernateDAO;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.dao.SchemeHibernateDAO;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
@@ -101,18 +111,15 @@ import org.egov.infstr.utils.StringUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
-@Namespace("/receipts")
-@ResultPath("/WEB-INF/jsp/")
 @Results({
-    @Result(name=ReceiptAction.NEW,location="receipts/receipt-new.jsp")  ,
-    @Result(name=ReceiptAction.EDIT,location="receipts/receipt-edit.jsp"),
-    @Result(name=ReceiptAction.INDEX, location="receipts/receipt-index.jsp")
+    @Result(name=ReceiptAction.NEW,location="receipt-new.jsp")  ,
+    @Result(name=ReceiptAction.EDIT,location="receipt-edit.jsp"),
+    @Result(name=ReceiptAction.INDEX, location="receipt-index.jsp"),
+    @Result(name=CollectionConstants.REPORT,location="receipt-report.jsp")
   })
 public class ReceiptAction extends BaseFormAction {
 	private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
@@ -127,7 +134,6 @@ public class ReceiptAction extends BaseFormAction {
 	 * system
 	 */
 	private String collectXML;
-	private CommonsServiceImpl commonsServiceImpl;
 	private BillCollectXmlHandler xmlHandler;
 	private FinancialsUtil financialsUtil;
 
@@ -145,9 +151,6 @@ public class ReceiptAction extends BaseFormAction {
 
 	private ReceiptHeaderService receiptHeaderService;
 
-	/**
-	 * Collections utility object
-	 */
 	private CollectionsUtil collectionsUtil;
 
 	private List<ReceiptHeader> receiptHeaderValues = new ArrayList<ReceiptHeader>();
@@ -162,6 +165,7 @@ public class ReceiptAction extends BaseFormAction {
 	private String reasonForCancellation;
 	private String target = "view";
 	private String paidBy;
+	private ReceiptHeader receiptHeader;
 
 	/**
 	 * A <code>Long</code> value representing the receipt header id captured
@@ -231,7 +235,6 @@ public class ReceiptAction extends BaseFormAction {
 	 * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the
 	 * model for the action.
 	 */
-	//private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
 
 	private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
 
@@ -260,7 +263,40 @@ public class ReceiptAction extends BaseFormAction {
 
 	private ServiceDetails service;
 	
-	private List<CChartOfAccounts> bankCOAList =  FinancialsUtil.getBankChartofAccountCodeList();
+	@Autowired
+	private FundHibernateDAO fundDAO;
+	
+	@Autowired
+	private FunctionHibernateDAO functionDAO;
+	
+	@Autowired
+	private FunctionaryHibernateDAO functionaryDAO;
+	
+	@Autowired
+	private SchemeHibernateDAO schemeDAO;
+	
+	@Autowired
+	private FundSourceHibernateDAO fundSourceDAO;
+	
+	@Autowired
+	private BankBranchHibernateDAO bankBranchDAO;
+	
+	@Autowired
+	private BankHibernateDAO bankDAO;
+	
+	@Autowired
+	private BankaccountHibernateDAO bankAccountDAO;
+	
+	@Autowired
+	private SubSchemeHibernateDAO subSchemeDAO;
+	
+	@Autowired
+	private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+	
+	@Autowired
+	private EgwStatusHibernateDAO statusDAO;
+	
+	private List<CChartOfAccounts> bankCOAList;
 
 	@Override
 	public void prepare() {
@@ -270,10 +306,9 @@ public class ReceiptAction extends BaseFormAction {
 		if (getCollectXML() != null && !getCollectXML().equals("")) {
 			String decodedCollectXML = java.net.URLDecoder.decode(getCollectXML());
 			try {
-				//modelPayeeList.clear();
 				collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXML);
 
-				Fund fund = commonsServiceImpl.fundByCode(collDetails.getFundCode());
+				Fund fund = fundDAO.fundByCode(collDetails.getFundCode());
 				if (fund == null) {
 					addActionError(getText("billreceipt.improperbilldata.missingfund"));
 				}
@@ -288,7 +323,6 @@ public class ReceiptAction extends BaseFormAction {
 
 				ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
 						CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
-
 				setServiceName(service.getName());
 				setCollectionModesNotAllowed(collDetails.getCollectionModesNotAllowed());
 				setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
@@ -298,6 +332,8 @@ public class ReceiptAction extends BaseFormAction {
 
 				// populate bank account list
 				populateBankBranchList(true);
+				
+				receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
 
 				/*modelPayeeList = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
 				for (ReceiptPayeeDetails payeeDetails : modelPayeeList) {
@@ -356,7 +392,7 @@ public class ReceiptAction extends BaseFormAction {
 			// to load branch list and account list while returning after an
 			// error
 			if (getServiceName() != null && receiptMisc.getFund() != null) {
-				Fund fund = commonsServiceImpl.fundById(receiptMisc.getFund().getId());
+				Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
 				ajaxBankRemittanceAction.setFundName(fund.getName());
 				ajaxBankRemittanceAction.bankBranchList();
 				addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
@@ -364,7 +400,7 @@ public class ReceiptAction extends BaseFormAction {
 				// account list should be populated only if bank branch had been
 				// chosen
 				if (bankBranchId != null && bankBranchId != 0) {
-					Bankbranch branch = commonsServiceImpl.getBankbranchById(bankBranchId);
+					Bankbranch branch = (Bankbranch) bankBranchDAO.findById(bankBranchId, false);
 
 					ajaxBankRemittanceAction.setBranchId(branch.getId());
 					ajaxBankRemittanceAction.accountList();
@@ -446,19 +482,19 @@ public class ReceiptAction extends BaseFormAction {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setPartPaymentAllowed(false);
 		receiptHeader.setService(service);
-		Fund fund = commonsServiceImpl.fundById(receiptMisc.getFund().getId());
+		Fund fund = fundDAO.fundById(receiptMisc.getFund().getId());
 		Functionary functionary = null;
 		Scheme scheme = null;
 		SubScheme subscheme = null;
 		try {
 			if (receiptMisc.getIdFunctionary() != null ) {
-				functionary = commonsServiceImpl.getFunctionaryById(receiptMisc.getIdFunctionary().getId());
+				functionary = functionaryDAO.functionaryById(receiptMisc.getIdFunctionary().getId());
 			}
 			if (receiptMisc.getScheme() != null && receiptMisc.getScheme().getId() != -1) {
-				scheme = commonsServiceImpl.getSchemeById(receiptMisc.getScheme().getId());
+				scheme = schemeDAO.getSchemeById(receiptMisc.getScheme().getId());
 			}
 			if (receiptMisc.getSubscheme() != null && receiptMisc.getSubscheme().getId() != -1) {
-				subscheme = commonsServiceImpl.getSubSchemeById(receiptMisc.getSubscheme().getId());
+				subscheme = subSchemeDAO.getSubSchemeById(receiptMisc.getSubscheme().getId());
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error in getting functionary for id [" + receiptMisc.getIdFunctionary().getId() + "]", e);
@@ -466,7 +502,7 @@ public class ReceiptAction extends BaseFormAction {
 
 		Fundsource fundSource = null;
 		if (receiptMisc.getFundsource() != null && receiptMisc.getFundsource().getId() != null)
-			fundSource = commonsServiceImpl.fundsourceById(receiptMisc.getFundsource().getId());
+			fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId());
 		Department dept = (Department) getPersistenceService().findByNamedQuery(
 				CollectionConstants.QUERY_DEPARTMENT_BY_ID, Integer.valueOf(this.deptId));
 
@@ -483,10 +519,10 @@ public class ReceiptAction extends BaseFormAction {
 		if (validateData(billCreditDetailslist, subLedgerlist)) {
 
 			for (ReceiptDetailInfo voucherDetails : billCreditDetailslist) {
-				CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(voucherDetails.getGlcodeDetail());
+				CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails.getGlcodeDetail());
 				CFunction function = null;
 				if (voucherDetails.getFunctionIdDetail() != null) {
-					function = commonsServiceImpl.getFunctionById(voucherDetails.getFunctionIdDetail());
+					function = functionDAO.getFunctionById(voucherDetails.getFunctionIdDetail());
 				}
 				ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
 						voucherDetails.getCreditAmountDetail(), voucherDetails.getDebitAmountDetail(), BigDecimal.ZERO,
@@ -518,11 +554,11 @@ public class ReceiptAction extends BaseFormAction {
 
 				if (voucherDetails.getGlcodeDetail() != null
 						&& StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
-					CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(voucherDetails
+					CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails
 							.getGlcodeDetail());
 					CFunction function = null;
 					if (voucherDetails.getFunctionIdDetail() != null) {
-						function = commonsServiceImpl.getFunctionById(voucherDetails.getFunctionIdDetail());
+						function = functionDAO.getFunctionById(voucherDetails.getFunctionIdDetail());
 					}
 					ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
 							voucherDetails.getCreditAmountDetail(), voucherDetails.getDebitAmountDetail(),
@@ -600,7 +636,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * @return
 	 */
 	@ValidationErrorPage(value = "new")
-	@Transactional
+	@Action(value="/receipts/receipt-save")
 	public String save() {
 		LOGGER.info("Receipt creation process is started !!!!!!");
 		ReceiptHeader rhForValidation = null ;
@@ -644,10 +680,10 @@ public class ReceiptAction extends BaseFormAction {
 			// billing system
 			populateAndPersistReceipts();
 	
-			ReceiptHeader rh = null ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
+		//	ReceiptHeader rh = null ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
 			long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-			LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " + rh.getReceiptnumber()
-					+ (rh.getConsumerCode() != null ? " and consumer code: " + rh.getConsumerCode() : "")
+			LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " + receiptHeader.getReceiptnumber()
+					+ (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode() : "")
 					+ "; Time taken(ms) = " + elapsedTimeMillis);
 			// Do not invoke print receipt in case of bulk upload.
 			if (!receiptBulkUpload) {
@@ -802,13 +838,11 @@ public class ReceiptAction extends BaseFormAction {
 	 * to be shown on the print screen
 	 * 
 	 */
-	@Transactional
 	private void populateAndPersistReceipts() {
 		List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
 		int noOfNewlyCreatedReceipts = 0;
 		boolean setInstrument = true;
 		String serviceType = "";
-		ReceiptHeader receiptHeader = null;
 		//for (ReceiptPayeeDetails payee : modelPayeeList) {
 			//for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
 
@@ -820,18 +854,18 @@ public class ReceiptAction extends BaseFormAction {
 					// Set created by Date as this required to generate receipt
 					// number before persist
 					if (manualReceiptDate == null) {
-						receiptHeader.setCreatedDate(new DateTime());
+						receiptHeader.setReceiptdate(new DateTime());
 
 					} else {
 						// If the receipt has been manually created, the receipt
 						// date is same as the date of manual creation.
-						receiptHeader.setCreatedDate(manualReceiptDate);
 						// set Createdby, in MySavelistner if createdBy is null
 						// it set both createdBy and createdDate with
 						// currentDate.
 						// Thus overridding the manualReceiptDate set above
-						receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
+						//receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
 						receiptHeader.setManualreceiptdate(manualReceiptDate);
+						receiptHeader.setReceiptdate(manualReceiptDate);
 						receiptHeader.setVoucherDate(manualReceiptDate);
 					}
 					if (manualReceiptNumber != null) {
@@ -842,6 +876,7 @@ public class ReceiptAction extends BaseFormAction {
 						receiptHeader.setVoucherDate(voucherDate);
 						receiptHeader.setVoucherNum(voucherNum);
 						receiptHeader.setIsReconciled(Boolean.TRUE);
+						receiptHeader.setReceiptdate(manualReceiptDate);
 						receiptHeader.setManualreceiptdate(manualReceiptDate);
 
 					} else {
@@ -1008,7 +1043,7 @@ public class ReceiptAction extends BaseFormAction {
 			}
 			instrHeaderBank.setIsPayCheque(CollectionConstants.ZERO_INT);
 
-			Bankaccount account = commonsServiceImpl.getBankaccountById(bankAccountId);
+			Bankaccount account = (Bankaccount) bankAccountDAO.findById(bankAccountId,false);
 
 			instrHeaderBank.setBankAccountId(account);
 			instrHeaderBank.setBankBranchName(account.getBankbranch().getBranchname());
@@ -1059,8 +1094,8 @@ public class ReceiptAction extends BaseFormAction {
 						.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
 			}
 			if (instrumentHeader.getBankId() != null) {
-				instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId()
-						.getId())));
+				instrumentHeader.setBankId((Bank)bankDAO.findById(Integer.valueOf(instrumentHeader.getBankId()
+						.getId()), false));
 			}
 			chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
 			instrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
@@ -1079,7 +1114,7 @@ public class ReceiptAction extends BaseFormAction {
 	private void recreateNewReceiptOnCancellation() {
 		ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
 
-		receiptHeaderToBeCancelled.setStatus(commonsServiceImpl.getStatusByModuleAndCode(
+		receiptHeaderToBeCancelled.setStatus(statusDAO.getStatusByModuleAndCode(
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
 		receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
 		// set isReconciled to false before calling update to billing system for
@@ -1136,7 +1171,7 @@ public class ReceiptAction extends BaseFormAction {
 				.getReceiptMisc().getFundsource(), oldReceiptHeader.getReceiptMisc().getDepartment(), receiptHeader,
 				oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc().getSubscheme(),null);
 		receiptHeader.setReceiptMisc(receiptMisc);
-		
+		bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
 		for (ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails()) {
 			// debit account heads for revenue accounts should not be considered
 			if (oldDetail.getOrdernumber() != null && !financialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(),bankCOAList)) {
@@ -1233,7 +1268,7 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "error")
-	@Action(value="/receipts/receipt-cancel",results = { @Result(name = CANCEL,type="redirect")})
+	@Action(value="/receipts/receipt-cancel")
 	public String cancel() {
 		if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
 			receipts = new ReceiptHeader[selectedReceipts.length];
@@ -1251,7 +1286,6 @@ public class ReceiptAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
-	@Transactional
 	public String saveOnCancel() {
 		String instrumentType = "";
 		boolean isInstrumentDeposited = false;
@@ -1293,13 +1327,13 @@ public class ReceiptAction extends BaseFormAction {
 			// if instrument has not been deposited, cancel the old instrument,
 			// reverse the
 			// voucher and persist
-			receiptHeaderToBeCancelled.setStatus(commonsServiceImpl.getStatusByModuleAndCode(
+			receiptHeaderToBeCancelled.setStatus(statusDAO.getStatusByModuleAndCode(
 					CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
 			receiptHeaderToBeCancelled.setIsReconciled(false);
 			receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
 
 			for (InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument()) {
-				instrumentHeader.setStatusId(commonsServiceImpl.getStatusByModuleAndCode(
+				instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
 						CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
 						CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
 				instrumentType = instrumentHeader.getInstrumentType().getType();
@@ -1857,11 +1891,11 @@ public class ReceiptAction extends BaseFormAction {
 	public void setMandatoryFields(List<String> mandatoryFields) {
 		this.mandatoryFields = mandatoryFields;
 	}
-
+/*
 	public boolean isRevenueAccountHead(CChartOfAccounts coa) {
 		return financialsUtil.isRevenueAccountHead(coa, bankCOAList);
 	}
-
+*/
 	public Integer getBankBranchId() {
 		return bankBranchId;
 	}
@@ -1905,7 +1939,7 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	public Object getModel() {
-		return null;//modelPayeeList;
+		return receiptHeader;
 	}
 
 	public ReceiptHeader[] getReceipts() {
@@ -2014,4 +2048,11 @@ public class ReceiptAction extends BaseFormAction {
 		this.manualReceiptNumberAndDateReq = manualReceiptNumberAndDateReq;
 	}
 
+	public ReceiptHeader getReceiptHeader() {
+		return receiptHeader;
+	}
+
+	public void setReceiptHeader(ReceiptHeader receiptHeader) {
+		this.receiptHeader = receiptHeader;
+	}
 }

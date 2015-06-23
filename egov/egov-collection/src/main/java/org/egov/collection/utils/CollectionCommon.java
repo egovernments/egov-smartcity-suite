@@ -79,7 +79,12 @@ import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -93,6 +98,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
@@ -103,12 +109,24 @@ public class CollectionCommon {
     protected PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
 
-    private CommonsServiceImpl commonsServiceImpl;
     @Autowired
     private BoundaryService boundaryService; 
     private EgovCommon egovCommon;
     private CollectionsUtil collectionsUtil;
     private FinancialsUtil financialsUtil;
+	@Autowired
+	private FundSourceHibernateDAO fundSourceDAO;
+	@Autowired
+	private FunctionHibernateDAO functionDAO;
+	@Autowired
+	private BankHibernateDAO bankDAO;
+	@Autowired
+	private BankaccountHibernateDAO bankAccountDAO;
+	@Autowired
+	private EgwStatusHibernateDAO statusDAO;
+	@Autowired
+	private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+	
 
     /**
      * 
@@ -212,16 +230,14 @@ public class CollectionCommon {
     public ReceiptDetail addDebitAccountHeadDetails(BigDecimal debitAmount, ReceiptHeader receiptHeader,
             BigDecimal chequeInstrumenttotal, BigDecimal otherInstrumenttotal, String instrumentType) {
 
-        Map<String, Object> cashChequeInfoMap  = egovCommon.getCashChequeInfoForBoundary();
         ReceiptDetail newReceiptDetail = new ReceiptDetail();
         if (chequeInstrumenttotal.toString() != null
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
 
-            String chequeInHandGLCode = cashChequeInfoMap.get(CollectionConstants.MAP_KEY_EGOVCOMMON_CHEQUEINHAND)
-                    .toString();
-
-            newReceiptDetail.setAccounthead(commonsServiceImpl.getCChartOfAccountsByGlCode(chequeInHandGLCode));
+            newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                    CollectionConstants.INSTRUMENTTYPE_CHEQUE));
 
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.valueOf(0));
@@ -232,10 +248,9 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
         	if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
-                String cashInHandGLCode  = cashChequeInfoMap.get(CollectionConstants.MAP_KEY_EGOVCOMMON_CASHINHAND)
-                        .toString();
-                 
-                newReceiptDetail.setAccounthead(commonsServiceImpl.getCChartOfAccountsByGlCode(cashInHandGLCode));
+                newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                        CollectionConstants.INSTRUMENTTYPE_CASH));
             } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
                 newReceiptDetail
                         .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
@@ -261,7 +276,6 @@ public class CollectionCommon {
     /**
      * Updates the billing system with receipt information
      */
-    @Transactional
     public void updateBillingSystemWithReceiptInfo(ReceiptHeader receiptHeader) {
 
         String serviceCode = null;
@@ -309,48 +323,48 @@ public class CollectionCommon {
             }
         }
 
-  
-    	BillPayeeDetails billPayee = collDetails.getPayee();
-    	receiptHeader = new ReceiptHeader();
-        for (BillDetails billDetail : billPayee.getBillDetails()) {
-            ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
+        for (BillPayeeDetails billPayee : collDetails.getPayees()) {
+        	receiptHeader = new ReceiptHeader();
+            for (BillDetails billDetail : billPayee.getBillDetails()) {
+                ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
 
-            receiptHeader = new ReceiptHeader(billDetail.getRefNo(), billDetail.getBilldate(),
-                    billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
-                    billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(), collDetails
-                            .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
-                    collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),billPayee.getPayeeName(),billPayee.getPayeeAddress());
+                receiptHeader = new ReceiptHeader(billDetail.getRefNo(), new DateTime(billDetail.getBilldate()),
+                        billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
+                        billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(), collDetails
+                                .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
+                        collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),billPayee.getPayeeName(),billPayee.getPayeeAddress());
 
-            Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(Long.valueOf(billDetail.getBoundaryNum()), billDetail
-                    .getBoundaryType(), CollectionConstants.BOUNDARY_HIER_CODE_ADMIN);
+                Boundary boundary = boundaryService.getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(Long.valueOf(billDetail.getBoundaryNum()), billDetail
+                        .getBoundaryType(), CollectionConstants.BOUNDARY_HIER_CODE_ADMIN);
 
-            Functionary functionary = (Functionary) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_FUNCTIONARY_BY_CODE, collDetails.getFunctionaryCode());
-            Fundsource fundSource = commonsServiceImpl.getFundSourceByCode(collDetails.getFundSourceCode());
+                Functionary functionary = (Functionary) persistenceService.findByNamedQuery(
+                        CollectionConstants.QUERY_FUNCTIONARY_BY_CODE, collDetails.getFunctionaryCode());
+                Fundsource fundSource = fundSourceDAO.getFundSourceByCode(collDetails.getFundSourceCode());
 
-            ReceiptMisc receiptMisc = new ReceiptMisc(boundary, fund, functionary, fundSource, dept, receiptHeader,
-                    null, null,null);
-            receiptHeader.setReceiptMisc(receiptMisc);
+                ReceiptMisc receiptMisc = new ReceiptMisc(boundary, fund, functionary, fundSource, dept, receiptHeader,
+                        null, null,null);
+                receiptHeader.setReceiptMisc(receiptMisc);
 
-            BigDecimal totalAmountToBeCollected = BigDecimal.valueOf(0);
+                BigDecimal totalAmountToBeCollected = BigDecimal.valueOf(0);
 
-            Collections.sort(billDetail.getAccounts());
+                Collections.sort(billDetail.getAccounts());
 
-            for (BillAccountDetails billAccount : billDetail.getAccounts()) {
-                CChartOfAccounts account = null ;//= common.getCChartOfAccountsByGlCode(billAccount.getGlCode());
-                CFunction function = commonsServiceImpl.getFunctionByCode(billAccount.getFunctionCode());
-                if (billAccount.getIsActualDemand()) {
-					totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
-				}
-                ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
-                        .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
-                        Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
-                receiptHeader.addReceiptDetail(receiptDetail);
+                for (BillAccountDetails billAccount : billDetail.getAccounts()) {
+                    CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(billAccount.getGlCode());
+                    CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
+                    if (billAccount.getIsActualDemand()) {
+						totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
+					}
+                    ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
+                            .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
+                            Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
+                    receiptHeader.addReceiptDetail(receiptDetail);
+                }
+                receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
             }
-            receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
+            
         }
-
         return receiptHeader;
     }
 
@@ -471,15 +485,15 @@ public class CollectionCommon {
    /* *//**
      * @param egovCommon
      *            the egovCommon to set
-     *//*
+     */
     public void setEgovCommon(EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
-    }*/
+    }
 
     public List<ReceiptDetailInfo> setReceiptDetailsList(ReceiptHeader rh, String amountType) {
         // To Load receipt details to billDetailslist
         List<ReceiptDetailInfo> billDetailslist = new ArrayList<ReceiptDetailInfo>();
-        List<CChartOfAccounts> bankCOAList =  FinancialsUtil.getBankChartofAccountCodeList();
+        List<CChartOfAccounts> bankCOAList =  chartOfAccountsDAO.getBankChartofAccountCodeList();
         for (ReceiptDetail rDetails : rh.getReceiptDetails()) {
             if (!FinancialsUtil.isRevenueAccountHead(rDetails.getAccounthead(),bankCOAList)) {
                 ReceiptDetailInfo rInfo = new ReceiptDetailInfo();
@@ -607,7 +621,7 @@ public class CollectionCommon {
                 newReceiptHeader, null, null,null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
 
-        List<CChartOfAccounts> bankCOAList =  FinancialsUtil.getBankChartofAccountCodeList();
+        List<CChartOfAccounts> bankCOAList =  chartOfAccountsDAO.getBankChartofAccountCodeList();
         
         for (ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails()) {
             // debit account heads should not be considered
@@ -672,7 +686,7 @@ public class CollectionCommon {
         if (cancelInstrument) {
             for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
 
-                instrumentHeader.setStatusId(commonsServiceImpl.getStatusByModuleAndCode(
+                instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
 
@@ -821,7 +835,7 @@ public class CollectionCommon {
         if (paytInfoBank.getBankAccountId() == null) {
             invalidBankPaytMsg += "Missing Bank Account Id \n";
         } else {
-            account = commonsServiceImpl.getBankaccountById(paytInfoBank.getBankAccountId().intValue());
+            account = (Bankaccount) bankAccountDAO.findById(paytInfoBank.getBankAccountId().intValue(),false);
 
             if (account == null) {
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
@@ -881,7 +895,7 @@ public class CollectionCommon {
         }
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
-            bank = commonsServiceImpl.getBankById(paytInfoChequeDD.getBankId().intValue());
+            bank = (Bank) bankDAO.findById(paytInfoChequeDD.getBankId().intValue(),false);
             if (bank == null) {
                 invalidChequeDDPaytMsg += "No bank present for bank id [" + paytInfoChequeDD.getBankId() + "] \n";
             }

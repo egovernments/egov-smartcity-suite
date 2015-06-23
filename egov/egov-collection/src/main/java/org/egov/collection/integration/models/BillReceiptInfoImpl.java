@@ -72,7 +72,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 	 */
 	private String event;
 
-	private final Set<ReceiptAccountInfo> accountDetails = new HashSet<ReceiptAccountInfo>();
+	private final Set<ReceiptAccountInfo> accountDetails = new HashSet<ReceiptAccountInfo>(0);
 	private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>();
 
 	/**

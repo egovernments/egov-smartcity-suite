@@ -119,7 +119,7 @@ public final class CollectionConstants {
 	public static final String MODULE_NAME_RECEIPTHEADER= "ReceiptHeader";
 	public static final String MODULE_NAME_CHALLAN= "Challan";
 	public static final String MODULE_NAME_COLLECTIONS= "Collections";
-	public static final String MODULE_NAME_COLLECTIONS_CONFIG= "erpCollection";
+	public static final String MODULE_NAME_COLLECTIONS_CONFIG= "Collection";
 	public static final String MODULE_NAME_INSTRUMENTHEADER= "Instrument";	
 	public static final String MODULE_NAME_ONLINEPAYMENT= "OnlinePayment";
 	public static final String MODULE_NAME_PROPERTYTAX = "Property Tax";

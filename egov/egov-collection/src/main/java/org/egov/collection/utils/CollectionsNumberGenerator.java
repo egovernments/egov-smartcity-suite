@@ -39,6 +39,7 @@
  */
 package org.egov.collection.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +49,8 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceNumberGenerator;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class CollectionsNumberGenerator {
@@ -65,9 +68,11 @@ public class CollectionsNumberGenerator {
 	 */
 	public String generateReceiptNumber(ReceiptHeader receiptHeader){
 		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
-		return (String)scriptExecutionService.executeScript(CollectionConstants.SCRIPT_RECEIPTNUMBER_GENERERATOR, ScriptService.createContext(
-				"receiptHeader",receiptHeader,"finYear",financialYear,
-				"sequenceGenerator",sequenceGenerator));
+		DateTimeFormatter sdf =  DateTimeFormat.forPattern("MM");
+		String formattedDate = sdf.print(receiptHeader.getReceiptdate()); 
+		String strObj="RECEIPTHEADER_"+financialYear.getFinYearRange(); 
+		String result=formattedDate+'/'+financialYear.getFinYearRange()+'/'+sequenceGenerator.getNextNumber(strObj,0).getFormattedNumber();
+		return result;
 	}
 	
 	/**

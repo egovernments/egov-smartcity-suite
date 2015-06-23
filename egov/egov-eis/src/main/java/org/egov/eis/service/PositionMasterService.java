@@ -184,5 +184,10 @@ public class PositionMasterService {
 
         return positionList;
     }
+    
+    public Position getCurrentPositionForUser(final Long userId) {
+    	Assignment assign = assignmentService.getPriamryAssignmentForEmployee(userId);
+    	return assign.getPosition();
+    }
 
 }

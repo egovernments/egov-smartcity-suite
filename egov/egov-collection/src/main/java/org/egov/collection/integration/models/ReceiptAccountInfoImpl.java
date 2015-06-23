@@ -43,9 +43,12 @@ import java.math.BigDecimal;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Provides account information for receipts
  */
+
 public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 	/**
 	 * This is used to check if an account is a revenue account.
@@ -56,7 +59,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 	 * This is used by all public getters.
 	 */
 	private final ReceiptDetail receiptDetail;
-	
+		
 	/**
 	 * Creates the receipt account info for given receipt detail.
 	 * @param receiptDetail The receipt detail object

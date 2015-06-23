@@ -803,7 +803,7 @@ public class EgovCommon {
 
                 List<BoundaryType> listBoundType = (List<BoundaryType>) persistenceService
                                 .findAllBy(
-                                                "from BoundaryType where lower(name)=? and lower(heirarchyType.name)='administration'",
+                                                "from BoundaryType where lower(name)=? and lower(hierarchyType.name)='administration'",
                                                 boundaryTypeval.toLowerCase());
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("listBoundType size   = " + listBoundType.size());
                 Long boundaryTypeId = listBoundType.get(0).getId();

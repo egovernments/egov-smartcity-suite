@@ -137,7 +137,7 @@ public class ChallanAction extends BaseFormAction {
 	//Added for Challan Approval
 	private String challanId;
 	private String approvalRemarks;
-	private Integer positionUser;
+	private Long positionUser;
 	private Integer designationId;
 	
 	/**
@@ -1310,7 +1310,7 @@ public class ChallanAction extends BaseFormAction {
 	/**
 	 * @return the positionUser
 	 */
-	public Integer getPositionUser() {
+	public Long getPositionUser() {
 		return positionUser;
 	}
 
@@ -1318,7 +1318,7 @@ public class ChallanAction extends BaseFormAction {
 	/**
 	 * @param positionUser the positionUser to set
 	 */
-	public void setPositionUser(Integer positionUser) {
+	public void setPositionUser(Long positionUser) {
 		this.positionUser = positionUser;
 	}
 

@@ -69,7 +69,8 @@ public class BillInfoImpl implements BillInfo {
 	@XStreamImplicit(itemFieldName = "collectionModeNotAllowed")
 	private List<String> collectionModesNotAllowed;
 
-	private BillPayeeDetails payee;
+	@XStreamAlias("payees")
+	private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>();
 
 	public String getServiceCode() {
 		return serviceCode;
@@ -128,14 +129,18 @@ public class BillInfoImpl implements BillInfo {
 		return collectionModesNotAllowed;
 	}
 
-	public BillPayeeDetails getPayee() {
-		return payee;
+	public List<BillPayeeDetails> getPayees() {
+		return payees;
 	}
 
-	public void setPayee(BillPayeeDetails payee) {
-		this.payee = payee;
+	public void setPayees(List<BillPayeeDetails> payees) {
+		this.payees = payees;
 	}
 
+	public void addPayees(BillPayeeDetails payee) {
+		this.payees.add(payee);
+	}
+	
 	public COLLECTIONTYPE getCollectionType() {
 		return collectionType;
 	}
@@ -167,7 +172,7 @@ public class BillInfoImpl implements BillInfo {
 				&& this.partPaymentAllowed == billColl.partPaymentAllowed
 				&& this.overrideAccountHeadsAllowed == billColl.overrideAccountHeadsAllowed
 				&& this.callbackForApportioning == billColl.callbackForApportioning
-				&& this.getPayee().equals(billColl.getPayee())) {
+				&& this.getPayees().containsAll(billColl.getPayees())) {
 
 			return this.collectionModesNotAllowed == billColl
 					.getCollectionModesNotAllowed()

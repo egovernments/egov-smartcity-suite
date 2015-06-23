@@ -203,7 +203,7 @@ public class CollectionHelper {
 					BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
 							billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
 							billDet.getDescription(),null /*billDet.getAdditionalFlag()*/);
-					billInfoImpl.getPayee().getBillDetails().get(0).addBillAccountDetails(billAccDetails);
+					billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
 					break;
 				}
 			}
@@ -221,6 +221,7 @@ public class CollectionHelper {
 	private BillInfoImpl initialiseFromBill(BigDecimal amountPaid, COLLECTIONTYPE collType) {
 		BillInfoImpl billInfoImpl = null;
 		BillPayeeDetails billPayeeDet = null;
+		List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
 		List<String> collModesList = new ArrayList<String>();
 		String[] collModes = bill.getCollModesNotAllowed().split(",");
 		for (String coll : collModes) {
@@ -237,7 +238,8 @@ public class CollectionHelper {
 							// advances
 				bill.getMinAmtPayable());
 		billPayeeDet.addBillDetails(billDetails);
-		billInfoImpl.setPayee(billPayeeDet);
+		billPayeeDetList.add(billPayeeDet);
+		billInfoImpl.setPayees(billPayeeDetList);
 		return billInfoImpl;
 	}
 

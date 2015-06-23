@@ -746,7 +746,7 @@ public class InstrumentService {
 		} else {
 			String qry = "";
 			try {
-				qry = "from InstrumentType  where type=? and isActive=1";
+				qry = "from InstrumentType  where type=? and isActive='1'";
 				iType = instrumentTypeService.find(qry, type);
 			} catch (Exception e) {
 				LOGGER.error("Error while getting InstrumentType from database" + e.getMessage(), e);

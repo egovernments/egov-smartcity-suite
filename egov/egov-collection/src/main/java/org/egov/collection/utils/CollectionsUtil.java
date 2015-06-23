@@ -56,6 +56,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -65,6 +66,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infstr.ValidationError;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.Script;
@@ -85,7 +87,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CollectionsUtil {
 	private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
 	private PersistenceService persistenceService;
-	private EisCommonsServiceImpl eisCommonsService;
+	@Autowired
 	private UserService userService;
 	private CommonsService commonsService;
 	private PersistenceService<Script, Long> scriptService;
@@ -101,6 +103,8 @@ public class CollectionsUtil {
 	private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
 	@Autowired
     private SecurityUtils securityUtils;
+	@Autowired
+	private PositionMasterService posService;
 
 	/**
 	 * Returns the Status object for given status code for a receipt
@@ -202,12 +206,12 @@ public class CollectionsUtil {
 	public Location getLocationOfUser(Map<String, Object> sessionMap) {
 		Location location = null;
 		try {
-			if (sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID) != null) {
+			if (sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID) != null && !sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID).equals("")) {
 				location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_GET_LOCATIONBYID,
 						Integer.valueOf((String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID)));
 			} else {
 				location = (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER,
-						(String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME));
+						getLoggedInUser().getName());
 			}
 			if(location == null){
 				throw new EGOVRuntimeException("Unable to fetch the location of the logged in user [" + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
@@ -282,8 +286,22 @@ public class CollectionsUtil {
 	 *         the mode of payments supported.
 	 */
 	public List<String> getCollectionModesNotAllowed(User loggedInUser) {
-		List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", CollectionConstants.SCRIPT_PAYMENTMODESNOTALLOWED_RULES);
-		return null;//(List<String>) scripts.get(0).eval(Script.createContext("loggedInUser", loggedInUser, "collUtil", this));
+		List<String> collectionsModeNotAllowed = new ArrayList<String>();
+		Department dept=getDepartmentOfUser(loggedInUser)    ;
+				if(dept==null)   {
+					
+					 final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+				            validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
+				}
+				else {     
+				    if(dept.getCode()=="A")      
+				    	collectionsModeNotAllowed.add("card");   
+				    else         {
+				    	collectionsModeNotAllowed.add("cash");  
+				    	collectionsModeNotAllowed.add("card");  
+				    }
+				}
+		return collectionsModeNotAllowed;
 	}
 
 	/**
@@ -292,7 +310,7 @@ public class CollectionsUtil {
 	 * @return Position of logged in user
 	 */
 	public Position getPositionOfUser(User user) {
-		return eisCommonsService.getCurrentPositionByUser(user);
+		return posService.getCurrentPositionForUser(user.getId());
 	}
 
 	/**
@@ -303,7 +321,7 @@ public class CollectionsUtil {
 	 * @return Position object for given position name
 	 */
 	public Position getPositionByName(String positionName) {
-		return eisCommonsService.getPositionByName(positionName);
+		return posService.getPositionByName(positionName);
 	}
 
 	/**
@@ -443,8 +461,8 @@ public class CollectionsUtil {
 	 *            Position Id
 	 * @return Position object for given position id
 	 */
-	public Position getPositionById(Integer positionId) {
-		return eisCommonsService.getPositionById(positionId);
+	public Position getPositionById(Long positionId) {
+		return posService.getPositionById(positionId);
 	}
 
 	/**
@@ -626,10 +644,6 @@ public class CollectionsUtil {
 	public Location getLocationByUser(Long userId) {
 		User user = userService.getUserById(userId);
 		return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername());
-	}
-
-	public void seteisCommonsService(EisCommonsServiceImpl eisCommonsService) {
-		this.eisCommonsService = eisCommonsService;
 	}
 
 	public void setUserService(UserService userService) {

@@ -38,7 +38,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_challan" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="10" resourceBundle="custom">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_challan"  language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="10" resourceBundle="custom">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -72,7 +72,7 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($F{challanDetails}, false)]]></dataSourceExpression>
 				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
@@ -83,7 +83,7 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($F{challanDetails}, false)]]></dataSourceExpression>
 				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
@@ -94,7 +94,7 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($F{challanDetails}, false)]]></dataSourceExpression>
 				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
 		</band>

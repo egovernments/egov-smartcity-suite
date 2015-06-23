@@ -82,7 +82,6 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -387,13 +386,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			receiptHeader.transition(true).start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created - work flow starts")
 			 				.withStateValue(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
 		//}
-
+		/* TODO: fix me Phoenix comment getSession().flush();
 		transition(receiptHeader, CollectionConstants.WF_ACTION_CREATE_RECEIPT, "Receipt created");
 
 		LOGGER.debug("Workflow state transition complete");
 
 		if (createVoucherForBillingService) {
-			createVouchers(receiptHeader, receiptBulkUpload);
+			//createVouchers(receiptHeader, receiptBulkUpload);
 			transition(receiptHeader, CollectionConstants.WF_ACTION_CREATE_VOUCHER, "Receipt voucher created");
 		}
 
@@ -406,7 +405,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				receiptHeader.transition(true).end().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Data Migration Receipt Approved - Workflow ends")
 					.withStateValue(CollectionConstants.WF_STATE_END).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
 			//}
-		}
+		}*/
 	}
 
 	/**
@@ -420,7 +419,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *            Comment for the transition
 	 */
 	public void transition(ReceiptHeader receiptHeader, String actionName, String comment) {
-			receiptHeader.transition(true).transition().withComments(comment).withStateValue(actionName);
+			receiptHeader.transition(true).transition().withComments(comment).withStateValue(actionName).withDateInfo(new Date());
 	}
 
 	/**
@@ -433,9 +432,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
 
 		String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,vh.VOUCHERDATE AS VOUCHERDATE,"
-				+ "sd.SERVICENAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.dept_name AS DEPARTMENTNAME,"
+				+ "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.dept_name AS DEPARTMENTNAME,"
 				+ "fnd.code AS FUNDCODE,dpt.dept_code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,VOUCHERHEADER vh,"
-				+ "EGCL_COLLECTIONVOUCHER cv,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EG_SERVICEDETAILS sd,"
+				+ "EGCL_COLLECTIONVOUCHER cv,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
 				+ "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt";
 
 		String whereClauseBeforInstumentType = " where ch.id=cv.COLLECTIONHEADERID AND ch.id=cm.id_collectionheader AND "
@@ -447,7 +446,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				+ CollectionConstants.MODULE_NAME_COLLECTIONS + "') and ch.ID_STATUS=(select id from egw_status where " + "moduletype='"
 				+ CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='" + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
 
-		String groupByClause = " group by vh.VOUCHERDATE,sd.SERVICENAME,it.TYPE,fnd.name,dpt.dept_name,fnd.code,dpt.dept_code";
+		String groupByClause = " group by vh.VOUCHERDATE,sd.NAME,it.TYPE,fnd.name,dpt.dept_name,fnd.code,dpt.dept_code";
 		String orderBy = " order by VOUCHERDATE";
 
 		/**
@@ -1122,8 +1121,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 */
 	@Override
 	@Transactional
-	public ReceiptHeader persist(ReceiptHeader entity) {
-		for (ReceiptHeader receiptHeader : entity.getReceiptHeaders()) {
+	public ReceiptHeader persist(ReceiptHeader receiptHeader) {
+		//for (ReceiptHeader receiptHeader : entity.getReceiptHeaders()) {
 			if (receiptHeader.getReceipttype()!=CollectionConstants.RECEIPT_TYPE_CHALLAN && 
 					!CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(
 							receiptHeader.getStatus().getCode()) && receiptHeader.getReceiptnumber()==null){
@@ -1140,8 +1139,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				LOGGER.info("Persisted challan with challan number " + 
 						challan.getChallanNumber());
 			}
-		}
-		return super.persist(entity);
+		//}
+		return super.persist(receiptHeader);
 	}
 	
 	/**
@@ -1251,7 +1250,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * This method looks up the bean to communicate with the billing system and
 	 * updates the billing system.
 	 */
-	@Transactional
 	public Boolean updateBillingSystem(String serviceCode,
 			Set<BillReceiptInfo> billReceipts) {
 		BillingIntegrationService billingService = getBillingServiceBean(serviceCode);

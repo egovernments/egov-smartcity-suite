@@ -44,7 +44,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<link rel="stylesheet" href="/resources/demos/style.css" />
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -69,8 +68,8 @@ jQuery(window).load(function () {
 	undoLoadingMask();
 });
 
-$(function() {
-		$( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
+jQuery(function() {
+	jQuery( "#instrumentDate" ).datepicker({ dateFormat: 'dd/mm/yy' }).val();
        });
 
 function showInstrumentDetails(obj){
@@ -123,7 +122,7 @@ function showInstrumentDetails(obj){
 }
 
 function clearCashDetails(){
-	dom.get('instrHeaderCash.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderCash.instrumentAmount').value="0.0";
 }
 
 function clearChequeDDDetails(){
@@ -184,14 +183,14 @@ function clearChequeDDDetails(){
 }
 
 function clearCardDetails(){
-	dom.get('instrHeaderCard.instrumentAmount').value="0.0";
-	dom.get('instrHeaderCard.transactionNumber').value="";
-	dom.get('instrHeaderCard.instrumentNumber').value="";
+	document.getElementById('instrHeaderCard.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderCard.transactionNumber').value="";
+	document.getElementById('instrHeaderCard.instrumentNumber').value="";
 }
 function clearBankDetails(){
-	dom.get('instrHeaderBank.instrumentAmount').value="0.0";
-	dom.get('instrHeaderBank.transactionNumber').value="";
-	dom.get('bankChallanDate').value="";
+	document.getElementById('instrHeaderBank.instrumentAmount').value="0.0";
+	document.getElementById('instrHeaderBank.transactionNumber').value="";
+	document.getElementById('bankChallanDate').value="";
 	if(document.getElementById("accountNumberMaster")!=null){
 		document.getElementById("accountNumberMaster").options.length = 1;
 	}
@@ -214,13 +213,13 @@ function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
     if(!verifyChequeDetails(chequetable,chequetablelen1)){
     	instrAmountInvalidErrMsg='<s:text name="billreceipt.missingchequeamount.errormessage" />' + '<br>';
     	document.getElementById("receipt_error_area").innerHTML='Please Enter Mandatory Cheque/DD Details Before Adding A New Cheque/DD';  
-    	dom.get("receipt_error_area").style.display="block";
+    	document.getElementById("receipt_error_area").style.display="block";
     }
     
     else{
    		 //To add rows to the cheque grid table
 		addtablerow(tableId,trId1,trId2,trId3,trId4,trId5);
-		var tbl = dom.get(tableId);
+		var tbl = document.getElementById(tableId);
 		var rowNumber=getRow(obj).rowIndex;
 		var newtablelength=tbl.rows.length;
 		
@@ -301,18 +300,18 @@ function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
 	}
 }
 function addtablerow(tableId,trId1,trId2,trId3,trId4,trId5){
-	var tbl = dom.get(tableId);
-		var rowObj1 = dom.get(trId1).cloneNode(true);
-		var rowObj2 = dom.get(trId2).cloneNode(true);
-		var rowObj3 = dom.get(trId3).cloneNode(true);
-		var rowObj4 = dom.get(trId4).cloneNode(true);
-		var rowObj5 = dom.get(trId5).cloneNode(true);
+	var tbl = document.getElementById(tableId);
+		var rowObj1 = document.getElementById(trId1).cloneNode(true);
+		var rowObj2 = document.getElementById(trId2).cloneNode(true);
+		var rowObj3 = document.getElementById(trId3).cloneNode(true);
+		var rowObj4 = document.getElementById(trId4).cloneNode(true);
+		var rowObj5 = document.getElementById(trId5).cloneNode(true);
 		addRow(tbl,rowObj1);
 		addRow(tbl,rowObj2);
 		addRow(tbl,rowObj3);
 		addRow(tbl,rowObj4);
 		addRow(tbl,rowObj5);
-		dom.get("delerror").style.display="none";
+		document.getElementById("delerror").style.display="none";
 }
 
 
@@ -376,7 +375,7 @@ function loadchequegrid(tableId,trId1,trId2,trId3,trId4,trId5){
 		}
 		for(var k=1;k<chqAmtArray.length;k++){
 			addtablerow(tableId,trId1,trId2,trId3,trId4,trId5);
-			var tbl = dom.get(tableId);
+			var tbl = document.getElementById(tableId);
 			var rowNumber=4;
 			var newtablelength=tbl.rows.length;
 	
@@ -415,15 +414,15 @@ function addRow(tableObj,rowObj)
 
 function deleteChequeObj(obj,tableId)
 {
-	var tbl = dom.get(tableId);
+	var tbl = document.getElementById(tableId);
 	var rowNumber=getRow(obj).rowIndex; 
 	if(tbl.rows.length==6)
 	{
-	   dom.get("delerror").style.display="block";
+	   document.getElementById("delerror").style.display="block";
 	}
 	else
 	{
-		dom.get("delerror").style.display="none";
+		document.getElementById("delerror").style.display="none";
 		tbl.deleteRow(rowNumber);
 		tbl.deleteRow(rowNumber-1);
 		tbl.deleteRow(rowNumber-2);
@@ -431,7 +430,7 @@ function deleteChequeObj(obj,tableId)
 		tbl.deleteRow(rowNumber-4);
 	}
 	callpopulateapportioningamountforbills();
-	var tbl = dom.get(tableId);
+	var tbl = document.getElementById(tableId);
 	var rowNumber=getRow(obj).rowIndex;
 	var newtablelength=tbl.rows.length;
 	var countUI=document.forms[0].instrumentCount.value;
@@ -463,15 +462,15 @@ function calculateCollectionTotal(){
 			}
 		}//end of for loop
 
-		cashamount=eval(dom.get("instrHeaderCash.instrumentAmount").value);
+		cashamount=eval(document.getElementById("instrHeaderCash.instrumentAmount").value);
 		cashamount = isNaN(cashamount)?0:cashamount;
 		collectiontotal=collectiontotal+cashamount;
 		
-		cardamount=eval(dom.get("instrHeaderCard.instrumentAmount").value);
+		cardamount=eval(document.getElementById("instrHeaderCard.instrumentAmount").value);
 		cardamount = isNaN(cardamount)?0:cardamount;
 		collectiontotal=collectiontotal+cardamount;
 		
-		bankamount=eval(dom.get("instrHeaderBank.instrumentAmount").value);
+		bankamount=eval(document.getElementById("instrHeaderBank.instrumentAmount").value);
 		bankamount = isNaN(bankamount)?0:bankamount;
 		collectiontotal=collectiontotal+bankamount;
 
@@ -479,7 +478,7 @@ function calculateCollectionTotal(){
 }
 
 function initialiseCreditAmount(){
-	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var noofaccounts=document.getElementById("totalNoOfAccounts").value;
 	for(var j=0;j<noofaccounts; j++)
 	{
 		if(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value>=0){
@@ -490,7 +489,7 @@ function initialiseCreditAmount(){
 }
 
 function calculateCreditTotal(){
-	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var noofaccounts=document.getElementById("totalNoOfAccounts").value;
 	var creditamount=0,credittotal=0,debitamount=0;
 	//this step is done to populate credit amount
         for(var j=0;j<noofaccounts; j++)
@@ -514,7 +513,7 @@ function callpopulateapportioningamountforbills(){
 
 apportionLoadHandler = function(req,res){
   results=res.results;
-  var noofaccounts=dom.get("totalNoOfAccounts").value;
+  var noofaccounts=document.getElementById("totalNoOfAccounts").value;
   for(var j=0;j<noofaccounts; j++)
   {
     for(var k=0;k<results.length;k++)
@@ -530,21 +529,21 @@ apportionLoadHandler = function(req,res){
 }
 
 apportionLoadFailureHandler= function(){
-   // dom.get("errorstyle").style.display='';
+   // document.getElementById("errorstyle").style.display='';
 	//document.getElementById("errorstyle").innerHTML='Error Loading Apportioned Amount';
 }
 function populateapportioningamount()
 {
     // total of actual amt to be credited - can be removed
 	var billingtotal=document.forms[0].totalAmountToBeCollected.value;
-	var checkpartpaymentvalue=dom.get("partPaymentAllowed").value;
-	var checkoverridevalue=dom.get("overrideAccountHeads").value;
+	var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
+	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 	var collectiontotal=0,cashamount=0,chequeamount=0,cardamount=0,bankamount=0;
 
-	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var noofaccounts=document.getElementById("totalNoOfAccounts").value;
 	var credittotal=0;
 	collectiontotal=calculateCollectionTotal();
-	dom.get("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
+	document.getElementById("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
 	
 	for(var j=0;j<noofaccounts; j++)
 	{
@@ -555,12 +554,12 @@ function populateapportioningamount()
 		}
 	}
 
-	if(dom.get("callbackForApportioning").value=="true")
+	if(document.getElementById("callbackForApportioning").value=="true")
 	{
-		dom.get("amountoverrideerror").style.display="none";
+		document.getElementById("amountoverrideerror").style.display="none";
 		if(collectiontotal > billingtotal && zeroAccHeads==false)
 		{
-			dom.get("amountoverrideerror").style.display="block";
+			document.getElementById("amountoverrideerror").style.display="block";
 			return false;
 		}
 		else
@@ -568,7 +567,7 @@ function populateapportioningamount()
 			//makeJSONCall(["OrderNumber","CreditAmount","DebitAmount","CrAmountToBePaid"],'${pageContext.request.contextPath}/receipts/receipt!apportionBillAmount.action',{instrumenttotal:collectiontotal},apportionLoadHandler,apportionLoadFailureHandler);
 		}
 	}
-	else if(dom.get("callbackForApportioning").value=="false")
+	else if(document.getElementById("callbackForApportioning").value=="false")
 	{
 			if(initialSetting=="true"){
 				initialiseCreditAmount();
@@ -668,7 +667,7 @@ function populateapportioningamount()
 					}
 					check++;
 					}//end of for
-					dom.get("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
+					document.getElementById("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
 				}//end of if collectiontotal < billingtotal
 			}//end of if checkpartpaymentvalue=="true"
 		}	
@@ -682,10 +681,10 @@ function validate()
 		document.getElementById("bankChallanDate").value="";
 	}
 
-    	document.getElementById("receipt_error_area").innerHTML="";
-	dom.get("amountoverrideerror").style.display="none";
-	dom.get("invaliddateformat").style.display="none";
-	dom.get("receipt_dateerror_area").style.display="none";
+    document.getElementById("receipt_error_area").innerHTML="";
+	document.getElementById("amountoverrideerror").style.display="none";
+	document.getElementById("invaliddateformat").style.display="none";
+	document.getElementById("receipt_dateerror_area").style.display="none";
 	var validation = true;
 	
 		<s:if test="%{!isBillSourcemisc()}"> 
@@ -707,18 +706,18 @@ function validate()
 		if(validateMiscReceipt){
 			if(!validateMiscReceipt()){
 				validation = false;
-				dom.get("receipt_error_area").style.display="block";
+				document.getElementById("receipt_error_area").style.display="block";
 			}
 		}
 	</s:if>
-	var checkpartpaymentvalue=dom.get("partPaymentAllowed").value;
+	var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
 	var collectiontotal=0,cashamount=0,chequeamount=0,cardamount=0,bankamount=0,billingtotal=0;
 	var zeroAccHeads=false;
 	<s:if test="%{isBillSourcemisc()}"> 
 		billingtotal=document.forms[0].misctotalAmount.value;
  	</s:if>
  	<s:else>
-		var noofaccounts=dom.get("totalNoOfAccounts").value;
+		var noofaccounts=document.getElementById("totalNoOfAccounts").value;
 		var totalCreditAmountToBePaid = 0;
 		for(var j=0;j<noofaccounts; j++)
 		{
@@ -730,7 +729,7 @@ function validate()
 			}
 		}
 
-		if(dom.get("callbackForApportioning").value=="false")	
+		if(document.getElementById("callbackForApportioning").value=="false")	
 		{	
  			billingtotal=document.forms[0].totalAmountToBeCollected.value;
 		}
@@ -742,18 +741,18 @@ function validate()
 
 		
  	</s:else>
-	var instrTypeCash = dom.get("cashradiobutton").checked;
-	var instrTypeCheque = dom.get("chequeradiobutton").checked;
-	var instrTypeCard = dom.get("cardradiobutton").checked;
-	var instrTypeBank = dom.get("bankradiobutton").checked;
+	var instrTypeCash = document.getElementById("cashradiobutton").checked;
+	var instrTypeCheque = document.getElementById("chequeradiobutton").checked;
+	var instrTypeCard = document.getElementById("cardradiobutton").checked;
+	var instrTypeBank = document.getElementById("bankradiobutton").checked;
 	var chequetable=document.getElementById('chequegrid')
 	var chequetablelen1 =chequetable.rows.length;
 
 	//if mode of payment is cash
 	if(instrTypeCash){
-		if(dom.get("instrHeaderCash.instrumentAmount")!=null)
+		if(document.getElementById("instrHeaderCash.instrumentAmount")!=null)
 		{
-			cashamount=dom.get("instrHeaderCash.instrumentAmount").value;
+			cashamount=document.getElementById("instrHeaderCash.instrumentAmount").value;
 			if(cashamount==null || cashamount=="" || isNaN(cashamount) || cashamount<0 || cashamount.startsWith('+')){
 				document.getElementById("receipt_error_area").innerHTML+=
 				'<s:text name="billreceipt.invalidcashamount.errormessage" />'+ '<br>';
@@ -774,24 +773,24 @@ function validate()
 	}
 	//if mode of payment is card
 	if(instrTypeCard){
-		if(dom.get("instrHeaderCard.transactionNumber")!=null){
+		if(document.getElementById("instrHeaderCard.transactionNumber")!=null){
 
-	    	var transNo=dom.get("instrHeaderCard.transactionNumber").value;
+	    	var transNo=document.getElementById("instrHeaderCard.transactionNumber").value;
 		    if(transNo==null || transNo==""){
 		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcardtransactionno.errormessage" /> ' + '<br>';
 		    	validation=false;
 		    }
 		}
-		if(dom.get("instrHeaderCard.instrumentNumber")!=null){
-		    var cardNo=dom.get("instrHeaderCard.instrumentNumber").value;
+		if(document.getElementById("instrHeaderCard.instrumentNumber")!=null){
+		    var cardNo=document.getElementById("instrHeaderCard.instrumentNumber").value;
 		    if(cardNo==null || isNaN(cardNo) || cardNo.length < 4){
 		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcardno.errormessage" />' + '<br>';
 		    	validation=false;
 		    }
 		}
-		if(dom.get("instrHeaderCard.instrumentAmount")!=null){
+		if(document.getElementById("instrHeaderCard.instrumentAmount")!=null){
 
-			cardamount=dom.get("instrHeaderCard.instrumentAmount").value;
+			cardamount=document.getElementById("instrHeaderCard.instrumentAmount").value;
 			if(cardamount==null || cardamount=="" || isNaN(cardamount) || cardamount<0 || cardamount.startsWith('+')){
 				document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.invalidcardamount.errormessage" />'+ '<br>';
 				validation = false;
@@ -810,8 +809,8 @@ function validate()
 	
 	//if mode of payment is bank
 	if(instrTypeBank){
-		if(dom.get("instrHeaderBank.transactionNumber")!=null){
-	    	var transNo=dom.get("instrHeaderBank.transactionNumber").value;
+		if(document.getElementById("instrHeaderBank.transactionNumber")!=null){
+	    	var transNo=document.getElementById("instrHeaderBank.transactionNumber").value;
 		    if(transNo==null || transNo==""){
 		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankchallanno.errormessage" /> ' + '<br>';
 		    	validation=false;
@@ -828,8 +827,8 @@ function validate()
 				validation = false;
 			}
 		}
-		if(dom.get("instrHeaderBank.instrumentAmount")!=null){
-			bankamount=dom.get("instrHeaderBank.instrumentAmount").value;
+		if(document.getElementById("instrHeaderBank.instrumentAmount")!=null){
+			bankamount=document.getElementById("instrHeaderBank.instrumentAmount").value;
 			if(bankamount==null || bankamount=="" || isNaN(bankamount) || bankamount<0 || bankamount.startsWith('+')){
 				document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.invalidbankchallanamount.errormessage" />'+ '<br>';
 				validation = false;
@@ -883,11 +882,11 @@ function validate()
 		}//end of else
 		document.getElementById('instrumentTypeCashOrCard').value="";
 	}
-	dom.get("instrumenttotal").value=collectiontotal;
+	document.getElementById("instrumenttotal").value=collectiontotal;
 	var credittotal=calculateCreditTotal();
-	var checkoverridevalue=dom.get("overrideAccountHeads").value;
+	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 	var advancePaymentAllowed=false;
-	var minimumAmt=eval(dom.get("minimumAmount").value);
+	var minimumAmt=eval(document.getElementById("minimumAmount").value);
 	if(minimumAmt==null){
 	    minimumAmt=0;
 	}
@@ -903,7 +902,7 @@ function validate()
 		}
 		// if there is an advance payment and overriding of acc heads is permitted, but value has not been manually entered
 		// - display error if credit total (sum of amts paid for the account heads) is not equal to payment amount entered in modes of payt
-		if(collectiontotal != credittotal  && advancePaymentAllowed==true && checkoverridevalue==true && dom.get("callbackForApportioning").value==false)
+		if(collectiontotal != credittotal  && advancePaymentAllowed==true && checkoverridevalue==true && document.getElementById("callbackForApportioning").value==false)
 		{
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.incorrectaccountheadamt.errormessage" />' + '<br>';
 			validation=false;
@@ -930,7 +929,7 @@ function validate()
 		}
 
 	}
-    	var paidby=dom.get("paidBy").value;
+    	var paidby=document.getElementById("paidBy").value;
     	paidby = trimAll(paidby);
    	if(paidby.length == 0 || paidby==""){
    		document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingpayeename.errormessage" /> ' + '<br>';
@@ -938,7 +937,7 @@ function validate()
    	}
 
    	if(validation==false){
-		dom.get("receipt_error_area").style.display="block";
+		document.getElementById("receipt_error_area").style.display="block";
 		window.scroll(0,0);
 	}
 	if(validation==true){
@@ -953,7 +952,7 @@ function validate()
 	}
 	else {
 		doLoadingMask('#loadingMask');
-		document.collDetails.action="receipt!save.action";
+		document.collDetails.action="receipt-save.action";
 		document.collDetails.submit();
   		
 		return validation;
@@ -1082,10 +1081,10 @@ function verifyChequeDetails(table,len1)
 function checkaccountheaderwiseamount()
 {	
     var zeroAccHeads=false; 	
-    var checkoverridevalue=dom.get("overrideAccountHeads").value;
+    var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
     
 
-	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var noofaccounts=document.getElementById("totalNoOfAccounts").value;
 	for(var j=0;j<noofaccounts; j++)
 	{
 		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
@@ -1278,7 +1277,7 @@ function onBodyLoad()
 {
 	var headertable=document.getElementById('billsheaderinfotable');
 	var headertablelength=headertable.rows.length;
-	var checkoverridevalue=dom.get("overrideAccountHeads").value;
+	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 	
 	
 	if(null != document.getElementById('asteriskId')){
@@ -1295,11 +1294,11 @@ function onBodyLoad()
 	}
 
 	<s:if test="%{isBillSourcemisc()}"> 
-	 dom.get("totalNoOfAccounts").value = 0;
-	 accountscount=dom.get("totalNoOfAccounts").value;
+	 document.getElementById("totalNoOfAccounts").value = 0;
+	 accountscount=document.getElementById("totalNoOfAccounts").value;
 	</s:if>
 	<s:else>
-	accountscount=dom.get("totalNoOfAccounts").value;
+	accountscount=document.getElementById("totalNoOfAccounts").value;
 	</s:else>
 
 	<s:if test="%{isBillSourcemisc()}"> 
@@ -1343,7 +1342,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="0.0";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  '<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
+		var paidby =  "Paid By";//TODO: Fix me for Phoenix change'<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1361,14 +1360,14 @@ function onBodyLoad()
 }
 
 function displayPaymentDetails(){
-if(dom.get("instrHeaderBank.instrumentAmount")!=null && dom.get("instrHeaderBank.instrumentAmount").value!="0.0"){
+if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!="0.0"){
 		document.getElementById('bankradiobutton').checked=true;
 		document.getElementById('bankdetails').style.display='block';
        	document.getElementById('instrumentTypeCashOrCard').value="bank";
        	document.getElementById('cashdetails').style.display="none";
        	// document.getElementById('carddetails').style.display="none";
 	}
-	if(dom.get("instrHeaderCard.instrumentAmount")!=null && dom.get("instrHeaderCard.instrumentAmount").value!="0.0"){
+	if(document.getElementById("instrHeaderCard.instrumentAmount")!=null && document.getElementById("instrHeaderCard.instrumentAmount").value!="0.0"){
 		document.getElementById('cardradiobutton').checked=true;
 		document.getElementById('carddetails').style.display='block';
        	document.getElementById('instrumentTypeCashOrCard').value="card";
@@ -1395,7 +1394,7 @@ if(dom.get("instrHeaderBank.instrumentAmount")!=null && dom.get("instrHeaderBank
 function loadchequedetails(){
 	var chequetable=document.getElementById('chequegrid');
 	var chequetablelen1 =chequetable.rows.length;
-	var tbl = dom.get("chequegrid");
+	var tbl = document.getElementById("chequegrid");
 	
 	for(var j=chequetablelen1;j>5;j=j-5){
 		if(chequetablelen1>5){
@@ -1418,7 +1417,7 @@ function checkandcalculatecredittotal(index,elem){
 	var collectiontotal=0;
 	
 	document.getElementById("receipt_error_area").innerHTML="";
-	dom.get("receipt_error_area").style.display="none";
+	document.getElementById("receipt_error_area").style.display="none";
 	for(var j=0;j<accountscount;j++)
 	{
 		var tobecollectedamount=eval(document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value);
@@ -1427,12 +1426,12 @@ function checkandcalculatecredittotal(index,elem){
 
 		if(receivedAmount>tobecollectedamount && tobecollectedamount>0)
 		{
-			dom.get("amountoverrideerror").style.display="block";
+			document.getElementById("amountoverrideerror").style.display="block";
 			return false;
 		}
 		else
 		{
-			dom.get("amountoverrideerror").style.display="none";
+			document.getElementById("amountoverrideerror").style.display="none";
 		}
 
 		creditamount = isNaN(receivedAmount)?0:receivedAmount;
@@ -1443,28 +1442,28 @@ function checkandcalculatecredittotal(index,elem){
 	collectiontotal=calculateCollectionTotal();
 	if(collectiontotal!=credittotal){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.amountoverride.errormessage" />' + '<br>';
-		dom.get("receipt_error_area").style.display="block";
+		document.getElementById("receipt_error_area").style.display="block";
 		}
 	else{
 		document.getElementById("receipt_error_area").innerHTML="";
-		dom.get("receipt_error_area").style.display="none";
+		document.getElementById("receipt_error_area").style.display="none";
 	}
-	dom.get("totalamountdisplay").value=isNaN(credittotal)?credittotal:credittotal.toFixed(2);
+	document.getElementById("totalamountdisplay").value=isNaN(credittotal)?credittotal:credittotal.toFixed(2);
 
 	//set values
     fieldname="receiptDetailList["+index+"].cramount";
-    dom.get(fieldname).value=elem.value;
+    document.getElementById(fieldname).value=elem.value;
 }
 
 function validateChallanDate(obj)
 {
 	if(validateDateFormat(obj)){
 		trim(obj,obj.value);
-		dom.get("receipt_dateerror_area").style.display="none";
+		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
 		if(!validateNotFutureDate(obj.value,currDate)){
-		   dom.get("receipt_dateerror_area").style.display="block";
+		   document.getElementById("receipt_dateerror_area").style.display="block";
 	       document.getElementById("receipt_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.bankchallandate.futuredate.errormessage" />'+ '<br>';
 	       obj.value = "";
@@ -1485,11 +1484,11 @@ function validateManualReceiptDate(obj)
 {
 	if(validateDateFormat(obj)){
 		trim(obj,obj.value);
-		dom.get("receipt_dateerror_area").style.display="none";
+		document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   	if(obj.value!="");
 		if(!validateNotFutureDate(obj.value,currDate)){
-		   dom.get("receipt_dateerror_area").style.display="block";
+		   document.getElementById("receipt_dateerror_area").style.display="block";
 	       document.getElementById("receipt_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.manualreceipt.futuredate.errormessage" />'+ '<br>';
 	       obj.value = "";
@@ -1512,7 +1511,7 @@ function checkForCurrentDate(obj)
 	 var receiptDate;
 	if(validateDateFormat(obj))
 	   {
-	   dom.get("receipt_dateerror_area").style.display="none";
+	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
 	   trim(obj,obj.value);
 	   <s:if test="%{!isBillSourcemisc()}">
@@ -1543,23 +1542,23 @@ function checkForCurrentDate(obj)
 		   <s:if test="%{!isBillSourcemisc()}">
 		   if (document.getElementById("manualReceiptDate").value != null && document.getElementById("manualReceiptDate").value != '') {
 			if(receiptDateFormat<finDate) {
-				 dom.get("receipt_dateerror_area").style.display="block";
+				 document.getElementById("receipt_dateerror_area").style.display="block";
 					document.getElementById("receipt_dateerror_area").innerHTML+=
 						'<s:text name="billreceipt.datelessthan6monthdate.errormessage" />'+ '<br>';
 			}
 			else {
-				 dom.get("receipt_dateerror_area").style.display="block";
+				 document.getElementById("receipt_dateerror_area").style.display="block";
 				  document.getElementById("receipt_dateerror_area").innerHTML+=
 						'<s:text name="billreceipt.manualReceiptdatelessthanfinancialdate.errormessage" />'+ '<br>';
 				}
 		   } else{
-			   dom.get("receipt_dateerror_area").style.display="block";
+			   document.getElementById("receipt_dateerror_area").style.display="block";
 				  document.getElementById("receipt_dateerror_area").innerHTML+=
 						'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
 			  	 }
 		   </s:if>
 		   <s:else>
-		   dom.get("receipt_dateerror_area").style.display="block";
+		   document.getElementById("receipt_dateerror_area").style.display="block";
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
 		   </s:else>
@@ -1602,18 +1601,18 @@ function setinstrumenttypevalue(obj)
 function checkreset()
 {
 	document.forms[0].reset();
-	dom.get("delerror").style.display="none";
-	dom.get("amountoverrideerror").style.display="none";
-	dom.get("invaliddateformat").style.display="none";
-	dom.get("receipt_dateerror_area").style.display="none";
-	dom.get("receipt_error_area").style.display="none";
+	document.getElementById("delerror").style.display="none";
+	document.getElementById("amountoverrideerror").style.display="none";
+	document.getElementById("invaliddateformat").style.display="none";
+	document.getElementById("receipt_dateerror_area").style.display="none";
+	document.getElementById("receipt_error_area").style.display="none";
 	
 	clearCashDetails();
 	clearCardDetails();
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value='<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
+	document.getElementById('paidBy').value="Payee";//TODO: Fix me Phoenix change'<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -1625,17 +1624,17 @@ function checkreset()
 
 
 function setCashInstrumentDetails(elem){
-     dom.get("instrHeaderCash.instrumentAmount").value=elem.value;
-     dom.get("instrumentTypeCashOrCard").value="cash";
+     document.getElementById("instrHeaderCash.instrumentAmount").value=elem.value;
+     document.getElementById("instrumentTypeCashOrCard").value="cash";
 }
 
 function setCardInstrumentDetails(elem){
-     dom.get("instrHeaderCard.instrumentAmount").value=elem.value;
-     dom.get("instrumentTypeCashOrCard").value="card";
+     document.getElementById("instrHeaderCard.instrumentAmount").value=elem.value;
+     document.getElementById("instrumentTypeCashOrCard").value="card";
 }
 function setBankInstrumentDetails(elem){
-     dom.get("instrHeaderBank.instrumentAmount").value=elem.value;
-     dom.get("instrumentTypeCashOrCard").value="bank";
+     document.getElementById("instrHeaderBank.instrumentAmount").value=elem.value;
+     document.getElementById("instrumentTypeCashOrCard").value="bank";
 }
 
 var bankfuncObj;
@@ -1719,14 +1718,14 @@ function fillAfterSplitBank(obj)
 
 function onChangeBankAccount(branchId)
 {
-    var serviceName=dom.get("serviceName").value;
+    var serviceName=document.getElementById("serviceName").value;
     var fundName="",fundId=-1;
     if(document.getElementById('fundId')!=null){
     	fundId=document.getElementById('fundId').value;
     	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundId:fundId});
     }
-    else if(dom.get("fundName")!=null){
-    	fundName=dom.get("fundName").value;
+    else if(document.getElementById("fundName")!=null){
+    	fundName=document.getElementById("fundName").value;
     	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundName:fundName});
     }
     
@@ -1761,6 +1760,7 @@ function showHideMandataryMark(obj){
 	<title><s:text name="billreceipt.pagetitle"/></title>
 </head>
 <!-- Area for error display -->
+<body onLoad="onBodyLoad();refreshInbox();"><br>
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
 <div class="errorstyle" id="common_error_area" style="display:none;"></div>
 <span align="center" style="display:none" id="delerror">
@@ -1784,9 +1784,6 @@ function showHideMandataryMark(obj){
 	</b></font>
   </li>
 </span>
-
-
-<body onLoad="onBodyLoad();refreshInbox();"><br>
 <div class="formmainbox">
 	<s:if test="%{hasErrors()}">
 	    <div id="actionErrorMessages" class="errorstyle">
@@ -1961,12 +1958,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="/egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="/egi/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2011,12 +2008,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="<egov:url path='/egi/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="<egov:url id="deletechequeimg" path='/egi/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2058,7 +2055,7 @@ function showHideMandataryMark(obj){
 							    <td class="bluebox">
 							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
 							    	<a  id="calendarLink" href="javascript:show_calendar('forms[0].bankChallanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-			      						<img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
+			      						<img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
 			      					</a>
 							    </td>
 						    </tr>
@@ -2119,7 +2116,7 @@ function showHideMandataryMark(obj){
 									
 			</table>
 			 
-			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="${pageContext.request.contextPath}/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom" align="center">
 			      <label><input align="center" type="button" class="buttonsubmit" id="button2" value="Create" onclick="return validate();"/></label>

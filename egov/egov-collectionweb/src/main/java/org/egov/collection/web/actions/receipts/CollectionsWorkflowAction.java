@@ -70,7 +70,6 @@ import org.springframework.transaction.annotation.Transactional;
 				"actionName", "chequeCollectionReport.action",
 				"method", "submissionReport.action",
 				"namespace", "/reports" }) })
-@Transactional(readOnly=true)
 public class CollectionsWorkflowAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;

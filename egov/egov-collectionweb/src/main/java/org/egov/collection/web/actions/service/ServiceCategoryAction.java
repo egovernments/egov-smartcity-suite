@@ -48,17 +48,16 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.service.ServiceCategoryService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 
 @ParentPackage("egov")
 @Validations
-@Transactional(readOnly = true)
 @Namespace("/service")
 @ResultPath("/WEB-INF/jsp/")
 @Results({

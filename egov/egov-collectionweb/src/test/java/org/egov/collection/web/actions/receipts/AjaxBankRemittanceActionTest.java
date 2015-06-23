@@ -72,7 +72,7 @@ public class AjaxBankRemittanceActionTest { /*extends AbstractPersistenceService
 		action.setServiceName(serviceDetails.getServiceName());
 		action.setFundId(serviceDetails.getServiceBankAccount().iterator().next().getFund().getId());
 		Query qry=session.createSQLQuery("select bb.id as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from bank b,bankbranch bb, bankaccount ba," +
-		"EG_BANKACCOUNTSERVICEMAPPING asm,eg_servicedetails sd where asm.BANKACCOUNTID=ba.ID and asm.SERVICEID=sd.ID and " +
+		"EG_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and " +
 		"ba.BRANCHID=bb.ID and bb.BANKID=b.ID and sd.SERVICENAME=:serviceName");
 		qry.setString("serviceName", serviceDetails.getServiceName());
 		
@@ -92,7 +92,7 @@ public class AjaxBankRemittanceActionTest { /*extends AbstractPersistenceService
 		action.setBranchId(bankaccount.getId());
 		
 		Query qry=session.createSQLQuery("select ba.id as accountid,ba.accountnumber as accountnumber from bankaccount ba," +
-		"EG_BANKACCOUNTSERVICEMAPPING asm,eg_servicedetails sd where asm.BANKACCOUNTID=ba.ID and asm.SERVICEID=sd.ID and " +
+		"EG_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and " +
 		"ba.BRANCHID=:branchId and sd.SERVICENAME=:serviceName");
 		qry.setString("serviceName", serviceDetails.getServiceName());
 		qry.setInteger("branchId", bankaccount.getId());

@@ -78,10 +78,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
 @Namespace("/service")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
@@ -89,7 +87,7 @@ import org.springframework.transaction.annotation.Transactional;
     @Result(name="list",location="service/serviceDetails-list.jsp"),
     @Result(name=ServiceDetailsAction.BEFORECREATE,location="service/serviceDetails-beforeCreate.jsp"),
     @Result(name="codeUniqueCheck",location="service/serviceDetails-codeUniqueCheck.jsp"),
-    @Result(name=ServiceDetailsAction.MESSAGE,location="service/ serviceDetails-message.jsp"),
+    @Result(name=ServiceDetailsAction.MESSAGE,location="service/ serviceDetails-message.jsp")
   })
 public class ServiceDetailsAction extends BaseFormAction {
 
