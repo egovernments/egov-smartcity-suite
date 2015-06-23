@@ -45,7 +45,7 @@
 <html>
 	<head>
 		<title><s:text name="objectionView.det"></s:text></title>
-		<link href="<c:url value='/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:push value="model">
@@ -56,7 +56,7 @@
 					<s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED)">
 					<td>
 					<input type="button" name="memoButton" id="memoButton" value="Generate Memo" class="button" 
-					onclick="window.open('${pageContext.request.contextPath}/objection/memoGeneration!print.action?objection.id=<s:property value="%{id}"/>','dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');"/>
+					onclick="window.open('${pageContext.request.contextPath}/objection/memoGeneration-print.action?objection.id=<s:property value="%{id}"/>','dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');"/>
 					</s:if>
 					</td>
 					<td><input type="button" name="printButton" id="printButton" value="Print" class="button" onclick="window.print();"/></td>

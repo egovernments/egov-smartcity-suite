@@ -64,7 +64,7 @@
 	 			if(opener && opener.top.document.getElementById('inboxframe'))
 					opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 				alert("Generating Rejection Letter");
-				window.location = "${pageContext.request.contextPath}/objection/rejectionLetter!print.action?model.id="+'<s:property value="objection.id"/>';
+				window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
 			</script>
 		</s:if>
 		<s:if test="isShowAckMessage == true">			
@@ -73,7 +73,7 @@
 					<span class="mandatory">
 						No valid assessment data exists for property 
 					</span>
-					<a href='../view/viewProperty!viewForm.action?propertyId=<s:property value="%{propertyId}" />' style="fond-size:15px;">
+					<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{propertyId}" />' style="fond-size:15px;">
 						<s:property value="%{propertyId}" /> 
 					</a> 
 					<span class="mandatory"> 
@@ -89,7 +89,7 @@
 						<td>
 							<input type="button" class="button" name="SearchProperty"
 								id="SearchProperty" value="Search Property" 
-								onclick="window.location='../search/searchProperty!searchForm.action';" />	
+								onclick="window.location='../search/searchProperty-searchForm.action';" />	
 						</td>
 					</s:if>
 					<td>

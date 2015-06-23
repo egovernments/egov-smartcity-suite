@@ -43,7 +43,7 @@
 <script>
   function generateRejectionLetter(){ 
 	alert("Generating Rejection Letter");
-	window.location = "${pageContext.request.contextPath}/objection/rejectionLetter!print.action?model.id="+'<s:property value="objection.id"/>';
+	window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
 	}
 	</script>
 	<tr>
@@ -155,7 +155,7 @@
 								<a
 									href='#'
 									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager!viewDocument.action?docNumber=${docNumberObjection}&moduleName=ptis'
+									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${docNumberObjection}&moduleName=ptis'
 									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${docNumberObjection}</a>
 							</s:if>
 							<s:else>N/A</s:else>
@@ -241,7 +241,7 @@
 									<a
 									href='#'
 									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager!viewDocument.action?docNumber=${documentNumber}&moduleName=ptis'
+									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${documentNumber}&moduleName=ptis'
 									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${documentNumber}</a>
 							</s:if>
 							<s:else>N/A</s:else></div>
@@ -382,14 +382,14 @@
 									<a
 									href='#'
 									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager!viewDocument.action?docNumber=${docNumberOutcome}&moduleName=ptis'
+									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${docNumberOutcome}&moduleName=ptis'
 									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${docNumberOutcome}</a>
 							</s:if>
 							<s:else>N/A</s:else></div>
 							</td>
 							<td>
 							<div align="center">
-							<a href='../objection/rejectionLetter!print.action?model.id =<s:property value="objection.id"/>'>										
+							<a href='../objection/rejectionLetter-print.action?model.id =<s:property value="objection.id"/>'>										
 									<s:text name="rejection.memo"></s:text> </a>			
 									</div>			
 					</td>

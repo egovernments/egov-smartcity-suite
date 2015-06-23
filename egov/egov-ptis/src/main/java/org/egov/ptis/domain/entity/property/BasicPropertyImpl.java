@@ -511,7 +511,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		Objection wfObjection = null;
 		for (Objection objection : getObjections()) {
 			wfObjection = objection;
-			if (!wfObjection.getState().getValue().equalsIgnoreCase("END")) {
+			if (wfObjection.getState()!=null && !wfObjection.getState().getValue().equalsIgnoreCase("END")) {
 				break;
 			}
 			wfObjection = null;

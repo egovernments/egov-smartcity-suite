@@ -67,7 +67,7 @@
 						<a
 							href="javascript:show_calendar('objectionViewForm.plannedHearingDt',null,null,'DD/MM/YYYY');"
 							style="text-decoration: none">&nbsp;<img
-								src="${pageContext.request.contextPath}/image/calendaricon.gif"
+								src="/egi/resources/erp2/images/calendaricon.gif"
 								border="0" /> </a>(dd/mm/yyyy)
 					</td>
 					<td class="bluebox" width="25%" colspan="3"></td>

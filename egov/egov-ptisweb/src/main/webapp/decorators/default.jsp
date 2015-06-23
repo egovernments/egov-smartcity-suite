@@ -74,7 +74,7 @@
 	    <%--  <script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script> --%>
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
 	    <script type="text/javascript" src="<c:url value='/resources/javascript/WorkFlow.js'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/commonjs/calendar.js' context='/egi'/>" ></script>
+	    <script type="text/javascript" src="<c:url value='/commonjs/calender.js' context='/egi'/>" ></script>
 		<%-- <script type="text/javascript" src="<c:url value='/dhtml.js'/>"></script> --%>
 		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js'/>"></script>

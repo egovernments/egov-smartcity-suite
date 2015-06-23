@@ -55,7 +55,7 @@
 				<td class="bluebox" width="25%"><s:text name="objection.received.date" /><span class="mandatory1">*</span></td>
 			    <td class="bluebox" width="25%"><s:date name="recievedOn" id="recievedOnId" format="dd/MM/yyyy"  />
 				<s:textfield name="recievedOn" id="recievedOn" value="%{recievedOnId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-				<a href="javascript:show_calendar('objectionViewForm.recievedOn',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+				<a href="javascript:show_calendar('objectionViewForm.recievedOn',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 				</td>
 			
 				<td class="bluebox" width="25%"><s:text name="objection.received.by"/><span class="mandatory1">*</span></td>

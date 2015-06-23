@@ -49,6 +49,7 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -60,8 +61,8 @@ import org.hibernate.validator.constraints.Length;
  * @author manoranjan
  * 
  */
-@CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message = "dateOfOutcome.greaterThan.recievedOn")
-public class Objection extends StateAware {
+//@CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message = "dateOfOutcome.greaterThan.recievedOn")
+public class Objection extends StateAware implements Auditable{
 
 	/**
 	 * Default serial version Id

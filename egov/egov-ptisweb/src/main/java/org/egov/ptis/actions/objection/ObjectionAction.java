@@ -56,9 +56,13 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
@@ -72,6 +76,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.Objection;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -95,7 +100,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	private static final long serialVersionUID = 1L;
 
 	public static final String STRUTS_RESULT_MESSAGE = "message";
-
+	
 	private final Logger LOGGER = Logger.getLogger(ObjectionAction.class);
 	private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
 	private Objection objection = new Objection();
@@ -117,7 +122,18 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	
 	@Autowired
 	private UserService userService;
-
+	
+        @Autowired
+        private PropertyStatusDAO propertyStatusDAO;
+        
+        @Autowired
+        private EgwStatusHibernateDAO egwStatusDAO; 
+        @Autowired
+        private EisCommonService eisCommonService;
+        
+	@Autowired
+	private ApplicationNumberGenerator applicationNumberGenerator;
+	
 	public ObjectionAction() {
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
 	}
@@ -169,20 +185,23 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	public String create() {
 		LOGGER.debug("ObjectionAction | Create | start " + objection);
 		setupWorkflowDetails();
-		objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber());
-		objection.getBasicProperty().setStatus(
-				(PropertyStatus) persistenceService
-						.find("from PropertyStatus where  statusCode='OBJECTED'"));
-		EgwStatus egwStatus = (EgwStatus) persistenceService
-				.find("from EgwStatus where moduletype='PTObejction' and code='CREATED'");
+		//objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber()); //COMMENTED EARLIER NUMBER GENERATION LOGIC.
+		objection.setObjectionNumber(applicationNumberGenerator.generate()); 
+		
+		
+                objection.getBasicProperty().setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
+		EgwStatus egwStatus  = egwStatusDAO.getStatusByModuleAndCode("PTObejction", "CREATED"); 
+		
+		/*(EgwStatus) persistenceService
+				.find("from EgwStatus where moduletype='PTObejction' and code='CREATED'");*/
 		objection.setEgwStatus(egwStatus);
-		objectionService.persist(objection);
+		
 		// FIX ME
 		// Position position =
 		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		Position position = null;
 		// objectionWorkflowService.start(objection, position);
-		objection.transition(true).start().withOwner(position);
+		//objection.transition().start().withOwner(position);
 
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
@@ -194,7 +213,8 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		}
 
 		addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-
+		objectionService.applyAuditing(objection.getState());
+		objectionService.persist(objection);
 		LOGGER.debug("ObjectionAction | Create | End " + objection);
 		return STRUTS_RESULT_MESSAGE;
 	}
@@ -374,9 +394,9 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		LOGGER.debug("ObjectionAction | updateStateAndStatus | Start");
 
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			// Position position =
-			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-			Position position = null;
+			 Position position =
+			         eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+			//Position position = null;
 			objection.transition(true).start().withNextAction(actionToPerform)
 					.withStateValue(status).withOwner(position)
 					.withComments(workflowBean.getComments());
