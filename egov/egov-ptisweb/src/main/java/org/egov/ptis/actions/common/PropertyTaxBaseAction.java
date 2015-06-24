@@ -218,7 +218,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
         ajaxCommonAction.setDesignationService(new DesignationService());
         ajaxCommonAction.setAssignmentService(getAssignmentService());
         List<Department> departmentsForLoggedInUser = Collections.EMPTY_LIST;
-		//departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser(securityUtils.getCurrentUser());
+		departmentsForLoggedInUser = propertyTaxUtil.getDepartmentsForLoggedInUser(securityUtils.getCurrentUser());
         workflowBean.setDepartmentList(departmentsForLoggedInUser);
         workflowBean.setDesignationList(Collections.EMPTY_LIST);
         workflowBean.setAppoverUserList(Collections.EMPTY_LIST);
