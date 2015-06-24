@@ -52,7 +52,7 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
+
 
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
@@ -92,7 +92,7 @@
 				</nav>
 				
 			</header>
-		<form:form  class="form-horizontal form-groups-bordered"
+		<form:form  class="form-horizontal form-groups-bordered" 
 					id="searchEmployeeForm" modelAttribute="employee" action="search">
 			<div class="main-content">
 				<div class="row">
@@ -106,10 +106,11 @@
 							<div class="panel-body custom-form">
 								<form role="form" id="searchempform" class="form-horizontal form-groups-bordered">
 									<div class="form-group">
+									<input type="hidden" id="freeText"/>
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.search"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-6 add-margin">
-											<input name="searchText" type="text" class="form-control" placeholder="Search name, mobile number etc.."/>
+											<input id="searchText" name="searchText" type="text" class="form-control" placeholder="Search name, mobile number etc.." />
 										</div>
 									</div>
 									
@@ -122,12 +123,12 @@
 									<div class="form-group advanced-forms display-hide">
 										
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="" class="form-control" placeholder="Name">
+											<input type="text" name="name" id="name" class="form-control" placeholder="Name">
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="deptId" name="searchText">
+											<select class="form-control" id="department" name="department" >
 												<option value="">
-													<spring:message code="lbl.select" />
+													<spring:message code="lbl.departments" />
 												</option>
 												  <c:forEach items="${department}" var="dept">
 										            <option value="${dept.name}">${dept.name} </option>
@@ -135,9 +136,9 @@
 											</select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="desigId" name="searchText">
+											<select class="form-control" id="designation" name="designation">
 												<option value="">
-													<spring:message code="lbl.select" />
+													<spring:message code="lbl.designations" />
 												</option>
 												  <c:forEach items="${desigList}" var="desig">
 										            <option value="${desig.name}">${desig.name} </option>
@@ -150,9 +151,9 @@
 									<div class="form-group advanced-forms display-hide">
 										
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="functionId" name="searchText">
+											<select class="form-control" id="function" name="function">
 												<option value="">
-													<spring:message code="lbl.select" />
+													<spring:message code="lbl.functions" />
 												</option>
 												  <c:forEach items="${functionList}" var="function">
 										            <option value="${function.name}">${function.name} </option>
@@ -160,9 +161,9 @@
 											</select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="functionaryId" name="searchText">
+											<select class="form-control" id="functionary" name="functionary">
 												<option value="">
-													<spring:message code="lbl.select" />
+													<spring:message code="lbl.functionaries" />
 												</option>
 												  <c:forEach items="${functionaryList}" var="functionary">
 										            <option value="${functionary.name}">${functionary.name} </option>
@@ -170,55 +171,44 @@
 											</select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="" class="form-control" placeholder="Code">
+											<input type="text" name="code" id="code" class="form-control" placeholder="Code">
 										</div>
 									</div>
 
 									<div class="form-group advanced-forms display-hide">
 										
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="functionId" name="searchText">
+											<select class="form-control" id="status" name="status">
 												<option value="">
-													<spring:message code="lbl.select" />
+													<spring:message code="lbl.types" />
 												</option>
-												  <c:forEach items="${employeeStatus}" var="empStatus">
-										            <option value="${empStatus}">${empStatus} </option>
+												  <c:forEach items="${employeeTypes}" var="type">
+										            <option value="${type.name}">${type.name} </option>
 										         </c:forEach>
 											</select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select name="employeeType" id="employeeType" name="searchText" 
-												class="form-control">
-												<option value="">
-													<spring:message code="lbl.select" />
-												</option>
-												 <c:forEach items="${employeeTypes}" var="empType">
-										            <option value="${empType.name}">${empType.name} </option>
-										         </c:forEach>
-											</select>
-											
+											<input type="text" name="pan" id="pan" class="form-control" placeholder="PAN">
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="searchText" class="form-control" placeholder="Aadhaar">
+											<input type="text" name="aadhaar" id="aadhaar" class="form-control" placeholder="Aadhaar">
 										</div>
 										
 									</div>
 
 									<div class="form-group advanced-forms display-hide">
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="searchText" class="form-control" placeholder="Mobile Number">
+											<input type="text" name="mobileNumber" id="mobileNumber" class="form-control" placeholder="Mobile Number">
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="searchText" class="form-control" placeholder="Email">
+											<input type="text" name="email" id="email" class="form-control" placeholder="Email">
 										</div>
-										<div class="col-sm-4 add-margin">
-											<input type="text" name="searchText" class="form-control" placeholder="PAN">
-										</div>
+										
 										
 									</div>
 
 										<div class="text-center">
-											<button type="submit" class="btn btn-primary">Search Employee</button>
+											<button type="button"  class="btn btn-primary" id="searchbtn">Search Employee</button>
 											<button class="btn btn-danger" type="reset">Reset</button>
 											<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
 										</div>
@@ -230,7 +220,7 @@
 						</div>					
 					</div>
 				</div>
-			<c:if test="${employees != null}">
+			<%-- <c:if test="${employees != null}"> --%>
 				<div class="row">
 					<div class="col-md-6 col-xs-6 table-header">List of Employee</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
@@ -252,7 +242,7 @@
 								</tr>
 							</thead>
 							<tbody>
-							<c:forEach var="employee" items="${employees}" varStatus="status">
+							<%-- <c:forEach var="employee" items="${employees}" varStatus="status">
 							<tr>
 								<td><c:out value="${status.index + 1}"/></td>
 								<td><c:out value="${employee.name}"/></td>
@@ -268,17 +258,19 @@
 								<button type="button" class="btn btn-xs btn-secondary view-employee">
 										<span class="glyphicon glyphicon-edit"></span>&nbsp;View</button></td>
 							</tr>			
-							</c:forEach>
+							</c:forEach> --%>
 							</tbody>
 						</table>
 					</div>
 				</div>
-			</c:if>	
+			<%-- </c:if>	 --%>
 
 			</div>
 </form:form>
 
 		</div>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>		
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/employeesearch.js'/>"></script>

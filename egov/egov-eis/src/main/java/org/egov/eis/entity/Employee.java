@@ -66,13 +66,14 @@ import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
-import org.springframework.core.annotation.Order;
 
 @Indexed
 @Entity
@@ -96,7 +97,6 @@ public class Employee extends User {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Searchable(group = Searchable.Group.CLAUSES)
     private EmployeeStatus employeeStatus;
 
     @NotNull

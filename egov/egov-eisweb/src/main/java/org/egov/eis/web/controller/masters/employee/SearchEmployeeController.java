@@ -39,11 +39,18 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.EmployeeAdaptor;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.DesignationService;
@@ -56,11 +63,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/employee")
 public class SearchEmployeeController {
 
+    public static final String CONTENTTYPE_JSON = "application/json";
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -87,9 +100,7 @@ public class SearchEmployeeController {
     }
 
     @RequestMapping(value="search",method = RequestMethod.POST)
-    public String searchEmployee(@RequestParam final String searchText, final Model model) {
-        model.addAttribute("employees",
-                employeeService.searchEmployee(null == searchText || searchText.isEmpty() ? "" : searchText));
+    public String searchEmployee(final Model model) {
         loadDropDownValues(model);
         return "employeesearch-form";
     }
@@ -108,6 +119,23 @@ public class SearchEmployeeController {
                 getCurrentSession().createQuery(
                         "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
         model.addAttribute("desigList", designationService.getAllDesignations());
+    }
+    
+    public String toJSON(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Employee.class, new EmployeeAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "ajax/employees", method = RequestMethod.GET)
+    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,@RequestParam final String[] searchText,
+            final HttpServletResponse response,@RequestParam final Boolean freeText) throws IOException {
+        final List<Employee> employees = employeeService.searchEmployee(freeText,searchText);
+        final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees))
+                .append("}");
+        response.setContentType(CONTENTTYPE_JSON);
+        IOUtils.write(employeeJSONData, response.getWriter());
     }
 
 }

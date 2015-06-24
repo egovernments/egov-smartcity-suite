@@ -171,8 +171,8 @@ $(document).ready(function(){
 	});
 	
 	function resetAssignmentValues() {
-		$("#primary_yes").prop("checked",false);
-		$("#primary_no").prop("checked",true);
+		$("#primary_yes").prop("checked",true);
+		$("#primary_no").prop("checked",false);
 		$("#fromDate").val("");
 		$("#toDate").val("");
 		$("#deptId").val("");

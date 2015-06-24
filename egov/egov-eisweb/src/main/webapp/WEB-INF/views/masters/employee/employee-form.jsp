@@ -91,7 +91,7 @@
 							</div>
 							
 							<div class="panel-body custom-form">
-								<form:hidden path="password" value="804Mqu@123"/>
+								<form:hidden path="password" value="$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK"/>
 								<form:hidden path="locale" value="en IN"/>
 								<form:hidden path="pwdExpiryDate" id="pwdExpiryDate" value="01/01/2015"/>
 								<input type="hidden" value="${mode}" id="mode"/>

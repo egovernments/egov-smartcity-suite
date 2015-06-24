@@ -52,7 +52,9 @@ import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeRepository;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.search.query.dsl.TermMatchingContext;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +81,6 @@ public class EmployeeService {
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
         for (final Assignment assign : employee.getAssignments()) {
-            assign.setEmployee(employee);
             for(HeadOfDepartments hod:assign.getDeptSet()){
                 hod.setAssignment(assign);
             }
@@ -94,6 +95,7 @@ public class EmployeeService {
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
         for (final Assignment assign : employee.getAssignments()){
             assign.setEmployee(employee);
+            assign.setDepartment(assign.getDepartment());
             for(HeadOfDepartments hod:assign.getDeptSet()){
                 hod.setAssignment(assign);
             }
@@ -104,22 +106,39 @@ public class EmployeeService {
     }
     
     @Transactional
-    public List<Employee> searchEmployee(final String searchText) {
+    public List<Employee> searchEmployee(final Boolean freeText,final String[] searchText) {
        
         FullTextEntityManager fullTextEntityManager =
                 org.hibernate.search.jpa.Search.getFullTextEntityManager(entityManager);
-            // create native Lucene query unsing the query DSL
+            // create native Lucene query using the query DSL
             // alternatively you can write the Lucene query using the Lucene query parser
             // or the Lucene programmatic API. The Hibernate Search DSL is recommended though
             QueryBuilder qb = fullTextEntityManager.getSearchFactory()
                 .buildQueryBuilder().forEntity(Employee.class).get();
-            org.apache.lucene.search.Query luceneQuery = qb
-              .keyword()
-              .onFields("name","code","mobileNumber","aadhaarNumber","emailId","pan",
-                      "assignments.department.name", "assignments.designation.name","assignments.position.name",
-                      "assignments.fund.name","assignments.function.name","assignments.functionary.name")
-              .matching(searchText)
-              .createQuery();
+            TermMatchingContext onFields = qb.keyword().onFields("name","code","mobileNumber","aadhaarNumber","emailId","pan",
+                          "assignments.department.name", "assignments.designation.name","assignments.position.name",
+                          "assignments.fund.name","assignments.function.name","assignments.functionary.name");
+            
+            org.apache.lucene.search.Query luceneQuery = null;
+           
+            
+            if(freeText){
+                    luceneQuery = onFields
+                      .matching(searchText[0])
+                      .createQuery();
+
+              }
+            else {
+                BooleanJunction<BooleanJunction> bool = qb.bool();
+                for (int j = 0; j < searchText.length; j++) {
+                   String currentTerm = searchText[j];
+                   if(!currentTerm.isEmpty()) {
+                       bool.must(onFields.matching(currentTerm).createQuery());
+                   }
+                }
+                luceneQuery = bool.createQuery();
+            }
+              
 
             // wrap Lucene query in a javax.persistence.Query
             javax.persistence.Query jpaQuery =
