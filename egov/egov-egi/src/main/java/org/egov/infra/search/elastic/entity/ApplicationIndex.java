@@ -75,8 +75,8 @@ public class ApplicationIndex extends AbstractAuditable {
     
     @NotNull
     @Length(max = 50)
-    @Searchable(group = Searchable.Group.CLAUSES)
-	private String modulename;
+    @Searchable(name="modulename", group = Searchable.Group.CLAUSES)
+	private String moduleName;
 	
 	@NotNull
 	@Length(max = 50)
@@ -89,7 +89,7 @@ public class ApplicationIndex extends AbstractAuditable {
 	
 	@NotNull
 	@Length(max = 150)
-	@Searchable(group = Searchable.Group.CLAUSES)
+	@Searchable(name = "applicationtype", group = Searchable.Group.CLAUSES)
 	private String applicationType;
 	
 	@NotNull
@@ -104,11 +104,11 @@ public class ApplicationIndex extends AbstractAuditable {
 	
 	@NotNull
 	@Length(max = 250)
-	@Searchable(group = Searchable.Group.CLAUSES)
+	@Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
 	private String ulbName;
 	
 	@Length(max = 250)
-	@Searchable(group = Searchable.Group.CLAUSES)
+	@Searchable(name = "districtname",group = Searchable.Group.CLAUSES)
 	private String districtName;
 
 	@NotNull
@@ -124,6 +124,10 @@ public class ApplicationIndex extends AbstractAuditable {
 	@Searchable(name = "consumercode")
 	private String consumerCode;
 	
+	@Length(min = 10, max = 12)
+	@Searchable(name = "mobilenumber")
+	private String mobileNumber;
+	
 	
 	@Override
     public Long getId() {
@@ -135,12 +139,12 @@ public class ApplicationIndex extends AbstractAuditable {
         this.id = id;
     }
     
-    public String getModulename() {
-		return modulename;
+    public String getModuleName() {
+		return moduleName;
 	}
 
-	public void setModulename(String modulename) {
-		this.modulename = modulename;
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
 	}
     
 	public String getApplicationNumber() {
@@ -229,5 +233,13 @@ public class ApplicationIndex extends AbstractAuditable {
 
 	public void setConsumerCode(String consumerCode) {
 		this.consumerCode = consumerCode;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 }

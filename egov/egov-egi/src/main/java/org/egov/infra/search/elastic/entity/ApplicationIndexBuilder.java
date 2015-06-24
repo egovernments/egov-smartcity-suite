@@ -53,9 +53,9 @@ public class ApplicationIndexBuilder {
 
 	private ApplicationIndex applicationIndex;
 
-	public ApplicationIndexBuilder(String modulename, String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
+	public ApplicationIndexBuilder(String moduleName, String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
 		applicationIndex =  new ApplicationIndex();
-		applicationIndex.setModulename(modulename);
+		applicationIndex.setModuleName(moduleName);
 		applicationIndex.setApplicationNumber(applicationNumber);
 		applicationIndex.setApplicationDate(applicationDate);
 		applicationIndex.setApplicationType(applicationType);
@@ -79,13 +79,18 @@ public class ApplicationIndexBuilder {
 		return this;
 	}
 	
+	public ApplicationIndexBuilder mobileNumber(String mobileNumber) {
+		applicationIndex.setMobileNumber(mobileNumber);
+		return this;
+	}
+	
 	public ApplicationIndex build() throws EGOVRuntimeException {
 		validate();
 		return applicationIndex;
 	}
 
 	private void validate() throws EGOVRuntimeException {
-		if (applicationIndex.getModulename() == null) {
+		if (applicationIndex.getModuleName() == null) {
 			throw new EGOVRuntimeException("Module Name is mandatory");
 		}
 		if (applicationIndex.getApplicationNumber() == null) {

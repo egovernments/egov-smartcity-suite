@@ -138,13 +138,17 @@ public class WaterConnectionDetailsService {
     }
 
     private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder("wtms",
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder("Water Tax",
                 waterConnectionDetails.getApplicationNumber(), waterConnectionDetails.getApplicationDate(),
                 waterConnectionDetails.getApplicationType().getName(), "Mr. Bean",
                 waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
 
-        applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-
+        if(waterConnectionDetails.getDisposalDate() != null) {
+        	applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+        }	
+        if(waterConnectionDetails.getConnection().getMobileNumber() != null) {
+        	applicationIndexBuilder.mobileNumber(waterConnectionDetails.getConnection().getMobileNumber());
+        }
         final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
