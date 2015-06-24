@@ -37,17 +37,20 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.ptis.client.model;
+package org.egov.ptis.client.model.calculator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("misctaxes")
-public class MiscellaneousTax {
+public class APMiscellaneousTax extends MiscellaneousTax{
     @XStreamAsAttribute
     private String taxName;
     private BigDecimal totalActualTax;
@@ -59,9 +62,9 @@ public class MiscellaneousTax {
     @XStreamAlias("taxdetails")
     private List<MiscellaneousTaxDetail> taxDetails = new ArrayList<MiscellaneousTaxDetail>();
     
-    public MiscellaneousTax() {}
+    public APMiscellaneousTax() {}
     
-    public MiscellaneousTax(MiscellaneousTax miscTax) {
+    public APMiscellaneousTax(APMiscellaneousTax miscTax) {
     	this.taxName = miscTax.getTaxName();
     	this.totalActualTax = miscTax.getTotalActualTax();
     	this.totalCalculatedTax = miscTax.getTotalCalculatedTax();

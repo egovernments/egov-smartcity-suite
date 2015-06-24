@@ -42,6 +42,7 @@ package org.egov.ptis.web.controller.masters.rebatePeriod;
 import javax.validation.Valid;
 
 import org.egov.commons.Installment;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
@@ -60,17 +61,19 @@ public class CreateRebatePeriodController {
 
 	private RebatePeriodService rebatePeriodService;
 	private PropertyService propertyService;
+	private PropertyTaxUtil propertyTaxUtil;
 	private Installment currentInstallment;
 	
 	@Autowired
-	public CreateRebatePeriodController(PropertyService propertyService,RebatePeriodService rebatePeriodService){
+	public CreateRebatePeriodController(PropertyService propertyService,RebatePeriodService rebatePeriodService, PropertyTaxUtil propertyTaxUtil){
 		this.propertyService = propertyService;
+		this.propertyTaxUtil = propertyTaxUtil;
 		this.rebatePeriodService = rebatePeriodService;
 	}
 	
 	@ModelAttribute
 	public RebatePeriod rebatePeriodModel(){
-		currentInstallment = propertyService.getCurrentInstallment();
+		currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		RebatePeriod rebatePeriod = null;
 		if(currentInstallment!=null){
 			rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());

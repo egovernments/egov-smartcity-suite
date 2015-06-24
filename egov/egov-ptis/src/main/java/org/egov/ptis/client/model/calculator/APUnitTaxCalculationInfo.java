@@ -37,19 +37,22 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.ptis.client.model;
+package org.egov.ptis.client.model.calculator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias("unitinfo")
-public class UnitTaxCalculationInfo {
+public class APUnitTaxCalculationInfo extends UnitTaxCalculationInfo {
 	@XStreamAsAttribute
 	private Date baseRateEffectiveDate;
 
@@ -83,10 +86,10 @@ public class UnitTaxCalculationInfo {
 
 	private BigDecimal totalTaxPayable;
 
-	public UnitTaxCalculationInfo() {
+	public APUnitTaxCalculationInfo() {
 	}
 
-	public UnitTaxCalculationInfo(UnitTaxCalculationInfo unit) {
+	public APUnitTaxCalculationInfo(APUnitTaxCalculationInfo unit) {
 		this.floorNumber = unit.getFloorNumber();
 		this.unitOccupation = unit.getUnitOccupation();
 		this.unitUsage = unit.getUnitUsage();
@@ -247,7 +250,7 @@ public class UnitTaxCalculationInfo {
 		this.miscellaneousTaxes = miscellaneousTaxes;
 	}
 
-	public void addMiscellaneousTaxes(MiscellaneousTax miscellaneousTaxes) {
+	public void addMiscellaneousTaxes(APMiscellaneousTax miscellaneousTaxes) {
 		getMiscellaneousTaxes().add(miscellaneousTaxes);
 	}
 

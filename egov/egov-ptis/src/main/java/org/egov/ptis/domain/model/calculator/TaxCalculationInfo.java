@@ -37,7 +37,7 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.ptis.client.model;
+package org.egov.ptis.domain.model.calculator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("taxcalculationinfo")
-public class TaxCalculationInfo {
+public abstract class TaxCalculationInfo {
 	@XStreamAsAttribute
 	private String propertyOwnerName;
 	@XStreamAsAttribute

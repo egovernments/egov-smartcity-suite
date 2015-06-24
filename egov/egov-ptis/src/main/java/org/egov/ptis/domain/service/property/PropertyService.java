@@ -106,11 +106,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
-import org.egov.ptis.client.model.MiscellaneousTax;
-import org.egov.ptis.client.model.MiscellaneousTaxDetail;
-import org.egov.ptis.client.model.TaxCalculationInfo;
-import org.egov.ptis.client.model.UnitTaxCalculationInfo;
-import org.egov.ptis.client.service.impl.TaxCalculator;
+import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -136,6 +132,10 @@ import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -147,7 +147,7 @@ public class PropertyService  {
     
 	private PersistenceService propPerServ;
 	private Installment currentInstall;
-	private TaxCalculator taxCalculator;
+	private APTaxCalculator taxCalculator;
 	private HashMap<Installment, TaxCalculationInfo> instTaxMap;
 	private PropertyTaxUtil propertyTaxUtil;
 	@Autowired
@@ -1531,11 +1531,11 @@ public class PropertyService  {
 		this.propPerServ = propPerServ;
 	}
 
-	public TaxCalculator getTaxCalculator() {
+	public APTaxCalculator getTaxCalculator() {
 		return taxCalculator;
 	}
 
-	public void setTaxCalculator(TaxCalculator taxCalculator) {
+	public void setTaxCalculator(APTaxCalculator taxCalculator) {
 		this.taxCalculator = taxCalculator;
 	}
 
@@ -1975,17 +1975,6 @@ public class PropertyService  {
 
 	}
 
-	/**
-	 * Gives the current installment
-	 *
-	 * @return Installment the current installment for PT module
-	 */
-	public Installment getCurrentInstallment() {
-		Installment currentInstallment = (Installment) getPropPerServ().find("from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ",
-				PTMODULENAME, new Date(), new Date());
-		return currentInstallment;
-	}
-	
 	public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
 		return excessCollAmtMap;
 	}

@@ -99,13 +99,7 @@ public class BoundaryTypeBuilder {
     }
 
     public BoundaryTypeBuilder withId(final long id) {
-        try {
-            final Field idField = boundaryTypeImpl.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(boundaryTypeImpl, id);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+    	boundaryTypeImpl.setId(id);
         return this;
     }
 
@@ -117,7 +111,7 @@ public class BoundaryTypeBuilder {
         if (null == boundaryTypeImpl.getName())
             withName("test-BoundaryType-" + count);
 
-        if (0 == boundaryTypeImpl.getHierarchy())
+        if (null != boundaryTypeImpl.getHierarchy() && 0 == boundaryTypeImpl.getHierarchy())
             withHierarchy(Long.valueOf(count));
         if (null != boundaryTypeImpl.getHierarchyType())
             withHeirarchyType(new HeirarchyTypeBuilder().withDefaults().build());

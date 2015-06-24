@@ -1,0 +1,53 @@
+package org.egov.ptis.builder.entity.property;
+
+import java.util.Date;
+
+import org.egov.commons.Area;
+import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.junit.Ignore;
+
+/**
+ * @author Ramki
+ */
+
+public class FloorBuilder {
+	private final FloorImpl floor;
+
+	public FloorBuilder() {
+		floor = new FloorImpl();
+	}
+
+	public FloorImpl build() {
+		return floor;
+	}
+
+	public FloorBuilder withBuiltUpArea(final Float builtUpArea) {
+		Area area = new Area();
+		area.setArea(builtUpArea);
+		floor.setBuiltUpArea(area);
+		return this;
+	}
+
+	public FloorBuilder withUsage(final PropertyUsage propertyUsage) {
+		floor.setPropertyUsage(propertyUsage);
+		return this;
+	}
+
+	public FloorBuilder withOccupancy(final PropertyOccupation propertyOccupation) {
+		floor.setPropertyOccupation(propertyOccupation);
+		return this;
+	}
+
+	public FloorBuilder withOccupancyDate(final Date date) {
+		floor.setCreatedDate(date);
+		return this;
+	}
+
+	public FloorBuilder withDefaults() {
+		withOccupancyDate(new Date());
+		withBuiltUpArea(1000F);
+		return this;
+	}
+}

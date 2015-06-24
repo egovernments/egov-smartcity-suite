@@ -75,17 +75,18 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.client.model.MiscellaneousTax;
-import org.egov.ptis.client.model.MiscellaneousTaxDetail;
-import org.egov.ptis.client.model.TaxCalculationInfo;
 import org.egov.ptis.client.model.TaxDetail;
-import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -667,7 +668,7 @@ public class PropertyNoticeService {
 					}
 				}
 
-				MiscellaneousTaxDetail miscTaxDetail = new MiscellaneousTaxDetail();
+				MiscellaneousTaxDetail miscTaxDetail = new APMiscellaneousTaxDetail();
 				miscTaxDetail.setFromDate(demandReasonDetail.getFromDate());
 				miscTaxDetail.setTaxValue(demandReasonDetail.getPercentage());
 				miscTaxDetail.setCalculatedTaxValue(calculatedAnnualTax);

@@ -37,77 +37,85 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.ptis.client.model;
+package org.egov.ptis.domain.model.calculator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+public abstract class MiscellaneousTax {
+	private String taxName;
+	private BigDecimal totalActualTax;
+	private BigDecimal totalCalculatedTax;
 
-/**
- * ConsolidatedUnitTaxCalReport class is used to provide consolidated Unit tax
- * calculation information in generation of Calculation Sheet
- * 
- * @author subhash
- * 
- */
-public class ConsolidatedUnitTaxCalReport {
+	// Using this to make the text bold in iReport
+	private Boolean hasChanged = Boolean.FALSE;
 
-	private BigDecimal annualLettingValue;
-	private BigDecimal monthlyRent;
-	private BigDecimal annualRentBeforeDeduction;
-	private BigDecimal deductionAmount;
-	private String instDate;
-	private List<UnitTaxCalculationInfo> unitTaxCalInfo;
-	
-	public BigDecimal getAnnualLettingValue() {
-		return annualLettingValue;
-	}
-	
-	public BigDecimal getMonthlyRent() {
-		return monthlyRent;
+	private List<MiscellaneousTaxDetail> taxDetails = new ArrayList<MiscellaneousTaxDetail>();
+
+	public MiscellaneousTax() {
 	}
 
-	public void setMonthlyRent(BigDecimal monthlyRent) {
-		this.monthlyRent = monthlyRent;
+	public MiscellaneousTax(MiscellaneousTax miscTax) {
+		this.taxName = miscTax.getTaxName();
+		this.totalActualTax = miscTax.getTotalActualTax();
+		this.totalCalculatedTax = miscTax.getTotalCalculatedTax();
+		this.hasChanged = miscTax.getHasChanged();
 	}
 
-	public BigDecimal getAnnualRentBeforeDeduction() {
-		return annualRentBeforeDeduction;
+	public String getTaxName() {
+		return taxName;
 	}
 
-	public void setAnnualRentBeforeDeduction(BigDecimal annualRentBeforeDeduction) {
-		this.annualRentBeforeDeduction = annualRentBeforeDeduction;
+	public void setTaxName(String taxName) {
+		this.taxName = taxName;
 	}
 
-	public BigDecimal getDeductionAmount() {
-		return deductionAmount;
+	public List<MiscellaneousTaxDetail> getTaxDetails() {
+		return taxDetails;
 	}
 
-	public void setDeductionAmount(BigDecimal deductionAmount) {
-		this.deductionAmount = deductionAmount;
+	public void setTaxDetails(List<MiscellaneousTaxDetail> taxDetails) {
+		this.taxDetails = taxDetails;
 	}
 
-	public void setAnnualLettingValue(BigDecimal annualLettingValue) {
-		this.annualLettingValue = annualLettingValue;
-	}
-	public List<UnitTaxCalculationInfo> getUnitTaxCalInfo() {
-		return unitTaxCalInfo;
-	}
-	public void setUnitTaxCalInfo(List<UnitTaxCalculationInfo> unitTaxCalInfo) {
-		this.unitTaxCalInfo = unitTaxCalInfo;
-	}
-	
-	public void addUnitTaxCalInfo(UnitTaxCalculationInfo unitTaxCalInfo) {
-		this.getUnitTaxCalInfo().add(unitTaxCalInfo);
+	public void addMiscellaneousTaxDetail(MiscellaneousTaxDetail taxDetail) {
+		this.taxDetails.add(taxDetail);
 	}
 
-	public String getInstDate() {
-		return instDate;
+	public BigDecimal getTotalActualTax() {
+		return totalActualTax;
 	}
 
-	public void setInstDate(String instDate) {
-		this.instDate = instDate;
+	public void setTotalActualTax(BigDecimal totalActualTax) {
+		this.totalActualTax = totalActualTax;
 	}
-	
+
+	public BigDecimal getTotalCalculatedTax() {
+		return totalCalculatedTax;
+	}
+
+	public void setTotalCalculatedTax(BigDecimal totalCalculatedTax) {
+		this.totalCalculatedTax = totalCalculatedTax;
+	}
+
+	public Boolean getHasChanged() {
+		return hasChanged;
+	}
+
+	public void setHasChanged(Boolean hasChanged) {
+		this.hasChanged = hasChanged;
+	}
+
+	@Override
+	public int hashCode() {
+		int hashCode = this.taxName.hashCode() + this.taxDetails.hashCode();
+		return hashCode;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append("MiscellaneousTax [").append("taxName=").append(getTaxName())
+				.append(", hasChanged=").append(getHasChanged()).append(", ").append(this.taxDetails).toString();
+	}
 }

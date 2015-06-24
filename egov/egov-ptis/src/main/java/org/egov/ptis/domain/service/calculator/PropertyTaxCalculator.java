@@ -1,4 +1,4 @@
-package org.egov.ptis.client.service;
+package org.egov.ptis.domain.service.calculator;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -7,8 +7,8 @@ import java.util.Set;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.ptis.client.model.TaxCalculationInfo;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 
 /*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency,
@@ -49,6 +49,7 @@ import org.egov.ptis.domain.entity.property.Property;
  * In case of any queries, you can reach eGovernments Foundation at
  * contact@egovernments.org
  ******************************************************************************/
-public interface TaxCalculatorInterface {
+//TODO class name should be PropertyTaxCalculator
+public interface PropertyTaxCalculator {
 	public HashMap<Installment, TaxCalculationInfo> calculatePropertyTax(Property property, Date occupationDate);
 }

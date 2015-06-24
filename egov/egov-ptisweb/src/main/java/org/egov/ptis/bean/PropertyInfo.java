@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
@@ -87,10 +86,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.ptis.client.model.MiscellaneousTax;
-import org.egov.ptis.client.model.MiscellaneousTaxDetail;
-import org.egov.ptis.client.model.TaxCalculationInfo;
-import org.egov.ptis.client.model.UnitTaxCalculationInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -98,6 +93,10 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -855,156 +854,6 @@ public class PropertyInfo {
 			LOGGER.info("multiple miscTax change for date " + mayKey
 					+ unitTaxForChangeInTaxByDate.get(mayKey).getMiscellaneousTaxes());
 		}
-	}
-
-	public List<UnitTaxCalculationInfo> getUnitTaxesForMultipleTaxSlabs(Installment installment,
-			List<UnitTaxCalculationInfo> units) {
-		LOGGER.info("Into getUnitTaxesForMultipleTaxSlabs - Installment: " + installment + ", units: " + units.size());
-
-		Boolean hasMultipleTaxSlabs = Boolean.FALSE;
-		for (MiscellaneousTax tax : units.get(0).getMiscellaneousTaxes()) {
-			if (tax.getTaxDetails().size() > 1) {
-				hasMultipleTaxSlabs = Boolean.TRUE;
-				break;
-			}
-		}
-		UnitTaxCalculationInfo u = propertyTaxUtil.getUnitTaxCalculationInfoClone(units.get(0));
-
-		if (hasMultipleTaxSlabs) {
-			for (UnitTaxCalculationInfo unitInfo : units) {
-				for (MiscellaneousTax t : unitInfo.getMiscellaneousTaxes()) {
-					if (t.getHasChanged()) {
-						for (MiscellaneousTax ut : u.getMiscellaneousTaxes()) {
-							if (ut.getTaxName().equals(t.getTaxName())) {
-								ut.setHasChanged(t.getHasChanged());
-								break;
-							}
-						}
-					}
-				}
-			}
-		} else {
-
-			return units;
-		}
-
-		LOGGER.info("MiscTaxes: " + u.getMiscellaneousTaxes());
-
-		List<UnitTaxCalculationInfo> unitTaxes = new ArrayList<UnitTaxCalculationInfo>();
-
-		Boolean hasALVChanged = FALSE;
-
-		Map<Date, List<MiscellaneousTax>> miscTaxesByDate = new TreeMap<Date, List<MiscellaneousTax>>();
-		Map<Date, UnitTaxCalculationInfo> unitClonesByDate = new TreeMap<Date, UnitTaxCalculationInfo>();
-		Map<Date, Map<String, Boolean>> taxNameSlabExistanceByDate = new TreeMap<Date, Map<String, Boolean>>();
-
-		for (MiscellaneousTax miscTax : u.getMiscellaneousTaxes()) {
-			LOGGER.info("MiscTaxName: " + miscTax.getTaxName());
-			if (miscTax.getTaxDetails().size() > 1) {
-				for (MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails()) {
-					LOGGER.info("Tax: " + taxDetail.getCalculatedTaxValue());
-					Map<String, Boolean> taxNameBySlabExistance = new TreeMap<String, Boolean>();
-					taxNameBySlabExistance.put(miscTax.getTaxName(), true);
-					UnitTaxCalculationInfo unitClone = new UnitTaxCalculationInfo(u);
-					MiscellaneousTax miscTaxClone = new MiscellaneousTax(miscTax);
-					MiscellaneousTaxDetail taxDetailClone = new MiscellaneousTaxDetail(taxDetail);
-
-					if (unitClonesByDate.get(taxDetail.getFromDate()) == null) {
-						if (miscTaxesByDate.get(taxDetail.getFromDate()) == null) {
-							List<MiscellaneousTax> taxes = new ArrayList<MiscellaneousTax>();
-
-							for (MiscellaneousTax tax : u.getMiscellaneousTaxes()) {
-								if (!tax.getTaxName().equals(miscTaxClone.getTaxName())) {
-									MiscellaneousTax taxClone = new MiscellaneousTax(tax);
-									taxClone.getTaxDetails().addAll(
-											new ArrayList<MiscellaneousTaxDetail>(tax.getTaxDetails()));
-									taxes.add(taxClone);
-								}
-							}
-
-							miscTaxClone.addMiscellaneousTaxDetail(taxDetailClone);
-							taxes.add(miscTaxClone);
-							miscTaxesByDate.put(taxDetail.getFromDate(), taxes);
-
-						} else {
-							updateTax(miscTaxClone.getTaxName(), taxDetailClone,
-									miscTaxesByDate.get(taxDetail.getFromDate()));
-						}
-
-						unitClone.getMiscellaneousTaxes().addAll(miscTaxesByDate.get(taxDetail.getFromDate()));
-						LOGGER.info("taxDetail.getFromDate(): " + taxDetail.getFromDate());
-
-						if (propertyTaxUtil.between(unitClone.getOccpancyDate(), installment.getFromDate(),
-								installment.getToDate())) {
-							unitClone.setOccpancyDate(unitClone.getOccpancyDate());
-						} else {
-							unitClone.setOccpancyDate(taxDetail.getFromDate());
-						}
-						unitClonesByDate.put(taxDetail.getFromDate(), unitClone);
-
-					} else {
-						UnitTaxCalculationInfo un = unitClonesByDate.get(taxDetail.getFromDate());
-						updateTax(miscTax.getTaxName(), taxDetailClone, un.getMiscellaneousTaxes());
-					}
-
-					LOGGER.info("miscTaxClone : " + unitClone.getMiscellaneousTaxes());
-					LOGGER.info("taxDetailClone : " + taxDetailClone);
-
-					if (taxNameSlabExistanceByDate.get(taxDetail.getFromDate()) == null) {
-						taxNameSlabExistanceByDate.put(taxDetail.getFromDate(), taxNameBySlabExistance);
-					} else {
-						Map<String, Boolean> map = taxNameSlabExistanceByDate.get(taxDetail.getFromDate());
-						map.put(miscTax.getTaxName(), true);
-					}
-				}
-			}
-		}
-
-		if (hasMultipleTaxSlabs) {
-			/**
-			 * 1. get all the UnitTaxCalcInfo except last UnitTaxCalInfo(having
-			 * greatest effective date) 2. loop through MiscTaxes 3. if false(no
-			 * multi slab present) the update the calculated value with "-"
-			 * 
-			 * 
-			 */
-			LOGGER.info("Dates: " + unitClonesByDate.keySet());
-			LOGGER.info("slab Existance dates : " + taxNameSlabExistanceByDate.keySet());
-			UnitTaxCalculationInfo uni = null;
-			Date date = null;
-			int count = 0;
-			for (Map.Entry<Date, UnitTaxCalculationInfo> entry : unitClonesByDate.entrySet()) {
-				LOGGER.info("First key: " + entry.getKey());
-
-				date = entry.getKey();
-
-				uni = propertyTaxUtil.getUnitTaxCalculationInfoClone(entry.getValue());
-
-				if (count + 1 == unitClonesByDate.size()) {
-					break;
-				}
-
-				if (count == 0 && hasALVChanged) {
-					uni.setOccpancyDate(installment.getFromDate());
-				}
-
-				for (MiscellaneousTax tax : uni.getMiscellaneousTaxes()) {
-					Boolean slabStatus = taxNameSlabExistanceByDate.get(date).get(tax.getTaxName());
-					if (slabStatus == null) {
-						tax.getTaxDetails().get(0).setCalculatedTaxValue(new BigDecimal("-1"));
-					}
-				}
-				LOGGER.info("Updated: " + uni.getMiscellaneousTaxes());
-				unitClonesByDate.put(date, uni);
-				count++;
-			}
-			unitTaxes.addAll(unitClonesByDate.values());
-			LOGGER.info("After adding unitClonesByDate to unitTaxes: " + unitTaxes.size());
-		}
-
-		LOGGER.info("getUnitTaxesForMultipleTaxSlabs - after copy units: " + unitTaxes.size());
-		LOGGER.info("Exit from getUnitTaxesForMultipleTaxSlabs");
-		return unitTaxes;
 	}
 
 	private void updateTax(String taxName, MiscellaneousTaxDetail taxDetail, List<MiscellaneousTax> miscTaxes) {

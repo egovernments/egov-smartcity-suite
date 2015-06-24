@@ -102,9 +102,7 @@
   
     
     
-    <bean id="taxCalculator" class="org.egov.ptis.client.service.impl.TaxCalculator" scope="prototype">
-        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
-    </bean> 
+    <bean id="taxCalculator" class="org.egov.ptis.client.service.calculator.APTaxCalculator" scope="prototype"/>
     
    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
   	

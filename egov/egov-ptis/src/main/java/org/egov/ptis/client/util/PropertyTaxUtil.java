@@ -158,12 +158,12 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.ApplicableFactor;
-import org.egov.ptis.client.model.MiscellaneousTax;
-import org.egov.ptis.client.model.MiscellaneousTaxDetail;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
-import org.egov.ptis.client.model.TaxCalculationInfo;
-import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
+import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
+import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
+import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
 import org.egov.ptis.client.workflow.ActionAmalgmate;
 import org.egov.ptis.client.workflow.ActionBifurcate;
 import org.egov.ptis.client.workflow.ActionChangeAddress;
@@ -192,6 +192,10 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1321,7 +1325,7 @@ public class PropertyTaxUtil {
 
 	public UnitTaxCalculationInfo getUnitTaxCalculationInfoClone(UnitTaxCalculationInfo unit) {
 		LOGGER.debug("Entered into getUnitTaxCalculationInfoClone");
-		UnitTaxCalculationInfo clone = new UnitTaxCalculationInfo();
+		UnitTaxCalculationInfo clone = new APUnitTaxCalculationInfo();
 		clone.setFloorNumber(unit.getFloorNumber());
 		clone.setUnitOccupation(unit.getUnitOccupation());
 		clone.setUnitUsage(unit.getUnitUsage());
@@ -1352,7 +1356,7 @@ public class PropertyTaxUtil {
 	 */
 
 	public TaxCalculationInfo getTaxCalculationInfoClone(TaxCalculationInfo taxCalInfo) {
-		TaxCalculationInfo clone = new TaxCalculationInfo();
+		TaxCalculationInfo clone = new APTaxCalculationInfo();
 		clone.setBlock(taxCalInfo.getBlock());
 		clone.setHouseNumber(taxCalInfo.getHouseNumber());
 		clone.setPropertyId(taxCalInfo.getPropertyId());
@@ -1401,14 +1405,14 @@ public class PropertyTaxUtil {
 		LOGGER.debug("Entered into addMiscellaneousTaxesClone");
 		for (MiscellaneousTax miscTax : unit.getMiscellaneousTaxes()) {
 
-			MiscellaneousTax newMiscTax = new MiscellaneousTax();
+			MiscellaneousTax newMiscTax = new APMiscellaneousTax();
 			newMiscTax.setTaxName(miscTax.getTaxName());
 			newMiscTax.setTotalActualTax(miscTax.getTotalActualTax());
 			newMiscTax.setTotalCalculatedTax(miscTax.getTotalCalculatedTax());
 			newMiscTax.setHasChanged(miscTax.getHasChanged());
 
 			for (MiscellaneousTaxDetail miscTaxDetail : miscTax.getTaxDetails()) {
-				MiscellaneousTaxDetail newMiscTaxDetail = new MiscellaneousTaxDetail();
+				MiscellaneousTaxDetail newMiscTaxDetail = new APMiscellaneousTaxDetail();
 				newMiscTaxDetail.setTaxValue(miscTaxDetail.getTaxValue());
 				newMiscTaxDetail.setActualTaxValue(miscTaxDetail.getActualTaxValue());
 				newMiscTaxDetail.setCalculatedTaxValue(miscTaxDetail.getCalculatedTaxValue());
@@ -2055,28 +2059,6 @@ public class PropertyTaxUtil {
 	public static Installment getPTInstallmentForDate(Date date) {
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
-	}
-
-	/**
-	 * Returns the applicable taxes for the given property
-	 *
-	 * @param property
-	 * @return List of taxes
-	 */
-	public static List<String> prepareApplicableTaxes(Property property) {
-		LOGGER.debug("Entered into prepareApplTaxes");
-		LOGGER.debug("prepareApplTaxes: property: " + property);
-		List<String> applicableTaxes = new ArrayList<String>();
-		String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
-
-		applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
-		applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
-		applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
-		applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
-
-		LOGGER.debug("prepareApplTaxes: applicableTaxes: " + applicableTaxes);
-		LOGGER.debug("Exiting from prepareApplTaxes");
-		return applicableTaxes;
 	}
 
 	/**

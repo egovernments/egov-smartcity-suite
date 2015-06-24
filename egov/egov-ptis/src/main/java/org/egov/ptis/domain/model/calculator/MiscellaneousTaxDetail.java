@@ -37,7 +37,7 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.ptis.client.model;
+package org.egov.ptis.domain.model.calculator;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -46,7 +46,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("taxdetail")
-public class MiscellaneousTaxDetail {
+public abstract class MiscellaneousTaxDetail {
     // %value or amount value
     private BigDecimal taxValue;
     private BigDecimal actualTaxValue;

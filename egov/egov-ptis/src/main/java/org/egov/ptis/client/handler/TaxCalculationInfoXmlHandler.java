@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.client.handler;
 
-import org.egov.ptis.client.model.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;

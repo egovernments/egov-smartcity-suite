@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.notice;
 
 import static org.egov.infstr.utils.MoneyUtils.roundOffTwo;
-import static org.egov.infstr.utils.MoneyUtils.roundOff;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
@@ -79,8 +78,7 @@ import org.egov.ptis.client.model.AreaTaxCalculationInfo;
 import org.egov.ptis.client.model.ConsolidatedUnitTaxCalReport;
 import org.egov.ptis.client.model.GovtPropertyInfo;
 import org.egov.ptis.client.model.GovtPropertyTaxCalInfo;
-import org.egov.ptis.client.model.TaxCalculationInfo;
-import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -88,6 +86,8 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -347,7 +347,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 
 		for (Map.Entry<String, Set<UnitAreaCalculationDetail>> entry : unitAreaDetails.entrySet()) {
 
-			unitTaxInfo = new UnitTaxCalculationInfo();
+			unitTaxInfo = new APUnitTaxCalculationInfo();
 			unitTaxInfo.setFloorNumber(unitCalcDetail.getUnitNumber().toString());
 
 			i = 0;
