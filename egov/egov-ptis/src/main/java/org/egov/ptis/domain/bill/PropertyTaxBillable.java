@@ -360,59 +360,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	}
 
 	@Override
-	public BigDecimal calcPanalty(Date latestCollReceiptDate, Date fromDate, BigDecimal amount) {
+	public BigDecimal calcPenalty(Date latestCollReceiptDate, Date fromDate, BigDecimal amount) {
 		BigDecimal penalty = BigDecimal.ZERO;
-		Calendar fromDateCalendar = Calendar.getInstance();
-		fromDateCalendar.setTime(fromDate);
-		Calendar arrearsPenaltyApplicableDate = Calendar.getInstance();
-		arrearsPenaltyApplicableDate.set(Calendar.DAY_OF_MONTH, 1);
-		arrearsPenaltyApplicableDate.set(Calendar.MONTH, Calendar.JANUARY);
-		arrearsPenaltyApplicableDate.set(Calendar.HOUR_OF_DAY, 00);
-		arrearsPenaltyApplicableDate.set(Calendar.MINUTE, 00);
-		arrearsPenaltyApplicableDate.set(Calendar.SECOND, 00);
-
-		Calendar latestCollRcptCalendar = Calendar.getInstance();
-		if (latestCollReceiptDate != null) {
-			latestCollRcptCalendar.setTime(latestCollReceiptDate);
-		}
-
-		DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
-		Date arrearlpDate = null;
-		Date arrearlpDateBreakup = null;
-		Date frmDate = null;
-		try {
-			arrearlpDate = dateFormat.parse(ARR_LP_DATE_CONSTANT);
-			arrearlpDateBreakup = dateFormat.parse(ARR_LP_DATE_BREAKUP);
-			frmDate = dateFormat.parse(dateFormat.format(fromDate));
-		} catch (ParseException e) {
-			throw new EGOVRuntimeException("Exception occured in calcPanalty", e);
-		}
-
-		if (getLPPenaltyCalcType().equals(LPPenaltyCalcType.SIMPLE)) {
-			int noOfMonths = 0;
-			Date penaltyFromDate = null;
-
-			if (latestCollReceiptDate != null && latestCollReceiptDate.after(frmDate)
-					&& latestCollReceiptDate.after(arrearlpDateBreakup)) {
-
-				latestCollRcptCalendar.add(Calendar.MONTH, 1);
-				arrearsPenaltyApplicableDate.setTime(latestCollRcptCalendar.getTime());
-				penaltyFromDate = arrearsPenaltyApplicableDate.getTime();
-
-			} else if (frmDate.after(arrearlpDateBreakup) || frmDate.equals(arrearlpDateBreakup)) {
-				arrearsPenaltyApplicableDate.set(Calendar.YEAR,
-						(fromDateCalendar.get(Calendar.YEAR) + 1));
-				penaltyFromDate = arrearsPenaltyApplicableDate.getTime();
-			} else {
-				penaltyFromDate = arrearlpDate;
-			}
-
-			noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(penaltyFromDate, new Date());
-
-			penalty = amount.multiply(LP_PERCENTAGE_CONSTANT).divide(BigDecimal.valueOf(100))
-					.multiply(BigDecimal.valueOf(noOfMonths));
-
-		}
+		int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
+		penalty = amount.multiply((PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths)))).divide(
+				VALUE_HUNDRED);
 		return MoneyUtils.roundOff(penalty);
 	}
 
@@ -760,7 +712,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 
 											} else {
 
-												penAmt = calcPanalty(latestCollRcptDate,
+												penAmt = calcPenalty(latestCollRcptDate,
 														installment.getFromDate(),
 														taxForPenaltyCalc);
 
@@ -770,7 +722,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 											lpAmt = penAmt;
 
 										} else if (collAmtForPenaltyCalc.equals(BigDecimal.ZERO)) {
-											lpAmt = calcPanalty(null, installment.getFromDate(),
+											lpAmt = calcPenalty(null, installment.getFromDate(),
 													taxForPenaltyCalc);
 										}
 									} else {
@@ -796,7 +748,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 								}
 							} else {
 								if (!installment.equals(currentInstall)) {
-									lpAmt = calcPanalty(latestCollRcptDate,
+									lpAmt = calcPenalty(latestCollRcptDate,
 											installment.getFromDate(), taxForPenaltyCalc);
 								} else {
 									lpAmt = calcCurrPenalty(latestCollRcptDate, taxForPenaltyCalc);

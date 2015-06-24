@@ -1002,7 +1002,7 @@ public interface PropertyTaxConstants {
 
 	public static final String STRING_EMPTY = new String();
 
-	public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(4);
+	public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(5);
 	public static final Integer MAX_ADVANCES_ALLOWED = 5;
 	
 	public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
@@ -1028,5 +1028,7 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
 	
 	public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
+	
+	public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
 
 }

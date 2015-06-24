@@ -73,6 +73,6 @@ public interface LatePayPenaltyCalculator {
 	 * @param amount - amount for which interest to be calculated
 	 * @return Interest amount.
 	 */
-	BigDecimal calcPanalty(Date latestCollectedRcptDate, Date fromDate, BigDecimal amount);
+	BigDecimal calcPenalty(Date latestCollectedRcptDate, Date fromDate, BigDecimal amount);
 
 }
