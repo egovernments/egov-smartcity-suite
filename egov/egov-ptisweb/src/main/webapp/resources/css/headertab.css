@@ -56,7 +56,7 @@
 #header UL {
 	PADDING-RIGHT: 1px;
 	PADDING-LEFT: 0px;
-	MARGIN: -4px;
+	MARGIN: 0 0 -3px;
 	PADDING-TOP: 5px;
 	LIST-STYLE-TYPE: none
 }
@@ -125,13 +125,21 @@
 	
 }
 
-#Tabs a {
+#Tabs li a {
 	
-	padding: 5px 30px 6px 8px;
-	float: left;
-	color: #fff;
-	text-align: center;
-	text-decoration: none;
+  padding: 10px 12px;
+  float: left;
+  color: #F2851F;
+  text-align: center;
+  text-decoration: none;
+  border-top: 1px solid #F2851F;
+  border-left: 1px solid #F2851F;
+  vertical-align: bottom;
+}
+
+#Tabs li:last-child a
+{
+	border-right: 1px solid #F2851F;
 }
 
 #Tabs li.Active {
@@ -139,15 +147,24 @@
 }
 
 #Tabs li.Active a {
-	color: #005C7D;
-	
-	text-decoration: none;
+  color: #FFF;
+  text-decoration: none;
+  /* border-bottom: 0; */
+  background-color: #F2851F;
+  /* border-top-left-radius: 8px; */
+  /* border-top-right-radius: 8px; */
 }
 
 #Tabs li.First {
-	border-left: 1px solid;
-	padding-left: 11px;
+	/*border-left: 1px solid;
+	padding-left: 11px;*/
 }
+
+table.tabs-tableparent > tbody > tr:not(:first-child) > td > div
+{
+	border:1px solid #F2851F;
+}
+
 
 #Tabs li.Last a {
 	

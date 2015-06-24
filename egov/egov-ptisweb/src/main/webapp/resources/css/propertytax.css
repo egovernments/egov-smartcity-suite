@@ -85,14 +85,14 @@ h1.subhead {
 td.bluebox {
 	width:150px;
 	background-color: #fff;
-	border-bottom: 1px solid white;
-	border-top: 1px solid white;
+	/*border-bottom: 1px solid white;
+	border-top: 1px solid white;*/
 	font-size: 12px;
 	padding:8px 5px;
 	color: #000000;
 	text-align: left;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	}
+}
 
 td.bluebox2 {
 	width:25px;

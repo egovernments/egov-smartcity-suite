@@ -59,13 +59,13 @@
 	<s:token />
 	<div class="errorstyle" id="lblError" style="display:none;"></div>
 	<s:actionerror/>  <s:fielderror />
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabs-tableparent">
         <tr>
             <td><div id="header">
 				<ul id="Tabs">
-					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="#" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
-					<li id="objectionDetailTab" class=""><a id="header_2" href="#" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
-					<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
+					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="javascript:void(0);" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
+					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
+					<li id="approvalTab" class="Last"><a id="header_3" href="javascript:void(0);" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
 				</ul>
             </div></td>
           </tr>
@@ -74,6 +74,7 @@
           <tr>
             <td>
             <div id="property_header">
+            <br/>
          			<jsp:include page="../view/viewProperty.jsp"/>
          			 <s:hidden name="basicProperty"   id="basicProperty" value="%{basicProperty.id}"></s:hidden>
           			
@@ -92,6 +93,7 @@
             <td>
             <div id="approval_header" style="display:none;"> 
          		<jsp:include page="../workflow/property-workflow.jsp"/>
+         		<br/>
             </div>
             </td>
           </tr>

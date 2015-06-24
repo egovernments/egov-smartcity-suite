@@ -166,21 +166,21 @@
 	        <tr>
 	            <td width="10%"></td>
 				<td width="20%" align="right">
-				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift"/></label>
-				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage"/></label>
-				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable"/></label> 
+				  <label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift"/></label>
+				  <br/><label><s:text name="drainage"></s:text> <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage"/></label>
+				  <br/> <label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable"/></label> 
 				</td>
 				<td width="20%" align="right">
-				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets"/> </label>
-				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity"/> </label>
+				  <label><s:text name="toilets"></s:text> <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets"/> </label>
+				  <br/> <label><s:text name="electricity"></s:text>  <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity"/> </label>
 				</td>
 				<td width="20%" align="right">
-				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap"/></label> 
-				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom"/> </label>
+				  <label><s:text name="watertap"></s:text> <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap"/></label> 
+				   <br/><label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom"/> </label>
 			    </td>
 			    <td width="20%" align="right">
-				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"/></label>
-				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting"/></label>
+				  <label><s:text name="superstructure"></s:text> <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"/></label>
+				  <br/> <label><s:text name="waterharvesting"></s:text> <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting"/></label>
 			    </td>
 			    <td width="10%"></td>
 			</tr>
