@@ -60,7 +60,8 @@ import org.hibernate.search.annotations.DocumentId;
 @NamedQueries({
         @NamedQuery(name = WorkflowTypes.MODULE_FOR_TYPE, query = "select wt.module.name from WorkflowTypes wt where wt.type=?"),
         @NamedQuery(name = WorkflowTypes.TYPE_FOR_NAME, query = "select wt from WorkflowTypes wt where wt.displayName = ?"),
-        @NamedQuery(name = WorkflowTypes.TYPE_LIKE_NAME, query = "select wt from WorkflowTypes wt where lower(wt.displayName) like ?") })
+        @NamedQuery(name = WorkflowTypes.TYPE_LIKE_NAME, query = "select wt from WorkflowTypes wt where lower(wt.displayName) like ?"),
+        @NamedQuery(name = WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y, query = "select wt from WorkflowTypes wt where wt.type =? and  renderYN ='Y'") })
 @SequenceGenerator(name = WorkflowTypes.SEQ_WORKFLOWTYPES, sequenceName = WorkflowTypes.SEQ_WORKFLOWTYPES, allocationSize = 1)
 public class WorkflowTypes extends AbstractAuditable {
 
@@ -69,6 +70,7 @@ public class WorkflowTypes extends AbstractAuditable {
     public static final String TYPE_FOR_NAME = "TYPE_FOR_NAME";
     public static final String TYPE_LIKE_NAME = "TYPE_LIKE_NAME";
     public static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES";
+    public static final String WF_TYPE_BY_TYPE_AND_RENDER_Y = "WF_TYPE_BY_TYPE_AND_RENDER_Y";
 
     @DocumentId
     @Id

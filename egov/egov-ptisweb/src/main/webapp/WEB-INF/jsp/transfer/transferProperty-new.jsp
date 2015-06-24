@@ -89,7 +89,7 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="transferProperty" name="transferform" theme="simple" enctype="multipart/form-data">
+			<s:form action="property-save" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
 				<s:token/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -311,35 +311,30 @@
 						</td>
 						<td class="bluebox">
 							<s:textfield name="otherFee" id="otherFee" value="%{otherFee}" maxlength="12"></s:textfield>
-						</td>
-					</tr>
-				</table>
-				 <tr>
-        			<%@ include file="../workflow/property-workflow.jsp" %>  
-       			 </tr>
-       			 
-       			 <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-       			 
-				<tr>
-				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
-					<div class="buttonbottom">
 							<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}"></s:hidden>
 							<s:hidden id="oldOwnerName" name="oldOwnerName"
 								value="%{oldOwnerName}"></s:hidden>
-							<s:hidden id="propAddress" name="propAddress"
-								value="%{propAddress}"></s:hidden>
-						 <td>
-							<s:submit value="Save&Submit" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+							<s:hidden id="propAddress" name="propAddress" value="%{propAddress}"></s:hidden>
+							<s:hidden name="modelId" id="modelId" value="%{modelId}" />	
 						</td>
-						<td>
-							<input type="reset" value="Cancel" class="button" align="center" />
-						</td>
-
-						<td>
-							<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-						</td>
-					</div>
-				</tr>
+					</tr>
+				</table>
+        		<%@ include file="../workflow/property-workflow.jsp" %>  
+       			 <div class="buttonbottom">
+					<table>
+						<tr>
+							 <td>
+								<s:submit value="Save & Submit" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+							 </td>
+							 <td>
+								<input type="reset" value="Cancel" class="button" align="center" />
+							 </td>
+							 <td>
+								<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
+							 </td>
+						</tr>
+				</table>
+				</div>
 				</s:push>
 			</s:form>
 			<div align="left" class="mandatory1" style="font-size: 11px">
@@ -430,5 +425,6 @@
 			}
 		}
 </script>
+<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>
 </html>

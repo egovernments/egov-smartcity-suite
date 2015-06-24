@@ -41,7 +41,6 @@ package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,10 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
 
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -77,7 +73,6 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 
     public static final String UNKNOWN = "Unknown";
     public static final String SLASH_DELIMIT = " / ";
-    private static final Map<String, WorkflowTypes> WF_TYPES = new TreeMap<String, WorkflowTypes>();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -93,13 +88,6 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 
     @Qualifier("eisService")
     private @Autowired EISServeable eisService;
-
-    @PostConstruct
-    public void initWorkflowTypes() {
-        this.workflowTypePersistenceService.findAll().parallelStream()
-                .filter(wftype -> RENDER_Y.equals(wftype.getRenderYN()))
-                .forEach(wftype -> WF_TYPES.put(wftype.getType(), wftype));
-    }
 
     public List<T> getInboxItems(final Long userId) {
         return fetchInboxItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
@@ -146,7 +134,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     }
     
     public WorkflowTypes getWorkflowType(final String wfType) {
-        return WF_TYPES.get(wfType);
+        return this.workflowTypePersistenceService.findByNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y, wfType);
     }
 
     public List<String> getAssignedWorkflowTypes(final List<Long> owners) {

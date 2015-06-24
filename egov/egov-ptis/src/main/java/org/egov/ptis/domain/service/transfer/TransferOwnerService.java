@@ -89,7 +89,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	 */
 	public PropertyImpl createPropertyClone(BasicProperty basicProp, PropertyMutation propertyMutation,
 			List<PropertyOwner> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
-			String corrPinCode, String email, String mobileNo, String docNumber) {
+			String corrPinCode, String email, String mobileNo) {
 		LOGGER.debug("Inside createPropertyClone method");
 		Property oldProperty = basicProp.getProperty();
 		Set<PropertyMutation> propertyMutationSet = getPropMutationSet(basicProp, propertyMutation, oldProperty);
@@ -105,7 +105,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		clonedProperty.setExtra_field2(NOTICE_PRATIVRUTTA);
 		clonedProperty.setExtra_field3("");
 		clonedProperty.setExtra_field4("");
-		clonedProperty.setDocNumber(docNumber);
 		basicProp.addProperty(clonedProperty);
 		basicPrpertyService.update(basicProp);
 		LOGGER.debug("Exit from createPropertyClone method");
