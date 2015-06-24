@@ -341,16 +341,19 @@ public class CreatePropertyAction extends WorkflowAction {
 		User user = securityUtils.getCurrentUser();
 		final DateTime currentDate = new DateTime();
 		Assignment assignment = assignmentService.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
+		if(assignment!=null){
 		property.transition().start().withSenderName(user.getName())
 				.withComments(getWorkflowBean().getComments())
 				.withDateInfo(currentDate.toDate())
                 .withStateValue(PROPERTY_STATUS_WORKFLOW)
 		        .withOwner(assignment.getPosition())
 		        .withNextAction(PROPERTY_STATUS_APPROVEL_PENDING);
-		property.getState().setCreatedBy(user);
+		/*property.getState().setCreatedBy(user);
 		property.getState().setLastModifiedBy(user);
 		property.getState().setCreatedDate(currentDate);
-		property.getState().setLastModifiedDate(currentDate);
+		property.getState().setLastModifiedDate(currentDate);*/
+		basicPrpertyService.applyAuditing(property.getState());
+		}
 		basicPrpertyService.persist(basicProperty);
 		
 		setBasicProp(basicProperty);
