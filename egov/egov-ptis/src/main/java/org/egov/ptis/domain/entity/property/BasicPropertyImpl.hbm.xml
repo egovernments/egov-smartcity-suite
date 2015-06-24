@@ -138,8 +138,7 @@
 			<formula>'N'</formula>
 		</one-to-one> -->
 
-		<set name="propMutationSet" cascade="all" table="EGPT_PROPERTY_MUTATION"
-			order-by="ID_PROP_MUTATION">
+		<set name="propMutationSet" cascade="all" table="EGPT_PROPERTY_MUTATION" order-by="ID">
 			<key column="ID_BASIC_PROPERTY" not-null="true" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyMutation" />
 		</set>

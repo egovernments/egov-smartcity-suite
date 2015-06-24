@@ -79,22 +79,24 @@
 	<body onload="loadOnStartUp();">
 		<div class="formmainbox">
 			<s:if test="%{hasErrors()}">
-				<div align="left">
-					<s:actionerror />
-					<s:fielderror></s:fielderror>
+				<div class="errorstyle" id="property_error_area">
+					<div class="errortext">
+						<s:actionerror />
+					</div>
 				</div>
 			</s:if>
-			<!-- Area for error display -->
-			<div class="errorstyle" id="property_error_area" style="display:none;"></div>
 			<s:form action="transferProperty" name="transferform" theme="simple">
 				<s:push value="model">
 				<s:hidden name="model.id"/>
+				<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+				<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}"></s:hidden>
+				<s:hidden id="oldOwnerName" name="oldOwnerName" value="%{oldOwnerName}"></s:hidden>
+				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}"></s:hidden>
 				<s:token/>
+				<div class="headingbg">
+					<s:text name="transferProperty" />
+				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<div class="formheading"></div>
-					<div class="headingbg">
-						<s:text name="transferProperty" />
-					</div>
 					<tr>
 						<td class="bluebox2" style="width:10%">
 							&nbsp;
@@ -242,7 +244,7 @@
 						<td class="greybox">
 							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
 							<s:textfield name="deedDate" id="deedDate" maxlength="10"
-								value="%{docDate}"
+								value="%{docDate}" cssClass="datepicker"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onfocus="waterMarkTextIn('deedDate','DD/MM/YYYY');"
 								onblur="validateDateFormat(this);waterMarkTextOut('deedDate','DD/MM/YYYY');" />
@@ -257,8 +259,7 @@
 							
 						</td>
 						<td class="bluebox">
-							<input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();" />
-							<s:hidden name="docNumber" id="docNumber" />
+							<input type="file" name="upload" class="button" width="500px" value="Upload Document"/>
 						</td>
 						<td class="bluebox" colspan="2">
 							&nbsp;
@@ -288,21 +289,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
-							<div class="headingsmallbg">
-								<s:text name="ownerDtls" />
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div id="OwnerNameDiv">
-								<%@ include file="../common/OwnerNameForm.jsp"%>
-							</div>
-						</td>
-					</tr>
-					<tr>
 						<td class="greybox2">&nbsp;</td>
+						<td class="bluebox">
+							<s:text name="marketValue"></s:text>
+							<span class="mandatory">*</span> :
+						</td>
+						<td class="bluebox">
+							<s:textfield name="marketValue" id="marketValue" value="%{marketValue}" maxlength="12" readonly="true"></s:textfield>
+						</td>
 						<td class="greybox">
 							<s:text name="mutationDate"></s:text>
 							<span class="mandatory">*</span> :
@@ -312,69 +306,33 @@
 							<s:textfield name="mutationDate" id="mutationDate" value="%{mutDate}" maxlength="10"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onfocus="waterMarkTextIn('mutationDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('mutationDate','DD/MM/YYYY');"/>
+								onblur="validateDateFormat(this);waterMarkTextOut('mutationDate','DD/MM/YYYY');" cssClass="datepicker"/>
 						</td>
 						<td class="greybox" colspan="2">&nbsp;</td>
 					</tr>
-					<%-- <tr>
-						<td class="greybox2">
-							&nbsp;
-						</td>
-						<td class="greybox">
-							<s:text name="MobileNumber" />
-							:
-						</td>
-						<td class="greybox">
-							<div>
-								+91
-								<s:textfield name="mobileNo" maxlength="10"
-									onblur="validNumber(this);checkZero(this,'Mobile Number');" />
+					<tr>
+						<td colspan="6">
+							<div class="headingsmallbg">
+								<s:text name="ownerDtls" />
 							</div>
 						</td>
-						<td class="greybox">
-							<s:text name="EmailAddress" />
-							:
-						</td>
-						<td class="greybox">
-							<s:textfield name="email" maxlength="64"
-								onblur="trim(this,this.value);validateEmail(this);" />
-						</td>
-					</tr> --%>
+					</tr>
 					<tr>
-						<td>
-							<div id="CorrAddrDiv">
-								<%@ include file="../common/CorrAddressForm.jsp"%>
+						<td class="bluebox" colspan="6">
+							<div id="OwnerNameDiv">
+								<%@ include file="../common/OwnerNameForm.jsp"%>
 							</div>
 						</td>
 					</tr>
 				</table>
-				 <tr>
-        			<%@ include file="../workflow/property-workflow.jsp" %>  
-       			 </tr>
-       			 
-       			 <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-       			 
-				<tr>
-				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+				 <%@ include file="../common/CorrAddressForm.jsp"%>
+       			 <%@ include file="../workflow/property-workflow.jsp" %>  
 					<div class="buttonbottom">
-							<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}"></s:hidden>
-							<s:hidden id="oldOwnerName" name="oldOwnerName"
-								value="%{oldOwnerName}"></s:hidden>
-							<s:hidden id="propAddress" name="propAddress"
-								value="%{propAddress}"></s:hidden>
-						 <td>
-							<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-						</td>
-						<td>
-							<s:submit value="Approve" id="Mutation:Approve" name="Transfer" cssClass="buttonsubmit" align="center" method="approve" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-							<s:submit value="Reject" id="Mutation:Reject" name="Transfer" cssClass="buttonsubmit" align="center" method="reject" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-						</td>
-
-						<td>
-							<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-						</td>
+						<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+						<s:submit value="Approve" id="Mutation:Approve" name="Transfer" cssClass="buttonsubmit" align="center" method="approve" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+						<s:submit value="Reject" id="Mutation:Reject" name="Transfer" cssClass="buttonsubmit" align="center" method="reject" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+						<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
 					</div>
-				</tr>
 				</s:push>
 			</s:form>
 			<div align="left" class="mandatory" style="font-size: 11px">
@@ -475,6 +433,18 @@
 				document.getElementById("mutationDate").value = "";
 			}
 		}
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy"
+			}); 
+		}catch(e){
+			console.warn("No Date Picker "+ e);
+		}
+
+		jQuery('.datepicker').on('changeDate', function(ev){
+			jQuery(this).datepicker('hide');
+		});
 </script>
+<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>
 </html>

@@ -248,11 +248,10 @@ public class TransferPropertyAction extends WorkflowAction {
             return NEW;
         }
         populateExistingPropertyDetails();
-        setPropertyOwnerProxy(new ArrayList(property.getPropertyOwnerSet()));
+        getPropertyOwnerProxy().addAll(property.getPropertyOwnerSet());
         if (property.getPropertyOwnerSet() != null && !property.getPropertyOwnerSet().isEmpty()) {
             final PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-            final Set<Address> addrSet = (Set<Address>) owner.getAddress();
-            for (final Address addr : addrSet)
+            for (final Address addr : owner.getAddress())
                 if (addr.getLandmark() != null || addr.getAreaLocalitySector() != null || addr.getPinCode() != null) {
                     setChkIsCorrIsDiff(true);
                     if (addr.getLandmark() != null)
