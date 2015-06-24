@@ -41,8 +41,6 @@ package org.egov.eis.web.controller.masters.employee;
 
 import java.util.Arrays;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
 import org.egov.eis.entity.Employee;
@@ -50,7 +48,6 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,15 +59,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value="/employee")
-public class UpdateAndViewEmployeController {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+@RequestMapping(value = "/employee")
+public class ViewAndUpdateEmployeController {
 
     @Autowired
     private DepartmentService departmentService;
@@ -87,20 +77,9 @@ public class UpdateAndViewEmployeController {
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String updateForm(final Model model,@PathVariable final String code) {
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        model.addAttribute("fundList",
-                getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
-                .list());
-        model.addAttribute("functionaryList",
-                getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
-        model.addAttribute(
-                "functionList",
-                getCurrentSession().createQuery(
-                        "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
-        model.addAttribute("gradeList", getCurrentSession().createQuery("from GradeMaster order by name").list());
+    public String edit(final Model model, @PathVariable final String code) {
+
+        setDropDownValues(model);
         model.addAttribute("mode", "update");
         return "employee-form";
     }
@@ -108,20 +87,8 @@ public class UpdateAndViewEmployeController {
     @RequestMapping(value = "/update/{code}",method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors()){
-            model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-            model.addAttribute("department", departmentService.getAllDepartments());
-            model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-            model.addAttribute("fundList",
-                    getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
-                    .list());
-            model.addAttribute("functionaryList",
-                    getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
-            model.addAttribute(
-                    "functionList",
-                    getCurrentSession().createQuery(
-                            "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
-            model.addAttribute("gradeList", getCurrentSession().createQuery("from GradeMaster order by name").list());
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
             model.addAttribute("mode", "update");
             return "employee-form";
         }
@@ -132,8 +99,18 @@ public class UpdateAndViewEmployeController {
     }
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String view(@PathVariable final String code,final Model model) {
+    public String view(@PathVariable final String code, final Model model) {
         return "employee-success";
+    }
+
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
+        model.addAttribute("department", departmentService.getAllDepartments());
+        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
+        model.addAttribute("fundList", employeeService.getAllFunds());
+        model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
+        model.addAttribute("functionList", employeeService.getAllFunctions());
+        model.addAttribute("gradeList", employeeService.getAllGrades());
     }
 
 }

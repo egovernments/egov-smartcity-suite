@@ -71,7 +71,9 @@ $(document).ready(function(){
 	});
 	
 	$("#searchText").focus(function (){
-		
+		$(".btn-danger").trigger("click");
+		$(".adv-button").data('advanced', false);
+		$('.advanced-forms').hide();
 	});
 	
 	$("#employee-table").on('click','tbody tr td .edit-employee',function(event) {

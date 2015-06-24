@@ -72,6 +72,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -90,6 +91,8 @@ import com.google.gson.annotations.Expose;
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 @Indexed
+@Unique(id = "id", tableName = "eg_user",columnName = { "username", "mobileNumber","altContactNumber","pan","aadhaarNumber","emailId" },
+fields = { "username", "mobileNumber","altContactNumber","pan","aadhaarNumber","emailId" }, enableDfltMsg = true)
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";

@@ -76,6 +76,7 @@
 			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
+                    <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
                 
                 <div class="row">
@@ -91,7 +92,7 @@
 							</div>
 							
 							<div class="panel-body custom-form">
-								<form:hidden path="password" value="$2a$10$uheIOutTnD33x7CDqac1zOL8DMiuz7mWplToPgcf7oxAI9OzRKxmK"/>
+								<form:hidden path="password" value="804Mqu@123"/>
 								<form:hidden path="locale" value="en IN"/>
 								<form:hidden path="pwdExpiryDate" id="pwdExpiryDate" value="01/01/2015"/>
 								<input type="hidden" value="${mode}" id="mode"/>
@@ -112,7 +113,7 @@
 											</form:select>
 										</div>
 										<div class="col-sm-4 col-md-5 add-margin">
-											<form:input type="text" path="name" id="name" cssClass="form-control is_valid_alphabet" maxlength="100"/>
+											<form:input type="text" path="name" id="name" cssClass="form-control is_valid_alphabet" maxlength="100" required="required"/>
 										</div>
 									</div>
 
@@ -138,7 +139,9 @@
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-2 add-margin">
-											<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" cssClass="form-control" maxlength="10" placeholder="Mobile Number"/>
+											<form:input type="text" path="mobileNumber" id="mobileNumber" data-inputmask="'mask': '9999999999'" 
+											required="required" cssClass="form-control" maxlength="10" placeholder="Mobile Number"/>
+											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										
 										<div class="col-sm-1">
@@ -146,16 +149,17 @@
 										</div>
 										
 										<div class="col-sm-3">
-											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com"/>
+											<form:input type="text" cssClass="form-control" id="emial" path="emailId" required="required" placeholder="abc@xyz.com" />
 										</div>
 										
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.altcontact"/><span class="mandatory"></span></label>
+										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.altcontact"/></label>
 										
 										<div class="col-sm-2 add-margin">
 											<form:input type="text" path="altContactNumber" id="altcontact" cssClass="form-control" data-inputmask="'mask': '9999999999'" maxlength="10" placeholder="Mobile Number"/>
+											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										
 										<div class="col-sm-1">
@@ -163,12 +167,13 @@
 										</div>
 										
 										<div class="col-sm-3 add-margin">
-											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
+											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" 
+											required="required" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.DOA"/>t<span class="mandatory"></span></label>
+										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.DOA"/></label>
 										
 										<div class="col-sm-2 add-margin">
 											<form:input id="DOA" path="dateOfAppointment" type="text" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992"/>
@@ -178,7 +183,7 @@
 											<label for="field-1" class="control-label"><spring:message code="lbl.status"/><span class="mandatory"></span></label>
 										</div>
 										<div class="col-sm-3 add-margin">
-											<form:select path="employeeStatus" id="employeeStatus"
+											<form:select path="employeeStatus" id="employeeStatus" required="required"
 												cssClass="form-control" cssErrorClass="form-control error">
 												<form:option value="">
 													<spring:message code="lbl.select" />
@@ -193,7 +198,7 @@
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.emptype"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-2 add-margin">
-											<form:select path="employeeType" id="employeeType"
+											<form:select path="employeeType" id="employeeType" required="required"
 												cssClass="form-control" cssErrorClass="form-control error">
 												<form:option value="">
 													<spring:message code="lbl.select" />
@@ -206,27 +211,31 @@
 										
 										<div class="col-sm-1">
 											<label for="field-1" class="control-label"><spring:message code="lbl.code"/><span class="mandatory"></span></label>
+											
 										</div>
 										
 										<div class="col-sm-3">
-											<form:input path="code" id="code" type="text" cssClass="form-control is_valid_alphanumeric"/>
+											<form:input path="code" id="code" type="text" required="required" cssClass="form-control is_valid_alphanumeric"/>
+											<form:errors path="code" cssClass="add-margin error-msg"/>
 										</div>
 										
 									</div>
 
 									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/><span class="mandatory"></span></label>
+										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.pan"/></label>
 										
 										<div class="col-sm-2 add-margin">
 											<form:input path="pan" id="pan" type="text" cssClass="form-control is_valid_alphanumeric" maxlength="10"/>
+											<form:errors path="pan" cssClass="add-margin error-msg"/>
 										</div>
 										
 										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/><span class="mandatory"></span></label>
+											<label for="field-1" class="control-label"><spring:message code="lbl.aadhar"/></label>
 										</div>
 										
 										<div class="col-sm-3 add-margin">
 											<form:input type="text" id="aadhaarNumber" path="aadhaarNumber" cssClass="form-control is_valid_nuber" maxlength="12"/>
+											<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
 										</div>
 									</div>
 
@@ -247,7 +256,8 @@
 										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.username"/></label>
 										
 										<div class="col-sm-3 add-margin">
-											<form:input type="text" path="username" id="username" cssClass="form-control"/>
+											<form:input type="text" path="username" id="username" required="required" cssClass="form-control"/>
+											<form:errors path="username" cssClass="add-margin error-msg"/>
 										</div>
 
 									</div>
@@ -264,12 +274,12 @@
 										<label for="field-1" class="col-sm-3 control-label">Is Primary<span class="mandatory"></span></label>
 										
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<input type="radio" id="primary_yes" name="isprimary" value="true" >
+											<input type="radio" id="primary_yes" name="isprimary" value="true" checked>
 											<label>Yes</label>
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<input type="radio" id="primary_no" name="isprimary" value="false" checked>
+											<input type="radio" id="primary_no" name="isprimary" value="false" >
 											<label>No</label>
 										</div>
 
@@ -315,8 +325,8 @@
 										<label for="field-1" class="col-sm-3 control-label">Designation<span class="mandatory"></span></label>
 										
 										<div class="col-sm-6 add-margin">
-											<input id="designationName" type="text" class="form-control typeahead is_valid_letters_space_hyphen_underscore" autocomplete="off"
-													required="required" value="${assignment.designation.name}" placeholder="Designation">
+											<input id="designationName" type="text" class="form-control " autocomplete="off"
+													value="${assignment.designation.name}" placeholder="Designation">
 													<input type="hidden" id="designationId" value=""/>
 												<c:forEach items="${designations}" var="designation">
 													<a onclick="setDesignationId(<c:out value="${designation.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -330,8 +340,8 @@
 										<label for="field-1" class="col-sm-3 control-label">Position<span class="mandatory"></span></label>
 										
 										<div class="col-sm-6 add-margin">
-												<input id="positionName" type="text" class="form-control typeahead is_valid_letters_space_hyphen_underscore" autocomplete="off"
-													required="required" value="${assignment.position.name}" placeholder="Position">
+												<input id="positionName" type="text" class="form-control typeahead " autocomplete="off"
+													value="${assignment.position.name}" placeholder="Position">
 													<input type="hidden" id="positionId" value=""/>
 												<c:forEach items="${positions}" var="position">
 													<a onclick="setPositionId(<c:out value="${position.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -445,84 +455,79 @@
 										</div>
 										</thead>
 											<tbody>
-											<c:forEach var="assignment" items="${employee.assignments}" varStatus="status">
+											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
-														<form:input type="hidden"
-															id="assignments[${status.index}].fromDate"
-															path="assignments[${status.index}].fromDate"
-															/> 
-														<form:input type="hidden"
-															id="assignments[${status.index}].toDate"
-															path="assignments[${status.index}].toDate"
-															/> 
-														
-														<fmt:formatDate value="${assignment.fromDate}" var="fromDate"
+														<fmt:formatDate value="${assign.fromDate}" var="fromDate"
 															pattern="dd/MM/yyyy" />
-														<fmt:formatDate value="${assignment.toDate}" var="toDate"
+														<fmt:formatDate value="${assign.toDate}" var="toDate"
 															pattern="dd/MM/yyyy" />
 														<input type="text" id="table_date_range${status.index}" 
 															class="form-control" readonly="readonly" style="text-align:center"
 															value="<c:out value="${fromDate} - ${toDate}"/>"/>
+														<input type="hidden" id="assignments[${status.index}].fromDate"
+															name="assignments[${status.index}].fromDate"
+															value="${fromDate}"/>
+														<input type="hidden" id="assignments[${status.index}].fromDate"
+															name="assignments[${status.index}].fromDate"
+															value="${toDate}"/>			
 													</td>
 													<td>
-														<form:input type="hidden"
-															id="assignments[${status.index}].primary"
-															path="assignments[${status.index}].primary"
-															/>
-																<c:if test="${assignment.primary==true}" >
+														<input type="hidden" id="assignments[${status.index}].primary"
+															name="assignments[${status.index}].primary"
+															value="${assign.primary}"/>	
+																
+																<c:if test="${assign.primary==true}" >
 																<input type="text" id="table_department${status.index}" class="form-control" 
 																	readonly="readonly" style="text-align:center" value="Yes"/>
 																</c:if>
-																<c:if test="${assignment.primary==false}">
+																<c:if test="${assign.primary==false}">
 																	<input type="text" id="table_department${status.index}" class="form-control" 
 																	readonly="readonly" style="text-align:center" value="No"/>
 																</c:if>
 													</td>
 													<td>
-														<form:input type="hidden"
-															id="assignments[${status.index}].department"
-															path="assignments[${status.index}].department.id"
-															/>
+															<input type="hidden" id="assignments[${status.index}].department"
+															name="assignments[${status.index}].department"
+															value="${assign.department.id}"/>	
+															
 															<input type="text" id="table_department${status.index}" class="form-control" 
-															readonly="readonly" style="text-align:center" value="${assignment.department.name}"/>
+															readonly="readonly" style="text-align:center" value="${assign.department.name}"/>
 															
 													</td>
 													<td>
-														<form:input type="hidden"
-															id="assignments[${status.index}].designation"
-															path="assignments[${status.index}].designation.id"
-															/>
+														<input type="hidden" id="assignments[${status.index}].designation"
+															name="assignments[${status.index}].designation"
+															value="${assign.designation.id}"/>
+																
 															<input type="text" id="table_designation${status.index}" class="form-control" 
-															readonly="readonly" style="text-align:center" value="${assignment.designation.name}"/>
+															readonly="readonly" style="text-align:center" value="${assign.designation.name}"/>
 													</td>
 													<td>
 														<input type="text" id="table_position${status.index}" class="form-control" 
-														readonly="readonly" style="text-align:center" value="${assignment.position.name}"/>
-														<form:input type="hidden"
-															id="assignments[${status.index}].position"
-															path="assignments[${status.index}].position.id" 
-															/>
-														<form:input type="hidden"
-															id="assignments[${status.index}].fund"
-															path="assignments[${status.index}].fund.id"
-															/>
-														<form:input type="hidden"
-															id="assignments[${status.index}].function"
-															path="assignments[${status.index}].function.id"
-															/>
-														<form:input type="hidden"
-															id="assignments[${status.index}].functionary"
-															path="assignments[${status.index}].functionary.id"
-															/>
-														<form:input type="hidden"
-															id="assignments[${status.index}].grade"
-															path="assignments[${status.index}].grade.id"
-															/>	
-														<form:input type="hidden"
-															id="assignments[${status.index}].employee"
-															path="assignments[${status.index}].employee.id"
-															/>
+														readonly="readonly" style="text-align:center" value="${assign.position.name}"/>
+														<input type="hidden" id="assignments[${status.index}].position"
+															name="assignments[${status.index}].position"
+															value="${assign.position.id}"/>
+														<input type="hidden" id="assignments[${status.index}].fund"
+															name="assignments[${status.index}].fund"
+															value="${assign.fund.id}"/>
+														<input type="hidden" id="assignments[${status.index}].function"
+															name="assignments[${status.index}].function"
+															value="${assign.function.id}"/>
+														<input type="hidden" id="assignments[${status.index}].functionary"
+															name="assignments[${status.index}].functionary"
+															value="${assign.functionary.id}"/>
+														<input type="hidden" id="assignments[${status.index}].grade"
+															name="assignments[${status.index}].grade"
+															value="${assign.grade.id}"/>	
+														<c:if test="${assign.deptSet!=null}">
+															<c:forEach var="hodDept" items="${assignments.deptSet}" varStatus="hodeptStatus">
+																<input type="hidden" id="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod"
+																	name="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod.id"
+																	value="${hodDept.hod.id}"/>	
+															</c:forEach>
+														</c:if>
 													</td>
 													<td>
 														<span class="parallel-actions"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>

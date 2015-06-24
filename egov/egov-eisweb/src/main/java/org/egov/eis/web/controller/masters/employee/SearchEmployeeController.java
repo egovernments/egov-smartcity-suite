@@ -73,7 +73,7 @@ import com.google.gson.GsonBuilder;
 public class SearchEmployeeController {
 
     public static final String CONTENTTYPE_JSON = "application/json";
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -93,49 +93,38 @@ public class SearchEmployeeController {
     @Autowired
     private DesignationService designationService;
 
-    @RequestMapping(value="search",method = RequestMethod.GET)
+    @RequestMapping(value = "search", method = RequestMethod.GET)
     public String searchForm(final Model model) {
-        loadDropDownValues(model);
+        setDropDownValues(model);
         return "employeesearch-form";
     }
 
-    @RequestMapping(value="search",method = RequestMethod.POST)
-    public String searchEmployee(final Model model) {
-        loadDropDownValues(model);
-        return "employeesearch-form";
-    }
-
-    private void loadDropDownValues(final Model model) {
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        model.addAttribute("fundList",
-                getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
-                        .list());
-        model.addAttribute("functionaryList",
-                getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list());
-        model.addAttribute(
-                "functionList",
-                getCurrentSession().createQuery(
-                        "from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list());
-        model.addAttribute("desigList", designationService.getAllDesignations());
-    }
-    
     public String toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(Employee.class, new EmployeeAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "ajax/employees", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,@RequestParam final String[] searchText,
-            final HttpServletResponse response,@RequestParam final Boolean freeText) throws IOException {
-        final List<Employee> employees = employeeService.searchEmployee(freeText,searchText);
-        final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees))
-                .append("}");
+    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
+            @RequestParam final String[] searchText, final HttpServletResponse response,
+            @RequestParam final Boolean freeText) throws IOException {
+        final List<Employee> employees = employeeService.searchEmployee(freeText, searchText);
+        final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(employeeJSONData, response.getWriter());
+    }
+
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
+        model.addAttribute("department", departmentService.getAllDepartments());
+        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
+        model.addAttribute("fundList", employeeService.getAllFunds());
+        model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
+        model.addAttribute("functionList", employeeService.getAllFunctions());
+        model.addAttribute("gradeList", employeeService.getAllGrades());
+        model.addAttribute("desigList",designationService.getAllDesignations());
     }
 
 }

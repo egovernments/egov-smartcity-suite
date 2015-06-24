@@ -39,24 +39,28 @@
  */
 package org.egov.eis.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeRepository;
+import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.search.query.dsl.TermMatchingContext;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,88 +68,115 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EmployeeService {
 
-    private final EmployeeRepository employeeRepository;
-    
     @PersistenceContext
     private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    private final EmployeeRepository employeeRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<CFunction> getAllFunctions() {
+        return getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Functionary> getAllFunctionaries() {
+        return getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Fund> getAllFunds() {
+        return getCurrentSession().createQuery("from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)")
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Fund> getAllGrades() {
+        return getCurrentSession().createQuery("from GradeMaster order by name").list();
+    }
+
     @Transactional
     public void create(final Employee employee) {
         employee.setPwdExpiryDate(new DateTime().plus(90).toDate());
-        // Following is added to prevent null values and empty assignment objects getting persisted
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        // Following is added to prevent null values and empty assignment
+        // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
         for (final Assignment assign : employee.getAssignments()) {
-            for(HeadOfDepartments hod:assign.getDeptSet()){
+            assign.setEmployee(employee);
+            assign.setDepartment(assign.getDepartment());
+            for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
-            }
         }
         employeeRepository.save(employee);
     }
 
     @Transactional
     public void update(final Employee employee) {
-        //Following is added to prevent null values and empty assignment objects getting persisted
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        // Following is added to prevent null values and empty assignment
+        // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
-        for (final Assignment assign : employee.getAssignments()){
+        for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
-            for(HeadOfDepartments hod:assign.getDeptSet()){
+            for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
-            }
         }
-        //employee.getAssignments().retainAll(employee.getAssignments());
-        
+        // employee.getAssignments().retainAll(employee.getAssignments());
+
         employeeRepository.saveAndFlush(employee);
     }
-    
+
     @Transactional
-    public List<Employee> searchEmployee(final Boolean freeText,final String[] searchText) {
-       
-        FullTextEntityManager fullTextEntityManager =
-                org.hibernate.search.jpa.Search.getFullTextEntityManager(entityManager);
-            // create native Lucene query using the query DSL
-            // alternatively you can write the Lucene query using the Lucene query parser
-            // or the Lucene programmatic API. The Hibernate Search DSL is recommended though
-            QueryBuilder qb = fullTextEntityManager.getSearchFactory()
-                .buildQueryBuilder().forEntity(Employee.class).get();
-            TermMatchingContext onFields = qb.keyword().onFields("name","code","mobileNumber","aadhaarNumber","emailId","pan",
-                          "assignments.department.name", "assignments.designation.name","assignments.position.name",
-                          "assignments.fund.name","assignments.function.name","assignments.functionary.name");
-            
-            org.apache.lucene.search.Query luceneQuery = null;
-           
-            
-            if(freeText){
-                    luceneQuery = onFields
-                      .matching(searchText[0])
-                      .createQuery();
+    public List<Employee> searchEmployee(final Boolean freeText, final String[] searchText) {
 
-              }
-            else {
-                BooleanJunction<BooleanJunction> bool = qb.bool();
-                for (int j = 0; j < searchText.length; j++) {
-                   String currentTerm = searchText[j];
-                   if(!currentTerm.isEmpty()) {
-                       bool.must(onFields.matching(currentTerm).createQuery());
-                   }
-                }
-                luceneQuery = bool.createQuery();
+        final FullTextEntityManager fullTextEntityManager = org.hibernate.search.jpa.Search
+                .getFullTextEntityManager(entityManager);
+        // create native Lucene query using the query DSL
+        // alternatively you can write the Lucene query using the Lucene query
+        // parser
+        // or the Lucene programmatic API. The Hibernate Search DSL is
+        // recommended though
+        final QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Employee.class)
+                .get();
+        final TermMatchingContext onFields = qb.keyword().onFields("name", "code", "mobileNumber", "aadhaarNumber",
+                "emailId", "pan", "assignments.department.name", "assignments.designation.name",
+                "assignments.position.name", "assignments.fund.name", "assignments.function.name",
+                "assignments.functionary.name");
+
+        org.apache.lucene.search.Query luceneQuery = null;
+
+        if (freeText)
+            luceneQuery = onFields.matching(searchText[0]).createQuery();
+        else {
+            final BooleanJunction<BooleanJunction> bool = qb.bool();
+            for (final String element : searchText) {
+                final String currentTerm = element;
+                if (!currentTerm.isEmpty())
+                    bool.must(onFields.matching(currentTerm).createQuery());
             }
-              
+            luceneQuery = bool.createQuery();
+        }
 
-            // wrap Lucene query in a javax.persistence.Query
-            javax.persistence.Query jpaQuery =
-                fullTextEntityManager.createFullTextQuery(luceneQuery, Employee.class);
+        // wrap Lucene query in a javax.persistence.Query
+        final javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Employee.class);
 
-            // execute search
-            return jpaQuery.getResultList();
+        // execute search
+        return jpaQuery.getResultList();
     }
 
     @Transactional

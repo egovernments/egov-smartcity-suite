@@ -104,7 +104,6 @@
 								</div>
 							</div>
 							<div class="panel-body custom-form">
-								<form role="form" id="searchempform" class="form-horizontal form-groups-bordered">
 									<div class="form-group">
 									<input type="hidden" id="freeText"/>
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.search"/><span class="mandatory"></span></label>
@@ -220,7 +219,6 @@
 						</div>					
 					</div>
 				</div>
-			<%-- <c:if test="${employees != null}"> --%>
 				<div class="row">
 					<div class="col-md-6 col-xs-6 table-header">List of Employee</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
@@ -242,33 +240,14 @@
 								</tr>
 							</thead>
 							<tbody>
-							<%-- <c:forEach var="employee" items="${employees}" varStatus="status">
-							<tr>
-								<td><c:out value="${status.index + 1}"/></td>
-								<td><c:out value="${employee.name}"/></td>
-								<td><c:out value="${employee.code}"/><input type="hidden" value="${employee.code}" id="empCode"/></td>
-								<fmt:formatDate value="${employee.assignments[0].fromDate}" pattern="dd/MM/yyyy" var="fromDate" />
-								<fmt:formatDate value="${employee.assignments[0].toDate}" pattern="dd/MM/yyyy" var="toDate" />
-								<td><c:out value="${employee.assignments[0].department.name}"/></td>
-								<td><c:out value="${employee.assignments[0].designation.name}"/></td>
-								<td><c:out value="${employee.assignments[0].position.name}"/></td>
-								<td><c:out value="${fromDate}"/> - <c:out value="${toDate}"/></td>
-								<td><button type="button" class="btn btn-xs btn-secondary edit-employee">
-										<span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>
-								<button type="button" class="btn btn-xs btn-secondary view-employee">
-										<span class="glyphicon glyphicon-edit"></span>&nbsp;View</button></td>
-							</tr>			
-							</c:forEach> --%>
 							</tbody>
 						</table>
 					</div>
 				</div>
-			<%-- </c:if>	 --%>
 
 			</div>
 </form:form>
 
-		</div>
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>		
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

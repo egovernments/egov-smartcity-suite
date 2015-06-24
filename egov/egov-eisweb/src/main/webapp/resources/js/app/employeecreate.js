@@ -106,6 +106,8 @@ $(document).ready(function(){
 		if(null!=toDate || ''!=toDate){
 			$('.todateerror').html('To Date is required').hide();
 		}
+		if(Date.parse($("#fromDate").val()) >= Date.parse($("#toDate").val()))
+			$('.todateerror').html('To Date should be greater than from date').show();
 	});
 	
 	//Position auto-complete
@@ -157,7 +159,7 @@ $(document).ready(function(){
 	$("#btn-add").click(function() {
 		if(validateAssignment()) {
 			if(!edit){
-				rowCount = $("#assignmentTable").length;
+				rowCount = $("#assignmentTable tr").length-1;
 				addRow(rowCount);
 				rowCount++;
 			}
@@ -171,23 +173,25 @@ $(document).ready(function(){
 	});
 	
 	function resetAssignmentValues() {
-		$("#primary_yes").prop("checked",true);
-		$("#primary_no").prop("checked",false);
-		$("#fromDate").val("");
-		$("#toDate").val("");
-		$("#deptId").val("");
-		$("#designationName").val("");
-		$("#designationId").val("");
-		$("#positionId").val("");
-		$("#positionName").val("");
-		$("#fundId").val("");
-		$("#functionId").val("");
-		$("#functionaryId").val("");
-		$("#gradeId").val("");
-		$("#isHodYes").prop("checked",false);
-		$("#isHodNo").prop("checked",true);
-		$("#hodDeptId").find('option').attr('selected', false);
-		$('#hodDeptDiv').hide();
+		if(!edit) {
+			$("#primary_yes").prop("checked",true);
+			$("#primary_no").prop("checked",false);
+			$("#fromDate").val("");
+			$("#toDate").val("");
+			$("#deptId").val("");
+			$("#designationName").val("");
+			$("#designationId").val("");
+			$("#positionId").val("");
+			$("#positionName").val("");
+			$("#fundId").val("");
+			$("#functionId").val("");
+			$("#functionaryId").val("");
+			$("#gradeId").val("");
+			$("#isHodYes").prop("checked",false);
+			$("#isHodNo").prop("checked",true);
+			$("#hodDeptId").find('option').attr('selected', false);
+			$('#hodDeptDiv').hide();
+		}	
 	}
 	
 	function addRow(index) {
@@ -201,7 +205,7 @@ $(document).ready(function(){
 			for(var i=0;i<hoddept.length;i++) {
 				hodInput = hodInput+'<input type="hidden" id="assignments['+index+'].deptSet['+i+'].hod" name="assignments['+index+'].deptSet['+i+'].hod" value="'+hoddept[i]+'"/>';
 			}
-			hodInput = hodInput+'<input type="hidden" id="hodIds" value="'+hoddept+'"/>';
+			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
 		}	
 		var del="";
 		if($("#mode").val()=='create')
@@ -291,7 +295,7 @@ $(document).ready(function(){
 		$("#functionId").val(ftn);
 		$("#functionaryId").val(functionary);
 		$("#grade").val(grade);
-		if(null!=document.getElementById("hodIds")) {
+		if(null!=document.getElementById("hodIds"+editedRowIndex)) {
 			var hodIds = document.getElementById("hodIds").value;
 			if(null!=hodIds){
 				var dataArray = hodIds.split(","); 
@@ -318,11 +322,12 @@ $(document).ready(function(){
 	
 	$("#primary_yes").click(function () {
 		resetAssignmentValues();
-		$("#primary_yes").prop("checked",true);
 	});
 	
 	$("#primary_no").click(function () {
 		resetAssignmentValues();
+		$("#primary_no").prop("checked",true);
+		$("#primary_yes").prop("checked",false);
 	});
 	
 });

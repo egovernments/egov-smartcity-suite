@@ -62,6 +62,7 @@ import javax.validation.constraints.Pattern;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.Analyze;
@@ -78,6 +79,7 @@ import org.joda.time.DateTime;
 @Indexed
 @Entity
 @Table(name = "egeis_employee")
+@Unique(id = "id", tableName = "egeis_employee",columnName = { "code"},fields = {"code" }, enableDfltMsg = true)
 public class Employee extends User {
 
     private static final long serialVersionUID = -1105585841211211215L;
