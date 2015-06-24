@@ -37,53 +37,14 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.search.elastic.service;
+package org.egov.infra.search.elastic.repository;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.CityWebsite;
-import org.egov.infra.admin.master.service.CityWebsiteService;
-import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.repository.ApplicationIndexRepository;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * Service for the Application Index
- * 
- * @author rishi
- *
- */
-@Service
-@Transactional(readOnly = true)
-public class ApplicationIndexService {
+@Repository
+public interface ApplicationIndexRepository extends JpaRepository<ApplicationIndex, Long> {
 
-	private ApplicationIndexRepository applicationIndexRepository;
 	
-	@Autowired
-    private CityWebsiteService cityWebsiteService;
-	
-	@Autowired
-	public ApplicationIndexService(ApplicationIndexRepository applicationIndexRepository) {
-		this.applicationIndexRepository = applicationIndexRepository;
-	}
-	
-	@Transactional
-	@Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
-	public ApplicationIndex createApplicationIndex(ApplicationIndex applicationIndex) {
-		
-		CityWebsite cityWebsite = cityWebsiteService.getCityWebsiteByCode(EgovThreadLocals.getCityCode());
-		
-		applicationIndex.setUlbName(cityWebsite.getCityName());
-		applicationIndex.setDistrictName(cityWebsite.getDistrictName());
-		
-		applicationIndexRepository.save(applicationIndex);
-		
-		return applicationIndex;
-		
-	}
-
 }

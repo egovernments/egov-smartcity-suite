@@ -37,55 +37,112 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.search.elastic.model;
+package org.egov.infra.search.elastic.entity;
 
 import java.util.Date;
 
-import org.egov.infra.search.elastic.Indexable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
-public class ApplicationIndex implements Indexable {
+/**
+ * ApplicationIndex class
+ *
+ * @author rishi
+ */
 
-	private String indexId;
+@Entity
+@Table(name = "EG_APPLICATIONINDEX")
+@SequenceGenerator(name = ApplicationIndex.SEQ_APPLICATIONINDEX, sequenceName = ApplicationIndex.SEQ_APPLICATIONINDEX, allocationSize = 1)
+public class ApplicationIndex extends AbstractAuditable {
 
+	private static final long serialVersionUID = 1L;
+    public static final String SEQ_APPLICATIONINDEX = "SEQ_EG_APPLICATIONINDEX";
+
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATIONINDEX, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
+    @Searchable(name = "modulename")
+    @NotNull
+    @Length(max = 50)
+	private String modulename;
+    
 	@Searchable(name = "applicationnumber")
+	@NotNull
+	@Length(max = 50)
 	private String applicationNumber;
 
 	@Searchable(name = "applicationdate")
+	@NotNull
 	private Date applicationDate;
 
 	@Searchable(name = "applicationtype")
+	@NotNull
+	@Length(max = 150)
 	private String applicationType;
 
 	@Searchable(name = "applicantname")
+	@NotNull
+	@Length(max = 100)
 	private String applicantName;
 
+	@Length(max = 250)
 	private String applicantAddress;
 
 	private Date disposalDate;
 
-	@Searchable(name = "uldcode")
-	private String ulbCode;
+	@Searchable(name = "ulbname")
+	@NotNull
+	@Length(max = 250)
+	private String ulbName;
 
-	@Searchable(name = "districtcode")
-	private String districtCode;
+	@Searchable(name = "districtname")
+	@Length(max = 250)
+	private String districtName;
 
 	@Searchable(name = "status")
+	@NotNull
+	@Length(max = 50)
 	private String status;
 
+	@NotNull
+	@Length(max = 250)
 	private String url;
 	
 	@Searchable(name = "consumercode")
+	@Length(max = 50)
 	private String consumerCode;
+	
+	
+	@Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getIndexId() {
-		return indexId;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+    
+    public String getModulename() {
+		return modulename;
 	}
 
-	public void setIndexId(String indexId) {
-		this.indexId = indexId;
+	public void setModulename(String modulename) {
+		this.modulename = modulename;
 	}
-
+    
 	public String getApplicationNumber() {
 		return applicationNumber;
 	}
@@ -134,20 +191,20 @@ public class ApplicationIndex implements Indexable {
 		this.disposalDate = disposalDate;
 	}
 
-	public String getUlbCode() {
-		return ulbCode;
+	public String getUlbName() {
+		return ulbName;
 	}
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
+	public void setUlbName(String ulbName) {
+		this.ulbName = ulbName;
 	}
 
-	public String getDistrictCode() {
-		return districtCode;
+	public String getDistrictName() {
+		return districtName;
 	}
 
-	public void setDistrictCode(String districtCode) {
-		this.districtCode = districtCode;
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
 	}
 
 	public String getStatus() {
@@ -173,5 +230,4 @@ public class ApplicationIndex implements Indexable {
 	public void setConsumerCode(String consumerCode) {
 		this.consumerCode = consumerCode;
 	}
-
 }

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.search.elastic.model;
+package org.egov.infra.search.elastic.entity;
 
 import java.util.Date;
 
@@ -53,8 +53,9 @@ public class ApplicationIndexBuilder {
 
 	private ApplicationIndex applicationIndex;
 
-	public ApplicationIndexBuilder(String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
+	public ApplicationIndexBuilder(String modulename, String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
 		applicationIndex =  new ApplicationIndex();
+		applicationIndex.setModulename(modulename);
 		applicationIndex.setApplicationNumber(applicationNumber);
 		applicationIndex.setApplicationDate(applicationDate);
 		applicationIndex.setApplicationType(applicationType);
@@ -84,6 +85,9 @@ public class ApplicationIndexBuilder {
 	}
 
 	private void validate() throws EGOVRuntimeException {
+		if (applicationIndex.getModulename() == null) {
+			throw new EGOVRuntimeException("Module Name is mandatory");
+		}
 		if (applicationIndex.getApplicationNumber() == null) {
 			throw new EGOVRuntimeException("Application Number is mandatory");
 		}

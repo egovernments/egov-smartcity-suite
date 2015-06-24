@@ -48,8 +48,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.search.elastic.model.ApplicationIndex;
-import org.egov.infra.search.elastic.model.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.entity.ApplicationIndex;
+import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -138,7 +138,7 @@ public class WaterConnectionDetailsService {
     }
 
     private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder("wtms",
                 waterConnectionDetails.getApplicationNumber(), waterConnectionDetails.getApplicationDate(),
                 waterConnectionDetails.getApplicationType().getName(), "Mr. Bean",
                 waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
