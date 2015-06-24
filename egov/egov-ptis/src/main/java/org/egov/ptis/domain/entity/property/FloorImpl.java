@@ -76,8 +76,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	private String electricMeter = null;
 	private PropertyTypeMaster unitType;
 	private String unitTypeCategory;
-	private Date lastUpdatedTimeStamp = null;
-	private Date createdTimeStamp = null;
 	private BigDecimal rentPerMonth;
 	private BigDecimal manualAlv;
 	private BigDecimal alv;
@@ -129,8 +127,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.waterMeter = waterMeter;
 		this.electricMeter = electricMeter;
 
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-		this.createdTimeStamp = createdTimeStamp;
 		this.rentPerMonth = rentPerMonth;
 		this.extraField1 = extraField1;
 		this.extraField2 = extraField2;
@@ -343,22 +339,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.waterMeter = waterMeter;
 	}
 
-	/**
-	 * @return Returns the lastUpdatedTimeStamp.
-	 */
-	@Override
-	public Date getLastUpdatedTimeStamp() {
-		return lastUpdatedTimeStamp;
-	}
-
-	/**
-	 * @param lastUpdatedTimeStamp
-	 *            The lastUpdatedTimeStamp to set.
-	 */
-	@Override
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-	}
 
 	/**
 	 * @return true if the given Object is equal to FloorImpl this will get
@@ -410,22 +390,6 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		return true;
 	}
 
-	/**
-	 * @return Returns the createdTimeStamp.
-	 */
-	@Override
-	public Date getCreatedTimeStamp() {
-		return createdTimeStamp;
-	}
-
-	/**
-	 * @param createdTimeStamp
-	 *            The createdTimeStamp to set.
-	 */
-	@Override
-	public void setCreatedTimeStamp(Date createdTimeStamp) {
-		this.createdTimeStamp = createdTimeStamp;
-	}
 
 	@Override
 	public BigDecimal getRentPerMonth() {

@@ -157,7 +157,7 @@ public class TransferPropertyAction extends WorkflowAction {
         populateNonHistProperty();
         final Map<String, String> wfMap = nonHistProperty.getBasicProperty().getPropertyWfStatus();
         final String wfStatus = wfMap.get(WFSTATUS);
-        if (!wfStatus.equalsIgnoreCase("TRUE")) {
+        if (wfStatus.equalsIgnoreCase("TRUE")) {
             getSession().put(WFOWNER, wfMap.get(WFOWNER));
             target = "workFlowError";
         } else {

@@ -1604,7 +1604,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 			for (FloorIF floor : propertyModel.getPropertyDetail().getFloorDetailsProxy()) {
 				if (floor != null) {
-					floor.setCreatedTimeStamp(new Date());
 					PropertyUsage usage = (PropertyUsage) persistenceService.find(
 							"from PropertyUsage pu where pu.id = ?",
 							floor.getPropertyUsage().getId());

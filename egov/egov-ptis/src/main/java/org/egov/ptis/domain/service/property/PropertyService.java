@@ -261,8 +261,7 @@ public class PropertyService  {
 				for (FloorImpl floor : property.getPropertyDetail().getFloorDetailsProxy()) {
 					if (floor != null) {
 						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
-						floor.setCreatedTimeStamp(new Date());
-/*
+						/*
 						if ("-1".equals(floor.getExtraField7())) {
 							floor.setExtraField7(null);
 						}

@@ -50,12 +50,6 @@
 					<param name="sequence">SEQ_EGPT_FLOOR_DETAIL</param>
 			</generator>
 		</id>
-		<timestamp
-			column="LASTUPDATEDTIMESTAMP"
-			name="modifiedDate"
-			access="property"
-			unsaved-value="null"
-		/>
 		<property
 			name="floorNo"
 			column="FLOOR_NO"
@@ -72,11 +66,6 @@
 		<property
 			name="electricMeter"
 			column="ELEC_METER_NUM"
-		/>
-		<property
-			name="createdTimeStamp"
-			column="CRT_TIMESTAMP"
-			update="false"
 		/>
 		<property
 			name="rentPerMonth"
@@ -126,6 +115,12 @@
 		EXTRA_FIELD1 varchar
 		
 		-->
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="CREATED_BY" />
 		</many-to-one>

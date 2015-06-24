@@ -118,14 +118,6 @@ public interface FloorIF {
 
 	public boolean validateFloor();
 
-	public Date getLastUpdatedTimeStamp();
-
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp);
-
-	public Date getCreatedTimeStamp();
-
-	public void setCreatedTimeStamp(Date createdTimeStamp);
-
 	public Long getId();
 
 	public void setId(Long id);
