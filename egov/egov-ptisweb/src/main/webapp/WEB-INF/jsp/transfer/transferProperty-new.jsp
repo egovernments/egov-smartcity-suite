@@ -321,19 +321,9 @@
 				</table>
         		<%@ include file="../workflow/property-workflow.jsp" %>  
        			 <div class="buttonbottom">
-					<table>
-						<tr>
-							 <td>
-								<s:submit value="Save & Submit" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-							 </td>
-							 <td>
-								<input type="reset" value="Cancel" class="button" align="center" />
-							 </td>
-							 <td>
-								<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-							 </td>
-						</tr>
-				</table>
+					<s:submit value="Save & Submit" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+					<input type="reset" value="Cancel" class="button" align="center" />
+					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
 				</div>
 				</s:push>
 			</s:form>
