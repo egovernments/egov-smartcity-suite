@@ -21,9 +21,6 @@ $(document).ready(function(){
 	//This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspace-hyphen-underscore")
 	var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 
-	//This will allow you to enter numbers and plus. (eg: data-pattern="mobilenumber")
-	var regexp_mobilenumber = /[^0-9+-]/g ;
-
 	//This will allow you to enter numbers and dot. (eg: data-pattern="decimalvalue")
 	var regexp_decimalvalue = /[^0-9.]/g ;
 
@@ -53,11 +50,7 @@ $(document).ready(function(){
 			if($(this).val().match(regexp_alphanumerichyphenunderscore)){
 				$(this).val( $(this).val().replace(regexp_alphanumerichyphenunderscore,'') );
 			}
-		}else if($(this).data('pattern') === "mobilenumber"){ //number
-			if($(this).val().match(regexp_mobilenumber)){
-				$(this).val( $(this).val().replace(regexp_mobilenumber,'') );
-			}
-		}else if($(this).data('pattern') === "decimalvalue"){ //number
+		}else if($(this).data('pattern') === "decimalvalue"){ //decimal value
 			if($(this).val().match(regexp_decimalvalue)){
 				$(this).val( $(this).val().replace(regexp_decimalvalue,'') );
 			}
