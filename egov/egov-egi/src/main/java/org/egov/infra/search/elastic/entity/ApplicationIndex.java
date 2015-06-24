@@ -73,55 +73,55 @@ public class ApplicationIndex extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLICATIONINDEX, strategy = GenerationType.SEQUENCE)
     private Long id;
     
-    @Searchable(name = "modulename")
     @NotNull
     @Length(max = 50)
+    @Searchable(group = Searchable.Group.CLAUSES)
 	private String modulename;
-    
-	@Searchable(name = "applicationnumber")
+	
 	@NotNull
 	@Length(max = 50)
+	@Searchable(name = "applicationnumber")
 	private String applicationNumber;
-
-	@Searchable(name = "applicationdate")
+	
 	@NotNull
+	@Searchable(name = "applicationdate")
 	private Date applicationDate;
-
-	@Searchable(name = "applicationtype")
+	
 	@NotNull
 	@Length(max = 150)
+	@Searchable(group = Searchable.Group.CLAUSES)
 	private String applicationType;
-
-	@Searchable(name = "applicantname")
+	
 	@NotNull
 	@Length(max = 100)
+	@Searchable(name = "applicantname")
 	private String applicantName;
 
 	@Length(max = 250)
 	private String applicantAddress;
 
 	private Date disposalDate;
-
-	@Searchable(name = "ulbname")
+	
 	@NotNull
 	@Length(max = 250)
+	@Searchable(group = Searchable.Group.CLAUSES)
 	private String ulbName;
-
-	@Searchable(name = "districtname")
+	
 	@Length(max = 250)
+	@Searchable(group = Searchable.Group.CLAUSES)
 	private String districtName;
 
-	@Searchable(name = "status")
 	@NotNull
 	@Length(max = 50)
+	@Searchable(group = Searchable.Group.CLAUSES)
 	private String status;
 
 	@NotNull
 	@Length(max = 250)
 	private String url;
 	
-	@Searchable(name = "consumercode")
 	@Length(max = 50)
+	@Searchable(name = "consumercode")
 	private String consumerCode;
 	
 	
