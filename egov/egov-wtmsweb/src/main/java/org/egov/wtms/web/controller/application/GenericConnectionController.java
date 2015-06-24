@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.List;
+import java.util.Map;
 
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -47,7 +48,6 @@ import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
@@ -76,8 +76,8 @@ public abstract class GenericConnectionController {
     @Autowired
     protected PropertyTypeService propertyTypeService;
 
-    public @ModelAttribute("connectionTypes") List<ConnectionType> connectionTypes() {
-        return waterConnectionDetailsService.getAllConnectionTypes();
+    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
+        return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
     public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {

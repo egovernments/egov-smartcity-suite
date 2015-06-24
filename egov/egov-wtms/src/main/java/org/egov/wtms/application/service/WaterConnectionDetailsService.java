@@ -41,7 +41,9 @@ package org.egov.wtms.application.service;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -78,7 +80,7 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
-    
+
     @Autowired
     private ApplicationIndexService applicationIndexService;
 
@@ -135,19 +137,27 @@ public class WaterConnectionDetailsService {
         return savedWaterConnectionDetails;
     }
 
-    private void createApplicationIndex(WaterConnectionDetails waterConnectionDetails) {
-	    final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(waterConnectionDetails.getApplicationNumber(),
-	    		waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName() ,
-	    		"Mr. Bean", waterConnectionDetails.getConnectionStatus().toString(),"/wtms/test.action");
-	    	
-	    applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-	
-	    final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
-	    applicationIndexService.createApplicationIndex(applicationIndex);
+    private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+                waterConnectionDetails.getApplicationNumber(), waterConnectionDetails.getApplicationDate(),
+                waterConnectionDetails.getApplicationType().getName(), "Mr. Bean",
+                waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
+
+        applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+
+        final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
+        applicationIndexService.createApplicationIndex(applicationIndex);
     }
-    
+
     public List<ConnectionType> getAllConnectionTypes() {
         return Arrays.asList(ConnectionType.values());
+    }
+
+    public Map<String, String> getConnectionTypesMap() {
+        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>();
+        connectionTypeMap.put(ConnectionType.METERED.toString(), WaterTaxConstants.METERED);
+        connectionTypeMap.put(ConnectionType.NON_METERED.toString(), WaterTaxConstants.NON_METERED);
+        return connectionTypeMap;
     }
 
 }
