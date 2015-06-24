@@ -66,8 +66,7 @@
 		</many-to-one>
 
 		<many-to-one name="propMutationMstr" column="mutationreason"
-			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" cascade="all"
-			unique="true" />
+			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster"  unique="true" />
 
 		<property name="mutationNo" column="MUTATION_NO" />
 		<property name="mutationDate" column="MUTATION_DATE" />

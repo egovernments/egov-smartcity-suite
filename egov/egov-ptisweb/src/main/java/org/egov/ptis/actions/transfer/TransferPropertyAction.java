@@ -106,7 +106,6 @@ public class TransferPropertyAction extends WorkflowAction {
     private static final String WORKFLOW_END = "END";
     private static final String MSG_REJECT_SUCCESS = " Change Property Rejected Successfully ";
 
-    private final Logger LOGGER = Logger.getLogger(getClass());
     private String oldOwnerName;
     private String propAddress;
     private PropertyAddress prpAddress;
@@ -205,11 +204,11 @@ public class TransferPropertyAction extends WorkflowAction {
     public String save() {
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
         processAndStoreDocumentsWithReason(basicProp, DOCS_MUTATION_PROPERTY);
-        property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerProxy, chkIsCorrIsDiff,
-                corrAddress1, corrAddress2, corrPinCode, email, mobileNo );
-        property.setStatus(STATUS_WORKFLOW);
         propertyMutation.setExtraField1(getWorkflowBean().getComments());
         propertyMutation.setOwnerNameOld(oldOwnerName);
+        transferOwnerService.applyAuditing(propertyMutation);
+        property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerProxy, chkIsCorrIsDiff,
+                corrAddress1, corrAddress2, corrPinCode, email, mobileNo );
         transitionWorkFlow();
         setExtra_field4(property.getExtra_field4());
         if (getModelId() != null && !getModelId().isEmpty()) {
@@ -222,6 +221,7 @@ public class TransferPropertyAction extends WorkflowAction {
                 .findByNamedQuery("getPropertyByUpicNoAndStatus", getIndexNumber(), STATUS_ISACTIVE);
         propertyPrevious.setStatus(STATUS_ISHISTORY);
         property.setStatus(STATUS_ISACTIVE);
+        propertyImplService.persist(property);
         return ACK;
     }
 
@@ -458,7 +458,6 @@ public class TransferPropertyAction extends WorkflowAction {
         if (workflowAction.isNoticeGenerated())
             endWorkFlow();
 
-        propertyImplService.persist(property);
     }
 
     private void setWFPropertyMutation(final PropertyMutation propMutation) {

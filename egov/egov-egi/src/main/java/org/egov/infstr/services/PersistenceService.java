@@ -42,6 +42,7 @@ package org.egov.infstr.services;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -371,6 +372,16 @@ public class PersistenceService<T, ID extends Serializable> {
         } 
         auditable.setLastModifiedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
         auditable.setLastModifiedDate(currentDate);
+    }
+    
+    public void applyAuditing(BaseModel baseModel) {
+        Date currentDate = new Date();
+        if (baseModel.getId() == null) {
+            baseModel.setCreatedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+            baseModel.setCreatedDate(currentDate);
+        } 
+        baseModel.setModifiedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+        baseModel.setModifiedDate(currentDate);
     }
 
 }

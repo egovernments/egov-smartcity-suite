@@ -152,19 +152,11 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	 */
 	private Set<PropertyMutation> getPropMutationSet(BasicProperty basicProp, PropertyMutation propertyMutation,
 			Property oldProperty) {
-		PropertyMutationMaster propMutMstr = null;
-		if (propertyMutation.getPropMutationMstr() != null
-				&& propertyMutation.getPropMutationMstr().getIdMutation() != -1) {
-			propMutMstr = (PropertyMutationMaster) trnsfOwnerPerService.find(
-					"from PropertyMutationMaster PM where PM.idMutation = ?",
-					Integer.valueOf(propertyMutation.getPropMutationMstr().getIdMutation()).intValue());
-		}
 		propertyMutation.setRefPid(null);
 		propertyMutation.setBasicProperty(basicProp);
 		propertyMutation.setApplicationNo(propertyTaxNumberGenerator.generateNameTransApplNo(basicProp.getBoundary()));
 		propertyMutation.setMutationDate(propertyMutation.getMutationDate());
 		propertyMutation.setMutationOwnerSet(getMutOwners(oldProperty, propertyMutation));
-		propertyMutation.setPropMutationMstr(propMutMstr);
 		Set<PropertyMutation> propertyMutationSet = new HashSet();
 		propertyMutationSet.add(propertyMutation);
 		return propertyMutationSet;

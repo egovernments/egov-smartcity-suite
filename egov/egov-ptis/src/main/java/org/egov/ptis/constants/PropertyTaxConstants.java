@@ -1007,8 +1007,8 @@ public interface PropertyTaxConstants {
 	
 	public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
 	public static final String MUTATIONRS_OTHERS = "OTHERS";
-	public static final String MUTATIONRS_SALES_DEED = "SALE DEED";
-	public static final String MUTATIONRS_COURT_ORDER = "COURT ORDER";
+	public static final String MUTATIONRS_SALES_DEED = "Sale Deed";
+	public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
 	
 	public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
 		{
