@@ -55,6 +55,7 @@ public class AssessmentDetails implements Serializable {
 	private String propertyID;
 	private Set<OwnerName> ownerNames;
 	private BoundaryDetails boundaryDetails;
+	private String propertyAddress;
 	private PropertyDetails propertyDetails;
 	private ErrorDetails errorDetails;
 	
@@ -88,10 +89,17 @@ public class AssessmentDetails implements Serializable {
 	public void setErrorDetails(ErrorDetails errorDetails) {
 		this.errorDetails = errorDetails;
 	}
+	public String getPropertyAddress() {
+		return propertyAddress;
+	}
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
+	}
 	@Override
 	public String toString() {
 		return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
-				+ boundaryDetails + ", propertyDetails=" + propertyDetails + ", errorDetails=" + errorDetails + "]";
+				+ boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
+				+ ", errorDetails=" + errorDetails + "]";
 	}
 	
 }

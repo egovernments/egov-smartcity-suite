@@ -1023,7 +1023,8 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_DEACTIVATE_ERR_CODE = "PTAX101";
 	public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
 	
-	public static final String PROPERTY_NOT_EXIST_ERR_MSG = "Property does not exist";
+	public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
+	public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
 	public static final String PROPERTY_DEACTIVATE_ERR_MSG = "Property is decativated";
 	public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
 	

@@ -110,6 +110,7 @@ public class AssessmentService {
 		PropertyDetails propertyDetails = new PropertyDetails();
 		Set<OwnerName> ownerNames = new HashSet<OwnerName>();
 		ErrorDetails errorDetails = new ErrorDetails();
+		String propertyAddress = null;
 
 		if(null != basicProperty) {
 			//Error Code
@@ -162,6 +163,7 @@ public class AssessmentService {
 					BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);
 					propertyDetails.setTaxDue(taxDue);
 				}
+				propertyAddress = getPropertyAddress(property);
 			}
 
 			//Boundary Details
@@ -189,7 +191,9 @@ public class AssessmentService {
 			
 		} else {
 			errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
-			errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG);
+			errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX 
+					+ assessmentNumber
+					+ PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
 		}
 
 		//Assessment Details
@@ -198,6 +202,7 @@ public class AssessmentService {
 		assessmentDetail.setBoundaryDetails(boundaryDetails);
 		assessmentDetail.setPropertyDetails(propertyDetails);
 		assessmentDetail.setErrorDetails(errorDetails);
+		assessmentDetail.setPropertyAddress(propertyAddress);
 		
 		return getJSONResponse(assessmentDetail);
 	}
@@ -217,5 +222,28 @@ public class AssessmentService {
 		objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
 		String jsonResponse  = objectMapper.writeValueAsString(obj);
 		return jsonResponse;
+	}
+	
+	private String getPropertyAddress(Property property) {
+		StringBuffer propertAddr = new StringBuffer();
+		String houseNo = property.getBasicProperty().getAddress().getHouseNoBldgApt();
+		String landmark = property.getBasicProperty().getAddress().getLandmark();
+		String pinCode = property.getBasicProperty().getAddress().getPinCode();
+		if(houseNo != null && houseNo.trim().length() != 0) {
+			propertAddr.append(houseNo);
+		}
+		if(landmark != null && landmark.trim().length() != 0) {
+			if(propertAddr.toString().length() != 0) {
+				propertAddr.append(", ");
+			}
+			propertAddr.append(landmark);
+		}
+		if(pinCode != null && pinCode.trim().length() != 0) {
+			if(propertAddr.toString().length() != 0) {
+				propertAddr.append(", ");
+			}
+			propertAddr.append(pinCode);
+		}
+		return propertAddr.toString();
 	}
 }
