@@ -82,9 +82,9 @@ public class WaterConnection extends AbstractAuditable {
     @Length(min = 3, max = 50)
     private String bpaIdentifier;
 
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = Constants.NUMERIC)
     @SafeHtml
-    @Length(min = 10, max = 15)
+    @Length(min = 10, max = 12)
     private String mobileNumber;
 
     @SafeHtml

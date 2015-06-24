@@ -74,7 +74,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="mobilenumber" id="mobileNumber" path="connection.mobileNumber" min="10" maxlength="15" />
+		<form:input class="form-control patternvalidation" data-pattern="number" id="mobileNumber" path="connection.mobileNumber" min="10" maxlength="12" />
 		<form:errors path="connection.mobileNumber" cssClass="add-margin error-msg" /> 
 	</div>
 </div>
