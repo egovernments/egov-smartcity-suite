@@ -69,7 +69,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.applicantname" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" disabled>
+		<input type="text" class="form-control" id="applicantname" disabled> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
@@ -82,18 +82,18 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.address" /></label>
 	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" disabled></textarea>
+		<textarea class="form-control" id="propertyaddress" disabled></textarea>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.zonewardblock" /></label>
 	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" disabled></textarea>
+		<textarea class="form-control" id="zonewardblock" disabled></textarea>
 	</div>
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.pt.due" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" disabled value="0.00"> 
+		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
 	</div>
 </div>				
