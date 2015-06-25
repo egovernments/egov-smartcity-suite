@@ -37,46 +37,83 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.bean.rest;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
 
 /**
- * The OwnerName class is used to contain owner details such as aadhaar number,
- * owner name and mobile number.
+ * The BoundaryDetails class is used to contain boundary details such as zone
+ * details, ward details, block details, locality and street details.
  * 
  * @author ranjit
  *
  */
 @SuppressWarnings("serial")
-public class OwnerName implements Serializable {
+public class BoundaryDetails implements Serializable {
 	
-	private String aadhaarNumber;
-	private String ownerName;
-	private String mobileNumber;
+	private Long zoneNumber;
+	private String zoneName;
+	private Long wardNumber;
+	private String wardName;
+	private Long blockNumber;
+	private String blockName;
+	private String localityName;
+	private String streetName;
 	
-	public String getAadhaarNumber() {
-		return aadhaarNumber;
+	public Long getZoneNumber() {
+		return zoneNumber;
 	}
-	public void setAadhaarNumber(String aadhaarNumber) {
-		this.aadhaarNumber = aadhaarNumber;
+	public void setZoneNumber(Long zoneNumber) {
+		this.zoneNumber = zoneNumber;
 	}
-	public String getOwnerName() {
-		return ownerName;
+	public String getZoneName() {
+		return zoneName;
 	}
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
+	public void setZoneName(String zoneName) {
+		this.zoneName = zoneName;
 	}
-	public String getMobileNumber() {
-		return mobileNumber;
+	public Long getWardNumber() {
+		return wardNumber;
 	}
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
+	public void setWardNumber(Long wardNumber) {
+		this.wardNumber = wardNumber;
 	}
+	public String getWardName() {
+		return wardName;
+	}
+	public void setWardName(String wardName) {
+		this.wardName = wardName;
+	}
+	public Long getBlockNumber() {
+		return blockNumber;
+	}
+	public void setBlockNumber(Long blockNumber) {
+		this.blockNumber = blockNumber;
+	}
+	public String getBlockName() {
+		return blockName;
+	}
+	public void setBlockName(String blockName) {
+		this.blockName = blockName;
+	}
+	public String getLocalityName() {
+		return localityName;
+	}
+	public void setLocalityName(String localityName) {
+		this.localityName = localityName;
+	}
+	public String getStreetName() {
+		return streetName;
+	}
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
+	}
+	
 	@Override
 	public String toString() {
-		return "OwnerName [aadhaarNumber=" + aadhaarNumber + ", ownerName=" + ownerName + ", mobileNumber="
-				+ mobileNumber + "]";
+		return "BoundaryDetails [zoneNumber=" + zoneNumber + ", zoneName=" + zoneName + ", wardNumber=" + wardNumber
+				+ ", wardName=" + wardName + ", blockNumber=" + blockNumber + ", blockName=" + blockName
+				+ ", localityName=" + localityName + ", streetName=" + streetName + "]";
 	}
 	
 }

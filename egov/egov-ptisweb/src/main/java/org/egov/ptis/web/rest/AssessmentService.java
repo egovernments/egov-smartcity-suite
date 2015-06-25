@@ -40,10 +40,6 @@
 package org.egov.ptis.web.rest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -56,20 +52,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.egov.ptis.bean.rest.AssessmentDetails;
-import org.egov.ptis.bean.rest.BoundaryDetails;
-import org.egov.ptis.bean.rest.ErrorDetails;
-import org.egov.ptis.bean.rest.OwnerName;
-import org.egov.ptis.bean.rest.PropertyDetails;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
-import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
-import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,13 +67,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/")
 public class AssessmentService {
-	
+
 	@Autowired
-	private BasicPropertyDAO basicPropertyDAO;
-	
-	@Autowired
-	private PtDemandDao ptDemandDao;
-	
+	private PropertyExternalService propertyExternalService;
+
 	/**
 	 * This method is used for handling user request for assessment details.
 	 * 
@@ -103,107 +84,10 @@ public class AssessmentService {
 	@GET
 	@Path("/property/{assessmentNumber}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAssessmentDetails(@PathParam("assessmentNumber") String assessmentNumber) throws JsonGenerationException, JsonMappingException, IOException{
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-		AssessmentDetails assessmentDetail = new AssessmentDetails();
-		BoundaryDetails boundaryDetails = new BoundaryDetails();
-		PropertyDetails propertyDetails = new PropertyDetails();
-		Set<OwnerName> ownerNames = new HashSet<OwnerName>();
-		ErrorDetails errorDetails = new ErrorDetails();
-		String propertyAddress = null;
+	public String getAssessmentDetails(@PathParam("assessmentNumber") String assessmentNumber)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		AssessmentDetails assessmentDetail = propertyExternalService.getPropertyDetails(assessmentNumber);
 
-		if(null != basicProperty) {
-			//Error Code
-			if(!basicProperty.isActive()) {
-				errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
-				errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG);
-			} else {
-				Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
-				if(null != statusValues && !statusValues.isEmpty()) {
-					for (PropertyStatusValues statusValue : statusValues){
-						if(statusValue.getPropertyStatus().getStatusCode() == PropertyTaxConstants.MARK_DEACTIVE) {
-							errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
-							errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
-						}
-					}
-				}
-			}
-
-			//Owner Details
-			Property property = basicProperty.getProperty();
-			if(null != property) {
-				Set<PropertyOwner> propertyOwners = property.getPropertyOwnerSet();
-				if(propertyOwners != null && !propertyOwners.isEmpty()) {
-					for(PropertyOwner propertyOwner : propertyOwners) {
-						OwnerName ownerName = new OwnerName();
-						ownerName.setAadhaarNumber(propertyOwner.getAadhaarNumber());
-						ownerName.setOwnerName(propertyOwner.getName());
-						ownerName.setMobileNumber(propertyOwner.getMobileNumber());
-						ownerNames.add(ownerName);
-					}
-				}
-
-				//Property Details
-				PropertyDetail propertyDetail = property.getPropertyDetail();
-				if(null != propertyDetail) {
-					propertyDetails.setPropertyType(propertyDetail.getPropertyType());
-					if(propertyDetail.getPropertyUsage() != null) {
-						propertyDetails.setPropertyUsage(propertyDetail.getPropertyUsage().getUsageName());
-					}
-				}
-
-				Map<String, BigDecimal> resultmap = ptDemandDao.getDemandCollMap(property);
-				if(null != resultmap && !resultmap.isEmpty()) {
-					BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_DMD_STR);
-					BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
-					BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_COLL_STR);
-					BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
-					
-					//Calculating tax dues
-					BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);
-					propertyDetails.setTaxDue(taxDue);
-				}
-				propertyAddress = getPropertyAddress(property);
-			}
-
-			//Boundary Details
-			PropertyID propertyID = basicProperty.getPropertyID();
-			if(null != propertyID) {
-				if(null != propertyID.getZone()) {
-					boundaryDetails.setZoneNumber(propertyID.getZone().getBoundaryNum());
-					boundaryDetails.setZoneName(propertyID.getZone().getName());
-				}
-				if(null != propertyID.getWard()) {
-					boundaryDetails.setWardNumber(propertyID.getWard().getBoundaryNum());
-					boundaryDetails.setWardName(propertyID.getWard().getName());
-				}
-				if(null != propertyID.getArea()) {
-					boundaryDetails.setBlockNumber(propertyID.getArea().getBoundaryNum());
-					boundaryDetails.setBlockName(propertyID.getArea().getName());
-				}
-				if(null != propertyID.getLocality()) {
-					boundaryDetails.setLocalityName(propertyID.getLocality().getName());
-				}
-				if(null != propertyID.getStreet()) {
-					boundaryDetails.setStreetName(propertyID.getStreet().getName());
-				}
-			}
-			
-		} else {
-			errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
-			errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX 
-					+ assessmentNumber
-					+ PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
-		}
-
-		//Assessment Details
-		assessmentDetail.setPropertyID(assessmentNumber);
-		assessmentDetail.setOwnerNames(ownerNames);
-		assessmentDetail.setBoundaryDetails(boundaryDetails);
-		assessmentDetail.setPropertyDetails(propertyDetails);
-		assessmentDetail.setErrorDetails(errorDetails);
-		assessmentDetail.setPropertyAddress(propertyAddress);
-		
 		return getJSONResponse(assessmentDetail);
 	}
 
@@ -220,30 +104,7 @@ public class AssessmentService {
 	private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-		String jsonResponse  = objectMapper.writeValueAsString(obj);
+		String jsonResponse = objectMapper.writeValueAsString(obj);
 		return jsonResponse;
-	}
-	
-	private String getPropertyAddress(Property property) {
-		StringBuffer propertAddr = new StringBuffer();
-		String houseNo = property.getBasicProperty().getAddress().getHouseNoBldgApt();
-		String landmark = property.getBasicProperty().getAddress().getLandmark();
-		String pinCode = property.getBasicProperty().getAddress().getPinCode();
-		if(houseNo != null && houseNo.trim().length() != 0) {
-			propertAddr.append(houseNo);
-		}
-		if(landmark != null && landmark.trim().length() != 0) {
-			if(propertAddr.toString().length() != 0) {
-				propertAddr.append(", ");
-			}
-			propertAddr.append(landmark);
-		}
-		if(pinCode != null && pinCode.trim().length() != 0) {
-			if(propertAddr.toString().length() != 0) {
-				propertAddr.append(", ");
-			}
-			propertAddr.append(pinCode);
-		}
-		return propertAddr.toString();
 	}
 }

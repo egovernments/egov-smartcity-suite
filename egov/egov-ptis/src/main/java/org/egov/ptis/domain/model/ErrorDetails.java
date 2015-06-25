@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.bean.rest;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
 

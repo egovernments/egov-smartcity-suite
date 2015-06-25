@@ -151,5 +151,5 @@
 	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil">
 	</bean>
 	
-	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
+	<bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
 </beans>

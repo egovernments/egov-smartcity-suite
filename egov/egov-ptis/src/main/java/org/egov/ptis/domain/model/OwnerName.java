@@ -37,69 +37,46 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.bean.rest;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
- * The AssessmentDetails class is used to contain assessment details such as
- * property id, owner details, boundary details, and block details.
+ * The OwnerName class is used to contain owner details such as aadhaar number,
+ * owner name and mobile number.
  * 
  * @author ranjit
  *
  */
 @SuppressWarnings("serial")
-public class AssessmentDetails implements Serializable {
+public class OwnerName implements Serializable {
 	
-	private String propertyID;
-	private Set<OwnerName> ownerNames;
-	private BoundaryDetails boundaryDetails;
-	private String propertyAddress;
-	private PropertyDetails propertyDetails;
-	private ErrorDetails errorDetails;
+	private String aadhaarNumber;
+	private String ownerName;
+	private String mobileNumber;
 	
-	public String getPropertyID() {
-		return propertyID;
+	public String getAadhaarNumber() {
+		return aadhaarNumber;
 	}
-	public void setPropertyID(String propertyID) {
-		this.propertyID = propertyID;
+	public void setAadhaarNumber(String aadhaarNumber) {
+		this.aadhaarNumber = aadhaarNumber;
 	}
-	public Set<OwnerName> getOwnerNames() {
-		return ownerNames;
+	public String getOwnerName() {
+		return ownerName;
 	}
-	public void setOwnerNames(Set<OwnerName> ownerNames) {
-		this.ownerNames = ownerNames;
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
-	public BoundaryDetails getBoundaryDetails() {
-		return boundaryDetails;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
-	public void setBoundaryDetails(BoundaryDetails boundaryDetails) {
-		this.boundaryDetails = boundaryDetails;
-	}
-	public PropertyDetails getPropertyDetails() {
-		return propertyDetails;
-	}
-	public void setPropertyDetails(PropertyDetails propertyDetails) {
-		this.propertyDetails = propertyDetails;
-	}
-	public ErrorDetails getErrorDetails() {
-		return errorDetails;
-	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
-		this.errorDetails = errorDetails;
-	}
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
-	public void setPropertyAddress(String propertyAddress) {
-		this.propertyAddress = propertyAddress;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 	@Override
 	public String toString() {
-		return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
-				+ boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
-				+ ", errorDetails=" + errorDetails + "]";
+		return "OwnerName [aadhaarNumber=" + aadhaarNumber + ", ownerName=" + ownerName + ", mobileNumber="
+				+ mobileNumber + "]";
 	}
 	
 }

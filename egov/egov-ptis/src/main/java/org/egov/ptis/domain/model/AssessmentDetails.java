@@ -37,83 +37,69 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.bean.rest;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
- * The BoundaryDetails class is used to contain boundary details such as zone
- * details, ward details, block details, locality and street details.
+ * The AssessmentDetails class is used to contain assessment details such as
+ * property id, owner details, boundary details, and block details.
  * 
  * @author ranjit
  *
  */
 @SuppressWarnings("serial")
-public class BoundaryDetails implements Serializable {
+public class AssessmentDetails implements Serializable {
 	
-	private Long zoneNumber;
-	private String zoneName;
-	private Long wardNumber;
-	private String wardName;
-	private Long blockNumber;
-	private String blockName;
-	private String localityName;
-	private String streetName;
+	private String propertyID;
+	private Set<OwnerName> ownerNames;
+	private BoundaryDetails boundaryDetails;
+	private String propertyAddress;
+	private PropertyDetails propertyDetails;
+	private ErrorDetails errorDetails;
 	
-	public Long getZoneNumber() {
-		return zoneNumber;
+	public String getPropertyID() {
+		return propertyID;
 	}
-	public void setZoneNumber(Long zoneNumber) {
-		this.zoneNumber = zoneNumber;
+	public void setPropertyID(String propertyID) {
+		this.propertyID = propertyID;
 	}
-	public String getZoneName() {
-		return zoneName;
+	public Set<OwnerName> getOwnerNames() {
+		return ownerNames;
 	}
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
+	public void setOwnerNames(Set<OwnerName> ownerNames) {
+		this.ownerNames = ownerNames;
 	}
-	public Long getWardNumber() {
-		return wardNumber;
+	public BoundaryDetails getBoundaryDetails() {
+		return boundaryDetails;
 	}
-	public void setWardNumber(Long wardNumber) {
-		this.wardNumber = wardNumber;
+	public void setBoundaryDetails(BoundaryDetails boundaryDetails) {
+		this.boundaryDetails = boundaryDetails;
 	}
-	public String getWardName() {
-		return wardName;
+	public PropertyDetails getPropertyDetails() {
+		return propertyDetails;
 	}
-	public void setWardName(String wardName) {
-		this.wardName = wardName;
+	public void setPropertyDetails(PropertyDetails propertyDetails) {
+		this.propertyDetails = propertyDetails;
 	}
-	public Long getBlockNumber() {
-		return blockNumber;
+	public ErrorDetails getErrorDetails() {
+		return errorDetails;
 	}
-	public void setBlockNumber(Long blockNumber) {
-		this.blockNumber = blockNumber;
+	public void setErrorDetails(ErrorDetails errorDetails) {
+		this.errorDetails = errorDetails;
 	}
-	public String getBlockName() {
-		return blockName;
+	public String getPropertyAddress() {
+		return propertyAddress;
 	}
-	public void setBlockName(String blockName) {
-		this.blockName = blockName;
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
 	}
-	public String getLocalityName() {
-		return localityName;
-	}
-	public void setLocalityName(String localityName) {
-		this.localityName = localityName;
-	}
-	public String getStreetName() {
-		return streetName;
-	}
-	public void setStreetName(String streetName) {
-		this.streetName = streetName;
-	}
-	
 	@Override
 	public String toString() {
-		return "BoundaryDetails [zoneNumber=" + zoneNumber + ", zoneName=" + zoneName + ", wardNumber=" + wardNumber
-				+ ", wardName=" + wardName + ", blockNumber=" + blockNumber + ", blockName=" + blockName
-				+ ", localityName=" + localityName + ", streetName=" + streetName + "]";
+		return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
+				+ boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
+				+ ", errorDetails=" + errorDetails + "]";
 	}
 	
 }
