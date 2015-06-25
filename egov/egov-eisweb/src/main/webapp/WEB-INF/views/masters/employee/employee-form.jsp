@@ -99,15 +99,15 @@
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
 										<div class="col-sm-2 col-md-1 add-margin">
-											<form:select path="salutation" id="salutation"
+											<form:select path="salutation" id="salutation" 
 												cssClass="form-control" cssErrorClass="form-control error">
-												<form:option value="">
+												<form:option value="MR.">
 													Mr
 												</form:option>
-												<form:option value="">
+												<form:option value="MISS.">
 													Miss
 												</form:option>
-												<form:option value="">
+												<form:option value="MRS.">
 													Mrs
 												</form:option>
 											</form:select>
@@ -243,16 +243,16 @@
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.useractive"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_yes" value="true" checked="true"/>
+											<form:radiobutton path="active" id="isactive_yes" checked="checked" value="true"/>
 											<label>Yes</label>
 										</div>
 
 										<div class="col-sm-1 col-xs-12 add-margin">
-											<form:radiobutton path="active" id="isactive_no" value="false"/>
+											<form:radiobutton path="active" id="isactive_no" value="true"/>
 											<label>No</label>
 										</div>
 
-										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.username"/></label>
+										<label for="field-1" class="col-sm-1 control-label"><spring:message code="lbl.username"/><span class="mandatory"></span></label>
 										
 										<div class="col-sm-3 add-margin">
 											<form:input type="text" path="username" id="username" required="required" cssClass="form-control"/>

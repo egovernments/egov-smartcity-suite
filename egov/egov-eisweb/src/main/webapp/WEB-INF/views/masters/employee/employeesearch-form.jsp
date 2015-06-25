@@ -214,11 +214,11 @@
 									</div>
 
 
-								</form>
 							</div>
 						</div>					
 					</div>
 				</div>
+				</form:form>
 				<div class="row">
 					<div class="col-md-6 col-xs-6 table-header">List of Employee</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
@@ -246,7 +246,7 @@
 				</div>
 
 			</div>
-</form:form>
+
 
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>		

@@ -39,7 +39,7 @@ $(document).ready(function(){
 			"aLengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
 			"bDestroy": true,
 			"autoWidth": false,
-			"ajax": "ajax/employees?searchText="+search+"&freeText="+$("#freeText").val(),
+			"ajax": "ajax/employees?searchText="+search+"&freeText="+$("#freeText").val()+"&"+$("#searchEmployeeForm").serialize(),
 			"columns": [
 			            { "data": "slno","width": "5%" },
 						{ "data": "name","width": "10%" },
@@ -52,6 +52,7 @@ $(document).ready(function(){
 			]
 		});
 		
+
 	});
 	
 	

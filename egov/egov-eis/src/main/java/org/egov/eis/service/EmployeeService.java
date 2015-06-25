@@ -55,6 +55,7 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.BooleanJunction;
@@ -86,6 +87,9 @@ public class EmployeeService {
     private RoleService roleService;
 
     @Autowired
+    private ApplicationProperties applicationProperties;
+
+    @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
@@ -113,7 +117,8 @@ public class EmployeeService {
 
     @Transactional
     public void create(final Employee employee) {
-        employee.setPwdExpiryDate(new DateTime().plus(90).toDate());
+        employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
@@ -142,11 +147,17 @@ public class EmployeeService {
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
-        // employee.getAssignments().retainAll(employee.getAssignments());
-
         employeeRepository.saveAndFlush(employee);
     }
 
+    /**
+     * This search API is used for EIS internal search. Not intended for general
+     * search by other modules
+     *
+     * @param freeText
+     * @param searchText
+     * @return
+     */
     @Transactional
     public List<Employee> searchEmployee(final Boolean freeText, final String[] searchText) {
 
@@ -159,10 +170,9 @@ public class EmployeeService {
         // recommended though
         final QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Employee.class)
                 .get();
-        final TermMatchingContext onFields = qb.keyword().onFields("name", "code", "mobileNumber", "aadhaarNumber",
-                "emailId", "pan", "assignments.department.name", "assignments.designation.name",
-                "assignments.position.name", "assignments.fund.name", "assignments.function.name",
-                "assignments.functionary.name");
+        final TermMatchingContext onFields = qb.keyword().onFields("code", "mobileNumber", "aadhaarNumber", "emailId",
+                "pan", "assignments.department.name", "assignments.designation.name", "assignments.position.name",
+                "assignments.fund.name", "assignments.function.name", "assignments.functionary.name");
 
         org.apache.lucene.search.Query luceneQuery = null;
 
@@ -172,7 +182,7 @@ public class EmployeeService {
             final BooleanJunction<BooleanJunction> bool = qb.bool();
             for (final String element : searchText) {
                 final String currentTerm = element;
-                if (!currentTerm.isEmpty())
+                if (!currentTerm.isEmpty()&& !"".equals(currentTerm))
                     bool.must(onFields.matching(currentTerm).createQuery());
             }
             luceneQuery = bool.createQuery();
