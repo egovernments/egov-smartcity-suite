@@ -48,11 +48,6 @@
 					zoneId : document.getElementById("zoneId").value
 				});
 			}
-			function populateStreet() {
-				populateareaId( {
-					wardId : document.getElementById("wardId").value
-				});
-			}
 			function onSubmit(obj,formId){
 				var formObj = document.getElementById(formId);
 				formObj.action=obj;
@@ -148,9 +143,7 @@
 							<td class="greybox">
 								<s:select name="wardId" id="wardId" list="dropdownData.wardList"
 									listKey="id" listValue="name" headerKey="-1"
-									headerValue="%{getText('default.select')}" value="%{wardId}" onchange="populateStreet();"/>
-									<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
-									dropdownId="areaId" url="common/ajaxCommon-streetByWard.action" />
+									headerValue="%{getText('default.select')}" value="%{wardId}"/>
 							</td>
 							<td class="greybox">&nbsp;</td>
 						</tr>
@@ -192,7 +185,7 @@
 				</table>
 				
 				<table  border="0" cellspacing="0" cellpadding="0" width="100%">
-				<s:form name="areaform" theme="simple" id="areaform">
+				<s:form name="areaform" theme="simple" id="locationform">
 					<tr>
 						<td width="100%" colspan="4" class="headingbg">												
 							<div class="headingbg">					
@@ -204,11 +197,11 @@
 					<tr>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">
-							<s:text name="Area" /> :
+							<s:text name="Location" /><span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
-							<s:select name="areaId" id="areaId" list="dropdownData.Street" cssStyle="width: 150px;" listKey="id" listValue="name"
-								headerKey="-1" headerValue="----Choose----" value="%{areaId}" />
+							<s:select name="locationId" id="locationId" list="dropdownData.Location" cssStyle="width: 150px;" listKey="id" listValue="name"
+								headerKey="-1" headerValue="----Choose----" value="%{locationId}" />
 						</td>
 						<td class="bluebox">&nbsp;</td>
 						
@@ -233,7 +226,7 @@
 							:
 						</td>
 						<td class="bluebox">
-							<s:textfield name="ownerNameBndry" />
+							<s:textfield name="houseNumArea" />
 						</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -243,8 +236,8 @@
 						<td class="greybox" colspan="2">
 						    <br/>
 							<div class="greybox" style="text-align:center">
-								<s:hidden id="mode" name="mode" value="area"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'srchByArea');"></s:submit>
+								<s:hidden id="mode" name="mode" value="location"></s:hidden>
+								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByLocation.action', 'locationform');"></s:submit>
 							</div>
 						</td>
 						<td class="greybox">&nbsp;</td>
@@ -254,7 +247,7 @@
 			</table>
 			<!-- objection search details -->
 			<table  border="0" cellspacing="0" cellpadding="0" width="100%">
-				<s:form name="objectionForm"  theme="simple" id="objectionForm">
+				<s:form name="demandForm"  theme="simple" id="demandForm">
 					<tr>
 						<td width="100%" colspan="4" class="headingbg">												
 							<div class="headingbg">					
@@ -283,8 +276,8 @@
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox" colspan="2">
 							<div class="bluebox" style="text-align:center">
-								<s:hidden id="mode" name="mode" value="objection"></s:hidden>
-								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByObjection.action', 'objectionForm');"></s:submit>
+								<s:hidden id="mode" name="mode" value="demand"></s:hidden>
+								<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-searchByDemand.action', 'demandForm');"></s:submit>
 							</div>
 						</td>
 						<td class="bluebox">&nbsp;</td>

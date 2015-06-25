@@ -167,7 +167,7 @@
 			</c:if>	
 		
 			<input type="button" class="button" name="SearchProperty"
-				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty!searchForm.action';" />
+				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
 			<input type="button" class="button" name="btnViewDCB"
 				id="btnViewDCB" value="View DCB"
 				onclick="window.location='../view/viewDCBProperty!displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />

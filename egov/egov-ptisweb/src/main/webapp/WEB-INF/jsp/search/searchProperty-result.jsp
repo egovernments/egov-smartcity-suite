@@ -45,7 +45,7 @@
 		
 		function viewPropDetails(indexNum)
 		{
-				window.location="../view/viewProperty!viewForm.action?propertyId="+indexNum;
+				window.location="../view/viewProperty-viewForm.action?propertyId="+indexNum;
 		}
 			
 		function getPropdetails(obj,indexNum)
@@ -53,45 +53,50 @@
 			var selectedValue = obj.options[obj.selectedIndex].value;
 	       if(selectedValue=="ViewProperty")
 			{
-				window.location="../view/viewProperty!viewForm.action?propertyId="+indexNum;
+				window.location="../view/viewProperty-viewForm.action?propertyId="+indexNum;
 			}
 			else if(selectedValue=="TransferProperty")
 			{
-			window.location="../transfer/transferProperty!transferForm.action?indexNumber="+indexNum;
+			window.location="../transfer/transferProperty-transferForm.action?indexNumber="+indexNum;
 			}
 			else if(selectedValue=="ChangeAddress")
 			{
-			window.location="../modify/changePropertyAddress!newForm.action?indexNumber="+indexNum;
+			window.location="../modify/changePropertyAddress-newForm.action?indexNumber="+indexNum;
 			}
 			else if(selectedValue=="DeactivateProperty")
 			{
-			window.location="../deactivate/deactivateProperty!newForm.action?indexNumber="+indexNum;
+			window.location="../deactivate/deactivateProperty-newForm.action?indexNumber="+indexNum;
 			}
 			else if(selectedValue=='Amalgamation') {
-				window.location="../modify/modifyProperty!modifyForm.action?modifyRsn=AMALG&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=AMALG&indexNumber="+indexNum;
 			}
 			else if(selectedValue=='Bifurcation') {
-				window.location="../modify/modifyProperty!modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+indexNum;
 			}
 			else if(selectedValue=='Modification') {
-				window.location="../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber="+indexNum;
 			}
 			else if(selectedValue=='Objection') {
-				window.location="../objection/objection!newForm.action?propertyId="+indexNum;
+				window.location="../objection/objection-newForm.action?propertyId="+indexNum;
 			}
 			else if(selectedValue=='Notice 125') {
-				window.location="../notice/propertyTaxNotice!generateNotice.action?noticeType=Notice125&indexNumber="+indexNum;
+				window.location="../notice/propertyTaxNotice-generateNotice.action?noticeType=Notice125&indexNumber="+indexNum;
 			}
 			else if(selectedValue=='Recovery') {
-				window.location="../recovery/recovery!newform.action?propertyId="+indexNum;
+				window.location="../recovery/recovery-newform.action?propertyId="+indexNum;
 			} else if (selectedValue == 'Assessment Data update') {				
-				window.location="../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+indexNum;
 			} else if (selectedValue == 'Edit Demand') {				
-				window.location="../edit/editDemand!newEditForm.action?propertyId="+indexNum;
+				window.location="../edit/editDemand-newEditForm.action?propertyId="+indexNum;
 			} else if (selectedValue == 'Edit Property Data') {				
-				window.location="../modify/modifyProperty!editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+indexNum;
 			}
 	    }
+
+function gotoSearchForm(){
+document.viewform.action='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';
+document.viewform.submit(); 
+}
 
 	</script>
 		<title><s:text name="searchResults.title" /></title>
@@ -244,8 +249,9 @@
 							<div class="buttonsearch" align="center">
 								<input type="button" value="Close" class="button"
 									onClick="window.close()" />
-								<s:submit value="Search Again" cssClass="buttonsubmit"
-									method="searchForm"></s:submit>
+								<input type="submit" value="Search Again" class="button"
+									onClick="gotoSearchForm();" />
+								
 							</div>
 						</td>
 					</tr>
@@ -254,4 +260,3 @@
 		</div>
 	</body>
 </html>
-
