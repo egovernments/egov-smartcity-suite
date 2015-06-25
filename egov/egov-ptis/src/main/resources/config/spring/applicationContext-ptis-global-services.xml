@@ -51,5 +51,13 @@
     <bean id="PropertyImplInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="propertyImplPersistenceService"/>
     </bean>
+    
+        <bean id="objectionPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
+    </bean>
+    
+    <bean id="ObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="objectionPersistenceService"/>
+    </bean>
         
 </beans>

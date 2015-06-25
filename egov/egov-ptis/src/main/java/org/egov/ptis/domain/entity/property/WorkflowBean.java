@@ -39,10 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Designation;
 
 public class WorkflowBean {
@@ -55,12 +57,21 @@ public class WorkflowBean {
 	private List<Department> departmentList;
 	private Long designationId;
 	private List<Designation> designationList;
+	private List<StateHistory> workFlowHistoryItems = new LinkedList<>();
 
 	public String getActionName() {
 		return actionName;
 	}
 
-	public String getActionState() {
+	public List<StateHistory> getWorkFlowHistoryItems() {
+        return workFlowHistoryItems;
+    }
+
+    public void setWorkFlowHistoryItems(List<StateHistory> workFlowHistoryItems) {
+        this.workFlowHistoryItems = workFlowHistoryItems;
+    }
+
+    public String getActionState() {
 		return actionState;
 	}
 

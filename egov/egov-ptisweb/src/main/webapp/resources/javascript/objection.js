@@ -38,7 +38,11 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #  
 #-------------------------------------------------------------------------------*/
-
+function onSubmit(obj) {
+	document.forms[0].action=obj; 
+	document.forms[0].submit;
+   return true;
+}
 function showPropertyHeaderTab(){
 		document.getElementById('property_header').style.display='';
 		setCSSClasses('propertyHeaderTab','First Active');
@@ -124,7 +128,12 @@ function validateHearingDate(obj){
 		return false;
 	}else{
 		
-		return validateApproval(obj);
+		if(validateApproval(obj))
+		{	
+			onSubmit('objection-addHearingDate.action');  
+		}
+			else
+			return false;
 	}
 	
 }
@@ -146,8 +155,13 @@ function validateRecordHearing(obj){
 		document.getElementById("lblError").innerHTML ='Please choose if Inspection Required or not';
 		return false;
 	}
-	else {
-		return validateApproval(obj);
+	else { 
+		if(validateApproval(obj))
+		{	
+			onSubmit('objection-recordHearingDetails.action');  
+		}
+			else 
+			return false;
 	}
 }
 
@@ -161,9 +175,14 @@ function validateRecordInspection(obj){
 		document.getElementById("lblError").style.display='block';
 		document.getElementById("lblError").innerHTML ='Please enter Inspection Remark';
 		return false;
-	}else{
+	}else{ 
 		
-		return validateApproval(obj);
+		if(validateApproval(obj))
+		{	
+			onSubmit('objection-recordInspectionDetails.action');  
+		}
+			else
+			return false;
 	}
 }
 
@@ -188,7 +207,12 @@ function validateObjectionOutcome(obj){
 		return false;
 	} 
 	else { 
-		return validateApproval(obj);
+		if(validateApproval(obj))
+		{	
+			onSubmit('objection-recordObjectionOutcome.action');  
+		}
+			else
+			return false;  
 	}
 }
 

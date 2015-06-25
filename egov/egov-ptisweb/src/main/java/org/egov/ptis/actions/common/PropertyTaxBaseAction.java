@@ -40,22 +40,9 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MUTATION_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCCUPIER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_MOBILE_TOWER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 
 import java.io.File;
@@ -64,15 +51,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -85,6 +65,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -95,7 +78,6 @@ import org.egov.ptis.domain.entity.property.FloorImpl;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -126,6 +108,9 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
     protected String fromDataEntry;
     protected String userRole;
     private AssignmentService assignmentService;
+    @Autowired
+    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+   
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -203,7 +188,13 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
         }
         LOGGER.debug("Exiting from validate");
     }
+    @SuppressWarnings("unchecked")
+    protected List<StateHistory> setUpWorkFlowHistory(Long stateId) {
 
+        List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
+        workflowBean.setWorkFlowHistoryItems(workflowHisObj);
+        return workflowHisObj;
+    }
     @SuppressWarnings("unchecked")
     protected void setupWorkflowDetails() {
         LOGGER.debug("Entered into setupWorkflowDetails | Start");

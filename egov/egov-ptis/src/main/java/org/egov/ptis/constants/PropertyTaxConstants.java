@@ -1032,5 +1032,5 @@ public interface PropertyTaxConstants {
 	public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
 	
 	public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
-
+	public static final String STATUS_CODE_ASSESSED = "ASSESSED";
 }

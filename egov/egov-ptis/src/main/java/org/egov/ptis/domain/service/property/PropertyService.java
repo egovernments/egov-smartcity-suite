@@ -177,16 +177,24 @@ public class PropertyService  {
 				PTMODULENAME, new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
-        FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?",floorTypeId);
-        RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?",roofTypeId);
-        WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?",wallTypeId);
-        WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?",woodTypeId);
-        property.getPropertyDetail().setFloorType(floorType);
-        property.getPropertyDetail().setRoofType(roofType);
-        property.getPropertyDetail().setWallType(wallType);
-        property.getPropertyDetail().setWoodType(woodType);
-        
-		if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                    if (floorTypeId != null) {
+                        FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+                        property.getPropertyDetail().setFloorType(floorType);
+                    }
+                    if (roofTypeId != null) {
+                        RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+                        property.getPropertyDetail().setRoofType(roofType);
+                    }
+                    if (wallTypeId != null) {
+                        WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?",wallTypeId);
+                        property.getPropertyDetail().setWallType(wallType);
+                    }
+                    if (woodTypeId != null) { 
+                        WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?",woodTypeId);
+                        property.getPropertyDetail().setWoodType(woodType);
+                    }
+       
+                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
 			Area area = new Area();
 			area.setArea(new Float(areaOfPlot));
 			property.getPropertyDetail().setSitalArea(area);

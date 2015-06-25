@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FOR
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -182,119 +183,115 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 		return NEW;
 	}
 	@Action(value = "/objection/objection") 
-	public String create() {
-		LOGGER.debug("ObjectionAction | Create | start " + objection);
-		setupWorkflowDetails();
-		//objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber()); //COMMENTED EARLIER NUMBER GENERATION LOGIC.
-		objection.setObjectionNumber(applicationNumberGenerator.generate()); 
-		
-		
-                objection.getBasicProperty().setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
-		EgwStatus egwStatus  = egwStatusDAO.getStatusByModuleAndCode("PTObejction", "CREATED"); 
-		
-		/*(EgwStatus) persistenceService
-				.find("from EgwStatus where moduletype='PTObejction' and code='CREATED'");*/
-		objection.setEgwStatus(egwStatus);
-		
-		// FIX ME
-		// Position position =
-		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-		Position position = null;
-		// objectionWorkflowService.start(objection, position);
-		//objection.transition().start().withOwner(position);
+                public String create() {
+                    LOGGER.debug("ObjectionAction | Create | start " + objection);
+                    setupWorkflowDetails();
+                    // objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber());
+                    // //COMMENTED EARLIER NUMBER GENERATION LOGIC.
+                    objection.setObjectionNumber(applicationNumberGenerator.generate());
+            
+                    objection.getBasicProperty().setStatus(
+                            propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
+                    EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                            PropertyTaxConstants.OBJECTION_CREATED);
+                    objection.setEgwStatus(egwStatus);
+            
+                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
+                        // FIX ME
+                        // objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
+                    } else {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
+                    }
+            
+                    addActionMessage(getText("objection.success") + objection.getObjectionNumber());
+                    objectionService.applyAuditing(objection.getState());
+                    objectionService.persist(objection);
+                    LOGGER.debug("ObjectionAction | Create | End " + objection);
+                    return STRUTS_RESULT_MESSAGE;
+                }
 
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
-			// FIX ME
-			// objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
-		} else {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED,
-					PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-		}
-
-		addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-		objectionService.applyAuditing(objection.getState());
-		objectionService.persist(objection);
-		LOGGER.debug("ObjectionAction | Create | End " + objection);
-		return STRUTS_RESULT_MESSAGE;
-	}
-
-	@ValidationErrorPage(value = "view")
-	public String addHearingDate() {
-		LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
-
-		if (objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()
-				.before(objection.getRecievedOn())) {
-			setupWorkflowDetails();
-			throw new ValidationException(Arrays.asList(new ValidationError("accountdetailkey",
-					getText("receivedon.greaterThan.plannedhearingdate"))));
-
-		}
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED,
-					PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-			// FIX ME
-			// objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
-
-		} else {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
-					PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
-		}
-		LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
-		return STRUTS_RESULT_MESSAGE;
-	}
+	@Action(value = "/objection/objection-addHearingDate")  
+                public String addHearingDate() {
+                    LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
+            
+                    if (objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()
+                            .before(objection.getRecievedOn())) {
+                        setupWorkflowDetails();
+                        throw new ValidationException(Arrays.asList(new ValidationError("accountdetailkey",
+                                getText("receivedon.greaterThan.plannedhearingdate"))));
+            
+                    }
+                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
+                        // FIX ME
+                        // objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
+            
+                    } else {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
+                                PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
+                    }
+                    objectionService.persist(objection);
+                    LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
+                    return STRUTS_RESULT_MESSAGE;
+                }
 
 	@ValidationErrorPage(value = "view")
-	public String recordHearingDetails() {
-
-		LOGGER.debug("ObjectionAction | recordHearingDetails | start "
-				+ objection.getHearings().get(objection.getHearings().size() - 1));
-		// set the auto generated hearing number
-		if (null == objection.getHearings().get(objection.getHearings().size() - 1)
-				.getHearingNumber()) {
-			String hearingNumber = propertyTaxNumberGenerator.getHearingNumber(objection
-					.getBasicProperty().getBoundary().getParent());
-			objection.getHearings().get(objection.getHearings().size() - 1)
-					.setHearingNumber(hearingNumber);
-			addActionMessage(getText("hearingNum") + hearingNumber);
-		}
-
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
-					PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
-		} else if (objection.getHearings().get(objection.getHearings().size() - 1)
-				.getInspectionRequired()) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
-					PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS);
-		} else {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
-					PropertyTaxConstants.OBJECTION_RECORD_OBJECTIONOUTCOME);
-		}
-		LOGGER.debug("ObjectionAction | recordHearingDetails | End "
-				+ objection.getHearings().get(objection.getHearings().size() - 1));
-		return STRUTS_RESULT_MESSAGE;
-
-	}
+	@Action(value = "/objection/objection-recordHearingDetails")  
+          public String recordHearingDetails() {
+            
+                    LOGGER.debug("ObjectionAction | recordHearingDetails | start "
+                            + objection.getHearings().get(objection.getHearings().size() - 1));
+                    // set the auto generated hearing number
+                    if (null == objection.getHearings().get(objection.getHearings().size() - 1).getHearingNumber()) {
+                        /*
+                         * String hearingNumber =
+                         * propertyTaxNumberGenerator.getHearingNumber(objection
+                         * .getBasicProperty().getBoundary().getParent());
+                         */
+                        String hearingNumber = applicationNumberGenerator.generate();
+                        objection.getHearings().get(objection.getHearings().size() - 1).setHearingNumber(hearingNumber);
+                        addActionMessage(getText("hearingNum") + hearingNumber);
+                    }
+            
+                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
+                                PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
+                    } else if (objection.getHearings().get(objection.getHearings().size() - 1).getInspectionRequired()) {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
+                                PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS);
+                    } else {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
+                                PropertyTaxConstants.OBJECTION_RECORD_OBJECTIONOUTCOME);
+                    }
+                    objectionService.persist(objection);
+                    LOGGER.debug("ObjectionAction | recordHearingDetails | End "
+                            + objection.getHearings().get(objection.getHearings().size() - 1));
+                    return STRUTS_RESULT_MESSAGE;
+            
+                }
 
 	/**
 	 * @description - allows the user to record the inspection details.
 	 * @return String
 	 */
 	@ValidationErrorPage(value = "view")
+	@Action(value = "/objection/objection-recordInspectionDetails")  
 	public String recordInspectionDetails() {
-		LOGGER.debug("ObjectionAction | recordInspectionDetails | start "
-				+ objection.getInspections().get(objection.getInspections().size() - 1));
-
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
-					PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS);
-		} else {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED,
-					PropertyTaxConstants.OBJECTION_RECORD_OBJECTIONOUTCOME);
-		}
-		LOGGER.debug("ObjectionAction | recordInspectionDetails | End "
-				+ objection.getInspections().get(objection.getInspections().size() - 1));
-		return STRUTS_RESULT_MESSAGE;
+                    LOGGER.debug("ObjectionAction | recordInspectionDetails | start "
+                            + objection.getInspections().get(objection.getInspections().size() - 1));
+            
+                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED,
+                                PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS);
+                    } else {
+                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED,
+                                PropertyTaxConstants.OBJECTION_RECORD_OBJECTIONOUTCOME);
+                    }
+                    LOGGER.debug("ObjectionAction | recordInspectionDetails | End "
+                            + objection.getInspections().get(objection.getInspections().size() - 1));
+                    objectionService.persist(objection);
+                    return STRUTS_RESULT_MESSAGE;
 	}
 
 	/**
@@ -303,41 +300,37 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 	 * @return String
 	 */
 	@ValidationErrorPage(value = "view")
+	@Action(value = "/objection/objection-recordObjectionOutcome")  
 	public String recordObjectionOutcome() {
 
 		LOGGER.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
-		objection.getBasicProperty().setStatus(
-				(PropertyStatus) persistenceService
-						.find("from PropertyStatus where  statusCode='ASSESSED'"));
-		objectionService.update(objection);
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			updateStateAndStatus("END", "END");
+		objection.getBasicProperty().setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
+				
+		
+        if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                    updateStateAndStatus("END", "END");
+        
+                    if (objection.getObjectionRejected()) {
+                        addActionMessage(getText("objection.rejected"));
+                        objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                                PropertyTaxConstants.OBJECTION_REJECTED));
+        
+                    } else {
+        
+                        objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                                PropertyTaxConstants.OBJECTION_ACCEPTED));
+        
+                        // initiate the property modify if the action is approve and
+                        // objection is accepted
+                        //TODO: FIX THIS.
+                      /*  propService.initiateModifyWfForObjection(objection.getBasicProperty().getId(),
+                                objection.getObjectionNumber(), objection.getRecievedOn(), objection.getCreatedBy(), null,
+                                PROPERTY_MODIFY_REASON_OBJ);
+                        User approverUser = userService.getUserById(objection.getCreatedBy().getId());
+                        addActionMessage(getText("initiate.modify.forward") + approverUser.getUsername());*/
 
-			if (objection.getObjectionRejected()) {
-				addActionMessage(getText("objection.rejected"));
-				EgwStatus egwStatus = (EgwStatus) persistenceService
-						.find("from EgwStatus where moduletype='"
-								+ PropertyTaxConstants.OBJECTION_MODULE + "' and code='"
-								+ PropertyTaxConstants.OBJECTION_REJECTED + "'");
-				objection.setEgwStatus(egwStatus);
-
-			} else {
-				EgwStatus egwStatus = (EgwStatus) persistenceService
-						.find("from EgwStatus where moduletype='"
-								+ PropertyTaxConstants.OBJECTION_MODULE + "' and code='"
-								+ PropertyTaxConstants.OBJECTION_ACCEPTED + "'");
-				objection.setEgwStatus(egwStatus);
-
-				// initiate the property modify if the action is approve and
-				// objection is accepted
-				propService.initiateModifyWfForObjection(objection.getBasicProperty().getId(),
-						objection.getObjectionNumber(), objection.getRecievedOn(),
-						objection.getCreatedBy(), null, PROPERTY_MODIFY_REASON_OBJ);
-				User approverUser = userService.getUserById(objection.getCreatedBy().getId());
-				addActionMessage(getText("initiate.modify.forward") + approverUser.getUsername());
-
-			}
-		} else {
+            } 
+        } else {
 			if (objection.getHearings().get(objection.getHearings().size() - 1)
 					.getInspectionRequired()) {
 				updateStateAndStatus(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED,
@@ -347,7 +340,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 						PropertyTaxConstants.OBJECTION_RECORD_OBJECTIONOUTCOME);
 			}
 		}
-
+		objectionService.update(objection);
 		addActionMessage(getText("objection.outcome.success"));
 		LOGGER.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
 		return STRUTS_RESULT_MESSAGE;
@@ -359,6 +352,8 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 				.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
 		getPropertyView(objection.getBasicProperty().getUpicNo());
 		setupWorkflowDetails();
+		if(objection!=null && objection.getState()!=null)
+		    setUpWorkFlowHistory(objection.getState().getId());
 		setOwnerName(objection.getBasicProperty().getProperty());
 		setPropertyAddress(objection.getBasicProperty().getAddress());
 		LOGGER.debug("ObjectionAction | view | End");
@@ -392,34 +387,62 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 
 	private void updateStateAndStatus(String status, String actionToPerform) {
 		LOGGER.debug("ObjectionAction | updateStateAndStatus | Start");
-
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			 Position position =
-			         eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
-			//Position position = null;
-			objection.transition(true).start().withNextAction(actionToPerform)
-					.withStateValue(status).withOwner(position)
-					.withComments(workflowBean.getComments());
-			addActionMessage(getText("file.save"));
-
-		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
-			// FIX ME
-			// Position position =
-			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
-			Position position = null;
-			EgwStatus egwStatus = (EgwStatus) persistenceService
-					.find("from EgwStatus where moduletype='"
-							+ PropertyTaxConstants.OBJECTION_MODULE + "' and code='" + status + "'");
-			objection.setEgwStatus(egwStatus);
-			objection.transition(true).start().withNextAction(actionToPerform)
-					.withStateValue(status).withOwner(position)
-					.withComments(workflowBean.getComments());
-
-			User approverUser = userService.getUserById(workflowBean.getApproverUserId()
-					.longValue());
-			addActionMessage(getText("objection.forward",
-					new String[] { approverUser.getUsername() }));
-		}
+		 Position position =null;
+                 User user =null;
+                 
+                 position= eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+                 user= userService.getUserById(EgovThreadLocals.getUserId());
+                    
+                  //  objection.transition().start().withOwner(position).withOwner(user);
+                 
+                 
+                if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                    /*
+                                if (workflowBean.getApproverUserId() != null) {
+                                    position = eisCommonService.getPositionByUserId(workflowBean.getApproverUserId());
+                                    user = userService.getUserById(workflowBean.getApproverUserId());
+                                }
+                        */     
+                        if(!objection.hasState())
+                            {
+                                objection.start().withNextAction(actionToPerform).withStateValue(status).withOwner(position)
+                                .withOwner(user).withComments(workflowBean.getComments());
+                            }   else
+                            {  
+                               if(!actionToPerform.equals("END")) 
+                                objection.transition(true).withNextAction(actionToPerform).withStateValue(status).withOwner(position)
+                                    .withOwner(user).withComments(workflowBean.getComments());
+                               else
+                                   objection.end().withStateValue(status).withOwner(position)
+                                   .withOwner(user).withComments(workflowBean.getComments());
+                            }
+                            addActionMessage(getText("file.save"));
+        
+                } else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
+                    
+                            if (workflowBean.getApproverUserId() != null) {
+                                position = eisCommonService.getPositionByUserId(workflowBean.getApproverUserId());
+                                user = userService.getUserById(workflowBean.getApproverUserId());
+                            }
+                            EgwStatus egwStatus = (EgwStatus) persistenceService.find("from EgwStatus where moduletype='"
+                                    + PropertyTaxConstants.OBJECTION_MODULE + "' and code='" + status + "'");
+                            
+                            if(egwStatus!=null)
+                                objection.setEgwStatus(egwStatus);  
+                           
+                                if(!objection.hasState())
+                                {
+                                    objection.start().withNextAction(actionToPerform).withStateValue(status).withOwner(position)
+                                    .withOwner(user).withComments(workflowBean.getComments());
+                                }   else
+                                { 
+                                objection.transition(true).withNextAction(actionToPerform).withStateValue(status).withOwner(position)
+                                        .withOwner(user).withComments(workflowBean.getComments());
+                                }
+                            if (user != null)
+                                addActionMessage(getText("objection.forward", new String[] { user.getUsername() }));
+        
+                }
 		LOGGER.debug("ObjectionAction | updateStateAndStatus | End");
 	}
 
