@@ -468,7 +468,7 @@
 	
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
-										required="required" placeholder="Email or Mobile or Username"
+										required="required" placeholder="Your Username(mostly email or mobile)"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
 								</div>

@@ -95,12 +95,16 @@ public class UserService {
         return userRepository.findByEmailId(emailId);
     }
 
-    public User getUserByUsernameOrEmailorMobileNumber(final String identity) {
-        return userRepository.findByEmailIdOrMobileNumberOrUsername(identity);
+    public User getUserByAadhaarNumber(final String aadhaarNumber) {
+        return userRepository.findByAadhaarNumber(aadhaarNumber);
+    }
+
+    public User getUserByMobileNumber(final String mobileNumber) {
+        return userRepository.findByMobileNumber(mobileNumber);
     }
 
     public Optional<User> checkUserWithIdentity(final String identity) {
-        return Optional.ofNullable(getUserByUsernameOrEmailorMobileNumber(identity));
+        return Optional.ofNullable(getUserByUsername(identity));
     }
 
     public List<User> findAllByMatchingUserNameForType(final String username, final UserType type) {

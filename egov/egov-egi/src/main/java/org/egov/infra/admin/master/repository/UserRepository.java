@@ -63,13 +63,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmailId(String emailId);
 
+    User findByAadhaarNumber(String aadhaarNumber);
+
+    User findByMobileNumber(String mobileNumber);
+
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
     Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
 
     Set<User> findByActiveTrue();
-
-    @Query("select u from User u where u.username = :identity or u.mobileNumber = :identity or u.emailId = :identity")
-    User findByEmailIdOrMobileNumberOrUsername(@Param("identity") String identity);
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 }
