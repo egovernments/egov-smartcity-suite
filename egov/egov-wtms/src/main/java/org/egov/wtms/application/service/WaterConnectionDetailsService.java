@@ -48,6 +48,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.EgModules;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
@@ -58,6 +59,8 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -105,6 +108,11 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails load(final Long id) {
         return waterConnectionDetailsRepository.getOne(id);
     }
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
 
     public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
             final Integer pageSize) {
@@ -138,7 +146,10 @@ public class WaterConnectionDetailsService {
     }
 
     private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder("Water Tax",
+    	final String strQuery = "select md from EgModules md where md.name=:name";
+        final Query hql = getCurrentSession().createQuery(strQuery);
+        hql.setParameter("name", WaterTaxConstants.MODULES_NAME);
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(((EgModules)hql.uniqueResult()).getName(),
                 waterConnectionDetails.getApplicationNumber(), waterConnectionDetails.getApplicationDate(),
                 waterConnectionDetails.getApplicationType().getName(), "Mr. Bean",
                 waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");

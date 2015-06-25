@@ -47,5 +47,6 @@ public class WaterTaxConstants {
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
     public static final String NON_METERED = "Non-metered";
+    public static final String MODULES_NAME = "Water Tax";
 
 }

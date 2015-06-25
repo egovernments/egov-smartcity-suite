@@ -58,7 +58,7 @@ public class ApplicationIndexBuilder {
 		applicationIndex.setModuleName(moduleName);
 		applicationIndex.setApplicationNumber(applicationNumber);
 		applicationIndex.setApplicationDate(applicationDate);
-		applicationIndex.setApplicationType(applicationType);
+		applicationIndex.setApplicationType(moduleName.concat("-".concat(applicationType)));
 		applicationIndex.setApplicantName(applicantName);
 		applicationIndex.setStatus(status);
 		applicationIndex.setUrl(url);
