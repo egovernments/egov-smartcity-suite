@@ -161,8 +161,14 @@
 							</div>					
 						</div>
 				</div>
-				<h4>The Search result is</h4>
-				<table class="table table-bordered">
+				<div class="row">
+						<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
+						<div class="col-md-6 col-xs-6 add-margin text-right">
+							<span class="inline-elem">Search</span>
+							<span class="inline-elem"><input type="text" id="search" class="form-control input-sm"></span>
+						</div>
+			    	</div>
+				<table class="table table-bordered datatable" id="search-table">
 					<thead>
 						<tr>
 							<th>Consumer No.</th>
@@ -216,6 +222,11 @@
 	</script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+	<script src="../js/app/connectionsearch.js"></script>
 	</body>
 </html>
 
