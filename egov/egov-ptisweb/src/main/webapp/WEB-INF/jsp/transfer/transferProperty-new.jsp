@@ -179,7 +179,7 @@
 							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:select name="propMutationMstr.idMutation" id="transRsnId"
+							<s:select name="propMutationMstr" id="transRsnId"
 								list="dropdownData.MutationReason" listKey="idMutation"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"

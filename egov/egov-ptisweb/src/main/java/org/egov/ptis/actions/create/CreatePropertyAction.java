@@ -206,7 +206,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Autowired
 	private PropertyService propService;
 	private Map<String, String> amenitiesMap;
-	private Integer mutationId;
+	private Long mutationId;
 	private String parentIndex;
 	private String isAuthProp;
 	Date propCompletionDate = null;
@@ -1529,11 +1529,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.amenitiesMap = amenitiesMap;
 	}
 
-	public Integer getMutationId() {
+	public Long getMutationId() {
 		return mutationId;
 	}
 
-	public void setMutationId(Integer mutationId) {
+	public void setMutationId(Long mutationId) {
 		this.mutationId = mutationId;
 	}
 

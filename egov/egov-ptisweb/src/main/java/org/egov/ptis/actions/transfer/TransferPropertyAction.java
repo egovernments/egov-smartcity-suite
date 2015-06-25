@@ -142,6 +142,10 @@ public class TransferPropertyAction extends WorkflowAction {
     @Autowired
     private PropertyMutationMasterDAO propertyMutationMasterDAO;
 
+    public TransferPropertyAction() {
+        addRelatedEntity("propMutationMstr", PropertyMutationMaster.class);
+    }
+    
     @Override
     public Object getModel() {
         return propertyMutation;
@@ -375,6 +379,7 @@ public class TransferPropertyAction extends WorkflowAction {
         if (propertyMutation != null && propertyMutation.getId() != null)
             propertyMutation = (PropertyMutation) getPersistenceService().find("from PropertyMutation where id = ?",
                     propertyMutation.getId());
+        super.prepare();
     }
 
     private void populateExistingPropertyDetails() {

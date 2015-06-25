@@ -118,6 +118,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		}
 		LOGGER.debug("prepare : Property in Workflow : " + propertyModel);
 		LOGGER.debug("prepare : Exit from method prepare");
+		super.prepare();
 	}
 
 	@SkipValidation

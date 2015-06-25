@@ -45,7 +45,7 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyMutationMaster" table="EGPT_MUTATION_MASTER">
 		<id
-			name="idMutation" column="ID" type="int">
+			name="idMutation" column="ID" type="long">
 			<generator class="sequence">
 					<param name="sequence">SEQ_EGPT_MUTATION_MASTER</param>
 			</generator>

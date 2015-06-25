@@ -47,7 +47,7 @@
 package org.egov.ptis.domain.entity.property;
 
 public class PropertyMutationMaster {
-	private Integer idMutation = null;
+	private Long idMutation = null;
 	private String mutationName = null;
 	private String mutationDesc = null;
 	private String type = null;
@@ -57,7 +57,7 @@ public class PropertyMutationMaster {
 	/**
 	 * @return Returns the idMutation.
 	 */
-	public Integer getIdMutation() {
+	public Long getIdMutation() {
 		return idMutation;
 	}
 
@@ -65,7 +65,7 @@ public class PropertyMutationMaster {
 	 * @param idMutation
 	 *            The idMutation to set.
 	 */
-	public void setIdMutation(Integer idMutation) {
+	public void setIdMutation(Long idMutation) {
 		this.idMutation = idMutation;
 	}
 
