@@ -39,7 +39,9 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -51,6 +53,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -151,6 +154,9 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "demand")
     private EgDemand demand;
+
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ApplicationDocuments> applicationDocs = Collections.emptySet();
 
     @Override
     public Long getId() {
@@ -312,6 +318,14 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setDemand(final EgDemand demand) {
         this.demand = demand;
+    }
+
+    public Set<ApplicationDocuments> getApplicationDocs() {
+        return applicationDocs;
+    }
+
+    public void setApplicationDocs(final Set<ApplicationDocuments> applicationDocs) {
+        this.applicationDocs = applicationDocs;
     }
 
     @Override
