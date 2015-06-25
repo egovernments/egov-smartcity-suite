@@ -74,9 +74,11 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +116,8 @@ public class ViewPropertyAction extends BaseFormAction {
 	private PtDemandDao ptDemandDAO;
 	@Autowired
 	private UserService UserService;
+	
+	private Set<PropertyOwner> propertyOwners;
 
 	public void setBasicPropertyDAO(BasicPropertyDAO basicPropertyDAO) {
 		this.basicPropertyDAO = basicPropertyDAO;
@@ -138,13 +142,14 @@ public class ViewPropertyAction extends BaseFormAction {
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm method");
 		String target = "";
+		BasicProperty bp = null;
 		try {
 			LOGGER.debug("viewForm : Index Num in View Property : " + propertyId + ", "
 					+ "Parcel Id : " + parcelID);
 			viewMap = new HashMap<String, Object>();
 			if (getParcelID() != null || StringUtils.isNotEmpty(getParcelID())
 					|| StringUtils.isBlank(getParcelID())) {
-				BasicProperty bp = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(
+				bp = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(
 						propertyId, parcelID);
 				LOGGER.debug("viewForm : BasicProperty : " + bp);
 				if (bp != null) {
@@ -173,6 +178,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			LOGGER.debug("viewForm : Property : " + property);
 			viewMap.put("ownerName",
 					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
+			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
 			if (property.getPropertyDetail().getExtra_field6() != null) {
@@ -184,9 +190,9 @@ public class ViewPropertyAction extends BaseFormAction {
 				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);
 			}
 
-			Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
-			if (ownerSet != null && !ownerSet.isEmpty()) {
-				for (PropertyOwner owner : ownerSet) {
+			propertyOwners = property.getPropertyOwnerSet();
+			if (propertyOwners != null && !propertyOwners.isEmpty()) {
+				for (PropertyOwner owner : propertyOwners) {
 					List<Address> addrSet =  (List<Address>) owner.getAddress();
 					for (Address address : addrSet) {
 						ownerAddress = ptisCacheMgr.buildAddressByImplemetation(address);
@@ -195,6 +201,8 @@ public class ViewPropertyAction extends BaseFormAction {
 				}
 				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOTAVAIL
 						: ownerAddress);
+				PropertyTypeMaster propertyTypeMaster = bp.getProperty().getPropertyDetail().getPropertyTypeMaster();
+				viewMap.put("ownershipType", propertyTypeMaster.getType());
 			}
 			Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 			viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
@@ -229,6 +237,11 @@ public class ViewPropertyAction extends BaseFormAction {
 					setDocNumber(propDocs.getSupportDoc().getFileStoreId());
 				}
 			}
+			
+			PropertyDetail propertyDetail = bp.getProperty().getPropertyDetail();
+			viewMap.put("propDetail", propertyDetail);
+			viewMap.put("propID", bp.getPropertyID());
+			
 			// setPropDocsSet(getBasicProperty().getPropertyDocsSet());
 			LOGGER.debug("viewForm : Owner Name : " + viewMap.get(ownerName) + ", "
 					+ "Property Address : " + viewMap.get(propAddress) + ", " + "Owner Address : "
@@ -439,4 +452,13 @@ public class ViewPropertyAction extends BaseFormAction {
 	public void setNoOfDaysForInactiveDemand(Integer noOfDaysForInactiveDemand) {
 		this.noOfDaysForInactiveDemand = noOfDaysForInactiveDemand;
 	}
+
+	public Set<PropertyOwner> getPropertyOwners() {
+		return propertyOwners;
+	}
+
+	public void setPropertyOwners(Set<PropertyOwner> propertyOwners) {
+		this.propertyOwners = propertyOwners;
+	}
+	
 }

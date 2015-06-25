@@ -38,6 +38,7 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 
+<%@page import="org.egov.ptis.domain.entity.property.PropertyOwner"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
@@ -51,14 +52,14 @@
 		<td class="greybox" width="25%"><span class="bold"><s:property
 					default="N/A" value="%{basicProperty.upicNo}" /> </span></td>
 		<td class="greybox" width="25"><s:text name="prntPropIndexNum" /> :</td>
-		<td class="greybox" width="25%"><span class="bold"><s:property default="N/A" value="%{basicProperty.upicNo}" /> </span></td>
+		<td class="greybox" width="25%"><span class="bold"><s:property default="" value="%{}" /> </span></td>
 	</tr>
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
 		<td class="bluebox" width="20%"><s:text name="fatherhusbandname"></s:text> :</td>
 		<td class="bluebox">
-			<span class="bold"><s:property default="N/A" value="%{viewMap.ownerName}" /> </span>
+			<span class="bold"><s:property default="" value="%{}" /> </span>
 		</td>
 	</tr>
 	
@@ -85,17 +86,17 @@
 		<td class="bluebox">
 			<span class="bold">
 			 <s:property
-					value="%{basicProperty.boundary.parent.boundaryNum}" />-
+					value="%{viewMap.propID.zone.id}" />-
 			 <s:property
-					default="N/A" value="%{basicProperty.boundary.parent.name}" /> 
+					default="N/A" value="%{viewMap.propID.zone.name}" /> 
 			</span>
 		</td>
 
 		<td class="greybox"><s:text name="Ward" /> :</td>
 		<td class="greybox">
 			<span class="bold"><s:property
-					value="%{basicProperty.boundary.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProperty.boundary.name}" /> </span>
+					value="%{viewMap.propID.ward.id}" />-<s:property
+					default="N/A" value="%{viewMap.propID.ward.name}" /> </span>
 		</td>
 	
 	</tr>
@@ -106,7 +107,8 @@
 		<td class="bluebox"><s:text name="block" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{viewMap.propID.area.id}" /> -
+				<s:property value="%{viewMap.propID.area.name}" />
 			</span>
 		</td>
 
@@ -114,7 +116,7 @@
 		</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{basicProperty.vacantLandAssmtNo}" /> 
 			</span>
 		</td>
 		
@@ -126,14 +128,14 @@
 		<td class="bluebox"><s:text name="extent.site"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{viewMap.propDetail.extentSite}" /> 
 			</span>
 		</td>
 
 		<td class="bluebox"><s:text name="extent.appurtntland"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{viewMap.propDetail.extentAppartenauntLand}" /> 
 			</span>
 		</td>
 		
@@ -147,14 +149,19 @@
 		<td class="bluebox"><s:text name="reg.docno"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{basicProperty.regdDocNo}" /> 
 			</span>
 		</td>
 
 		<td class="bluebox"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:if test="%{basicProperty.regdDocDate != null}">
+					<s:date name="%{basicProperty.regdDocDate}" format="d/M/yy"/>
+				</s:if>
+				<s:else>
+					N/A
+				</s:else>
 			</span>
 		</td>
 		
@@ -168,7 +175,7 @@
 		<td class="bluebox"><s:text name="ownership.type"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="N/A" value="%{viewMap.ownershipType}" /> 
 			</span>
 		</td>
 	</tr>
@@ -180,7 +187,7 @@
 		</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="" value="%{}" /> 
 			</span>
 		</td>
 	</tr>
@@ -190,7 +197,7 @@
 		<td class="bluebox"><s:text name="annualvalue" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:property	default="" value="%{}" /> 
 			</span>
 		</td>
 	</tr>
@@ -200,7 +207,12 @@
 		<td class="bluebox"><s:text name="effectivedt" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+				<s:if test="%{viewMap.propDetail.effective_date != null}">
+					<s:date name="%{viewMap.propDetail.effective_date}" format="d/M/yy"/>
+				</s:if>
+				<s:else>
+					N/A
+				</s:else>
 			</span>
 		</td>
 	</tr>
@@ -224,13 +236,14 @@
 				<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
 		    </tr>
 		    
-		    <tr>
-		        <td class="blueborderfortd">N/A</td>
-		        <td class="blueborderfortd">N/A</td>
-		        <td class="blueborderfortd">N/A</td>
-		        <td class="blueborderfortd">N/A</td>
-		    </tr>
-		
+		    <s:iterator value="propertyOwners" var="propOwner">
+		    	<tr>
+			        <td class="blueborderfortd"><s:property value="%{aadhaarNumber}"/></td>
+			        <td class="blueborderfortd"><s:property value="%{name}"/></td>
+			        <td class="blueborderfortd"><s:property value="%{mobileNumber}"/></td>
+			        <td class="blueborderfortd"><s:property value="%{emailId}"/></td>
+			    </tr>
+		    </s:iterator>
 		</table>
 	</td>
 	</tr>
@@ -249,13 +262,13 @@
 		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{basicProperty.gisReferenceNo}" /> </span>
+					value="%{viewMap.propDetail.floorType.name}" /> </span>
 		</td>
 
 		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{basicProperty.gisReferenceNo}" /> </span>
+					value="%{viewMap.propDetail.roofType.name}" /> </span>
 		</td>
 		
 	</tr>
@@ -265,13 +278,13 @@
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{basicProperty.gisReferenceNo}" /> </span>
+					value="%{viewMap.propDetail.wallType.name}" /> </span>
 		</td>
 
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{basicProperty.gisReferenceNo}" /> </span>
+					value="%{viewMap.propDetail.woodType.name}" /> </span>
 		</td>
 		
 	</tr>
@@ -323,15 +336,42 @@
 		    </tr>
 		    
 		    <tr>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">No</td>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">No</td>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">Yes</td>
-		     <td class="blueborderfortd">Yes</td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.lift}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.toilets}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.watertap}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.superstructure}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.drainage}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.electricity}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.attachbathroom}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.waterharvesting}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
+		     <td class="blueborderfortd">
+		     	<s:if test="%{viewMap.propDetail.cableconnection}">Yes</s:if>
+		     	<s:else>No</s:else>
+		     </td>
 		    </tr>
 		</table>
           
@@ -351,8 +391,7 @@
 		<tr>
 			<td colspan="5" class="bluebgheadtd">
 
-				<table width="100%" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
+				<table style="width:100%;" class="tablebottom">
 					
 					<tr>
 						<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
@@ -367,6 +406,7 @@
 						<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
 						<th class="bluebgheadtd"><s:text name="planappr" /></th>
+						<th class="bluebgheadtd"><s:text name="exemption" /></th>
 					</tr>
 					<s:iterator
 						value="basicProperty.property.propertyDetail.floorDetailsProxy"
@@ -375,7 +415,7 @@
 							<s:set value="basicProperty.property.propertyDetail.floorDetailsProxy[#floorsstatus.index]" var="floor" />
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.extraField1}" />
+									<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
@@ -385,23 +425,24 @@
 							</td>
 						    <td class="blueborderfortd">
 						    	<div align="center">
-						    		<script type="text/javascript">
+						    		<s:property default="N/A" value="%{#floor.propertyUsage.usageName}" />
+						    		<%-- <script type="text/javascript">
 							    		var category = '<s:property default="N/A" value="%{getUnitTypeCategory(unitType.code , unitTypeCategory)}" />';
 						    			var categoryStrings = category.split(" ");
 						    			for (var k = 0; k < categoryStrings.length; k++) {
 						    				document.write(" " + categoryStrings[k]);	
 						    			}						    			
-						    		</script>									
+						    		</script> --%>									
 								</div>
 						    </td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />
+									<s:property default="N/A" value="%{floor.occupancy}"/>
 								</div>
 							</td>
 							<td class="blueborderfortd" width="5%">
 						    	<div align="center"> 	    		
-						    		<s:property default="N/A" value="%{#floor.taxExemptedReason}" />
+						    		<s:property default="N/A" value="%{#floor.occupantname}" />
 						        </div>
 						    </td>
 							<td class="blueborderfortd">
@@ -411,22 +452,27 @@
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.extraField2}" />
+									<s:if test="%{#floor.createdDate != null}">
+										<s:date name="%{#floor.createdDate}" format="d/M/yy"/>
+									</s:if>
+									<s:else>
+										N/A
+									</s:else>
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="center">
+									<s:property default="N/A" value="%{#floor.builtUpArea.breadth}" />
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="center">
+									<s:property default="N/A" value="%{#floor.propertyUsage.length}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{#floor.builtUpArea.area}" />
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:property default="N/A" value="%{#floor.propertyUsage.usageName}" />
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:property default="N/A" value="%{#floor.propertyOccupation.occupation}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
@@ -444,7 +490,17 @@
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.structureClassification.typeName}" />
+									<s:if test="%{floor.planApproved}">
+										Yes
+									</s:if>
+									<s:else>
+										No
+									</s:else>
+								</div>
+							</td>
+							<td class="blueborderfortd">
+								<div align="center">
+									<s:property default="N/A" value="%{}"/>
 								</div>
 							</td>
 						</tr>
