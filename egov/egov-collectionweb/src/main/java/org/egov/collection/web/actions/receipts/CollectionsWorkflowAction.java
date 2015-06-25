@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -61,7 +62,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Action class for "Approve Collections"
  */
 @ParentPackage("egov")
-@Results( {
+/*@Results( {
 		@Result(name = "submissionReportCash", type = "redirectAction", location = "cashCollectionReport", params = {
 				"actionName", "cashCollectionReport.action",
 				"method", "submissionReport.action",
@@ -69,7 +70,11 @@ import org.springframework.transaction.annotation.Transactional;
 		@Result(name = "submissionReportCheque", type = "redirectAction", location = "chequeCollectionReport", params = {
 				"actionName", "chequeCollectionReport.action",
 				"method", "submissionReport.action",
-				"namespace", "/reports" }) })
+				"namespace", "/reports" }) })*/
+@Results({
+    @Result(name=ReceiptAction.SUCCESS,location="collectionsWorkflow-success.jsp"),
+    @Result(name=ReceiptAction.INDEX, location="collectionsWorkflow-index.jsp"),
+  })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -445,7 +450,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 * @return Next page to be displayed (index)
 	 */
 	public String listSubmit() {
-		userName = collectionsUtil.getLoggedInUserName(getSession());
+		userName = collectionsUtil.getLoggedInUserName();
 		Location counter = collectionsUtil.getLocationOfUser(getSession());
 		if (counter != null) {
 			counterId = counter.getId();
@@ -503,6 +508,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 * 
 	 * @return Next page to be displayed (index)
 	 */
+	@Action(value="/receipts/collectionsWorkflow-listWorkflow") 
 	public String listWorkflow() {
 		if (wfAction.equals(CollectionConstants.WF_ACTION_APPROVE)) {
 			return listApprove();

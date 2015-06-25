@@ -304,8 +304,13 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	 * @return instrument type of instruments associated with the receipt
 	 */
 	public String getInstrumentType() {
+		if(!receiptInstrument.isEmpty()) {
 		return receiptInstrument.iterator().next().getInstrumentType()
 				.getType();
+		}
+		else {
+			return ""; 
+		}
 	}
 
 	public void addInstrument(InstrumentHeader instrumentMaster) {

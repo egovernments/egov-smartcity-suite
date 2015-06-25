@@ -150,7 +150,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		}
 
 		if (!allUsers) {
-			query.append(" and receipt.createdBy.userName = ?");
+			query.append(" and receipt.createdBy.name = ?");
 			arguments[argCount++] = userName;
 		}
 

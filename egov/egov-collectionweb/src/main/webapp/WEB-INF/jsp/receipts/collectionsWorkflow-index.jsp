@@ -259,7 +259,7 @@ function readOnlyCheckBox() {
 <body onload="javascript:refreshSummary()">
 
 <s:form theme="simple" name="collectionsWorkflowForm">
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="${pageContext.request.contextPath}/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
 		<s:text name="collectionsWorkflow.submitTitle" />
 	</s:if> <s:else>
@@ -347,7 +347,7 @@ function readOnlyCheckBox() {
 					format="{0,date,dd/MM/yyyy}" style="width:10%; text-align: center" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="service.serviceName" title="Service" style="width:10%" />
+					property="service.name" title="Service" style="width:10%" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					title="Bill Number" style="width:10%">&nbsp;${currentRow.referencenumber}</display:column>
@@ -361,7 +361,7 @@ function readOnlyCheckBox() {
 					style="width:15%" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="receiptPayeeDetails.payeename" title="Payee Name"
+					property="payeeName" title="Payee Name"
 					style="width:15%" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"

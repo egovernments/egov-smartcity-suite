@@ -75,7 +75,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
@@ -83,7 +82,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly=true)
 public class CollectionsUtil {
 	private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
 	private PersistenceService persistenceService;
@@ -153,8 +151,8 @@ public class CollectionsUtil {
 	 *            Map of session variables
 	 * @return user name of currently logged in user
 	 */
-	public String getLoggedInUserName(Map<String, Object> sessionMap) {
-		return (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME);
+	public String getLoggedInUserName() {
+		return securityUtils.getCurrentUser().getName();
 	}
 
 	/**

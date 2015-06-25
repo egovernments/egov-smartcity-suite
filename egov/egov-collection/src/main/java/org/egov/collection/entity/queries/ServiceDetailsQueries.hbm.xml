@@ -88,7 +88,7 @@
     <![CDATA[from SubScheme where scheme.id=? and isActive=1 order by name]]></query>
     
     <query name="getServicesforChallan">
-    <![CDATA[from ServiceDetails s where s.serviceType=? order by serviceName]]></query>
+    <![CDATA[from ServiceDetails s where s.serviceType=? order by name]]></query>
     
     <query name="getActiveFinancialYear">
     <![CDATA[from CFinancialYear f where f.isActive=1 order by finYearRange]]></query>
