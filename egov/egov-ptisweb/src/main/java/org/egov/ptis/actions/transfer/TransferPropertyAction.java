@@ -58,7 +58,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
@@ -187,15 +186,16 @@ public class TransferPropertyAction extends WorkflowAction {
         property.setStatus(STATUS_ISACTIVE);
         final BasicProperty basicProperty = property.getBasicProperty();
         processAndStoreDocumentsWithReason(basicProperty, DOCS_MUTATION_PROPERTY);
-        basicPrpertyService.update(basicProperty);
-        final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
+       /* 
+        * FIXME WHY THIS?
+        * final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
                 corrAddress2, corrPinCode, propertyOwnerProxy);
         for (final PropertyOwner owner : property.getPropertyOwnerSet())
             owner.getAddress().clear();
         property.getPropertyOwnerSet().clear();
-        property.getPropertyOwnerSet().addAll(owners);
-        basicPrpertyService.update(basicProperty);
+        property.getPropertyOwnerSet().addAll(owners);*/
         propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
+        basicPrpertyService.persist(basicProperty);
         return ACK;
     }
 
@@ -274,11 +274,12 @@ public class TransferPropertyAction extends WorkflowAction {
     @Action(value = "/property-forward")
     public String forward() {
         String target = "failure";
+        BasicProperty basicProp;
         if (getModelId() == null || getModelId().equals("")) {
             validate();
             if (hasErrors())
                 return NEW;
-            final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+            basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
             // if there is a workflow property then set the status as history
             if (getModelId() != null && !getModelId().equals("")) {
                 final PropertyImpl propWF = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -298,7 +299,7 @@ public class TransferPropertyAction extends WorkflowAction {
                 feeAmount = feeAmount.add(propertyMutation.getOtherFee());
             billReceiptInfo = transferOwnerService.generateMiscReceipt(basicProp, feeAmount);
             propertyMutation.setReceiptNum(billReceiptInfo.getReceiptNum());
-        } else {
+        } else { 
             if (idMutationMaster != null && idMutationMaster != -1) {
                 final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPersistenceService()
                         .find("from PropertyMutationMaster PM where PM.idMutation = ?", idMutationMaster);
@@ -306,7 +307,7 @@ public class TransferPropertyAction extends WorkflowAction {
             }
             property = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
-            final BasicProperty basicProp = property.getBasicProperty();
+            basicProp = property.getBasicProperty();
             final Set<PropertyMutation> propMutSet = basicProp.getPropMutationSet();
             for (final PropertyMutation pm : propMutSet)
                 if (pm.getId().equals(propertyMutation.getId())) {
@@ -316,16 +317,18 @@ public class TransferPropertyAction extends WorkflowAction {
             validate();
             if (hasErrors())
                 return EDIT;
-            final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
+            /*
+             * * FIXME WHY THIS?
+             * final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
                     corrAddress2, corrPinCode, propertyOwnerProxy);
             for (final PropertyOwner owner : property.getPropertyOwnerSet())
                 owner.getAddress().clear();
             property.getPropertyOwnerSet().clear();
-            property.getPropertyOwnerSet().addAll(owners);
-            basicPrpertyService.update(basicProp);
+            property.getPropertyOwnerSet().addAll(owners);*/
         }
         transitionWorkFlow();
         setNextUser(UserService.getUserById(getWorkflowBean().getApproverUserId().longValue()).getUsername());
+        basicPrpertyService.update(basicProp);
         if (getModelId() == null || getModelId().equals(""))
             target = MISC_RECEIPT;
         else
@@ -362,7 +365,7 @@ public class TransferPropertyAction extends WorkflowAction {
     @Override
     public void prepare() {
         if (getModelId() != null && !getModelId().isEmpty()) {
-            property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+            property = (PropertyImpl) getPersistenceService().find("from PropertyImpl where id = ?",
                     Long.valueOf(getModelId()));
             setBasicProperty(property.getBasicProperty());
         }

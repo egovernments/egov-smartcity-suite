@@ -93,6 +93,8 @@ public class PropertyBillInfo {
 
 	@Autowired
 	private PtDemandDao ptDemandDAO;
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private BasicProperty basicProperty;
 	private String billNo;
@@ -124,7 +126,7 @@ public class PropertyBillInfo {
 			isCentralGovtProp = 1;
 		}
 
-		currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		currentInstallment = propertyTaxUtil.getCurrentInstallment();
 
 		for (Ptdemand ptDemand : basicProperty.getProperty().getPtDemandSet()) {
 			if (ptDemand.getEgInstallmentMaster().equals(currentInstallment)) {

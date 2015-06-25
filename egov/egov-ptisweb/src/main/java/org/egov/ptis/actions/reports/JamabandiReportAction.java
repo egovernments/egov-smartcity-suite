@@ -63,10 +63,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.UnitWiseInfo;
 import org.egov.ptis.client.util.CurrFlrDmdCalcMvComparator;
@@ -77,6 +77,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 public class JamabandiReportAction extends ReportFormAction {
@@ -89,7 +90,10 @@ public class JamabandiReportAction extends ReportFormAction {
 	public static final String OPENPLOT = "OP";
 	public static final String SGOVT = "SGOVT";
 	public static final String CGOVT = "CGOVT";
-	private BoundaryDAO boundaryDAO;
+	@Autowired
+	private BoundaryService boundaryDAO;
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
@@ -144,10 +148,10 @@ public class JamabandiReportAction extends ReportFormAction {
 	public String generateJamabandi() {
 		ReportInfo reportInfo = new ReportInfo();
 		List<UnitWiseInfo> unitWiseInfoList = new ArrayList<UnitWiseInfo>();
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		if ((zoneId != null && zoneId != -1) && (wardId != null && wardId != -1)) {
-			String strZoneNum = (boundaryDAO.getBoundary(zoneId).getBoundaryNum()).toString();
-			String strWardNum = (boundaryDAO.getBoundary(wardId).getBoundaryNum()).toString();
+			String strZoneNum = "";//FIXME PHOENIX (boundaryDAO.getBoundary(zoneId).getBoundaryNum()).toString();
+			String strWardNum = "";//FIXME PHOENIX(boundaryDAO.getBoundary(wardId).getBoundaryNum()).toString();
 			StringBuffer query = new StringBuffer(300);
 
 			query.append("from PropertyMaterlizeView pmv left join fetch pmv.currFloorDmdCalc left join fetch pmv.propTypeMstrID where pmv.zone.id=? and pmv.ward.id=? ");

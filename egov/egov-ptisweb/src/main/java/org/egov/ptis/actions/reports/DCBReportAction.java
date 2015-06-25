@@ -83,12 +83,15 @@ public class DCBReportAction extends ReportFormAction {
 	List<Boundary> zoneList;
 
 	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
+	@Autowired
 	private BoundaryService boundaryService;
 
 	private void prepareReportInfo() {
 		StringBuffer query = new StringBuffer(1000);
 		StringBuilder billQueryString = new StringBuilder();
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		List<Long> zoneParamList = new ArrayList<Long>();
 
 		billQueryString

@@ -124,6 +124,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
 	private Boolean isCallbackForApportion = Boolean.TRUE;
 	private static final BigDecimal VALUE_HUNDRED = new BigDecimal(100);
 	private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -886,7 +889,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 
 	private BigDecimal getTaxforReason(Property property, String demandReason) {
 		BigDecimal reasonTax = BigDecimal.ZERO;
-		Installment inst = PropertyTaxUtil.getCurrentInstallment();
+		Installment inst = propertyTaxUtil.getCurrentInstallment();
 		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
 		for (EgDemandDetails dmdDet : egDemand.getEgDemandDetails()) {
 			if (dmdDet.getEgDemandReason().getEgInstallmentMaster().equals(inst)

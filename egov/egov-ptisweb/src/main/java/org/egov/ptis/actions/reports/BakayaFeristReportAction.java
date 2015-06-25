@@ -76,6 +76,7 @@ import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
@@ -91,6 +92,9 @@ public class BakayaFeristReportAction extends ReportFormAction {
 	private String partNo;
 	private Map<Long, String> ZoneBndryMap;
 
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
 	@Override
 	public void prepare() {
 		
@@ -136,7 +140,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		reportInfo.setWardNo(ward.getBoundaryNum().toString());
 		reportInfo.setPartNo(partNo != null && !partNo.equals("-1") ? partNo : "N/A");
 		
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		
 		Calendar installmentFromDate = Calendar.getInstance();
 		installmentFromDate.setTime(currentInstallment.getFromDate());
@@ -184,7 +188,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		List<PropertyMaterlizeView> properties = (List<PropertyMaterlizeView>) qry.setResultTransformer(
 				Criteria.DISTINCT_ROOT_ENTITY).list();
 		
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		
 		BigDecimal grandTotal = BigDecimal.ZERO;			
 		

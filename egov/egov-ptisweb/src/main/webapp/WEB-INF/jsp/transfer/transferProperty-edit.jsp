@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="transferProperty" name="transferform" theme="simple">
+			<s:form  id="transferform" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
 				<s:hidden name="model.id"/>
 				<s:hidden name="modelId" id="modelId" value="%{modelId}" />
@@ -140,7 +140,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
+						<td colspan="6">
 							<div class="headingsmallbg">
 								<s:text name="transferDtls" />
 							</div>
@@ -259,6 +259,11 @@
 							
 						</td>
 						<td class="bluebox">
+							<ul>
+							<c:forEach items="${property.basicProperty.propertyDocsSet}" var="propDocs">
+								<li><a target="_blank" href="/egi/downloadfile?fileStoreId=${propDocs.supportDoc.fileStoreId}&moduleName=PTIS">${propDocs.supportDoc.fileName}</a></li>
+							</c:forEach>
+							</ul>
 							<input type="file" name="upload" class="button" width="500px" value="Upload Document"/>
 						</td>
 						<td class="bluebox" colspan="2">
@@ -266,7 +271,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
+						<td colspan="6">
 							<div class="headingsmallbg">
 								<s:text name="feeDtls" />
 							</div>
@@ -328,10 +333,10 @@
 				 <%@ include file="../common/CorrAddressForm.jsp"%>
        			 <%@ include file="../workflow/property-workflow.jsp" %>  
 					<div class="buttonbottom">
-						<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" method="forward" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-						<s:submit value="Approve" id="Mutation:Approve" name="Transfer" cssClass="buttonsubmit" align="center" method="approve" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-						<s:submit value="Reject" id="Mutation:Reject" name="Transfer" cssClass="buttonsubmit" align="center" method="reject" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
-						<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
+						<input type="button" value="Forward" id="Mutation:Forward" name="forward" class="buttonsubmit submitbtn"/>
+						<input type="button" value="Approve" id="Mutation:Approve" name="approve" class="buttonsubmit submitbtn"/>
+						<input type="button" value="Reject" id="Mutation:Reject" name="reject" class="buttonsubmit submitbtn"/>
+						<input type="button" value="Close" class="button"  onclick="return confirmClose();" />
 					</div>
 				</s:push>
 			</s:form>
@@ -444,7 +449,24 @@
 		jQuery('.datepicker').on('changeDate', function(ev){
 			jQuery(this).datepicker('hide');
 		});
+
+		jQuery(".submitbtn").click(function(){
+			setWorkFlowInfo(this);
+			resetDateFields();
+			//doLoadingMask();
+			if(jQuery(this).attr("name") == 'approve') {
+				jQuery("#transferform").attr("action","property-approve.action");
+			} else if (jQuery(this).attr("name") == 'forward') {
+				jQuery("#transferform").attr("action","property-forward.action");
+			} else if (jQuery(this).attr("name") == 'reject') {
+				jQuery("#transferform").attr("action","property-reject.action");
+			}
+			jQuery("#transferform").submit();
+			
+		});
 </script>
-<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+<div id="loadingMask" style="display:none">
+<p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p>
+</div>
 </body>
 </html>

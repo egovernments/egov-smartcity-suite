@@ -81,18 +81,18 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PTBillServiceImpl extends BillServiceInterface {
 	private static final Logger LOGGER = Logger.getLogger(PTBillServiceImpl.class);
-	PropertyTaxUtil propertyTaxUtil;
 	PropertyTaxCollection propertyTaxCollection;
 	DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	@Autowired
 	private ModuleService moduleDao;
 	@Autowired
 	private PtDemandDao PtDemandDAO;
-
+	@Autowired
+	private PropertyTaxUtil propertyTaxUtil;
+	
 	@Override
 	public String getBillXML(Billable billObj) {
 		if (billObj == null) {
@@ -116,7 +116,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 		PropertyTaxBillable nmcBillable = (PropertyTaxBillable) billObj;
 
 		if (nmcBillable.isMiscellaneous()) {
-			Installment currInstallment = PropertyTaxUtil.getCurrentInstallment();
+			Installment currInstallment = propertyTaxUtil.getCurrentInstallment();
 			billdetail = new EgBillDetails();
 			billdetail.setOrderNo(1);
 			billdetail.setCreateDate(new Date());
@@ -138,7 +138,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 		List<EgDemandDetails> pendmdList = new ArrayList<EgDemandDetails>();
 
 		Ptdemand ptDemand = PtDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 
 		HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
 				ptDemand.getEgDemandDetails(), nmcBillable);
@@ -265,7 +265,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 		BillDetailBean billDetailBean = null;
 		String advanceKey = null;
 
-		List<String> advanceInstDescription = PropertyTaxUtil
+		List<String> advanceInstDescription = propertyTaxUtil
 				.getAdvanceYearsFromCurrentInstallment();
 		BigDecimal advanceCollection = new DemandGenericHibDao().getBalanceByDmdMasterCode(
 				ptDemand, DEMANDRSN_CODE_ADVANCE, getModule());

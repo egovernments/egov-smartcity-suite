@@ -83,6 +83,8 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 	private ModuleService moduleDao;
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDao;
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 
 	public BulkBillGenerationJob() {
 		LOGGER.info("BulkBillGenerationJob instantiated.........." + this);
@@ -148,7 +150,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 
 		StringBuilder queryString = new StringBuilder(200);
 		StringBuilder wardAndPartNumbers = new StringBuilder();
-		Installment currentInstallment = PropertyTaxUtil
+		Installment currentInstallment = propertyTaxUtil
 				.getCurrentInstallment();
 		Module ptModule = moduleDao
 				.getModuleByName(PropertyTaxConstants.PTMODULENAME);

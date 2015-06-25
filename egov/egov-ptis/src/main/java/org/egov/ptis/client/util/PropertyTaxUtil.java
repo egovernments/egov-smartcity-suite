@@ -218,9 +218,9 @@ public class PropertyTaxUtil {
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
-	private static ModuleService moduleDao;
+	private ModuleService moduleDao;
 	@Autowired
-	private static InstallmentDao installmentDao;
+	private InstallmentDao installmentDao;
 	@Autowired
 	@Qualifier(value = "ptDemandDAO")
 	private PtDemandDao ptDemandDao;
@@ -1111,7 +1111,7 @@ public class PropertyTaxUtil {
 			}
 		}
 
-		List<String> advanceYears = PropertyTaxUtil.getAdvanceYearsFromCurrentInstallment();
+		List<String> advanceYears = getAdvanceYearsFromCurrentInstallment();
 		Integer year = null;
 
 		for (String description : advanceYears) {
@@ -1444,7 +1444,7 @@ public class PropertyTaxUtil {
 	 *
 	 * @return Installment the current installment for PT module
 	 */
-	public static Installment getCurrentInstallment() {
+	public Installment getCurrentInstallment() {
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 	}
@@ -1636,6 +1636,7 @@ public class PropertyTaxUtil {
 		if (egBill != null) {
 			egBill.setIs_History("Y");
 			egBill.setModifiedDate(new Date());
+			//FIXME UTTERWRONG
 			persistenceService.setType(EgBill.class);
 			persistenceService.update(egBill);
 		}
@@ -2056,7 +2057,7 @@ public class PropertyTaxUtil {
 		return amount.compareTo(BigDecimal.ZERO) == 0 ? true : false;
 	}
 
-	public static Installment getPTInstallmentForDate(Date date) {
+	public Installment getPTInstallmentForDate(Date date) {
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
 	}
@@ -2156,11 +2157,11 @@ public class PropertyTaxUtil {
 						PropertyTaxConstants.STR_YES)) ? true : false;
 	}
 
-	public static List<String> getAdvanceYearsFromCurrentInstallment() {
+	public  List<String> getAdvanceYearsFromCurrentInstallment() {
 		LOGGER.debug("Entered into getAdvanceYearsFromCurrentInstallment");
 
 		List<String> advanceYears = new ArrayList<String>();
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = getCurrentInstallment();
 		Integer year = null;
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(currentInstallment.getFromDate());

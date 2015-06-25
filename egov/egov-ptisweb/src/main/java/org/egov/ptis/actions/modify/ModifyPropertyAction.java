@@ -1441,7 +1441,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		Ptdemand currentDemand = null;
 
 		for (Ptdemand ptdemand : property.getPtDemandSet()) {
-			if (ptdemand.getEgInstallmentMaster().equals(PropertyTaxUtil.getCurrentInstallment())) {
+			if (ptdemand.getEgInstallmentMaster().equals(propertyTaxUtil.getCurrentInstallment())) {
 				currentDemand = ptdemand;
 				break;
 			}

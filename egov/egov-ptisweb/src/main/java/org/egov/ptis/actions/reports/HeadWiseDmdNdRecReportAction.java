@@ -60,6 +60,7 @@ import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 public class HeadWiseDmdNdRecReportAction extends BaseFormAction{
@@ -81,12 +82,15 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction{
 	private List currInstDmdCollList = new ArrayList();
 	private Installment currentInstallment;
 	
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
 	public String generateHeadWiseDmdColl() {
 		ReportRequest reportRequest = null;
 		ReportInfo reportInfo = new ReportInfo();
 		getPersistenceService().setType(InstDmdCollMaterializeView.class);
 		
-		currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		
 		prepareReasonWiseCurrDmdColl();
 		prepareReasonWiseArrDmdColl();

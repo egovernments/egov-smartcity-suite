@@ -158,20 +158,18 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
         this.uploadContentTypes = contentTypes;
     }
 
-    protected List<PropertyDocs> processAndStoreDocumentsWithReason(BasicProperty basicProperty, String reason) {
-        List<PropertyDocs> fileStores = new ArrayList<>();
+    protected void processAndStoreDocumentsWithReason(BasicProperty basicProperty, String reason) {
         if (!uploads.isEmpty()) {
            int fileCount = 0; 
            for (File file : uploads) {
-               FileStoreMapper fileStore = fileStoreService.store(file, uploadContentTypes.get(fileCount++), "PTIS");
+               FileStoreMapper fileStore = fileStoreService.store(file, uploadFileNames.get(fileCount), uploadContentTypes.get(fileCount++), "PTIS");
                final PropertyDocs propertyDoc = new PropertyDocs();
                propertyDoc.setSupportDoc(fileStore);
                propertyDoc.setBasicProperty(basicProperty);
-               propertyDoc.setReason(DOCS_MUTATION_PROPERTY);
+               propertyDoc.setReason(reason);
                basicProperty.addDocs(propertyDoc);
            } 
         }
-        return fileStores;
     } 
     
     /**

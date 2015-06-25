@@ -49,6 +49,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -74,9 +75,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMapper store(final File sourceFile, final String mimeType, final String moduleName) {
+    public FileStoreMapper store(final File sourceFile, final String fileName, final String mimeType, final String moduleName) {
         try {
-            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), sourceFile.getName());
+            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), StringUtils.defaultString(fileName, sourceFile.getName()));
             final Path newFilePath = createNewFilePath(fileMapper, moduleName);
             Files.copy(sourceFile.toPath(), newFilePath);
             fileMapper.setContentType(mimeType);

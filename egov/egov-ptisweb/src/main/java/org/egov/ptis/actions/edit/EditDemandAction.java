@@ -100,7 +100,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.PTISCacheManager;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
@@ -128,7 +128,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Namespace("/edit")
 public class EditDemandAction extends BaseFormAction {
 
@@ -168,7 +167,6 @@ public class EditDemandAction extends BaseFormAction {
 	private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
 	private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
 	private BasicProperty basicProperty;
-	private PropertyTaxUtil propertyTaxUtil;
 	private PropertyService propService;
 
 	private DCBDisplayInfo dcbDispInfo;
@@ -180,6 +178,9 @@ public class EditDemandAction extends BaseFormAction {
 	private List<Installment> allInstallments = new ArrayList<Installment>();
 	private Set<Installment> propertyInstallments = new TreeSet<Installment>();
 
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
 	@Override
 	public Object getModel() {
 		return null;
@@ -330,7 +331,7 @@ public class EditDemandAction extends BaseFormAction {
 					.getAddress());
 
 			demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails,
-					basicProperty, PropertyTaxUtil.getCurrentInstallment());
+					basicProperty, propertyTaxUtil.getCurrentInstallment());
 
 			if (demandDetails.isEmpty()) {
 				setErrorMessage(MSG_ERROR_EDITDEMAND_NOTALLOWED);
@@ -416,7 +417,7 @@ public class EditDemandAction extends BaseFormAction {
 				demandDetailBeanList.add(dmdDtl);
 			}
 
-			Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+			Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 			if (!installmentDemandReason.get(currentInstallment).contains(
 					DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {
 				DemandDetail dmdDtl = createDemandDetailBean(currentInstallment,
@@ -535,7 +536,7 @@ public class EditDemandAction extends BaseFormAction {
 
 		List<EgDemandDetails> demandDetailsFromDB = getPersistenceService().findAllBy(
 				QUERY_NONZERO_DEMAND_DETAILS, basicProperty);
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<Installment, List<EgDemandDetails>>();
 		Map<Installment, BigDecimal> baseDemands = new TreeMap<Installment, BigDecimal>();
 
@@ -674,7 +675,7 @@ public class EditDemandAction extends BaseFormAction {
 
 		List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
 				queryInstallmentDemandDetails, basicProperty,
-				PropertyTaxUtil.getCurrentInstallment());
+				propertyTaxUtil.getCurrentInstallment());
 
 		EgDemand currentPtdemand = currentInstdemandDetailsFromDB.get(0).getEgDemand();
 

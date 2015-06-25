@@ -81,7 +81,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.service.collection.DemandDetailsComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Provides API to Generate a Demand Notice or the Bill giving the break up of
@@ -95,7 +94,8 @@ public class BillService {
 
 	private ReportService reportService;
 	private NoticeService noticeService;
-	private PropertyTaxUtil propertyTaxUtil;
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 	private PTBillServiceImpl nmcPtBillServiceImpl;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
@@ -201,7 +201,7 @@ public class BillService {
 	 * @return
 	 */
 	private int getNumberOfBills(BasicProperty basicProperty) {
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 
 		Long count = (Long) HibernateUtil
 				.getCurrentSession()

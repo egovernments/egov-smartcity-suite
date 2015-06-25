@@ -94,7 +94,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * This class is used to persist Collections .This is used for the integration
@@ -112,6 +111,9 @@ public class PropertyTaxCollection extends TaxCollection {
 	@Autowired
 	private EgBillDao egBillDAO;
 
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
+	
 	@Override
 	protected Module module() {
 		return moduleDao.getModuleByName(PTMODULENAME);
@@ -283,7 +285,7 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.info("saveCollectionDetails - installment demandDetails size = "
 				+ installmentWiseDemandDetailsByReason.size());
 
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 
 		for (ReceiptAccountInfo rcptAccInfo : accountDetails) {
 			if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty()) {
@@ -733,7 +735,7 @@ public class PropertyTaxCollection extends TaxCollection {
 				+ "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
 				+ "AND ptd.egptProperty.basicProperty.active = true";
 
-		EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(), egBill
+		EgDemand egDemand = (EgDemand) persistenceService.find(query, propertyTaxUtil.getCurrentInstallment(), egBill
 				.getConsumerId().substring(0, egBill.getConsumerId().indexOf('(')));
 
 		LOGGER.debug("Exiting from getCurrentDemand");

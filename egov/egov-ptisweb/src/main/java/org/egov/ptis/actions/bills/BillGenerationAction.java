@@ -102,7 +102,6 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -329,7 +328,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
-		Installment currInst = PropertyTaxUtil.getCurrentInstallment();
+		Installment currInst = propertyTaxUtil.getCurrentInstallment();
 
 		StringBuilder billQueryString = new StringBuilder();
 		StringBuilder propQueryString = new StringBuilder();

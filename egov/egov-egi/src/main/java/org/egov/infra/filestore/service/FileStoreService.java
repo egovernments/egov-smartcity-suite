@@ -47,7 +47,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 
 public interface FileStoreService {
 
-    FileStoreMapper store(File file, String mimeType, String moduleName);
+    FileStoreMapper store(File file, String fileName, String mimeType, String moduleName);
 
     FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName);
 

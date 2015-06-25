@@ -149,7 +149,8 @@ public class PropertyService  {
 	private Installment currentInstall;
 	private APTaxCalculator taxCalculator;
 	private HashMap<Installment, TaxCalculationInfo> instTaxMap;
-	private PropertyTaxUtil propertyTaxUtil;
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	protected EisCommonsService eisCommonsService;
 	@Autowired
@@ -423,7 +424,7 @@ public class PropertyService  {
 		List<Installment> instList = new ArrayList<Installment>();
 		instList = new ArrayList<Installment>(instTaxMap.keySet());
 		LOGGER.debug("createDemand: instList: " + instList);
-		currentInstall = PropertyTaxUtil.getCurrentInstallment();
+		currentInstall = propertyTaxUtil.getCurrentInstallment();
 
 		for (Installment installment : instList) {
 			TaxCalculationInfo taxCalcInfo = instTaxMap.get(installment);
@@ -1711,7 +1712,7 @@ public class PropertyService  {
 		Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
 				DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-		Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currerntInstallment = propertyTaxUtil.getCurrentInstallment();
 
 		for (Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment : excessCollAmtMap
 				.entrySet()) {
@@ -1847,7 +1848,7 @@ public class PropertyService  {
 								 */
 								if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
 									EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-											newDemandDetailsByInstallment.get(PropertyTaxUtil.getCurrentInstallment()),
+											newDemandDetailsByInstallment.get(propertyTaxUtil.getCurrentInstallment()),
 											demandReason);
 									/**
 									 * if the demand reason does not exist in
@@ -1861,7 +1862,7 @@ public class PropertyService  {
 										reasons.remove(demandReason);
 										for (String rsn : reasons) {
 											currentDemandDetail = getEgDemandDetailsForReason(
-													newDemandDetailsByInstallment.get(PropertyTaxUtil
+													newDemandDetailsByInstallment.get(propertyTaxUtil
 															.getCurrentInstallment()), rsn);
 											if (currentDemandDetail != null) {
 												break;

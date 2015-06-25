@@ -56,6 +56,7 @@ import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The property floor details object
@@ -96,7 +97,8 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	private DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	
 
-	private PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+	@Autowired
+        private PropertyTaxUtil propertyTaxUtil;
 
 	public PropertyFloorDetailsInfo(UnitCalculationDetail unitCalcDetail, String propType, Installment installment) {
 		this.unitCalcDetail = unitCalcDetail;
@@ -504,7 +506,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 			return dateFormat.format(unitCalcDetail.getFromDate());
 		}
 		
-		Installment installment = PropertyTaxUtil.getPTInstallmentForDate(unitCalcDetail.getInstallmentFromDate());
+		Installment installment = propertyTaxUtil.getPTInstallmentForDate(unitCalcDetail.getInstallmentFromDate());
 		
 		String dateString = dateFormat.format(unitCalcDetail.getInstallmentFromDate());
 		

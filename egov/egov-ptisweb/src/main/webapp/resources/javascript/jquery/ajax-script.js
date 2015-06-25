@@ -40,7 +40,7 @@
 #-------------------------------------------------------------------------------*/
 jQuery.noConflict();
 
-function doLoadingMask() {
+/*function doLoadingMask() {
     jQuery("#loadingMask").dialog({ 
         modal: true,
         width: 250,  
@@ -64,6 +64,6 @@ jQuery(document).ready(function() {
 	jQuery( "form" ).submit(function( event ) {
 		doLoadingMask();
 	});
-});
+});*/
 
 
