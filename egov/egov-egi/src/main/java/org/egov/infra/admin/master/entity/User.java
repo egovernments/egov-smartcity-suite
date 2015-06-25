@@ -91,8 +91,8 @@ import com.google.gson.annotations.Expose;
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 @Indexed
-@Unique(id = "id", tableName = "eg_user",columnName = { "username", "mobileNumber","altContactNumber","pan","aadhaarNumber","emailId" },
-fields = { "username", "mobileNumber","altContactNumber","pan","aadhaarNumber","emailId" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_user",columnName = { "username", "mobileNumber","pan","aadhaarNumber","emailId" },
+fields = { "username", "mobileNumber","pan","aadhaarNumber","emailId" }, enableDfltMsg = true)
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";
@@ -110,7 +110,6 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 8, max = 64)
-    @Pattern(regexp=Constants.PASSWORD)
     private String password;
 
     private String salutation;

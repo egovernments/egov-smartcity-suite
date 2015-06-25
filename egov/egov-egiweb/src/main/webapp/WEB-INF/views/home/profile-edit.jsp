@@ -82,6 +82,7 @@
 						<label for="field-1" class="col-sm-3 control-label">Mobile</label>
 						<div class="col-sm-2 add-margin">
 							<form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10"/>
+							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>
 						
 						<div class="col-sm-1">
@@ -90,6 +91,7 @@
 						
 						<div class="col-sm-3">
 							<form:input path="emailId" cssClass="form-control" id="emailId" placeholder="abc@xyz.com" maxlength="50"/>
+							<form:errors path="emailId" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					
@@ -114,6 +116,7 @@
 						
 						<div class="col-sm-2 add-margin">
 							<form:input path="pan" cssClass="form-control" placeholder="AHWPU1117T" maxlength="10"/>
+							<form:errors path="pan" cssClass="add-margin error-msg"/>
 						</div>
 						
 						<div class="col-sm-1">
@@ -122,6 +125,7 @@
 						
 						<div class="col-sm-3 add-margin">
 							<form:input path="aadhaarNumber" cssClass="form-control" placeholder="123456789012" maxlength="12"/>
+							<form:errors path="aadhaarNumber" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					

@@ -71,7 +71,7 @@ public class CitizenRegistrationController {
             final HttpServletRequest request) {
         //TODO Rework this
         String SUCCESS = "redirect:/../egi/login/secure";
-        if (errors.hasFieldErrors("password"))
+        if (!ValidatorUtils.isValidPassword(citizen.getPassword()))
             return SUCCESS + "?pwdInvalid=true";
         if(!ValidatorUtils.isCaptchaValid(request))
             return SUCCESS + "?captchaInvalid=true";
