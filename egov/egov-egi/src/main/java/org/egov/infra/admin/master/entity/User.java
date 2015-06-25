@@ -110,6 +110,7 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 8, max = 64)
+    @Pattern(regexp=Constants.PASSWORD)
     private String password;
 
     private String salutation;

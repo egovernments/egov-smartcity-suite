@@ -55,6 +55,7 @@ import org.egov.commons.service.CommonsService;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.utils.constants.EisConstants;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
@@ -65,7 +66,6 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.utils.EisConstants;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -326,19 +326,19 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	{
 		EgwStatus egwStatus=commonsService.getEgwStatusById(statusid);
 		DetachedCriteria detachCriteriaPersonalInfo=DetachedCriteria.forClass(PersonalInformation.class,"emp");
-		if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase(EisConstants.STATUS_TYPE_EMPLOYED))
+		if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Employed"))
 		{
 			detachCriteriaPersonalInfo.createAlias("emp.egpimsAssignment", "assPrd").
 			add(Restrictions.and(Restrictions.le("assPrd.fromDate", toDate), Restrictions.or(Restrictions.ge("assPrd.toDate", toDate), Restrictions.isNull("assPrd.toDate")) ));
 
 
 		}
-		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase(EisConstants.STATUS_TYPE_RETIRED))
+		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Retired"))
 		{
 			detachCriteriaPersonalInfo.add(Restrictions.between("emp.retirementDate", fromDate, toDate));				
 
 		}
-		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase(EisConstants.STATUS_TYPE_DECEASED))
+		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Deceased"))
 		{
 			detachCriteriaPersonalInfo.add(Restrictions.between("emp.deathDate", fromDate, toDate));
 		}

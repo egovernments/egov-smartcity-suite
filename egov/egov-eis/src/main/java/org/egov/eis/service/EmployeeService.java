@@ -53,6 +53,8 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeRepository;
+import org.egov.eis.utils.constants.EisConstants;
+import org.egov.infra.admin.master.service.RoleService;
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.BooleanJunction;
@@ -79,6 +81,9 @@ public class EmployeeService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
@@ -120,6 +125,7 @@ public class EmployeeService {
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
+        employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
         employeeRepository.save(employee);
     }
 

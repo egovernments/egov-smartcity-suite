@@ -145,11 +145,11 @@
 										</div>
 										
 										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.email"/><span class="mandatory"></span></label>
+											<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 										</div>
 										
 										<div class="col-sm-3">
-											<form:input type="text" cssClass="form-control" id="emial" path="emailId" required="required" placeholder="abc@xyz.com" />
+											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
 										</div>
 										
 									</div>
@@ -159,16 +159,15 @@
 										
 										<div class="col-sm-2 add-margin">
 											<form:input type="text" path="altContactNumber" id="altcontact" cssClass="form-control" data-inputmask="'mask': '9999999999'" maxlength="10" placeholder="Mobile Number"/>
-											<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 										</div>
 										
 										<div class="col-sm-1">
-											<label for="field-1" class="control-label"><spring:message code="lbl.DOB"/><span class="mandatory"></span></label>
+											<label for="field-1" class="control-label"><spring:message code="lbl.DOB"/></label>
 										</div>
 										
 										<div class="col-sm-3 add-margin">
 											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" 
-											required="required" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
+											data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
 										</div>
 									</div>
 
