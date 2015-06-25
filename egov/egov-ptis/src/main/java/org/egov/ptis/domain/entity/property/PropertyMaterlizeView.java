@@ -57,6 +57,8 @@ public class PropertyMaterlizeView implements Serializable {
 	private Boundary ward;
 	private Boundary zone;
 	private Boundary street;
+	private Boundary block;
+	private Boundary locality;
 	private Integer sourceID;
 	private BigDecimal sitalArea;
 	private BigDecimal toalBuiltUpArea;
@@ -69,8 +71,6 @@ public class PropertyMaterlizeView implements Serializable {
 	private String gisRefNo;
 	private Set<InstDmdCollMaterializeView> instDmdColl;
 	private Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc;
-	private String waterScheme;
-	private String partNo;
 	private BigDecimal alv;
 	
 	public Integer getBasicPropertyID() {
@@ -249,22 +249,6 @@ public class PropertyMaterlizeView implements Serializable {
 		this.currFloorDmdCalc = currFloorDmdCalc;
 	}
 
-	public String getWaterScheme() {
-		return waterScheme;
-	}
-
-	public void setWaterScheme(String waterScheme) {
-		this.waterScheme = waterScheme;
-	}
-
-	public String getPartNo() {
-		return partNo;
-	}
-
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
-	}
-
 	public BigDecimal getAlv() {
 		return alv;
 	}
@@ -285,4 +269,20 @@ public class PropertyMaterlizeView implements Serializable {
 
 		return objStr.toString();
 	}
+
+    public Boundary getBlock() {
+        return block;
+    }
+
+    public void setBlock(Boundary block) {
+        this.block = block;
+    }
+
+    public Boundary getLocality() {
+        return locality;
+    }
+
+    public void setLocality(Boundary locality) {
+        this.locality = locality;
+    }
 }

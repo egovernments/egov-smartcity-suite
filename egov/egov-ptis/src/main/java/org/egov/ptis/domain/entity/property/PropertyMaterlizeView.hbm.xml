@@ -56,10 +56,11 @@
 		<many-to-one name="propTypeMstrID" class="org.egov.ptis.domain.entity.property.PropertyTypeMaster" 
 			column="PROPTYMASTER"/>
 		<property name="propUsageMstrID" column="PROP_USAGE_MASTER" />
-		<property name="waterScheme" column="WATERSCHEME"/>
 		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary" column="ZONEID"/>
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary" column="WARDID"/>
 		<many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary" column="STREETID"/>
+		<many-to-one name="block" class="org.egov.infra.admin.master.entity.Boundary" column="BLOCKID"/>
+		<many-to-one name="locality" class="org.egov.infra.admin.master.entity.Boundary" column="LOCALITYID"/>
 		<property name="sourceID" column="SOURCE_ID" />
 		<property name="sitalArea" column="SITAL_AREA" />
 		<property name="toalBuiltUpArea" column="TOTAL_BUILTUP_AREA" />
@@ -70,7 +71,6 @@
 		<property name="aggrArrColl" column="ARREARCOLLECTION" />
 		<!-- <property name="avAmt" column="AV_AMOUNT" /> -->
 		<property name="gisRefNo" column="GISREFNO" />
-		<property name="partNo" column="PARTNO" />
 		<property name="alv" column="ALV"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" >

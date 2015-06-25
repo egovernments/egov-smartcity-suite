@@ -414,10 +414,10 @@ public class JamabandiReportAction extends ReportFormAction {
 				unitwiseInfo.setPropType(RESIDENTIAL);
 			}
 		}
-
-		if (propMatView.getWaterScheme() != null && !propMatView.getWaterScheme().equals(0)) {
+		// Todo : needs to be removed as waterscheme is removed from propertyMaterializedview
+		/*if (propMatView.getWaterScheme() != null && !propMatView.getWaterScheme().equals(0)) {
 			unitwiseInfo.setWaterScheme(propMatView.getWaterScheme());
-		}
+		}*/
 		if (propMatView.getAlv() != null && !propMatView.getAlv().equals(BigDecimal.ZERO)) {
 			unitwiseInfo.setAlv(propMatView.getAlv());
 		}

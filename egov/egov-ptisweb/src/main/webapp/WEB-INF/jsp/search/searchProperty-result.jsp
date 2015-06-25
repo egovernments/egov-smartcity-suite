@@ -43,53 +43,53 @@
 	<head>
 		<script type="text/javascript">
 		
-		function viewPropDetails(indexNum)
+		function viewPropDetails(assessmentNum)
 		{
-				window.location="../view/viewProperty-viewForm.action?propertyId="+indexNum;
+				window.location="../view/viewProperty-viewForm.action?propertyId="+assessmentNum;
 		}
 			
-		function getPropdetails(obj,indexNum)
+		function getPropdetails(obj,assessmentNum)
 		{
 			var selectedValue = obj.options[obj.selectedIndex].value;
 	       if(selectedValue=="ViewProperty")
 			{
-				window.location="../view/viewProperty-viewForm.action?propertyId="+indexNum;
+				window.location="../view/viewProperty-viewForm.action?propertyId="+assessmentNum;
 			}
 			else if(selectedValue=="TransferProperty")
 			{
-			window.location="../transfer/transferProperty-transferForm.action?indexNumber="+indexNum;
+			window.location="../transfer/transferProperty-transferForm.action?indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=="ChangeAddress")
 			{
-			window.location="../modify/changePropertyAddress-newForm.action?indexNumber="+indexNum;
+			window.location="../modify/changePropertyAddress-newForm.action?indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=="DeactivateProperty")
 			{
-			window.location="../deactivate/deactivateProperty-newForm.action?indexNumber="+indexNum;
+			window.location="../deactivate/deactivateProperty-newForm.action?indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Amalgamation') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=AMALG&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=AMALG&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Bifurcation') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Modification') {
-				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Objection') {
 				window.location="../objection/objection-newForm.action?propertyId="+indexNum;
 			}
 			else if(selectedValue=='Notice 125') {
-				window.location="../notice/propertyTaxNotice-generateNotice.action?noticeType=Notice125&indexNumber="+indexNum;
+				window.location="../notice/propertyTaxNotice-generateNotice.action?noticeType=Notice125&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Recovery') {
 				window.location="../recovery/recovery-newform.action?propertyId="+indexNum;
 			} else if (selectedValue == 'Assessment Data update') {				
-				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+assessmentNum;
 			} else if (selectedValue == 'Edit Demand') {				
 				window.location="../edit/editDemand-newEditForm.action?propertyId="+indexNum;
 			} else if (selectedValue == 'Edit Property Data') {				
-				window.location="../modify/modifyProperty-editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+indexNum;
+				window.location="../modify/modifyProperty-editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+assessmentNum;
 			}
 	    }
 
@@ -128,8 +128,8 @@ document.viewform.submit();
 									title="Index Number/ &#2311;&#2306;&#2337;&#2375;&#2325;&#2381;&#2360; &#2325;&#2381;&#2352;&#2350;&#2366;&#2306;&#2325;"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
-									<a href="../view/viewProperty!viewForm.action?propertyId=${currentRowObject.indexNum}" >
-										${currentRowObject.indexNum} </a>
+									<a href="../view/viewProperty!viewForm.action?propertyId=${currentRowObject.assessmentNum}" >
+										${currentRowObject.assessmentNum} </a>
 								</display:column>
 								<display:column property="parcelId"
 									title="Parcel Id/ &#2346;&#2366;&#2352;&#2381;&#2360;&#2354; &#2310;&#2351;.&#2337;&#2368;"
@@ -159,7 +159,7 @@ document.viewform.submit();
 									media="html" class="blueborderfortd" style="text-align:center">
 									<select id="actionValue" name="actionValue"
 										style="align: center"
-										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.indexNum}"/>')">
+										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">
 										<option value="">
 											<br>
 											----Choose----

@@ -72,11 +72,11 @@
 			    </div>
 			</s:if>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
-						<s:form action="searchProperty" name="indexform" theme="simple" id="indexform">
+						<s:form action="searchProperty" name="assessmentform" theme="simple" id="assessmentform">
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
-										<s:text name="search.index.num" />									
+										<s:text name="search.assessment.num" />									
 									</div>									
 								</td>
 							</tr>					
@@ -89,7 +89,7 @@
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="indexNum" id="indexNum" value="%{indexNum}" maxlength="30"/>
+									<s:textfield name="assessmentNum" id="assessmentNum" value="%{assessmentNum}" maxlength="30"/>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>
@@ -99,8 +99,8 @@
 								<td class="greybox" colspan="2">
 								   <br/>
 									<div class="greybox" style="text-align:center">
-										<s:hidden id="mode" name="mode" value="index"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByIndex.action', 'indexform');"></s:submit>
+										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
+										<s:submit name="search" value="Search" cssClass="buttonsubmit" onclick="return onSubmit('searchProperty-srchByAssessment.action', 'assessmentform');"></s:submit>
 									</div>
 								</td>
 								<td class="greybox">&nbsp;</td>
@@ -185,7 +185,7 @@
 				</table>
 				
 				<table  border="0" cellspacing="0" cellpadding="0" width="100%">
-				<s:form name="areaform" theme="simple" id="locationform">
+				<s:form name="locationform" theme="simple" id="locationform">
 					<tr>
 						<td width="100%" colspan="4" class="headingbg">												
 							<div class="headingbg">					
@@ -255,8 +255,6 @@
 							</div>
 						</td>
 					</tr>
-					
-					
 					
 					<tr>
 					  <td class="bluebox" style="text-align:center;" colspan="4">
