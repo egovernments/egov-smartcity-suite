@@ -39,6 +39,7 @@
  */
 package org.egov.infra.web.struts.actions;
 
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.RequestAware;
@@ -104,9 +106,13 @@ public abstract class BaseFormAction extends ActionSupport
         Object relation = null;
         if (ids != null && ids.length > 0) {
             final String id = ids[0];
-            if (id != null && id.length() > 0)
+            if (StringUtils.isNotBlank(id) && Long.valueOf(id) > 0)
                 try {
-                    relation = getPersistenceService().load(Long.valueOf(id), class1);
+                    final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
+                    if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
+                        relation = getPersistenceService().load(Long.valueOf(id), class1);
+                    else
+                        relation = getPersistenceService().load(Integer.valueOf(id), class1);
                     setValue(relationshipName, relation);
 
                 } catch (final Exception iae) {

@@ -407,12 +407,12 @@ public class TransferPropertyAction extends WorkflowAction {
             addActionError(getText("mandatory.applicant.date.beforeCurr"));
         if (propertyMutation.getApplicantName() == null || propertyMutation.getApplicantName().equals(""))
             addActionError(getText("mandatory.applicant.name"));
-        if (propertyMutation.getPropMutationMstr() == null || propertyMutation.getPropMutationMstr().getIdMutation() == -1)
+        if (propertyMutation.getPropMutationMstr() == null || propertyMutation.getPropMutationMstr().getId() == -1)
             addActionError(getText("mandatory.trRsnId"));
         else {
             final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPersistenceService().find(
                     "from PropertyMutationMaster PM where PM.idMutation = ?",
-                    propertyMutation.getPropMutationMstr().getIdMutation());
+                    propertyMutation.getPropMutationMstr().getId());
 
             if (propMutMstr != null || StringUtils.isNotEmpty(propMutMstr.getMutationName()))
                 if (propMutMstr.getMutationName().equals("SALE DEED")) {
@@ -470,7 +470,7 @@ public class TransferPropertyAction extends WorkflowAction {
     private void setWFPropertyMutation(final PropertyMutation propMutation) {
         final PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 
-        transRsnId = propMutation.getPropMutationMstr().getIdMutation().toString();
+        transRsnId = propMutation.getPropMutationMstr().getId().toString();
         setMobileNo(getBasicProperty().getAddress().getUser().getMobileNumber());
         setEmail(getBasicProperty().getAddress().getUser().getEmailId());
         setOldOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));

@@ -47,110 +47,101 @@
 package org.egov.ptis.domain.entity.property;
 
 public class PropertyMutationMaster {
-	private Long idMutation = null;
-	private String mutationName = null;
-	private String mutationDesc = null;
-	private String type = null;
-	private String code = null;
-	private String orderId = null;
+    private Long id = null;
+    private String mutationName = null;
+    private String mutationDesc = null;
+    private String type = null;
+    private String code = null;
+    private String orderId = null;
 
-	/**
-	 * @return Returns the idMutation.
-	 */
-	public Long getIdMutation() {
-		return idMutation;
-	}
+    /**
+     * @return Returns the idMutation.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param idMutation
-	 *            The idMutation to set.
-	 */
-	public void setIdMutation(Long idMutation) {
-		this.idMutation = idMutation;
-	}
+    /**
+     * @param idMutation
+     *            The idMutation to set.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return Returns the mutationDesc.
-	 */
-	public String getMutationDesc() {
-		return mutationDesc;
-	}
+    /**
+     * @return Returns the mutationDesc.
+     */
+    public String getMutationDesc() {
+        return mutationDesc;
+    }
 
-	/**
-	 * @param mutationDesc
-	 *            The mutationDesc to set.
-	 */
-	public void setMutationDesc(String mutationDesc) {
-		this.mutationDesc = mutationDesc;
-	}
+    /**
+     * @param mutationDesc
+     *            The mutationDesc to set.
+     */
+    public void setMutationDesc(String mutationDesc) {
+        this.mutationDesc = mutationDesc;
+    }
 
-	/**
-	 * @return Returns the mutationName.
-	 */
-	public String getMutationName() {
-		return mutationName;
-	}
+    /**
+     * @return Returns the mutationName.
+     */
+    public String getMutationName() {
+        return mutationName;
+    }
 
-	/**
-	 * @param mutationName
-	 *            The mutationName to set.
-	 */
-	public void setMutationName(String mutationName) {
-		this.mutationName = mutationName;
-	}
+    /**
+     * @param mutationName
+     *            The mutationName to set.
+     */
+    public void setMutationName(String mutationName) {
+        this.mutationName = mutationName;
+    }
 
-	/**
-	 * @return Returns the type.
-	 */
-	public String getType() {
-		return type;
-	}
+    /**
+     * @return Returns the type.
+     */
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * @param type
-	 *            The type to set.
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * @param type
+     *            The type to set.
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * @param code
+     *            the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	/**
-	 * @return the orderId
-	 */
-	public String getOrderId() {
-		return orderId;
-	}
+    /**
+     * @return the orderId
+     */
+    public String getOrderId() {
+        return orderId;
+    }
 
-	/**
-	 * @param orderId
-	 *            the orderId to set
-	 */
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+    /**
+     * @param orderId
+     *            the orderId to set
+     */
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder objStr = new StringBuilder();
-
-		objStr.append("Id: ").append(getIdMutation()).append("|Name: ").append(getMutationName())
-				.append("|Type: ").append(getType());
-
-		return objStr.toString();
-	}
 }

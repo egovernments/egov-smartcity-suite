@@ -1170,7 +1170,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		
 		
 		
-		setMutationId(basicProp.getPropertyMutationMaster().getIdMutation());
+		setMutationId(basicProp.getPropertyMutationMaster().getId());
 		PropertyAddress propAddress = basicProp.getAddress();
 		setHouseNumber(propAddress.getHouseNoBldgApt());
 		
