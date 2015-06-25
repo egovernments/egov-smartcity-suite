@@ -43,93 +43,55 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table style="width:100%;">
 	<!-- Body Begins -->
 	<tr>
 		<td class="greybox" width="5%"></td>
-		<td class="greybox" width="20%">
-			<s:text name="prop.Id" />
-			:
-		</td>
-		<td class="greybox"  width="25%">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.upicNo}" /> </span>
-		</td>
-		<td class="greybox" width="25">
-			<s:text name="prntPropIndexNum" />
-			:
-		</td>
-		<td class="greybox"  width="25%">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProperty.upicNo}" /> </span>
-		</td>
-		
-		
-		
-		
+		<td class="greybox" width="20%"><s:text name="prop.Id" /> :</td>
+		<td class="greybox" width="25%"><span class="bold"><s:property
+					default="N/A" value="%{basicProperty.upicNo}" /> </span></td>
+		<td class="greybox" width="25"><s:text name="prntPropIndexNum" /> :</td>
+		<td class="greybox" width="25%"><span class="bold"><s:property default="N/A" value="%{basicProperty.upicNo}" /> </span></td>
 	</tr>
 	
 	<tr>
-	
 		<td class="greybox" width="5%"></td>
-		
-		<td class="bluebox">
-			<s:text name="OwnerName" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"> <s:property default="N/A"
-					value="%{viewMap.ownerName}" /> </span>
-		</td>
-		
-		<td class="bluebox" width="20%">
-			<s:text name="fatherhusbandname"></s:text>
-			:
-		</td>
+		<td class="bluebox" width="20%"><s:text name="fatherhusbandname"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold"><s:property default="N/A" value="%{viewMap.ownerName}" /> </span>
 		</td>
-	
 	</tr>
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
+		<td class="greybox"><s:text name="PropertyAddress" /> :</td>
 		<td class="greybox">
-			<s:text name="PropertyAddress" />
-			:
+			<span class="bold">
+			  <s:property default="N/A" value="%{viewMap.propAddress}" /> 
+		    </span>
 		</td>
-		<td class="greybox">
-			<span class="bold"><s:property default="N/A"
-					value="%{viewMap.propAddress}" /> </span>
-		</td>
-		
+		<td class="bluebox"><s:text name="CorrAddr" /> :</td>
 		<td class="bluebox">
-			<s:text name="CorrAddr" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{viewMap.ownerAddress}" /> </span>
+			<span class="bold">
+			 <s:property default="N/A" value="%{viewMap.ownerAddress}" /> 
+			</span>
 		</td>
 		
 	</tr>
 	<tr>
 	<td class="greybox" width="5%"></td>
-	
-	<td class="bluebox" width="20%">
-			<s:text name="Zone" />
-			:
-		</td>
+
+		<td class="bluebox" width="20%"><s:text name="Zone" /> :</td>
 		<td class="bluebox">
-			<span class="bold"><s:property
-					value="%{basicProperty.boundary.parent.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProperty.boundary.parent.name}" /> </span>
+			<span class="bold">
+			 <s:property
+					value="%{basicProperty.boundary.parent.boundaryNum}" />-
+			 <s:property
+					default="N/A" value="%{basicProperty.boundary.parent.name}" /> 
+			</span>
 		</td>
-		
-		<td class="greybox">
-			<s:text name="Ward" />
-			:
-		</td>
+
+		<td class="greybox"><s:text name="Ward" /> :</td>
 		<td class="greybox">
 			<span class="bold"><s:property
 					value="%{basicProperty.boundary.boundaryNum}" />-<s:property
@@ -140,21 +102,15 @@
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
-		
-		
-		<td class="bluebox">
-			<s:text name="block" />
-			:
-		</td>
+
+		<td class="bluebox"><s:text name="block" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
 				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
 			</span>
 		</td>
-		
-		<td class="bluebox">
-			<s:text name="vacantland.assmtno"></s:text>
-			:
+
+		<td class="bluebox"><s:text name="vacantland.assmtno"></s:text> :
 		</td>
 		<td class="bluebox">
 			<span class="bold">
@@ -166,22 +122,15 @@
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
-		
-		
-		<td class="bluebox">
-			<s:text name="extent.site"></s:text>
-			:
-		</td>
+
+		<td class="bluebox"><s:text name="extent.site"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
 				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
 			</span>
 		</td>
-		
-		<td class="bluebox">
-			<s:text name="extent.appurtntland"></s:text>
-			:
-		</td>
+
+		<td class="bluebox"><s:text name="extent.appurtntland"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
 				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
@@ -193,22 +142,16 @@
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
-		
-		
-		<td class="bluebox">
-			<s:text name="reg.docno"></s:text>
-			:
-		</td>
+
+
+		<td class="bluebox"><s:text name="reg.docno"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
 				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
 			</span>
 		</td>
-		
-		<td class="bluebox">
-			<s:text name="reg.docdate"></s:text>
-			:
-		</td>
+
+		<td class="bluebox"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
 				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
@@ -220,57 +163,76 @@
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
+
+
+		<td class="bluebox"><s:text name="ownership.type"></s:text> :</td>
+		<td class="bluebox">
+			<span class="bold">
+				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+			</span>
+		</td>
+	</tr>
+	
+	
+	<tr>
+		<td class="greybox" width="5%"></td>
+		<td class="bluebox"><s:text name="apartcomplex.name"></s:text> :
+		</td>
+		<td class="bluebox">
+			<span class="bold">
+				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+			</span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%"></td>
+		<td class="bluebox"><s:text name="annualvalue" /> :</td>
+		<td class="bluebox">
+			<span class="bold">
+				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+			</span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%"></td>
+		<td class="bluebox"><s:text name="effectivedt" /> :</td>
+		<td class="bluebox">
+			<span class="bold">
+				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
+			</span>
+		</td>
+	</tr>
+	
+	<tr>
+			<td colspan="5">
+				<div class="headingsmallbg">
+					<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+				</div>
+			</td>
+	</tr>
+	
+	<tr>
+	
+	<td colspan="5">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
+		    <tr>
+			    <th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
+			    <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
+				<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
+				<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+		    </tr>
+		    
+		    <tr>
+		        <td class="blueborderfortd">N/A</td>
+		        <td class="blueborderfortd">N/A</td>
+		        <td class="blueborderfortd">N/A</td>
+		        <td class="blueborderfortd">N/A</td>
+		    </tr>
 		
-		
-		<td class="bluebox">
-			<s:text name="ownership.type"></s:text>
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
-			</span>
-		</td>
-	</tr>
-	
-	
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox">
-			<s:text name="apartcomplex.name"></s:text>
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
-			</span>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox">
-			<s:text name="annualvalue"/>
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
-			</span>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%"></td>
-		<td class="bluebox">
-			<s:text name="effectivedt"/>
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold">
-				<s:property	default="N/A" value="%{basicProperty.partNo}" /> 
-			</span>
-		</td>
+		</table>
+	</td>
 	</tr>
 	
 	<tr>
@@ -284,19 +246,13 @@
 		
 	<tr>
 		<td class="greybox" width="5%"></td>
-		<td class="greybox">
-			<s:text name="floortype"></s:text>
-			:
-		</td>
+		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
 					value="%{basicProperty.gisReferenceNo}" /> </span>
 		</td>
-		
-		<td class="greybox">
-			<s:text name="rooftype"></s:text>
-			:
-		</td>
+
+		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
 					value="%{basicProperty.gisReferenceNo}" /> </span>
@@ -306,19 +262,13 @@
 	
 	<tr>
 		<td class="greybox" width="5%"></td>
-		<td class="greybox">
-			<s:text name="walltype"></s:text>
-			:
-		</td>
+		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
 					value="%{basicProperty.gisReferenceNo}" /> </span>
 		</td>
-		
-		<td class="greybox">
-			<s:text name="woodtype"></s:text>
-			:
-		</td>
+
+		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
 					value="%{basicProperty.gisReferenceNo}" /> </span>
@@ -507,10 +457,7 @@
 
 	<tr>
 	   <td class="bluebox" width="5%"></td>
-		<td class="greybox" colspan="2">
-			<s:text name="CurrentTax" />
-			:
-		</td>
+		<td class="greybox" colspan="2"><s:text name="CurrentTax" /> :</td>
 		<td class="greybox" colspan="2">
 			<span class="bold">Rs. <s:property default="N/A"
 					value="%{viewMap.currTax}" /> </span>
@@ -518,10 +465,7 @@
 	</tr>
 	<tr>
 		<td class="bluebox" width="5%"></td>
-		<td class="bluebox" colspan="2">
-			<s:text name="CurrentTaxDue" />
-			:
-		</td>
+		<td class="bluebox" colspan="2"><s:text name="CurrentTaxDue" /> :</td>
 		<td class="bluebox" colspan="2">
 			<span class="bold">Rs. <s:property default="N/A"
 					value="%{viewMap.currTaxDue}" /> </span>
@@ -529,10 +473,7 @@
 	</tr>
 	<tr>
 		<td class="greybox" width="5%"></td>
-		<td class="greybox" colspan="2">
-			<s:text name="ArrearsDue" />
-			:
-		</td>
+		<td class="greybox" colspan="2"><s:text name="ArrearsDue" /> :</td>
 		<td class="greybox" colspan="2">
 			<span class="bold">Rs. <s:property default="N/A"
 					value="%{viewMap.totalArrDue}" /> </span>

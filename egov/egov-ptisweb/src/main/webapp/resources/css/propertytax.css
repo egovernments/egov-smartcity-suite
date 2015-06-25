@@ -48,7 +48,7 @@ div.topbar {
 	border-bottom-width: 3px;
 	border-bottom-style: double;
 	border-bottom-color: #F5B36D;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 24px;
 	font-weight: normal;
 	color: #000000;
@@ -74,7 +74,7 @@ div.blueshadow {
 	}
 	
 h1.subhead {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 14px;
 	font-weight: bold;
 	color: #333333;
@@ -91,7 +91,7 @@ td.bluebox {
 	padding:8px 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 }
 
 td.bluebox2 {
@@ -106,7 +106,7 @@ td.bluebox2 {
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	}
 td.blueborderfortd {
 	background-color: #FFFFFF;
@@ -117,7 +117,7 @@ td.blueborderfortd {
 	padding-left: 5px;
 	color: #000000;
 	text-align: center;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -134,7 +134,7 @@ th.bluebgheadtd {
 	border-bottom-style: solid;
 	border-right-color: #DFDFDF;
 	border-bottom-color: #DFDFDF;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: semibold;
 	font-size: 10px;
 	font-weight: bold;
 	color: #333333;
@@ -162,7 +162,7 @@ td.totalbg {
 	padding-left: 5px;
 	color: #000000;
 	text-align: right;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -262,7 +262,7 @@ td.totalbg {
 	}
 	
 	div.insidecontent {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	color: #333333;
 	background-color: #F3F3F3;
@@ -316,7 +316,7 @@ td.totalbg {
 }
 .welcomestyles {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -327,7 +327,7 @@ td.totalbg {
 }
 .welcomestylearrow {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: bold;
 	margin-right: 25px;
@@ -343,7 +343,7 @@ td.totalbg {
 .welcomestylearrow1 {
 
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -360,7 +360,7 @@ td.totalbg {
 
 .loginboxnew1 {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -400,31 +400,31 @@ td.totalbg {
 	border-right-color: #D87D1C;
 	border-left-color: #D87D1C;
 	padding-top: 2px;
-	}
+}
+
 div.headingbg {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 14px;
+	font-family: semibold;
+	font-size:14px;
+	font-weight:bold;
 	color: #fff;
 	text-align: center;
 	padding: 10px 15px;
 	background-color: #F2851F;
     border-color: #F2851F;
-	font-weight: bold;
 }
 
 div.headingsmallbg {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-family: semibold;
+	font-size: 13px;
 	color: #fff;
 	background-color: #F2851F;
 	padding:10px 15px;
 	text-align: center;
-	font-weight: bold;
 	margin: 10px 0;
 }
 
 div.headingsmallbg1 {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #EFEFEF;
@@ -445,7 +445,7 @@ span.radiobox {
 .highlight2 {
 	font-size: 9px;
 	color: #000000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFCC;
 	line-height: 1.5em;
 	padding-top: 3px;
@@ -466,7 +466,7 @@ div.buttonsearch {
 input.button2 {
 	width: 170px;
 	height: 27px;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	color: #333333;
 	background-image: url(../image/buttonbglarge.gif);
 	text-align: center;
@@ -485,7 +485,7 @@ input.button2 {
 	}
 	
 div.displaydate {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #EFEFEF;
@@ -506,7 +506,7 @@ div.displaydate {
 
 .logouttext {
 	color: #CC0000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -519,7 +519,7 @@ div.displaydate {
 
 .logoutmessage {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: bold;
 	margin-right: 25px;
@@ -532,13 +532,13 @@ div.displaydate {
 }
 .fontlarge {
 	font-size:12px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-weight: bold;
 	color: #CC0000;
 }
 
 div.headingsmallbgnew {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #ECEDED;
@@ -560,7 +560,7 @@ div.searchvalue {
 	background-color: #FFFFFF;
 	font-size: 10px;
 	color: #339933;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	padding: 10px;
 	font-weight: bold;
 	text-align: right;
@@ -574,12 +574,12 @@ div.searchvalue {
 .searchvalue1 {
 	font-size: 10px;
 	color: #339900;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	margin-top: 8px;
 }
 
 .selectnew {
-font-family: Arial, Helvetica, sans-serif;
+font-family: regular;
 font-size: 11px;
 color: #000000;
 padding-top: 2px;
@@ -597,11 +597,11 @@ td.bluebox1{
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	}
 
 div.errormsg {
-	font-family:Verdana, Geneva, sans-serif;
+	font-family: regular;
 	font-size:9px;
 	color: #F00;
 	background-color:#FFF;
@@ -631,11 +631,11 @@ div.errortext {
 	font-weight: bold;
 	color: #F00;
 	text-align: center;
-   font-family: Arial, Helvetica, sans-serif;
+   font-family: regular;
 	
 } 
 .oopstext {
-	font-family:Verdana, Geneva, sans-serif;
+	font-family: regular;
 	font-size:20px;
 	font-weight:bold;
 	color:#F00;
@@ -672,7 +672,7 @@ td.blueborderfortd2 {
 	padding-left: 5px;
 	color: #000000;
 	text-align: right;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -689,7 +689,7 @@ td.total{
 	padding-left: 5px;
 	color: #000;
 	text-align: right;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-weight:bold;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -710,7 +710,7 @@ td.blueboxWFH {
  	padding-left: 5px;
  	color: #000000;
  	text-align: left;
- 	font-family: Verdana, Arial, Helvetica, sans-serif;
+ 	font-family: regular;
 	}
 td.blueboxTamilFont {
 	background-color: #FDF7F0;

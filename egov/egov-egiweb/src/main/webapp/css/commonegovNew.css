@@ -50,25 +50,25 @@ body {
 	   
 a:link {
 	color: #0066cc;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	}
 	
 a:visited {
 	color: #0066cc;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	}
 	
 a:hover {
 	color: #CC0000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	}
 
 a:active {
 	color: #0066cc;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 10px;
 	}
 
@@ -204,6 +204,7 @@ div.formmainbox {
 	border:1px solid #F2851F;
 	border-radius:3px;
 	display:inline-block;
+	width:100%;
 	}	
 
 td.greybox {
@@ -212,11 +213,11 @@ td.greybox {
 	padding:8px 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	}
 	
 #select {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #FFFFFF;
@@ -228,7 +229,7 @@ td.greybox {
 	}
 	
 textarea {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	padding: 6px 12px;
@@ -236,7 +237,7 @@ textarea {
 
 
 input {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #FFFFFF;
@@ -248,7 +249,7 @@ input {
 	}
 	
 input.amount {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #FFFFFF;
@@ -264,7 +265,7 @@ input.amount {
 
 
 input.tablerow {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #333333;
 	background-color: #FFFFFF;
@@ -277,7 +278,7 @@ input.tablerow {
 	}
 
 input.hiddenslno {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #eceded;
@@ -291,7 +292,7 @@ input.hiddenslno {
 	}
 	
 td.greybox  input.hiddentext {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	background-color: #eceded;
@@ -306,7 +307,7 @@ td.greybox  input.hiddentext {
 
 input.buttonsubmit, input.button {
 	width: 133px;
-	font-family: Arial,Helvetica,sans-serif;
+	font-family: semibold;
 	text-align: center;
 	border-style: none;
 	font-size: 12px;
@@ -341,6 +342,7 @@ input.buttonsubmit:hover, input.buttonsubmit:active, input.buttonsubmit:focus, i
 	}
 .bold {
 	font-weight: bold;	
+	font-family:semibold;
 	}
 	
 div.buttonbottom {
@@ -348,7 +350,7 @@ div.buttonbottom {
 	margin-top: 10px;
 	padding: 15px;
 	background-color:#fff;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000000;
 	}
@@ -357,7 +359,7 @@ div.commontopyellowbg {
 	background-image:url(../images/commonnewTopbg.jpg);
 	background-color: #ffad01;
 	background-position: right bottom;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 20px;
 	font-weight: bold;
 	color: #FFF;
@@ -373,7 +375,7 @@ div.commontopbluebg {
 	background-image:url(../images/commonnewTop2bg.jpg);
 	background-color: #486f9f;
 	background-position: right bottom;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #cccccc;
 	text-align: left;
@@ -390,13 +392,13 @@ div.commontopdate {
 	width:150px;
 	float:right;
 	text-align: right;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #000;
 }
 div.commontopbreadc {
 	background-color: #FFF;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 11px;
 	color: #999;
 	text-align: left;
@@ -413,7 +415,7 @@ div.commontopbreadc {
 }
 
 .commonbcarrow {
-	font-family:Verdana, Geneva, sans-serif;
+	font-family: regular;
 	color:#416a9c;
 	font-weight: bold;
 	font-size:10px;
