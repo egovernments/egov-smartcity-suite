@@ -43,7 +43,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title><s:text name='ModProp.title' />--</title>
+		<s:if test="modifyRsn=='AMALG'">
+			<title><s:text name='AmalgProp.title' /></title>
+		</s:if>
+		<s:if test="modifyRsn=='BIFURCATE'">
+			<title><s:text name='BifurProp.title' /></title>
+		</s:if>
+		<s:if test="modifyRsn=='MODIFY' || modifyRsn=='OBJ' || modifyRsn=='DATA_ENTRY' || modifyRsn='ADD OR ALTER'">
+			<title><s:text name='ModProp.title' /></title>
+		</s:if>
 		<sx:head />
 
        <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
@@ -138,7 +146,7 @@
 					populateUnitTypeCatAndUsageOnValidationErrors();
 				}
 			}
-		*/
+			*/
 			var modifyReason = "";
 			function enableCourtRulingDets() {
 				if (document.forms[0].reasonForModify != undefined) {
@@ -158,8 +166,8 @@
 					document.getElementById("JudgmtDetsRow").style.display = "none"; */
 				}
 			}
-		/*
-			var targetitem = "";
+		
+			/* var targetitem = "";
 			function getAmalgPropStatus(obj) {
 				var index = getRow(obj).rowIndex;
 				if (document.forms[0].amalgPropIds.length == undefined) {
@@ -208,7 +216,8 @@
 								break;
 							}
 						}
-					}
+					} 
+
 					if (UsageTypeFlag == 'Residential') {
 						if (indexval == 0) {
 							document.getElementById("width").value = "";
@@ -454,12 +463,6 @@
 					<s:text name="ModProp.title" />
 				</div>
  					   <%@ include file="modifyPropertyForm.jsp"%>
-					<!-- <div id="loadingMask" style="display: none">
-						<p align="center">
-							<img src="/egi/resources/erp2/images/bar_loader.gif"> <span
-								id="message"><p style="color: red">Please wait....</p></span>
-						</p>
-					</div> -->
 					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 					<s:hidden id="indexNumber" name="indexNumber"
 						value="%{indexNumber}" />
@@ -467,24 +470,15 @@
 					<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
 					<s:hidden id="propAddress" name="propAddress"
 						value="%{propAddress}" />
-					<%--<tr>
-							<td><s:submit value="Data Entry" name="Save"
-									id="Modify:Save" method="save" cssClass="buttonsubmit"
-									onclick="setModificationType();setWorkFlowInfo(this);return submitMsg();doLoadingMask();" /></td>
-							<td><s:submit value="Forward" name="Forward"
-									id="Modify:Forward" method="forwardModify"
-									cssClass="buttonsubmit"
-									onclick="setWorkFlowInfo(this);return approveForwardMsg();doLoadingMask();" /></td>
-							<td><input type="button" name="button2" id="button2"
-								value="Close" class="button" onclick="window.close();" /></td>
-						</tr> --%>
-					
-				<%@ include file="../workflow/property-workflow.jsp"%>
-				<div class="buttonbottom" align="center">
-				 	<s:submit value="Approve" name="Approve"
-						id="Modify:Approve"  cssClass="buttonsubmit"
-						onclick="return onSubmit('modifyProperty-save.action');"/>
-				</div>
+
+					<%@ include file="../workflow/property-workflow.jsp"%>
+					<div class="buttonbottom" align="center">
+						<s:submit value="Forward" name="Forward" id="Modify:Forward"
+							method="forwardModify" cssClass="buttonsubmit"
+							onclick="return onSubmit('modifyProperty-forward.action');" />
+						<input type="button" name="button2" id="button2" value="Close"
+							class="button" onclick="window.close();" />
+					</div>
 			</div>
 			
 		</s:push>

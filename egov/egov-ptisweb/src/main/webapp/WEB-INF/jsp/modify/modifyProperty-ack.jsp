@@ -54,33 +54,26 @@
 			<div class="formmainbox">
 				<div class="formheading"></div>
 
-				<s:if test="modifyRsn == 'DATA_UPDATE'">
-					<div class="headingbg">
-						<s:text name="assessmentDataUpdate" />
-					</div>
-				</s:if>
-				<s:else>
 					<div class="headingbg">
 						<s:text name="ModifyPropAckHeader" />
 					</div>
-				</s:else>
 
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td colspan="5" style="background-color: #FDF7F0; font-size: 15px;"	align="center">
-								<span class="bold">
-									<s:property value="%{ackMessage}" />
-								</span> 
-								<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProp.upicNo}"/>'>
-									<s:property value="%{basicProp.upicNo}" />
-								</a>
-						</td>
-					</tr>
-				</table>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td colspan="5" style="background-color: #FDF7F0; font-size: 15px;"	align="center">
+									<span class="bold">
+										<s:property value="%{ackMessage}" />
+									</span> 
+									<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProp.upicNo}"/>'>
+										<s:property value="%{basicProp.upicNo}" />
+									</a>
+							</td>
+						</tr>
+					</table>
 			</div>
 			<div class="buttonbottom" align="center">
-				<td><input type="button" name="button2" id="button2"
-					value="Close" class="button" onclick="window.close();" /></td>
+				<input type="button" name="button2" id="button2"
+					value="Close" class="button" onclick="window.close();" />
 			</div>
 		</s:push>
 	</s:form>

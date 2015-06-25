@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPER
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PIPE_CHAR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_COURT_RULE;
@@ -73,11 +74,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BY
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_BASICPROPID_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
@@ -106,11 +109,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
@@ -163,7 +169,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({ @Result(name = "ack", location = "modify/modifyProperty-ack.jsp"),
 	@Result(name = "edit", location = "modify/modifyProperty-new.jsp"),
 	@Result(name = "new", location = "modify/modifyProperty-new.jsp"),
-	@Result(name = "view", location = "/modifyProperty-view.jsp")})
+	@Result(name = "view", location = "modify/modifyProperty-view.jsp"),
+	@Result(name = "workFlowError", location = "workflow/workflow-error.jsp")})
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
 	private static final String RESULT_ACK = "ack";
@@ -267,6 +274,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private Long wallTypeId;
 	private Long woodTypeId;
 	private Long appartmentId;
+	private Boolean inWorkflow = Boolean.FALSE;
+	@Autowired
+	private SecurityUtils securityUtils;
+	@Autowired
+	private AssignmentService assignmentService;
 
 	public ModifyPropertyAction() {
 		super();
@@ -306,17 +318,16 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return target;
 	}
 
-	// FIX ME
 	private String populateFormData() {
 		LOGGER.debug("Entered into populateFormData");
 		String target = "";
-		// Map<String, String> wfMap = basicProp.getPropertyWfStatus();
+		Map<String, String> wfMap = basicProp.getPropertyWfStatus();
 		PropertyImpl propertyImpl = null;
-		String wfStatus = "FALSE";// wfMap.get(WFSTATUS);
-		if (wfStatus.equalsIgnoreCase("TRUE")) {
-			// getSession().put(WFOWNER, wfMap.get(WFOWNER));
+		String wfStatus = wfMap.get(WFSTATUS);
+		/*if (wfStatus.equalsIgnoreCase("TRUE")) {
+			getSession().put(WFOWNER, wfMap.get(WFOWNER));
 			target = "workFlowError";
-		} else {
+		} else {*/
 
 			setOldProperty((PropertyImpl) getBasicProp().getProperty());
 			if (propWF == null) {
@@ -458,7 +469,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 			setDocNumber(propertyModel.getDocNumber());
 			target = NEW;
-		}
+		/*}*/
 
 		LOGGER.debug("populateFormData - target : " + target + "\n Exiting from populateFormData");
 		return target;
@@ -478,28 +489,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		String currWfState = propertyModel.getState().getValue();
-		// Code commented for reverting work flow changes, do not remove.
-		/*
-		 * if (PTCREATOR_ROLE.equals(userRole) &&
-		 * !currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING) &&
-		 * (modifyRsn.equals(PROPERTY_MODIFY_REASON_BIFURCATE) ||
-		 * modifyRsn.equals(PROPERTY_MODIFY_REASON_AMALG) ||
-		 * modifyRsn.equals(PROPERTY_MODIFY_REASON_DATA_ENTRY) ||
-		 * modifyRsn.equals(PROPERTY_MODIFY_REASON_MODIFY) || modifyRsn
-		 * .equals(PROPERTY_MODIFY_REASON_OBJ))) {
-		 * 
-		 * if (basicProp.getUpicNo() != null &&
-		 * !basicProp.getUpicNo().isEmpty()) {
-		 * setIndexNumber(basicProp.getUpicNo()); }
-		 * 
-		 * modifyForm(); if (!modifyRsn.equals(PROPERTY_MODIFY_REASON_BIFURCATE)
-		 * && !modifyRsn.equals(PROPERTY_MODIFY_REASON_AMALG)) { if
-		 * (propertyModel.getAreaBndry() != null) {
-		 * setAreaId(propertyModel.getAreaBndry().getId().toString()); } else {
-		 * setAreaId(basicProp.getPropertyID().getArea().getId().toString()); }
-		 * } return NEW; }
-		 */
-
+		populateFormData();
 		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerSet());
 
 		amalgPropIds = new String[10];
@@ -582,24 +572,24 @@ public class ModifyPropertyAction extends WorkflowAction {
 			propertyAddr.getUser().setMobileNumber(isBlank(addFields[4]) ? null : addFields[4]);
 			propertyAddr.getUser().setEmailId(isBlank(addFields[5]) ? null : addFields[5]);
 
-			parcelId = isBlank(addFields[10]) ? null : addFields[10];
+			/*parcelId = isBlank(addFields[10]) ? null : addFields[10];
 			northBound = isBlank(addFields[11]) ? null : addFields[11];
 			southBound = isBlank(addFields[12]) ? null : addFields[12];
 			eastBound = isBlank(addFields[13]) ? null : addFields[13];
-			westBound = isBlank(addFields[14]) ? null : addFields[14];
+			westBound = isBlank(addFields[14]) ? null : addFields[14];*/
 		} else {
 			propertyAddr = basicProp.getAddress();
-			parcelId = basicProp.getGisReferenceNo();
+			/*parcelId = basicProp.getGisReferenceNo();
 			northBound = basicProp.getPropertyID().getNorthBoundary();
 			southBound = basicProp.getPropertyID().getSouthBoundary();
 			eastBound = basicProp.getPropertyID().getEastBoundary();
-			westBound = basicProp.getPropertyID().getWestBoundary();
+			westBound = basicProp.getPropertyID().getWestBoundary();*/
 		}
 
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		setDocNumber(propertyModel.getDocNumber());
-		setPropertyCategory((Category) persistenceService.find("from Category c where c.id = ?",
-				Long.valueOf(propertyModel.getPropertyDetail().getExtra_field6())));
+		/*setPropertyCategory((Category) persistenceService.find("from Category c where c.id = ?",
+				Long.valueOf(propertyModel.getPropertyDetail().getExtra_field6())));*/
 		LOGGER.debug("view: ModifyReason: " + getModifyRsn());
 		LOGGER.debug("Exiting from view");
 		return VIEW;
@@ -784,6 +774,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				: oldProperty.getRemarks().concat(objectionRemarks));
 	}
 
+	@Action(value = "/modifyProperty-forward")
 	public String forwardModify() {// when creator(role) forwards
 		LOGGER.debug("forwardModify: Modify property started " + propertyModel);
 		long startTimeMillis = System.currentTimeMillis();
@@ -801,7 +792,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		oldProperty = (PropertyImpl) basicProp.getProperty();
 		modifyBasicProp(getDocNumber());
-		transitionWorkFlow();
+		initiateWorkflow();
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
 		if (propWF != null && modifyReasons.contains(modifyRsn)) {
@@ -827,7 +818,25 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
+	private void initiateWorkflow() {
+		User user = securityUtils.getCurrentUser();
+		final DateTime currentDate = new DateTime();
+		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+		Assignment approverAssignment = assignmentService
+				.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
+		if (approverAssignment != null) {
+			propertyModel.transition().start().withSenderName(user.getName())
+					.withComments(getWorkflowBean().getComments())
+					.withDateInfo(currentDate.toDate()).withStateValue(WFLOW_ACTION_NAME_MODIFY)
+					.withOwner(approverAssignment.getPosition())
+					.withNextAction(userAssignment.getDesignation().getName() + " Created");
+			basicPrpertyService.applyAuditing(propertyModel.getState());
+			propertyImplService.persist(propertyModel);
+		}
+	}
+
 	@SkipValidation
+	@Action(value = "/modifyProperty-forwardView")
 	public String forwardView() // when validator(role) forwards
 	{
 		LOGGER.debug("Entered into forwardView");
@@ -844,7 +853,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 			LOGGER.debug("forwardView: Exiting forwardView with validation errors");
 			return "view";
 		}
-		transitionWorkFlow();
+		//transitionWorkFlow();
+		updateWorkflow();
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		prepareAckMsg();
 		addActionMessage(getText("property.forward.success",
@@ -853,7 +863,25 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
+	private void updateWorkflow() {
+		User user = securityUtils.getCurrentUser();
+		final DateTime currentDate = new DateTime();
+		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+		Assignment approverAssignment = assignmentService.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
+		if(approverAssignment!=null){
+			propertyModel.transition().withSenderName(user.getName())
+					.withComments(getWorkflowBean().getComments())
+					.withDateInfo(currentDate.toDate())
+	                .withStateValue(WFLOW_ACTION_NAME_MODIFY)
+			        .withOwner(approverAssignment.getPosition())
+			        .withNextAction(userAssignment.getDesignation().getName() + " Verified");
+			basicPrpertyService.applyAuditing(propertyModel.getState());
+			propertyImplService.persist(propertyModel);
+		}
+	}
+
 	@SkipValidation
+	@Action(value = "modifyProperty-approve")
 	public String approve() {
 		LOGGER.debug("Enter method approve");
 		amalgPropIds = new String[10];
@@ -868,8 +896,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 					basicProp.getPropertyID().getWard().getBoundaryNum().toString());
 			basicProp.setUpicNo(indexNum);
 		}
-
-		transitionWorkFlow();
+		propertyModel.transition().end();
+		//transitionWorkFlow();
 		int i = 0;
 		for (PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
 			if (propstatval.getIsActive().equals("Y")) {
@@ -889,7 +917,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if ((basicProp.getAllChangesCompleted() != null && basicProp.getAllChangesCompleted())
 				|| (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
 						|| PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn))) {
-			createVoucher(); // Creates voucher
+			//createVoucher(); // Creates voucher
 		}
 
 		if (PROPERTY_MODIFY_REASON_OBJ.equalsIgnoreCase(modifyRsn)) {
@@ -930,15 +958,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 					&& !PROPERTY_MODIFY_REASON_BIFURCATE.equals(getModifyRsn())) {
 				if (propertyModel.getAreaBndry() != null) {
 					basicProp.getPropertyID().setArea(propertyModel.getAreaBndry());
-					// FIX ME
 					// basicProp.getAddress().setBlock(propertyModel.getAreaBndry().getName());
 				}
 			}
 
 			propertyModel.setStatus(STATUS_ISACTIVE);
 			oldProperty.setStatus(STATUS_ISHISTORY);
-			propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
-			endWorkFlow(oldProperty);
+			// FIX ME
+			//propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+			//endWorkFlow(oldProperty);
 		}
 		// upload docs
 		processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
@@ -960,7 +988,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propertyModel.setExtra_field6(null);
 		basicPrpertyService.update(basicProp);
 		setBasicProp(basicProp);
-
+		setAckMessage(getText("property.approve.success",
+				new String[] { propertyModel.getBasicProperty().getUpicNo() }));
 		addActionMessage(getText("property.approve.success",
 				new String[] { propertyModel.getBasicProperty().getUpicNo() }));
 		LOGGER.debug("Exiting approve");
@@ -968,6 +997,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/modifyProperty-reject")
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
 		propertyModel = (PropertyImpl) getPersistenceService()
@@ -983,7 +1013,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 		setBasicProp(basicProperty);
 		LOGGER.debug("reject: BasicProperty: " + basicProperty);
-		transitionWorkFlow();
+		//transitionWorkFlow();
+		propertyModel.setStatus(STATUS_CANCELLED);
+		propertyModel.transition().end();
+		propertyImplService.update(propertyModel);
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		setAckMessage("Property Rejected Successfully and forwarded to initiator : "
 				+ propertyModel.getCreatedBy().getUsername() + " with Index Number : ");
@@ -1138,8 +1171,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		Date propCompletionDate = null;
 		String mutationCode = null;
-		//Character status = STATUS_WORKFLOW;
-		Character status = STATUS_ISACTIVE;
+		Character status = STATUS_WORKFLOW;
 		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO
 				.getPropertyTypeMasterById(Integer.valueOf(propTypeId));
 		if (!proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
@@ -1871,12 +1903,12 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private void prepareAckMsg() {
 		LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
-		User approverUser = userService
-				.getUserById(getWorkflowBean().getApproverUserId().longValue());
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
 
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
-				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
+				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)
+				|| PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
 			setAckMessage(getText("property.modify.forward.success",
 					new String[] { approverUser.getUsername() }));
 		} else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
@@ -2821,6 +2853,22 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setBasicPrpertyService(PropertyPersistenceService basicPrpertyService) {
 		this.basicPrpertyService = basicPrpertyService;
+	}
+
+	public Boolean getInWorkflow() {
+		return inWorkflow;
+	}
+
+	public void setInWorkflow(Boolean inWorkflow) {
+		this.inWorkflow = inWorkflow;
+	}
+
+	public void setSecurityUtils(SecurityUtils securityUtils) {
+		this.securityUtils = securityUtils;
+	}
+
+	public void setAssignmentService(AssignmentService assignmentService) {
+		this.assignmentService = assignmentService;
 	}
 
 }

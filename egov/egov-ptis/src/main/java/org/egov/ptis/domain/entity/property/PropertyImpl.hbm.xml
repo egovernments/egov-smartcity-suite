@@ -145,7 +145,7 @@
 		<many-to-one name="installment" class="org.egov.commons.Installment"
 			column="ID_INSTALLMENT" />
 				
-		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="save-update">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID"/>
 		</many-to-one>
 		

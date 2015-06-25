@@ -47,6 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -62,7 +63,6 @@ import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -829,10 +829,16 @@ public class PropertyImpl extends StateAware implements Property {
         this.id = id;
     }
     
-    @Override
-    public String myLinkId() {
-    	return "/ptis/create/createProperty-view.action"+"?modelId="+getId();
-    	
-    }
+	@Override
+	public String myLinkId() {
+		String url = null;
+		if (getState() != null && getState().getValue() != null
+				&& getState().getValue().equals(WFLOW_ACTION_NAME_MODIFY)) {
+			url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
+		} else {
+			url = "/ptis/create/createProperty-view.action" + "?modelId=" + getId();
+		}
+		return url;
+	}
 
 }
