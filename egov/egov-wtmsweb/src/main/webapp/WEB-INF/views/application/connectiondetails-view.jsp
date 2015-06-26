@@ -40,6 +40,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -91,20 +93,23 @@
 				<th><spring:message code="lbl.documentdate" /></th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr>
-				<td>1</td>
-				<td>Mohammed Aslam AR</td>
-				<td>4560</td>
-				<td>23/01/2014</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>Dinesh</td>
-				<td>6541</td>
-				<td>23/01/2014</td>
-			</tr>
-		</tbody>
+		<c:choose>
+			<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
+				<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">
+					<tbody>
+						<tr>
+							<td><c:out value="${serialNo.count}"/></td>
+							<td><c:out value="${docs.documentNames.documentName}" /></td>
+							<td><c:out value="${docs.documentNumber}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+						</tr>
+					</tbody>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<div class="col-md-3 col-xs-6 add-margin">No Documents found</div>
+			</c:otherwise>
+		</c:choose>
 	</table>
 <script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
