@@ -87,7 +87,7 @@
 			    <td class="greybox" width="10%"><s:text name="bank.branch.code"/></td>
 			    <td class="greybox" width="46%"><s:textfield id="bankBranch.branchcode" name="bankBranch.branchcode" /></td>
 			   	<td class="greybox" width="2%"><s:text name="bank.create.isactive"/></td>
-				<td class="greybox"><s:checkbox id="isactive" name="isactive" /> </td>
+				<td class="greybox"><s:checkbox id="isActive" name="isActive" value="%{isActive}"/></td>
 			</tr>
     		<tr>
     			<td class="bluebox" width="10%"></td>

@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -53,7 +53,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -67,192 +66,180 @@ import org.egov.infstr.ValidationException;
 import org.egov.services.masters.BankService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
-@Namespace("/masters")
 @Results({
-    @Result(name = BankAction.MODIFY, location = "/WEB-INF/jsp/masters/bank-modify.jsp"),
-    @Result(name = BankAction.SUCCESS, location = "/WEB-INF/jsp/masters/bank.jsp"),
-    @Result(name = BankAction.SEARCH, location = "/WEB-INF/jsp//masters/bank-search.jsp") })
+    @Result(name = BankAction.MODIFY, location = "bank-modify.jsp"),
+    @Result(name = BankAction.SUCCESS, location = "bank.jsp"),
+    @Result(name = BankAction.SEARCH, location = "bank-search.jsp") })
 public class BankAction extends BaseFormAction {
-	private static final long serialVersionUID = 1L;
-	private Bank bank = new Bank();
-	private boolean isActive;
-	public static final String MODIFY = "modify";
-	public static final String SEARCH = "search";
-	private String mode;
-	// For jquery BankName auto complete
-	private String term;
-	
-	@Qualifier("bankService")
+        private static final long serialVersionUID = 1L;
+        private Bank bank = new Bank();
+        private boolean isActive;
+        public static final String MODIFY = "modify";
+        public static final String SEARCH = "search";
+        private String mode;
+        // For jquery BankName auto complete
+        private String term;
+        
         private BankService bankService;
    
-    @Override
-	public void prepare() {
-		// DO NOTHING
-            if(bank.getId()!=null){
-                if(bank.getIsactive()!=0){
-                    isActive=true;
+ 
+        @Override
+        @SkipValidation
+        @Actions({
+            @Action(value="/masters/bank"), 
+            @Action(value="/masters/bank-execute")
+            })
+        public String execute() {
+                if ("MODIFY".equals(mode)) { 
+                        if (StringUtils.isBlank(bank.getName())) {
+                                return "search";
+                        }
+                        else {
+                                bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
+                                if(bank==null)
+                                {
+                                        return "search";
+                                }else{
+                                        if(bank.getIsactive()!=0){
+                                            isActive=true;
+                                        }
+                                        else
+                                            isActive=false;
+                                    return "modify";
+                                }
+                        }
+                } else if ("UNQ_NAME".equals(mode)) {
+                        checkUniqueBankName();
+                } else if ("UNQ_CODE".equals(mode)) {
+                        checkUniqueBankCode();
+                } else if ("AUTO_COMP_BANK_NAME".equals(mode)) {
+                        populateBankNames();
                 }
-                else
-                    isActive=false;
-            }
-	}
+                return SUCCESS;
+        }
 
-	@Override
-	@SkipValidation
-	@Actions({
-	    @Action(value="/masters/bank"), 
-	    @Action(value="/masters/bank-execute")
-	    })
-	public String execute() {
-		if ("MODIFY".equals(mode)) {
-			if (StringUtils.isBlank(bank.getName())) {
-				return "search";
-			}
-			else {
-				bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
-				if(bank==null)
-				{
-					return "search";
-				}else{
-				return "modify";
-				}
-			}
-		} else if ("UNQ_NAME".equals(mode)) {
-			checkUniqueBankName();
-		} else if ("UNQ_CODE".equals(mode)) {
-			checkUniqueBankCode();
-		} else if ("AUTO_COMP_BANK_NAME".equals(mode)) {
-			populateBankNames();
-		}
-		return SUCCESS;
-	}
+        @Override
+        public Object getModel() {
+                return bank;
+        }
 
-	@Override
-	public Object getModel() {
-		return bank;
-	}
-
-	@Transactional
         @Action(value="/masters/bank-save")
-	public String save() { 
-		try {
-		       if(getIsActive()){
-		           bank.setIsactive(1);
-		       }
-		       else
-		           bank.setIsactive(0);
-			if (bank.getId() == null) {
-				// TODO Dirty Code can be avoided by extending BaseModel for Bank
-				final Date currentDate = new Date();
-				bank.setCreated(currentDate);
-				bank.setLastmodified(currentDate);
-				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
-				bankService.persist(bank);
-			} else {
-				bank.setLastmodified(new Date());
-				bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
-				bankService.update(bank);
-			}
-			addActionMessage(getText("Bank Saved Successfully"));
-		} catch (final ConstraintViolationException e) {
-			throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Bank", "Duplicate Bank")));
-		} catch (final Exception e) {
-			addActionMessage(getText("Bank information can't be saved."));
-			throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator", "An error occured contact Administrator")));
-		}
-		return "modify";
-	}
+        public String save() { 
+                try {
+                       if(isActive){
+                           bank.setIsactive(1);
+                       }
+                       else
+                           bank.setIsactive(0);
+                     
+                        if (bank.getId() == null) {
+                                // TODO Dirty Code can be avoided by extending BaseModel for Bank
+                                final Date currentDate = new Date();
+                                bank.setCreated(currentDate);
+                                bank.setLastmodified(currentDate);
+                                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
+                                bankService.persist(bank);
+                        } else {
+                                bank.setLastmodified(new Date());
+                                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(EgovThreadLocals.getUserId())));
+                                bankService.update(bank);
+                        }
+                        addActionMessage(getText("Bank Saved Successfully"));
+                } catch (final ConstraintViolationException e) {
+                        throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Bank", "Duplicate Bank")));
+                } catch (final Exception e) {
+                        addActionMessage(getText("Bank information can't be saved."));
+                        throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator", "An error occured contact Administrator")));
+                }
+                return "modify";
+        }
 
-	 @Transactional
-	private void checkUniqueBankCode() {
-		final Bank bank = bankService.find("from Bank where code=?", this.bank.getCode());
-		writeToAjaxResponse(String.valueOf(bank == null));
-	}
+        
+        private void checkUniqueBankCode() {
+                final Bank bank = bankService.find("from Bank where code=?", this.bank.getCode());
+                writeToAjaxResponse(String.valueOf(bank == null));
+        }
 
-	 @Transactional
-	private void checkUniqueBankName() {
-		final Bank bank = bankService.find("from Bank where name=?", this.bank.getName());
-		writeToAjaxResponse(String.valueOf(bank == null));
-	}
+        private void checkUniqueBankName() {
+                final Bank bank = bankService.find("from Bank where name=?", this.bank.getName());
+                writeToAjaxResponse(String.valueOf(bank == null));
+        }
 
-	 @Transactional
-	private void populateBankNames() {
-		final JSONArray jsonArray = new JSONArray(persistenceService.findAllBy("select name FROM Bank WHERE lower(name) like ?", StringUtils.lowerCase(term + "%")));
-		writeToAjaxResponse(jsonArray.toString());
-	}
 
-	public String getBankAccountTypesJSON() {
-		final StringBuilder bankAcTypesJson = new StringBuilder(":;");
-		for (final BankAccountType value : BankAccountType.values()) {
-			bankAcTypesJson.append(value.name()).append(":").append(value.name()).append(";");
-		}
-		bankAcTypesJson.deleteCharAt(bankAcTypesJson.lastIndexOf(";"));
-		return bankAcTypesJson.toString();
-	}
+        private void populateBankNames() {
+                final JSONArray jsonArray = new JSONArray(persistenceService.findAllBy("select name FROM Bank WHERE lower(name) like ?", StringUtils.lowerCase(term + "%")));
+                writeToAjaxResponse(jsonArray.toString());
+        }
 
-	 @Transactional
-	public String getFundsJSON() { 
-		final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", 1);
-		final StringBuilder fundJson = new StringBuilder(":;");
-		for (final Object [] fund : funds) {
-			fundJson.append((Integer)fund[0]).append(":").append(fund[1]).append(";");
-		}
-		fundJson.deleteCharAt(fundJson.lastIndexOf(";"));
-		return fundJson.toString();
-	}
+        public String getBankAccountTypesJSON() {
+                final StringBuilder bankAcTypesJson = new StringBuilder(":;");
+                for (final BankAccountType value : BankAccountType.values()) {
+                        bankAcTypesJson.append(value.name()).append(":").append(value.name()).append(";");
+                }
+                bankAcTypesJson.deleteCharAt(bankAcTypesJson.lastIndexOf(";"));
+                return bankAcTypesJson.toString();
+        }
 
-	 @Transactional
-	public String getAccountTypesJSON() {
-		final List<Object[]> accounttypes = persistenceService.findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=3 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
-		final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
-		for (Object[] accType : accounttypes) {
-			accType[0] = org.egov.infstr.utils.StringUtils.escapeJavaScript((String)accType[0]); 
-			accountdetailtypeJson.append("\"").append(accType[1]+"#"+accType[0]).append("\"").append(":").append("\"").append(accType[0]).append("\"").append(",");
-		}
-		accountdetailtypeJson.deleteCharAt(accountdetailtypeJson.lastIndexOf(","));
-		return accountdetailtypeJson.append("}").toString();
-	}
+         
+        public String getFundsJSON() { 
+                final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", 1);
+                final StringBuilder fundJson = new StringBuilder(":;");
+                for (final Object [] fund : funds) {
+                        fundJson.append((Integer)fund[0]).append(":").append(fund[1]).append(";");
+                }
+                fundJson.deleteCharAt(fundJson.lastIndexOf(";"));
+                return fundJson.toString();
+        }
 
-	@Override
-	public void validate() {
-		if (bank.getName().equals("")) {
-			addFieldError("name", getText("bank.name.field.required"));
-		}
-		if (bank.getCode().equals("")) {
-			addFieldError("code", getText("bank.code.field.required"));
-		}
-	}
 
-	private void writeToAjaxResponse(final String response) {
-		try {
-			final HttpServletResponse httpResponse = ServletActionContext.getResponse();
-			final Writer httpResponseWriter = httpResponse.getWriter();
-			IOUtils.write(response, httpResponseWriter);
-			IOUtils.closeQuietly(httpResponseWriter);
-		}
-		catch (final IOException e) {
-			LOG.error("Error occurred while processing Ajax response", e);
-		}
-	}
+        public String getAccountTypesJSON() {
+                final List<Object[]> accounttypes = persistenceService.findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=3 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
+                final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
+                for (Object[] accType : accounttypes) {
+                        accType[0] = org.egov.infstr.utils.StringUtils.escapeJavaScript((String)accType[0]); 
+                        accountdetailtypeJson.append("\"").append(accType[1]+"#"+accType[0]).append("\"").append(":").append("\"").append(accType[0]).append("\"").append(",");
+                }
+                accountdetailtypeJson.deleteCharAt(accountdetailtypeJson.lastIndexOf(","));
+                return accountdetailtypeJson.append("}").toString();
+        }
 
-	public void setTerm(final String term) {
-		this.term = term;
-	}
+        @Override
+        public void validate() {
+                if (bank.getName().equals("")) {
+                        addFieldError("name", getText("bank.name.field.required"));
+                }
+                if (bank.getCode().equals("")) {
+                        addFieldError("code", getText("bank.code.field.required"));
+                }
+        }
 
-	
+        private void writeToAjaxResponse(final String response) {
+                try {
+                        final HttpServletResponse httpResponse = ServletActionContext.getResponse();
+                        final Writer httpResponseWriter = httpResponse.getWriter();
+                        IOUtils.write(response, httpResponseWriter);
+                        IOUtils.closeQuietly(httpResponseWriter);
+                }
+                catch (final IOException e) {
+                        LOG.error("Error occurred while processing Ajax response", e);
+                }
+        }
 
-	public String getMode() {
-		return mode;
-	}
+        public void setTerm(final String term) {
+                this.term = term;
+        }
 
-	public void setMode(final String mode) {
-		this.mode = mode;
-	}
+        
+
+        public String getMode() {
+                return mode;
+        }
+
+        public void setMode(final String mode) {
+                this.mode = mode;
+        }
 
     public void setBankService(BankService bankService) {
         this.bankService = bankService;
@@ -262,7 +249,7 @@ public class BankAction extends BaseFormAction {
         return isActive;
     }
 
-    public void setActive(boolean isActive) {
+    public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
 }

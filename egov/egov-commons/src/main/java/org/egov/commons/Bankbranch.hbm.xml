@@ -42,8 +42,8 @@
         <property name="contactperson" type="string">
             <column name="CONTACTPERSON" length="50" />
         </property>
-        <property name="isactive" type="boolean">
-            <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
+        <property name="isactive" type="integer">
+            <column name="ISACTIVE" precision="1" scale="0" not-null="true" /> 
         </property>
         <property name="created" type="date">
             <column name="CREATED" length="7" not-null="true" />
@@ -56,6 +56,9 @@
         </property>
         <property name="narration" type="string">
             <column name="NARRATION" length="250" />
+        </property>
+        <property name="branchMICR" type="string">
+            <column name="MICR" length="50" />
         </property>
         <set name="bankaccounts" inverse="true">
             <key>

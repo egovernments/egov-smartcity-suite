@@ -138,7 +138,7 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchname("test  branch");
 		bankbranch.setBranchaddress1("test branch address");
 		bankbranch.setBranchcity("branch city");
-		bankbranch.setIsactive(true);
+		bankbranch.setIsactive(1);
 		bankbranch.setBank(createBank());
 		bankbranch.setCreated(new Date());
 		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")

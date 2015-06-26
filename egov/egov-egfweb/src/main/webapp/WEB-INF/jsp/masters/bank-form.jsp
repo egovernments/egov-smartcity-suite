@@ -75,7 +75,7 @@
 	 <tr>
 	 	 <td class="bluebox"></td>
 	 	<td class="bluebox"><s:text name="bank.create.isactive"/></td>
-		<td class="bluebox" colspan="2"><s:checkbox id="isActive" name="isActive" /> </td>
+		<td class="bluebox" colspan="2"><s:checkbox id="isActive" name="isActive" value="%{isActive}"/> </td> 
 	 </tr>
 	
   		 <tr>
