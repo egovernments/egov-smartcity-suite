@@ -180,10 +180,10 @@
 						</td>
 						<td class="greybox">
 							<s:select name="propMutationMstr" id="transRsnId"
-								list="dropdownData.MutationReason" listKey="idMutation"
+								list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{propMutationMstr.idMutation}"
+								value="%{propMutationMstr.id}"
 								onchange="enableSaleDtls(this);" />
 						</td>
 						<td class="greybox">

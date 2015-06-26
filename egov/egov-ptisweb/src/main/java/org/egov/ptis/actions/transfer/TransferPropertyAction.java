@@ -71,6 +71,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -107,7 +108,6 @@ public class TransferPropertyAction extends WorkflowAction {
 
     private String oldOwnerName;
     private String propAddress;
-    private PropertyAddress prpAddress;
     private String noticeType;
     private BasicProperty basicProperty;
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -133,7 +133,6 @@ public class TransferPropertyAction extends WorkflowAction {
     private PropertyImpl nonHistProperty;
     private String transRsnId;
     private String ackMessage;
-    private Integer idMutationMaster;
     private BillReceiptInfo billReceiptInfo;
     @Autowired
     private UserService UserService;
@@ -176,12 +175,8 @@ public class TransferPropertyAction extends WorkflowAction {
     }
 
     @ValidationErrorPage(value = EDIT)
-    @SkipValidation
     @Action(value = "/property-approve")
     public String approve() {
-        validate();
-        if (hasErrors())
-            return EDIT;
         propertyMutation.setExtraField1(getWorkflowBean().getComments());
         transitionWorkFlow();
         final PropertyImpl propertyPrevious = (PropertyImpl) super.getPersistenceService()
@@ -190,20 +185,13 @@ public class TransferPropertyAction extends WorkflowAction {
         property.setStatus(STATUS_ISACTIVE);
         final BasicProperty basicProperty = property.getBasicProperty();
         processAndStoreDocumentsWithReason(basicProperty, DOCS_MUTATION_PROPERTY);
-       /* 
-        * FIXME WHY THIS?
-        * final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
-                corrAddress2, corrPinCode, propertyOwnerProxy);
-        for (final PropertyOwner owner : property.getPropertyOwnerSet())
-            owner.getAddress().clear();
-        property.getPropertyOwnerSet().clear();
-        property.getPropertyOwnerSet().addAll(owners);*/
         propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
         basicPrpertyService.persist(basicProperty);
+        propertyImplService.persist(property);
         return ACK;
     }
 
-    @ValidationErrorPage(value = "new")
+    @ValidationErrorPage(value = NEW)
     @Action(value = "/property-save")
     public String save() {
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
@@ -220,11 +208,13 @@ public class TransferPropertyAction extends WorkflowAction {
                     Long.valueOf(getModelId()));
             propWF.setStatus(STATUS_ISHISTORY);
             endWorkFlow(propWF);
+            propertyImplService.persist(propWF);
         }
         final PropertyImpl propertyPrevious = (PropertyImpl) super.getPersistenceService()
                 .findByNamedQuery("getPropertyByUpicNoAndStatus", getIndexNumber(), STATUS_ISACTIVE);
         propertyPrevious.setStatus(STATUS_ISHISTORY);
         property.setStatus(STATUS_ISACTIVE);
+        propertyImplService.persist(propertyPrevious);
         propertyImplService.persist(property);
         return ACK;
     }
@@ -267,102 +257,50 @@ public class TransferPropertyAction extends WorkflowAction {
                 }
             setCorrAddress(owner.getAddress().iterator().next());
         }
-        if (currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING))
-            return VIEW;
-        else
-            return EDIT;
+       
+        return currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING) ? VIEW : EDIT;
     }
 
-    @ValidationErrorPage(value = "new")
-    @SkipValidation
+    @ValidationErrorPage(value = EDIT)
     @Action(value = "/property-forward")
     public String forward() {
-        String target = "failure";
-        BasicProperty basicProp;
-        if (getModelId() == null || getModelId().equals("")) {
-            validate();
-            if (hasErrors())
-                return NEW;
-            basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
-            // if there is a workflow property then set the status as history
-            if (getModelId() != null && !getModelId().equals("")) {
-                final PropertyImpl propWF = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-                        Long.valueOf(getModelId()));
-                if (propWF.getStatus().equals(STATUS_WORKFLOW)) {
-                    propWF.setStatus(STATUS_ISHISTORY);
-                    endWorkFlow(propWF);
-                }
-            }
-
-            property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerProxy, chkIsCorrIsDiff,
-                    corrAddress1, corrAddress2, corrPinCode, email, mobileNo);
-            propertyMutation.setExtraField1(getWorkflowBean().getComments());
-            propertyMutation.setOwnerNameOld(oldOwnerName);
-            BigDecimal feeAmount = propertyMutation.getMutationFee();
-            if (propertyMutation.getOtherFee() != null)
-                feeAmount = feeAmount.add(propertyMutation.getOtherFee());
-            billReceiptInfo = transferOwnerService.generateMiscReceipt(basicProp, feeAmount);
-            propertyMutation.setReceiptNum(billReceiptInfo.getReceiptNum());
-        } else { 
-            if (idMutationMaster != null && idMutationMaster != -1) {
-                final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPersistenceService()
-                        .find("from PropertyMutationMaster PM where PM.idMutation = ?", idMutationMaster);
-                propertyMutation.setPropMutationMstr(propMutMstr);
-            }
-            property = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+        property = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
-            basicProp = property.getBasicProperty();
+        BasicProperty basicProp = property.getBasicProperty();
             final Set<PropertyMutation> propMutSet = basicProp.getPropMutationSet();
             for (final PropertyMutation pm : propMutSet)
                 if (pm.getId().equals(propertyMutation.getId())) {
                     propMutSet.remove(pm);
                     propMutSet.add(propertyMutation);
                 }
-            validate();
-            if (hasErrors())
-                return EDIT;
-            /*
-             * * FIXME WHY THIS?
-             * final Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff, corrAddress1,
-                    corrAddress2, corrPinCode, propertyOwnerProxy);
-            for (final PropertyOwner owner : property.getPropertyOwnerSet())
-                owner.getAddress().clear();
-            property.getPropertyOwnerSet().clear();
-            property.getPropertyOwnerSet().addAll(owners);*/
-        }
         transitionWorkFlow();
         setNextUser(UserService.getUserById(getWorkflowBean().getApproverUserId().longValue()).getUsername());
         basicPrpertyService.update(basicProp);
-        if (getModelId() == null || getModelId().equals(""))
-            target = MISC_RECEIPT;
-        else
-            target = ACK;
-        return target;
+        return ACK;
 
     }
 
     @SkipValidation
     @Action(value = "/property-reject")
     public String reject() {
-        String target = "failure";
         property = (PropertyImpl) super.getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
         final Set<PropertyMutation> propMutSet = property.getBasicProperty().getPropMutationSet();
-        PropertyMutation pm1 = null;
         for (final PropertyMutation pm : propMutSet)
-            pm1 = pm;
-        setPropertyMutation(pm1);
+            if (pm.getId().equals(propertyMutation.getId())) {
+                setPropertyMutation(pm);
+            }
+        
         transitionWorkFlow();
 
-        if (WORKFLOW_END.equalsIgnoreCase(property.getState().getValue())) {
+        if (property.stateIsEnded()) {
             property.setStatus(STATUS_CANCELLED);
             setAckMessage(MSG_REJECT_SUCCESS);
-            propertyImplService.update(property);
         }
 
         setNextUser(UserService.getUserById(property.getCreatedBy().getId()).getUsername());
-        target = ACK;
-        return target;
+        propertyImplService.update(property);
+        return ACK;
 
     }
 
@@ -400,8 +338,7 @@ public class TransferPropertyAction extends WorkflowAction {
 
     @Override
     public void validate() {
-        if (propertyMutation.getNoticeDate() == null || propertyMutation.getNoticeDate().equals("")
-                || propertyMutation.getNoticeDate().equals("DD/MM/YYYY"))
+        if (propertyMutation.getNoticeDate() == null)
             addActionError(getText("mandatory.applicant.date"));
         else if (propertyMutation.getNoticeDate().after(new Date()))
             addActionError(getText("mandatory.applicant.date.beforeCurr"));
@@ -410,20 +347,18 @@ public class TransferPropertyAction extends WorkflowAction {
         if (propertyMutation.getPropMutationMstr() == null || propertyMutation.getPropMutationMstr().getId() == -1)
             addActionError(getText("mandatory.trRsnId"));
         else {
-            final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPersistenceService().find(
-                    "from PropertyMutationMaster PM where PM.idMutation = ?",
-                    propertyMutation.getPropMutationMstr().getId());
+            final PropertyMutationMaster propMutMstr = propertyMutation.getPropMutationMstr();
 
-            if (propMutMstr != null || StringUtils.isNotEmpty(propMutMstr.getMutationName()))
-                if (propMutMstr.getMutationName().equals("SALE DEED")) {
+            if (propMutMstr != null)
+                if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)) {
                     if (StringUtils.isEmpty(propertyMutation.getExtraField3())
                             || StringUtils.isBlank(propertyMutation.getExtraField3()))
                         addActionError(getText("mandatory.saleDtl"));
-                } else if (propMutMstr.getMutationName().equals("COURT ORDER")) {
+                } else if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_COURT_ORDER)) {
                     if (StringUtils.isEmpty(propertyMutation.getMutationNo())
                             || StringUtils.isBlank(propertyMutation.getMutationNo()))
                         addActionError(getText("mandatory.crtOrdNo"));
-                } else if (propMutMstr.getMutationName().equals("OTHERS"))
+                } else if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_OTHERS))
                     if (StringUtils.isEmpty(propertyMutation.getExtraField4())
                             || StringUtils.isBlank(propertyMutation.getExtraField4()))
                         addActionError(getText("mandatory.mutationReason"));
@@ -436,8 +371,7 @@ public class TransferPropertyAction extends WorkflowAction {
             addActionError(getText("madatory.mutFeePos"));
 
         if (getModelId() != null && !getModelId().isEmpty()) {
-            if (propertyMutation.getMutationDate() == null || propertyMutation.getMutationDate().equals("")
-                    || propertyMutation.getMutationDate().equals("DD/MM/YYYY"))
+            if (propertyMutation.getMutationDate() == null)
                 addActionError(getText("mandatory.mutationDate"));
             else if (propertyMutation.getMutationDate().after(new Date()))
                 addActionError(getText("mandatory.mutationDateBeforeCurr"));
@@ -622,14 +556,6 @@ public class TransferPropertyAction extends WorkflowAction {
         this.propertyOwnerProxy = propertyOwnerProxy;
     }
 
-    public PropertyAddress getPrpAddress() {
-        return prpAddress;
-    }
-
-    public void setPrpAddress(final PropertyAddress prpAddress) {
-        this.prpAddress = prpAddress;
-    }
-
     public void setNoticeType(final String noticeType) {
         this.noticeType = noticeType;
     }
@@ -702,14 +628,6 @@ public class TransferPropertyAction extends WorkflowAction {
 
     public void setAckMessage(final String ackMessage) {
         this.ackMessage = ackMessage;
-    }
-
-    public Integer getIdMutationMaster() {
-        return idMutationMaster;
-    }
-
-    public void setIdMutationMaster(final Integer idMutationMaster) {
-        this.idMutationMaster = idMutationMaster;
     }
 
     public List<PropertyOwner> getPropOwnerProxy() {

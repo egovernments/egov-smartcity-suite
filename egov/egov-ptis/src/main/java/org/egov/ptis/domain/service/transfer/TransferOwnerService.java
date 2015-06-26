@@ -59,6 +59,7 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -184,22 +185,24 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
 		Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		Address ownerAddr = null;
+		CorrespondenceAddress ownerAddr = null;
 		if (chkIsCorrIsDiff) {
-			ownerAddr = new PropertyAddress();
+			ownerAddr = new CorrespondenceAddress();
 			if (corrAddress1 != null && !corrAddress1.isEmpty()) {
-				corrAddress1 = propertyTaxUtil.antisamyHackReplace(corrAddress1);
+			    ownerAddr.setLandmark(propertyTaxUtil.antisamyHackReplace(corrAddress1));
 			}
 			if (corrAddress2 != null && !corrAddress2.isEmpty()) {
-				corrAddress2 = propertyTaxUtil.antisamyHackReplace(corrAddress2);
+			    ownerAddr.setStreetRoadLine(propertyTaxUtil.antisamyHackReplace(corrAddress2));
 			}
-			ownerAddr.setLandmark(corrAddress1);
+			
 			if (StringUtils.isNotEmpty(corrPinCode) || StringUtils.isNotBlank(corrPinCode)) {
 				ownerAddr.setPinCode(corrPinCode);
 			}
 		} else {
-			PropertyAddress propAddress = clonedProperty.getBasicProperty().getAddress();
-			ownerAddr = propAddress;
+		     ownerAddr = new CorrespondenceAddress();
+		     ownerAddr.setLandmark(clonedProperty.getBasicProperty().getAddress().getLandmark());
+		     ownerAddr.setStreetRoadLine(clonedProperty.getBasicProperty().getAddress().getStreetRoadLine());
+		     ownerAddr.setPinCode(clonedProperty.getBasicProperty().getAddress().getPinCode());
 		}
 		int orderNo = 1;
 		for (PropertyOwner owner : propertyOwnerProxy) {

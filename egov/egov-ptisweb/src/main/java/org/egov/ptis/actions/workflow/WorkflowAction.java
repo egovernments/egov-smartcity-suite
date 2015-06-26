@@ -97,9 +97,6 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	protected WorkflowDetails workflowAction;
 	private WorkflowService<PropertyImpl> propertyWorkflowService;
 
-	@Autowired
-	protected EisCommonService eisCommonService;
-	 
 	@SkipValidation
 	@Override
 	public Object getModel() {

@@ -56,6 +56,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -63,6 +64,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -110,7 +112,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
     private AssignmentService assignmentService;
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
-   
+    @Autowired
+    protected EisCommonService eisCommonService;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -678,18 +681,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
      * END state.
      */
     public void endWorkFlow(PropertyImpl property) {
-        LOGGER.debug("Enter method endWorkFlow, Property: " + property);
-
-        State prevState = property.getCurrentState();
-        // FIX ME
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
-        Position position = null;
-		//State stateEnd = new State("PropertyImpl", State.DEFAULT_STATE_VALUE_CLOSED, position, "Property Workflow Ended");
-		property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED).withOwner(position).withComments("Property Workflow Ended");
-        // prevState.setNext(stateEnd);
-        // property.setState(stateEnd);
-        LOGGER.debug("endWorkFlow: After state change, Property: " + property);
-        LOGGER.debug("Exit method endWorkFlow()");
+	Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+	property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED).withOwner(position).withComments("Property Workflow Ended");
     }
 
     // protected abstract PropertyImpl property();
