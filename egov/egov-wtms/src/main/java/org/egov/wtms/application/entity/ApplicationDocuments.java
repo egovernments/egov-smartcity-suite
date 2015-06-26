@@ -85,10 +85,6 @@ public class ApplicationDocuments extends AbstractAuditable {
     @JoinColumn(name = "documentnamesid", nullable = false)
     private DocumentNames documentNames;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "filestoreid", nullable = false)
-    private FileStoreMapper fileStoreId;
-
     @NotNull
     private String documentNumber;
 
@@ -126,14 +122,6 @@ public class ApplicationDocuments extends AbstractAuditable {
 
     public void setDocumentNames(final DocumentNames documentNames) {
         this.documentNames = documentNames;
-    }
-
-    public FileStoreMapper getFileStoreId() {
-        return fileStoreId;
-    }
-
-    public void setFileStoreId(final FileStoreMapper fileStoreId) {
-        this.fileStoreId = fileStoreId;
     }
 
     public String getDocumentNumber() {
