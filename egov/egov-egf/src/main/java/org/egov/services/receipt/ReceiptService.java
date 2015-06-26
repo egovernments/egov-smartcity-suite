@@ -114,37 +114,32 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
         this.employeeServiceOld = employeeServiceOld;
     }
     //TODO : Need to move to collection
-    public HashMap<String, Object> getReceiptHeaderforDishonor(String mode, Long bankAccId,  Long bankId, String chequeDDNo,String chqueDDDate) {
+    public String getReceiptHeaderforDishonor(String mode, Long bankAccId,  Long bankId, String chequeDDNo,String chqueDDDate) {
         final StringBuilder sb = new StringBuilder(300);
         final List<Object> paramList = new ArrayList<Object>();
-        sb.append("from org.egov.collection.entity.ReceiptHeader rpt join "
+        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
+        		+ "bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
+        		+ "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '"+mode+"' AND ((ih.ispaycheque ='0' AND status.moduletype ='Instrument' "
+        		+ "AND status.description = 'Deposited') OR (ih.ispaycheque = '1' AND status.moduletype = 'Instrument' AND status.description = 'New'))") ;
+       /* sb.append("from org.egov.collection.entity.ReceiptHeader rpt join "
             + "rpt.receiptInstrument ih where ih.instrumentType.type=? "
             + "and ((ih.isPayCheque=0 and ih.statusId.moduletype='Instrument' and ih.statusId.description='Deposited') or "
-            + "(ih.isPayCheque=1 and ih.statusId.moduletype='Instrument' and ih.statusId.description='New'))");
-        paramList.add(mode);
+            + "(ih.isPayCheque=1 and ih.statusId.moduletype='Instrument' and ih.statusId.description='New'))");*/
         
         if (bankAccId != null && bankAccId != 0) {
-            sb.append(" AND ih.bankAccountId.id=? ");
-            paramList.add(bankAccId);
+            sb.append(" AND ih.bankaccountid="+ bankAccId+"");
         }
         if ((bankAccId == null || bankAccId == 0) && bankId != null
                         && bankId != 0) {
-            sb.append(" AND ih.bankId.id=? ");
-            paramList.add(bankAccId);
+            sb.append(" AND ih.bankid="+bankAccId+"");
         }
         if (!("").equals(chequeDDNo) && chequeDDNo!=null) {
-            sb.append(" AND ih.instrumentnumber=trim(?) ");
-            paramList.add(chequeDDNo);
+            sb.append(" AND ih.instrumentnumber=trim('"+chequeDDNo+"') ");
         }
         if (!("").equals(chqueDDDate) && chqueDDDate!=null) {
-               sb.append(" AND ih.instrumentdate >= ? ");
-               paramList.add(chqueDDDate);
+               sb.append(" AND ih.instrumentdate >= '"+chqueDDDate+"' ");
         }
-        sb.append(" ORDER BY rpt.receiptnumber, rpt.receiptdate ");
    
-        HashMap<String, Object> searchQuery = new HashMap<String, Object>();
-        searchQuery.put("query", sb.toString());
-        searchQuery.put("paramList",paramList);
-        return searchQuery;
+        return sb.toString();
     }
 }

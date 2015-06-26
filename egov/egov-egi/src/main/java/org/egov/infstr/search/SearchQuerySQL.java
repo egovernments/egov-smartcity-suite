@@ -39,7 +39,7 @@
  */
 package org.egov.infstr.search;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.egov.infstr.services.Page;
@@ -76,7 +76,7 @@ public class SearchQuerySQL implements SearchQuery {
 	@Override
 	public int getCount(final PersistenceService persistenceService) {
 		final Query q = getSQLQueryWithParams(persistenceService, this.countQuery);
-		return ((BigDecimal) q.uniqueResult()).intValue();
+		return ((BigInteger) q.uniqueResult()).intValue();
 	}
 
 	/*

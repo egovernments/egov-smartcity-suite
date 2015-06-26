@@ -37,9 +37,6 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ include file="/includes/taglibs.jsp" %>
 
 <%@ page language="java"%> 
@@ -104,20 +101,16 @@ function dishonorSelectedChq() {
 	var instrmndId="";
 	if(len >0){
 		for (i = 0; i < len; i++){
-			alert("hi,,"+i);
 			if(dishonorcheck[i].checked){
 				receiptId=receiptHdrId[i].value;
 				instrmndId=instrmntHdrId[i].value;
 				break;
 			}
-			alert("hi,,!");
 		}
 		if(receiptId!=""){
 			value[x++]=instrmndId;
 			for (var j = i+1; j < len; j++){
-			alert("j,,"+j);
 				if(dishonorcheck[j].checked){
-alert("j,,"+dishonorcheck[j].checked);
 					if(receiptId==receiptHdrId[j].value){
 						value[x++]=instrmntHdrId[j].value
 						flag=true;
@@ -137,15 +130,12 @@ alert("j,,"+dishonorcheck[j].checked);
 
 		}
 	}
-alert(value.length);
 	if(value.length==0){
 		alert("Please Choose Cheques to Dishonor.");
 		return false;
 	}
-alert("value.length");
 
 	if((flag=="true" || flag=="") && value.length>0){
-alert(",,,,,,,");
 		document.dishonorForm.action='${pageContext.request.contextPath}/brs/dishonoredCheque-dishonorCheque.action?installmentIds='+value;
 		document.dishonorForm.submit();
 	}
@@ -170,6 +160,7 @@ alert(",,,,,,,");
 		<br/>
 		<table  width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
+					<td class="greybox"></td>
 					<td class="greybox"><s:text	name="dishnrChq.bankBranch.title" />:</td>
 					<td class="greybox"><s:select name="bankBranchId"
 						id="bankBranchId" list="dropdownData.bankBranchList" headerKey="-1"
@@ -191,6 +182,7 @@ alert(",,,,,,,");
 				</tr> 
 				
 				<tr>
+					<td class="bluebox"></td>
 					<td class="bluebox"><s:text	name="dishnrChq.instrmntMode.title" />:<span class="mandatory">*</span></td>
 					<td class="bluebox">
 						<SELECT id="instrumentMode" name="instrumentMode" >
@@ -202,6 +194,7 @@ alert(",,,,,,,");
 				</tr>
 				
 				<tr>
+						<td class="greybox"></td>
 						<td class="greybox"><s:text	name="dishnrChq.chqDDNo.title" />:<span class="mandatory">*</span></td>
 						<td class="greybox"><s:textfield name="chequeNo" style="width: 200px;"
 							id="chequeNo" value="%{chequeNo}" /></td>
@@ -219,7 +212,7 @@ alert(",,,,,,,");
 						</td>
 					</tr>
 					<tr>
-						<td colspan="4">
+						<td colspan="5">
 							<div align="right" class="mandatory" style="font-size: 11px; padding-right: 20px;">	*
 								<s:text name="default.message.mandatory" />
 							</div>
@@ -237,7 +230,7 @@ alert(",,,,,,,");
         	</table>
         	</div>
         	
-        	<s:if test="%{dishonorHelperList.size != 0}">
+        	<s:if test="%{searchResult.fullListSize != 0}">
         	<table align="center">
         	<tr>
 				<td colspan="4">
@@ -246,26 +239,26 @@ alert(",,,,,,,");
 							cellpadding="0">
 								<tr>
 									<td>
-										<display:table name="dishonorHelperList"  id ="currentRowObject" uid="currentRowObject" pagesize = "30" class="tablebottom" 
+										<display:table name="searchResult"  id ="currentRowObject" uid="currentRowObject" pagesize = "30" class="tablebottom" 
 		style="width:100%;" cellpadding="0" cellspacing="0" requestURI="">
 											
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Sl.No"
-												style="width:10%;text-align:left">
+												style="width:8%;text-align:left">
 												<s:property
 													value="#attr.currentRowObject_rowNum + (page-1)*pageSize" />
-													<s:hidden name="receiptHeaderId" id="receiptHeaderId" value="%{#attr.currentRowObject.receiptHeaderId}" />
-													<s:hidden name="instrumentHeaderId" id="instrumentHeaderId" value="%{#attr.currentRowObject.instrumentHeaderId}" />
+													<s:hidden name="receiptHeaderId" id="receiptHeaderId" value="%{#attr.currentRowObject.receiptHeaderid}" />
+													<s:hidden name="instrumentHeaderId" id="instrumentHeaderId" value="%{#attr.currentRowObject.instrumentHeaderid}" />
 											</display:column>
 											
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Receipt Number"
-												style="width:15%;text-align:left" property="receiptnumber" />
+												style="width:30%;text-align:left" property="receiptNumber" />
 	
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Receipt Date"
 												style="width:15%;text-align:left"
-												property="receiptdate" />
+												property="receiptDate" />
 	
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="DD/Chq Number"
@@ -274,32 +267,32 @@ alert(",,,,,,,");
 	
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="DD/Chq Date"
-												style="width:15%;text-align:left"
+												style="width:15%;text-align:center"
 												property="instrumentDate" />
 	
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="DD/Chq Amount"
-												style="width:15%;text-align:left"
+												style="width:25%;text-align:right"
 												property="instrumentAmount" />
 												
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Bank"
-												style="width:15%;text-align:left"
+												style="width:30%;text-align:left"
 												property="bankName" />
 												
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Bank Account Number"
-												style="width:15%;text-align:left"
-												property="accountnumber" />
+												style="width:20%;text-align:left"
+												property="accountNumber" />
 												
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Pay to"
-												style="width:15%;text-align:left"
+												style="width:25%;text-align:left"
 												property="payTo" />
 											
 											<display:column headerClass="bluebgheadtd"
-												class="blueborderfortd" title="select"
-												style="width:15%;text-align:left"
+												class="blueborderfortd" title="Status"
+												style="width:20%;text-align:center"
 												property="description" />
 											
 		
@@ -319,9 +312,13 @@ alert(",,,,,,,");
 								<div class="buttonholderwk">
 									  <td><input type="submit" class="button" value="DISHONOR" id="dishonorButton" name="button" onclick="return dishonorSelectedChq();" />&nbsp;</td>
 	         						  <td><input type="button" class="button" value="RESET" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;</td>
-	          						  <td><input type="button" class="button" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" /></td>	
 								</div>
 							</s:if>
+					<s:elseif test="%{searchResult.fullListSize == 0}">
+					<tr><td  align="center"><font color="red">No record Found.</font></td>
+																	
+					</tr>
+</s:elseif>
 	  </s:form>  
   </body>
 </html>
