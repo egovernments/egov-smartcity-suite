@@ -55,14 +55,13 @@ td.bluebox {
 	background-color: #FFFFFF;
 	border-bottom: 1px solid white;
 	border-top: 1px solid white;
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	}
 	
 	td.bluebox3 {
@@ -428,19 +427,13 @@ td.totalbg {
 	}
 	
 	div.subheadnew {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	color: #000000;
-	background-color: #CCCCCC;
-	padding-top: 5px;
-	padding-right: 3px;
-	padding-bottom: 5px;
-	padding-left: 3px;
-	background-image: url(/egi/resources/erp2/images/greysmallbg.gif);
-	background-repeat: repeat-x;
-	background-position: bottom;
+	font-family: semibold;
+	font-size: 14px;
+	color: #fff;
 	text-align: center;
+	padding: 10px 15px;
+	background-color: #F2851F;
+	border-color: #F2851F;
 	}
 div.subheadsmallnew {
 	font-family: Verdana, Arial, Helvetica, sans-serif;

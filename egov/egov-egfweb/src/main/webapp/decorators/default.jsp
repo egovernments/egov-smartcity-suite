@@ -61,7 +61,12 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
+		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
+		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<decorator:head/>
 	</head>
 	
@@ -85,8 +90,20 @@ window.document.onkeydown = function(event) {
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
 	
 	<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
-		<egovtags:breadcrumb/> 
-		<decorator:body/>
-		<div class="urlwk"><div align>Financial Management System Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> All Rights Reserved </div></div>
+		<!-- <div class="urlwk"><div align>Financial Management System Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> All Rights Reserved </div></div> -->
+		<div class="page-container">
+		    <!-- header -->
+		    <egovtags:breadcrumb/> 
+		    
+		    <!-- pagecontent -->
+		    <div class="main-content">
+		       <decorator:body/>
+		    </div>
+		    
+		    <!-- footer -->
+		    <footer class="main">
+			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
+			</footer>
+	   </div>
 	</body>
 </html>
