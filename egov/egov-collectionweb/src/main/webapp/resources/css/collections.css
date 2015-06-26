@@ -34,7 +34,7 @@ div.blueshadow {
 	}
 	
 h1.subhead {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 14px;
 	font-weight: bold;
 	color: #333333;
@@ -65,19 +65,19 @@ td.bluebox {
   padding: 8px 5px;
   color: #000000;
   text-align: left;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: regular;
 }
 	
 td.bluebox3 {
 	background-color: #FFFFFF;
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -94,7 +94,7 @@ td.blueborderfortd {
   font-size: 12px;
   color: #000000;
   text-align: left;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: regular;
   border: 1px solid #E9E9E9;
   padding: 5px;
 }
@@ -108,7 +108,7 @@ td.blueborderfortd1 {
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -126,7 +126,7 @@ td.blueborderfortd2 {
 	padding-left: 5px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -145,7 +145,7 @@ td.blueborderfortd2 {
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #000000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -158,7 +158,7 @@ td.blueborderfortd2 {
 	}
 	
 	td.blueborderfortd4 {
-	background-color: #E6EBF2;
+	background-color: transparent;
 	font-size: 11px;
 	font-weight:bold;
 	text-align: right;
@@ -167,29 +167,29 @@ td.blueborderfortd2 {
 	padding-right: 5px;
 	padding-left: 5px;
 	color: #000000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	border-right-width: 1px;
+	font-family: regular;
+	/*border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
 	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #B0C0D7;
+	border-right-color: transparent;
+	border-bottom-color: #D4D4D4;
 	border-top-width: 1px;
 	border-top-style: solid;
-	border-top-color: #FFF;
+	border-top-color: #FFF;*/
 	}
 	
 th.bluebgheadtd {
   height: 32px;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: semibold;
   font-size: 12px;
   font-weight: bold;
-  color: #171616;
+  color: #FFF;
   padding: 10px;
-  background-color: #E0E0E0;
+  background-color: #8CBBB7;
   text-align: center;
   background-repeat: repeat-x;
-  border: 1px solid #E9E9E9;
+  border: 1px solid #84B1AD;
 }
 
 td.totalbg {
@@ -201,7 +201,7 @@ td.totalbg {
 	padding-left: 5px;
 	color: #000000;
 	text-align: right;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-right-style: solid;
@@ -355,7 +355,7 @@ td.totalbg {
 }
 .welcomestyles {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -366,7 +366,7 @@ td.totalbg {
 }
 .welcomestylearrow {
 	color: #666666;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: bold;
 	margin-right: 25px;
@@ -382,7 +382,7 @@ td.totalbg {
 .welcomestylearrow1 {
 
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -399,7 +399,7 @@ td.totalbg {
 
 .loginboxnew1 {
 	color: #333333;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-size: 12px;
 	font-weight: normal;
 	margin-right: 25px;
@@ -441,7 +441,7 @@ td.totalbg {
 	}
 	
 	div.subheadnew {
-	    font-family: Verdana, Arial, Helvetica, sans-serif;
+	    font-family: semibold;
 		  color: #fff;
 		  text-align: center;
 		  padding: 10px 15px;
@@ -449,23 +449,25 @@ td.totalbg {
 		  border-color: #F2851F;
 		  font-weight: bold;
 	}
+	
 div.subheadsmallnew {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	font-weight: bold;
-	color: #006699;
-	background-color: #E8E8E8;
-	padding-top: 5px;
-	padding-right: 3px;
-	padding-bottom: 5px;
-	padding-left: 3px;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: #CCCCCC;
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: #FFFFFF;
-	text-align: center;
+  font-family: semibold;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #F9F9F9;
+  padding-top: 5px;
+  padding-right: 3px;
+  padding-bottom: 5px;
+  padding-left: 3px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #DFDFDF;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: #DFDFDF;
+  text-align: center;
+  text-align: center;
 }
 input.righttext {
 	text-align: right;
@@ -484,7 +486,7 @@ input.centretext {
 .highlight2 {
 	font-size: 9px;
 	color: #000000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFCC;
 	line-height: 1.5em;
 	padding-top: 3px;
@@ -504,7 +506,7 @@ td.bluebox2 {
 	  padding-left: 5px;
 	  color: #000000;
 	  text-align: left;
-	  font-family: Verdana, Arial, Helvetica, sans-serif;
+	  font-family: regular;
 }
 	
 .buttongeneral {
@@ -522,7 +524,7 @@ td.bluebox2 {
 .highlight3 {
 	font-size: 9px;
 	color: #000000;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	background-color: #FFFFCC;
 	line-height: 1.5em;
 	padding-top: 3px;
@@ -546,22 +548,21 @@ div.billhead {
 }
 
 div.billhead2 {
-	background:#FFFFCC;
-	padding: 8px;
-	border-top-width: 1px;
-	border-bottom-width: 1px;
-	border-top-style: solid;
-	border-bottom-style: solid;
-	border-top-color: #DFDFDF;
-	border-bottom-color: #DFDFDF;
-	text-align:center;
-	font-size:12px;
-
+  background: #FFFFCC;
+  padding: 8px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-top-color: #FFFFFF;
+  border-bottom-color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
 }
 div.billheadtext {
 	font-size:12px;
 	padding-bottom:5px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	font-weight: bold;
 	color: #333333;
 	width: 200px;
@@ -693,7 +694,7 @@ td.greyboxwithlink {
 	padding-left: 20px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 
 	}
 	
@@ -706,7 +707,7 @@ td.greyboxwithlink {
 	padding-left: 20px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 	border-top-width: 1px;
 	border-top-style: solid;
 	border-top-color: #FFF;
@@ -753,51 +754,50 @@ div.errorstyle {
 	background-color: #FFFFFF;
 	border-bottom: 1px solid white;
 	border-top: 1px solid white;
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 22px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 }
 
 .bluebox2new{
-	background-color: #F5F5F5;
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 22px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 }
 
 .bluebox2cheque{
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 0px;
 	padding-right: 0px;
 	padding-left: 0px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 }
 
 .blueboxcheckbox{
 	background-color: #FFFFFF;
 	border-bottom: 1px solid white;
 	border-top: 1px solid white;
-	font-size: 11px;
+	font-size: 12px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 18px;
 	color: #000000;
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: regular;
 }
 
 .tdfortotal {
@@ -805,13 +805,13 @@ background-color:#F5F5F5;
 border-bottom:1px solid #E9E9E9;
 border-right:1px solid #E9E9E9;
 color:#000000;
-font-family:Verdana,Arial,Helvetica,sans-serif;
+font-family: regular;
 text-align:right;
 }
 
 
 div.buttongeneralnew {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: semibold;
 	font-weight: bold;
 	color: #FFFFFF;
 	background-color: #666666;
@@ -851,15 +851,48 @@ div.textholdernew {padding-left:5px;}
   font-size: 12px;
 }
 
-td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select, td.bluebox2 input[type="text"], td.bluebox2 select {
-  min-width: 180px;
-  min-height: 30px;
-  padding: 5px 10px;
-  font-size: 12px;
-  line-height: 1.5;
-  border-radius: 3px;
-  background-color: #FFF;
-  background-image: none;
-  border: 1px solid #CCC;
+
+td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
+{
+	min-width:180px;
+    height: 30px;
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
+	background-color: #FFF;
+	background-image: none;
+	border: 1px solid #CCC;
+	webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
 
+td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[type="text"]:focus, td.bluebox select:focus, textarea:focus
+{
+  border-color: #FBA81A;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(251, 190, 101, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(253, 154, 10, 0.6);
+}	
+
+td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox input[type="text"]:read-only, td.bluebox select:disabled, textarea:read-only
+{
+    background-color: #eceded;
+    cursor: not-allowed;
+}
+
+textarea
+{
+  padding: 6px 12px;
+  line-height: 1.42857143;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}

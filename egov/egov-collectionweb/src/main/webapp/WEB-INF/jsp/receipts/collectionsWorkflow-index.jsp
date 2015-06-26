@@ -257,9 +257,11 @@ function readOnlyCheckBox() {
 </script>
 </head>
 <body onload="javascript:refreshSummary()">
+<div class="formmainbox">
+
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <s:form theme="simple" name="collectionsWorkflowForm">
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
 		<s:text name="collectionsWorkflow.submitTitle" />
 	</s:if> <s:else>
@@ -311,7 +313,7 @@ function readOnlyCheckBox() {
 	<logic:notEmpty name="receiptHeaders">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
-			<div align="center">
+			
 			<display:table name="receiptHeaders"
 				uid="currentRow" pagesize="30" style="border:1px;empty-cells:show;border-collapse:collapse;" cellpadding="0"
 				cellspacing="0" export="false" requestURI="">
@@ -367,9 +369,9 @@ function readOnlyCheckBox() {
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 					title="Bill Description" style="width:15%">&nbsp;${currentRow.referenceDesc}</display:column>
 
-			</display:table></div>
-			<br />
-			<br />
+			</display:table>
+			
+			<br/>
 
 			<table width="50%" border="0" align="center" cellpadding="0"
 				cellspacing="0" class="tablebottom">
@@ -423,12 +425,24 @@ function readOnlyCheckBox() {
 						name="totalAmount" disabled="true"
 						style="border-width: 0px;font-weight: bold; background-color: #F5F5F5; text-align: right; width: 90%" /></td>
 				</tr>
+				
+				
 			</table>
 
 			<br />
-			<s:label>Remarks</s:label>
-			<s:textfield id="remarks" type="text" name="remarks"
-				cssStyle="width:45%" maxlength="1024"/>
+			
+            <table width="50%" border="0" align="center" cellpadding="0"
+				cellspacing="0">
+				
+				<tr>
+				
+				<td><s:label>Remarks</s:label></td>
+						
+				<td><s:textarea id="remarks" name="remarks" maxlength="1024" cols="40" ></s:textarea></td>		
+				
+				</tr>
+				
+		    </table>
 			<br />
 			<br />
 			<div class="buttonbottom"><!--  If action is submit, show only submit button -->
@@ -453,9 +467,7 @@ function readOnlyCheckBox() {
 			&nbsp;<input type="button" class="button" id="buttonClose"
 				value="<s:text name='common.buttons.close'/>"
 				onclick="window.close()" />
-			</div>
-			
-			</logic:notEmpty>
+			</div>		
 
 			<logic:empty name="receiptHeaders">
 				<table width="90%" border="0" align="center" cellpadding="0"
@@ -471,5 +483,11 @@ function readOnlyCheckBox() {
 						value="<s:text name='common.buttons.close'/>"
 						onclick="window.close()" />
 				</logic:empty>
-			</s:form></body>
+				
+			</table>
+			</logic:notEmpty>
+			</s:form>
+			</div>
+			
+			</body>
 </html>

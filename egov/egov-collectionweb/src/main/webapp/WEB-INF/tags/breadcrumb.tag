@@ -10,7 +10,7 @@
 					<img src="<c:url value='/resources/global/images/${sessionScope.citylogo}' context='/egi'/>" height="60">
 					<div>
 						<span class="title2">
-						  PROPERTY TAX
+						  COLLECTIONS
 						</span>
 						
 					</div>

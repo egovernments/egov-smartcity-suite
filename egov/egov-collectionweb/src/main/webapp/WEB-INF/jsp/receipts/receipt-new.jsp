@@ -74,7 +74,7 @@ jQuery(function() {
 
 function showInstrumentDetails(obj){
 	if(obj.id=='cashradiobutton'){
-		document.getElementById('cashdetails').style.display='block';
+		document.getElementById('cashdetails').style.display='table-row';
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
@@ -85,7 +85,7 @@ function showInstrumentDetails(obj){
 	}
 	else  if(obj.id=='chequeradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
-		document.getElementById('chequeDDdetails').style.display='block';
+		document.getElementById('chequeDDdetails').style.display='table-row';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
@@ -97,7 +97,7 @@ function showInstrumentDetails(obj){
 	else if(obj.id=='cardradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
 		document.getElementById('chequeDDdetails').style.display='none';
-		document.getElementById('carddetails').style.display='block';
+		document.getElementById('carddetails').style.display='table-row';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="card";
 		clearCashDetails();
@@ -108,7 +108,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('cashdetails').style.display='none';
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
-		document.getElementById('bankdetails').style.display='block';
+		document.getElementById('bankdetails').style.display='table-row';
 		document.getElementById('instrumentTypeCashOrCard').value="bank";
 		clearCashDetails();
 		clearCardDetails();
@@ -1132,7 +1132,7 @@ function checkaccountheaderwiseamount()
 function clearPaytModes(){
 	//deselect all payt mode radio buttons
 	document.getElementById('cashradiobuttonspan').style.display="none";
-	document.getElementById('cashdetails').style.display="none";
+	document.getElementById('cashdetails').style.display="table-row";
 	
 	document.getElementById('cardradiobuttonspan').style.display="none";
 	document.getElementById('carddetails').style.display="none";
@@ -1207,13 +1207,13 @@ function displayPaytModes(){
        		document.getElementById('cashradiobuttonspan').style.display="block";
 
        		document.getElementById('cashradiobutton').checked=true;
-       		document.getElementById('cashdetails').style.display='block';
+       		document.getElementById('cashdetails').style.display='table-row';
 			document.getElementById('instrumentTypeCashOrCard').value="cash";
        }
        else{
             // do not display cash details
        		document.getElementById('cashradiobuttonspan').style.display="none";
-       		document.getElementById('cashdetails').style.display='none';
+       		document.getElementById('cashdetails').style.display='table-row';
        }
        if(cardAllowed=='true'){
             //display card radio button
@@ -1245,7 +1245,7 @@ function displayPaytModes(){
        //if cash is not allowed and cheque is allowed, set cheque as the default payt
        if(chequeDDAllowed=='true' && cashAllowed=='false'){
        		document.getElementById('chequeradiobutton').checked=true;
-       		document.getElementById('chequeDDdetails').style.display='block';
+       		document.getElementById('chequeDDdetails').style.display='table-row';
        		document.getElementById('instrumentTypeCashOrCard').value="";
        		
        		displayChequeDDInstrumentTypeDetails();
@@ -1253,13 +1253,13 @@ function displayPaytModes(){
        //if cash, cheque/DD are not allowed and card is allowed, set card as the default payt
        if(cardAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false'){
        		document.getElementById('cardradiobutton').checked=true;
-       		document.getElementById('carddetails').style.display='block';
+       		document.getElementById('carddetails').style.display='table-row';
        		document.getElementById('instrumentTypeCashOrCard').value="card";
        }
        //if cash, cheque/DD and card are not allowed and bank is allowed, set bank as the default payt
        if(bankAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false' && cardAllowed=='false'){
        		document.getElementById('bankradiobutton').checked=true;
-       		document.getElementById('bankdetails').style.display='block';
+       		document.getElementById('bankdetails').style.display='table-row';
        		document.getElementById('instrumentTypeCashOrCard').value="bank";
        }
 }
@@ -1362,14 +1362,14 @@ function onBodyLoad()
 function displayPaymentDetails(){
 if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!="0.0"){
 		document.getElementById('bankradiobutton').checked=true;
-		document.getElementById('bankdetails').style.display='block';
+		document.getElementById('bankdetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="bank";
        	document.getElementById('cashdetails').style.display="none";
        	// document.getElementById('carddetails').style.display="none";
 	}
 	if(document.getElementById("instrHeaderCard.instrumentAmount")!=null && document.getElementById("instrHeaderCard.instrumentAmount").value!="0.0"){
 		document.getElementById('cardradiobutton').checked=true;
-		document.getElementById('carddetails').style.display='block';
+		document.getElementById('carddetails').style.display='table-row';
        	document.getElementById('instrumentTypeCashOrCard').value="card";
        	document.getElementById('cashdetails').style.display="none";
 	}
@@ -1382,7 +1382,7 @@ if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document
 		if(chequeAmt!=null && chequeAmt.value!="0.0")
 		{
 			document.getElementById('chequeradiobutton').checked=true;
-			document.getElementById('chequeDDdetails').style.display='block';
+			document.getElementById('chequeDDdetails').style.display='table-row';
     		document.getElementById('instrumentTypeCashOrCard').value="";
        		document.getElementById('cashdetails').style.display="none";
 	    }
@@ -1784,7 +1784,7 @@ function showHideMandataryMark(obj){
 	</b></font>
   </li>
 </span>
-<div class="formmainbox">
+<div class="formmainbox" style="width:100%;max-width:960px;">
 	<s:if test="%{hasErrors()}">
 	    <div id="actionErrorMessages" class="errorstyle">
 	      <s:actionerror/>
@@ -1874,46 +1874,37 @@ function showHideMandataryMark(obj){
 	<!--  Table to hold all modes of payment -->
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" >
 	   <tr>
-	   <td class="bluebox2new" width="20%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory">*</span></td>
+	   <td class="bluebox" width="3%" ></td>
+	   <td class="bluebox" width="22%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory1">*</span></td>
 	   <div class="errorstyle" id="receipt_dateerror_area" style="display:none;"></div>
-	   <td class="bluebox2new" width="84%" >
-      		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	          	<tr><td>
+	   <td class="bluebox" colspan="2" >
+      		
 	            	<span style="float:left;" id="cashradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cashradiobutton"  name="paytradiobutton"/>Cash
-						<s:hidden name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard" value="cash" />
+						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cashradiobutton"  name="paytradiobutton"/> Cash &nbsp; <s:hidden name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard" value="cash" />
 					</span>
 					<span style="float:left;"  id="chequeradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="chequeradiobutton" name="paytradiobutton"/>Cheque/DD
-					</span>
+						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="chequeradiobutton" name="paytradiobutton"/> Cheque/DD &nbsp;</span>
 					<span style="float:left;" id="cardradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cardradiobutton" name="paytradiobutton"/>Credit  card
-	            	</span>
+						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cardradiobutton" name="paytradiobutton"/> Credit  card	&nbsp;</span>
 	             	<span style="float:left;" id="bankradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="bankradiobutton" name="paytradiobutton"/>Direct Bank
-	             	</span>
-	            </td></tr>
-	   		</table>
+						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="bankradiobutton" name="paytradiobutton"/> Direct Bank &nbsp;</span>
 	   </td>
 	   </tr>
+	   
+	   <tr id="cashdetails" >
+		   <td class="bluebox" width="3%" ></td>
+		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
+	   </tr>
+	   
+	   
 		<tr>
-			<td class="bluebox" colspan="5" >
+			<td colspan="5" >
 				<!--  Table to hold each mode of payment -->
 				<table border="0" width="100%" cellspacing="0" cellpadding="0" align="left">
-				<!--for cash-->
-					<tr id="cashdetails" >
-			    	<td class="bluebox2cheque"  width="11%">
-			    		<table  width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:0px;margin:1px;">
-						<tr>
-							<td class="blueboxcheckbox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-			   				<td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="setCashInstrumentDetails(this);"/></td>
-						</tr>
-						</table>
-					</td>
-		    		</tr>
-				<!--for cash-->
+				
 				<!--for cheque NEW USING PROXY-->
-			<tr id="chequeDDdetails" style="display:none">
+			 <tr id="chequeDDdetails" style="display:none">
 		       	<td class="bluebox2cheque" width="11%">
 		       		<s:hidden label="instrumentCount" id="instrumentCount" name="instrumentCount"/>
 		       		
@@ -1921,23 +1912,25 @@ function showHideMandataryMark(obj){
 		       		<!-- This row contains check boxes to choose between cheque and DD -->
 		       		<s:if test="instrumentProxyList==null || instrumentProxyList.size()==0">
 		       		<tr id="chequetyperow">
-			   			<td class="blueboxcheckbox" width="19%">
+		       		    <td class="bluebox" width="3%"></td>
+			   			<td class="bluebox" width="21%">
 			   				<INPUT TYPE="CHECKBOX" NAME="cheque" onclick="setinstrumenttypevalue(this);" value="cheque" id="instrumenttypecheque">Cheque
 			   				<INPUT TYPE="CHECKBOX" NAME="dd" onclick="setinstrumenttypevalue(this);" value="dd" id="instrumenttypedd">DD<BR>
 			   				<s:hidden label="instrumentType" id="instrumentType" name="instrumentProxyList[0].instrumentType.type"/>
 			   			</td>
-			       		<td class="bluebox" colspan="3">&nbsp;</td>
 					</tr>
 					<!-- This row captures the cheque/DD No and the cheque/DD date -->
 					<tr id="chequedetailsrow"> 
-					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory">*</span></td>
-					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
-					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox" width="3%"></td>
+					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
+					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
+					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
+					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
-				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory">*</span></td>
+		     		    <td class="bluebox" width="3%"></td>
+				       	<td class="bluebox"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
 				       	<td class="bluebox">
 					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[0].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
 					   			<s:hidden id="bankID" name="instrumentProxyList[0].bankId.id" />
@@ -1948,10 +1941,11 @@ function showHideMandataryMark(obj){
 		       		</tr>
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
-						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();"/></td>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox2">&nbsp;</td>
+		       		    <td class="bluebox" width="3%"></td>
+						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox">&nbsp;</td>
 					</tr>
 					<tr id="chequeaddrow">
 						<td colspan="5" class="blueborderfortd4">
@@ -1980,14 +1974,14 @@ function showHideMandataryMark(obj){
 					</tr>
 					<!-- This row captures the cheque/DD No and the cheque/DD date -->
 					<tr id="chequedetailsrow"> 
-					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory">*</span></td>
+					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber" size="18" /></td>
-					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory">*</span></td>
+					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
 					   <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate"   onblur="checkForCurrentDate(this);"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
-				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory">*</span></td>
+				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
 				       	<td class="bluebox">
 					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[%{#instrstatus.index}].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
 					   			<s:hidden id="bankID" name="instrumentProxyList[%{#instrstatus.index}].bankId.id" />
@@ -1998,7 +1992,7 @@ function showHideMandataryMark(obj){
 		       		</tr>
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
-						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
+						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
 						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();" /></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
@@ -2029,13 +2023,19 @@ function showHideMandataryMark(obj){
 		        	<td class="bluebox2cheque" width="11%">
 			        	<table width="100%" border="0" cellspacing="0" cellpadding="0" name="cardgrid" id="cardgrid">
 					  		<tr id="carddetailsrow">
-					            <td width="19%" class="blueboxnew"><s:text name="billreceipt.payment.cardno"/><span class="mandatory">*</span></td>
-					            <td class="blueboxnew"><s:textfield label="instrHeaderCard.instrumentNumber" id="instrHeaderCard.instrumentNumber" maxlength="4" name="instrHeaderCard.instrumentNumber" value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
-						        <td class="blueboxnew"><s:text name="billreceipt.payment.transactionnumber"/><span class="mandatory">*</span></td>
-								<td class="blueboxnew"><s:textfield label="instrHeaderCard.transactionNumber" id="instrHeaderCard.transactionNumber" maxlength="14" name="instrHeaderCard.transactionNumber" size="18" value="%{instrHeaderCard.transactionNumber}"/></td>
-								<td class="blueboxnew"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-					           <td class="blueboxnew"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
+					  		    <td class="bluebox" width="3%"></td>
+					            <td width="22%" class="bluebox"><s:text name="billreceipt.payment.cardno"/><span class="mandatory1">*</span></td>
+					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentNumber" id="instrHeaderCard.instrumentNumber" maxlength="4" name="instrHeaderCard.instrumentNumber" value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
+						        <td class="bluebox"><s:text name="billreceipt.payment.transactionnumber"/><span class="mandatory1">*</span></td>
+								<td class="bluebox"><s:textfield label="instrHeaderCard.transactionNumber" id="instrHeaderCard.transactionNumber" maxlength="14" name="instrHeaderCard.transactionNumber" size="18" value="%{instrHeaderCard.transactionNumber}"/></td>
 					        </tr>
+					        
+					        <tr id="carddetailsrow">
+					  		    <td class="bluebox" width="3%"></td>
+								<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
+					        </tr>
+					        
 			            </table> 
 			   <!-- End of table 'cardgrid' -->
 		        	</td>
@@ -2047,10 +2047,11 @@ function showHideMandataryMark(obj){
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" name="bankgrid" id="bankgrid" style="padding:0px;margin:0px;">
 				       		
 							<!-- This row captures the bank challan No and the bank challan date -->
-							<tr id="bankchallandetailsrow"> 
-							    <td class="blueboxnew"  width="19%"><s:text name="billreceipt.payment.bankchallano"/><span class="mandatory">*</span></td>
+							<tr id="bankchallandetailsrow">
+							    <td class="bluebox" width="3%">&nbsp;</td> 
+							    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.bankchallano"/><span class="mandatory1">*</span></td>
 							    <td class="bluebox" ><s:textfield label="transactionNumber" id="instrHeaderBank.transactionNumber" maxlength="6" name="instrHeaderBank.transactionNumber" value="%{instrHeaderBank.transactionNumber}" size="18" /></td>
-							    <td class="blueboxnew"><s:text name="billreceipt.payment.bankchallandate"/><span class="mandatory">*</span></td>
+							    <td class="bluebox"><s:text name="billreceipt.payment.bankchallandate"/><span class="mandatory1">*</span></td>
 							    <s:date name="instrHeaderBank.transactionDate" var="cdFormat" format="dd/MM/yyyy"/>
 							    <td class="bluebox">
 							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
@@ -2061,8 +2062,9 @@ function showHideMandataryMark(obj){
 						    </tr>
 						    <!-- This row captures the bank and account names -->
 				     		<tr id="bankaccountrow">
-						       	<td class="bluebox2new" width="21%"><s:text name="billreceipt.payment.bankname"/><span class="mandatory">*</span></td>
-						       	<td class="bluebox2">
+				     		    <td class="bluebox" width="3%">&nbsp;</td> 
+						       	<td class="bluebox"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
+						       	<td class="bluebox">
 						       		<egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
 				                 		url='receipts/ajaxBankRemittance!bankBranchList.action' selectedValue="%{bankbranch.id}"/>
 							   		<s:select headerValue="--Select--"  headerKey="0" list="dropdownData.bankBranchList" listKey="id" 
@@ -2071,15 +2073,16 @@ function showHideMandataryMark(obj){
 									<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster'
 				         				url='receipts/ajaxBankRemittance!accountList.action' selectedValue="%{bankaccount.id}"/>
 				       			</td>
-				       			<td class="bluebox2new"><s:text name="billreceipt.payment.bankaccountname"/></td>
-				       			<td class="bluebox2"><s:select headerValue="--Select--"  headerKey="0"
+				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/></td>
+				       			<td class="bluebox"><s:select headerValue="--Select--"  headerKey="0"
 		                			list="dropdownData.accountNumberList" listKey="id" id="accountNumberMaster" listValue="accountnumber"
 		                			label="accountNumberMaster" name="bankAccountId" value="%{bankAccountId}"/>
 		                		</td>
 				       		</tr>
 				       		<tr id="bankamountrow">
-				       		<td class="blueboxcheckbox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory">*</span></td>
-				       		<td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox" width="3%">&nbsp;</td>
+				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
@@ -2088,32 +2091,43 @@ function showHideMandataryMark(obj){
 					
 		</table> <!-- End of mode of payments table -->
 		</td></tr>
+		
+		<!-- Paid by details -->
+		<tr id="cashdetails" >
+		   <td class="bluebox" width="3%" ></td>
+		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
+		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" /></td>
+	    </tr>
+		
+		<s:if test="%{!isBillSourcemisc()}">
+					<tr>
+					<td class="bluebox" width="3%" ></td>
+					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
+					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" checked="true" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
+					</tr>
+		 </s:if>
+		 
+		 <s:if test="%{!isBillSourcemisc()}">
+				<tr>
+				    <td class="bluebox" width="3%" ></td>
+					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
+					<td class="bluebox"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
+					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
+					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" onkeyup="DateFormat(this,this.value,event,false,'3')"/><div>(DD/MM/YYYY)</div></td>
+				</tr>
+		 </s:if>
+		
+		
 		</table>
-			<!-- Paid by details -->
+			
 
 			<table border="0" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="padding:0px;margin:0px;">
 				<tr>
-			        	<td class="bluebox2new" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory">*</span></td>
-			            	<td class="bluebox2"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" size="35"/> </td>
+			        	<td class="bluebox2new" width="21%"></td>
+			            	<td class="bluebox2"></td>
 					<td class="bluebox2">&nbsp;</td>
 					<td class="bluebox2">&nbsp;</td>	
-			     	</tr>
-				<s:if test="%{!isBillSourcemisc()}">
-					<tr>
-					<td class="blueboxnew"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory">*</span></td>
-					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" checked="true" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
-					</tr>
-					</s:if>
-
-				<s:if test="%{!isBillSourcemisc()}">
-				<tr>
-					<td class="bluebox2new"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
-					<td class="bluebox2" width="20%"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
-					<td class="bluebox2" width="23%"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox2"><s:textfield id="manualReceiptDate" name="manualReceiptDate"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" onkeyup="DateFormat(this,this.value,event,false,'3')"/><div>(DD/MM/YYYY)</div></td>
-				</tr>
-				</s:if>
-									
+			     	</tr>				
 			</table>
 			 
 			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
@@ -2142,18 +2156,17 @@ function showHideMandataryMark(obj){
            <td class="bluebox"><input name="dt2" type="text" disabled="disabled" /></td>
          </tr>
          <tr>
-           <td width="4%" class="bluebox2">&nbsp;</td>
-           <td width="21%" class="bluebox2"><s:text name="billreceipt.counter.operator"/></td>
-           <td width="24%" class="bluebox2"><b><s:property value="%{receiptCreatedByCounterOperator.userName}"/> </b></td>
-           <td width="21%" class="bluebox2"><s:text name="billreceipt.service"/></td>
-           <td width="30%" class="bluebox2"><b><s:property value="%{serviceName}"/></b></td>
+           <td class="bluebox">&nbsp;</td>
+           <td class="bluebox"><s:text name="billreceipt.counter.operator"/></td>
+           <td class="bluebox"><b><s:property value="%{receiptCreatedByCounterOperator.userName}"/> </b></td>
+           <td class="bluebox"><s:text name="billreceipt.service"/></td>
+           <td class="bluebox"><b><s:property value="%{serviceName}"/></b></td>
           </tr>
 
           <tr>
             <td colspan="5"></td>
           </tr>
     	</table>
-   		<div class="subheadsmallnew"></div>
        </td>
      </tr>
      <tr>
