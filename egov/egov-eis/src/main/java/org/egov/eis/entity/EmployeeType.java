@@ -55,6 +55,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -73,6 +74,7 @@ public class EmployeeType extends AbstractAuditable {
     @SafeHtml
     @Column(name="name",unique=true)
     @Pattern(regexp = Constants.ALPHABETS)
+    @Field
     public String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")

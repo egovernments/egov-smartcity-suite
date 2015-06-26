@@ -96,7 +96,7 @@ public class EmployeeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from Functionary where isactive=1 order by upper(name)").list();
+        return getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -136,7 +136,6 @@ public class EmployeeService {
 
     @Transactional
     public void update(final Employee employee) {
-        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
         employee.setAssignments(employee.getAssignments().parallelStream()
@@ -170,7 +169,7 @@ public class EmployeeService {
         // recommended though
         final QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Employee.class)
                 .get();
-        final TermMatchingContext onFields = qb.keyword().onFields("code", "mobileNumber", "aadhaarNumber", "emailId",
+        final TermMatchingContext onFields = qb.keyword().onFields("code","name","mobileNumber", "aadhaarNumber", "emailId","employeeType.name",
                 "pan", "assignments.department.name", "assignments.designation.name", "assignments.position.name",
                 "assignments.fund.name", "assignments.function.name", "assignments.functionary.name");
 
