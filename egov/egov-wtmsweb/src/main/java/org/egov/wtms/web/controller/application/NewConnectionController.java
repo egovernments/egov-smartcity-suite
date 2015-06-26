@@ -51,6 +51,7 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -73,9 +74,12 @@ public class NewConnectionController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
-    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
+    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final Model model) {
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        model.addAttribute("documentNamesList",
+                waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType()));
         return "newconnection-form";
     }
 
@@ -84,8 +88,10 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
         if (resultBinder.hasErrors())
             return "newconnection-form";
+        processAndStoreApplicationDocuments(waterConnectionDetails);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
         return "application-success";
     }
+
 }

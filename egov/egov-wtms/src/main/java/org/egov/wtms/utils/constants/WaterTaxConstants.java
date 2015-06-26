@@ -40,7 +40,8 @@
 package org.egov.wtms.utils.constants;
 
 public class WaterTaxConstants {
-    
+
+    public static final String MODULE_NAME = "Water Tax";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
     public static final String APPLICATION_NUMBER = "applicationNumber";

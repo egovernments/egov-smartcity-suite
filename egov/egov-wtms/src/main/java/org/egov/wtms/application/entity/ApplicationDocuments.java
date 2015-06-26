@@ -62,6 +62,9 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egwtr_application_documents")
@@ -86,17 +89,23 @@ public class ApplicationDocuments extends AbstractAuditable {
     private DocumentNames documentNames;
 
     @NotNull
+    @SafeHtml
+    @Length(max = 50)
     private String documentNumber;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date documentDate;
 
+    @SafeHtml
+    @Length(max = 255)
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "filestoreid") , inverseJoinColumns = @JoinColumn(name = "applicationdocumentsid") )
+    @JoinTable(name = "egwtr_documents", joinColumns = @JoinColumn(name = "applicationdocumentsid") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+
+    private transient MultipartFile[] files;
 
     @Override
     public Long getId() {
@@ -154,6 +163,14 @@ public class ApplicationDocuments extends AbstractAuditable {
 
     public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(final MultipartFile[] files) {
+        this.files = files;
     }
 
 }

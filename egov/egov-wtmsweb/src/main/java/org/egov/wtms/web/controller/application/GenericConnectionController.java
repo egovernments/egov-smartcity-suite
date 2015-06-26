@@ -39,9 +39,18 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
@@ -49,12 +58,16 @@ import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.DocumentNamesService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterSourceService;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 public abstract class GenericConnectionController {
 
@@ -75,6 +88,9 @@ public abstract class GenericConnectionController {
 
     @Autowired
     protected PropertyTypeService propertyTypeService;
+
+    @Autowired
+    private DocumentNamesService documentNamesService;
 
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
@@ -98,6 +114,34 @@ public abstract class GenericConnectionController {
 
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
+    }
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), WaterTaxConstants.MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return null;
+    }
+
+    protected void processAndStoreApplicationDocuments(final WaterConnectionDetails waterConnectionDetails) {
+        if (!waterConnectionDetails.getApplicationDocs().isEmpty())
+            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
+                applicationDocument
+                        .setDocumentNames(documentNamesService.load(applicationDocument.getDocumentNames().getId()));
+                applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
+                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+            }
     }
 
 }

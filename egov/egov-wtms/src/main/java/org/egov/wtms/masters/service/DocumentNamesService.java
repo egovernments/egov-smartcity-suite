@@ -74,7 +74,7 @@ public class DocumentNamesService {
 
     @Transactional
     public void updateDocumentName(final DocumentNames documentNames) {
-    	documentNamesRepository.save(documentNames);
+        documentNamesRepository.save(documentNames);
     }
 
     public List<DocumentNames> findAll() {
@@ -95,7 +95,11 @@ public class DocumentNamesService {
     }
 
     public List<DocumentNames> findByApplicationType(final ApplicationType applicationType) {
-    	return documentNamesRepository.findByApplicationType(applicationType);
+        return documentNamesRepository.findByApplicationType(applicationType);
     }
 
- }
+    public List<DocumentNames> getAllActiveDocumentNamesByApplicationType(final ApplicationType applicationType) {
+        return documentNamesRepository.findByActiveTrueAndApplicationTypeOrderByDocumentNameAsc(applicationType);
+    }
+
+}

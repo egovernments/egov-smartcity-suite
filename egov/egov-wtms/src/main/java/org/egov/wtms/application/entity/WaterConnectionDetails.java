@@ -39,9 +39,9 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -156,7 +156,7 @@ public class WaterConnectionDetails extends StateAware {
     private EgDemand demand;
 
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ApplicationDocuments> applicationDocs = Collections.emptySet();
+    private List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>(0);
 
     @Override
     public Long getId() {
@@ -320,11 +320,11 @@ public class WaterConnectionDetails extends StateAware {
         this.demand = demand;
     }
 
-    public Set<ApplicationDocuments> getApplicationDocs() {
+    public List<ApplicationDocuments> getApplicationDocs() {
         return applicationDocs;
     }
 
-    public void setApplicationDocs(final Set<ApplicationDocuments> applicationDocs) {
+    public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
         this.applicationDocs = applicationDocs;
     }
 

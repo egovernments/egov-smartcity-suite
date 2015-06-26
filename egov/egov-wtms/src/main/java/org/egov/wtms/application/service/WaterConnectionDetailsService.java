@@ -55,9 +55,12 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
+import org.egov.wtms.masters.service.DocumentNamesService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -88,6 +91,9 @@ public class WaterConnectionDetailsService {
     private ApplicationIndexService applicationIndexService;
 
     @Autowired
+    private DocumentNamesService documentNamesService;
+
+    @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
     }
@@ -108,11 +114,10 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails load(final Long id) {
         return waterConnectionDetailsRepository.getOne(id);
     }
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
 
     public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
             final Integer pageSize) {
@@ -146,20 +151,18 @@ public class WaterConnectionDetailsService {
     }
 
     private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
-    	final String strQuery = "select md from EgModules md where md.name=:name";
+        final String strQuery = "select md from EgModules md where md.name=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
         hql.setParameter("name", WaterTaxConstants.MODULES_NAME);
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(((EgModules)hql.uniqueResult()).getName(),
-                waterConnectionDetails.getApplicationNumber(), waterConnectionDetails.getApplicationDate(),
-                waterConnectionDetails.getApplicationType().getName(), "Mr. Bean",
-                waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+                ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
+                waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
+                "Mr. Bean", waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
 
-        if(waterConnectionDetails.getDisposalDate() != null) {
-        	applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-        }	
-        if(waterConnectionDetails.getConnection().getMobileNumber() != null) {
-        	applicationIndexBuilder.mobileNumber(waterConnectionDetails.getConnection().getMobileNumber());
-        }
+        if (waterConnectionDetails.getDisposalDate() != null)
+            applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+        if (waterConnectionDetails.getConnection().getMobileNumber() != null)
+            applicationIndexBuilder.mobileNumber(waterConnectionDetails.getConnection().getMobileNumber());
         final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
         applicationIndexService.createApplicationIndex(applicationIndex);
     }
@@ -173,6 +176,10 @@ public class WaterConnectionDetailsService {
         connectionTypeMap.put(ConnectionType.METERED.toString(), WaterTaxConstants.METERED);
         connectionTypeMap.put(ConnectionType.NON_METERED.toString(), WaterTaxConstants.NON_METERED);
         return connectionTypeMap;
+    }
+
+    public List<DocumentNames> getAllActiveDocumentNames(final ApplicationType applicationType) {
+        return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
     }
 
 }

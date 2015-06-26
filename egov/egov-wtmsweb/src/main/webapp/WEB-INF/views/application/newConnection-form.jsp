@@ -57,7 +57,8 @@
 				</div>
 				<div class="panel-body custom-form ">
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>			
+					<jsp:include page="connectiondetails.jsp"></jsp:include>	
+					<jsp:include page="documentdetails.jsp"></jsp:include>			
 				</div>
 			</div>
 			<div class="row">

@@ -39,33 +39,35 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 	</div>
 </div>
 <div class="col-sm-12 view-content header-color hidden-xs">
-	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentname"/></div>											
-	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
-	<div class="col-sm-4 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>																					
+	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentname"/></div>											
+	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
+	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
+	<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
 </div>
-<div class="form-group">
-	<div class="col-sm-4 add-margin">
-		<input type="checkbox"> House Tax Registration Document
+
+<c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
+<div class="form-group">	
+	<div class="col-sm-3 add-margin">
+		<input type="text" id="applicationDocs${status.index}documentNames.documentName" value="${docs.documentName}" class="form-control" disabled>  
+		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" class="form-control" /> 
 	</div>
-	<div class="col-sm-4 add-margin">
-		<input type="textbox" class="form-control">
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
+		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
 	</div>
-	<div class="col-sm-4 add-margin">
-		<input type="date" class="form-control">
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
+		<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
 	</div>
-	<div class="col-sm-4 add-margin">
-		<input type="checkbox"> House Tax Registration Document
-	</div>
-	<div class="col-sm-4 add-margin">
-		<input type="textbox" class="form-control">
-	</div>
-	<div class="col-sm-4 add-margin">
-		<input type="date" class="form-control">
+	<div class="col-sm-3 add-margin">
+		<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" >
 	</div>
 </div>
+</c:forEach> 
