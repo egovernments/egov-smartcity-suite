@@ -171,6 +171,8 @@
 			<input type="button" class="button" name="btnViewDCB"
 				id="btnViewDCB" value="View DCB"
 				onclick="window.location='../view/viewDCBProperty!displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+			<input type="button" name="btnPrint" id="btnPrint" value="Print"
+				class="button" onclick="window.print();" />
 			<input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" />
 			<s:hidden label="upicNo" id="upicNo" name="upicNo"
