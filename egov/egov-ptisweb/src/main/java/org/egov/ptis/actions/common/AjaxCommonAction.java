@@ -41,10 +41,13 @@ package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,6 +61,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -76,6 +81,7 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -90,8 +96,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -158,6 +162,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private DesignationService designationService;
 	@Autowired
 	private AssignmentService assignmentService;
+	@Autowired
+	private SecurityUtils securityUtils;
 	@Override
 	public Object getModel() {
 		return null;
@@ -230,9 +236,16 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String populateDesignationsByDept() {
 		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
 		if (departmentId != null) {
-			designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
+			//designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
+			Designation designation = assignmentService.getPrimaryAssignmentForUser(
+					securityUtils.getCurrentUser().getId()).getDesignation();
+			if (designation.getName().equals(ASSISTANT_DESGN)) {
+				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
+			} else if (designation.getName().equals(REVENUE_OFFICER_DESGN)){
+				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+			}
 		}
-
+		
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
 				+ ((designationMasterList != null) ? designationMasterList.size() : ZERO));
 
@@ -574,6 +587,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
 	public void setAssignmentList(List<Assignment> assignmentList) {
 		this.assignmentList = assignmentList;
+	}
+
+	public void setSecurityUtils(SecurityUtils securityUtils) {
+		this.securityUtils = securityUtils;
 	}
 	
 }

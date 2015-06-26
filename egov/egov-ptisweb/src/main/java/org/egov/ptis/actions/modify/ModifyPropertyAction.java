@@ -307,9 +307,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				+ basicProp + ", OldProperty: " + oldProperty + ", PropertyModel: "
 				+ propertyModel);
 		String target = "";
-
 		target = populateFormData();
-
 		LOGGER.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: "
 				+ getAreaOfPlot() + ", PropTypeId: " + getPropTypeId() + ", PropTypeCategoryId: "
 				+ getPropTypeCategoryId() + ", PropUsageId: " + getPropUsageId() + ", PropOccId: "
@@ -328,35 +326,28 @@ public class ModifyPropertyAction extends WorkflowAction {
 			getSession().put(WFOWNER, wfMap.get(WFOWNER));
 			target = "workFlowError";
 		} else {
-
 			setOldProperty((PropertyImpl) getBasicProp().getProperty());
 			if (propWF == null) {
-
 				if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)) {
 					// Using the existing active egpt_property object
 					propertyImpl = oldProperty;
 				} else {
 					propertyImpl = (PropertyImpl) oldProperty.createPropertyclone();
 				}
-
 				if (!modifyRsn.equals(PROPERTY_MODIFY_REASON_BIFURCATE)
 						&& !modifyRsn.equals(PROPERTY_MODIFY_REASON_AMALG)) {
 					setAreaId(basicProp.getPropertyID().getArea().getId().toString());
 				}
-
 			} else {
 				propertyImpl = propWF;
-
 				// setReasonForModify is only for work flow revert changes
 				setReasonForModify(
 						propertyImpl.getPropertyDetail().getPropertyMutationMaster().getCode());
-
 				if (propWF.getAreaBndry() != null) {
 					setAreaId(propWF.getAreaBndry().getId().toString());
 				} else {
 					setAreaId(basicProp.getPropertyID().getArea().getId().toString());
 				}
-			
 			}
 
 			propertyImpl.setExtra_field1("");
@@ -376,19 +367,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propertyAddr.setPinCode(isBlank(addFields[3]) ? null : addFields[3]);
 				propertyAddr.getUser().setMobileNumber(isBlank(addFields[4]) ? null : addFields[4]);
 				propertyAddr.getUser().setEmailId(isBlank(addFields[5]) ? null : addFields[5]);
-
-				/*parcelId = isBlank(addFields[10]) ? null : addFields[10];
-				northBound = isBlank(addFields[11]) ? null : addFields[11];
-				southBound = isBlank(addFields[12]) ? null : addFields[12];
-				eastBound = isBlank(addFields[13]) ? null : addFields[13];
-				westBound = isBlank(addFields[14]) ? null : addFields[14];*/
 			} else {
 				propertyAddr = basicProp.getAddress();
-				/*parcelId = basicProp.getGisReferenceNo();
-				northBound = basicProp.getPropertyID().getNorthBoundary();
-				southBound = basicProp.getPropertyID().getSouthBoundary();
-				eastBound = basicProp.getPropertyID().getEastBoundary();
-				westBound = basicProp.getPropertyID().getWestBoundary();*/
 			}
 
 			corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerSet());
@@ -443,14 +423,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 			PropertyTypeMaster propertyType = propertyModel.getPropertyDetail()
 					.getPropertyTypeMaster();
 			propTypeId = propertyType.getId().toString();
-			//prepareCategoryMap(propertyModel.getPropertyDetail().getPropertyTypeMaster());
-			// prepareUsageList(propTypeId);
-
-			/*if (propertyModel.getPropertyDetail().getExtra_field5() != null) {
-				setPropTypeCategoryId(
-						propertyModel.getPropertyDetail().getExtra_field5().toString());
-			}*/
-
 			if (propertyModel.getPropertyDetail().getPropertyUsage() != null) {
 				propUsageId = propertyModel.getPropertyDetail().getPropertyUsage().getId()
 						.toString();
@@ -460,12 +432,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propOccId = propertyModel.getPropertyDetail().getPropertyOccupation().getId()
 						.toString();
 			}
-
-			/*
-			 * setDateOfCompletion(new
-			 * SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
-			 * .format(basicProp.getPropOccupationDate()));
-			 */
 
 			setDocNumber(propertyModel.getDocNumber());
 			target = NEW;
@@ -1775,63 +1741,16 @@ public class ModifyPropertyAction extends WorkflowAction {
 	public void validate() {
 		LOGGER.debug("Entered into validate, ReasonForModify: " + reasonForModify + ", ModifyRsn: "
 				+ modifyRsn);
-		/*validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted,
-				taxExemptReason, isAuthProp, propTypeId, propUsageId, propOccId, 
-				isfloorDetailsRequired, isUpdateData(), floorTypeId, roofTypeId, wallTypeId, woodTypeId);*/
-
 		if (reasonForModify == null || reasonForModify.equals("-1")) {
 			if (modifyRsn != null && !modifyReasons.contains(modifyRsn)) {
 				addActionError(getText("mandatory.rsnForMdfy"));
 			}
 		}
-		/*if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)) {
-			if (reasonForModify == null || reasonForModify.equals("-1")) {
-				addActionError(getText("mandatory.rsnForMdfy"));
-			}
-		}*/
-		/*if (reasonForModify != null && !reasonForModify.equals("-1")
-				&& PROPERTY_MODIFY_REASON_COURT_RULE.equals(reasonForModify)) {
-			if (courtOrdNum == null || courtOrdNum.equals("")) {
-				addActionError(getText("mandatory.courtOrdNo"));
-			}
-			if (orderDate == null || orderDate.equals("") || orderDate.equals("DD/MM/YYYY")) {
-				addActionError(getText("mandatory.courtOrdDt"));
-			}
-			if (judgmtDetails != null || !judgmtDetails.equals("")) {
-				if (judgmtDetails.length() > 1000) {
-					addActionError(getText("judgmtDet.length"));
-				}
-			}
-		}*/
-		/*if (modifyRsn != null && PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
-			for (String amalgId : amalgPropIds) {
-				if (amalgId == null || amalgId.equals("")) {
-					addActionError(getText("propToBeAmal"));
-				} else {
-					setOldpropId(amalgId);
-					checkAmalgStatus();
-					if (!getAmalgStatus().equals("Property is Ready for Amalgamation")) {
-						addActionError(getAmalgStatus());
-					}
-				}
-			}
-		}*/
-
-		/*if (PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)
-				|| PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)) {
-			if (org.apache.commons.lang.StringUtils.isBlank(parcelId)) {
-				addActionError(getText("mandatory.parcelId"));
-			}
-		}*/
+		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted,
+				taxExemptReason, isAuthProp, propTypeId, propUsageId, propOccId, 
+				isfloorDetailsRequired, isUpdateData(), floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		super.validate();
-
-		/*if ((PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)
-				|| PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn))
-				&& propertyAddr.getHouseNoBldgApt() != null) {
-			validateHouseNumber(basicProp.getBoundary().getId(), propertyAddr.getHouseNoBldgApt(),
-					basicProp);
-		}*/
 
 		LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
 	}

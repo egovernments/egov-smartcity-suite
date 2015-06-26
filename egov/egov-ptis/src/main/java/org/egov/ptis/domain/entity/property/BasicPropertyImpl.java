@@ -420,7 +420,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         for (Property property : getPropertySet()) {
             wfProperty = (PropertyImpl) property;
             if (wfProperty.hasState()
-                    && (wfProperty.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW) || !wfProperty.stateIsEnded())) {
+                    && (wfProperty.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW))) {
                 break;
             }
             wfProperty = null;

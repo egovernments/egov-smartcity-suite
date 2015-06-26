@@ -684,6 +684,8 @@ public interface PropertyTaxConstants {
 
 	// Designations
 	public static final String ASSISTANT_DESGN = "Assistant";
+	public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
+	public static final String COMMISSIONER_DESGN = "Commissioner";
 	public static final String END_APPROVER_DESGN = "RO";
 
 	public static final String WFSTATUS = "WFSTATUS";
