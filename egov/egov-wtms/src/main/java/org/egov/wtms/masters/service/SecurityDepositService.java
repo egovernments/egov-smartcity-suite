@@ -85,5 +85,9 @@ public class SecurityDepositService {
     public SecurityDeposit load(final Long id) {
         return securityDepositRepository.getOne(id);
     }
+    
+    public SecurityDeposit findByUsageTypeAndNoOfMonths(final UsageType usageType, Long noOfMonths){
+        return securityDepositRepository.findByUsageTypeAndNoOfMonths(usageType, noOfMonths);
+    }
 
 }

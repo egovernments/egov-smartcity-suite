@@ -40,27 +40,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
+		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 					<spring:message code="msg.newconnection.ack.success" /> <span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span> on 
 					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></strong>
-						
 				</div>
 			</div>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
 			
-		</div>					
-</div>
+		
 <jsp:include page="connectiondetails-view.jsp"></jsp:include>
-<div class="row">
-<div class="col-md-12">
 	<div class="panel panel-default" data-collapsed="0">
 		<div class="panel-body">
 			<div class="row">
@@ -77,9 +75,10 @@
 				</div>
 			</div>
 		</div>
+	</div>
+		</form:form>
 	</div>					
-</div>
-</div>
+</div>					
 </div>
 <div class="row text-center">
 	<div class="add-margin">

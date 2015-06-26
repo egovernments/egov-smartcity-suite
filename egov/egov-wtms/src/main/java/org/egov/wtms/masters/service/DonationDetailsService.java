@@ -39,7 +39,10 @@
  */
 package org.egov.wtms.masters.service;
 
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.DonationHeader;
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.DonationDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,4 +76,9 @@ public class DonationDetailsService {
     public DonationDetails load(final Long id) {
         return donationDetailsRepository.getOne(id);
     }
+    
+    public DonationDetails findByDonationHeader(final DonationHeader donationHeader) {
+        return donationDetailsRepository.findByDonationHeader(donationHeader);
+    }
+
 }

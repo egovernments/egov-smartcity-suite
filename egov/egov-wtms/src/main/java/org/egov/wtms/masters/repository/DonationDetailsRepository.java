@@ -40,11 +40,14 @@
 package org.egov.wtms.masters.repository;
 
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.DonationHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonationDetailsRepository extends JpaRepository<DonationDetails, Long> {
-
-
+    @Query(" from DonationDetails dd where dd.fromDate<=current_date and dd.toDate>=current_date and dd.donationHeader =:donationHeader")
+    DonationDetails findByDonationHeader(@Param("donationHeader") DonationHeader donationHeader);
 }

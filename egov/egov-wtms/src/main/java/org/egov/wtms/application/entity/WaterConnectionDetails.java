@@ -151,7 +151,7 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
 

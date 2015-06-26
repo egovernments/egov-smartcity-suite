@@ -49,5 +49,8 @@ public class WaterTaxConstants {
     public static final String METERED = "Metered";
     public static final String NON_METERED = "Non-metered";
     public static final String MODULES_NAME = "Water Tax";
-
+    public static final String EGMODULE_NAME = "Water Tax Management";
+    public static final String WATERTAX_CONNECTION_CHARGE ="WTAXCONCHARGE";
+    public static final String WATERTAX_SECURITY_CHARGE="WTAXSECURITY";
+    public static final String WATERTAX_DONATION_CHARGE="WTAXDONATION";
 }

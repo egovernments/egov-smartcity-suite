@@ -43,11 +43,14 @@ import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConnectionChargesRepository extends JpaRepository<ConnectionCharges, Long> {
 
 	List<ConnectionCharges> findByType(String type);
-
+	@Query("from ConnectionCharges cc where cc.fromDate<=current_date and cc.toDate>=current_date and cc.type =:type")
+	ConnectionCharges findByTypeAndDate(@Param("type") String type);
 }

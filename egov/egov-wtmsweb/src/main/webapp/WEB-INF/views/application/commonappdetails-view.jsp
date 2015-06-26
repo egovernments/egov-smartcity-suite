@@ -135,13 +135,13 @@
 				<spring:message code="lbl.current.due"/>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<strong>1111.00</strong>
+				<strong><c:out value="${waterConnectionDetails.demand.baseDemand}" /></strong>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.arrear.due"/>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<strong>2222.00</strong>
+				<strong>N/A</strong>
 			</div>
 		</div>
 	</div>

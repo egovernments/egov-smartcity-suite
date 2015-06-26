@@ -91,6 +91,8 @@ public class NewConnectionController extends GenericConnectionController {
         processAndStoreApplicationDocuments(waterConnectionDetails);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
+        /*redirectAttributes.addFlashAttribute("connection", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));*/
         return "application-success";
     }
 

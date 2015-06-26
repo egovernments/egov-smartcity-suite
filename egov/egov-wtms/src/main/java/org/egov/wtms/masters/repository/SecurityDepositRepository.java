@@ -50,4 +50,6 @@ import org.springframework.stereotype.Repository;
 public interface SecurityDepositRepository extends JpaRepository<SecurityDeposit, Long> {
 
 	List<SecurityDeposit> findAllByUsageType(UsageType usageType);
+	
+	SecurityDeposit findByUsageTypeAndNoOfMonths(UsageType usageType, Long noOfMonths);
 }

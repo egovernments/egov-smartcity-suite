@@ -39,16 +39,26 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.EgModules;
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
@@ -56,11 +66,18 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.egov.wtms.masters.entity.DocumentNames;
+import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.SecurityDeposit;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
+import org.egov.wtms.masters.service.ConnectionChargesService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.masters.service.DonationDetailsService;
+import org.egov.wtms.masters.service.DonationHeaderService;
+import org.egov.wtms.masters.service.SecurityDepositService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -92,7 +109,23 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private DocumentNamesService documentNamesService;
+    
+    @Autowired
+    private DonationDetailsService donationDetailsService;
 
+    @Autowired
+    private SecurityDepositService securityDepositService;
+
+    @Autowired
+    private ConnectionChargesService connectionChargesService;
+
+    @Autowired
+    private DonationHeaderService donationHeaderService;
+    
+    @Autowired
+    private ModuleService moduleService;
+
+    
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -138,6 +171,7 @@ public class WaterConnectionDetailsService {
 
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
+        waterConnectionDetails.setDemand(createDemand(waterConnectionDetails));
         if (appProcessTime != null) {
             final Calendar c = Calendar.getInstance();
             c.setTime(waterConnectionDetails.getApplicationDate());
@@ -180,6 +214,62 @@ public class WaterConnectionDetailsService {
 
     public List<DocumentNames> getAllActiveDocumentNames(final ApplicationType applicationType) {
         return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
+    }
+    
+    public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
+        final Map<String, Object> feeDetails = new HashMap<String, Object>();
+
+        final ConnectionCharges connectionCharges = connectionChargesService.findByTypeAndDate("Connection fee");
+        final SecurityDeposit securityDeposit = securityDepositService
+                .findByUsageTypeAndNoOfMonths(waterConnectionDetails.getUsageType(), Long.valueOf(6));
+        final DonationDetails donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
+                .findByCategoryandUsage(waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType()));
+        if (connectionCharges != null)
+            feeDetails.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, connectionCharges.getAmount());
+        if (securityDeposit != null)
+            feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, securityDeposit.getAmount());
+        if (donationDetails != null)
+            feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
+
+        final Query installmentQry = getCurrentSession().createQuery(
+                "from Installment where module = :module and installmentYear <= current_date order by installmentYear desc");
+        installmentQry.setEntity("module", moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME));
+        final Installment installment = (Installment) installmentQry.uniqueResult();
+
+        double totalFee = 0.0;
+
+        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        for (final String demandReason : feeDetails.keySet()) {
+            dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
+            totalFee += (Double) feeDetails.get(demandReason);
+        }
+
+        final EgDemand egDemand = new EgDemand();
+        egDemand.setBaseDemand(BigDecimal.valueOf(totalFee));
+        egDemand.setEgInstallmentMaster(installment);
+        egDemand.getEgDemandDetails().addAll(dmdDetailSet);
+        egDemand.setIsHistory("N");
+        egDemand.setMinAmtPayable(BigDecimal.valueOf(totalFee));
+        egDemand.setCreateDate(new Date());
+        egDemand.setModifiedDate(new Date());
+        return egDemand;
+    }
+
+    private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
+            final Installment installment) {
+
+        final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
+        demandQuery.setParameter(0, demandReason);
+        demandQuery.setParameter(1, installment.getId());
+        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
+        final EgDemandDetails demandDetail = new EgDemandDetails();
+        demandDetail.setAmount(BigDecimal.valueOf(amount));
+        demandDetail.setAmtCollected(BigDecimal.ZERO);
+        demandDetail.setAmtRebate(BigDecimal.ZERO);
+        demandDetail.setEgDemandReason(demandReasonObj);
+        demandDetail.setCreateDate(new Date());
+        demandDetail.setModifiedDate(new Date());
+        return demandDetail;
     }
 
 }
