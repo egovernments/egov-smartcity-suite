@@ -332,9 +332,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		long startTimeMillis = System.currentTimeMillis();
 		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
-		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
-		basicProperty.setUpicNo(indexNum);*/
-	    basicProperty.setUpicNo("1085000123");
+		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
+		basicProperty.setUpicNo(indexNum);
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
 
@@ -765,7 +764,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setRegdDocNo(getRegdDocNo());
 		basicProperty.setAllChangesCompleted(allChangesCompleted);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
-				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN, mutationId);
+				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
 		basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, "CREATE", null, null, null,
 				null, getParentIndex(),getBuildingPermissionDate(),getBuildingPermissionNo()));
@@ -830,7 +829,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProp.getPropertyID();
 		basicProp.setAllChangesCompleted(allChangesCompleted);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
-				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN, mutationId);
+				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProp.setPropertyMutationMaster(propertyMutationMaster);
 		basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, "CREATE", null, null, null,
 				null, getParentIndex(),null,null));
@@ -1059,20 +1058,21 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 
 		}
-		if (getMutationId() == -1) {
+		if (getMutationId() == null || getMutationId() == -1) {
 			addActionError(getText("mandatory.createRsn"));
-		}
-		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
-				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN,
-				getMutationId());
-		if (propertyMutationMaster != null) {
-			if (org.apache.commons.lang.StringUtils.equals(propertyMutationMaster.getCode(), PROP_CREATE_RSN_BIFUR)) {
-				BasicProperty basicProperty = basicPrpertyService
-						.findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, getParentIndex());
-				if (StringUtils.isBlank(getParentIndex())) {
-					addActionError(getText("mandatory.parentIndex"));
-				} else if (basicProperty == null) {
-					addActionError(getText("mandatory.parentIndexNotFound"));
+		} else {
+			PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
+					"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN,
+					getMutationId());
+			if (propertyMutationMaster != null) {
+				if (org.apache.commons.lang.StringUtils.equals(propertyMutationMaster.getCode(), PROP_CREATE_RSN_BIFUR)) {
+					BasicProperty basicProperty = basicPrpertyService
+							.findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, getParentIndex());
+					if (StringUtils.isBlank(getParentIndex())) {
+						addActionError(getText("mandatory.parentIndex"));
+					} else if (basicProperty == null) {
+						addActionError(getText("mandatory.parentIndexNotFound"));
+					}
 				}
 			}
 		}

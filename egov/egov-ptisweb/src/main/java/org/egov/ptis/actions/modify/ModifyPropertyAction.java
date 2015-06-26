@@ -324,10 +324,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 		Map<String, String> wfMap = basicProp.getPropertyWfStatus();
 		PropertyImpl propertyImpl = null;
 		String wfStatus = wfMap.get(WFSTATUS);
-		/*if (wfStatus.equalsIgnoreCase("TRUE")) {
+		if (wfStatus.equalsIgnoreCase("TRUE")) {
 			getSession().put(WFOWNER, wfMap.get(WFOWNER));
 			target = "workFlowError";
-		} else {*/
+		} else {
 
 			setOldProperty((PropertyImpl) getBasicProp().getProperty());
 			if (propWF == null) {
@@ -469,7 +469,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 			setDocNumber(propertyModel.getDocNumber());
 			target = NEW;
-		/*}*/
+		}
 
 		LOGGER.debug("populateFormData - target : " + target + "\n Exiting from populateFormData");
 		return target;

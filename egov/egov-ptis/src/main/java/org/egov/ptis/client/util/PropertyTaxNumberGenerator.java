@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLGEN_SEQNAME_PREFIX;
-import static org.egov.ptis.constants.PropertyTaxConstants.MANUAL_BILLGEN_SEQNAME_PREFIX;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNIT_IDENTIFIER_SEQ_STR;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -52,9 +48,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infstr.utils.SequenceNumberGenerator;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
+	private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
 	@Autowired
 	private SequenceNumberGenerator sequenceNumberGenerator;
 	@Autowired
@@ -92,10 +89,11 @@ public class PropertyTaxNumberGenerator {
 			objString = PropertyTaxConstants.PRATIVRUTTA_SEQ_STR;
 			noticeNo.append(PropertyTaxConstants.PRATIVRUTTA_NOTICENO_PREFIX);
 		}
-		String index = sequenceNumberGenerator.getNextNumberWithFormat(
+		//FIX ME
+		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
 				objString.toUpperCase(), 8, '0', Long.valueOf(1))
 				.getFormattedNumber();
-		noticeNo.append(index);
+		noticeNo.append(index);*/
 		noticeNo.append("/");
 
 		// might be required for 127,134 as well
@@ -112,14 +110,15 @@ public class PropertyTaxNumberGenerator {
 				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		Installment finYear = installmentDao
 				.getInsatllmentByModuleForGivenDate(module, new Date());
-		String index = sequenceNumberGenerator.getNextNumberWithFormat(
+		//FIX ME
+		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
 				BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
 				.getFormattedNumber();
 		billNo.append(wardNo);
 		billNo.append("/");
 		billNo.append(index);
 		billNo.append("/");
-		billNo.append(finYear.getDescription());
+		billNo.append(finYear.getDescription());*/
 		return billNo.toString();
 	}
 
@@ -132,13 +131,14 @@ public class PropertyTaxNumberGenerator {
 		zoneNo = org.apache.commons.lang.StringUtils.leftPad(zoneNo, 2, '0');
 		wardNo = org.apache.commons.lang.StringUtils.leftPad(wardNo, 3, '0');
 
-		String index = sequenceNumberGenerator
+		//FIX ME
+		/*String index = sequenceNumberGenerator
 				.getNextNumberWithFormat(
 						MANUAL_BILLGEN_SEQNAME_PREFIX + wardNo, 6, '0',
 						Long.valueOf(1)).getFormattedNumber();
 
 		billNo.append(zoneNo).append("/").append(wardNo).append("/")
-				.append(index);
+				.append(index);*/
 		return billNo.toString();
 	}
 
@@ -158,16 +158,18 @@ public class PropertyTaxNumberGenerator {
 			noticeNo.append(PropertyTaxConstants.NOTICE159_NOTICENO_PREFIX);
 		} else if (PropertyTaxConstants.WARRANT_APPLICATION
 				.equalsIgnoreCase(noticeType)) {
-			String index = sequenceNumberGenerator.getNextNumberWithFormat(
+			//FIX ME
+			/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
 					PropertyTaxConstants.WARRANT_APPLICATION.toUpperCase(), 5, '0',
 					Long.valueOf(1)).getFormattedNumber();
-			noticeNo.append(index);
+			noticeNo.append(index);*/
 			return noticeNo.toString();
 		}
-		String index = sequenceNumberGenerator.getNextNumberWithFormat(
+		//FIX ME
+		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
 				objString.toUpperCase(), 5, '0', Long.valueOf(1))
 				.getFormattedNumber();
-		noticeNo.append(index);
+		noticeNo.append(index);*/
 		noticeNo.append("/");
 		Module module = moduleDao
 				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
@@ -183,8 +185,9 @@ public class PropertyTaxNumberGenerator {
 		try {
 			wardNum = org.apache.commons.lang.StringUtils.leftPad(wardNum, 3, "0");
 			indexNum.append(wardNum);
-			Long index = sequenceNumberGenerator.getNextNumber("DIV-" + wardNum).getNumber();
-			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));
+			//FIX ME
+			/*Long index = sequenceNumberGenerator.getNextNumber("DIV-" + wardNum).getNumber();
+			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));*/
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
 		}
@@ -197,27 +200,29 @@ public class PropertyTaxNumberGenerator {
 
 		StringBuffer indexNum = new StringBuffer();
 		try {
-			String prefix = "1085";
-			indexNum.append(prefix);
-			Long index = sequenceNumberGenerator.getNextNumber("DIV-" + prefix).getNumber();
-			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));
+			String cityCode = EgovThreadLocals.getCityCode();
+			indexNum.append(cityCode);
+			String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
+			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
 		}
 		return indexNum.toString();
 	}
 
+	//FIX ME
 	public String getObjectionNumber() {
-		String type = PropertyTaxConstants.OBJECTION_SEQ_STR;
+		/*String type = PropertyTaxConstants.OBJECTION_SEQ_STR;
 		return type
 				+ "/"
 				+ org.apache.commons.lang.StringUtils.leftPad(
 						sequenceNumberGenerator.getNextNumber(type, 1)
-								.getFormattedNumber(), 8, "0");
+								.getFormattedNumber(), 8, "0");*/
+		return null;
 	}
 
 	public String getHearingNumber(Boundary zoneBoundary) {
-		StringBuffer hearingNum = new StringBuffer();
+		/*StringBuffer hearingNum = new StringBuffer();
 		String type = PropertyTaxConstants.HEARINGNO_SEQ_STR;
 		return hearingNum
 				.append(org.apache.commons.lang.StringUtils.leftPad(sequenceNumberGenerator
@@ -228,7 +233,8 @@ public class PropertyTaxNumberGenerator {
 				.append(zoneBoundary != null ? zoneBoundary.getName() : "")
 				.append("-")
 				.append(zoneBoundary != null ? zoneBoundary.getBoundaryNum()
-						.toString() : "").toString();
+						.toString() : "").toString();*/
+		return null;
 
 	}
 
@@ -236,26 +242,30 @@ public class PropertyTaxNumberGenerator {
 		return applicationNumberGenerator.generate();
 	}
 
+	//FIX ME
 	public String generateMemoNumber() {
 
-		String memoNumber = "";
+		/*String memoNumber = "";
 		String type = PropertyTaxConstants.MEMONO_SEQ_STR;
 		return memoNumber
 				+ (StringUtils.leftPad(
 						sequenceNumberGenerator.getNextNumber(type, 1)
-								.getFormattedNumber(), 5, "0"));
+								.getFormattedNumber(), 5, "0"));*/
+		return null;
 
 	}
 
 	public String getRejectionLetterSerialNum() {
 		String type = PropertyTaxConstants.REJECTION_SEQ_STR;
-		return sequenceNumberGenerator.getNextNumber(type, 1)
-				.getFormattedNumber();
+		/*return sequenceNumberGenerator.getNextNumber(type, 1)
+				.getFormattedNumber();*/
+		return null;
 	}
 
 	public String generateUnitIdentifierPrefix() {
-		return sequenceNumberGenerator
-				.getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();
+		/*return sequenceNumberGenerator
+				.getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();*/
+		return null;
 	}
 
 	public void setSequenceNumberGenerator(

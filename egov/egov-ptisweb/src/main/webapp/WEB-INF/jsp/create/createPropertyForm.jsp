@@ -68,7 +68,7 @@
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="mutationId"
-				id="mutationId" listKey="idMutation" listValue="mutationName"
+				id="mutationId" listKey="id" listValue="mutationName"
 				list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
