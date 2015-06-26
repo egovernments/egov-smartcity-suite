@@ -75,7 +75,7 @@ $(document).ready(function(){
 		tableContainer1.fnFilter(this.value);
 	});*/
 
-	function getSanctionAndOutsourcePositions()
+	function getSanctionAndOutsourcePositions(){
 	 $.ajax({
          url: '/eis/position/position-getTotalPositionCount',
          type: 'GET',
@@ -85,13 +85,13 @@ $(document).ready(function(){
          	var msg = data.split('/');
          	$("#outSourcedPost").val(msg[0]); 
     		$("#sanctionedPost").val(msg[1]); 	
-         	alert(msg(0)+msg(1));
+         //	alert(msg(0)+msg(1));
          },
          error: function() {
          	alert("Internal server error occurred, please try after sometime.");
          }
  }); 
-	 
+	}
 	 
 	
 	
