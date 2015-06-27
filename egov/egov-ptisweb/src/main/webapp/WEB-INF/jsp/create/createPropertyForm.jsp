@@ -113,7 +113,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="form-control datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -126,7 +126,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12" cssClass="form-control datepicker"></s:textfield>
+		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12" cssClass="datepicker"></s:textfield>
 		</td>
 	</tr>
 	
@@ -142,7 +142,7 @@
 	</tr>
 	
 	<tr>
-		<td>
+		<td colspan="5">
 			<div id="CorrAddrDiv">
 				<%@ include file="../common/CorrAddressForm.jsp"%>
 			</div>

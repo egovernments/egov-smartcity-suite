@@ -41,19 +41,19 @@
 <div id="CorrAddressDiv">
 	<table width="100%">
 		<tr>
-	      <td class="bluebox2" width="5%">&nbsp;</td>
-	      <td class="bluebox" colspan="3"><s:text name="CorrAddrConfirm"/>
+	      <td class="bluebox" colspan="5" style="padding-left: 5%;"><s:text name="CorrAddrConfirm"/>
 	     	<s:checkbox name="chkIsCorrIsDiff" id="chkIsCorrIsDiff" onclick="enableCorresAddr();"/> <!--  have to check this -->
 	   	  </td>
+	    
 	    </tr>
 	    <tr id="corrAddrHdr">
-	      <td colspan="5" width="5%"><div class="headingsmallbg"><span class="bold"><s:text name="CorrAddr"/></span></div></td>
+	      <td colspan="5"><div class="headingsmallbg"><span class="bold"><s:text name="CorrAddr"/></span></div></td>
 	    </tr>
 	    
 	    <tr id="add1Row">
 	      <td class="bluebox2" width="5%">&nbsp;</td>
 	      <td class="bluebox" width="25%"><s:text name="Address1"/>:</td>
-	      <td class="bluebox" width="">
+	      <td class="bluebox" style="width:26%;">
 	        <s:textfield name="corrAddress1" id="corrAddress1" maxlength="512" onblur="trim(this,this.value);checkZero(this,'Corr Address1');validateAddress(this);"/>
 	      </td>
 	      

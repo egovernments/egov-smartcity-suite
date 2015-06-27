@@ -127,20 +127,20 @@ td.blueborderfortd {
 	}
 	
 th.bluebgheadtd {
-	height: 28px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #DFDFDF;
-	border-bottom-color: #DFDFDF;
-	font-family: semibold;
-	font-size: 10px;
-	font-weight: bold;
-	color: #333333;
-	padding: 4px;
-	background-color: #f8f8f8;
-	text-align:center;
+  height: 28px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-right-color: #84B1AD;
+  border-bottom-color: #84B1AD;
+  font-family: semibold;
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  padding: 4px;
+  background-color: #8CBBB7;
+  text-align: center;
 }
 
 #floorDetails th.bluebgheadtd
@@ -578,14 +578,16 @@ div.searchvalue {
 	margin-top: 8px;
 }
 
-.selectnew {
-font-family: regular;
-font-size: 11px;
-color: #000000;
-padding-top: 2px;
-padding-right: 2px;
-padding-bottom: 2px;
-padding-left: 4px;
+.selectnew, select {
+  font-family: regular;
+  font-size: 11px;
+  background-color: white;
+  border: 1px solid #d4d4d4;
+  color: #000000;
+  padding-top: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
 }
 
 td.bluebox1{

@@ -415,23 +415,23 @@ function finishAllChangesMsg(button) {
         	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>
-		    <div class="buttonbottom" align="center">		   
-		    	<%-- <td><s:submit value="Approve" name="Approve"
-						id='Create:Save' cssClass="buttonsubmit" method="create"
-						/></td>				
-				<td><s:submit value="Data Entry" name="Save"
-						id="Create:Save" method="create" cssClass="buttonsubmit"
-						onclick="setWorkFlowInfo(this);return submitMsg(this);doLoadingMask();" /></td>
-				<td><s:submit value="Forward" name="Forward"
-						id="Create:Forward" method="forward" cssClass="buttonsubmit"
-						onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
-				<td><input type="button" name="button2" id="button2"
-						value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
-						<td><s:submit value="Approve" name="Approve"
-						id='approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action');"
-						/></td>			
-						<button type="button" class="btn btn-default" onclick="window.close();">Close</button>	
-			</div>
+		    <td>
+			    <div class="buttonbottom" align="center">		   
+			    	<%-- <td><s:submit value="Approve" name="Approve"
+							id='Create:Save' cssClass="buttonsubmit" method="create"
+							/></td>				
+					<td><s:submit value="Data Entry" name="Save"
+							id="Create:Save" method="create" cssClass="buttonsubmit"
+							onclick="setWorkFlowInfo(this);return submitMsg(this);doLoadingMask();" /></td>
+					<td><s:submit value="Forward" name="Forward"
+							id="Create:Forward" method="forward" cssClass="buttonsubmit"
+							onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
+					<td><input type="button" name="button2" id="button2"
+							value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
+					<s:submit value="Approve" name="Approve" id='approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action');"/>&nbsp;			
+					<input type="button" class="button" onclick="window.close();" value="Close">
+				</div>
+			</td>
 		</tr> 
 		</table>
 	</div>
