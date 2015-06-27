@@ -77,17 +77,17 @@
 				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Objection') {
-				window.location="../objection/objection-newForm.action?propertyId="+indexNum;
+				window.location="../objection/objection-newForm.action?propertyId="+assessmentNum;
 			}
 			else if(selectedValue=='Notice 125') {
 				window.location="../notice/propertyTaxNotice-generateNotice.action?noticeType=Notice125&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Recovery') {
-				window.location="../recovery/recovery-newform.action?propertyId="+indexNum;
+				window.location="../recovery/recovery-newform.action?propertyId="+assessmentNum;
 			} else if (selectedValue == 'Assessment Data update') {				
 				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+assessmentNum;
 			} else if (selectedValue == 'Edit Demand') {				
-				window.location="../edit/editDemand-newEditForm.action?propertyId="+indexNum;
+				window.location="../edit/editDemand-newEditForm.action?propertyId="+assessmentNum;
 			} else if (selectedValue == 'Edit Property Data') {				
 				window.location="../modify/modifyProperty-editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+assessmentNum;
 			}
@@ -125,34 +125,37 @@ document.viewform.submit();
 								pagesize="10" export="true" requestURI="" class="tablebottom"
 								style="width:100%" uid="currentRowObject">								
 								<display:column
-									title="Index Number/ &#2311;&#2306;&#2337;&#2375;&#2325;&#2381;&#2360; &#2325;&#2381;&#2352;&#2350;&#2366;&#2306;&#2325;"
+									title="Assessment Number" media="html"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
-									<a href="../view/viewProperty!viewForm.action?propertyId=${currentRowObject.assessmentNum}" >
+									<a href="../view/viewProperty-viewForm.action?propertyId=${currentRowObject.assessmentNum}" >
 										${currentRowObject.assessmentNum} </a>
 								</display:column>
+								<display:column	title="Assessment Number" property="assessmentNum" media="csv" />
+								<display:column	title="Assessment Number" property="assessmentNum" media="xml" />
+								<display:column	title="Assessment Number" property="assessmentNum" media="excel" />
 								<display:column property="parcelId"
-									title="Parcel Id/ &#2346;&#2366;&#2352;&#2381;&#2360;&#2354; &#2310;&#2351;.&#2337;&#2368;"
+									title="Parcel Id"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
 								<display:column property="ownerName"
-									title="Owner Name/ &#2328;&#2352;&#2350;&#2366;&#2354;&#2325;&#2366;&#2330;&#2375; &#2344;&#2366;&#2306;&#2357;"
+									title="Owner Name"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:left" />
 								<display:column property="address"
-									title="Address/ &#2346;&#2340;&#2381;&#2340;&#2366;"
+									title="Address"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:left" />
 								<display:column property="currDemand"
-									title="Current Tax/ &#2330;&#2366;&#2354;&#2370; &#2325;&#2352;"
+									title="Current Tax"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
 								<display:column property="currDemandDue"
-									title="Current Tax Due/ &#2330;&#2366;&#2354;&#2370; &#2342;&#2375;&#2351; &#2325;&#2352;"
+									title="Current Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="width:10%;text-align:center" />
 								<display:column property="arrDemandDue"
-									title="Arrear Tax Due/ &#2341;&#2325;&#2368;&#2340; &#2342;&#2375;&#2351; &#2325;&#2352;"
+									title="Arrear Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
 								<display:column title="Action" headerClass="bluebgheadtd"
