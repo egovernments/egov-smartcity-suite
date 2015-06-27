@@ -63,7 +63,7 @@
 			cascade="all">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
-		<property name="categoryAmount" column="CATEGORY_AMNT" type="float" />
+		<property name="categoryAmount" column="CATEGORY_AMNT" type="double" />
 		<property name="categoryName" column="CATEGORY_NAME" type="string" />
 
 		<property name="IsHistory" column="IS_HISTORY" />

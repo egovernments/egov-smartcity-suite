@@ -70,7 +70,7 @@ public class Category extends BaseModel {
 
 	private String categoryName;
 
-	private Float categoryAmount;
+	private Double categoryAmount;
 
 	private Set<BoundaryCategory> catBoundaries;
 
@@ -92,11 +92,11 @@ public class Category extends BaseModel {
 		this.categoryName = categoryName;
 	}
 
-	public Float getCategoryAmount() {
+	public Double getCategoryAmount() {
 		return categoryAmount;
 	}
 
-	public void setCategoryAmount(Float categoryAmount) {
+	public void setCategoryAmount(Double categoryAmount) {
 		this.categoryAmount = categoryAmount;
 	}
 

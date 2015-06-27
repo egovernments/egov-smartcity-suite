@@ -590,7 +590,7 @@ public class PropertyTaxUtil {
 			ApplicableFactor applicableStructuralFactor = new ApplicableFactor();
 			applicableStructuralFactor.setFactorName("SF");
 			applicableStructuralFactor.setFactorIndex(category.getCategoryName());
-			applicableStructuralFactor.setFactorValue(new BigDecimal(Float.toString(category.getCategoryAmount())));
+			applicableStructuralFactor.setFactorValue(new BigDecimal(Double.toString(category.getCategoryAmount())));
 			applicableFactors.add(applicableStructuralFactor);
 		}
 
@@ -650,7 +650,7 @@ public class PropertyTaxUtil {
 		} else {
 			applicableLocationFactor.setFactorName("LF");
 			applicableLocationFactor.setFactorIndex(category.getCategoryName());
-			applicableLocationFactor.setFactorValue(new BigDecimal(Float.toString(category.getCategoryAmount())));
+			applicableLocationFactor.setFactorValue(new BigDecimal(Double.toString(category.getCategoryAmount())));
 			applicableFactors.add(applicableLocationFactor);
 		}
 
