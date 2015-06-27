@@ -149,7 +149,7 @@ public class User extends AbstractAuditable {
     @Field
     private String aadhaarNumber;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Address> address = new ArrayList<Address>();
 
     private boolean active;

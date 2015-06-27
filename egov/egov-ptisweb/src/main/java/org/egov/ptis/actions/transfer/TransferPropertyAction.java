@@ -45,7 +45,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BY
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
@@ -76,7 +75,6 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -101,11 +99,6 @@ public class TransferPropertyAction extends WorkflowAction {
     private static final long serialVersionUID = 1L;
     
     public  static final String ACK = "ack";
-    private static final String MISC_RECEIPT = "miscReceipt";
-    private static final String VIEW = "view";
-    private static final String WORKFLOW_END = "END";
-    private static final String MSG_REJECT_SUCCESS = " Change Property Rejected Successfully ";
-
     private String oldOwnerName;
     private String propAddress;
     private String noticeType;
@@ -183,11 +176,10 @@ public class TransferPropertyAction extends WorkflowAction {
                 .findByNamedQuery("getPropertyByUpicNoAndStatus", getIndexNumber(), STATUS_ISACTIVE);
         propertyPrevious.setStatus(STATUS_ISHISTORY);
         property.setStatus(STATUS_ISACTIVE);
-        final BasicProperty basicProperty = property.getBasicProperty();
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(property.getBasicProperty().getPropertyID());
         processAndStoreDocumentsWithReason(basicProperty, DOCS_MUTATION_PROPERTY);
         propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
         basicPrpertyService.persist(basicProperty);
-        propertyImplService.persist(property);
         return ACK;
     }
 
@@ -214,7 +206,6 @@ public class TransferPropertyAction extends WorkflowAction {
                 .findByNamedQuery("getPropertyByUpicNoAndStatus", getIndexNumber(), STATUS_ISACTIVE);
         propertyPrevious.setStatus(STATUS_ISHISTORY);
         property.setStatus(STATUS_ISACTIVE);
-        propertyImplService.persist(propertyPrevious);
         propertyImplService.persist(property);
         return ACK;
     }
@@ -295,7 +286,7 @@ public class TransferPropertyAction extends WorkflowAction {
 
         if (property.stateIsEnded()) {
             property.setStatus(STATUS_CANCELLED);
-            setAckMessage(MSG_REJECT_SUCCESS);
+            setAckMessage(" Change Property Rejected Successfully ");
         }
 
         setNextUser(UserService.getUserById(property.getCreatedBy().getId()).getUsername());
@@ -342,7 +333,7 @@ public class TransferPropertyAction extends WorkflowAction {
             addActionError(getText("mandatory.applicant.date"));
         else if (propertyMutation.getNoticeDate().after(new Date()))
             addActionError(getText("mandatory.applicant.date.beforeCurr"));
-        if (propertyMutation.getApplicantName() == null || propertyMutation.getApplicantName().equals(""))
+        if (StringUtils.isBlank(propertyMutation.getApplicantName()))
             addActionError(getText("mandatory.applicant.name"));
         if (propertyMutation.getPropMutationMstr() == null || propertyMutation.getPropMutationMstr().getId() == -1)
             addActionError(getText("mandatory.trRsnId"));
@@ -351,26 +342,23 @@ public class TransferPropertyAction extends WorkflowAction {
 
             if (propMutMstr != null)
                 if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)) {
-                    if (StringUtils.isEmpty(propertyMutation.getExtraField3())
-                            || StringUtils.isBlank(propertyMutation.getExtraField3()))
+                    if (StringUtils.isBlank(propertyMutation.getExtraField3()))
                         addActionError(getText("mandatory.saleDtl"));
                 } else if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_COURT_ORDER)) {
-                    if (StringUtils.isEmpty(propertyMutation.getMutationNo())
-                            || StringUtils.isBlank(propertyMutation.getMutationNo()))
+                    if ( StringUtils.isBlank(propertyMutation.getMutationNo()))
                         addActionError(getText("mandatory.crtOrdNo"));
                 } else if (propMutMstr.getMutationName().equals(PropertyTaxConstants.MUTATIONRS_OTHERS))
-                    if (StringUtils.isEmpty(propertyMutation.getExtraField4())
-                            || StringUtils.isBlank(propertyMutation.getExtraField4()))
+                    if (StringUtils.isBlank(propertyMutation.getExtraField4()))
                         addActionError(getText("mandatory.mutationReason"));
         }
-        if (StringUtils.isEmpty(propertyMutation.getExtraField2()) || StringUtils.isBlank(propertyMutation.getExtraField2()))
+        if (StringUtils.isBlank(propertyMutation.getExtraField2()))
             addActionError(getText("mandatory.subRgName"));
         if (propertyMutation.getMutationFee() == null)
             addActionError(getText("mandatory.mutationFee"));
         else if (!(propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) == 1))
             addActionError(getText("madatory.mutFeePos"));
 
-        if (getModelId() != null && !getModelId().isEmpty()) {
+        if (StringUtils.isNotBlank(getModelId())) {
             if (propertyMutation.getMutationDate() == null)
                 addActionError(getText("mandatory.mutationDate"));
             else if (propertyMutation.getMutationDate().after(new Date()))

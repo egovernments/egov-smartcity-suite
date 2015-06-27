@@ -69,6 +69,8 @@ public abstract class BaseFormAction extends ActionSupport
     public static final String INDEX = "index";
     public static final String NEW = "new";
     public static final String EDIT = "edit";
+    public static final String VIEW = "view";
+    
     public static final String TRANSACTIONSUCCESS = "transactionsuccess";
     protected PersistenceService persistenceService;
     protected Map<String, Object> request;

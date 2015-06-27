@@ -43,6 +43,7 @@ import static org.egov.dcb.bean.Payment.AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -58,8 +60,10 @@ import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
-import org.egov.infra.persistence.entity.Address;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -74,231 +78,233 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyMutationOwner;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
-	private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
-	private PersistenceService trnsfOwnerPerService;
-	protected PersistenceService<BasicProperty, Long> basicPrpertyService;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
+    private PersistenceService trnsfOwnerPerService;
+    protected PersistenceService<BasicProperty, Long> basicPrpertyService;
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    @Autowired
+    private UserService userService;
+    
+    /*
+     * This method returns property's basic property which is undergoing
+     * mutation
+     */
+    public PropertyImpl createPropertyClone(BasicProperty basicProp, PropertyMutation propertyMutation,
+            List<PropertyOwner> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
+            String corrPinCode, String email, String mobileNo) {
+        LOGGER.debug("Inside createPropertyClone method");
+        Property oldProperty = basicProp.getProperty();
+        Set<PropertyMutation> propertyMutationSet = getPropMutationSet(basicProp, propertyMutation, oldProperty);
+        basicProp.setPropMutationSet(propertyMutationSet);
+        // cloning property
+        Property clonedProperty = oldProperty.createPropertyclone();
+        clonedProperty.setPropertyOwnerSet(
+                getNewPropOwnerAdd(clonedProperty, chkIsCorrIsDiff, corrAddress1, corrAddress2, corrPinCode, propertyOwnerProxy));
+        clonedProperty.setPtDemandSet(cloneDemandSet(clonedProperty, oldProperty));
+        basicProp.setAddress(getChangedOwnerContact(basicProp, email, mobileNo));
+        clonedProperty.setStatus(STATUS_WORKFLOW);
+        clonedProperty.setExtra_field1("");
+        clonedProperty.setExtra_field2(NOTICE_PRATIVRUTTA);
+        clonedProperty.setExtra_field3("");
+        clonedProperty.setExtra_field4("");
+        basicProp.addProperty(clonedProperty);
+        basicPrpertyService.update(basicProp);
+        LOGGER.debug("Exit from createPropertyClone method");
+        return (PropertyImpl) clonedProperty;
+    }
 
-	/*
-	 * This method returns property's basic property which is undergoing
-	 * mutation
-	 */
-	public PropertyImpl createPropertyClone(BasicProperty basicProp, PropertyMutation propertyMutation,
-			List<PropertyOwner> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
-			String corrPinCode, String email, String mobileNo) {
-		LOGGER.debug("Inside createPropertyClone method");
-		Property oldProperty = basicProp.getProperty();
-		Set<PropertyMutation> propertyMutationSet = getPropMutationSet(basicProp, propertyMutation, oldProperty);
-		basicProp.setPropMutationSet(propertyMutationSet);
-		// cloning property
-		Property clonedProperty = oldProperty.createPropertyclone();
-		clonedProperty.setPropertyOwnerSet(getNewPropOwnerAdd(clonedProperty, chkIsCorrIsDiff, corrAddress1,
-				corrAddress2, corrPinCode, propertyOwnerProxy));
-		clonedProperty.setPtDemandSet(cloneDemandSet(clonedProperty, oldProperty));
-		basicProp.setAddress(getChangedOwnerContact(basicProp, email, mobileNo));
-		clonedProperty.setStatus(STATUS_WORKFLOW);
-		clonedProperty.setExtra_field1("");
-		clonedProperty.setExtra_field2(NOTICE_PRATIVRUTTA);
-		clonedProperty.setExtra_field3("");
-		clonedProperty.setExtra_field4("");
-		basicProp.addProperty(clonedProperty);
-		basicPrpertyService.update(basicProp);
-		LOGGER.debug("Exit from createPropertyClone method");
-		return (PropertyImpl) clonedProperty;
-	}
+    private Map<Installment, PTDemandCalculations> getDemandCalMap(Property oldProperty) {
+        Map<Installment, PTDemandCalculations> dmdCalMap = new HashMap<Installment, PTDemandCalculations>();
+        for (Ptdemand dmd : oldProperty.getPtDemandSet()) {
+            dmdCalMap.put(dmd.getEgInstallmentMaster(), dmd.getDmdCalculations());
+        }
+        return dmdCalMap;
 
-	private Map<Installment, PTDemandCalculations> getDemandCalMap(Property oldProperty) {
-		Map<Installment, PTDemandCalculations> dmdCalMap = new HashMap<Installment, PTDemandCalculations>();
-		for (Ptdemand dmd : oldProperty.getPtDemandSet()) {
-			dmdCalMap.put(dmd.getEgInstallmentMaster(), dmd.getDmdCalculations());
-		}
-		return dmdCalMap;
+    }
 
-	}
+    private Set<Ptdemand> cloneDemandSet(Property clonedProperty, Property oldProperty) {
+        Map<Installment, PTDemandCalculations> dmdCalMap = getDemandCalMap(oldProperty);
+        Set<Ptdemand> demandSet = new HashSet<Ptdemand>();
+        PTDemandCalculations ptDmdCal;
+        for (Ptdemand ptDmd : clonedProperty.getPtDemandSet()) {
+            PTDemandCalculations OldPTDmdCal = dmdCalMap.get(ptDmd.getEgInstallmentMaster());
+            ptDmdCal = new PTDemandCalculations(ptDmd, OldPTDmdCal.getPropertyTax(), OldPTDmdCal.getRateOfTax(), null, null,
+                    cloneFlrWiseDmdCal(OldPTDmdCal.getFlrwiseDmdCalculations()), OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
+            ptDmd.setDmdCalculations(ptDmdCal);
+            demandSet.add(ptDmd);
+        }
+        return demandSet;
+    }
 
-	private Set<Ptdemand> cloneDemandSet(Property clonedProperty, Property oldProperty) {
-		Map<Installment, PTDemandCalculations> dmdCalMap = getDemandCalMap(oldProperty);
-		Set<Ptdemand> demandSet = new HashSet<Ptdemand>();
-		PTDemandCalculations ptDmdCal;
-		for (Ptdemand ptDmd : clonedProperty.getPtDemandSet()) {
-			PTDemandCalculations OldPTDmdCal = dmdCalMap.get(ptDmd.getEgInstallmentMaster());
-			ptDmdCal = new PTDemandCalculations(ptDmd, OldPTDmdCal.getPropertyTax(), OldPTDmdCal.getRateOfTax(), null,
-					null, cloneFlrWiseDmdCal(OldPTDmdCal.getFlrwiseDmdCalculations()),
-					 OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
-			ptDmd.setDmdCalculations(ptDmdCal);
-			demandSet.add(ptDmd);
-		}
-		return demandSet;
-	}
+    private Set<FloorwiseDemandCalculations> cloneFlrWiseDmdCal(Set<FloorwiseDemandCalculations> flrDmdCal) {
+        FloorwiseDemandCalculations flrWiseDmdCal;
+        Set<FloorwiseDemandCalculations> floorDmdCalSet = new HashSet<FloorwiseDemandCalculations>();
+        for (FloorwiseDemandCalculations flrCal : flrDmdCal) {
+            flrWiseDmdCal = new FloorwiseDemandCalculations(null, flrCal.getFloor(), flrCal.getPTDemandCalculations(), new Date(),
+                    new Date(), flrCal.getCategoryAmt(), flrCal.getOccupancyRebate(), flrCal.getConstructionRebate(),
+                    flrCal.getDepreciation(), flrCal.getUsageRebate());
+            floorDmdCalSet.add(flrWiseDmdCal);
+        }
+        return floorDmdCalSet;
+    }
 
-	private Set<FloorwiseDemandCalculations> cloneFlrWiseDmdCal(Set<FloorwiseDemandCalculations> flrDmdCal) {
-		FloorwiseDemandCalculations flrWiseDmdCal;
-		Set<FloorwiseDemandCalculations> floorDmdCalSet = new HashSet<FloorwiseDemandCalculations>();
-		for (FloorwiseDemandCalculations flrCal : flrDmdCal) {
-			flrWiseDmdCal = new FloorwiseDemandCalculations(null, flrCal.getFloor(), flrCal.getPTDemandCalculations(),
-					new Date(), new Date(), flrCal.getCategoryAmt(), flrCal.getOccupancyRebate(),
-					flrCal.getConstructionRebate(), flrCal.getDepreciation(), flrCal.getUsageRebate());
-			floorDmdCalSet.add(flrWiseDmdCal);
-		}
-		return floorDmdCalSet;
-	}
+    /*
+     * This method returns Property Mutation as a Set
+     */
+    private Set<PropertyMutation> getPropMutationSet(BasicProperty basicProp, PropertyMutation propertyMutation,
+            Property oldProperty) {
+        propertyMutation.setRefPid(null);
+        propertyMutation.setBasicProperty(basicProp);
+        propertyMutation.setApplicationNo(propertyTaxNumberGenerator.generateNameTransApplNo(basicProp.getBoundary()));
+        propertyMutation.setMutationDate(propertyMutation.getMutationDate());
+        propertyMutation.setMutationOwnerSet(getMutOwners(oldProperty, propertyMutation));
+        Set<PropertyMutation> propertyMutationSet = new HashSet();
+        propertyMutationSet.add(propertyMutation);
+        return propertyMutationSet;
+    }
 
-	/*
-	 * This method returns Property Mutation as a Set
-	 */
-	private Set<PropertyMutation> getPropMutationSet(BasicProperty basicProp, PropertyMutation propertyMutation,
-			Property oldProperty) {
-		propertyMutation.setRefPid(null);
-		propertyMutation.setBasicProperty(basicProp);
-		propertyMutation.setApplicationNo(propertyTaxNumberGenerator.generateNameTransApplNo(basicProp.getBoundary()));
-		propertyMutation.setMutationDate(propertyMutation.getMutationDate());
-		propertyMutation.setMutationOwnerSet(getMutOwners(oldProperty, propertyMutation));
-		Set<PropertyMutation> propertyMutationSet = new HashSet();
-		propertyMutationSet.add(propertyMutation);
-		return propertyMutationSet;
-	}
+    /*
+     * This method returns Mutation Owner details as a Set for Property
+     * undergoing Mutation
+     */
+    private Set<PropertyMutationOwner> getMutOwners(Property prop, PropertyMutation propertyMutation) {
+        Set<PropertyMutationOwner> mutOwnerSet = new HashSet<PropertyMutationOwner>();
+        for (PropertyOwner ownerprop : prop.getPropertyOwnerSet()) {
+            PropertyMutationOwner propMutOwner = new PropertyMutationOwner();
+            propMutOwner.setOwnerId(ownerprop.getId().intValue());
+            propMutOwner.setPropertyMutation(propertyMutation);
+            mutOwnerSet.add(propMutOwner);
+        }
+        return mutOwnerSet;
+    }
 
-	/*
-	 * This method returns Mutation Owner details as a Set for Property
-	 * undergoing Mutation
-	 */
-	private Set<PropertyMutationOwner> getMutOwners(Property prop, PropertyMutation propertyMutation) {
-		Set<PropertyMutationOwner> mutOwnerSet = new HashSet<PropertyMutationOwner>();
-		for (PropertyOwner ownerprop : prop.getPropertyOwnerSet()) {
-			PropertyMutationOwner propMutOwner = new PropertyMutationOwner();
-			propMutOwner.setOwnerId(ownerprop.getId().intValue());
-			propMutOwner.setPropertyMutation(propertyMutation);
-			mutOwnerSet.add(propMutOwner);
-		}
-		return mutOwnerSet;
-	}
+    /*
+     * This method returns changed owner corr address as a Set
+     */
+    public Set<PropertyOwner> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
+            String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
+        Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
+        PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+        CorrespondenceAddress ownerAddr = new CorrespondenceAddress();
+        if (chkIsCorrIsDiff) {
+            if (StringUtils.isNotBlank(corrAddress1)) {
+                ownerAddr.setLandmark(propertyTaxUtil.antisamyHackReplace(corrAddress1));
+            }
+            if (StringUtils.isNotBlank(corrAddress2)) {
+                ownerAddr.setStreetRoadLine(propertyTaxUtil.antisamyHackReplace(corrAddress2));
+            }
 
-	/*
-	 * This method returns changed owner corr address as a Set
-	 */
-	public Set<PropertyOwner> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
-			String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
-		Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
-		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		CorrespondenceAddress ownerAddr = null;
-		if (chkIsCorrIsDiff) {
-			ownerAddr = new CorrespondenceAddress();
-			if (corrAddress1 != null && !corrAddress1.isEmpty()) {
-			    ownerAddr.setLandmark(propertyTaxUtil.antisamyHackReplace(corrAddress1));
-			}
-			if (corrAddress2 != null && !corrAddress2.isEmpty()) {
-			    ownerAddr.setStreetRoadLine(propertyTaxUtil.antisamyHackReplace(corrAddress2));
-			}
-			
-			if (StringUtils.isNotEmpty(corrPinCode) || StringUtils.isNotBlank(corrPinCode)) {
-				ownerAddr.setPinCode(corrPinCode);
-			}
-		} else {
-		     ownerAddr = new CorrespondenceAddress();
-		     ownerAddr.setLandmark(clonedProperty.getBasicProperty().getAddress().getLandmark());
-		     ownerAddr.setStreetRoadLine(clonedProperty.getBasicProperty().getAddress().getStreetRoadLine());
-		     ownerAddr.setPinCode(clonedProperty.getBasicProperty().getAddress().getPinCode());
-		}
-		int orderNo = 1;
-		for (PropertyOwner owner : propertyOwnerProxy) {
-			PropertyOwner newOwner = new PropertyOwner();
-			String ownerName = owner.getName();
-			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
-			newOwner.setName(ownerName);
-			newOwner.setOrderNo(orderNo);
-                        newOwner.setAadhaarNumber(owner.getAadhaarNumber());
-                        newOwner.setUsername(owner.getMobileNumber());
-                        newOwner.setMobileNumber(owner.getMobileNumber());
-                        newOwner.setEmailId(owner.getEmailId());
-                        newOwner.setPassword("NOT SET");
-			newOwner.addAddress(ownerAddr);
-			ownSet.add(newOwner);
-			orderNo++;
-		}
-		return ownSet;
-	}
+            if (StringUtils.isNotBlank(corrPinCode)) {
+                ownerAddr.setPinCode(corrPinCode);
+            }
+        } else {
+            try {
+                BeanUtils.copyProperties(ownerAddr, clonedProperty.getBasicProperty().getAddress());
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new EGOVRuntimeException("Error occurred while coping property address to correspondence address",e);
+            }
+            ownerAddr.setId(null);
+            ownerAddr.setType(AddressType.CORRESPONDENCE);
+        }
+        int orderNo = 1;
+        for (PropertyOwner owner : propertyOwnerProxy) {
+            PropertyOwner newOwner = new PropertyOwner();
+            newOwner.setName(propertyTaxUtil.antisamyHackReplace(owner.getName()));
+            newOwner.setOrderNo(orderNo);
+            newOwner.setAadhaarNumber(owner.getAadhaarNumber());
+            newOwner.setUsername(owner.getMobileNumber());
+            newOwner.setMobileNumber(owner.getMobileNumber());
+            newOwner.setEmailId(owner.getEmailId());
+            newOwner.setPassword("NOT SET");
+            newOwner.addAddress(ownerAddr);
+            ownSet.add(newOwner);
+            orderNo++;
+        }
+        return ownSet;
+    }
 
-	/*
-	 * This method returns modified Owner Details for email and contact number
-	 */
-	private PropertyAddress getChangedOwnerContact(BasicProperty bp, String email, String mobileNo) {
-		PropertyAddress propAddr = bp.getAddress();
-		if (email != null && email != "") {
-			propAddr.getUser().setEmailId(email);
-		}
-		if (mobileNo != null && mobileNo != "") {
-			propAddr.getUser().setMobileNumber(mobileNo);
-		}
-		return propAddr;
-	}
+    /*
+     * This method returns modified Owner Details for email and contact number
+     */
+    private PropertyAddress getChangedOwnerContact(BasicProperty bp, String email, String mobileNo) {
+        PropertyAddress propAddr = bp.getAddress();
+        if (email != null && email != "") {
+            propAddr.getUser().setEmailId(email);
+        }
+        if (mobileNo != null && mobileNo != "") {
+            propAddr.getUser().setMobileNumber(mobileNo);
+        }
+        return propAddr;
+    }
 
-	/**
-	 * Generates Miscellaneous receipt
-	 * 
-	 * @param basicProperty
-	 * @param amount
-	 * @return BillReceiptInfo
-	 */
-	public BillReceiptInfo generateMiscReceipt(BasicProperty basicProperty, BigDecimal amount) {
-		LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
-		org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
-		PropertyTaxBillable billable = new PropertyTaxBillable();
-		billable.setBasicProperty(basicProperty);
-		billable.setIsMiscellaneous(Boolean.TRUE);
-		billable.setMutationFee(amount);
-		billable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
-		billable.setCallbackForApportion(Boolean.FALSE);
-		billable.setUserId(Long.valueOf(EgovThreadLocals.getUserId()));
-		billable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
-				.getWard().getBoundaryNum().toString()));
-		property.setBillable(billable);
-		EgBill bill = property.createBill();
-		CollectionHelper collHelper = new CollectionHelper(bill);
-		Payment payment = preparePayment(amount);
-		return collHelper.generateMiscReceipt(payment);
-	}
+    /**
+     * Generates Miscellaneous receipt
+     * 
+     * @param basicProperty
+     * @param amount
+     * @return BillReceiptInfo
+     */
+    public BillReceiptInfo generateMiscReceipt(BasicProperty basicProperty, BigDecimal amount) {
+        LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
+        org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
+        PropertyTaxBillable billable = new PropertyTaxBillable();
+        billable.setBasicProperty(basicProperty);
+        billable.setIsMiscellaneous(Boolean.TRUE);
+        billable.setMutationFee(amount);
+        billable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        billable.setCallbackForApportion(Boolean.FALSE);
+        billable.setUserId(Long.valueOf(EgovThreadLocals.getUserId()));
+        billable.setReferenceNumber(propertyTaxNumberGenerator
+                .generateBillNumber(basicProperty.getPropertyID().getWard().getBoundaryNum().toString()));
+        property.setBillable(billable);
+        EgBill bill = property.createBill();
+        CollectionHelper collHelper = new CollectionHelper(bill);
+        Payment payment = preparePayment(amount);
+        return collHelper.generateMiscReceipt(payment);
+    }
 
-	/**
-	 * Prepares payment information
-	 * @param amount
-	 * @return
-	 */
-	private Payment preparePayment(BigDecimal amount) {
-		LOGGER.debug("Inside preparePayment method, Mutation Amount: " + amount);
-		Map<String, String> payDetailMap = new HashMap<String, String>();
-		payDetailMap.put(AMOUNT, String.valueOf(amount));
-		Payment payment = Payment.create(Payment.CASH, payDetailMap);
-		LOGGER.debug("Exit from preparePayment method ");
-		return payment;
-	}
+    /**
+     * Prepares payment information
+     * 
+     * @param amount
+     * @return
+     */
+    private Payment preparePayment(BigDecimal amount) {
+        LOGGER.debug("Inside preparePayment method, Mutation Amount: " + amount);
+        Map<String, String> payDetailMap = new HashMap<String, String>();
+        payDetailMap.put(AMOUNT, String.valueOf(amount));
+        Payment payment = Payment.create(Payment.CASH, payDetailMap);
+        LOGGER.debug("Exit from preparePayment method ");
+        return payment;
+    }
 
-	public PersistenceService getTrnsfOwnerPerService() {
-		return trnsfOwnerPerService;
-	}
+    public PersistenceService getTrnsfOwnerPerService() {
+        return trnsfOwnerPerService;
+    }
 
-	public void setTrnsfOwnerPerService(PersistenceService trnsfOwnerPerService) {
-		this.trnsfOwnerPerService = trnsfOwnerPerService;
-	}
+    public void setTrnsfOwnerPerService(PersistenceService trnsfOwnerPerService) {
+        this.trnsfOwnerPerService = trnsfOwnerPerService;
+    }
 
-	public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-		return basicPrpertyService;
-	}
+    public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
+        return basicPrpertyService;
+    }
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
-	}
+    public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
+        this.basicPrpertyService = basicPrpertyService;
+    }
 
-	public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
-		return propertyTaxNumberGenerator;
-	}
+    public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
+        return propertyTaxNumberGenerator;
+    }
 
-	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
-		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-	}
+    public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+        this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
+    }
 
 }

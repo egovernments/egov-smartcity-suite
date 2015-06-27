@@ -52,21 +52,10 @@ import org.egov.infstr.models.BaseModel;
  * @version 1.00
  */
 public class PropertyDocs extends BaseModel implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private Long id = null;
+    private static final long serialVersionUID = -2528676632693330217L;
     private BasicProperty basicProperty;
     private FileStoreMapper supportDoc;
     private String reason;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
 
     public BasicProperty getBasicProperty() {
         return basicProperty;
