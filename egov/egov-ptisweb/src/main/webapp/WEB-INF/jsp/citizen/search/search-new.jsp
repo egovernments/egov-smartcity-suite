@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
@@ -47,6 +47,11 @@
 				populatewardId( {
 					zoneId : document.getElementById("zoneId").value
 				});
+			}
+
+			function gotoSearch(){
+				document.assessmentform.action='${pageContext.request.contextPath}/citizen/search/search-srchByAssessment.action';
+				document.assessmentform.submit(); 
 			}
 			
 		</script>
@@ -61,13 +66,13 @@
 			</s:if>
 			<center>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
-						<s:form action="search" name="indexform" theme="simple">
+						<s:form action="search" name="assessmentform" theme="simple">
 							<div class="formheading"></div>
 							
 							<tr>
 								<td width="100%" colspan="4" class="headingbg">												
 									<div class="headingbg">					
-										<s:text name="search.index.num" />									
+										<s:text name="search.assessment.num" />									
 									</div>									
 								</td>
 							</tr>					
@@ -80,7 +85,7 @@
 								</td>
 								
 								<td class="bluebox">
-									<s:textfield name="indexNum" id="indexNum" value="%{indexNum}" maxlength="50"/>
+									<s:textfield name="assessmentNum" id="assessmentNum" value="%{assessmentNum}" maxlength="50"/>
 								</td>
 								<td class="bluebox">&nbsp;</td>
 							</tr>
@@ -95,8 +100,9 @@
 								<td class="greybox">&nbsp;</td>
 								<td class="greybox" colspan="2">
 									<div class="greybox" style="text-align:center">
-										<s:hidden id="mode" name="mode" value="index"></s:hidden>
-										<s:submit name="search" value="Search" cssClass="buttonsubmit" method="srchByIndex"></s:submit>
+										<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
+										<input type="submit" value="Search" class="button"
+											onClick="gotoSearch();" />
 									</div>
 								</td>								
 								<td class="greybox">&nbsp;</td>

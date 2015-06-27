@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!--  #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,20 +36,25 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
 	<head>
 		<script type="text/javascript">
-		function getPropdetails(obj,indexNum)
+		function getPropdetails(obj,assessmentNum)
 		{
 		   var selectedValue = obj.options[obj.selectedIndex].value;	       
 	       if(selectedValue=="ViewProperty")
 			{
-				window.location="../../view/viewDCBProperty!displayPropInfo.action?propertyId="+indexNum;
+				window.location="../../view/viewDCBProperty-displayPropInfo.action?propertyId="+assessmentNum;
 			}
 	    }
+
+		function gotoSearchForm(){
+			document.viewform.action='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
+			document.viewform.submit(); 
+		}
 		
 	</script>
 		<title><s:text name="searchResults.title" /></title>
@@ -77,8 +82,8 @@
 							<display:table name="searchResultList" id="linksTables"
 								pagesize="10" export="true" requestURI="" class="tablebottom"
 								style="width:100%" uid="currentRowObject">
-								<display:column property="indexNum"
-									title="Index Number"
+								<display:column property="assessmentNum"
+									title="Assessment Number"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center">
 								</display:column>
@@ -110,7 +115,7 @@
 									media="html" class="blueborderfortd" style="text-align:center">
 									<select id="actionValue" name="actionValue"
 										style="align: center" 	
-										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.indexNum}"/>')">									
+										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">									
 										<option value="">
 											<br>
 											----Choose----
@@ -144,8 +149,8 @@
 							<div class="buttonsearch" align="center">
 								<input type="button" value="Close" class="button"
 									onClick="window.close()" />
-								<s:submit value="Search Again" cssClass="buttonsubmit"
-									method="searchForm"></s:submit>
+								<input type="submit" value="Search Again" class="button"
++									onClick="gotoSearchForm();" />
 							</div>
 						</td>
 					</tr>

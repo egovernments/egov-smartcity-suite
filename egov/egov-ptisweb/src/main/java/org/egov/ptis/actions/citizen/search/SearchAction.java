@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.citizen.search;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -53,21 +54,18 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.StringUtils;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -76,28 +74,27 @@ import org.egov.ptis.domain.entity.property.PropertyOwner;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
-@Transactional(readOnly = true)
+@Results({ @Result(name = NEW, location = "search-new.jsp") ,
+    @Result(name = SearchAction.TARGET, location = "search-result.jsp") })
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 
-	private String indexNum;
+	private String assessmentNum;
 	private String mode;
 	private List<Map<String, String>> searchResultList;
 	private String searchUri;
 	private String searchCreteria;
 	private String searchValue;
-	private HttpSession session = null;
 	private HttpServletRequest request;
 	private Long userId;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
-	String target = "failure";
+	public static final String TARGET = "result";
 
 	@Autowired
 	private UserService userService;
@@ -111,68 +108,57 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		return null;
 	}
 
+	@SkipValidation 
+        @Action(value = "/citizen/search/search-searchForm")
 	public String searchForm() {
-		return "new";
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public void prepare() {
-		LOGGER.debug("Entered into prepare method");
-		session = request.getSession();
-		User user = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
-		userId = user.getId();
-		EgovThreadLocals.setUserId(userId);
-		session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
-		LOGGER.debug("Exit from prepare method");
+		return NEW;
 	}
 
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/search/searchAction-srchByIndex")
-	public String srchByIndex() {
-		LOGGER.info("Entered into srchByIndex  method");
-		LOGGER.info("Index Number : " + indexNum);
+	@Action(value = "/citizen/search/search-srchByAssessment")
+	public String srchByAssessment() {
+		LOGGER.info("Entered into srchByAssessment  method");
+		LOGGER.info("Assessment Number : " + assessmentNum);
 		try {
-			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNum);
-			LOGGER.debug("srchByIndex : BasicProperty : " + basicProperty);
+			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
+			LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
 			if (basicProperty != null) {
 				setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
 			}
-			if (indexNum != null && !indexNum.equals("")) {
-				setSearchValue("Index Number : " + indexNum);
-			} else if (indexNum != null && !indexNum.equals("")) {
-				setSearchValue("Index Number : " + indexNum);
-			}
-			setSearchCreteria("Search By Index number");
-			target = "result";
+			if (assessmentNum != null && !assessmentNum.equals("")) {
+                                setSearchValue("Assessment Number : " + assessmentNum);
+                        } else if (assessmentNum != null && !assessmentNum.equals("")) {
+                                setSearchValue("Assessment Number : " + assessmentNum);
+                        }
+			setSearchCreteria("Search By Assessment number");
 		} catch (Exception e) {
-			LOGGER.error("Exception in Search Property By Index ", e);
+			LOGGER.error("Exception in Search Property By Assessment ", e);
 			throw new EGOVRuntimeException("Exception : " + e);
 		}
-		LOGGER.debug("Exit from srchByIndex method ");
-		return target;
+		LOGGER.debug("Exit from srchByAssessment method ");
+		return TARGET;
 	}
 
 	@Override
 	public void validate() {
 		LOGGER.info("Entered into validate method");
-		if (org.apache.commons.lang.StringUtils.equals(mode, "index")) {
-			if ((org.apache.commons.lang.StringUtils.isEmpty(indexNum) || org.apache.commons.lang.StringUtils.isBlank(indexNum))) {
-				addActionError(getText("mandatory.indexNumber"));
+		if (org.apache.commons.lang.StringUtils.equals(mode, "assessment")) {
+			if ((org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))) {
+				addActionError(getText("mandatory.assessmentNo"));
 			}
 		}
 		LOGGER.debug("Exit from validate method");
 	}
 
-	private List<Map<String, String>> getSearchResults(String indexNumber) {
+	private List<Map<String, String>> getSearchResults(String assessmentNumber) {
 		LOGGER.debug("Entered into getSearchResults method");
-		LOGGER.debug("Index Number : " + indexNumber);
+		LOGGER.debug("Asssessment Number : " + assessmentNumber);
 		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 
-		if (indexNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(indexNumber)) {
+		if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
 
 			BasicProperty basicProperty = basicPropertyDAO
-					.getBasicPropertyByPropertyID(indexNumber);
+					.getBasicPropertyByPropertyID(assessmentNumber);
 			LOGGER.debug("BasicProperty : " + basicProperty);
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
@@ -180,7 +166,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 				Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
-				searchResultMap.put("indexNum", indexNumber);
+				searchResultMap.put("assessmentNum", assessmentNumber);
 				searchResultMap.put("ownerName", ptisCachMgr.buildOwnerFullName(ownerSet));
 				searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
 				searchResultMap.put("address",
@@ -198,14 +184,6 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
 		LOGGER.debug("Exit from getSearchResults method");
 		return searchList;
-	}
-
-	public String getIndexNum() {
-		return indexNum;
-	}
-
-	public void setIndexNum(String indexNum) {
-		this.indexNum = indexNum;
 	}
 
 	public List<Map<String, String>> getSearchResultList() {
@@ -253,5 +231,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	public void setServletRequest(HttpServletRequest arg0) {
 		this.request = arg0;
 	}
+
+        public String getAssessmentNum() {
+            return assessmentNum;
+        }
+    
+        public void setAssessmentNum(String assessmentNum) {
+            this.assessmentNum = assessmentNum;
+        }
 
 }
