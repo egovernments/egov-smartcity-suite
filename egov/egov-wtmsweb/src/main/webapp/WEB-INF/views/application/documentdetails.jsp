@@ -92,10 +92,10 @@
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" required="required">
+				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" required="required">
 			</c:when>
 			<c:otherwise>
-				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" >
+				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" >
 			</c:otherwise>		
 		</c:choose> 
 	</div> 
