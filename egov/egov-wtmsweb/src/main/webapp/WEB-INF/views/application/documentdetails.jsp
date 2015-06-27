@@ -56,24 +56,46 @@
 <c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
 <div class="form-group">	
 	<div class="col-sm-3 add-margin">
-		<input type="text" id="applicationDocs${status.index}documentNames.documentName" value="${docs.documentName}" class="form-control" disabled>  
-		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" class="form-control" /> 
-	</div>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
-		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
-	</div>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
-		<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
+		<c:choose>
+			<c:when test="${docs.required}">
+				<input type="checkbox" checked disabled>&nbsp;<c:out value="${docs.documentName}"/> 
+			</c:when>
+			<c:otherwise>
+				<input type="checkbox" disabled>&nbsp;<c:out value="${docs.documentName}"/> 
+			</c:otherwise>		
+		</c:choose> 
+		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
+		<form:hidden id="applicationDocs${status.index}documentNames.required" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
 	</div>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" required="required">
+				<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
 			</c:when>
 			<c:otherwise>
-				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files">
+				<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" />
+			</c:otherwise>		
+		</c:choose> 
+		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
+	</div>
+	<div class="col-sm-3 add-margin">
+		<c:choose>
+			<c:when test="${docs.required}">
+				<form:input class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
+			</c:when>
+			<c:otherwise>
+				<form:input class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" />
+			</c:otherwise>		
+		</c:choose> 
+			<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
+	</div>
+	<div class="col-sm-3 add-margin">
+		<c:choose>
+			<c:when test="${docs.required}">
+				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" required="required">
+			</c:when>
+			<c:otherwise>
+				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" value="%{waterConnectionDetails.applicationDocs[${status.index}].files}" >
 			</c:otherwise>		
 		</c:choose> 
 	</div> 
