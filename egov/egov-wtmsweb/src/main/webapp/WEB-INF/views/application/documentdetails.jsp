@@ -40,6 +40,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<c:choose>
+<c:when test="${!documentNamesList.isEmpty()}">
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
@@ -51,7 +53,6 @@
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
 </div>
-
 <c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
 <div class="form-group">	
 	<div class="col-sm-3 add-margin">
@@ -67,7 +68,16 @@
 		<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
 	</div>
 	<div class="col-sm-3 add-margin">
-		<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" >
-	</div>
+		<c:choose>
+			<c:when test="${docs.required}">
+				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files" required="required">
+			</c:when>
+			<c:otherwise>
+				<input type="file" id="applicationDocs${status.index}file" name="applicationDocs[${status.index}].files">
+			</c:otherwise>		
+		</c:choose> 
+	</div> 
 </div>
 </c:forEach> 
+</c:when>
+</c:choose>
