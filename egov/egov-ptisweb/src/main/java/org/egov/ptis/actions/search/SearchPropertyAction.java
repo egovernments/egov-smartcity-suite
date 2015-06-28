@@ -174,7 +174,7 @@ public class SearchPropertyAction extends BaseFormAction {
 			throw new ValidationException(Arrays.asList(new ValidationError(msg, msg)));
 		} catch (Exception e) {
 			LOGGER.error("Exception in Search Property By Assessment ", e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new EGOVRuntimeException("Exception : ", e);
 		}
 		LOGGER.debug("Exit from srchByAssessment method ");
 		return TARGET;

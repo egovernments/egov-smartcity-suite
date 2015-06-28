@@ -52,7 +52,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "egBillDAO")
-@Transactional(readOnly = true)
 public class EgBillHibernateDao implements EgBillDao {
 
 	@PersistenceContext
@@ -72,9 +71,8 @@ public class EgBillHibernateDao implements EgBillDao {
 	}
 
 	@Override
-	public EgBill findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
+	public EgBill findById(Long id, boolean lock) {
+		return (EgBill) getCurrentSession().load(EgBill.class, id);
 	}
 
 	@Override
@@ -85,8 +83,9 @@ public class EgBillHibernateDao implements EgBillDao {
 
 	@Override
 	public EgBill create(EgBill egBill) {
-		// TODO Auto-generated method stub
-		return null;
+	    getCurrentSession().saveOrUpdate(egBill);
+	    getCurrentSession().flush();
+	    return egBill;
 	}
 
 	@Override

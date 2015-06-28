@@ -118,6 +118,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	private UserService UserService;
 	
 	private Set<PropertyOwner> propertyOwners;
+	private boolean isUserOperator;
 
 	public void setBasicPropertyDAO(BasicPropertyDAO basicPropertyDAO) {
 		this.basicPropertyDAO = basicPropertyDAO;
@@ -230,6 +231,9 @@ public class ViewPropertyAction extends BaseFormAction {
 			Long userId = (Long) session().get(SESSIONLOGINID);
 			if (userId != null) {
 				setRoleName(getRolesForUserId(userId));
+				if (roleName.contains(PropertyTaxConstants.PROPERTY_CSC_OPERATOR.toUpperCase())) {
+				    isUserOperator = true;
+				}
 			}
 			if (!getBasicProperty().getPropertyDocsSet().isEmpty()
 					&& getBasicProperty().getPropertyDocsSet() != null) {
@@ -460,5 +464,15 @@ public class ViewPropertyAction extends BaseFormAction {
 	public void setPropertyOwners(Set<PropertyOwner> propertyOwners) {
 		this.propertyOwners = propertyOwners;
 	}
+
+    public boolean getIsUserOperator() {
+        return isUserOperator;
+    }
+
+    public void setIsUserOperator(boolean isUserOperator) {
+        this.isUserOperator = isUserOperator;
+    }
+	
+	
 	
 }

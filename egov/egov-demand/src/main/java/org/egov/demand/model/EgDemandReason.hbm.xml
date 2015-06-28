@@ -50,6 +50,10 @@
             <one-to-many class="org.egov.demand.model.EgDemandReasonDetails" />
         </set>
         
+         <!-- <many-to-one name="purposeCode" class="org.egov.commons.EgfAccountcodePurpose" >
+            <column name="PURPOSEID"  />
+        </many-to-one> -->
+        
          <many-to-one name="glcodeId" class="org.egov.commons.CChartOfAccounts" >
             <column name="GLCODEID"  />
         </many-to-one>

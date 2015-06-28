@@ -57,10 +57,12 @@
 				buttonPayTax.disabled = (ensureCheckbox.checked) ? false : true;			
 			}
 
-			function setLevyPenalyBeforeSubmit() {
-				var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
-				window.location='../collection/collectPropertyTax!showPenalty.action?propertyId='+propertyId;
-			}
+			jQuery(document).ready( function () {
+				jQuery('#payBill').click( function () {
+					var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
+					window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+				});
+			});
 		</script>
 	</head>
 	<body onload="loadOnStartup(); ">
@@ -73,29 +75,29 @@
 			<jsp:include page="viewObjection.jsp"/>
 			<jsp:include page="../recovery/viewRecovery.jsp"/>
 			<div class="buttonbottom" align="center">
-			<c:if test="${fn:contains(roleName,'OPERATOR')}">
+			<s:if test="isUserOperator == true">
 				<div align="center">
-									<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
-									<span style="font-size:15px; color:red">
-										<s:text name="msg.payBill.verification" /> <br><br>
-										<s:if test="basicProperty.isDemandActive == true">
-											<s:text name="msg.activeDemand" />	
-										</s:if>
-										<s:else>
-											<s:text name="getText('msg.inactiveDemand' , {demandEffectiveYear, noOfDaysForInactiveDemand})" />
-										</s:else>
-									</span> 
+					<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
+					<span style="font-size:15px; color:red">
+						<s:text name="msg.payBill.verification" /> <br><br>
+						<s:if test="basicProperty.isDemandActive == true">
+							<s:text name="msg.activeDemand" />	
+						</s:if>
+						<s:else>
+							<s:text name="getText('msg.inactiveDemand' , {demandEffectiveYear, noOfDaysForInactiveDemand})" />
+						</s:else>
+					</span> 
 				</div><br>
 				<div align="center">
 					<table>
 						<tr>
-							<td align="center"><input type="button" name="display"
-								id="display" value="Pay Bill" class="button"
-								onclick="setLevyPenalyBeforeSubmit();" /></td>
+							<td align="center">
+								<input type="button" name="payBill" id="payBill" value="Pay Bill" class="button" />
+							</td>
 						</tr>
 					</table>
 				</div><br>
-			</c:if>
+			</s:if>
 			
 			<br>			
 			<c:if test="${fn:contains(roleName,'ASSISTANT') && basicProperty.isDemandActive == true}">
@@ -160,11 +162,11 @@
 					id="btnModifyProperty" value="Modification"
 					onclick="window.location='../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 			</s:if>
-			<c:if test="${fn:contains(roleName,'OPERATOR') && basicProperty.isDemandActive == true}">
+			<s:if test="isUserOperator && basicProperty.isDemandActive == true}">
 				<input type="button" class="button" name="btnTrnsProperty"
 					id="btnTrnsProperty" value="Mutation"
 					onclick="window.location='../transfer/transferProperty!transferForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />				
-			</c:if>	
+			</s:if>	
 		
 			<input type="button" class="button" name="SearchProperty"
 				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />

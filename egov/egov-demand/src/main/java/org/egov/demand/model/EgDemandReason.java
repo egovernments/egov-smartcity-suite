@@ -69,7 +69,10 @@ public class EgDemandReason implements java.io.Serializable {
 			0);
 	private Set<EgDemandDetails> egDemandDetails = new HashSet<EgDemandDetails>(
 			0);
-	private EgfAccountcodePurpose purposeCode = null;
+	/**
+	 * FIXME Check with ramki eg_demand_reason does not have purpose_id
+	 */
+	//private EgfAccountcodePurpose purposeCode = null;
 	private CChartOfAccounts glcodeId;
 
 	public String toString() {
@@ -154,13 +157,13 @@ public class EgDemandReason implements java.io.Serializable {
 		getEgDemandDetails().remove(egDemandDetails);
 	}
 
-	public EgfAccountcodePurpose getPurposeCode() {
+	/*public EgfAccountcodePurpose getPurposeCode() {
 		return purposeCode;
 	}
 
 	public void setPurposeCode(EgfAccountcodePurpose purposeCode) {
 		this.purposeCode = purposeCode;
-	}
+	}*/
 
 	public Date getCreateDate() {
 		return createDate;

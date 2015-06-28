@@ -86,7 +86,7 @@ public class BillTaxCollection {
 		try {
 			if (bri != null) {
 				billRecpt = new BillReceipt();
-				EgBill egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()),
+				EgBill egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()),
 						false);
 				List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
 				BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
@@ -123,7 +123,7 @@ public class BillTaxCollection {
 		EgBill egBill = null;
 		try {
 			if (bri != null) {
-				egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()),
+				egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()),
 						false);
 				List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
 

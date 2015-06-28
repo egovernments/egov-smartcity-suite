@@ -69,8 +69,8 @@ public interface PropertyTaxConstants {
 	public static final String PTISCONFIGFILE = "ptis_egov_config.xml";
 	public static final String DEACTIVATION = "DEACTIVATION";
 	public static final String DATE_FORMAT_DDMMYYY = "dd/MM/yyyy";
-	public static final String SESSIONLOGINID = "com.egov.user.LoginUserId";
-	public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
+	public static final String SESSIONLOGINID = "userid";
+	public static final String SESSION_VAR_LOGIN_USER_NAME = "username";
 	public static final String CITIZENUSER = "citizenUser";
 	public static final String PROP_ADDR_TYPE = "PROPERTY";
 	public static final String OWNER_ADDR_TYPE = "OWNER";
@@ -511,6 +511,7 @@ public interface PropertyTaxConstants {
 			put(DEMANDRSN_CODE_LIBRARY_CESS, 3);
 			put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 4);
 			put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 5);
+			put(DEMANDRSN_REBATE, 6);
 		}
 	};
 
@@ -670,9 +671,9 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_STATUS_INACTIVE = "INACTIVE";
 	public static final String PROP_STATUS_TYPE_DEACT = "DEACTIVATE";
 
-	public static final String DEFAULT_FUNCTIONARY_CODE = "17";
-	public static final String DEFAULT_FUND_SRC_CODE = "45021";
-	public static final String DEFAULT_FUND_CODE = "45021";
+	public static final String DEFAULT_FUNCTIONARY_CODE = "1";
+	public static final String DEFAULT_FUND_SRC_CODE = "01";
+	public static final String DEFAULT_FUND_CODE = "01";
 	public static final String DEPT_CODE_TAX = "T";
 
 	// Roles
@@ -1032,7 +1033,8 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
 	
 	public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
-	
 	public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
 	public static final String STATUS_CODE_ASSESSED = "ASSESSED";
+	public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
+	public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
 }

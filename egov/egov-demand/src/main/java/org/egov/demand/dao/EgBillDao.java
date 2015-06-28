@@ -48,7 +48,7 @@ public interface EgBillDao {
 
 	public EgBillType getBillTypeByCode(String code);
 
-	public EgBill findById(Integer id, boolean lock);
+	public EgBill findById(Long id, boolean lock);
 
 	public List<EgBill> findAll();
 

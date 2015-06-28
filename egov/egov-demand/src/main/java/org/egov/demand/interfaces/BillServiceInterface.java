@@ -50,6 +50,8 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.utils.DemandUtils;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -131,17 +133,20 @@ public abstract class BillServiceInterface {
 		bill.setEgDemand(currentDemand);
 		bill.setDescription(billObj.getDescription());
 		bill.setDisplayMessage(billObj.getDisplayMessage());
+		
 		if (currentDemand != null && currentDemand.getMinAmtPayable() != null) {
 			bill.setMinAmtPayable(currentDemand.getMinAmtPayable());
 		} else {
 			bill.setMinAmtPayable(BigDecimal.ZERO);
 		}
+		
 		// Get it from the concrete implementation
 		List<EgBillDetails> bd = getBilldetails(billObj);
 		for (EgBillDetails billdetails : bd) {
 			bill.addEgBillDetails(billdetails);
 			billdetails.setEgBill(bill);
 		}
+		
 		bill.setConsumerId(billObj.getPropertyId());
 		bill.setCallBackForApportion(billObj.isCallbackForApportion());
 		egBillDAO.create(bill);

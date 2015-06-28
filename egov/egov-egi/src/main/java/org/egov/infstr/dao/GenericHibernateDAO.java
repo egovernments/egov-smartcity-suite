@@ -42,6 +42,7 @@ package org.egov.infstr.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
@@ -75,7 +76,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 * @return the hibernate session
 	 */
 	protected Session getCurrentSession() {
-		return session;
+		return HibernateUtil.getCurrentSession();
 	}
 
 	/**

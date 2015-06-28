@@ -146,6 +146,14 @@ public final class ReportUtil {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
 	}
+	
+	public static String getCityName() {
+	    try {
+                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT CITYNAME FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
+        } catch (final HibernateException e) {
+                throw new EGOVRuntimeException("Exception in getting city name!", e);
+        }
+	}
 
 	/**
 	 * Returns input stream for given report template. First checks in the custom location (/custom/reports/templates/). If not found, tries the product location (/reports/templates/)
@@ -287,4 +295,6 @@ public final class ReportUtil {
 	public static String formatNumber(final BigDecimal number, final int fractionDigits, final boolean useGrouping) {
 		return NumberUtil.formatNumber(number, fractionDigits, useGrouping);
 	}
+	
+	
 }

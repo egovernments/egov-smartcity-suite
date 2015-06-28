@@ -42,6 +42,7 @@ package org.egov.ptis.domain.bill;
 import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
@@ -105,30 +106,23 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	EgBillType egBillType;
 	PTISCacheManager ptcm = new PTISCacheManager();
 	@Autowired
-	@Qualifier(value = "demandDAO")
-	private EgDemandDao demandDao;
+	private EgDemandDao egDemandDAO;
 	@Autowired
 	private ModuleService moduleDao;
 	@Autowired
-	@Qualifier(value = "propertyDAO")
-	private PropertyDAO propertyDao;
+	private PropertyDAO propertyDAO;
 	@Autowired
-	@Qualifier(value = "ptDemandDAO")
-	private PtDemandDao ptDemandDao;
+	private PtDemandDao ptDemandDAO;
 	@Autowired
-	@Qualifier(value = "egBillDAO")
-	private EgBillDao egBillDao;
+	private EgBillDao egBillDAO;
 	@Autowired
-	@Qualifier(value = "demandGenericDAO")
-	private DemandGenericDao demandGenericDao;
+	private DemandGenericDao demandGenericDAO;
 	@Autowired
 	private UserService userService;
-
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
-	
+	private PropertyTaxUtil propertyTaxUtil;
+
 	private Boolean isCallbackForApportion = Boolean.TRUE;
-	private static final BigDecimal VALUE_HUNDRED = new BigDecimal(100);
 	private LPPenaltyCalcType penaltyCalcType = SIMPLE;
 	private PropertyTaxUtil ptUtils = new PropertyTaxUtil();
 	private String referenceNumber;
@@ -188,7 +182,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Property does not exist" + e);
 		}
-		return ptDemandDao.getNonHistoryCurrDmdForProperty(bp.getProperty());
+		return ptDemandDAO.getNonHistoryCurrDmdForProperty(bp.getProperty());
 	}
 
 	/*
@@ -219,12 +213,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 
 	@Override
 	public String getBoundaryType() {
-		return "Ward";
+		return PropertyTaxConstants.WARD_BNDRY_TYPE;
 	}
 
 	@Override
 	public Long getBoundaryNum() {
-		return getBasicProperty().getBoundary().getId();
+		return getBasicProperty().getBoundary().getBoundaryNum();
 	}
 
 	@Override
@@ -280,17 +274,17 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	@Override
 	public BigDecimal getTotalAmount() {
 		EgDemand currentDemand = getCurrentDemand();
-		List instVsAmt = propertyDao.getDmdCollAmtInstWise(currentDemand);
+		List instVsAmt = propertyDAO.getDmdCollAmtInstWise(currentDemand);
 		BigDecimal balance = BigDecimal.ZERO;
 		for (Object object : instVsAmt) {
 			Object[] ddObject = (Object[]) object;
 			BigDecimal dmdAmt = (BigDecimal) ddObject[1];
 			BigDecimal collAmt = BigDecimal.ZERO;
 			if (ddObject[2] != null) {
-				collAmt = (BigDecimal) ddObject[2];
+				collAmt = new BigDecimal((Double)ddObject[2]);
 			}
 			balance = balance.add(dmdAmt.subtract(collAmt));
-			BigDecimal penaltyAmount = demandGenericDao.getBalanceByDmdMasterCode(currentDemand,
+			BigDecimal penaltyAmount = demandGenericDAO.getBalanceByDmdMasterCode(currentDemand,
 					PropertyTaxConstants.PENALTY_DMD_RSN_CODE, getModule());
 			if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
 				balance = balance.add(penaltyAmount);
@@ -315,12 +309,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	@Override
 	public List<EgDemand> getAllDemands() {
 		List<EgDemand> demands = null;
-		List demandIds = propertyDao.getAllDemands(getBasicProperty());
+		List demandIds = propertyDAO.getAllDemands(getBasicProperty());
 		if (demandIds != null && !demandIds.isEmpty()) {
 			demands = new ArrayList<EgDemand>();
 			Iterator iter = demandIds.iterator();
 			while (iter.hasNext()) {
-				demands.add((EgDemand) demandDao.findById(Integer.valueOf(iter.next().toString()),
+				demands.add((EgDemand) egDemandDAO.findById(Integer.valueOf(iter.next().toString()),
 						false));
 			}
 		}
@@ -367,7 +361,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 		BigDecimal penalty = BigDecimal.ZERO;
 		int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
 		penalty = amount.multiply((PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths)))).divide(
-				VALUE_HUNDRED);
+				BIGDECIMAL_100);
 		return MoneyUtils.roundOff(penalty);
 	}
 
@@ -408,7 +402,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 				noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(
 						currentPenaltyApplicableDate.getTime(), new Date());
 			}
-			penalty = balanceTax.multiply(LP_PERCENTAGE_CONSTANT).divide(VALUE_HUNDRED)
+			penalty = balanceTax.multiply(LP_PERCENTAGE_CONSTANT).divide(BIGDECIMAL_100)
 					.multiply(new BigDecimal(noOfMonths));
 		}
 
@@ -451,9 +445,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 			if (getUserId() != null && !getUserId().equals("")) {
 				String loginUser = userService.getUserById(getUserId()).getName();
 				if (loginUser.equals(PropertyTaxConstants.CITIZENUSER)) {
-					billType = egBillDao.getBillTypeByCode("ONLINE");
+					billType = egBillDAO.getBillTypeByCode("ONLINE");
 				} else if (!loginUser.equals(PropertyTaxConstants.CITIZENUSER)) {
-					billType = egBillDao.getBillTypeByCode("AUTO");
+					billType = egBillDAO.getBillTypeByCode("AUTO");
 				}
 			}
 		}
@@ -890,7 +884,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	private BigDecimal getTaxforReason(Property property, String demandReason) {
 		BigDecimal reasonTax = BigDecimal.ZERO;
 		Installment inst = propertyTaxUtil.getCurrentInstallment();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
+		EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 		for (EgDemandDetails dmdDet : egDemand.getEgDemandDetails()) {
 			if (dmdDet.getEgDemandReason().getEgInstallmentMaster().equals(inst)
 					&& dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -909,8 +903,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	 * @return applicable rebate amount
 	 */
 	public BigDecimal calculateAdvanceRebate(BigDecimal currentTax) {
-		return currentTax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(
-				VALUE_HUNDRED);
+		return currentTax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100);
 	}
 
 	public Boolean isMiscellaneous() {

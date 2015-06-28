@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_REBATE_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMA_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_REBATE_STR;
@@ -113,6 +114,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -197,12 +199,14 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.utils.PTISCacheManager;
+import org.hibernate.Query;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PropertyTaxUtil {
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
+	
 	@Autowired
 	private PersistenceService persistenceService;
 	@Autowired
@@ -213,34 +217,26 @@ public class PropertyTaxUtil {
 	private AssignmentService assignmentService;
 	@Autowired
 	private EisCommonService eisCommonService;
-	private static final String HUNDRED = "100";
-	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	@Autowired
 	private AppConfigValuesDAO appConfigValuesDAO;
 	@Autowired
-	private ModuleService moduleDao;
+	private ModuleService moduleService;
 	@Autowired
 	private InstallmentDao installmentDao;
 	@Autowired
-	@Qualifier(value = "ptDemandDAO")
-	private PtDemandDao ptDemandDao;
+	private PtDemandDao ptDemandDAO;
 	@Autowired
-	@Qualifier(value = "boundaryCategoryDAO")
-	private BoundaryCategoryDao boundaryCategoryDao;
+	private BoundaryCategoryDao boundaryCategoryDAO;
 
 	@Autowired
-	@Qualifier(value = "demandGenericDAO")
-	private DemandGenericHibDao demandGenericHibDao;
+	private DemandGenericHibDao demandGenericDAO;
 
 	@Autowired
-	@Qualifier(value = "basicPropertyDAO")
-	private BasicPropertyDAO basicPropertyDao;
+	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
-	@Qualifier(value = "egBillDAO")
-	private EgBillDao egBillDao;
+	private EgBillDao egBillDAO;
 	@Autowired
-	@Qualifier(value = "propertyDAO")
-	private PropertyDAO propertyDao;
+	private PropertyDAO propertyDAO;
 
 	private Map<Date, Property> getPropertiesByCreatedDate(Map<Date, Property> historyProperties) {
 		Map<Date, Property> historyPropsByCrtdDate = new TreeMap<Date, Property>();
@@ -501,13 +497,13 @@ public class PropertyTaxUtil {
 		BigDecimal applicableTaxValueDummy = applicableTaxValue;
 		if (amenities.equalsIgnoreCase(AMENITY_TYPE_FULL)) {
 			applicableTaxValueDummy = applicableTaxValueDummy.multiply(new BigDecimal(AMENITY_PERCENTAGE_FULL)
-					.divide(new BigDecimal(HUNDRED)));
+					.divide(BIGDECIMAL_100));
 		} else if (amenities.equalsIgnoreCase(AMENITY_TYPE_PARTIAL)) {
 			applicableTaxValueDummy = applicableTaxValueDummy.multiply(new BigDecimal(AMENITY_PERCENTAGE_PARTIAL)
-					.divide(new BigDecimal(HUNDRED)));
+					.divide(BIGDECIMAL_100));
 		} else if (amenities.equalsIgnoreCase(AMENITY_TYPE_NIL)) {
 			applicableTaxValueDummy = applicableTaxValueDummy.multiply(new BigDecimal(AMENITY_PERCENTAGE_NIL)
-					.divide(new BigDecimal(HUNDRED)));
+					.divide(BIGDECIMAL_100));
 		}
 		return applicableTaxValueDummy;
 	}
@@ -765,7 +761,7 @@ public class PropertyTaxUtil {
 	}
 
 	public Category getCategoryForBoundary(Boundary boundary) {
-		return boundaryCategoryDao.getCategoryForBoundary(boundary);
+		return boundaryCategoryDAO.getCategoryForBoundary(boundary);
 	}
 
 	public List<Installment> getInstallmentListByStartDate(Date startDate) {
@@ -989,12 +985,12 @@ public class PropertyTaxUtil {
 	public Map<String, Map<String, BigDecimal>> getDemandDues(String propertyId) {
 		Map<String, Map<String, BigDecimal>> demandDues = new HashMap<String, Map<String, BigDecimal>>();
 		List list = new ArrayList();
-		BasicProperty basicProperty = basicPropertyDao.getBasicPropertyByPropertyID(propertyId);
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+		EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+		Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
-		list = demandGenericHibDao.getReasonWiseDCB(egDemand, module);
+		list = demandGenericDAO.getReasonWiseDCB(egDemand, module);
 
 		Map<String, BigDecimal> arrTaxSum = new HashMap<String, BigDecimal>();
 		Map<String, BigDecimal> currTaxSum = new HashMap<String, BigDecimal>();
@@ -1219,7 +1215,7 @@ public class PropertyTaxUtil {
 	}
 
 	public EgBillType getBillTypeByCode(String typeCode) {
-		EgBillType billType = egBillDao.getBillTypeByCode(typeCode);
+		EgBillType billType = egBillDAO.getBillTypeByCode(typeCode);
 		return billType;
 	}
 
@@ -1239,7 +1235,7 @@ public class PropertyTaxUtil {
 	public Map<Installment, BigDecimal> prepareRsnWiseDemandForProp(Property property) {
 		Installment inst = null;
 		Map<Installment, BigDecimal> instAmountMap = new TreeMap<Installment, BigDecimal>();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
+		EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 		String demandReason = "";
 		BigDecimal amount = BigDecimal.ZERO;
 
@@ -1276,7 +1272,7 @@ public class PropertyTaxUtil {
 	public Map<Installment, BigDecimal> prepareRsnWiseCollForProp(Property property) {
 		Installment inst = null;
 		Map<Installment, BigDecimal> instCollMap = new HashMap<Installment, BigDecimal>();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
+		EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 		String demandReason = "";
 		BigDecimal amount = BigDecimal.ZERO;
 		BigDecimal collection = BigDecimal.ZERO;
@@ -1444,9 +1440,12 @@ public class PropertyTaxUtil {
 	 *
 	 * @return Installment the current installment for PT module
 	 */
-	public Installment getCurrentInstallment() {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+	public static Installment getCurrentInstallment() {
+	        Query query = HibernateUtil.getCurrentSession().createQuery("from Installment I where I.module.name = :moduleName and (I.fromDate <= :fromYear and I.toDate >=:toYear)");
+                query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
+                query.setDate("fromYear", new Date());
+                query.setDate("toYear", new Date());
+		return (Installment) query.list().get(0);
 	}
 
 	/**
@@ -1563,8 +1562,8 @@ public class PropertyTaxUtil {
 		BigDecimal currentRebate = BigDecimal.ZERO;
 		BigDecimal arrearRebate = BigDecimal.ZERO;
 
-		Ptdemand currDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
-		List dmdCollList = propertyDao.getDmdCollForAllDmdReasons(currDemand);
+		Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+		List dmdCollList = propertyDAO.getDmdCollForAllDmdReasons(currDemand);
 
 		for (Object object : dmdCollList) {
 			Object[] listObj = (Object[]) object;
@@ -1632,7 +1631,7 @@ public class PropertyTaxUtil {
 	public void makeTheEgBillAsHistory(BasicProperty basicProperty) {
 		EgBill egBill = (EgBill) persistenceService.find(
 				"from EgBill where module = ? and consumerId like ? || '%' and is_history = 'N'",
-				moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME), basicProperty.getUpicNo());
+				moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), basicProperty.getUpicNo());
 		if (egBill != null) {
 			egBill.setIs_History("Y");
 			egBill.setModifiedDate(new Date());
@@ -2058,7 +2057,7 @@ public class PropertyTaxUtil {
 	}
 
 	public Installment getPTInstallmentForDate(Date date) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
 	}
 
@@ -2157,7 +2156,7 @@ public class PropertyTaxUtil {
 						PropertyTaxConstants.STR_YES)) ? true : false;
 	}
 
-	public  List<String> getAdvanceYearsFromCurrentInstallment() {
+	public List<String> getAdvanceYearsFromCurrentInstallment() {
 		LOGGER.debug("Entered into getAdvanceYearsFromCurrentInstallment");
 
 		List<String> advanceYears = new ArrayList<String>();
@@ -2177,7 +2176,7 @@ public class PropertyTaxUtil {
 		LOGGER.debug("getAdvanceYearsFromCurrentInstallment = " + advanceYears);
 		LOGGER.debug("Exiting from getAdvanceYearsFromCurrentInstallment");
 
-		return advanceYears;
+		return Collections.emptyList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2249,7 +2248,7 @@ public class PropertyTaxUtil {
 		}
 
 		try {
-			earliestModificationDate = dateFormatter.parse((String) result.get(0));
+			earliestModificationDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse((String) result.get(0));
 		} catch (ParseException e) {
 			LOGGER.error("Error while parsing effective date", e);
 			throw new EGOVRuntimeException("Error while parsing effective date", e);
@@ -2268,7 +2267,7 @@ public class PropertyTaxUtil {
 		org.slf4j.Logger LOG = LoggerFactory.getLogger(PropertyTaxUtil.class);
 
 		try {
-			waterTaxEffectiveDate = dateFormatter.parse(PENALTY_WATERTAX_EFFECTIVE_DATE);
+			waterTaxEffectiveDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse(PENALTY_WATERTAX_EFFECTIVE_DATE);
 		} catch (ParseException pe) {
 			throw new EGOVRuntimeException("Error while parsing Water Tax Effective Date for Penalty Calculation", pe);
 		}

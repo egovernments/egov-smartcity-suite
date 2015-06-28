@@ -74,7 +74,7 @@ public class DemandUtils {
 			if(bill!=null && displayMsg!=null)
 			{
 			LOGGER.info(" before preparing Bill XML xmlData===" + xmlData);
-			//xmlData = handler.toXML(prepareBillInfoXml(bill, displayMsg));
+			xmlData = handler.toXML(prepareBillInfoXml(bill, displayMsg));
 			LOGGER.info("xmlData===" + xmlData);
 			}
 		} catch (Exception ex) {
@@ -111,12 +111,13 @@ public class DemandUtils {
 				billInfoImpl.setPayees(billPayeeDetList);
 				billInfoImpl.setCallbackForApportioning(bill.getCallBackForApportion());
 
+				boolean isActualDemand = false;
 				//FIX ME
 				for (EgBillDetails egBillDet : bill.getEgBillDetails()) {
+				        isActualDemand = egBillDet.getAdditionalFlag() == 1 ? true : false;
 					billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet
 							.getOrderNo(), egBillDet.getCrAmount(), egBillDet.getDrAmount(),
-							egBillDet.getFunctionCode(), egBillDet.getDescription(),null
-							/*egBillDet.getAdditionalFlag()*/);
+							egBillDet.getFunctionCode(), egBillDet.getDescription(), isActualDemand);
 					billDetails.addBillAccountDetails(billAccDetails);
 				}
 				billPayeeDet.addBillDetails(billDetails);

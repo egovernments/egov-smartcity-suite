@@ -371,11 +371,11 @@ public class PtDemandHibernateDao implements PtDemandDao {
 		currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		for (Object object : dmdCollList) {
 			Object[] listObj = (Object[]) object;
-			instId = Integer.valueOf(((BigDecimal) listObj[0]).toString());
+			instId = Integer.valueOf(listObj[0].toString());
 			installment = (Installment) installmentDao.findById(instId, false);
 			if (currInst.equals(installment)) {
 				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					currCollection = currCollection.add((BigDecimal) listObj[2]);
+					currCollection = currCollection.add(new BigDecimal((Double)listObj[2]));
 				}
 				/*
 				 * adding rebate to collection (commenting this code because,
@@ -384,7 +384,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 				 * view property screen)
 				 */
 				if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO)) {
-					currCollection = currCollection.add((BigDecimal) listObj[3]);
+					currCollection = currCollection.add(new BigDecimal((Double)listObj[3]));
 				}
 				currDmd = currDmd.add((BigDecimal) listObj[1]);
 			} else {
@@ -428,9 +428,11 @@ public class PtDemandHibernateDao implements PtDemandDao {
 		Ptdemand egptPtdemand = null;
 
 		if (property != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							"from  Ptdemand egptDem where egptDem.egptProperty =:property and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
+            qry = getCurrentSession()
+                    .createQuery(
+                            "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
+                            + "where egptDem.egptProperty =:property "
+                            + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
 			qry.setEntity(PROPERTY, property);
 			qry.setDate("fromYear", new Date());
 			qry.setDate("toYear", new Date());
@@ -442,7 +444,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 			
 			List<Ptdemand> ptDemandResult=qry.list();
                         if (ptDemandResult!=null && ptDemandResult.size()>0) {
-                                egptPtdemand = ptDemandResult.get(0);
+                                egptPtdemand = (Ptdemand) ptDemandResult.get(0);
                         }
 		}
 		return egptPtdemand;

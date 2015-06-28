@@ -93,7 +93,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryNum = :boundaryNum AND upper(b.boundaryType.name) = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
+    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryNum = :boundaryNum AND b.boundaryType.name = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
     Boundary findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(@Param("boundaryNum") Long boundaryNum,
             @Param("boundaryType") String boundaryType, @Param("hierarchyTypeCode") String hierarchyTypeCode,
             @Param("asOnDate") Date asOnDate);

@@ -110,9 +110,6 @@ public class PropertyTaxCollection extends TaxCollection {
 	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;
-
-	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
 	
 	@Override
 	protected Module module() {
@@ -236,14 +233,6 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("Entering method saveCollectionDetails");
 
 		BigDecimal rebateAmt = BigDecimal.ZERO;
-		Map<String, BigDecimal> rebateMap = new HashMap<String, BigDecimal>();
-
-		for (ReceiptAccountInfo rcptAccInfo : accountDetails) {
-			if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE)
-					|| rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE_REBATE)) {
-				rebateMap.put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo.getDrAmount());
-			}
-		}
 
 		LOGGER.info("saveCollectionDetails : Start get demandDetailList");
 
@@ -262,9 +251,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
 		for (EgDemandDetails dmdDtls : demandDetailList) {
 
-			if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0
-					|| dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()
-							.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
+			if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				dmdRsn = dmdDtls.getEgDemandReason();
 				installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
@@ -285,7 +272,8 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.info("saveCollectionDetails - installment demandDetails size = "
 				+ installmentWiseDemandDetailsByReason.size());
 
-		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		EgDemandDetails demandDetail = null;
 
 		for (ReceiptAccountInfo rcptAccInfo : accountDetails) {
 			if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty()) {
@@ -293,50 +281,15 @@ public class PropertyTaxCollection extends TaxCollection {
 					String[] desc = rcptAccInfo.getDescription().split("-", 2);
 					String reason = desc[0].trim();
 					String instDesc = desc[1].trim();
-					rebateAmt = rebateMap.get(instDesc);
 
-					EgDemandDetails demandDetail = null;
-
-					if (reason.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE)) {
-						demandDetail = installmentWiseDemandDetailsByReason.get(currentInstallment.getDescription())
-								.get(reason);
-					} else {
-						demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-					}
+					demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
 
 					if (rcptAccInfo.getGlCode().equalsIgnoreCase(
 							GLCODEMAP_FOR_CURRENTTAX.get(PropertyTaxConstants.GLCODE_FOR_PENALTY))) {
 
 						demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
-					} else if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_ADVANCE)) {
-
-						if (demandDetail != null) {
-							demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
-						} else {
-							demandDetail = insertAdvanceCollection(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE,
-									rcptAccInfo.getCrAmount(), currentInstallment);
-
-							demand.addEgDemandDetails(demandDetail);
-							HibernateUtil.getCurrentSession().flush();
-
-							if (installmentWiseDemandDetailsByReason.get(currentInstallment.getDescription()) == null) {
-								Map<String, EgDemandDetails> reasonAndDemandDetail = new HashMap<String, EgDemandDetails>();
-								reasonAndDemandDetail.put(DEMANDRSN_STR_ADVANCE, demandDetail);
-								installmentWiseDemandDetailsByReason.put(currentInstallment.getDescription(),
-										reasonAndDemandDetail);
-							} else {
-								installmentWiseDemandDetailsByReason.get(currentInstallment.getDescription()).put(
-										DEMANDRSN_STR_ADVANCE, demandDetail);
-							}
-
-						}
 					} else {
-						if (isArrearOrCurrentGenTaxGlCode(rcptAccInfo.getGlCode())) {
-							if (rebateAmt != null && !rebateAmt.equals(BigDecimal.ZERO)) {
-								demandDetail.addRebateAmt(rebateAmt);
-							}
-						}
 						demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
 					}
 
@@ -345,15 +298,9 @@ public class PropertyTaxCollection extends TaxCollection {
 					LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
 							+ instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
 							+ rcptAccInfo.getCrAmount());
+					//persistenceService.getSession().merge(demandDetail);
 				}
 			}
-		}
-
-		Ptdemand ptDemand = (Ptdemand) demand;
-
-		// Activating the demand on payment
-		if (ptDemand.getEgptProperty().getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-			ptDemand.getEgptProperty().setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
 		}
 
 		LOGGER.debug("Exiting method saveCollectionDetails");
@@ -472,7 +419,7 @@ public class PropertyTaxCollection extends TaxCollection {
 	private EgDemand cancelBill(Long billId) {
 		EgDemand egDemand = null;
 		if (billId != null) {
-			EgBill egBill = egBillDAO.findById(Integer.valueOf(billId.intValue()), false);
+			EgBill egBill = egBillDAO.findById(billId, false);
 			egBill.setIs_Cancelled("Y");
 		}
 		return egDemand;
@@ -728,14 +675,15 @@ public class PropertyTaxCollection extends TaxCollection {
 	public EgDemand getCurrentDemand(Long billId) {
 		LOGGER.debug("Entered into getCurrentDemand");
 
-		EgBill egBill = (EgBill) egBillDAO.findById(Integer.valueOf(billId.intValue()), false);
+		EgBill egBill = (EgBill) egBillDAO.findById(billId, false);
 
-		String query = "SELECT ptd FROM Ptdemand ptd " + "WHERE ptd.egInstallmentMaster = ? "
+		String query = "SELECT ptd FROM Ptdemand ptd " 
+		                + "WHERE ptd.egInstallmentMaster = ? "
 				+ "AND ptd.egptProperty.basicProperty.upicNo = ? "
-				+ "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
+				+ "AND ptd.egptProperty.status = 'A' "
 				+ "AND ptd.egptProperty.basicProperty.active = true";
 
-		EgDemand egDemand = (EgDemand) persistenceService.find(query, propertyTaxUtil.getCurrentInstallment(), egBill
+		EgDemand egDemand = (EgDemand) persistenceService.find(query, PropertyTaxUtil.getCurrentInstallment(), egBill
 				.getConsumerId().substring(0, egBill.getConsumerId().indexOf('(')));
 
 		LOGGER.debug("Exiting from getCurrentDemand");

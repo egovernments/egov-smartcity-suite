@@ -69,7 +69,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "demandGenericDAO")
-@Transactional(readOnly = true)
 public class DemandGenericHibDao implements DemandGenericDao {
 
 	@Autowired
@@ -769,13 +768,11 @@ public class DemandGenericHibDao implements DemandGenericDao {
 	@Override
 	public BigDecimal getBalanceByDmdMasterCode(EgDemand demand, String dmdReasonMasterCode,
 			Module module) {
-		DemandGenericDao dmdGenricDao = null;
 		BigDecimal balance = BigDecimal.ZERO;
 		if (demand != null && dmdReasonMasterCode != null && module != null) {
-			dmdGenricDao = new DemandGenericHibDao();
-			List<EgDemandDetails> dmdDetList = dmdGenricDao.getDmdDetailList(demand,
+			List<EgDemandDetails> dmdDetList = getDmdDetailList(demand,
 					demand.getEgInstallmentMaster(), module,
-					dmdGenricDao.getDemandReasonMasterByCode(dmdReasonMasterCode, module));
+					getDemandReasonMasterByCode(dmdReasonMasterCode, module));
 			if (!dmdDetList.isEmpty()) {
 				for (EgDemandDetails dmdDet : dmdDetList) {
 					if (dmdDet.getAmount() != null) {

@@ -75,8 +75,9 @@ public class EgdmCollectedReceiptHibDao implements EgdmCollectedReceiptDao {
 
 	@Override
 	public EgdmCollectedReceipt create(EgdmCollectedReceipt egdmCollectedReceipt) {
-		// TODO Auto-generated method stub
-		return null;
+	        getCurrentSession().save(egdmCollectedReceipt);
+	        getCurrentSession().flush();
+		return egdmCollectedReceipt;
 	}
 
 	@Override

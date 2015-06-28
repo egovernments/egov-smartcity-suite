@@ -166,7 +166,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		if (bri == null) {
 			throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
 		}
-		EgBill egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()),
+		EgBill egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()),
 				false);
 		if (egBill == null) {
 			throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number"
@@ -284,7 +284,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		if (bri == null) {
 			throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
 		}
-		egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()), false);
+		egBill = egBillDAO.findById(Long.valueOf(bri.getBillReferenceNum()), false);
 		List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
 
 		if (bri.getEvent() != null

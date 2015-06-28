@@ -53,7 +53,9 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class InstallmentHibDao<T, id extends Serializable> extends GenericHibernateDAO implements InstallmentDao {
 
     @PersistenceContext
