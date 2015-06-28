@@ -60,13 +60,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateRebatePeriodController {
 
 	private RebatePeriodService rebatePeriodService;
-	private PropertyService propertyService;
 	private PropertyTaxUtil propertyTaxUtil;
 	private Installment currentInstallment;
 	
 	@Autowired
-	public CreateRebatePeriodController(PropertyService propertyService,RebatePeriodService rebatePeriodService, PropertyTaxUtil propertyTaxUtil){
-		this.propertyService = propertyService;
+	public CreateRebatePeriodController(RebatePeriodService rebatePeriodService, PropertyTaxUtil propertyTaxUtil){
 		this.propertyTaxUtil = propertyTaxUtil;
 		this.rebatePeriodService = rebatePeriodService;
 	}
