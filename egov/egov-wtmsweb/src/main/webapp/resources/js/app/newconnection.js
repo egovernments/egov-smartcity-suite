@@ -14,6 +14,7 @@ $(document).ready(function(){
 				dataType: "json",
 				success: function (response) { 
 					console.log("success"+response);
+					
 					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
 						$('#propertyIdentifier').val('');
 						$('#applicantname').val('');
@@ -24,6 +25,7 @@ $(document).ready(function(){
 						alert(response.errorDetails.errorMessage);
 					}
 					else {	
+						$('#propertyIdentifierError').html('');
 						applicantName = '';
 						for(i=0; i<response.ownerNames.length; i++) {
 							if(applicantName == '')

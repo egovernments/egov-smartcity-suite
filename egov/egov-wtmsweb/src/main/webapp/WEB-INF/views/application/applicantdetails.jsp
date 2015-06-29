@@ -52,11 +52,10 @@
 			code="lbl.ptassesmentnumber" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<div class="input-group">
-			<form:input id="propertyIdentifier" path="connection.propertyIdentifier" class="form-control" min="3" maxlength="50" required="required" /> <span
-				class="input-group-addon"> <i class="fa fa-search"></i>
-			</span>
-			<form:errors path="connection.propertyIdentifier" cssClass="add-margin error-msg" />
+			<form:input id="propertyIdentifier" path="connection.propertyIdentifier" class="form-control" min="3" maxlength="50" required="required" /> 
+			<span class="input-group-addon"> <i class="fa fa-search"></i></span>
 		</div>
+		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.bpanumber" /></label>

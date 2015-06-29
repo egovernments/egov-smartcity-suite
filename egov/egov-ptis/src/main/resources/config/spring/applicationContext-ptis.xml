@@ -149,7 +149,6 @@
 		<property name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
 	</bean>	
 	
-	<bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
 	<bean id="propertyTaxBillable" class="org.egov.ptis.domain.bill.PropertyTaxBillable" scope="prototype" />
 	
 	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil">

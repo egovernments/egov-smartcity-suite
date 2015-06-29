@@ -43,7 +43,9 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
-
+	
+	<context:component-scan base-package="org.egov.ptis" />
+	
     <bean id="propertyImplPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
     </bean>
@@ -59,5 +61,7 @@
     <bean id="ObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="objectionPersistenceService"/>
     </bean>
+    
+    <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
         
 </beans>

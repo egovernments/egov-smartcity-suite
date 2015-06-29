@@ -74,7 +74,6 @@ public class NewConnectionController extends GenericConnectionController {
             final ApplicationTypeService applicationTypeService, final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
-
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -92,6 +91,15 @@ public class NewConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+
+        if (waterConnectionDetails.getConnection() != null
+                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
+                && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
+            final String errorMessage = waterConnectionDetailsService
+                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            if (errorMessage != null && !errorMessage.equals(""))
+                resultBinder.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+        }
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;

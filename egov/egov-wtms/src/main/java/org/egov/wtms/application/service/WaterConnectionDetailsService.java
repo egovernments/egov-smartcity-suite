@@ -63,6 +63,8 @@ import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -109,7 +111,7 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private DocumentNamesService documentNamesService;
-    
+
     @Autowired
     private DonationDetailsService donationDetailsService;
 
@@ -121,11 +123,13 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private DonationHeaderService donationHeaderService;
-    
+
     @Autowired
     private ModuleService moduleService;
 
-    
+    @Autowired
+    private PropertyExternalService propertyExternalService;
+
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -215,7 +219,7 @@ public class WaterConnectionDetailsService {
     public List<DocumentNames> getAllActiveDocumentNames(final ApplicationType applicationType) {
         return documentNamesService.getAllActiveDocumentNamesByApplicationType(applicationType);
     }
-    
+
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
         final Map<String, Object> feeDetails = new HashMap<String, Object>();
 
@@ -270,6 +274,14 @@ public class WaterConnectionDetailsService {
         demandDetail.setCreateDate(new Date());
         demandDetail.setModifiedDate(new Date());
         return demandDetail;
+    }
+
+    public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
+        String errorMessage = "";
+        final AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(asessmentNumber);
+        if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
+            errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
+        return errorMessage;
     }
 
 }
