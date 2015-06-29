@@ -11,7 +11,7 @@
 		<many-to-one name="action" class="org.egov.infra.admin.master.entity.Action">
 			<column name="ACTIONID" />
 		</many-to-one>
-		<many-to-one name="script" class="org.egov.infstr.models.Script">
+		<many-to-one name="script" class="org.egov.infra.script.entity.Script">
 			<column name="SCRIPTID" />
 		</many-to-one>
 		<property name="objectType" type="java.lang.String">

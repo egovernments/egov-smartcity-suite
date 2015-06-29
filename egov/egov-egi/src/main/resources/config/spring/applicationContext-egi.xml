@@ -86,21 +86,6 @@
 		<constructor-arg value="30" />
 	</bean>
 
-	<bean id="scriptService" parent="persistenceService" autowire-candidate="true">
-		<property name="type" value="org.egov.infstr.models.Script"/>
-	</bean>
-
-	<!-- Bean for script execution service. constructor arguments: arg0 => Script 
-		Engine Cache minimum size arg1 => Script Engine Cache maximum size arg2 => 
-		Script Cache minimum size arg3 => Script Cache maximum size -->
-	<bean id="scriptExecutionService" class="org.egov.infstr.services.ScriptService" parent="persistenceService" autowire-candidate="true">
-		<constructor-arg index="0" value="2" />
-		<constructor-arg index="1" value="5" />
-		<constructor-arg index="2" value="10" />
-		<constructor-arg index="3" value="30" />
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
 	<bean id="userPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
 	</bean>
@@ -125,7 +110,6 @@
 	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
 		<property name="userService" ref="userService" />
 		<property name="daoService" ref="persistenceService" />
-		<property name="scriptExecuter" ref="scriptExecutionService" />
 		<property name="authRuleService" ref="authRuleService" />
 	</bean>
 
@@ -190,10 +174,6 @@
 		<property name="type" value="org.egov.infra.workflow.entity.StateAware" />
 	</bean>
 	
-	<bean id="scriptPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.models.Script" />
-	</bean>
-	
 	<bean id="actionPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infstr.workflow.Action" />
 	</bean>
@@ -210,11 +190,9 @@
 			<constructor-arg index="0" ref="myStateAwarePersistenceService"/>
 		</bean>
 	-->
-	<bean id="workflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
+	<bean id="workflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
 		<constructor-arg index="0" ref="stateAwarePersistenceService" />
-		<property name="scriptExecutionService" ref="scriptExecutionService"/>
 		<property name="actionPersistenceService" ref="actionPersistenceService"/>
-		<property name="scriptPersistenceService" ref="scriptPersistenceService"/>
 	</bean>
 	
 	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>

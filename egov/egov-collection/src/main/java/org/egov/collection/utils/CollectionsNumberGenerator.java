@@ -39,7 +39,6 @@
  */
 package org.egov.collection.utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -47,15 +46,17 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
-import org.egov.infstr.services.ScriptService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class CollectionsNumberGenerator {
 	private SequenceNumberGenerator sequenceGenerator;
-	private ScriptService scriptExecutionService;
+	@Autowired
+	private ScriptService scriptService;
 	private CollectionsUtil collectionsUtil;
 
 	/**
@@ -91,7 +92,7 @@ public class CollectionsNumberGenerator {
 	public List<String> generateInternalReferenceNumber(ReceiptHeader receiptHeader,
 			CFinancialYear financialYear,CFinancialYear currentFinancialYear){
 		
-		return (List<String>) scriptExecutionService.executeScript(
+		return (List<String>) scriptService.executeScript(
 				CollectionConstants.SCRIPT_INTERNALREFNO_GENERERATOR, 
 				ScriptService.createContext(
 				"receiptHeader",receiptHeader,"finYear",financialYear,
@@ -107,7 +108,7 @@ public class CollectionsNumberGenerator {
 	 * @return a <code>String</code> representing the challan number
 	 */
 	public String generateChallanNumber(Challan challan,CFinancialYear financialYear){
-		return (String) scriptExecutionService.executeScript(
+		return (String) scriptService.executeScript(
 				CollectionConstants.SCRIPT_CHALLANNO_GENERERATOR, ScriptService
 						.createContext("challan", challan, "sequenceGenerator",
 								sequenceGenerator, "finYear", financialYear,
@@ -120,12 +121,5 @@ public class CollectionsNumberGenerator {
 	
 	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
 		this.collectionsUtil = collectionsUtil;
-	}
-
-	/**
-	 * @param scriptExecutionService the scriptExecutionService to set
-	 */
-	public void setScriptExecutionService(ScriptService scriptExecutionService) {
-		this.scriptExecutionService = scriptExecutionService;
 	}
 }

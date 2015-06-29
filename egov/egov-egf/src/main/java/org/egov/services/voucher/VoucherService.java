@@ -88,14 +88,14 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.models.Script;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.masters.services.MastersService;
@@ -138,6 +138,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         private FunctionDAO functionDAO;
         @Autowired
         private VoucherHeaderDAO voucherHeaderDAO;
+        
+        @Autowired
+        private VoucherHelper voucherHelper;
+        
         private  UserService userMngr;
         private MastersService masters;
         private SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
@@ -502,7 +506,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         if( !voucherHeader.getFundId().equals(existingVH.getFundId())){
                                 
                                 //String vDate = FORMATDDMMYYYY.format(voucherHeader.getVoucherDate());
-                                String strVoucherNumber = VoucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+                                String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                                 existingVH.setVoucherNumber(strVoucherNumber);
                                  String vType=voucherHeader.getFundId().getIdentifier()+"/"+autoVoucherType+"/CGVN";
                                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher type  : "+ vType);
@@ -529,7 +533,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                 strVoucherNumber=voucherArr[0]+"/"+voucherArr[1]+"/"+voucherArr[2]+"/"+newDate[1]+"/"+voucherArr[4];                                                        
                                 existingVH.setVoucherNumber(strVoucherNumber);
                         }else{
-                                String strVoucherNumber = VoucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+                                String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                                 existingVH.setVoucherNumber(strVoucherNumber);
                                 String vType=voucherHeader.getFundId().getIdentifier()+"/"+autoVoucherType+"/CGVN";
                                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher type  : "+ vType);
@@ -545,7 +549,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                 // If only the voucher number is modified then just appending the manual voucher number
                         else if("Manual".equalsIgnoreCase(vNumGenMode) && ! existingVH.getVoucherNumber().substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH)
                     ).equalsIgnoreCase(voucherHeader.getVoucherNumber())){
-                                String strVoucherNumber = VoucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType,
+                                String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType,
                                                 voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                                 //existingVH.setVoucherNumber(existingVH.getVoucherNumber().substring(0,
                                 //                                  Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH))+voucherHeader.getVoucherNumber());
@@ -580,7 +584,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  int lineId=1;
                  String accDetailFunc="";
                  String detailedFunc ="";     
-                 List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
+                 List<String> repeatedglCodes = voucherHelper.getRepeatedGlcodes(billDetailslist);
                 try {
                         for (VoucherDetails accountDetails : billDetailslist) {
                                  String glcodeId = accountDetails.getGlcodeIdDetail().toString();
@@ -663,7 +667,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          vNumGenMode= new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
                 }
                 String autoVoucherType =EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME,voucherTypeBean.getVoucherNumType().toLowerCase(),"",FinancialConstants.CATEGORYFORVNO);
-                String vocuherNumber= VoucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+                String vocuherNumber= voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                 voucherHeader.setVoucherNumber(vocuherNumber);
                 
         }
@@ -681,7 +685,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          vNumGenMode= new VoucherTypeForULB().readVoucherTypes(voucherTypeBean.getVoucherNumType());
                 }
                 String autoVoucherType =EGovConfig.getProperty(FinancialConstants.APPLCONFIGNAME,voucherTypeBean.getVoucherNumType().toLowerCase(),"",FinancialConstants.CATEGORYFORVNO);
-                String vocuherNumber= VoucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
+                String vocuherNumber= voucherHelper.getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate(), vNumGenMode, voucherHeader.getVoucherNumber());
                 voucherHeader.setVoucherNumber(vocuherNumber);
                 /*
                 if("Auto".equalsIgnoreCase(vNumGenMode)){

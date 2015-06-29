@@ -63,15 +63,17 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 /**
@@ -84,6 +86,10 @@ public class VoucherHelper {
 	private PersistenceService persistenceService;
 	private EisCommonService eisCommonService;
 	private EisUtilService eisUtilService;
+	
+	@Autowired
+	private ScriptService scriptService;
+	
 	@SuppressWarnings("unchecked")
 	public PersistenceService getPersistenceService() {
 		return persistenceService;
@@ -241,7 +247,7 @@ public class VoucherHelper {
 		return numDateQuery.toString();
   	}
   
-	public static String getGeneratedVoucherNumber(Integer fundId, String voucherType, Date voucherDate, String vNumGenMode, String voucherNumber)  throws Exception {
+	public  String getGeneratedVoucherNumber(Integer fundId, String voucherType, Date voucherDate, String vNumGenMode, String voucherNumber)  throws Exception {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("fundId | in getGeneratedVoucherNumber      :"+fundId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherType | in getGeneratedVoucherNumber :"+voucherType);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherDate | in getGeneratedVoucherNumber :"+voucherDate);
@@ -275,16 +281,13 @@ public class VoucherHelper {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("after transNumber..........................."+transNumber);
 		*/String monthArr[] = vDate.split("/");
 		String month = (String) monthArr[1];
-		//new ScriptService(2,5,10,10);
-		ScriptService scriptExecutionService = new ScriptService(0,0,0,0); //initialized as per the globalApplicationContext.xml bean def.
-		//scriptExecutionService.setSessionFactory(new SessionFactory());
 		
 		String scriptName = "voucherheader.vouchernumber";
-		//Script voucherNumberScript=(Script)persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
+		Script voucherNumberScript=scriptService.getByName( scriptName);
 		
 		ScriptContext scriptContext = ScriptService.createContext("fundIdentity", fundIdentifier, "voucherType", voucherType, "transNumber", 
 				transNumber, "vNumGenMode", vNumGenMode,  "date", voucherDate, "month", month, "voucherNumber", voucherNumber,"sequenceName",sequenceName );
-		fVoucherNumber = (String)scriptExecutionService.executeScript(scriptName, scriptContext);
+		fVoucherNumber = (String)scriptService.executeScript(scriptName, scriptContext);
 	
 		}
 		

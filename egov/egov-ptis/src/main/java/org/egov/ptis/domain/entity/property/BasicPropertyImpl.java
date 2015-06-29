@@ -446,7 +446,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         Objection wfObjection = null;
         for (Objection objection : getObjections()) {
             wfObjection = objection;
-            if (wfObjection.getState() != null && !wfObjection.getState().getValue().equalsIgnoreCase("END")) {
+            if (wfObjection.hasState() && !wfObjection.stateIsEnded()) {
                 break;
             }
             wfObjection = null;
@@ -467,7 +467,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         String wfOwner = "";
         Map<String, String> wfMap = new HashMap<String, String>();
         for (Recovery recovery : getRecoveries()) {
-            if (!recovery.getState().getValue().equalsIgnoreCase("END")) {
+            if (!recovery.stateIsEnded()) {
                 isPropInWf = Boolean.TRUE;
                 wfOwner = recovery.getState().getOwnerUser().getName();
                 break;

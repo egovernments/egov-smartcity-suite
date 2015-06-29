@@ -218,6 +218,8 @@ public class CreateVoucher {
         @Autowired
         private BankHibernateDAO bankDAO;
         
+        @Autowired
+        private VoucherHelper voucherHelper;
         
         private static final String ERR="Exception in CreateVoucher";
         private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -1483,7 +1485,7 @@ public class CreateVoucher {
                                  voucherNumber = headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString();
                          if( null !=  headerdetails.get(VoucherConstant.MODULEID) ) vNumGenMode = "Auto";
                          
-                         String strVoucherNumber = VoucherHelper.getGeneratedVoucherNumber(fundByCode.getId(), voucherNumberPrefix, 
+                         String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(fundByCode.getId(), voucherNumberPrefix, 
                                          voucherDate, vNumGenMode, voucherNumber);
                          cVoucherHeader.setVoucherNumber(strVoucherNumber);
 
@@ -2532,7 +2534,7 @@ public class CreateVoucher {
                                  SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
                                  String vDate = df.format(reversalVoucher.getVoucherDate());
 
-                                 String strVoucherNumber = VoucherHelper.getGeneratedVoucherNumber(originalVoucher.getFundId().getId(), autoVoucherType, 
+                                 String strVoucherNumber = voucherHelper.getGeneratedVoucherNumber(originalVoucher.getFundId().getId(), autoVoucherType, 
                                                  reversalVoucher.getVoucherDate(), vNumGenMode, reversalVoucher.getVoucherNumber());
                                  reversalVoucher.setVoucherNumber(strVoucherNumber);
                                  /*

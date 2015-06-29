@@ -47,13 +47,11 @@
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
-		<property name="scriptService" ref="scriptService" />
 		<property name="beanProvider" ref="beanProvider" />
 	</bean>
 	
 	<bean class="org.egov.collection.utils.CollectionsNumberGenerator"
 		id="collectionsNumberGenerator" scope="prototype">
-		<property name="scriptExecutionService" ref="scriptExecutionService" />
 		<property name="sequenceGenerator" ref="sequenceNumberGenerator" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>

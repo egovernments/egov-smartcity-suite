@@ -40,8 +40,8 @@
 package org.egov.lib.rrbac.model;
 
 import org.egov.infra.admin.master.entity.Action;
+import org.egov.infra.script.entity.Script;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.Script;
 
 public class AuthorizationRule extends BaseModel {
 

@@ -62,7 +62,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.models.Script;
+import org.egov.infra.script.entity.Script;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;

@@ -47,11 +47,6 @@
 
 	<context:component-scan base-package="org.egov.asset" />
 
-	<bean id="scriptService" parent="persistenceService" scope="prototype">
-	  	<property name="type" value="org.egov.infstr.models.Script"></property>
-	</bean>
-	
-	
      <!-- Services for assets -->
      <bean class="org.egov.infstr.config.dao.AppConfigValuesDAO" id="appConfigValuesDAO" scope="prototype" />
      

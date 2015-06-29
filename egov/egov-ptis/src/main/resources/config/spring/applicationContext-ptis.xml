@@ -70,7 +70,6 @@
 	<!-- <bean id="boundaryDao" class="org.egov.infra.admin.master.entity.BoundaryDAO" scope="prototype"/>
 
    <bean id="deactivatePropertyDelegate" class="org.egov.ptis.property.delegate.DeactivatePropertyDelegate" scope="prototype">
-       	<property name="scriptService" ref="scriptService"/>
      </bean>
      	
      <bean id="propertyService" class="org.egov.ptis.property.services.property.PropertyService" scope="prototype">
@@ -79,7 +78,6 @@
      
 	<bean id="ActionsBaseWFFilter" class="org.egov.ptis.workflow.filter.ActionsBasedOnWorkFlowFilter" scope="prototype">
     	<property name="actionDao" ref="actionDao" />
-    	<property name="scriptService" ref="scriptService"/>
     	<property name="workFlowPerService" ref="persistenceService"/>
     </bean> 
     

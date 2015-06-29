@@ -75,11 +75,7 @@
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.SetStatus" />
 	</bean>
-	n>
-	<bean id="scriptService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.models.Script">
-		</property>
-	</bean>
+	
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
 		parent="persistenceService" scope="prototype">
 		<property name="estimateNumberGenerator" ref="estimateNumberGenerator" />
@@ -122,7 +118,7 @@
 
 	<bean class="org.egov.works.models.estimate.EstimateNumberGenerator"
 		id="estimateNumberGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 
@@ -133,25 +129,25 @@
 
 	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
 		id="budgetNumberGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.works.models.tender.WorkOrderNumberGenerator"
 		id="workOrderNumberGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean
 		class="org.egov.works.models.contractorBill.ContractorBillNumberGenerator"
 		id="contractorBillNumberGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 
@@ -203,7 +199,7 @@
 
 	<bean class="org.egov.works.models.tender.NegotiationNumberGenerator"
 		id="negotiationNumberGenerator">
-		<!--<property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!-- <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> <property name="commonsService" ref="commonsService" 
 			/> -->
 	</bean>
@@ -254,13 +250,13 @@
 	<!-- on dec14th -->
 	<bean class="org.egov.works.models.workorder.WorkOrderNumberGenerator"
 		id="workOrderNumberGenerators">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!-- <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.tender.WorksPackageNumberGenerator"
 		id="workspackageGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!-- <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean id="egwStatusService" parent="persistenceService" scope="prototype">
@@ -356,7 +352,7 @@
 		<property name="assetService" ref="assetService" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!-- <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl"
@@ -371,7 +367,7 @@
 		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!-- <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService"
@@ -398,7 +394,6 @@
 		parent="persistenceService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
-		<property name="scriptExecutionService" ref="scriptExecutionService" />
 	</bean>
 
 
@@ -408,7 +403,7 @@
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
-		<!-- <property name="scriptService" ref="scriptService"/> <property name="sequenceGenerator" 
+		<!--  <property name="sequenceGenerator" 
 			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.works.services.impl.DepositWorksUsageServiceImpl"
@@ -553,7 +548,6 @@
 	<bean
 		class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisitionNumberGenerator"
 		id="contractorAdvanceRequisitionNumberGenerator">
-		<property name="scriptService" ref="scriptService" />
 		<property name="sequenceGenerator" ref="sequenceGenerator" />
 	</bean>
 

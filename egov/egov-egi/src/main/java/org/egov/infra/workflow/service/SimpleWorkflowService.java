@@ -45,16 +45,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.workflow.Action;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -71,20 +72,13 @@ import org.hibernate.criterion.Restrictions;
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
     private final PersistenceService<T, Long> stateAwarePersistenceService;
-    private PersistenceService<Script, Long> scriptPersistenceService;
     private PersistenceService<Action, Long> actionPersistenceService;
-    private ScriptService scriptExecutionService;
+    
+    @Autowired
+    private ScriptService scriptService;
 
     public SimpleWorkflowService(final PersistenceService<T, Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
-    }
-
-    public void setScriptExecutionService(final ScriptService scriptExecutionService) {
-        this.scriptExecutionService = scriptExecutionService;
-    }
-
-    public void setScriptPersistenceService(final PersistenceService<Script, Long> scriptPersistenceService) {
-        this.scriptPersistenceService = scriptPersistenceService;
     }
 
     public void setActionPersistenceService(final PersistenceService<Action, Long> actionPersistenceService) {
@@ -93,7 +87,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     @Override
     public T transition(final Action action, final T stateAware, final String comments) {
-        scriptExecutionService.executeScript(getScript(stateAware, action.getName()), ScriptService.createContext("action", this,
+        scriptService.executeScript(getScript(stateAware, action.getName()), ScriptService.createContext("action", this,
                 "wfItem", stateAware, "persistenceService", this.stateAwarePersistenceService, "workflowService", this,
                 "comments", comments));
         return this.stateAwarePersistenceService.persist(stateAware);
@@ -112,9 +106,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     @Override
     public List<Action> getValidActions(final T stateAware) {
         final String scriptName = stateAware.getStateType() + ".workflow.validactions";
-        final Script trasitionScript = this.scriptPersistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName)
-                .get(0);
-        final List<String> actionNames = (List<String>) scriptExecutionService.executeScript(trasitionScript,
+        final Script trasitionScript = this.scriptService.getByName(scriptName);
+        final List<String> actionNames = (List<String>) scriptService.executeScript(trasitionScript,
                 ScriptService.createContext("wfItem", stateAware, "workflowService", this, "persistenceService",
                         this.stateAwarePersistenceService));
         final List<Action> savedActions = this.actionPersistenceService.findAllByNamedQuery(Action.IN_NAMES_AND_TYPE,
@@ -124,29 +117,29 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     public Object execute(final T stateAware) {
         final Script script = getScript(stateAware, "");
-        return scriptExecutionService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
+        return scriptService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
                 "persistenceService", this.stateAwarePersistenceService));
     }
 
     public Object execute(final T stateAware, final String comments) {
         final Script script = getScript(stateAware, "");
-        return scriptExecutionService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
+        return scriptService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
                 "persistenceService", this.stateAwarePersistenceService, "comments", comments));
     }
 
     private Script getScript(final T stateAware, final String actionName) {
-        List<Script> scripts = null;
+        Script script = null;
         
         if(!actionName.isEmpty())
-            scripts = scriptPersistenceService.findAllByNamedQuery(Script.BY_NAME, stateAware.getStateType()+ ".workflow." + actionName);
+            script = this.scriptService.getByName(stateAware.getStateType()+ ".workflow." + actionName);
         
-        if (scripts == null || scripts.isEmpty())
-            scripts = scriptPersistenceService.findAllByNamedQuery(Script.BY_NAME, stateAware.getStateType()+ ".workflow");
+        if (script == null)
+            script = scriptService.getByName(stateAware.getStateType()+ ".workflow");
 
-        if (scripts == null || scripts.isEmpty())
+        if (script == null)
             throw new EGOVRuntimeException("workflow.script.notfound");
         
-        return scripts.get(0);
+        return script;
     }
 
     private List<Action> createActions(final T stateAware, final List<String> actionNames) {

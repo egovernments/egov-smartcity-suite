@@ -55,7 +55,6 @@
 	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="commonsService" ref="commonsService"/>
-		<property name="scriptService" ref="scriptExecutionService"/>
 		<property name="sequenceGenerator" ref="sequenceGenerator"/>
 	</bean>
 	
