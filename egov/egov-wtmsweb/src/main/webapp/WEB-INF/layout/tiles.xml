@@ -64,5 +64,10 @@
         <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/application-success.jsp"/>
     </definition>
+     <definition name="applicationSearch-newForm" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/elasticSearch/applicationSearch-newForm.jsp"/>
+    </definition>
+	 
 	
 </tiles-definitions>
