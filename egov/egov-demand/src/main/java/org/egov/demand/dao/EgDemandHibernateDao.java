@@ -56,13 +56,12 @@ public class EgDemandHibernateDao implements EgDemandDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unused")
 	private Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
 
 	@Override
-	public EgDemand findById(Integer id, boolean lock) {
+	public EgDemand findById(Long id, boolean lock) {
 		return (EgDemand) getCurrentSession().load(EgDemand.class, id);
 	}
 
