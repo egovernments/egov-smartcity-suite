@@ -727,19 +727,13 @@
 											<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 											<span style="font-size:15px; color:red ">										
 												<s:text name="msg.payBill.verification" /> <br><br>
-												<s:if test="basicProperty.isDemandActive == true">
-													<s:text name="msg.activeDemand" />	
-												</s:if>
-												<s:else>
-													<s:text name="getText('msg.inactiveDemand' , {demandEffectiveYear, noOfDaysForInactiveDemand})" />
-												</s:else>
-																						
+												<s:text name="msg.activeDemand" />	
 											</span> 
 										</div><br>
 										<div align="center">
 											<s:if test="%{isCitizen()}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="button"
-															onclick="window.location='../citizen/collection/collection!generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+															onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
 											</s:if> 
 											<s:else>
 											<table>

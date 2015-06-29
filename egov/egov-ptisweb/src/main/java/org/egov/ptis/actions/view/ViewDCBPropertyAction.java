@@ -41,6 +41,7 @@ package org.egov.ptis.actions.view;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -188,9 +189,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 				setCitizen(Boolean.TRUE);
 			}
 
-			session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
-			setCitizen(Boolean.TRUE);
-
 		} else {
 			setCitizen(Boolean.FALSE);
 		}
@@ -230,8 +228,8 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error("Error occured in method displayPropInfo while ecoding index no ", e);
 		}
-		PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
 		
+		PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
 		billable.setBasicProperty(basicProperty);
 		dcbService.setBillable(billable);
 		
