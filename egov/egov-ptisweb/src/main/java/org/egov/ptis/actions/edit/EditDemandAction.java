@@ -326,7 +326,7 @@ public class EditDemandAction extends BaseFormAction {
 			resultPage = RESULT_ERROR;
 		} else {
 			ownerName = new PTISCacheManager().buildOwnerFullName(basicProperty.getProperty()
-					.getPropertyOwnerSet());
+					.getPropertyOwnerInfo());
 			propertyAddress = new PTISCacheManager().buildAddressByImplemetation(basicProperty
 					.getAddress());
 

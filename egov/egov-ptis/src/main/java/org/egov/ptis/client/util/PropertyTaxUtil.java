@@ -191,7 +191,7 @@ import org.egov.ptis.domain.entity.property.FloorImpl;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
@@ -1673,12 +1673,12 @@ public class PropertyTaxUtil {
 	 *            <Owner> Set of Property Owners
 	 * @return String
 	 */
-	public static String getOwnerAddress(Set<PropertyOwner> ownerSet) {
+	public static String getOwnerAddress(List<PropertyOwnerInfo> ownerSet) {
 		LOGGER.debug("Entered into getOwnerAddress");
 
 		String ownerAddress = "";
-		for (PropertyOwner owner : ownerSet) {
-			List<Address> addresses = owner.getAddress();
+		for (PropertyOwnerInfo owner : ownerSet) {
+			List<Address> addresses = owner.getOwner().getAddress();
 			for (Address address : addresses) {
 				ownerAddress = new PTISCacheManager().buildAddressByImplemetation(address);
 				break;

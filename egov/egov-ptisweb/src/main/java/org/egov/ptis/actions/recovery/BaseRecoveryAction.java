@@ -366,7 +366,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	}
 
 	public void setOwnerName(Property property) {
-		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet());
+		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
 	}
 
 	public void setPropertyAddress(Address address) {

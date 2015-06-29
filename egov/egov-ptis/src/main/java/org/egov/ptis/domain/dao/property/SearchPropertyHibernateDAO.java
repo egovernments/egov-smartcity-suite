@@ -80,7 +80,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PtDemandARV;
 import org.egov.ptis.domain.entity.property.SearchResult;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
@@ -140,13 +140,13 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		Set<PropertyOwner> ownerSet = null;
+		List<PropertyOwnerInfo> ownerSet = null;
 		try {
 			basicProperty = basicPropertyDAO.getBasicPropertyByRegNum(regNum);
 			if (basicProperty != null) {
 				property = basicProperty.getProperty();
 				if (property != null) {
-					ownerSet = property.getPropertyOwnerSet();
+					ownerSet = property.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(regNum);
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -183,7 +183,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		Set<PropertyOwner> ownerSet = null;
+		List<PropertyOwnerInfo> ownerSet = null;
 		BigDecimal currDemand = BigDecimal.ZERO;
 		BigDecimal currDemandDue = BigDecimal.ZERO;
 		BigDecimal currCollection = BigDecimal.ZERO;
@@ -197,7 +197,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.debug("getPropertyByPropertyId : property id : " + property.getId());
-					ownerSet = property.getPropertyOwnerSet();
+					ownerSet = property.getPropertyOwnerInfo();
 					Map<String, BigDecimal> DmdCollMap = ptDemandDAO.getDemandCollMap(property);
 					currDemand = DmdCollMap.get(PropertyTaxConstants.CURR_DMD_STR);
 					arrDemand = DmdCollMap.get(PropertyTaxConstants.ARR_DMD_STR);
@@ -263,7 +263,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		SearchResult retSearchResult = null;
 		Address address = null;
 		List retList = null;
-		Set ownerSet = null;
+		List ownerSet = null;
 		try {
 			List propIdList = propertyIDDAO.getPropertyIDByBoundry(zoneID, wardID, colonyID);
 			if (propIdList != null && !propIdList.isEmpty()) {
@@ -278,7 +278,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
 							address = basicProperty.getAddress();
 							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = property.getPropertyOwnerSet();
+							ownerSet = property.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -340,7 +340,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		SearchResult retSearchResult = null;
 		Address address = null;
 		List retList = null;
-		Set ownerSet = null;
+		List ownerSet = null;
 		try {
 			List propIdList = propertyIDDAO.getPropertyIDByBoundryForWardBlockStreet(wardID,
 					blockID, streetID);
@@ -356,7 +356,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
 							address = basicProperty.getAddress();
 							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = property.getPropertyOwnerSet();
+							ownerSet = property.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -414,7 +414,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		PropertyID propertyID = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		Set ownerSet = null;
+		List ownerSet = null;
 		try {
 
 			// These are IDs not Numbers but in database FK is number not id so
@@ -427,7 +427,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					property = basicProperty.getProperty();
 					if (property != null) {
 						retSearchResult = new SearchResult();
-						ownerSet = property.getPropertyOwnerSet();
+						ownerSet = property.getPropertyOwnerInfo();
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 						retSearchResult.setUpicNumber(basicProperty.getUpicNo());
 						retSearchResult.setAssesseeFullName(ptisManager
@@ -579,7 +579,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		Set ownerSet = null;
+		List ownerSet = null;
 		List retList = null;
 		try {
 			List basicPropertyList = basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldMuncipalNo);
@@ -589,7 +589,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					basicProperty = (BasicProperty) iter.next();
 					property = basicProperty.getProperty();
 					if (property != null) {
-						ownerSet = property.getPropertyOwnerSet();
+						ownerSet = property.getPropertyOwnerInfo();
 						retSearchResult = new SearchResult();
 
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
@@ -746,7 +746,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		Set ownerSet = null;
+		List ownerSet = null;
 		try {
 			basicProperty = basicPropertyDAO.getBasicPropertyByRegNum(khataNumber);
 
@@ -754,7 +754,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.info("property id" + property.getId());
-					ownerSet = property.getPropertyOwnerSet();
+					ownerSet = property.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());

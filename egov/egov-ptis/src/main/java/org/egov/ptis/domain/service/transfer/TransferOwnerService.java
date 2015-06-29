@@ -79,7 +79,7 @@ import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationOwner;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
@@ -95,7 +95,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
      * mutation
      */
     public PropertyImpl createPropertyClone(BasicProperty basicProp, PropertyMutation propertyMutation,
-            List<PropertyOwner> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
+            List<PropertyOwnerInfo> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
             String corrPinCode, String email, String mobileNo) {
         LOGGER.debug("Inside createPropertyClone method");
         Property oldProperty = basicProp.getProperty();
@@ -103,7 +103,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         basicProp.setPropMutationSet(propertyMutationSet);
         // cloning property
         Property clonedProperty = oldProperty.createPropertyclone();
-        clonedProperty.setPropertyOwnerSet(
+        clonedProperty.setPropertyOwnerInfo(
                 getNewPropOwnerAdd(clonedProperty, chkIsCorrIsDiff, corrAddress1, corrAddress2, corrPinCode, propertyOwnerProxy));
         clonedProperty.setPtDemandSet(cloneDemandSet(clonedProperty, oldProperty));
         basicProp.setAddress(getChangedOwnerContact(basicProp, email, mobileNo));
@@ -174,7 +174,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
      */
     private Set<PropertyMutationOwner> getMutOwners(Property prop, PropertyMutation propertyMutation) {
         Set<PropertyMutationOwner> mutOwnerSet = new HashSet<PropertyMutationOwner>();
-        for (PropertyOwner ownerprop : prop.getPropertyOwnerSet()) {
+        for (PropertyOwnerInfo ownerprop : prop.getPropertyOwnerInfo()) {
             PropertyMutationOwner propMutOwner = new PropertyMutationOwner();
             propMutOwner.setOwnerId(ownerprop.getId().intValue());
             propMutOwner.setPropertyMutation(propertyMutation);
@@ -186,46 +186,18 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     /*
      * This method returns changed owner corr address as a Set
      */
-    public Set<PropertyOwner> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
-            String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
-        Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
-        PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-        CorrespondenceAddress ownerAddr = new CorrespondenceAddress();
-        if (chkIsCorrIsDiff) {
-            if (StringUtils.isNotBlank(corrAddress1)) {
-                ownerAddr.setLandmark(propertyTaxUtil.antisamyHackReplace(corrAddress1));
-            }
-            if (StringUtils.isNotBlank(corrAddress2)) {
-                ownerAddr.setStreetRoadLine(propertyTaxUtil.antisamyHackReplace(corrAddress2));
-            }
-
-            if (StringUtils.isNotBlank(corrPinCode)) {
-                ownerAddr.setPinCode(corrPinCode);
-            }
-        } else {
-            try {
-                BeanUtils.copyProperties(ownerAddr, clonedProperty.getBasicProperty().getAddress());
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new EGOVRuntimeException("Error occurred while coping property address to correspondence address",e);
-            }
-            ownerAddr.setId(null);
-            ownerAddr.setType(AddressType.CORRESPONDENCE);
-        }
+    public List<PropertyOwnerInfo> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
+            String corrAddress2, String corrPinCode, List<PropertyOwnerInfo> propertyOwnerProxy) {
         int orderNo = 1;
-        for (PropertyOwner owner : propertyOwnerProxy) {
-            PropertyOwner newOwner = new PropertyOwner();
-            newOwner.setName(propertyTaxUtil.antisamyHackReplace(owner.getName()));
-            newOwner.setOrderNo(orderNo);
-            newOwner.setAadhaarNumber(owner.getAadhaarNumber());
-            newOwner.setUsername(owner.getMobileNumber());
-            newOwner.setMobileNumber(owner.getMobileNumber());
-            newOwner.setEmailId(owner.getEmailId());
-            newOwner.setPassword("NOT SET");
-            newOwner.addAddress(ownerAddr);
-            ownSet.add(newOwner);
-            orderNo++;
+        for (PropertyOwnerInfo newOwner : propertyOwnerProxy) {
+            if (newOwner.isNew()) {
+                newOwner.setOrderNo(orderNo);
+                newOwner.getOwner().setUsername(newOwner.getOwner().getMobileNumber());
+                newOwner.getOwner().setPassword("NOT SET");
+                orderNo++;
+            }
         }
-        return ownSet;
+        return propertyOwnerProxy;
     }
 
     /*

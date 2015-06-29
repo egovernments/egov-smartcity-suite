@@ -48,7 +48,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.ConstructionTypeImpl;
 import org.egov.ptis.domain.entity.property.PropertyCreationReason;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -83,7 +83,7 @@ public interface PTISCacheManagerInteface
 	public java.util.List getAllDepreciationRates();
 	public List getAllCategories();
 	public String buildAddress(BasicProperty basicProperty);
-	public String buildOwnerFullName(Set<PropertyOwner> ownerSet);
+	public String buildOwnerFullName(List<PropertyOwnerInfo> ownerSet);
     public Map getTxPercWithUsg(List lstTaxRates);
     public String  buildOwnerFullName(BasicProperty basicProp);
     public String buildAddressFromAddress(Address add);

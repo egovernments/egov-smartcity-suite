@@ -49,6 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPE
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_CSC_OPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVEL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
@@ -66,7 +67,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -74,7 +74,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,6 +101,7 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
@@ -121,7 +121,7 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
@@ -133,7 +133,6 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.utils.OwnerNameComparator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -217,7 +216,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String propOccId;
 	private String ackMessage;
 	private Map<Long, String> ZoneBndryMap;
-	private List<PropertyOwner> propOwnerProxy;
+	/*private List<PropertyOwnerInfo> propOwnerProxy;*/
 	private Map<String, String> propTypeCategoryMap;
 	private String propTypeCategoryId;
 	private String method;
@@ -240,7 +239,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	private boolean isfloorDetailsRequired = true;
 	private PropertyImpl propWF;// would be current property workflow obj
-	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
+	private List<PropertyOwnerInfo> propertyOwnerProxy = new ArrayList<PropertyOwnerInfo>();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private PropertyImpl newProperty = new PropertyImpl();
 	private Date currDate;
@@ -307,13 +306,13 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyUsage", PropertyUsage.class);
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyOccupation", PropertyOccupation.class);
 		this.addRelatedEntity("propertyDetail.floorDetailsProxy.structureClassification", StructureClassification.class);
+		this.addRelatedEntity("propertyOwnerInfo.owner", Citizen.class);
 	
 	}
 
-	@SkipValidation
 	@Override
 	public Object getModel() {
-		return property;
+	    return property;
 	}
 
 	@SkipValidation
@@ -416,9 +415,9 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (propertyDetail.getFloorDetails().size() > 0) {
 			setFloorDetails(property);
 		}
-		List<PropertyOwner> propOwners = new ArrayList<PropertyOwner>(property.getPropertyOwnerSet());
+		/*List<PropertyOwner> propOwners = new ArrayList<PropertyOwner>(property.getPropertyOwnerSet());
 		Collections.sort(propOwners, new OwnerNameComparator());
-		setPropOwnerProxy(propOwners);
+		setPropOwnerProxy(propOwners);*/
 		setDocNumber(property.getDocNumber());
 		/*setPropertyCategory((Category) persistenceService.find("from Category c where c.id = ?",
 				Long.valueOf(property.getPropertyDetail().getExtra_field6())));*/
@@ -563,9 +562,9 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
-	private boolean checkCorrespondingAddress() {
+	/*private boolean checkCorrespondingAddress() {
 		LOGGER.debug("Entered into checkCorrespondingAddress, Property: " + property);
-		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
+		PropertyOwnerInfo owner = property.getPropertyOwnerSet().iterator().next();
 		Address address = owner.getAddress().iterator().next();
 		LOGGER.debug("checkCorrespondingAddress: Property Address: " + address);
 		if (address.getLandmark() != null && !address.getLandmark().isEmpty() || address.getAreaLocalitySector() != null && !address.getAreaLocalitySector().isEmpty()
@@ -575,7 +574,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		LOGGER.debug("CorrespondingAddress is Un-Available, Exiting from checkCorrespondingAddress");
 		return false;
-	}
+	}*/
 
 	private void setFloorDetails(Property property) {
 		LOGGER.debug("Entered into setFloorDetails, Property: " + property);
@@ -633,7 +632,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			
 			LOGGER.debug("prepare: Property by ModelId: " + property);
 			LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
-			setPropOwnerProxy(property.getPropertyOwnerProxy());
 		}
 
 		List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
@@ -929,24 +927,15 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		LOGGER.debug("createOwners:  CorrAddress1: " + getCorrAddress1()
 				+ ", CorrAddress2: " + getCorrAddress2() + ", CorrPinCode: " + getCorrPinCode());
-		PropertyOwner propertyOwner;
 		String addrStr1;
 		String addrStr2;
-		Set<PropertyOwner> PropertyOwner = new HashSet<PropertyOwner>();
 		int orderNo = 0;
-		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
+		for (PropertyOwnerInfo ownerInfo : property.getPropertyOwnerInfo()) {
 			orderNo++;
-			if (owner != null) {
-				String ownerName = owner.getName();
-				ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
-				propertyOwner = new PropertyOwner();
-				propertyOwner.setName(ownerName);
-				propertyOwner.setOrderNo(orderNo);
-				propertyOwner.setAadhaarNumber(owner.getAadhaarNumber());
-				propertyOwner.setUsername(owner.getMobileNumber());
-				propertyOwner.setMobileNumber(owner.getMobileNumber());
-				propertyOwner.setEmailId(owner.getEmailId());
-				propertyOwner.setPassword("NOT SET");
+			if (ownerInfo != null) {
+			    ownerInfo.setOrderNo(orderNo);
+			    ownerInfo.getOwner().setPassword("NOT SET");
+			    ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
 				//Use Correspondence adress 
 				Address ownerAddr = new CorrespondenceAddress();
 				addrStr1 = getCorrAddress1();
@@ -959,13 +948,9 @@ public class CreatePropertyAction extends WorkflowAction {
 					ownerAddr.setPinCode(getCorrPinCode());
 				}
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
-				propertyOwner.addAddress(ownerAddr);
-				PropertyOwner.add(propertyOwner);
-				property.addPropertyOwners(propertyOwner);
+				ownerInfo.getOwner().addAddress(ownerAddr);
 			}
 		}
-		property.setPropertyOwnerSet(PropertyOwner);
-		LOGGER.debug("Exiting from createOwners");
 	}
 
 	private PropertyAddress createPropAddress() {
@@ -1044,8 +1029,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (null == property.getPropertyDetail() && property.getPropertyDetail().getExtentAppartenauntLand() == 0.0) {
 			addActionError(getText("mandatory.extentAppartenauntLand"));
 		}
-		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
-			if (owner != null && owner.getName().equals("")) {
+		for (PropertyOwnerInfo owner : property.getPropertyOwnerInfo()) {
+			if (owner != null && owner.getOwner().getName().equals("")) {
 				addActionError(getText("mandatory.ownerName"));
 			}
 		}
@@ -1185,11 +1170,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 	
 		
-		Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
+		/*List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
 		if (ownerSet != null && !ownerSet.isEmpty()) {
 			List propOwProxy = new ArrayList();	
-			for (PropertyOwner owner : ownerSet) {
-				Set<Address> addrSet = (Set<Address>) owner.getAddress();
+			for (PropertyOwnerInfo owner : ownerSet) {
+				List<Address> addrSet = owner.getOwner().getAddress();
 				for (Address address : addrSet) {
 					if(address.getLandmark() != null) {
 						setCorrAddress2(address.getLandmark());
@@ -1206,7 +1191,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 			property.setPropertyOwnerProxy(propOwProxy);
 		}
-		
+		*/
 		if (basicProp.getExtraField1() != null) {
 			setIsAuthProp(basicProp.getExtraField1());
 		}
@@ -1601,9 +1586,9 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.ackMessage = ackMessage;
 	}
 
-	public Address getCorrAddress() {
+	/*public Address getCorrAddress() {
 		return property.getPropertyOwnerProxy().get(0).getAddress().iterator().next();
-	}
+	}*/
 
 	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
@@ -1613,15 +1598,15 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.ZoneBndryMap = ZoneBndryMap;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<PropertyOwner> getPropOwnerProxy() {
+	/*@SuppressWarnings("unchecked")
+	public List<PropertyOwnerInfo> getPropOwnerProxy() {
 		Collections.sort(propOwnerProxy, new OwnerNameComparator());
 		return propOwnerProxy;
 	}
 
-	public void setPropOwnerProxy(List<PropertyOwner> propOwnerProxy) {
+	public void setPropOwnerProxy(List<PropertyOwnerInfo> propOwnerProxy) {
 		this.propOwnerProxy = propOwnerProxy;
-	}
+	}*/
 
 	public Map<String, String> getPropTypeCategoryMap() {
 		return propTypeCategoryMap;
@@ -1731,11 +1716,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public List<PropertyOwner> getPropertyOwnerProxy() {
+	public List<PropertyOwnerInfo> getPropertyOwnerProxy() {
 		return propertyOwnerProxy;
 	}
 
-	public void setPropertyOwnerProxy(List<PropertyOwner> propertyOwnerProxy) {
+	public void setPropertyOwnerProxy(List<PropertyOwnerInfo> propertyOwnerProxy) {
 		this.propertyOwnerProxy = propertyOwnerProxy;
 	}
 

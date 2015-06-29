@@ -2,6 +2,7 @@ package org.egov.ptis.domain.service.property;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
@@ -119,14 +120,14 @@ public class PropertyExternalService {
 	}
 
 	private Set<OwnerName> prepareOwnerInfo(Property property) {
-		Set<PropertyOwner> propertyOwners = property.getPropertyOwnerSet();
+		List<PropertyOwnerInfo> propertyOwners = property.getPropertyOwnerInfo();
 		Set<OwnerName> ownerNames = new HashSet<OwnerName>();
 		if (propertyOwners != null && !propertyOwners.isEmpty()) {
-			for (PropertyOwner propertyOwner : propertyOwners) {
+			for (PropertyOwnerInfo propertyOwner : propertyOwners) {
 				OwnerName ownerName = new OwnerName();
-				ownerName.setAadhaarNumber(propertyOwner.getAadhaarNumber());
-				ownerName.setOwnerName(propertyOwner.getName());
-				ownerName.setMobileNumber(propertyOwner.getMobileNumber());
+				ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber());
+				ownerName.setOwnerName(propertyOwner.getOwner().getName());
+				ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber());
 				ownerNames.add(ownerName);
 			}
 		}

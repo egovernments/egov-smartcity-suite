@@ -255,7 +255,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				.getBoundaryNum().toString(), 2, '0'));
 		propMutationInfo.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
 		propMutationInfo.setNewOwnerName(ptisCacheMgr.buildOwnerFullName(property
-				.getPropertyOwnerSet()));
+				.getPropertyOwnerInfo()));
 		propMutationInfo.setOldOwnerName(propMutation.getOwnerNameOld());
 		propMutationInfo.setAddress(ptisCacheMgr.buildAddress(basicProperty));
 		return propMutationInfo;

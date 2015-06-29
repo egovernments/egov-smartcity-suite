@@ -47,11 +47,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.utils.EGovConfig;
@@ -67,10 +67,9 @@ import org.egov.ptis.domain.dao.property.TaxPercDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.ConstructionTypeImpl;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyCreationReason;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -425,14 +424,14 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	 * build ownername
 	 */
 	@Override
-	public String buildOwnerFullName(Set<PropertyOwner> ownerSet) {
+	public String buildOwnerFullName(List<PropertyOwnerInfo> ownerSet) {
 		if (ownerSet == null) {
 			throw new EGOVRuntimeException("Property Owner set is null...");
 		}
 		String ownerFullName = "";
 		Set<String> ownerNameSet = new HashSet<String>();
-		for (PropertyOwner propOwner : ownerSet) {
-
+		for (PropertyOwnerInfo propOwnerInfo : ownerSet) {
+		        User propOwner = propOwnerInfo.getOwner();
 			LOGGER.debug("buildOwnerFullName : Owner id " + propOwner.getId());
 			if (propOwner.getName() != null && !propOwner.getName().trim().equals("")) {
 				if (!ownerNameSet.contains(propOwner.getName().trim())) {
@@ -486,7 +485,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	@Override
 	public String buildOwnerFullName(BasicProperty bp) {
 		Property property = bp.getProperty();
-		return buildOwnerFullName(property.getPropertyOwnerSet());
+		return buildOwnerFullName(property.getPropertyOwnerInfo());
 	}
 
 	@Override

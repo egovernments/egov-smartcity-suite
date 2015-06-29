@@ -147,7 +147,7 @@ import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
@@ -250,7 +250,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private String errorMessage;
 	private String partNo;
-	private List<PropertyOwner> propertyOwners = new ArrayList<PropertyOwner>();
+	private List<PropertyOwnerInfo> propertyOwners = new ArrayList<PropertyOwnerInfo>();
 	private String modificationType;
 
 	private boolean isTenantFloorPresent;
@@ -356,7 +356,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			propertyImpl.setExtra_field5("");
 			setProperty(propertyImpl);
 
-			setOwnerName(ptisCacheMgr.buildOwnerFullName(propertyModel.getPropertyOwnerSet()));
+			setOwnerName(ptisCacheMgr.buildOwnerFullName(propertyModel.getPropertyOwnerInfo()));
 			setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
 
 			if (isNotBlank(propertyImpl.getExtra_field6())) {
@@ -371,7 +371,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propertyAddr = basicProp.getAddress();
 			}
 
-			corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerSet());
+			corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerInfo());
 
 			/*if (basicProp.getExtraField1() != null) {
 				setIsAuthProp(basicProp.getExtraField1());
@@ -456,7 +456,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		String currWfState = propertyModel.getState().getValue();
 		populateFormData();
-		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerSet());
+		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerInfo());
 
 		amalgPropIds = new String[10];
 		if (basicProp.getAllChangesCompleted() != null) {
@@ -998,23 +998,22 @@ public class ModifyPropertyAction extends WorkflowAction {
 				"Entered into editOwnerForm, edit facility for Owner Name and PartNO, indexNumber: "
 						+ indexNumber);
 		setOwnerName(
-				ptisCacheMgr.buildOwnerFullName(basicProp.getProperty().getPropertyOwnerSet()));
-		setPropertyOwners(
-				new ArrayList<PropertyOwner>(basicProp.getProperty().getPropertyOwnerSet()));
+				ptisCacheMgr.buildOwnerFullName(basicProp.getProperty().getPropertyOwnerInfo()));
+		setPropertyOwners(basicProp.getProperty().getPropertyOwnerInfo());
 		return "ownerForm";
 	}
 
 	@SkipValidation
 	public String updateOwner() {
 		LOGGER.debug("Entered into updateOwner");
-		Set<PropertyOwner> existingOwners = basicProp.getProperty().getPropertyOwnerSet();
-		List<PropertyOwner> newOwners = getPropertyOwners();
+		List<PropertyOwnerInfo> existingOwners = basicProp.getProperty().getPropertyOwnerInfo();
+		List<PropertyOwnerInfo> newOwners = getPropertyOwners();
 		StringBuilder auditDetail1 = new StringBuilder();
-		PropertyOwner propertyOwner = null;
+		PropertyOwnerInfo propertyOwner = null;
 		int index = 0;
 
-		if (!newOwners.isEmpty()) {
-			for (PropertyOwner propOwner : existingOwners) {
+		/*if (!newOwners.isEmpty()) {
+			for (PropertyOwnerInfo propOwner : existingOwners) {
 				propertyOwner = newOwners.get(index);
 				propOwner.setOrderNo(index + 1);
 				LOGGER.debug("updateOwner new owner " + propertyOwner.getName());
@@ -1024,7 +1023,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propOwner.setName(propertyOwner.getName());
 				index++;
 			}
-		}
+		}*/
 		auditDetail1.append("Part No : ").append(basicProp.getPartNo()).append(PIPE_CHAR)
 				.append(partNo);
 		LOGGER.debug(
@@ -1087,11 +1086,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		if (propWF != null) {
-			setOwnerName(ptisCacheMgr.buildOwnerFullName(propWF.getPropertyOwnerSet()));
-			Set<PropertyOwner> ownerSet = propWF.getPropertyOwnerSet();
+			setOwnerName(ptisCacheMgr.buildOwnerFullName(propWF.getPropertyOwnerInfo()));
+			List<PropertyOwnerInfo> ownerSet = propWF.getPropertyOwnerInfo();
 			if (ownerSet != null && !ownerSet.isEmpty()) {
-				for (PropertyOwner owner : ownerSet) {
-					for (Address address : owner.getAddress()) {
+				for (PropertyOwnerInfo owner : ownerSet) {
+					for (Address address : owner.getOwner().getAddress()) {
 						corrsAddress = ptisCacheMgr.buildAddressByImplemetation(address);
 						break;
 					}
@@ -1687,7 +1686,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			wfStatus = wfMap.get(WFSTATUS);
 			if (!wfStatus.equalsIgnoreCase("TRUE")) {
 				PropertyImpl oldProp = (PropertyImpl) amalgPropBasicProp.getProperty();
-				setOldOwnerName(ptisCacheMgr.buildOwnerFullName(oldProp.getPropertyOwnerSet()));
+				setOldOwnerName(ptisCacheMgr.buildOwnerFullName(oldProp.getPropertyOwnerInfo()));
 				setOldPropAddress(
 						ptisCacheMgr.buildAddressByImplemetation(amalgPropBasicProp.getAddress()));
 
@@ -2658,11 +2657,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public List<PropertyOwner> getPropertyOwners() {
+	public List<PropertyOwnerInfo> getPropertyOwners() {
 		return propertyOwners;
 	}
 
-	public void setPropertyOwners(List<PropertyOwner> propertyOwners) {
+	public void setPropertyOwners(List<PropertyOwnerInfo> propertyOwners) {
 		this.propertyOwners = propertyOwners;
 	}
 

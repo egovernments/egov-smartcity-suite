@@ -39,14 +39,18 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
 -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.egov.ptis.domain.entity.property">
-	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
-		extends="org.egov.portal.entity.Citizen">
-		<key column="OWNERID" />
+<hibernate-mapping >
+		<class name="org.egov.ptis.domain.entity.property.PropertyOwnerInfo" table="EGPT_PROPERTY_OWNER_INFO">
+		<id name="id" column="ID" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGPT_PROPERTY_OWNER_INFO</param>
+			</generator>
+		</id>
+		<many-to-one name="owner" class="org.egov.infra.admin.master.entity.User" column="OWNER" cascade="all"/>
 		<many-to-one name="property" column="ID_PROPERTY"
 			not-null="true" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false" fetch="select" />
 		<many-to-one name="source"
 			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
 		<property name="orderNo" column="ORDERNO" />
-	</joined-subclass>
+		</class>
 </hibernate-mapping>

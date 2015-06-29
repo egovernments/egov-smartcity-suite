@@ -158,7 +158,7 @@ public class PropertyNoticeInfo {
 	 */
 	public String getNewOwnerName() {
 		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
-			return ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet());
+			return ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
 
 		return "";
 	}

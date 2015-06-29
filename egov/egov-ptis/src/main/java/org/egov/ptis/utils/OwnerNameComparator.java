@@ -41,17 +41,17 @@ package org.egov.ptis.utils;
 
 import java.util.Comparator;
 
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 
 public class OwnerNameComparator implements Comparator {
 	Integer orderNo1;
 	Integer orderNo2;
-	PropertyOwner owner1 = null;
-	PropertyOwner owner2 = null;
+	PropertyOwnerInfo owner1 = null;
+	PropertyOwnerInfo owner2 = null;
 
 	public int compare(Object arg0, Object arg1) {
-		owner1 = (PropertyOwner) arg0;
-		owner2 = (PropertyOwner) arg1;
+		owner1 = (PropertyOwnerInfo) arg0;
+		owner2 = (PropertyOwnerInfo) arg1;
 		orderNo1 = owner1.getOrderNo();
 		orderNo2 = owner2.getOrderNo();
 

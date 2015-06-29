@@ -89,7 +89,7 @@ import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.PTISCacheManager;
@@ -423,8 +423,8 @@ public class SearchNoticesAction extends SearchFormAction {
 				LOGGER.debug("Property : " + prop);
 				if (ownerName != null && !ownerName.equals("")) {
 					boolean isOwnerExist = true;
-					for (PropertyOwner propOwner : prop.getPropertyOwnerSet()) {
-						if (!getOwnerName().equalsIgnoreCase(propOwner.getName())) {
+					for (PropertyOwnerInfo propOwner : prop.getPropertyOwnerInfo()) {
+						if (!getOwnerName().equalsIgnoreCase(propOwner.getOwner().getName())) {
 							noticeRmvList.add(notice);
 							isOwnerExist = false;
 							break;
@@ -454,7 +454,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		String NonHistoryOwnerName = ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty()
-				.getPropertyOwnerSet());
+				.getPropertyOwnerInfo());
 		LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
 		LOGGER.debug("Exit from getNonHistoryOwnerName method");
 		return NonHistoryOwnerName;

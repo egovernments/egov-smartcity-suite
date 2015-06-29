@@ -498,7 +498,7 @@ public class ObjectionAction extends PropertyTaxBaseAction {
 
 	public void setOwnerName(Property property) {
 
-		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet());
+		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
 	}
 
 	public String getPropertyAddress() {

@@ -50,26 +50,26 @@
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
-    <s:if test="propertyOwnerProxy.size()==0">
+    <s:if test="%{propertyOwnerInfo.isEmpty()}">
       <tr id="nameRow" >
        <!-- <td class="greybox" width="10%"> </td>  -->
       <%-- <td class="" align="center">
-        	<s:textfield name="title" maxlength="512" size="20" id="title"  value="%{propertyOwnerProxy[0].name}" 
+        	<s:textfield name="title" maxlength="512" size="20" id="title"  value="%{propertyOwnerInfo[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td> --%>
         <td class="blueborderfortd" align="center">
-		   <s:textfield name="propertyOwnerProxy[0].aadhaarNumber" id="propertyOwnerProxy[0].aadhaarNumber" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="propertyOwnerInfo[0].owner.aadhaarNumber" id="propertyOwnerInfo[0].owner.aadhaarNumber" size="12" maxlength="12"></s:textfield>
 		</td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerProxy[0].name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerProxy[0].name}" 
+        	<s:textfield name="propertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerInfo[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerProxy[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{propertyOwnerProxy[0].mobileNumber}" 
+        	<s:textfield name="propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{propertyOwnerInfo[0].owner.mobileNumber}" 
         		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerProxy[0].emailId" maxlength="64" size="20" id="emailId"  value="%{propertyOwnerProxy[0].emailId}" 
+        	<s:textfield name="propertyOwnerInfo[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{propertyOwnerInfo[0].owner.emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);"/>
         </td>
         
@@ -80,21 +80,21 @@
         </tr>
      </s:if>
       <s:else>
-        <s:iterator value="(propertyOwnerProxy.size).{#this}" status="ownerStatus">
+        <s:iterator value="propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
 			  <td class="blueborderfortd" align="center">
-			  <s:textfield name="propertyOwnerProxy[0].aadhaarNumber" id="propertyOwnerProxy[0].aadhaarNumber" size="12" maxlength="12"></s:textfield>
+			  <s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" size="12" maxlength="12"></s:textfield>
 			  </td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerProxy[#ownerStatus.index].name}" 
+        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerInfo[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
         		</td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].mobileNumber" maxlength="10" size="20" id="mobileNo" value="%{propertyOwnerProxy[#ownerStatus.index].mobileNumber}" 
+        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNo" value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
         		</td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerProxy[%{#ownerStatus.index}].emailId" maxlength="64" size="20" id="emailId" value="%{propertyOwnerProxy[#ownerStatus.index].emailId}" 
+        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.emailId" maxlength="64" size="20" id="emailId" value="%{propertyOwnerInfo[#ownerStatus.index].owner.emailId}" 
         				onblur="trim(this,this.value);validateEmail(this);"/>
         		</td>
         		<td class="blueborderfortd">

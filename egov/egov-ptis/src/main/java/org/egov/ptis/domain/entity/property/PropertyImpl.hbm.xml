@@ -123,10 +123,10 @@
 		<many-to-one name="propertyModifyReason" column="ID_MODIFY_REASON"
 			class="org.egov.ptis.domain.entity.property.PropertyModifyReason" unique="true" />
 
-		<set name="propertyOwnerSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_OWNER" order-by="ORDERNO">
+		<bag name="propertyOwnerInfo" cascade="all-delete-orphan" >
 			<key column="ID_PROPERTY" not-null="true" />
-			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyOwner"/>
-		</set>
+			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo"/>
+		</bag>
 
 		<!-- <set name="propertyTenantSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_TENANTS">
 			<key column="ID_PROPERTY" not-null="true" />

@@ -70,7 +70,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,7 +163,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
-				Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
+				List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("assessmentNum", assessmentNumber);

@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MOD
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -80,9 +81,7 @@ public class PropertyImpl extends StateAware implements Property {
 	
 	private Long id;
 	
-	private Set<PropertyOwner> propertyOwnerSet = new HashSet<PropertyOwner>();
-
-	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
+	private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
 
 	private Set<Citizen> propertyTenantSet = new HashSet<Citizen>();
 
@@ -278,13 +277,14 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public Set<PropertyOwner> getPropertyOwnerSet() {
-		return propertyOwnerSet;
+	public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
+	    propertyOwnerInfo.removeAll(Collections.singleton(null));
+	    return propertyOwnerInfo;
 	}
 
 	@Override
-	public void setPropertyOwnerSet(Set<PropertyOwner> propertyOwnerSet) {
-		this.propertyOwnerSet = propertyOwnerSet;
+	public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet) {
+		this.propertyOwnerInfo = propertyOwnerSet;
 	}
 
 	public AbstractProperty getAbstractProperty() {
@@ -335,13 +335,13 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public void addPropertyOwners(PropertyOwner owner) {
-		getPropertyOwnerSet().add(owner);
+	public void addPropertyOwners(PropertyOwnerInfo ownerInfo) {
+		getPropertyOwnerInfo().add(ownerInfo);
 	}
 
 	@Override
-	public void removePropertyOwners(PropertyOwner owner) {
-		getPropertyOwnerSet().remove(owner);
+	public void removePropertyOwners(PropertyOwnerInfo ownerInfo) {
+		getPropertyOwnerInfo().remove(ownerInfo);
 	}
 
 	/*@Override
@@ -534,19 +534,6 @@ public class PropertyImpl extends StateAware implements Property {
 		this.taxExemptReason = taxExemptReason;
 	}
 
-	@Override
-	public List<PropertyOwner> getPropertyOwnerProxy() {
-		// getPropertyOwnerSet().addAll(propertyOwnerProxy);
-		//propertyOwnerProxy.addAll(getPropertyOwnerSet());
-		return propertyOwnerProxy;
-	}
-
-	@Override
-	public void setPropertyOwnerProxy(List<PropertyOwner> propertyOwnerProxy) {
-		this.propertyOwnerProxy = propertyOwnerProxy;
-		getPropertyOwnerSet().addAll(propertyOwnerProxy);
-	}
-
 	/*
 	 * This method creates a clone of Property
 	 */
@@ -569,7 +556,7 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setStatus(getStatus());
 		newProp.setPropertyDetail(clonePropertyDetail(newProp));
 		newProp.setPropertyModifyReason(getPropertyModifyReason());
-		newProp.setPropertyOwnerSet(cloneOwners());
+		newProp.setPropertyOwnerInfo(cloneOwners());
 		newProp.setPropertySource(getPropertySource());
 		//newProp.setPropertyTenantSet(cloneTenants());
 		newProp.setPtDemandSet(cloneDemand());
@@ -603,17 +590,11 @@ public class PropertyImpl extends StateAware implements Property {
 	/*
 	 * This method returns Owner details as a Set
 	 */
-	private Set<PropertyOwner> cloneOwners() {
-		Set<PropertyOwner> newOwnerSet = new HashSet<PropertyOwner>();
-		PropertyOwner newOwner;
-		for (PropertyOwner owner : getPropertyOwnerSet()) {
-			newOwner = new PropertyOwner(owner.getAadhaarNumber(),owner.getActivationCode(),owner.isActive(),owner.getAddress(),
-					owner.getAltContactNumber(),
-					owner.getDob(),owner.getEmailId(),owner.getGender(),owner.getLocale(),owner.getMobileNumber(),owner.getName(),owner.getPan(),
-					owner.getPassword(),owner.getSalutation(),owner.getSource(),owner.getUsername(),
-					owner.getOrderNo(),owner.getProperty());
-			newOwner.setAddress(cloneAddrList(newOwner.getAddress()));
-			newOwnerSet.add(newOwner);
+	private List<PropertyOwnerInfo> cloneOwners() {
+		List<PropertyOwnerInfo> newOwnerSet = new ArrayList<PropertyOwnerInfo>();
+		for (PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
+		    PropertyOwnerInfo newOwner = new PropertyOwnerInfo(ownerInfo.getProperty(), ownerInfo.getSource(), ownerInfo.getOwner(), ownerInfo.getOrderNo());
+		    newOwnerSet.add(newOwner);
 		}
 		return newOwnerSet;
 	}

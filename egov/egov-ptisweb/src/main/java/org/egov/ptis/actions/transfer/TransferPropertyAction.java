@@ -77,7 +77,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.transfer.TransferOwnerService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
@@ -116,7 +116,7 @@ public class TransferPropertyAction extends WorkflowAction {
     private BigDecimal arrDemand;
     private String extra_field4;
     private BigDecimal currDemandDue;
-    private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
+    private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
     private PropertyImpl property;
     private String statvalue;
     private String nextUser;
@@ -188,7 +188,7 @@ public class TransferPropertyAction extends WorkflowAction {
         propertyMutation.setExtraField1(getWorkflowBean().getComments());
         propertyMutation.setOwnerNameOld(oldOwnerName);
         transferOwnerService.applyAuditing(propertyMutation);
-        property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerProxy, chkIsCorrIsDiff,
+        property = transferOwnerService.createPropertyClone(basicProp, propertyMutation, propertyOwnerInfo, chkIsCorrIsDiff,
                 corrAddress1, corrAddress2, corrPinCode, email, mobileNo);
         transitionWorkFlow();
         setExtra_field4(property.getExtra_field4());
@@ -227,22 +227,6 @@ public class TransferPropertyAction extends WorkflowAction {
             return NEW;
         }
         populateExistingPropertyDetails();
-        getPropertyOwnerProxy().addAll(property.getPropertyOwnerSet());
-        if (property.getPropertyOwnerSet() != null && !property.getPropertyOwnerSet().isEmpty()) {
-            final PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-            for (final Address addr : owner.getAddress())
-                if (addr.getLandmark() != null || addr.getAreaLocalitySector() != null || addr.getPinCode() != null) {
-                    setChkIsCorrIsDiff(true);
-                    if (addr.getLandmark() != null)
-                        setCorrAddress1(addr.getLandmark());
-                    if (addr.getStreetRoadLine() != null)
-                        setCorrAddress2(addr.getAreaLocalitySector());
-                    if (addr.getPinCode() != null)
-                        setCorrPinCode(addr.getPinCode().toString());
-                }
-            setCorrAddress(owner.getAddress().iterator().next());
-        }
-
         return currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING) ? VIEW : EDIT;
     }
 
@@ -306,8 +290,9 @@ public class TransferPropertyAction extends WorkflowAction {
                 && !propertyMutation.getOwnerNameOld().equals(""))
             setOldOwnerName(propertyMutation.getOwnerNameOld());
         else
-            setOldOwnerName(ptisCacheMgr.buildOwnerFullName(nonHistProperty.getPropertyOwnerSet()));
+            setOldOwnerName(ptisCacheMgr.buildOwnerFullName(nonHistProperty.getPropertyOwnerInfo()));
         setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
+        setPropertyOwnerInfo(nonHistProperty.getPropertyOwnerInfo());
     }
 
     private void populateNonHistProperty() {
@@ -351,8 +336,8 @@ public class TransferPropertyAction extends WorkflowAction {
                 addActionError(getText("mandatory.mutationDate"));
             else if (propertyMutation.getMutationDate().after(new Date()))
                 addActionError(getText("mandatory.mutationDateBeforeCurr"));
-            for (final PropertyOwner owner : getPropertyOwnerProxy())
-                if (owner.getName().equals(""))
+            for (final PropertyOwnerInfo owner : getPropertyOwnerInfo())
+                if (owner.getOwner().getName().equals(""))
                     addActionError(getText("mandatory.ownerName"));
         }
 
@@ -383,21 +368,8 @@ public class TransferPropertyAction extends WorkflowAction {
         transRsnId = propMutation.getPropMutationMstr().getId().toString();
         setMobileNo(getBasicProperty().getAddress().getUser().getMobileNumber());
         setEmail(getBasicProperty().getAddress().getUser().getEmailId());
-        setOldOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
+        setOldOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
         setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
-        final PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-        final Set<Address> addrSet = (Set<Address>) owner.getAddress();
-        for (final Address addr : addrSet)
-            if (addr.getLandmark() != null || addr.getAreaLocalitySector() != null || addr.getPinCode() != null) {
-                setChkIsCorrIsDiff(true);
-                if (addr.getLandmark() != null)
-                    setCorrAddress1(addr.getLandmark());
-                if (addr.getAreaLocalitySector() != null)
-                    setCorrAddress1(addr.getAreaLocalitySector());
-                if (addr.getPinCode() != null)
-                    setCorrPinCode(addr.getPinCode().toString());
-            }
-        setPropertyOwnerProxy(new ArrayList(property.getPropertyOwnerSet()));
     }
 
     public String getOldOwnerName() {
@@ -524,12 +496,12 @@ public class TransferPropertyAction extends WorkflowAction {
         this.propertyMutation = propertyMutation;
     }
 
-    public List<PropertyOwner> getPropertyOwnerProxy() {
-        return propertyOwnerProxy;
+    public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
+        return propertyOwnerInfo;
     }
 
-    public void setPropertyOwnerProxy(final List<PropertyOwner> propertyOwnerProxy) {
-        this.propertyOwnerProxy = propertyOwnerProxy;
+    public void setPropertyOwnerInfo(final List<PropertyOwnerInfo> propertyOwnerProxy) {
+        this.propertyOwnerInfo = propertyOwnerProxy;
     }
 
     public void setNoticeType(final String noticeType) {
@@ -606,8 +578,8 @@ public class TransferPropertyAction extends WorkflowAction {
         this.ackMessage = ackMessage;
     }
 
-    public List<PropertyOwner> getPropOwnerProxy() {
-        return getPropertyOwnerProxy();
+    public List<PropertyOwnerInfo> getPropOwnerProxy() {
+        return getPropertyOwnerInfo();
     }
 
     public BillReceiptInfo getBillReceiptInfo() {

@@ -38,7 +38,7 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 
-<%@page import="org.egov.ptis.domain.entity.property.PropertyOwner"%>
+<%@page import="org.egov.ptis.domain.entity.property.PropertyOwnerInfo"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>

@@ -85,7 +85,7 @@ import org.egov.ptis.domain.dao.property.SearchPropertyHibernateDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.egov.ptis.utils.PTISCacheManager;
@@ -405,7 +405,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
 				checkIsDemandActive(property);
 
-				Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
+				List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
 				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();

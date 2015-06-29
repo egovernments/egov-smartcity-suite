@@ -156,7 +156,7 @@ public class MemoGenerationAction extends BaseFormAction {
 		Boundary zone = objection.getBasicProperty().getBoundary().getParent();
 		paramMap.put("zoneNo", zone != null ? zone.getBoundaryNum().toString() : "");
 		paramMap.put("owner",
-				getPtisCacheMgr().buildOwnerFullName(objection.getBasicProperty().getProperty().getPropertyOwnerSet()));
+				getPtisCacheMgr().buildOwnerFullName(objection.getBasicProperty().getProperty().getPropertyOwnerInfo()));
 		paramMap.put("memoNo", propertyTaxNumberGenerator.generateMemoNumber());
 
 		return paramMap;

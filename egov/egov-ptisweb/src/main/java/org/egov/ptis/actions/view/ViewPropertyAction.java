@@ -76,7 +76,7 @@ import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.utils.PTISCacheManager;
@@ -117,7 +117,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	@Autowired
 	private UserService UserService;
 	
-	private Set<PropertyOwner> propertyOwners;
+	private List<PropertyOwnerInfo> propertyOwners;
 	private boolean isUserOperator;
 
 	public void setBasicPropertyDAO(BasicPropertyDAO basicPropertyDAO) {
@@ -178,7 +178,7 @@ public class ViewPropertyAction extends BaseFormAction {
 
 			LOGGER.debug("viewForm : Property : " + property);
 			viewMap.put("ownerName",
-					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
+					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
 			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
@@ -191,10 +191,10 @@ public class ViewPropertyAction extends BaseFormAction {
 				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);
 			}
 
-			propertyOwners = property.getPropertyOwnerSet();
+			propertyOwners = property.getPropertyOwnerInfo();
 			if (propertyOwners != null && !propertyOwners.isEmpty()) {
-				for (PropertyOwner owner : propertyOwners) {
-					List<Address> addrSet =  (List<Address>) owner.getAddress();
+				for (PropertyOwnerInfo owner : propertyOwners) {
+					List<Address> addrSet =  (List<Address>) owner.getOwner().getAddress();
 					for (Address address : addrSet) {
 						ownerAddress = ptisCacheMgr.buildAddressByImplemetation(address);
 						break;
@@ -457,11 +457,11 @@ public class ViewPropertyAction extends BaseFormAction {
 		this.noOfDaysForInactiveDemand = noOfDaysForInactiveDemand;
 	}
 
-	public Set<PropertyOwner> getPropertyOwners() {
+	public List<PropertyOwnerInfo> getPropertyOwners() {
 		return propertyOwners;
 	}
 
-	public void setPropertyOwners(Set<PropertyOwner> propertyOwners) {
+	public void setPropertyOwners(List<PropertyOwnerInfo> propertyOwners) {
 		this.propertyOwners = propertyOwners;
 	}
 

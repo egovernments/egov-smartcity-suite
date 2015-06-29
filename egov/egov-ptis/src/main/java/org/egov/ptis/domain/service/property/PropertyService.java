@@ -122,7 +122,7 @@ import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwner;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
@@ -1496,11 +1496,11 @@ public class PropertyService  {
 	 * @param oldProp
 	 * @return @PropertyImpl
 	 */
-	public Property createOwnersForNew(Property newProp, Property oldProp) {
+	/*public Property createOwnersForNew(Property newProp, Property oldProp) {
 		LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; " + oldProp);
 		Address oldOwnAddr = null;
-		for (PropertyOwner owner : oldProp.getPropertyOwnerSet()) {
-			PropertyOwner newOwner = new PropertyOwner();
+		for (PropertyOwnerInfo owner : oldProp.getPropertyOwnerSet()) {
+			PropertyOwnerInfo newOwner = new PropertyOwnerInfo();
 			String ownerName = owner.getName();
 			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
 			newOwner.setName(ownerName);
@@ -1529,7 +1529,7 @@ public class PropertyService  {
 		}
 		LOGGER.debug("Exiting from createOwnersForNew");
 		return newProp;
-	}
+	}*/
 
 	public PersistenceService getPropPerServ() {
 		return propPerServ;
