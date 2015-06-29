@@ -50,7 +50,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-					<spring:message code="msg.newconnection.ack.success" /> <span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span> on 
+					<spring:message code="msg.newconnection.ack.success" /><span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span> on 
 					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></strong>
 				</div>
 			</div>
@@ -62,17 +62,13 @@
 	<div class="panel panel-default" data-collapsed="0">
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.disposal.date" />
-				</div>
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.disposal.date" /></div>
 				<div class="col-xs-3 add-margin view-content">
-					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" /></strong>
+					<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
 				</div>
 			</div>
 			<div class="row text-right">
-				<div class="col-xs-12 view-content">
-					Signature<br>Service Center Assistant<br>Andhra Municipality
-				</div>
+				<div class="col-xs-12 view-content">Signature<br>Service Center Assistant<br>Andhra Municipality</div>
 			</div>
 		</div>
 	</div>
@@ -89,6 +85,7 @@
 
 <script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script type="text/javascript">
 function printDiv(divName) {
     var printContents = document.getElementById(divName).innerHTML;

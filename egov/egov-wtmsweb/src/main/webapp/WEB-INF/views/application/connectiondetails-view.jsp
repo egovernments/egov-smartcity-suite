@@ -52,33 +52,20 @@
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.category"/>
-					</div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.category"/></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.category.name}" /></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.watersourcetype"/></div>
 					<div class="col-xs-3 add-margin view-content">
-						<strong><c:out value="${waterConnectionDetails.category.name}" /></strong>
-					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.watersourcetype"/>
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<strong><c:out value="${waterConnectionDetails.waterSource.code}" /></strong>
+						<c:out value="${waterConnectionDetails.waterSource.waterSourceType}" />
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.hscpipesize.inches" />
-					</div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.hscpipesize.inches" /></div>
 					<div class="col-xs-3 add-margin view-content">
-						<strong><c:out value="${waterConnectionDetails.pipeSize.code}" /></strong>
+						<c:out value="${waterConnectionDetails.pipeSize.code}" />
 					</div>
-				
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.sumpcapacity.litres" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<strong><c:out value="${waterConnectionDetails.sumpCapacity}" /></strong>
-					</div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.sumpcapacity.litres" /></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
 				</div>
 			</div>
 		</div>					

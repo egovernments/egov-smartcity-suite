@@ -43,106 +43,58 @@
 <%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 	<div class="panel-body">
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.consumer.number"/>  
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.consumer.number"/></div>
 			<div class="col-xs-3 add-margin view-content">
 				<c:choose>
 					<c:when test="${not empty waterConnectionDetails.connection.consumerCode}">
-						<strong><c:out value="${waterConnectionDetails.connection.consumerCode}" /></strong>
+						<c:out value="${waterConnectionDetails.connection.consumerCode}" />
 					</c:when>
 					<c:otherwise>N/A</c:otherwise>
 				</c:choose>
 			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.mobilenumber"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${waterConnectionDetails.connection.mobileNumber}" /></strong>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
+			<div class="col-xs-3 add-margin view-content" id="mobileNumber"></div>
 		</div>
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.ptassesmentnumber"/>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.ptassesmentnumber"/></div>
+			<div class="col-xs-3 add-margin view-content" id='propertyIdentifier'>
+				<c:out value="${waterConnectionDetails.connection.propertyIdentifier}" />
 			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${waterConnectionDetails.connection.propertyIdentifier}" /></strong>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.bpanumber"/>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.bpanumber"/></div>
 			<div class="col-xs-3 add-margin view-content">
 				<c:choose>
 					<c:when test="${not empty waterConnectionDetails.connection.bpaIdentifier}">
-						<strong><c:out value="${waterConnectionDetails.connection.bpaIdentifier}" /></strong>
+						<c:out value="${waterConnectionDetails.connection.bpaIdentifier}" />
 					</c:when>
 					<c:otherwise>N/A</c:otherwise>
 				</c:choose>
 			</div>
 		</div>
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.applicantname"/>  
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${applicantDetails.applicantName}" /></strong>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
+			<div class="col-xs-3 add-margin view-content" id="applicantname"></div>
 		</div>
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.address" />
-			</div>
-			<div class="col-xs-9 add-margin view-content">
-				<strong><c:out value="${applicantDetails.address}" /></strong>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.address" /></div>
+			<div class="col-xs-9 add-margin view-content" id="propertyaddress" ></div>
 		</div>
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.connectiontype"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${waterConnectionDetails.connectionType}" /></strong>
-			</div>
-		
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.usagetype" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${waterConnectionDetails.usageType.name}" /></strong>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiontype"/></div>
+			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.connectionType}" /></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.usagetype"/></div>
+			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.usageType.name}"/></div>
 		</div>
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.zonewardblock"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${applicantDetails.zoneWardBlock}" /></strong>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.pt.due"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:choose>
-					<c:when test="${not empty applicantDetails.propertyTaxDue}">
-						<strong><c:out value="${applicantDetails.propertyTaxDue}" /></strong>
-					</c:when>
-					<c:otherwise>N/A</c:otherwise>
-				</c:choose>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.zonewardblock"/></div>
+			<div class="col-xs-3 add-margin view-content" id="zonewardblock"></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.pt.due"/></div>
+			<div class="col-xs-3 add-margin view-content" id="propertytaxdue"></div>
 		</div>
 		<div class="row">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.current.due"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong><c:out value="${waterConnectionDetails.demand.baseDemand}" /></strong>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.arrear.due"/>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<strong>N/A</strong>
-			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
+			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.arrear.due"/></div>
+			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>
 	</div>
 	
