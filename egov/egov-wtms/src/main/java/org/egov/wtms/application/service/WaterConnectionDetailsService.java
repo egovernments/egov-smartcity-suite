@@ -58,11 +58,13 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -129,6 +131,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private PropertyExternalService propertyExternalService;
+
+    @Autowired
+    private CityWebsiteService cityWebsiteService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -284,4 +289,7 @@ public class WaterConnectionDetailsService {
         return errorMessage;
     }
 
+    public String getCityName() {
+        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
+    }
 }

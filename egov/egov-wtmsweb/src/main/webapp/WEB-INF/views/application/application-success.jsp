@@ -66,9 +66,8 @@
 				<div class="col-xs-3 add-margin view-content">
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
 				</div>
-			</div>
-			<div class="row text-right">
-				<div class="col-xs-12 view-content">Signature<br>Service Center Assistant<br>Andhra Municipality</div>
+				<div class="col-xs-6 view-content text-right"><spring:message code="msg.sign"/><br>
+					<spring:message code="msg.ack.assistant"/><br>${cityName}</div>
 			</div>
 		</div>
 	</div>

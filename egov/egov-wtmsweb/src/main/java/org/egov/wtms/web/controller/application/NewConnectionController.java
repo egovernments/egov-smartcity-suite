@@ -56,6 +56,7 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -90,7 +91,7 @@ public class NewConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model) {
 
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
@@ -126,7 +127,9 @@ public class NewConnectionController extends GenericConnectionController {
         processAndStoreApplicationDocuments(waterConnectionDetails);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
-
+        model.addAttribute("connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType()));
+        model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
         return "application-success";
     }
 

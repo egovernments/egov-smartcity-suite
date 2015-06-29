@@ -80,7 +80,7 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiontype"/></div>
-			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.connectionType}" /></div>
+			<div class="col-xs-3 add-margin view-content"><c:out value="${connectionType}" /></div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.usagetype"/></div>
 			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.usageType.name}"/></div>
 		</div>
