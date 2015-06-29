@@ -96,17 +96,15 @@
 		<property name="receiptHeaderService" ref="receiptHeaderService"/>
 	</bean>
 	
-	<!-- <bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-    </bean>
-    
     <bean id="CLCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
-    </bean> -->
-    
-    	<bean id="PTCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
     </bean>
-       <bean id="receiptHeaderPersistenceService" parent="persistenceService">
+
+	<bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+		<property name="persistenceService" ref="persistenceService"/>
+    </bean>
+        
+    <bean id="receiptHeaderPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.collection.entity.ReceiptHeader" />
     </bean>
     

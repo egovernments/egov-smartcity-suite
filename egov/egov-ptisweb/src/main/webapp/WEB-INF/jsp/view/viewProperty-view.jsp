@@ -46,15 +46,14 @@
 		
 			function loadOnStartup () {
 				var btnCheckbox = document.getElementById('taxEnsureCheckbox');
-				var btnPayTax = document.getElementById('display');
+				var btnPayTax = document.getElementById('payBill');
 				if (btnCheckbox != null && btnPayTax != null) {
 					btnPayTax.disabled = (btnCheckbox.checked) ? false : true;
 				}
 			}
 			
 			function switchPayTaxButton (ensureCheckbox) {
-				var buttonPayTax = document.getElementById('display');
-				buttonPayTax.disabled = (ensureCheckbox.checked) ? false : true;			
+				jQuery('#payBill').attr('disabled', ensureCheckbox.checked ? false : true);			
 			}
 
 			jQuery(document).ready( function () {

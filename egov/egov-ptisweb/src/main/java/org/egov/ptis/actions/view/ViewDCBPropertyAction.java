@@ -61,7 +61,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.DCBException;
@@ -77,6 +82,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.util.DCBUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -93,6 +99,12 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+@Namespace("/view")
+@ResultPath("/WEB-INF/jsp/")
+@Results({ 
+    @Result(name = ViewDCBPropertyAction.VIEW, location = "view/viewDCBProperty-view.jsp")
+})
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequestAware {
@@ -106,7 +118,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private String currTaxAmount;
 
 	private BasicProperty basicProperty;
-	private DCBService dcbService;
 	private DCBDisplayInfo dcbDispInfo;
 	private Map<String, BigDecimal> propertyArrearsMap = new TreeMap<String, BigDecimal>();
 	private List<PropertyArrearBean> propertyArrearsList = new ArrayList<PropertyArrearBean>();
@@ -128,18 +139,23 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
 	private String errorMessage;
+	
+	@Autowired
 	private UserService userService;
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
 	private PtDemandDao ptDemandDAO;
+	@Autowired
+        private ApplicationContextBeanProvider beanProvider;
+	@Autowired
+	private DCBService dcbService;
 
 	public ViewDCBPropertyAction() {
 	}
 
 	@Override
 	public Object getModel() {
-
 		return dcbReport;
 	}
 
@@ -154,6 +170,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	 */
 
 	@ValidationErrorPage(value = VIEW)
+	@Action(value = "/viewDCBProperty-displayPropInfo")
 	public String displayPropInfo() {
 
 		LOGGER.debug("Entered into method displayPropInfo");
@@ -171,7 +188,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 				setCitizen(Boolean.TRUE);
 			}
 
-			EgovThreadLocals.setUserId(27613l);
 			session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
 			setCitizen(Boolean.TRUE);
 
@@ -180,23 +196,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		}
 
 		Property property = getBasicProperty().getProperty();
-		try {
-			if (!basicProperty.getStatus().getStatusCode()
-					.equalsIgnoreCase(PropertyTaxConstants.STATUS_OBJECTED_STR)
-					&& property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-				basicProperty.setIsDemandActive(false);
-				demandEffectiveYear = PropertyTaxUtil.getRevisedDemandYear(property);
-				noOfDaysForInactiveDemand = PropertyTaxUtil
-						.getNoticeDaysForInactiveDemand(property);
-			} else {
-				basicProperty.setIsDemandActive(true);
-			}
-		} catch (ParseException pe) {
-			String errorMsg = "Error in getting remaining notice days for inactive demand";
-			LOGGER.debug(errorMsg);
-			throw new EGOVRuntimeException(errorMsg, pe);
-		}
-
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
@@ -231,9 +230,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error("Error occured in method displayPropInfo while ecoding index no ", e);
 		}
-		PropertyTaxBillable billable = new PropertyTaxBillable();
-		dcbService = new DCBServiceImpl(billable);
+		PropertyTaxBillable billable = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
+		
 		billable.setBasicProperty(basicProperty);
+		dcbService.setBillable(billable);
+		
 		dcbDispInfo = dcbUtils.prepareDisplayInfo();
 
 		try {
@@ -248,50 +249,6 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	}
 
 	public String displayHeadwiseDcb() {
-		LOGGER.debug("Entered into method displayHeadwiseDcb");
-		LOGGER.debug("displayPropInfo : Index Number : " + propertyId);
-		StringBuilder encodedPropertyid = new StringBuilder();
-		DCBUtils dcbUtils = new DCBUtils();
-		session = request.getSession();
-		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-			User user = userService.getUserByUsername(CITIZENUSER);
-			userId = user.getId();
-			EgovThreadLocals.setUserId(userId);
-			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
-			if (user != null) {
-				setCitizen(Boolean.TRUE);
-			}
-		} else {
-			setCitizen(Boolean.FALSE);
-		}
-
-		try {
-			if (getBasicProperty() == null) {
-				throw new PropertyNotFoundException();
-			}
-		} catch (PropertyNotFoundException e) {
-			LOGGER.error("Property not found with given Index Number " + propertyId, e);
-		}
-		encodedPropertyid.append(propertyId).append("(Zone:")
-				.append(basicProperty.getPropertyID().getZone().getBoundaryNum()).append(" ")
-				.append("Ward:").append(basicProperty.getPropertyID().getWard().getBoundaryNum())
-				.append(")");
-		LOGGER.debug("Consumer Code : " + encodedPropertyid.toString());
-		try {
-			setEncodedConsumerCode(URLEncoder.encode(encodedPropertyid.toString(), "UTF-8"));
-			LOGGER.debug("ecoded Consumer Code : " + getEncodedConsumerCode());
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("Error occured in method displayHeadwiseDcb while ecoding index no ", e);
-		}
-		PropertyTaxBillable billable = new PropertyTaxBillable();
-		dcbService = new DCBServiceImpl(billable);
-		billable.setBasicProperty(basicProperty);
-		dcbDispInfo = dcbUtils.prepareDisplayInfoHeadwise();
-		dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
-		receiptsInDescendingOrderOfReceiptDate();
-		setCancelRcpt(populateCancelledReceiptsOnly(dcbReport.getReceipts()));
-		setActiveRcpts(populateActiveReceiptsOnly(dcbReport.getReceipts()));
-		LOGGER.debug("Exit from method displayHeadwiseDcb");
 		return HEADWISE_DCB;
 	}
 

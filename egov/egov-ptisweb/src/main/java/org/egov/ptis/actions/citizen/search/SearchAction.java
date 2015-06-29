@@ -133,7 +133,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 			setSearchCreteria("Search By Assessment number");
 		} catch (Exception e) {
 			LOGGER.error("Exception in Search Property By Assessment ", e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new EGOVRuntimeException("Exception in Search Property By Assessment ", e);
 		}
 		LOGGER.debug("Exit from srchByAssessment method ");
 		return TARGET;

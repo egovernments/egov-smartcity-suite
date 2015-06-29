@@ -35,7 +35,7 @@
 # 	   with regards to rights under trademark law for use of the trade names 
 # 	   or trademarks of eGovernments Foundation.
 # 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#   In case of any queries, you can reach eGovernments Foundation at contaRct@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 

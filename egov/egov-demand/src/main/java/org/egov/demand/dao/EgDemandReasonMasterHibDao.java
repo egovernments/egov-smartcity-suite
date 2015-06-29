@@ -57,15 +57,13 @@ public class EgDemandReasonMasterHibDao implements EgDemandReasonMasterDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unused")
 	private Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
 
 	@Override
-	public EgDemandReasonMaster findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
+	public EgDemandReasonMaster findById(Long id, boolean lock) {
+		return (EgDemandReasonMaster) getCurrentSession().load(EgDemandReasonMaster.class, id);
 	}
 
 	@Override

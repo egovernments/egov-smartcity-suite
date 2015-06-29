@@ -60,9 +60,8 @@ public class EgReasonCategoryHibernateDao implements EgReasonCategoryDao {
 	}
 
 	@Override
-	public EgReasonCategory findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
+	public EgReasonCategory findById(Long id, boolean lock) {
+		return (EgReasonCategory) getCurrentSession().load(EgReasonCategory.class, id);
 	}
 
 	@Override

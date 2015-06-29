@@ -314,7 +314,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 			demands = new ArrayList<EgDemand>();
 			Iterator iter = demandIds.iterator();
 			while (iter.hasNext()) {
-				demands.add((EgDemand) egDemandDAO.findById(Integer.valueOf(iter.next().toString()),
+				demands.add((EgDemand) egDemandDAO.findById(Long.valueOf(iter.next().toString()),
 						false));
 			}
 		}

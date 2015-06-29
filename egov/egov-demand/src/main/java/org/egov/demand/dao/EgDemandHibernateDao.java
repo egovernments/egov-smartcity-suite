@@ -63,8 +63,7 @@ public class EgDemandHibernateDao implements EgDemandDao {
 
 	@Override
 	public EgDemand findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
+		return (EgDemand) getCurrentSession().load(EgDemand.class, id);
 	}
 
 	@Override

@@ -191,7 +191,14 @@
 		<constructor-arg ref="userService"/>
 	</bean>
 	
-	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource" />
+	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource">
+		<property name="excludePatterns">
+          <list>              
+              <value>/citizen</value>
+              <value>/view</value>
+           </list>
+      	</property>
+	</bean>
 	
 	<!-- SSL Switching: to use this, configure it in the securityFilterChain bean -->
 	<bean id="channelProcessingFilter" class="org.springframework.security.web.access.channel.ChannelProcessingFilter">

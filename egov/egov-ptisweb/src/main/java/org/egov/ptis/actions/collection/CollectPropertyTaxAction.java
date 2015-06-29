@@ -87,13 +87,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ 
-    @Result(name = "view", location = "collection/collectPropertyTax-view.jsp")
+    @Result(name = CollectPropertyTaxAction.RESULT_VIEW, location = "collection/collectPropertyTax-view.jsp")
 })
 @ParentPackage("egov")
 public class CollectPropertyTaxAction extends BaseFormAction {
 
 	private static final String RESULT_SHOWPENALTY = "showPenalty";
-	private static final String RESULT_VIEW = "view";
+	public static final String RESULT_VIEW = "view";
 	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
 
 	private PersistenceService<BasicProperty, Long> basicPrpertyService;

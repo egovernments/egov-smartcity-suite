@@ -54,11 +54,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.handler.BillCollectXmlHandler;
@@ -84,14 +89,20 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Namespace("/citizen")
-@Transactional(readOnly = true)
+@ResultPath("/WEB-INF/jsp/")
+@Results({ 
+    @Result(name = BaseFormAction.NEW, location = "citizen/onlineReceipt-new.jsp"),
+    @Result(name = OnlineReceiptAction.REDIRECT, location = "citizen/onlineReceipt-redirect.jsp")
+})
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware{
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
+    public static final String REDIRECT = "redirect";
     private static final long serialVersionUID = 1L;
 
     //private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
@@ -99,10 +110,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     private ReceiptHeaderService receiptHeaderService;
 
-    List<ValidationError> errors = new ArrayList<ValidationError>();
+    private List<ValidationError> errors = new ArrayList<ValidationError>();
 
     private CollectionCommon collectionCommon;
-    private static final String REDIRECT = "redirect";
     private CommonsServiceImpl commonsServiceImpl;
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
     private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
@@ -135,6 +145,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 	private String consumerCode;
 	private String receiptResponse = "";
 	
+	private ReceiptHeader receiptHeader;
+	
+    @Action(value = "/onlineReceipt-newform")
     public String newform() {
         return NEW;
     }
@@ -143,15 +156,15 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return "PaytGatewayTest";
     }
 
-    @Transactional
+    @Action(value = "onlineReceipt-saveNew")
     public String saveNew() {
     	/**
 		 * initialise receipt info,persist receipt, create bill desk payment
 		 * object and redirect to payment screen
 		 */
-		if (callbackForApportioning && !overrideAccountHeads){/*
+		if (callbackForApportioning && !overrideAccountHeads){
 			this.apportionBillAmount();
-			for (ReceiptPayeeDetails payee : modelPayeeList) {
+			/*for (ReceiptPayeeDetails payee : modelPayeeList) {
 				for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
 					if(receiptDetailList == null || receiptDetailList.isEmpty() || receiptDetailList.size() == 0){
 						throw new EGOVRuntimeException("Receipt could not be created as the apportioned receipt detail list is empty");
@@ -159,8 +172,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 						receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
 					}
 				}
-			}	
-		*/}
+			}*/	
+		}
 		populateAndPersistReceipts();
 		return REDIRECT;
     }
@@ -693,15 +706,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_ID, paymentServiceId.longValue());
 
-       /* for (ReceiptPayeeDetails payee : modelPayeeList) {
-            for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
-                Date date = new Date();
+       // for (ReceiptPayeeDetails payee : modelPayeeList) {
+         //   for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
 
                 // only newly created receipts need to be initialised with the
                 // data.
                 // The cancelled receipt can be excluded from this processing.
                 if (receiptHeader.getStatus() == null) {
-                    receiptHeader.setCreatedDate(date);
+                    receiptHeader.setReceiptdate(new DateTime());;
 
                     receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
                     receiptHeader.setIsModifiable(Boolean.FALSE);
@@ -752,15 +764,18 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
                     receiptHeader.setOnlinePayment(onlinePayment);
                 }
-            }
-        }// end of looping through receipt headers
-*/
+            //}
+       // }// end of looping through receipt headers
+
         /**
          * Persist the receipt payee details which will internally persist all
          * the receipt headers
          */
 
        // receiptPayeeDetailsService.persistPendingReceipts(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
+    
+    receiptHeaderService.persist(receiptHeader);
+    receiptHeaderService.getSession().flush();
 
         /**
          * Construct Request Object For Bill Desk Payment Gateway

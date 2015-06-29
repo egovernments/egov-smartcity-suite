@@ -45,7 +45,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 
 public interface EgDemandReasonMasterDao {
 
-	public EgDemandReasonMaster findById(Integer id, boolean lock);
+	public EgDemandReasonMaster findById(Long id, boolean lock);
 
 	public List<EgDemandReasonMaster> findAll();
 

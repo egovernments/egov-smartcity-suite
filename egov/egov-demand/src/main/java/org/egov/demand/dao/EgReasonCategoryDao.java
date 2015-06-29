@@ -46,7 +46,7 @@ import org.egov.demand.model.EgReasonCategory;
 
 public interface EgReasonCategoryDao {
 
-	public EgReasonCategory findById(Integer id, boolean lock);
+	public EgReasonCategory findById(Long id, boolean lock);
 
 	public List<EgReasonCategory> findAll();
 

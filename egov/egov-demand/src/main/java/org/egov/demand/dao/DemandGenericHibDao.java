@@ -578,17 +578,20 @@ public class DemandGenericHibDao implements DemandGenericDao {
 	public List getDCB(EgDemand egDemand, Module module) {
 		List list = new ArrayList();
 		if (egDemand != null && module != null) {
-			String query = " SELECT dmdres.ID_INSTALLMENT, " + "  NVL(SUM(dmdDet.amount),0), "
-					+ "  NVL(SUM(dmdDet.amt_collected),0), " + "  master.id, "
-					+ "  master.id_category, " + "  NVL(SUM(dmdDet.amt_rebate),0) "
+			String query = " SELECT dmdres.ID_INSTALLMENT, " 
+			                + "  SUM(dmdDet.amount) as amount, "
+					+ "  SUM(dmdDet.amt_collected) as amt_collected, " 
+			                + "  master.id, master.category, SUM(dmdDet.amt_rebate) as amt_rebate "
 					+ "FROM eg_demand_details dmddet, " + "  eg_demand_reason dmdres, "
 					+ "  eg_demand_reason_master master, " + "  eg_reason_category cate "
-					+ "WHERE DMDDET.ID_DEMAND =:dmdId " + "AND DMDDET.ID_DEMAND_REASON =dmdres.id "
+					+ "WHERE DMDDET.ID_DEMAND =:dmdId " 
+					+ "AND DMDDET.ID_DEMAND_REASON =dmdres.id "
 					+ "AND DMDRES.ID_DEMAND_REASON_MASTER=master.id "
-					+ "AND MASTER.CODE NOT  IN('BASE') " + "AND master.module_id  =:moduleId "
-					+ "AND cate.id_type = master.id_category " + "GROUP BY dmdres.ID_INSTALLMENT, "
-					+ "  master.id, " + "  master.id_category "
-					+ "ORDER BY dmdres.id_installment, " + "  master.id_category  ";
+					+ "AND MASTER.CODE NOT  IN('BASE') " 
+					+ "AND master.module  =:moduleId "
+					+ "AND cate.id = master.category " 
+					+ "GROUP BY dmdres.ID_INSTALLMENT, master.id, master.category "
+					+ "ORDER BY dmdres.id_installment, master.category  ";
 			Query qry = getCurrentSession().createSQLQuery(query)
 					.setLong("dmdId", egDemand.getId()).setLong("moduleId", module.getId());
 			list = qry.list();

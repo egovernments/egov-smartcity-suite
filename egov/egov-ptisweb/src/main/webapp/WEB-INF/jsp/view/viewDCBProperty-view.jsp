@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
@@ -81,10 +81,19 @@
 				}
 				
 			}
-			function setLevyPenalyBeforeSubmit() {
+			
+			/* function setLevyPenalyBeforeSubmit() {
 				var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
 				window.location='../collection/collectPropertyTax!showPenalty.action?propertyId='+propertyId;
-			}
+			} */
+
+			jQuery(document).ready( function () {
+				jQuery('#operatorPayBill').click( function () {
+					var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
+					window.location = '/../ptis/collection/collectPropertyTax-generateBill.action?propertyId='+propertyId;
+				});
+			});
+			
 		</script>
 	</head>
 
@@ -730,16 +739,15 @@
 										<div align="center">
 											<s:if test="%{isCitizen()}">
 												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="button"
-															onclick="window.location='../citizen/collection/collection!generatePropertyTaxBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+															onclick="window.location='../citizen/collection/collection!generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
 											</s:if> 
 											<s:else>
 											<table>
 												<tr>
 													<td align="center">
-															<input type="button" name="display" id="operatorPayBill"
-																value="Pay Bill" class="button"
-																onclick="setLevyPenalyBeforeSubmit();" />
-														</td>
+															<input type="button" name="operatorPayBill" id="operatorPayBill"
+																value="Pay Bill" class="button"/>
+													</td>
 												</tr>
 											</table>
 										</s:else>

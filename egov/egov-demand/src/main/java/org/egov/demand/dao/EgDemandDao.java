@@ -45,7 +45,7 @@ import org.egov.demand.model.EgDemand;
 
 public interface EgDemandDao {
 	
-	public EgDemand findById(Integer id, boolean lock);
+	public EgDemand findById(Long id, boolean lock);
 
 	public List<EgDemand> findAll();
 
