@@ -77,18 +77,18 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="20%"><strong>Scheme<span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong>Scheme<span class="mandatory1"> *</span></strong></td>
 			    <td class="bluebox">
 			    	<s:select name="scheme" id ="scheme" list="dropdownData.schemeList"  listKey="id" listValue="name" headerKey="" headerValue="--- Select ---" value="%{scheme.id}" />
 			    </td>
-				<td class="bluebox" width="20%"><strong>Name<span class="mandatory">*</span></strong></td>
+				<td class="bluebox" width="20%"><strong>Name<span class="mandatory1"> *</span></strong></td>
 			    <td class="bluebox"><s:textfield id="name" name="name" value="%{subScheme.name}" cssStyle="width: 250px"/></td>
 			</tr>
 			<tr>
 			    <td class="greybox">&nbsp;</td>
-				<td class="greybox"><strong>Code</strong><span class="mandatory">*</span></td>
+				<td class="greybox"><strong>Code</strong><span class="mandatory1"> *</span></td>
 			    <td class="greybox"><s:textfield id="code" name="code" value="%{subScheme.code}"/></td>
-				<td class="greybox"><strong>Valid From</strong><span class="mandatory">*</span></td>
+				<td class="greybox"><strong>Valid From</strong><span class="mandatory1"> *</span></td>
 			    <td class="greybox"><s:date name="validfrom" id="validfrom" format="dd/MM/yyyy" />
 			    	<s:textfield name="validfrom" id="validfrom" value="%{subScheme.validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 					<a href="javascript:show_calendar('subSchemeForm.validfrom',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img  src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
@@ -97,7 +97,7 @@
 			</tr>
 			<tr>
 			    <td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><strong>Valid To</strong><span class="mandatory">*</span></td>
+				<td class="bluebox"><strong>Valid To</strong><span class="mandatory1"> *</span></td>
 			    <td class="bluebox"><s:date name="validto" id="validtoId" format="dd/MM/yyyy"/>
 					<s:textfield name="validto" id="validtoId" value="%{subScheme.validto}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 					<a href="javascript:show_calendar('subSchemeForm.validto',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
@@ -155,7 +155,7 @@
 		</table>
 		<br/><br/>
 		<div class="buttonbottom" style="padding-bottom:10px;"> 
-			<input type="submit" class="button" value="Save" id="saveButton" name="button" onclick="return validate();" />
+			<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
 			<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 		</div>
 		<s:token/>

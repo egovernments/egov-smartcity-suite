@@ -67,12 +67,14 @@
     <s:hidden name="mode" id="mode" value="%{mode}" />
   		<table width="100%" border="0" cellspacing="0" cellpadding="0">                   
     		<tr>
-			        <td class="bluebox"><s:text name="scheme.fund"/><span class="mandatory">*</span></td>
+    				<td style="width:10%"></td>
+			        <td class="bluebox"><s:text name="scheme.fund"/><span class="mandatory1"> *</span></td>
 				    <td class="bluebox">
 					<s:select name="fund" id="fundId" list="dropdownData.fundDropDownList" listKey="id" listValue="name" headerKey="-1" headerValue="----Select----"  value="scheme.fund.id" />
 					</td>
 			</tr>
 			<tr>
+					<td style="width:10%"></td>
 					<td class="greybox" > <s:text name="scheme.startDate" /></td>
 					<td  class="greybox" ><s:date name="validfrom" id="validfromId" format="dd/MM/yyyy" />
 					<s:textfield name="validfrom" id="validfromId" value="%{validfrom}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
@@ -90,7 +92,7 @@
     	<div class="buttonbottom" >
     	<table align="center">  
     	 <tr>  
-			<td><input type="submit" class="button" value="Search" id="search" name="button" onclick="return validateFund();" /></td>
+			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
 		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
 	  </table>
 	  </div>
@@ -146,7 +148,8 @@
 					</tr>
 				</table>
 			</div>
-		</s:if>           
+		</s:if>  
+		</div>         
 	  </s:form>
 	 
 	

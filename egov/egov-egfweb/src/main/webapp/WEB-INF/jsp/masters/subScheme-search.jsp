@@ -67,15 +67,16 @@
 		
 			<s:hidden name="showMode"  />
 			
-			<table align="center" width="100%" cellpadding="0" cellspacing="0">
-				<tr>
+			<table align="center" width="99.5%" cellpadding="0" cellspacing="0" style="margin-left:10px;border:1px solid #F2851F;border-top:none;">
+			   <tr>
+					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
 				</tr>
-				
 				<tr>
+					<td></td>
 					<td class="bluebox">
 						<s:text name="masters.subscheme.search.fund" />
 					</td>
@@ -93,6 +94,7 @@
 					<egov:ajaxdropdown id="subSchemeId" dropdownId="subSchemeId" fields="['Text','Value']" url="voucher/common-ajaxLoadSubSchemes.action" selectedValue="%{id}"  /> 
 				</tr>
 				<tr>
+					<td></td>
 					<td class="greybox">
 						<s:text name="masters.subscheme.search" />
 					</td>
@@ -102,10 +104,16 @@
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
 				</tr>
-
+				<tr>
+					<td class="greybox">&nbsp</td>
+					<td class="greybox">&nbsp</td>
+					<td class="greybox">&nbsp</td>
+					<td class="greybox">&nbsp</td>
+					<td class="greybox">&nbsp</td>
+				</tr>
 			</table>
 			<div class="buttonbottom">
-				<input type="submit" class="button" value="Search" id="saveButton" name="button" onclick="return submitForm();" />
+				<input type="submit" class="buttonsubmit" value="Search" id="saveButton" name="button" onclick="return submitForm();" />
 				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 			</div>
 			<br />
