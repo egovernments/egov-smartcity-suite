@@ -41,6 +41,7 @@ package org.egov.ptis.actions.citizen.collection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -62,30 +63,32 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@Namespace("/collection")
+@Namespace("/citizen/collection")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ 
-    @Result(name = "collectTax", location = "/citizen/collection/collection-collectTax.jsp"),
-    @Result(name = "taxPaid", location = "/citizen/collection/collection-taxPaid.jsp")
+    @Result(name = CollectionAction.RESULT_COLLECTTAX, location = "citizen/collection/collection-collectTax.jsp"),
+    @Result(name = CollectionAction.RESULT_TAXPAID, location = "citizen/collection/collection-taxPaid.jsp")
 })
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 public class CollectionAction extends BaseFormAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
-    private static final String RESULT_COLLECTTAX = "collectTax";
-    private static final String RESULT_TAXPAID = "taxPaid";
+    public static final String RESULT_COLLECTTAX = "collectTax";
+    public static final String RESULT_TAXPAID = "taxPaid";
     
     private PersistenceService<BasicProperty, Long> basicPrpertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
@@ -96,14 +99,14 @@ public class CollectionAction extends BaseFormAction {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
 
-    @SuppressWarnings("unchecked")
     public void prepare() {
         LOGGER.debug("Entered into prepare method");
-        User usr = (User) userService.getUserByUsername("citizenUser");
+        User usr = (User) userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
         setUserId(usr.getId().longValue());
         EgovThreadLocals.setUserId(usr.getId());
         LOGGER.debug("Exit from prepare method");
@@ -112,25 +115,25 @@ public class CollectionAction extends BaseFormAction {
     @Action(value = "/collection-generateBill")
     public String generateBill() {
         LOGGER.debug("Entered method generatePropertyTaxBill, indexNum: " + indexNum);
-        PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
+        
+        PropertyTaxBillable nmcPTBill = (PropertyTaxBillable) beanProvider.getBean(BEANNAME_PROPERTY_TAX_BILLABLE);
         BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, indexNum);
+        
         LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
         Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
         BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
 
-        if ((currDue.compareTo(BigDecimal.ZERO) == 0 || currDue.compareTo(BigDecimal.ZERO) == -1)
-                && (arrDue.compareTo(BigDecimal.ZERO) == 0 || arrDue.compareTo(BigDecimal.ZERO) == -1)) {
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
             return RESULT_TAXPAID;
         }
+        
         nmcPTBill.setBasicProperty(basicProperty);
         nmcPTBill.setLevyPenalty(true);
         nmcPTBill.setUserId(userId);
         nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
                 .getWard().getBoundaryNum().toString()));
         nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
-        Map<Installment, PropertyInstTaxBean> penaltyMap = nmcPTBill.getCalculatedPenalty();
-        nmcPTBill.setInstTaxBean(penaltyMap);
         collectXML = URLEncoder.encode(nmcPtBillServiceImpl.getBillXML(nmcPTBill));
         LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
         

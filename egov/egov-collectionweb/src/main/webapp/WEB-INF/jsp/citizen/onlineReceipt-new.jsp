@@ -394,8 +394,6 @@ function onLoad(){
 <%int i=1;%>
 <%int rcptDtlCnt=0; %>
 
-<s:iterator value="%{modelPayeeList}" status="rowpayeestatus">
- <s:iterator value="%{receiptHeaders}" status="receiptheaderrowstatus"> <!--  iterate through receipt headers -->
 	<tr>
 	  <td>
 	    <div class="switchgroup1" id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
@@ -406,7 +404,7 @@ function onLoad(){
 		                 <!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
 		        	 <!--td class="head" width="19%" ><s:text name="onlineReceipts.balance"/></td-->
 		                </tr>
-		                <s:iterator value="%{receiptDetails}" status="rowreceiptdetailstatus">
+		                <s:iterator value="%{receiptDetailList}" status="rowreceiptdetailstatus">
 			              	<tr>
 
 				               
@@ -453,8 +451,6 @@ function onLoad(){
 	        <!-- End of table enclosing all account detail tables -->
 	      </div></td>
 	  </tr>
-  </s:iterator><!-- end of iterating through receipt headers -->
-</s:iterator> <!--  iterating through receipt payee list(model) end -->
       
       </table>
       
@@ -473,10 +469,8 @@ function onLoad(){
    	    <input align="center" type="button"   class="buttonsubmitnew" id="button2" value="Pay Online" onclick="return validateOnlineReceipt();"/>
    	 </div></div>
 	</div></div>
-</div>
-  </div>
-</div>
 </s:form>
+</div>
 </body>
 
 

@@ -1567,37 +1567,21 @@ public class PropertyTaxUtil {
 
 		for (Object object : dmdCollList) {
 			Object[] listObj = (Object[]) object;
-			instId = Integer.valueOf(((BigDecimal) listObj[0]).toString());
+			instId = Integer.valueOf(listObj[0].toString());
 			installment = (Installment) installmentDao.findById(instId, false);
 			if (currDemand.getEgInstallmentMaster().equals(installment)) {
 				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					currCollection = currCollection.add((BigDecimal) listObj[2]);
+					currCollection = currCollection.add(new BigDecimal(listObj[2].toString()));
 				}
-				/**
-				 * Not adding the rebate amount, as during apportioning
-				 * crAmountToBePaid is set
-				 */
-				/*
-				 * if (listObj[3] != null &&
-				 * !listObj[3].equals(BigDecimal.ZERO)) { currCollection =
-				 * currCollection.add((BigDecimal) listObj[3]); }
-				 */
 
-				currentRebate = currentRebate.add((BigDecimal) listObj[3]);
-				currDmd = currDmd.add((BigDecimal) listObj[1]);
+				currentRebate = currentRebate.add(new BigDecimal(listObj[3].toString()));
+				currDmd = currDmd.add(new BigDecimal(listObj[1].toString()));
 			} else {
 				arrDmd = arrDmd.add((BigDecimal) listObj[1]);
 				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+					arrColelection = arrColelection.add(new BigDecimal(listObj[2].toString()));
 				}
-
-				arrearRebate = arrearRebate.add((BigDecimal) listObj[3]);
-
-				/*
-				 * if (listObj[3] != null &&
-				 * !listObj[3].equals(BigDecimal.ZERO)) { arrColelection =
-				 * arrColelection.add((BigDecimal) listObj[3]); }
-				 */
+				arrearRebate = arrearRebate.add(new BigDecimal(listObj[3].toString()));
 			}
 		}
 		demandCollMap.put(CURR_DMD_STR, currDmd);

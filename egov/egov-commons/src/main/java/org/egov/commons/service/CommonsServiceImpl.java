@@ -90,6 +90,7 @@ import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.BankbranchDAO;
 import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.ObjectTypeDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -129,6 +130,8 @@ public class CommonsServiceImpl implements CommonsService {
     public BoundaryService boundaryService;
     @Autowired
     public BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private FundHibernateDAO fundHibernateDAO;
 
     public CommonsServiceImpl(final CommonsDAOFactory commonsDAOFactory, final SessionFactory sessionFactory) {
         this.commonsDAOFactory = commonsDAOFactory;
@@ -948,7 +951,7 @@ public class CommonsServiceImpl implements CommonsService {
 
     @Override
     public Fund fundByCode(final String fundCode) {
-        return commonsDAOFactory.getFundDAO().fundByCode(fundCode);
+        return fundHibernateDAO.fundByCode(fundCode);
     }
 
     @Override

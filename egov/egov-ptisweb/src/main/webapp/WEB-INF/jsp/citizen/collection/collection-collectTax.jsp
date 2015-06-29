@@ -38,33 +38,31 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ page import="java.net.URLEncoder"%>
 
 <html>
 <head>
-    <title>View Property Details</title>
  
 <script type="text/javascript">
-  function loadOnStartup()
-  {  
-  	var form = document.createElement("form");
-		form.setAttribute("method", "post");
-		var collStr="";
-        collStr="/collection/citizen/onlineReceipt!newform.action";
-		form.setAttribute("action", collStr);
-		var hiddenField = document.createElement("input");
-		hiddenField.setAttribute("type","hidden");              
-		hiddenField.setAttribute("name", "collectXML");
-		hiddenField.setAttribute("value", "${collectXML}");
-		form.appendChild(hiddenField);
-		document.body.appendChild(form);
-		var  win1 = window.open(collStr,'_self');
-		form.submit();
-  }
-  
+
+  jQuery(document).ready( function() {
+
+		var collectXML = '<s:property value="%{collectXML}" />';
+
+		jQuery('<form>.').attr({
+			method: 'post',
+			action: '/collection/citizen/onlineReceipt-newform.action',
+			target: '_self'
+		}).append(jQuery('<input>').attr({
+		    type: 'hidden',
+		    id: 'collectXML',
+		    name: 'collectXML',
+		    value: collectXML
+		})).appendTo( document.body ).submit();
+		
+	});
   
 </script>   
 </head>
-<body onload = "loadOnStartup();">
+<body>
 </body>
 </html>
