@@ -112,7 +112,19 @@
 			</span>
 		</td>
 
-		<td class="bluebox"><s:text name="vacantland.assmtno"></s:text> :
+		<td class="bluebox"><s:text name="locality"></s:text> :
+		</td>
+		<td class="bluebox">
+			<span class="bold">
+				<s:property	default="N/A" value="%{basicProperty.vacantLandAssmtNo}" /> 
+			</span>
+		</td>
+		
+	</tr>
+	
+	<tr>
+	 <td class="greybox" width="5%"></td>
+	 <td class="bluebox"><s:text name="vacantland.assmtno"></s:text> :
 		</td>
 		<td class="bluebox">
 			<span class="bold">

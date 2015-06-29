@@ -99,7 +99,6 @@
 
 	<body onload="loadOnStartup();">
 		<div class="formmainbox">
-			<div class="formheading"></div>
 			<div class="headingbg">
 				<s:text name="viewDCB" />
 			</div>
@@ -117,9 +116,30 @@
 							</td>
 						</tr>
 						<tr>
+							<td class="bluebox" width="10%%"></td>
+							<td class="bluebox" width="13%" colspan="2">
+								<s:text name="Zone" /> :
+							</td>
+							<td class="bluebox" colspan="2">
+								<span class="bold"> <s:property value="%{propertyId}" />
+								</span>
+							</td>
+						</tr>
+						<tr>
 							<td class="greybox" width="10%"></td>
 							<td class="greybox" width="5%" colspan="2">
 								<s:text name="Ward" /> :
+							</td>
+							<td class="greybox" colspan="2">
+								<span class="bold"> <s:property value="%{wardName}" /> </span>
+							</td>
+
+						</tr>
+						
+						<tr>
+							<td class="greybox" width="10%"></td>
+							<td class="greybox" width="5%" colspan="2">
+								<s:text name="locality" /> :
 							</td>
 							<td class="greybox" colspan="2">
 								<span class="bold"> <s:property value="%{wardName}" /> </span>
@@ -151,7 +171,7 @@
 					<tr>
 						<td class="bluebox" width="10%"></td>
 						<td class="bluebox" colspan="2">
-							<s:text name="PropertyType" /> :
+							<s:text name="ownership.type"></s:text> :
 						</td>
 						<td class="bluebox" colspan="2">
 							<span class="bold"> <s:property value="%{propertyType}" />
@@ -162,7 +182,27 @@
 					<tr>
 						<td class="greybox" width="10%"></td>
 						<td class="greybox" colspan="2">
-							<s:text name="curr.tax.amnt" /> :
+							<s:text name="CurrentTax" /> :
+						</td>
+						<td class="greybox" colspan="2">
+							<span class="bold"> <s:property value="%{currTaxAmount}" />
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" colspan="2">
+							<s:text name="CurrentTaxDue" /> :
+						</td>
+						<td class="greybox" colspan="2">
+							<span class="bold"> <s:property value="%{currTaxAmount}" />
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" colspan="2">
+							<s:text name="ArrearsDue" /> :
 						</td>
 						<td class="greybox" colspan="2">
 							<span class="bold"> <s:property value="%{currTaxAmount}" />
@@ -732,8 +772,8 @@
 										</div><br>
 										<div align="center">
 											<s:if test="%{isCitizen()}">
-												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="button"
-															onclick="window.location='../citizen/collection/collection-generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
+												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
+															onclick="window.location='../citizen/collection/collection!generateBill.action?indexNum=<s:property value="%{propertyId}" />';" />
 											</s:if> 
 											<s:else>
 											<table>

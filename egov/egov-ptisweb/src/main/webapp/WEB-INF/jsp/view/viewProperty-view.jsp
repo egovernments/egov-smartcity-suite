@@ -91,7 +91,7 @@
 					<table>
 						<tr>
 							<td align="center">
-								<input type="button" name="payBill" id="payBill" value="Pay Bill" class="button" />
+								<input type="button" name="payBill" id="payBill" value="Pay Bill" class="buttonsubmit" />
 							</td>
 						</tr>
 					</table>
@@ -102,78 +102,78 @@
 			<c:if test="${fn:contains(roleName,'ASSISTANT') && basicProperty.isDemandActive == true}">
 			<c:if test="${markedForDeactive == 'N'}">	
 
-				<input type="button" class="button" name="btnAmalgProperty"
+				<input type="button" class="buttonsubmit" name="btnAmalgProperty"
 					id="btnAmalgProperty" value="Amalgamation" onclick="window.location='../modify/modifyProperty!modifyForm.action?modifyRsn=AMALG&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 				
 				<s:if test="%{basicProperty.isMigrated != null && basicProperty.isMigrated == 'Y'}">
-					<input type="button" class="button2" name="assessmentDataUpdate"
+					<input type="button" class="buttonsubmit" name="assessmentDataUpdate"
 						id="assessmentDataUpdate" value="Assessment Data update" 
 						onclick="window.location='../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />					
 				</s:if>
 
-				<input type="button" class="button" name="acssessmentDataUpdate" id="EditOwner"
+				<input type="button" class="buttonsubmit" name="acssessmentDataUpdate" id="EditOwner"
 					onclick="window.location='../modify/modifyProperty!editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" value="Edit Property Data" />
-				<input type="button" class="button" name="btnModifyProperty"
+				<input type="button" class="buttonsubmit" name="btnModifyProperty"
 					id="btnModifyProperty" value="Bifurcation"
 					onclick="window.location='../modify/modifyProperty!modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 
-				<input type="button" class="button" name="btnCancelBill"
+				<input type="button" class="buttonsubmit" name="btnCancelBill"
 					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				
-				<input type="button" class="button2" name="btnChAddrProperty"
+				<input type="button" class="buttonsubmit" name="btnChAddrProperty"
 					id="btnDeactivate" value="Change Property Address" onclick="window.location='../modify/changePropertyAddress!newForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				
-				<input type="button" class="button" name="btnDeactivate" id="btnDeactivate" value="Deactivate Property"	onclick="window.location='../deactivate/deactivateProperty!newForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />							
+				<input type="button" class="buttonsubmit" name="btnDeactivate" id="btnDeactivate" value="Deactivate Property"	onclick="window.location='../deactivate/deactivateProperty!newForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />							
 					
-				<input type="button" class="button" name="recovery" 
+				<input type="button" class="buttonsubmit" name="recovery" 
 					id="recovery" value="Recovery" onclick="window.location='../recovery/recovery!newform.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 
 			</c:if>
 			</c:if>
 			
 			<c:if test="${fn:contains(roleName,'ASSISTANT') && markedForDeactive == 'N'}">
-					<input type="button" class="button" name="objection" id="objection"
+					<input type="button" class="buttonsubmit" name="objection" id="objection"
 						value="Objection"
 						onclick="window.location='../objection/objection!newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 			</c:if>
 			
 			<s:if test="isDemandActive == false">
-				<input type="button" class="button" name="btnCancelBill"
+				<input type="button" class="buttonsubmit" name="btnCancelBill"
 					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 			</s:if>
 			<c:if test="${fn:contains(roleName,'PTADMINISTRATOR') && basicProperty.isDemandActive == true}">
 				<input type="button" name="editDemand" id="editDemand"
-					value="Edit Demand" class="button"
+					value="Edit Demand" class="buttonsubmit"
 					onclick="window.location='../edit/editDemand!newEditForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />				
 			</c:if>	
 			<c:if test="${fn:contains(roleName,'ASSISTANT')}">	
-				<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="button"
+				<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
 					onclick="window.location='../bills/billGeneration!generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 					
-				<input type="button" name="button2" id="button2" value="GenerateCalSheet" class="button"
+				<input type="button" name="button2" id="button2" value="GenerateCalSheet" class="buttonsubmit"
 						onclick="window.location='../notice/propertyIndividualCalSheet!generateCalSheet.action?indexNum=<s:property value="%{basicProperty.upicNo}"/>';" ) />
 				
-				<input type="button" class="button" name="Notice125"  
+				<input type="button" class="buttonsubmit" name="Notice125"  
 					id="Notice125" value="Notice 125" onclick="window.location='../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProperty.id}'/>&noticeType=Notice125&isPreviewPVR=false&indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />							
 			</c:if>		
 			<s:if test="basicProperty.isDemandActive == true">
-				<input type="button" class="button" name="btnModifyProperty"
+				<input type="button" class="buttonsubmit" name="btnModifyProperty"
 					id="btnModifyProperty" value="Modification"
 					onclick="window.location='../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 			</s:if>
 			<s:if test="isUserOperator && basicProperty.isDemandActive == true}">
-				<input type="button" class="button" name="btnTrnsProperty"
+				<input type="button" class="buttonsubmit" name="btnTrnsProperty"
 					id="btnTrnsProperty" value="Mutation"
 					onclick="window.location='../transfer/transferProperty!transferForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />				
 			</s:if>	
 		
-			<input type="button" class="button" name="SearchProperty"
+			<input type="button" class="buttonsubmit" name="SearchProperty"
 				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
-			<input type="button" class="button" name="btnViewDCB"
+			<input type="button" class="buttonsubmit" name="btnViewDCB"
 				id="btnViewDCB" value="View DCB"
 				onclick="window.location='../view/viewDCBProperty!displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 			<input type="button" name="btnPrint" id="btnPrint" value="Print"
-				class="button" onclick="window.print();" />
+				class="buttonsubmit" onclick="window.print();" />
 			<input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" />
 			<s:hidden label="upicNo" id="upicNo" name="upicNo"
