@@ -54,79 +54,56 @@
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
 		<th class="bluebgheadtd"><s:text name="planappr" /></th>
-		<s:if test="modifyRsn != 'DATA_UPDATE'">
-			<th class="bluebgheadtd"><s:text name="rentAgreementDetails"/></th>
-		</s:if>   
-      	
     </tr>
     <s:iterator value="floorDetails" status="floorsstatus">
         <tr id="Floorinfo">
 		
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center"> 
 	    	<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />
 	        </div>
 	    </td>
-	     <td class="blueborderfortd" width="5%">
+	     <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
 	    	<s:property default="N/A" value="%{structureClassification.typeName}" /> 
 	        </div>
 	    </td>
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
 	    	<s:property default="N/A" value="%{propertyUsage.usageName}" />
 	        </div>
 	    </td>
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
 	    	<s:property default="N/A" value="%{propertyOccupation.occupation}" />  
 	        </div>
 	    </td>	
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
 			<div align="center"><s:property default="N/A" value="%{depreciationMaster.depreciationName}" /></div>
 	    </td>	
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    <s:date name="createdDate" var="cdFormat" format="dd/MM/yyyy"/>
 	    <s:property default="N/A" value="%{cdFormat}"/>
 	    </td>
-	    <td class="blueborderfortd" width="5%">
+	    <td class="blueborderfortd" style="padding: 2px 2px">
         <div align="center">
         	<s:property default="N/A" value="%{extraField5}" />
         </div>
         </td>
-         <td class="blueborderfortd" width="5%">
+         <td class="blueborderfortd" style="padding: 2px 2px">
         <div align="center">
         	<s:property default="N/A" value="%{extraField4}" />
         </div>
         </td>
-        <td class="blueborderfortd" width="5%">
+        <td class="blueborderfortd" style="padding: 2px 2px">
 			<div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div>
 	    </td>
-	    <td class="blueborderfortd" width="5%">
-	    <s:property default="N/A" value="%{capitalValue}" />
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+	    	<s:property default="N/A" value="%{capitalValue}" />
 	    </td>
-	    <td class="blueborderfortd" width="5%">
-	    <s:property default="N/A" value="%{planApproved}" />
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+	    	<s:property default="N/A" value="%{planApproved}" />
 	    </td>
-        
-        <td class="blueborderfortd">
-        	<s:if test="rentPerMonth != null">
-				<img id="agreementDetails" name="agreementDetails"
-						src="${pageContext.request.contextPath}/image/bulletgo.gif"
-						alt="Remove" onclick="openRentAgreementWindow(this, 'view');"
-						width="18" height="18" border="0" />
-				<c:set value="yes" var="isTenant"/>
-			</s:if>
-			<s:hidden id="agreementPeriod"
-					name="rentAgreementDetail.agreementPeriod"
-					value="%{rentAgreementDetail.agreementPeriod}" />
-			<s:hidden id="agreementDate"
-						name="rentAgreementDetail.agreementDate"
-						value="%{rentAgreementDetail.agreementDate}" />
-			<s:hidden id="incrementInRent"
-						name="rentAgreementDetail.incrementInRent"
-						value="%{rentAgreementDetail.incrementInRent}" />
-		</td>
 	</tr>
    </s:iterator>
 </table>

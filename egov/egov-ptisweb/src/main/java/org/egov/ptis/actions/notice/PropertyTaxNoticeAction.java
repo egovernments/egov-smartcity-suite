@@ -131,7 +131,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		Boolean saveToDMS = FALSE;
 		Map reportParams = new HashMap<String, Object>();
 		ReportRequest reportInput = null;
-		Integer userId = (Integer) session().get(SESSIONLOGINID);
 		BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
 				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
 		property = (PropertyImpl) basicProperty.getProperty();

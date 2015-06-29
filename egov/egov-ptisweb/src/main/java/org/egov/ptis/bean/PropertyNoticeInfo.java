@@ -78,16 +78,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyNoticeInfo {
 	private final PropertyImpl property;
-	private TaxCalculationInfo taxCalInfo;
 	private String noticeNo;
 	// Total Tax payable for Current Installment
 	// private BigDecimal totalTax;
 
 	PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 	private static final Logger LOGGER = Logger.getLogger(PropertyNoticeInfo.class);
-	private static final String PROPERTY_TYPE = "PROPERTY-TYPE";
-	private static final String PROPERTY_TYPE_CATEGORY = "PROPERTY-TYPE-CATEGORY";
-	private static final String PROPERTY_AMENITY = "PROPERTY-AMENITY";
 
 	private final Set<PropertyFloorDetailsInfo> propertyFloorDetails = new TreeSet<PropertyFloorDetailsInfo>();
 	private DateFormat dateFormatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
@@ -114,8 +110,9 @@ public class PropertyNoticeInfo {
 	public PropertyNoticeInfo(PropertyImpl property, String noticeNo, Boolean instwiseNoticeReport) {
 		this.property = property;
 		this.noticeNo = noticeNo;
-		this.currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-		addFloorDetails();
+		//FIX ME
+		//this.currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+		//addFloorDetails();
 	}
 
 	private void addFloorDetails() {
@@ -385,4 +382,13 @@ public class PropertyNoticeInfo {
 	public String getAssessmentDate() {
 		return dateFormatter.format(this.property.getBasicProperty().getPropOccupationDate());
 	}
+
+	public void setPtDemandDAO(PtDemandDao ptDemandDAO) {
+		this.ptDemandDAO = ptDemandDAO;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+	
 }

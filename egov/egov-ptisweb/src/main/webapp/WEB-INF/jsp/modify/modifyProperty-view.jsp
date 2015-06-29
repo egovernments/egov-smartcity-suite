@@ -43,23 +43,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<s:if test="modifyRsn=='AMALG'">
-			<title><s:text name='AmalgProp.title' /></title>
-		</s:if>
-		<s:if test="modifyRsn=='BIFURCATE'">
-			<title><s:text name='BifurProp.title' /></title>
-		</s:if>
-		<s:if test="modifyRsn=='MODIFY' || modifyRsn=='OBJ' || modifyRsn=='DATA_ENTRY' || modifyRsn='ADD OR ALTER' || modifyRsn=='PART DEMOLITION'">
-			<title><s:text name='ModProp.title' /></title>
-		</s:if>
+		<title><s:text name='ModProp.title' /></title>
 		<sx:head />
 		
-		<script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
 
-			function onSubmit(action) {
+			function onSubmit(action, obj) {
+				document.getElementById('workflowBean.actionName').value = obj.id;
 				document.forms[0].action = action;
 				document.forms[0].submit;
 				return true;
@@ -85,10 +77,8 @@
 			}
   
 			function generatenotice(){
-				doLoadingMask();
-			    document.ModifyPropertyForm.action="../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&isPreviewPVR=false";
+			    document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&isPreviewPVR=false";
 				document.ModifyPropertyForm.submit();
-				undoLoadingMask();
 			}
 			  
 			function generatePrativrutta(){
@@ -114,7 +104,7 @@
 </script>
 	</head>
 	<body onload="loadOnStartUp();">
-		<div align="left">
+		<div align="left" class="errortext">
 			<s:actionerror />
 		</div>
 		<s:if test="%{hasActionMessages()}">
@@ -132,33 +122,30 @@
 			theme="simple" validate="true">
 			<s:push value="model">
 			<s:token/>
-				<s:hidden label="noticeType" id="noticeType" name="noticeType"
-					value="%{extra_field2}" />
 				<s:hidden name="modifyRsn" value="%{modifyRsn}" />
 				<div class="formmainbox">
 					<div class="headingbg" id="modPropHdr">
-						<s:if test="modifyRsn=='AMALG'">
-							<s:text name="AmalgProp.title" />
-						</s:if>
-						<s:if test="modifyRsn=='BIFURCATE'">
-							<s:text name="BifurProp.title" />
-						</s:if>
-						<s:if test="modifyRsn=='MODIFY' || modifyRsn=='OBJ' || modifyRsn=='DATA_ENTRY' || modifyRsn='ADD OR ALTER' || modifyRsn=='PART DEMOLITION'" >
-							<s:text name="ModProp.title" />
-						</s:if>
+						<s:text name="ModProp.title" />
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
+							&& !@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction))}">
 						<tr>
-							<s:if test="modifyRsn == 'MODIFY' || modifyRsn == 'DATA_ENTRY'">
-								<%@ include file="../modify/modifyOrDataUpdateView.jsp"%>
-							</s:if>
-							<s:else>
-								<%@ include file="../modify/modifyPropertyView.jsp"%>
-							</s:else>
-							
+							<%@ include file="../modify/modifyPropertyForm.jsp"%>
 						</tr>
+					</s:if>
+					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+							(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
+							&& @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)) }">
+						<tr>
+							<%@ include file="../modify/modifyPropertyView.jsp"%>
+						</tr>
+					</s:elseif>
 						<!--s:if test="%{userRole == @org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
-						<s:if test="%{isApprPageReq}">
+						<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
+							&& @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)))}">
 							<tr>
 								<%@ include file="../workflow/property-workflow.jsp"%>
 							</tr>
@@ -188,17 +175,15 @@
 									<s:text name="mandtryFlds" />
 								</div> </font>
 						</tr>
-						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 						<div class="buttonbottom" align="center">
-							<s:if
-								test="%{model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
+							<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)}">
 								<s:if test="%{extra_field3!='Yes'}">
 									<input type="button" name="GenerateNotice" id="GenerateNotice"
 										value="Generate Notice" class="button"
 										onclick="return generatenotice();" />
 								</s:if>
 
-								<s:if test="%{extra_field4!='Yes'}">
+								<%-- <s:if test="%{extra_field4!='Yes'}">
 									<input type="button" name="GeneratePrativrutta"
 										id="GeneratePrativrutta" value="Generate Prativrutta"
 										class="button" onclick="return generatePrativrutta();" />
@@ -208,10 +193,10 @@
 									<input type="button" name="GenerateBill" id="GenerateBill"
 										value="Generate Bill" class="button"
 										onclick="return generateBill();" />
-								</s:if>
+								</s:if> --%>
 							</s:if>
-							<s:else>
-								<s:if test="modifyRsn=='AMALG'">
+							<%--<s:else>
+								 <s:if test="modifyRsn=='AMALG'">
 									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 										<s:submit value="Approve" name="Approve"
 											id='Amalgamate:Approve' cssClass="buttonsubmit"
@@ -240,24 +225,27 @@
 										<s:submit value="Reject" name="Reject"
 											id='Bifurcate:Reject' cssClass="buttonsubmit"
 											method="reject" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-								</s:if>
-								<s:if
-									test="modifyRsn=='MODIFY' || modifyRsn=='OBJ' || modifyRsn=='DATA_ENTRY' || modifyRsn=='ADD OR ALTER' || modifyRsn=='PART DEMOLITION'">
-									
+								</s:if> --%>
+								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
 									<s:submit value="Approve" name="Approve" id="Modify:Approve"
 										cssClass="buttonsubmit"
-										onclick="return onSubmit('modifyProperty-approve.action');" />
+										onclick="return onSubmit('modifyProperty-approve.action', this);" />
+								</s:if>
+								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
+									'Commissioner Rejected'.equalsIgnoreCase(model.state.nextAction)}">
 									<s:submit value="Forward" name="Forward" id="Modify:Forward"
 										cssClass="buttonsubmit"
-										onclick="return onSubmit('modifyProperty-forwardView.action');" />
+										onclick="return onSubmit('modifyProperty-forward.action', this);" />
+								</s:if>
+								<s:if test="!@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
 									<s:submit value="Reject" name="Reject"
 											id='Modify:Reject' cssClass="buttonsubmit" 
-											onclick="return onSubmit('modifyProperty-reject.action');" />
-									<input type="button" name="button2" id="button2" value="Close"
-										class="button" onclick="window.close();" />
-									
+											onclick="return onSubmit('modifyProperty-reject.action', this);" />
 								</s:if>
-							</s:else>
+								<input type="button" name="button2" id="button2" value="Close"
+									class="button" onclick="window.close();" />
+									
+							<%-- </s:else> --%>
 						</div>
 					</table>
 				</div>

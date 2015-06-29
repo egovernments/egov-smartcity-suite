@@ -192,34 +192,34 @@
 			</div>
 		</td>
 	</tr>
-	<%-- <tr>
+	<tr>
 		<td colspan="5">
 		  <table width="100%" class="checkbox-section">
 	        <tr>
 	            <td width="10%"></td>
 				<td width="20%" align="right">
-				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift"/></label>
-				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage"/></label>
-				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable"/></label> 
+				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift" disabled="true"/></label>
+				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage" disabled="true"/></label>
+				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" disabled="true"/></label> 
 				</td>
 				<td width="20%" align="right">
-				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets"/> </label>
-				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity"/> </label>
+				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets" disabled="true"/> </label>
+				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity" disabled="true"/> </label>
 				</td>
 				<td width="20%" align="right">
-				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap"/></label> 
-				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom"/> </label>
+				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap" disabled="true"/></label> 
+				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom" disabled="true"/> </label>
 			    </td>
 			    <td width="20%" align="right">
-				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"/></label>
-				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting"/></label>
+				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/></label>
+				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting" disabled="true"/></label>
 			    </td>
 			    <td width="10%"></td>
 			</tr>
 			
 		   </table>
 		</td>
-	</tr> --%>
+	</tr>
 	<!-- Floor type details -->
 	
 	<tr>

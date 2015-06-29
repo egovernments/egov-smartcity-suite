@@ -40,9 +40,11 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTVERIFIER_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 
 import java.io.File;
@@ -73,7 +75,6 @@ import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
@@ -81,7 +82,6 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -274,12 +274,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 			if (propTypeMstr != null) {
 				if (propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-					if (propUsageId == null || propUsageId.equals("-1")) {
-						addActionError(getText("mandatory.usage"));
-					}
-					if (propOccId == null || propOccId.equals("-1")) {
-						addActionError(getText("mandatory.occ"));
-					}
 					if (dateOfCompletion == null || dateOfCompletion.equals("")
 							|| dateOfCompletion.equals("DD/MM/YYYY")) {
 						addActionError(getText("mandatory.dtOfCmpln"));
@@ -319,9 +313,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			Boolean isfloorDetailsRequired, Property property) {
 		LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr
 				+ ", No of floors: " + ((floorList != null) ? floorList : ZERO));
-		PropertyUsage propUsage = null;
-		String usage = null;
-
 		Boolean isGovtProperty = propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT)
 				|| propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT);
 
@@ -330,10 +321,9 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 				if (floorList != null && floorList.size() > 0) {
 					for (FloorIF floor : floorList) {
 						List<String> msgParams = null;
-						usage = null;
 						if (floor != null) {
 							msgParams = new ArrayList<String>();
-							if (floor.getFloorNo() == null || floor.getFloorNo().equals("-1")) {
+							if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10)) {
 								addActionError(getText("mandatory.floorNO"));
 							}
 							msgParams.add(floor.getFloorNo() != null ? CommonServices
@@ -356,12 +346,13 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 								addActionError(getText("mandatory.floor.occ"));
 							}
 
-							if (floor.getDepreciationMaster() == null
+							//FIX ME -- To be enabled once building age dropdown data is present
+							/*if (floor.getDepreciationMaster() == null
 									|| floor.getDepreciationMaster().getId() == null
 									|| (floor.getDepreciationMaster().getId().toString())
 											.equals("-1")) {
 								addActionError(getText("mandatory.ageFactor", msgParams));
-							}
+							}*/
 
 							if (floor.getExtraField3() == null || floor.getExtraField3().equals("")) {
 								addActionError(getText("mandatory.floor.docOcc"));
@@ -419,7 +410,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		setUserDesgn(designation.getName());
 		User user = userService.getUserById(userId);
 		for (Role role : user.getRoles()) {
-			if (role.getName().equalsIgnoreCase(PropertyTaxConstants.ASSISTANT_ROLE)) {
+			if (role.getName().equalsIgnoreCase(ASSISTANT_ROLE)
+					|| role.getName().equalsIgnoreCase(PTVERIFIER_ROLE)) {
 				setUserRole(role.getName());
 				break;
 			}

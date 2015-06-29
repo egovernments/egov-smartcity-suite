@@ -325,6 +325,7 @@ public class PropertyService  {
 						floor.setPropertyUsage(usage);
 						floor.setPropertyOccupation(occupancy);
 						floor.setStructureClassification(structureClass);
+						basicPrpertyService.applyAuditing(floor);
 						property.getPropertyDetail().addFloor(floor);
 						// setting total builtup area.
 						totBltUpArea.setArea(totBltUpAreaVal);

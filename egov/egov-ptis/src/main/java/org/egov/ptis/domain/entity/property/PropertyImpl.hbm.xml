@@ -165,5 +165,8 @@
 	
 	<query name="PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=?]]></query>	
+        
+    <query name="WORKFLOW_PROPERTYIMPL_BYID">
+        <![CDATA[from PropertyImpl where id=? and status = 'W']]></query>
 
 </hibernate-mapping>

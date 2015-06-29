@@ -69,7 +69,8 @@
 		});
 	});
 
-	function onSubmit(action) {
+	function onSubmit(action, obj) {
+		document.getElementById('workflowBean.actionName').value = obj.id;
 		document.forms[0].action = action;
 		document.forms[0].submit;
 		return true;
@@ -102,7 +103,7 @@
 				<div class="buttonbottom" align="center">
 					<s:submit value="Forward" name="Forward" id="Modify:Forward"
 						method="forwardModify" cssClass="buttonsubmit"
-						onclick="return onSubmit('modifyProperty-forward.action');" />
+						onclick="return onSubmit('modifyProperty-forward.action', this);" />
 					<input type="button" name="button2" id="button2" value="Close"
 						class="button" onclick="window.close();" />
 				</div>

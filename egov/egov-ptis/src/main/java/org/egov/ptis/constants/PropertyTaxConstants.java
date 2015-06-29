@@ -165,6 +165,7 @@ public interface PropertyTaxConstants {
 
 	// Named Queries
 	public static final String QUERY_PROPERTYIMPL_BYID = "PROPERTYIMPL_BYID";
+	public static final String QUERY_WORKFLOW_PROPERTYIMPL_BYID = "WORKFLOW_PROPERTYIMPL_BYID";
 	public static final String GET_PROPERTY_TYPES = "getPropertyTypes";
 	public static final String QUERY_STATUS_BY_MODULE_AND_CODE = "getStatusByModuleAndCode";
 	public static final String QUERY_PROP_STATUS_BY_STATUSCODE = "getPropStatusByStatusCode";
@@ -592,7 +593,8 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_STEP_SAVE = "Save";
 	public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
 	public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
-	public static final String WFLOW_ACTION_STEP_NOTICE_GENERATED = "Notice_Generated";
+	public static final String WFLOW_ACTION_STEP_NOTICE_GENERATED = "Notice Generated";
+	public static final String WFLOW_ACTION_STEP_COMMISSIONER_APPROVED = "Commissioner Approved";
 	public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
 
 	// workflow action names
@@ -679,9 +681,11 @@ public interface PropertyTaxConstants {
 	// Roles
 	public static final String PROPERTY_CSC_OPERATOR = "CSC Operator";
 	public static final String ASSISTANT_ROLE = "ASSISTANT";
+	public static final String PTVERIFIER_ROLE = "Property Verifier";
+	public static final String PTAPPROVER_ROLE = "Property Approver";
 	public static final String PTCREATOR_ROLE = "PTCreator";
 	public static final String PTVALIDATOR_ROLE = "PTValidator";
-	public static final String PTAPPROVER_ROLE = "PTApprover";
+	//public static final String PTAPPROVER_ROLE = "PTApprover";
 
 	// Designations
 	public static final String ASSISTANT_DESGN = "Assistant";
