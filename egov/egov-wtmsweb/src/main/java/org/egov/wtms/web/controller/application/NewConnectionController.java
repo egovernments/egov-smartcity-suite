@@ -127,8 +127,8 @@ public class NewConnectionController extends GenericConnectionController {
         processAndStoreApplicationDocuments(waterConnectionDetails);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType()));
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
         return "application-success";
     }
