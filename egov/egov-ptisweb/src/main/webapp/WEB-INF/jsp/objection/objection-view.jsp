@@ -71,8 +71,8 @@
           <tr>
             <td>
             <div id="property_header">
-         			<jsp:include page="../view/viewProperty.jsp"/>
-          			
+         		<%-- 	<jsp:include page="../view/viewProperty.jsp"/> --%>
+          			 <jsp:include page="modifyPropertyForObjectionForm.jsp"/> 
             </div>            
             </td> 
           </tr>            

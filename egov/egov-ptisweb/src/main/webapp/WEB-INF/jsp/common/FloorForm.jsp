@@ -60,15 +60,15 @@
 			<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 		</s:if>
 	</tr>
-	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
+	<s:if test="propertyDetail.floorDetails.size()==0">
 		<tr id="Floorinfo">
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-10"
 						headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].floorNo" listKey="key"
+						name="propertyDetail.floorDetails[0].floorNo" listKey="key"
 						id="floorNo"
-						value="%{propertyDetail.floorDetailsProxy[0].floorNo}"
+						value="%{propertyDetail.floorDetails[0].floorNo}"
 						listValue="value" list="floorNoMap" cssClass="selectnew"
 						cssStyle="width:100%" />
 				</div>
@@ -76,9 +76,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].structureClassification.id"
+						name="propertyDetail.floorDetails[0].structureClassification.id"
 						listKey="id" id="floorConstType"
-						value="%{propertyDetail.floorDetailsProxy[0].structureClassification.id}"
+						value="%{propertyDetail.floorDetails[0].structureClassification.id}"
 						listValue="typeName" list="dropdownData.StructureList"
 						cssClass="selectnew" cssStyle="width:100%" />
 				</div>
@@ -86,9 +86,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].propertyUsage.id"
+						name="propertyDetail.floorDetails[0].propertyUsage.id"
 						listKey="id" id="floorUsage"
-						value="%{propertyDetail.floorDetailsProxy[0].propertyUsage.id}"
+						value="%{propertyDetail.floorDetails[0].propertyUsage.id}"
 						listValue="usageName" list="dropdownData.UsageList"
 						cssClass="selectnew"
 						onchange="resetFloorDetailsForResdAndNonResd(this); "
@@ -98,9 +98,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
+						name="propertyDetail.floorDetails[0].propertyOccupation.id"
 						listKey="id" id="propOccId"
-						value="%{propertyDetail.floorDetailsProxy[0].propertyOccupation.id}"
+						value="%{propertyDetail.floorDetails[0].propertyOccupation.id}"
 						listValue="occupation" list="dropdownData.OccupancyList"
 						cssClass="selectnew"
 						onchange="resetDetailsForTenant(this); toggleDisplayOfRentAgreementFields(this);"
@@ -111,7 +111,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantname"
+					<s:textfield name="propertyDetail.floorDetails[0].occupantname"
 						id="width" size="20" maxlength="20"
 						cssStyle="width:100%" />
 					
@@ -121,37 +121,37 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[0].depreciationMaster.id"
+						name="propertyDetail.floorDetails[0].depreciationMaster.id"
 						id="constrYear" listKey="id" listValue="depreciationName"
 						list="dropdownData.AgeFactorList" cssClass="selectnew"
-						value="%{propertyDetail.floorDetailsProxy[0].depreciationMaster.id}"
+						value="%{propertyDetail.floorDetails[0].depreciationMaster.id}"
 						cssStyle="width:100%" />
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield
-						name="propertyDetail.floorDetailsProxy[0].extraField3"
+						name="propertyDetail.floorDetails[0].extraField3"
 						id="constructionDate" size="10"
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].extraField5"
+					<s:textfield name="propertyDetail.floorDetails[0].extraField5"
 						id="length" size="5" maxlength="7"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');"
-						value="%{propertyDetail.floorDetailsProxy[0].extraField5}"
+						value="%{propertyDetail.floorDetails[0].extraField5}"
 						cssStyle="width:100%" />
 				</div>
 			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetailsProxy[0].extraField4"
+					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
 						id="width" size="5" maxlength="7"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');"
-						value="%{propertyDetail.floorDetailsProxy[0].extraField4}"
+						value="%{propertyDetail.floorDetails[0].extraField4}"
 						cssStyle="width:100%" />
 				</div>
 			</td>
@@ -160,9 +160,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield
-						name="propertyDetail.floorDetailsProxy[0].builtUpArea.area"
+						name="propertyDetail.floorDetails[0].builtUpArea.area"
 						maxlength="15" size="10" id="assessableArea"
-						value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
+						value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
 				</div>
@@ -172,16 +172,16 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[0].capitalValue"
-							maxlength="100" size="10" id="propertyDetail.floorDetailsProxy[0].capitalValue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
+							name="propertyDetail.floorDetails[0].capitalValue"
+							maxlength="100" size="10" id="propertyDetail.floorDetails[0].capitalValue" value="%{propertyDetail.floorDetails[0].captialValue}"
 							cssStyle="width:100%" />
 				</div>
 			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
-							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
+					<s:select name="propertyDetail.floorDetails[0].planApproved" id="propertyDetail.floorDetails[0].planApproved" headerValue="Choose"
+							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[0].planApproved}"
 							cssClass="selectwk">
 						</s:select>
 				</div>
@@ -200,30 +200,30 @@
 
 			</s:if>
 			<td id="tdAgreementPeriod"><s:hidden id="agreementPeriod"
-					name="propertyDetail.floorDetailsProxy[0].rentAgreementDetail.agreementPeriod"
-					value="%{propertyDetail.floorDetailsProxy[0].rentAgreementDetail.agreementPeriod}" />
+					name="propertyDetail.floorDetails[0].rentAgreementDetail.agreementPeriod"
+					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.agreementPeriod}" />
 			</td>
 			<td id="tdAgreementDate"><s:hidden id="agreementDate"
-					name="propertyDetail.floorDetailsProxy[0].rentAgreementDetail.agreementDate"
-					value="%{propertyDetail.floorDetailsProxy[0].rentAgreementDetail.agreementDate}" />
+					name="propertyDetail.floorDetails[0].rentAgreementDetail.agreementDate"
+					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.agreementDate}" />
 			</td>
 			<td id="tdIncrementInRent"><s:hidden id="incrementInRent"
-					name="propertyDetail.floorDetailsProxy[0].rentAgreementDetail.incrementInRent"
-					value="%{propertyDetail.floorDetailsProxy[0].rentAgreementDetail.incrementInRent}" />
+					name="propertyDetail.floorDetails[0].rentAgreementDetail.incrementInRent"
+					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.incrementInRent}" />
 			</td>
 		</tr>
 	</s:if>
 	<s:else>
-		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}"
+		<s:iterator value="(propertyDetail.floorDetails.size).{#this}"
 			status="floorsstatus">
 			<tr id="Floorinfo">
 
 				<td class="blueborderfortd" style="padding: 2px 2px"><s:select
 						headerKey="-10" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].floorNo"
+						name="propertyDetail.floorDetails[%{#floorsstatus.index}].floorNo"
 						listKey="key" id="floorNo" listValue="value" list="floorNoMap"
 						cssClass="selectnew"
-						value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].floorNo}"
+						value="%{propertyDetail.floorDetails[#floorsstatus.index].floorNo}"
 						cssStyle="width:100%" /></td>
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
@@ -231,18 +231,18 @@
 						<s:if test="%{#floorsstatus.index == 0}">
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].structureClassification.id"
+								name="propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType"
-								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
+								value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
 								cssClass="selectnew" cssStyle="width:100%" />
 						</s:if>
 						<s:else>
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].structureClassification.id"
+								name="propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType%{#floorsstatus.index-1}"
-								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
+								value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
 								cssClass="selectnew" cssStyle="width:100%" />
 						</s:else>
@@ -254,21 +254,21 @@
 						<s:if test="%{#floorsstatus.index==0}">
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
+								name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage" listValue="usageName"
 								list="dropdownData.UsageList" cssClass="selectnew"
-								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
+								value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}"
 								onchange="resetFloorDetailsForResdAndNonResd(this);"
 								cssStyle="width:100%" />
 						</s:if>
 						<s:else>
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
+								name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
 								listValue="usageName" list="dropdownData.UsageList"
 								cssClass="selectnew"
-								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
+								value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}"
 								onchange="resetFloorDetailsForResdAndNonResd(this);"
 								cssStyle="width:100%" />
 						</s:else>
@@ -279,10 +279,10 @@
 					<div align="center">
 						<s:select headerKey="-1"
 							headerValue="%{getText('default.select')}"
-							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyOccupation.id"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyOccupation.id"
 							listKey="id" id="floorOccupation" listValue="occupation"
 							list="dropdownData.OccupancyList" cssClass="selectnew"
-							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyOccupation.id}"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyOccupation.id}"
 							onchange="resetDetailsForTenant(this); toggleDisplayOfRentAgreementFields(this);"
 							cssStyle="width:100%" />
 					</div>
@@ -291,7 +291,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						
-						<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantname"
+						<s:textfield name="propertyDetail.floorDetails[0].occupantname"
 							id="width" size="25" maxlength="25"
 							cssStyle="width:100%" />
 						
@@ -302,17 +302,17 @@
 					<div align="center">
 						<s:select headerKey="-1"
 							headerValue="%{getText('default.select')}"
-							name="propertyDetail.floorDetailsProxy[0].depreciationMaster.id"
+							name="propertyDetail.floorDetails[0].depreciationMaster.id"
 							id="constrYear" listKey="id" listValue="depreciationName"
 							list="dropdownData.AgeFactorList" cssClass="selectnew"
-							value="%{propertyDetail.floorDetailsProxy[0].depreciationMaster.id}"
+							value="%{propertyDetail.floorDetails[0].depreciationMaster.id}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[0].extraField3"
+							name="propertyDetail.floorDetails[0].extraField3"
 							id="constructionDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
@@ -321,10 +321,10 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[0].extraField5"
+							name="propertyDetail.floorDetails[0].extraField5"
 							id="length" size="5" maxlength="7"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');"
-							value="%{propertyDetail.floorDetailsProxy[0].extraField5}"
+							value="%{propertyDetail.floorDetails[0].extraField5}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
@@ -332,19 +332,19 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[0].extraField4" id="width"
+							name="propertyDetail.floorDetails[0].extraField4" id="width"
 							size="5" maxlength="7"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');"
-							value="%{propertyDetail.floorDetailsProxy[0].extraField4}"
+							value="%{propertyDetail.floorDetails[0].extraField4}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
 							maxlength="15" size="10" id="assessableArea"
-							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />
 					</div>
@@ -353,16 +353,16 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetailsProxy[0].capitalValue"
-							maxlength="100" size="10" id="propertyDetail.floorDetailsProxy[0].capitalValue" value="%{propertyDetail.floorDetailsProxy[0].captialValue}"
+							name="propertyDetail.floorDetails[0].capitalValue"
+							maxlength="100" size="10" id="propertyDetail.floorDetails[0].capitalValue" value="%{propertyDetail.floorDetails[0].captialValue}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetailsProxy[0].planApproved" id="propertyDetail.floorDetailsProxy[0].planApproved" headerValue="Choose"
-							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].planApproved}"
+						<s:select name="propertyDetail.floorDetails[0].planApproved" id="propertyDetail.floorDetails[0].planApproved" headerValue="Choose"
+							headerKey="0" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[0].planApproved}"
 							cssClass="selectwk">
 						</s:select>
 					</div>
@@ -379,16 +379,16 @@
 						width="18" height="18" border="0" /></td>
 
 					<td><s:hidden id="agreementPeriod"
-							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].rentAgreementDetail.agreementPeriod"
-							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].rentAgreementDetail.agreementPeriod}" />
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.agreementPeriod"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.agreementPeriod}" />
 					</td>
 					<td><s:hidden id="agreementDate"
-							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].rentAgreementDetail.agreementDate"
-							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].rentAgreementDetail.agreementDate}" />
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.agreementDate"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.agreementDate}" />
 					</td>
 					<td><s:hidden id="incrementInRent"
-							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].rentAgreementDetail.incrementInRent"
-							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].rentAgreementDetail.incrementInRent}" />
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.incrementInRent"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.incrementInRent}" />
 					</td>
 				</s:if>
 			</tr>
@@ -414,8 +414,8 @@
 
 	function populateFloorConstTypesOnValidationErrors() {
 
-		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}" status="floorsstatus">
-			constTypeValues[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}" />';		
+		<s:iterator value="(propertyDetail.floorDetails.size).{#this}" status="floorsstatus">
+			constTypeValues[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}" />';		
 		</s:iterator>
 		
 		var noOfFloors = document.getElementById("floorDetails").rows.length - 1;
@@ -452,9 +452,9 @@
 	var unitTypeUsages = new Array();
 	
 	function populateUnitTypeCatAndUsageOnValidationErrors() {
-		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}" status="floorsstatus">
-			unitTypeCats[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].unitTypeCategory}" />';
-			unitTypeUsages[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}" />';
+		<s:iterator value="(propertyDetail.floorDetails.size).{#this}" status="floorsstatus">
+			unitTypeCats[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].unitTypeCategory}" />';
+			unitTypeUsages[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}" />';
 		</s:iterator>
 		
 		var floorDetails = document.getElementById("floorDetails");

@@ -90,7 +90,7 @@
 		<property name="alv" column="ALV" />
 			
 		<property name="createTimeStamp" update="false" column="CREATETIMESTAMP"/>
-		<many-to-one name="floor" class="org.egov.ptis.domain.entity.property.FloorImpl" column="ID_FLOORDET" cascade="all" />
+		<many-to-one name="floor" class="org.egov.ptis.domain.entity.property.Floor" column="ID_FLOORDET" cascade="all" />
 		<!-- 
 		<set name="attributeValues" cascade="all-delete-orphan" table="EG_ATTRIBUTEVALUES" >
 		<key column="DOMAINTXNID"/>

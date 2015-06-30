@@ -61,6 +61,10 @@
          <many-to-one name="basicProperty" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" fetch="select">
             <column name="id_basicproperty"  not-null="true" />
         </many-to-one>
+        
+         <many-to-one name="referenceProperty" class="org.egov.ptis.domain.entity.property.PropertyImpl" fetch="select">
+            <column name="id_property"  />
+        </many-to-one>
         <property name="objectionNumber" type="java.lang.String">
             <column name="OBJECTION_NUMBER" length="50" not-null="true" unique="true" />
         </property>

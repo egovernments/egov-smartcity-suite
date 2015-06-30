@@ -77,6 +77,22 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
 		qry.setParameterList("Code", Code);
 		return (PropertyStatusValues) qry.uniqueResult();
 	}
+	
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
+                String referenceNumber)
+                {
+	    Query qry = getCurrentSession()
+                    .createQuery(
+                                    "from PropertyStatusValues PSV "
+                                   + " where PSV.basicProperty.upicNo =:PropertyId and PSV.referenceNo in (:referenceNumber) "
+                                                    + " order by PSV.createdDate desc").setMaxResults(1);
+                    qry.setString("PropertyId", PropertyId);
+                    qry.setString("referenceNumber", referenceNumber);
+                    return (PropertyStatusValues) qry.uniqueResult();
+	    
+                }
+	
+	
 
 	@Override
 	public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty) {

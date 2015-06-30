@@ -41,17 +41,17 @@ package org.egov.ptis.domain.dao.property;
 
 import java.util.List;
 
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 
 public interface FloorDAO {
 	
-	public FloorIF findById(Integer id, boolean lock);
+	public Floor findById(Integer id, boolean lock);
 
-	public List<FloorIF> findAll();
+	public List<Floor> findAll();
 
-	public FloorIF create(FloorIF floorIF);
+	public Floor create(Floor floorIF);
 
-	public void delete(FloorIF floorIF);
+	public void delete(Floor floorIF);
 
-	public FloorIF update(FloorIF floorIF);
+	public Floor update(Floor floorIF);
 }

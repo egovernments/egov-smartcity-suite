@@ -72,7 +72,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
@@ -182,8 +182,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
-			
-			if (StringUtils.isNotBlank(property.getPropertyDetail().getExtra_field6())) {
+			if (property.getPropertyDetail().getExtra_field6() != null) {
 				viewMap.put(
 						"propertyCategory",
 						persistenceService.find("from Category c where c.id = ?",
@@ -258,7 +257,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			return "view";
 		} catch (Exception e) {
 			LOGGER.error("Exception in View Property: ", e);
-			throw new EGOVRuntimeException("Exception in View Property: ", e);
+			throw new EGOVRuntimeException("Exception : " + e);
 		}
 	}
 
@@ -277,17 +276,18 @@ public class ViewPropertyAction extends BaseFormAction {
 		return roleNameList.toString().toUpperCase();
 	}
 
-	private void setFloorDetails(Property property) {
-		LOGGER.debug("Entered into method setFloorDetails");
-		LOGGER.debug("Property ===> " + property);
-		Set<FloorIF> flrDtSet = property.getPropertyDetail().getFloorDetails();
-		int i = 0;
-		for (FloorIF flr : flrDtSet) {
-			floorNoStr[i] = (propertyTaxUtil.getFloorStr(flr.getFloorNo()));
-			i++;
-		}
-		property.getPropertyDetail().setFloorDetailsProxy(new ArrayList(flrDtSet));
-		LOGGER.debug("Exit from method setFloorDetails");
+	private void setFloorDetails(Property property) {LOGGER.debug("Entered into method setFloorDetails");
+            LOGGER.debug("Property ===> " + property);
+            List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
+            int i = 0;
+            for (Floor flr : flrDtSet) {
+            if(flr!=null && flr.getFloorNo()!=null) {
+                floorNoStr[i] = (propertyTaxUtil.getFloorStr(flr.getFloorNo()));
+                    i++;
+            }
+            }
+            property.getPropertyDetail().setFloorDetails(property.getPropertyDetail().getFloorDetails());
+            LOGGER.debug("Exit from method setFloorDetails");
 	}
 
 	public String getAmenitiesDtls(String mstrCode) {

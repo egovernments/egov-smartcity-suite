@@ -50,13 +50,12 @@ import javax.validation.Valid;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Auditable;
-import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.hibernate.validator.constraints.Length;
-
 /**
  * @author manoranjan
  * 
@@ -90,6 +89,7 @@ public class Objection extends StateAware implements Auditable{
 	private String docNumberObjection;
 
 	private String docNumberOutcome;
+	private PropertyImpl referenceProperty;
 
 	@Valid
 	private List<Hearing> hearings = new LinkedList<Hearing>();
@@ -248,6 +248,14 @@ public class Objection extends StateAware implements Auditable{
     @Override
     public void setId(Long id) {
        this.id= id;
+    }
+
+    public PropertyImpl getReferenceProperty() {
+        return referenceProperty;
+    }
+
+    public void setReferenceProperty(PropertyImpl referenceProperty) {
+        this.referenceProperty = referenceProperty;
     }
 
 }

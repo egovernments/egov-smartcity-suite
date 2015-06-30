@@ -277,15 +277,14 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
-	    propertyOwnerInfo.removeAll(Collections.singleton(null));
-	    return propertyOwnerInfo;
-	}
+        public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
+            return propertyOwnerInfo;
+        }
 
-	@Override
-	public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet) {
-		this.propertyOwnerInfo = propertyOwnerSet;
-	}
+        @Override
+        public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet) {
+                this.propertyOwnerInfo = propertyOwnerSet;
+        }
 
 	public AbstractProperty getAbstractProperty() {
 		return abstractProperty;
@@ -335,14 +334,14 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public void addPropertyOwners(PropertyOwnerInfo ownerInfo) {
-		getPropertyOwnerInfo().add(ownerInfo);
-	}
+        public void addPropertyOwners(PropertyOwnerInfo ownerInfo) {
+                getPropertyOwnerInfo().add(ownerInfo);
+        }
 
-	@Override
-	public void removePropertyOwners(PropertyOwnerInfo ownerInfo) {
-		getPropertyOwnerInfo().remove(ownerInfo);
-	}
+        @Override
+        public void removePropertyOwners(PropertyOwnerInfo ownerInfo) {
+                getPropertyOwnerInfo().remove(ownerInfo);
+        }
 
 	/*@Override
 	public void addPropertyTenants(Citizen citizen) {
@@ -556,7 +555,7 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setStatus(getStatus());
 		newProp.setPropertyDetail(clonePropertyDetail(newProp));
 		newProp.setPropertyModifyReason(getPropertyModifyReason());
-		newProp.setPropertyOwnerInfo(cloneOwners());
+		//newProp.setPropertyOwnerSet(cloneOwners());
 		newProp.setPropertySource(getPropertySource());
 		//newProp.setPropertyTenantSet(cloneTenants());
 		newProp.setPtDemandSet(cloneDemand());
@@ -591,13 +590,13 @@ public class PropertyImpl extends StateAware implements Property {
 	 * This method returns Owner details as a Set
 	 */
 	private List<PropertyOwnerInfo> cloneOwners() {
-		List<PropertyOwnerInfo> newOwnerSet = new ArrayList<PropertyOwnerInfo>();
-		for (PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
-		    PropertyOwnerInfo newOwner = new PropertyOwnerInfo(ownerInfo.getProperty(), ownerInfo.getSource(), ownerInfo.getOwner(), ownerInfo.getOrderNo());
-		    newOwnerSet.add(newOwner);
-		}
-		return newOwnerSet;
-	}
+            List<PropertyOwnerInfo> newOwnerSet = new ArrayList<PropertyOwnerInfo>();
+            for (PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
+                PropertyOwnerInfo newOwner = new PropertyOwnerInfo(ownerInfo.getProperty(), ownerInfo.getSource(), ownerInfo.getOwner(), ownerInfo.getOrderNo());
+                newOwnerSet.add(newOwner);
+            }
+            return newOwnerSet;
+    }
 
 	/*
 	 * This method returns Demand details as a Set
@@ -699,11 +698,11 @@ public class PropertyImpl extends StateAware implements Property {
 	/*
 	 * This method returns Floor details as a Set
 	 */
-	private Set<FloorIF> cloneFlrDtls() {
-		FloorIF floor = null;
-		Set<FloorIF> flrDtlsSet = new HashSet<FloorIF>();
-		for (FloorIF flr : getPropertyDetail().getFloorDetails()) {
-			floor = new FloorImpl(flr.getConstructionTypeSet(), flr.getStructureClassification(),
+	private List<Floor> cloneFlrDtls() {
+		Floor floor = null;
+		List<Floor> flrDtlsSet = new ArrayList<Floor>();
+		for (Floor flr : getPropertyDetail().getFloorDetails()) {
+			floor = new Floor(flr.getConstructionTypeSet(), flr.getStructureClassification(),
 					flr.getPropertyUsage(), flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(),
 					flr.getBuiltUpArea(), flr.getFloorArea(), flr.getWaterMeter(), flr.getElectricMeter(), null, null,
 					flr.getRentPerMonth(), flr.getExtraField1(), flr.getExtraField2(), flr.getExtraField3(),

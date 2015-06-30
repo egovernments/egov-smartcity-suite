@@ -346,15 +346,15 @@ function resetNonResidentialDetails(propType, floorRow) {
 				document.forms[0].width[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
+								'propertyDetail.floorDetails[' + indexval + '].extraField4');
 				document.forms[0].length[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
+								'propertyDetail.floorDetails[' + indexval + '].extraField5');
 				document.forms[0].interWallArea[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
+								'propertyDetail.floorDetails[' + indexval + '].extraField6');
 				document.forms[0].width[indexval].disabled = false;
 				document.forms[0].length[indexval].disabled = false;
 				document.forms[0].interWallArea[indexval].disabled = false;
@@ -389,15 +389,15 @@ function resetNonResidentialDetails(propType, floorRow) {
 				document.forms[0].width[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField4');
+								'propertyDetail.floorDetails[' + indexval + '].extraField4');
 				document.forms[0].length[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField5');
+								'propertyDetail.floorDetails[' + indexval + '].extraField5');
 				document.forms[0].interWallArea[indexval]
 						.setAttribute(
 								'name',
-								'propertyDetail.floorDetailsProxy[' + indexval + '].extraField6');
+								'propertyDetail.floorDetails[' + indexval + '].extraField6');
 				document.forms[0].floorNo[indexval].disabled = false;
 				document.forms[0].floorType[indexval].disabled = false;
 				document.forms[0].width[indexval].value = "";
@@ -459,7 +459,7 @@ function resetDetailsForTenant(obj) {
 					document.forms[0].rent[indexval]
 							.setAttribute(
 									'name',
-									'propertyDetail.floorDetailsProxy[' + indexval + '].rentPerMonth');
+									'propertyDetail.floorDetails[' + indexval + '].rentPerMonth');
 					document.forms[0].rent[indexval].className = "";
 					document.forms[0].rent[indexval].readOnly = false;
 				}
@@ -472,7 +472,7 @@ function resetDetailsForTenant(obj) {
 					document.forms[0].rent[indexval]
 							.setAttribute(
 									'name',
-									'propertyDetail.floorDetailsProxy[' + indexval + '].rentPerMonth');
+									'propertyDetail.floorDetails[' + indexval + '].rentPerMonth');
 					document.forms[0].rent[indexval].value = "";
 					document.forms[0].rent[indexval].className = "hiddentext";
 					document.forms[0].rent[indexval].readOnly = true;
@@ -500,7 +500,7 @@ function resetDetailsForTenantOnload() {
 					document.forms[0].rent[j]
 							.setAttribute(
 									'name',
-									'propertyDetail.floorDetailsProxy[' + j + '].rentPerMonth');
+									'propertyDetail.floorDetails[' + j + '].rentPerMonth');
 					document.forms[0].rent[j].className = "";
 					document.forms[0].rent[j].readOnly = false;
 				}
@@ -513,7 +513,7 @@ function resetDetailsForTenantOnload() {
 					document.forms[0].rent[j]
 							.setAttribute(
 									'name',
-									'propertyDetail.floorDetailsProxy[' + j + '].rentPerMonth');
+									'propertyDetail.floorDetails[' + j + '].rentPerMonth');
 					document.forms[0].rent[j].value = "";
 					document.forms[0].rent[j].className = "hiddentext";
 					document.forms[0].rent[j].readOnly = true;

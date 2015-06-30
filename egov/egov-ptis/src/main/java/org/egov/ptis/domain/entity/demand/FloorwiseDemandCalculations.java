@@ -43,7 +43,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 
 /**
  * This class represents Floorwise Demand Calculations and this class
@@ -51,12 +51,12 @@ import org.egov.ptis.domain.entity.property.FloorIF;
  * 
  * @author Ramakrishna I
  * @version 1.00
- * @see org.egov.ptis.domain.entity.property.FloorIF
+ * @see org.egov.ptis.domain.entity.property.Floor
  * @since 1.00
  */
 public class FloorwiseDemandCalculations {
 	private Integer id = null;
-	private FloorIF floor = null;
+	private Floor floor = null;
 	private PTDemandCalculations pTDemandCalculations = null;
 	private Date lastUpdatedTimeStamp;
 	private Date createTimeStamp;
@@ -81,7 +81,7 @@ public class FloorwiseDemandCalculations {
 		super();
 	}
 
-	public FloorwiseDemandCalculations(Integer id, FloorIF floor, PTDemandCalculations demandCalculations,
+	public FloorwiseDemandCalculations(Integer id, Floor floor, PTDemandCalculations demandCalculations,
 			Date lastUpdatedTimeStamp, Date createTimeStamp, BigDecimal categoryAmt, BigDecimal occupancyRebate,
 			BigDecimal constructionRebate, BigDecimal depreciation, BigDecimal usageRebate) {
 		super();
@@ -136,7 +136,7 @@ public class FloorwiseDemandCalculations {
 	/**
 	 * @return the floor
 	 */
-	public FloorIF getFloor() {
+	public Floor getFloor() {
 		return floor;
 	}
 
@@ -144,7 +144,7 @@ public class FloorwiseDemandCalculations {
 	 * @param floor
 	 *            the floor to set
 	 */
-	public void setFloor(FloorIF floor) {
+	public void setFloor(Floor floor) {
 		this.floor = floor;
 	}
 

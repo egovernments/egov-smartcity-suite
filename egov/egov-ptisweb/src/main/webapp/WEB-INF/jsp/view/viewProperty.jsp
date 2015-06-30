@@ -392,7 +392,7 @@
 	</tr>
 	
 	<%--s:if
-		test="basicProperty.property.propertyDetail.floorDetailsProxy.size()>0"--%>
+		test="basicProperty.property.propertyDetail.floorDetails.size()>0"--%>
 		<tr>
 			<td colspan="5">
 				<div class="headingsmallbg">
@@ -421,10 +421,10 @@
 						<th class="bluebgheadtd"><s:text name="exemption" /></th>
 					</tr>
 					<s:iterator
-						value="basicProperty.property.propertyDetail.floorDetailsProxy"
+						value="basicProperty.property.propertyDetail.floorDetails"
 						status="floorsstatus">
 						<tr>
-							<s:set value="basicProperty.property.propertyDetail.floorDetailsProxy[#floorsstatus.index]" var="floor" />
+							<s:set value="basicProperty.property.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
 							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />

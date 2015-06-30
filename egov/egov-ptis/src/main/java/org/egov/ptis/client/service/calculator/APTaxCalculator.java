@@ -63,7 +63,7 @@ import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
@@ -110,7 +110,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 			APTaxCalculationInfo taxCalculationInfo = this.addPropertyInfo(property);
 
 			if (betweenOrBefore(occupationDate, installment.getFromDate(), installment.getToDate())) {
-				for (FloorIF floorIF : property.getPropertyDetail().getFloorDetails()) {
+				for (Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
 					if (floorIF != null) {
 						// TODO think about, these beans to be client specific
 						APUnitTaxCalculationInfo unitTaxCalculationInfo = prepareUnitCalcInfo(floorIF, boundaryCategory);
@@ -135,7 +135,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		return taxCalculationMap;
 	}
 
-	private APUnitTaxCalculationInfo prepareUnitCalcInfo(FloorIF floorIF, BoundaryCategory boundaryCategory) {
+	private APUnitTaxCalculationInfo prepareUnitCalcInfo(Floor floorIF, BoundaryCategory boundaryCategory) {
 		APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
 		BigDecimal builtUpArea = BigDecimal.ZERO;
 		BigDecimal floorMrv = BigDecimal.ZERO;
@@ -272,7 +272,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		return floorMrv.multiply(SITE_VALUE_FACTOR);
 	}
 
-	private BigDecimal calculateFloorDepreciation(BigDecimal grossArv, FloorIF floor) {
+	private BigDecimal calculateFloorDepreciation(BigDecimal grossArv, Floor floor) {
 		return grossArv.multiply(BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct())).divide(
 				BigDecimal.valueOf(100));
 	}

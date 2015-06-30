@@ -64,7 +64,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
@@ -168,7 +168,7 @@ public class PropertyNoticeInfo {
 	public int getNoOfTenants() {
 		int tenants = 0;
 
-		for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
+		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			if (PropertyTaxConstants.TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode())) {
 				tenants++;
 			}
@@ -216,7 +216,7 @@ public class PropertyNoticeInfo {
 	public int getNoOfUnits() {
 		Set<Integer> noOfUnits = new TreeSet<Integer>();
 
-		for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
+		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			noOfUnits.add(Integer.valueOf(floor.getExtraField1()));
 		}
 

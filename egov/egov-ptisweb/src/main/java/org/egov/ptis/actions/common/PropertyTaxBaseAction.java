@@ -50,7 +50,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTVERIFIER_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
 import java.io.File;
@@ -83,8 +82,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.FloorIF;
-import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -98,9 +96,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;
-
 	private static final String APPROVED = "Approved";
-	private static final String REJECTED = "Rejected";
+        private static final String REJECTED = "Rejected";
+        
 	protected PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	private SecurityUtils securityUtils;
@@ -304,7 +302,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 						addActionError(getText("mandatory.areaOfPlot"));
 					}
 				}
-				validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(),
+				validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetails(),
 						isfloorDetailsRequired, property);
 			}
 		}
@@ -320,7 +318,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		LOGGER.debug("Exiting from validateProperty");
 	}
 
-	private void validateFloor(PropertyTypeMaster propTypeMstr, List<FloorImpl> floorList,
+	private void validateFloor(PropertyTypeMaster propTypeMstr, List<Floor> floorList,
 			Boolean isfloorDetailsRequired, Property property) {
 		LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr
 				+ ", No of floors: " + ((floorList != null) ? floorList : ZERO));
@@ -330,7 +328,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		if (!propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((isGovtProperty && !isfloorDetailsRequired) || !isGovtProperty) {
 				if (floorList != null && floorList.size() > 0) {
-					for (FloorIF floor : floorList) {
+					for (Floor floor : floorList) {
 						List<String> msgParams = null;
 						if (floor != null) {
 							msgParams = new ArrayList<String>();
@@ -439,65 +437,63 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED)
 				.withOwner(position).withComments("Property Workflow Ended");
 	}
-	
 	public void transitionWorkFlow(PropertyImpl property) {
-		final DateTime currentDate = new DateTime();
-		User user = securityUtils.getCurrentUser();
-		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-		String beanActionName[] = workflowBean.getActionName().split(":");
-		String nextAction = null;
-		Long approverUserdId = null;
+            final DateTime currentDate = new DateTime();
+            User user = securityUtils.getCurrentUser();
+            Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+            String beanActionName[] = workflowBean.getActionName().split(":");
+            String nextAction = null;
+            Long approverUserdId = null;
 
-		if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
-			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
-				Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean
-						.getApproverUserId());
-				property.transition().start().withSenderName(user.getName())
-						.withComments(workflowBean.getComments())
-						.withDateInfo(currentDate.toDate()).withStateValue(beanActionName[0])
-						.withOwner(nextOwner.getPosition()).withNextAction(nextAction);
-			} else if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
-				property.transition().end();
-			} else {
-				property.transition().end();
-			}
+            if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
+                    if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
+                            nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+                            Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean
+                                            .getApproverUserId());
+                            property.transition().start().withSenderName(user.getName())
+                                            .withComments(workflowBean.getComments())
+                                            .withDateInfo(currentDate.toDate()).withStateValue(beanActionName[0])
+                                            .withOwner(nextOwner.getPosition()).withNextAction(nextAction);
+                    } else if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+                            property.transition().end();
+                    } else {
+                            property.transition().end();
+                    }
 
-		} else if (REVENUE_OFFICER_DESGN.equals(userAssignment.getDesignation().getName())) {
-			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
-				approverUserdId = workflowBean.getApproverUserId();
-			}
-			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + REJECTED;
-				approverUserdId = property.getCreatedBy().getId();
-			}
-			transition(property, beanActionName, nextAction, approverUserdId);
-		} else if (COMMISSIONER_DESGN.equals(userAssignment.getDesignation().getName())) {
-			nextAction = userAssignment.getDesignation().getName();
-			approverUserdId = property.getCreatedBy().getId();
-			if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
-				nextAction = nextAction + " " + APPROVED;
-			}
-			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
-				nextAction = nextAction + " " + REJECTED;
-			}
-			transition(property, beanActionName, nextAction, approverUserdId);
-		}
+            } else if (REVENUE_OFFICER_DESGN.equals(userAssignment.getDesignation().getName())) {
+                    if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
+                            nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+                            approverUserdId = workflowBean.getApproverUserId();
+                    }
+                    if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+                            nextAction = userAssignment.getDesignation().getName() + " " + REJECTED;
+                            approverUserdId = property.getCreatedBy().getId();
+                    }
+                    transition(property, beanActionName, nextAction, approverUserdId);
+            } else if (COMMISSIONER_DESGN.equals(userAssignment.getDesignation().getName())) {
+                    nextAction = userAssignment.getDesignation().getName();
+                    approverUserdId = property.getCreatedBy().getId();
+                    if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
+                            nextAction = nextAction + " " + APPROVED;
+                    }
+                    if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+                            nextAction = nextAction + " " + REJECTED;
+                    }
+                    transition(property, beanActionName, nextAction, approverUserdId);
+            }
 
-		LOGGER.debug("Exiting method : transitionWorkFlow");
-	}
+            LOGGER.debug("Exiting method : transitionWorkFlow");
+    }
 
-	private void transition(PropertyImpl property, String[] beanActionName, String nextAction,
-			Long approverUserdId) {
-		final DateTime currentDate = new DateTime();
-		Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(approverUserdId);
-		property.transition().withSenderName(securityUtils.getCurrentUser().getName())
-				.withComments(workflowBean.getComments()).withDateInfo(currentDate.toDate())
-				.withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition())
-				.withNextAction(nextAction);
-	}
-
+    private void transition(PropertyImpl property, String[] beanActionName, String nextAction,
+                    Long approverUserdId) {
+            final DateTime currentDate = new DateTime();
+            Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(approverUserdId);
+            property.transition().withSenderName(securityUtils.getCurrentUser().getName())
+                            .withComments(workflowBean.getComments()).withDateInfo(currentDate.toDate())
+                            .withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition())
+                            .withNextAction(nextAction);
+    }
 	public WorkflowBean getWorkflowBean() {
 		return workflowBean;
 	}

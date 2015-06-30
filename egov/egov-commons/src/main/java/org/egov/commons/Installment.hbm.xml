@@ -21,5 +21,5 @@
 			column="ID_MODULE" />
 	</class>
 	<query name="INSTALLMENTLISTBY_MODULE_AND_STARTYEAR">
-        <![CDATA[select it from org.egov.commons.Installment it where (it.fromDate>=? or ? between it.fromDate and it.toDate) and it.fromDate<=sysdate and it.module.name=?]]></query>
+        <![CDATA[select it from org.egov.commons.Installment it where (it.fromDate>=? or ? between it.fromDate and it.toDate) and it.fromDate<=current_date and it.module.name=?]]></query>
 </hibernate-mapping>

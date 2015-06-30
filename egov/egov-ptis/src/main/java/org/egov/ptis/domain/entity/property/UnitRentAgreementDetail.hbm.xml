@@ -56,7 +56,7 @@
 		<property name="agreementDate" column="agreement_date" type="date" />
 		<property name="incrementInRent" column="increment_in_rent" />
 		<many-to-one name="floor" fetch="join"
-			class="org.egov.ptis.domain.entity.property.FloorImpl"
+			class="org.egov.ptis.domain.entity.property.Floor"
 			column="ID_FLOOR_DETAIL" unique="true" cascade="none" />	
 	</class>
 </hibernate-mapping>

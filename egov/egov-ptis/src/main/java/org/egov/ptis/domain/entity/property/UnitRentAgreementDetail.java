@@ -52,7 +52,7 @@ import org.hibernate.validator.constraints.Range;
 public class UnitRentAgreementDetail{
 	
 	private Long id;
-	private FloorIF floor;
+	private Floor floor;
 	
 	/**
 	 * The period the rent agreement is valid
@@ -87,11 +87,11 @@ public class UnitRentAgreementDetail{
 		this.id = id;
 	}
 
-	public FloorIF getFloor() {
+	public Floor getFloor() {
 		return floor;
 	}
 
-	public void setFloor(FloorIF floor) {
+	public void setFloor(Floor floor) {
 		this.floor = floor;
 	}
 

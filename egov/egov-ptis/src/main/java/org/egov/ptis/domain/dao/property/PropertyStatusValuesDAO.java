@@ -60,5 +60,8 @@ public interface PropertyStatusValuesDAO {
 	public void delete(PropertyStatusValues propertyStatusValues);
 
 	public PropertyStatusValues update(PropertyStatusValues propertyStatusValues);
+	
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
+                String referenceNumber);
 
 }

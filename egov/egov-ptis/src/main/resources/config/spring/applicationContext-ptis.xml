@@ -59,7 +59,7 @@
 	</bean>
 
 	<bean id="floorService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.FloorIF" />
+		<property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
 	</bean>
 	
 	<bean id="nmcPtBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">

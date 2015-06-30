@@ -78,8 +78,8 @@ public class VacantProperty extends AbstractProperty {
 	private String surveyNumber;
 	private Character fieldVerified;
 	private java.util.Date fieldVerificationDate;
-	private java.util.Set<FloorIF> floorDetails = new HashSet<FloorIF>();
-	private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();
+	private java.util.List<Floor> floorDetails = new ArrayList<Floor>();
+	/*private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();*/
 	private Integer propertyDetailsID;
 	private String water_Meter_Num;
 	private String elec_Meter_Num;
@@ -119,7 +119,7 @@ public class VacantProperty extends AbstractProperty {
 
 	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
 			Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
-			Date fieldVerificationDate, Set<FloorIF> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
 			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date completion_year,
 			Date effective_date, Date dateOfCompletion, Property property, Date updatedTime,
 			PropertyUsage propertyUsage, PropertyCreationReason creationReason, PropertyTypeMaster propertyTypeMaster,
@@ -166,10 +166,12 @@ public class VacantProperty extends AbstractProperty {
 		this.dateOfCompletion = dateOfCompletion;
 	}
 
-	public void addFloor(FloorIF floor) {
+	public void addFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.addFloor");
+		if(floor!=null){
 		getFloorDetails().add(floor);
 		no_of_floors = getFloorDetails().size();
+		}
 	}
 
 	/**
@@ -178,7 +180,7 @@ public class VacantProperty extends AbstractProperty {
 	 * @param floor
 	 *            The floor to set .
 	 */
-	public void removeFloor(FloorIF floor) {
+	public void removeFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.removeFloor");
 		getFloorDetails().remove(floor);
 		no_of_floors = getFloorDetails().size();
@@ -322,7 +324,7 @@ public class VacantProperty extends AbstractProperty {
 	/**
 	 * @return Returns the floorDetails.
 	 */
-	public java.util.Set<FloorIF> getFloorDetails() {
+	public java.util.List<Floor> getFloorDetails() {
 		return floorDetails;
 	}
 
@@ -330,7 +332,7 @@ public class VacantProperty extends AbstractProperty {
 	 * @param floorDetails
 	 *            The floorDetails to set.
 	 */
-	public void setFloorDetails(java.util.Set<FloorIF> floorDetails) {
+	public void setFloorDetails(java.util.List<Floor> floorDetails) {
 		this.floorDetails = floorDetails;
 	}
 
@@ -674,7 +676,7 @@ public class VacantProperty extends AbstractProperty {
 		this.propertyOccupation = propertyOccupation;
 	}
 
-	public List<FloorImpl> getFloorDetailsProxy() {
+	/*public List<FloorImpl> getFloorDetailsProxy() {
 		getFloorDetails().addAll(floorDetailsProxy);
 		return floorDetailsProxy;
 	}
@@ -682,7 +684,7 @@ public class VacantProperty extends AbstractProperty {
 	public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
 		this.floorDetailsProxy = floorDetailsProxy;
 		getFloorDetails().addAll(floorDetailsProxy);
-	}
+	}*/
 
 	public VacantProperty() {
 		super();

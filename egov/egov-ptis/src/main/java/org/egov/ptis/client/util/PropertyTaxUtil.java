@@ -186,8 +186,8 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
-import org.egov.ptis.domain.entity.property.FloorIF;
-import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -268,7 +268,7 @@ public class PropertyTaxUtil {
 		StringBuilder floorIdString = new StringBuilder();
 		floorIdString.append("(");
 		int count = 0;
-		for (FloorIF floor : historyProperty.getPropertyDetail().getFloorDetails()) {
+		for (Floor floor : historyProperty.getPropertyDetail().getFloorDetails()) {
 			floorIdString.append(floor.getId());
 			count++;
 			if (count != historyProperty.getPropertyDetail().getFloorDetails().size()) {
@@ -508,7 +508,7 @@ public class PropertyTaxUtil {
 		return applicableTaxValueDummy;
 	}
 
-	public String multiplicativeFactorAreaWise(String propertyType, FloorImpl floor, String areaFactor,
+	public String multiplicativeFactorAreaWise(String propertyType, Floor floor, String areaFactor,
 			String propCategory) {
 		String unitAreaFactor = null;
 
@@ -555,7 +555,7 @@ public class PropertyTaxUtil {
 
 	}
 
-	public List<ApplicableFactor> getApplicableFactorsForResidentialAndNonResidential(FloorImpl floorImpl,
+	public List<ApplicableFactor> getApplicableFactorsForResidentialAndNonResidential(Floor floorImpl,
 			Boundary propertyArea, Installment installment, Long categoryId) {
 		List<ApplicableFactor> applicableFactors = new ArrayList<ApplicableFactor>();
 

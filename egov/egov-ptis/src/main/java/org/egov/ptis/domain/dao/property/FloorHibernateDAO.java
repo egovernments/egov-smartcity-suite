@@ -44,7 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.hibernate.Session;
 
 public class FloorHibernateDAO implements FloorDAO {
@@ -57,31 +57,31 @@ public class FloorHibernateDAO implements FloorDAO {
 	}
 
 	@Override
-	public FloorIF findById(Integer id, boolean lock) {
+	public Floor findById(Integer id, boolean lock) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<FloorIF> findAll() {
+	public List<Floor> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public FloorIF create(FloorIF floorIF) {
+	public Floor create(Floor floorIF) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void delete(FloorIF floorIF) {
+	public void delete(Floor floorIF) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public FloorIF update(FloorIF floorIF) {
+	public Floor update(Floor floorIF) {
 		// TODO Auto-generated method stub
 		return null;
 	}

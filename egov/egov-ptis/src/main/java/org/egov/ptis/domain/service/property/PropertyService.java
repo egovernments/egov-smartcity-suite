@@ -101,7 +101,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -114,15 +113,12 @@ import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.FloorIF;
-import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
@@ -265,9 +261,9 @@ public class PropertyService  {
 							.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property.getPropertyDetail()
 							.getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))) {
 				if ((mutationCode != null && "NEW".equals(mutationCode)) || STATUS_WORKFLOW.equals(property.getStatus())) {
-					property.getPropertyDetail().setFloorDetails(new HashSet<FloorIF>());
+					//property.getPropertyDetail().setFloorDetails(new ArrayList<Floor>());
 				}
-				for (FloorImpl floor : property.getPropertyDetail().getFloorDetailsProxy()) {
+				for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 					if (floor != null) {
 						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
 						/*
@@ -325,8 +321,15 @@ public class PropertyService  {
 						floor.setPropertyUsage(usage);
 						floor.setPropertyOccupation(occupancy);
 						floor.setStructureClassification(structureClass);
-						basicPrpertyService.applyAuditing(floor);
-						property.getPropertyDetail().addFloor(floor);
+						
+						floor.setPropertyDetail(property.getPropertyDetail());
+						//basicPrpertyService.applyAuditing(floor);
+						floor.setCreatedDate(new Date());
+                                                floor.setModifiedDate(new Date());
+						//property.getPropertyDetail().addFloor(floor);
+						User user = userService.getUserById(EgovThreadLocals.getUserId());
+                                                floor.setCreatedBy(user);
+                                                floor.setModifiedBy(user);
 						// setting total builtup area.
 						totBltUpArea.setArea(totBltUpAreaVal);
 						property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
@@ -335,10 +338,10 @@ public class PropertyService  {
 				}
 			} else {
 				// -added for state govt property without floors
-				if (property.getPropertyDetail().getFloorDetailsProxy().size() > 0
+				if (property.getPropertyDetail().getFloorDetails().size() > 0
 						&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-					property.getPropertyDetail().setFloorDetailsProxy(Collections.EMPTY_LIST);
-					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_SET);
+					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 				}
 				PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
 						"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
@@ -353,10 +356,10 @@ public class PropertyService  {
 			}
 
 		} else {
-			if (property.getPropertyDetail().getFloorDetailsProxy().size() > 0
+			if (property.getPropertyDetail().getFloorDetails().size() > 0
 					&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-				property.getPropertyDetail().setFloorDetailsProxy(Collections.EMPTY_LIST);
-				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_SET);
+				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 			}
 			PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
 					"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
@@ -433,7 +436,7 @@ public class PropertyService  {
 		List<Installment> instList = new ArrayList<Installment>();
 		instList = new ArrayList<Installment>(instTaxMap.keySet());
 		LOGGER.debug("createDemand: instList: " + instList);
-		currentInstall = PropertyTaxUtil.getCurrentInstallment();
+		currentInstall = propertyTaxUtil.getCurrentInstallment();
 
 		for (Installment installment : instList) {
 			TaxCalculationInfo taxCalcInfo = instTaxMap.get(installment);
@@ -470,7 +473,7 @@ public class PropertyService  {
 				if (installment.equals(currentInstall)) {
 					// FloorwiseDemandCalculations should be set only for the
 					// current installment for each floor.
-					for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
+					for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 						ptDmdCalc.addFlrwiseDmdCalculations(createFloorDmdCalc(ptDmdCalc, floor, taxCalcInfo));
 					}
 				}
@@ -589,6 +592,7 @@ public class PropertyService  {
 		LOGGER.debug("Entered into getPropOccupatedDate, dateOfCompletion: " + dateOfCompletion);
 		Date occupationDate = null;
 		try {
+		        if(dateOfCompletion!=null && !"".equals(dateOfCompletion))
 			occupationDate = sdf.parse(dateOfCompletion);
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -1119,7 +1123,7 @@ public class PropertyService  {
 		return demandDetail;
 	}
 
-	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal, FloorIF floor,
+	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal, Floor floor,
 			TaxCalculationInfo taxCalcInfo) {
 		// LOGGER.debug("Entered into createFloorDmdCalc, ptDmdCal: " + ptDmdCal
 		// + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
@@ -1205,7 +1209,7 @@ public class PropertyService  {
 			if (floorDmdCalcSet != null && floorDmdCalcSet.size() > 0) {
 				List<List<UnitTaxCalculationInfo>> unitTaxCalInfos = taxCalInfo.getUnitTaxCalculationInfos();
 				for (FloorwiseDemandCalculations floorDmdCalc : floorDmdCalcSet) {
-					FloorIF floor = floorDmdCalc.getFloor();
+					Floor floor = floorDmdCalc.getFloor();
 					UnitTaxCalculationInfo unitTaxCalInfo1 = null;
 					String floorString = (floor.getFloorNo() == null || floor.getFloorNo().equals(
 							OPEN_PLOT_UNIT_FLOORNUMBER)) ? propertyTaxUtil.getFloorStr(OPEN_PLOT_UNIT_FLOORNUMBER)
@@ -1257,10 +1261,10 @@ public class PropertyService  {
 		LOGGER.debug("Exiting from createAttributeValues");
 	}
 
-	public Date getLowestDtOfCompFloorWise(List<FloorImpl> floorList) {
+	public Date getLowestDtOfCompFloorWise(List<Floor> floorList) {
 		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
 		Date completionDate = null;
-		for (FloorIF floor : floorList) {
+		for (Floor floor : floorList) {
 			Date floorDate = null;
 			if (floor != null) {
 				try {
@@ -1410,12 +1414,12 @@ public class PropertyService  {
 
 		Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty);
 
-		for (FloorIF floor : newProperty.getPropertyDetail().getFloorDetails()) {
+		for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
 			if (floor != null) {
 				floorProxy.add(floor);
 			}
 		}
-		newProperty.getPropertyDetail().setFloorDetailsProxy(floorProxy);
+		newProperty.getPropertyDetail().setFloorDetails(floorProxy);
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
 				propCompletionDate, objectionNum, objectionDate, null, null,null,null));
 		if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
@@ -1459,6 +1463,75 @@ public class PropertyService  {
 		LOGGER.debug("Exiting from initiateModifyWfForObjection");
 	}
 
+public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProperty2, String objectionNum, Date objectionDate,
+                User objWfInitiator, String docNumber, String modifyRsn) {
+       
+	BasicProperty basicProperty = basicProperty2;
+
+        basicProperty.setAllChangesCompleted(FALSE);
+
+        LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
+       
+        PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty());
+        PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
+        
+        LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty + ", newProperty: " + newProperty);
+        List floorProxy = new ArrayList();
+        String propUsageId = null;
+        String propOccId = null;
+
+        Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty);
+
+        for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
+                if (floor != null) {
+                        floorProxy.add(floor);
+                }
+        }
+        newProperty.getPropertyDetail().setFloorDetails(floorProxy);
+        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
+                        propCompletionDate, objectionNum, objectionDate, null, null,null,null));
+        if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
+                propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
+        }
+        if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
+                propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
+        }
+        newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
+                        .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false,null,null,null,null);
+        
+        //TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
+
+/*        Set<PropertyOwnerInfo> newOwnerSet = new HashSet<PropertyOwnerInfo>();
+        for (PropertyOwnerInfo owner : oldProperty.getPropertyOwnerSet()) {
+            newOwnerSet.add(owner);
+        }
+        newProperty.setPropertyOwnerSet(newOwnerSet);*/
+        
+        newProperty.setStatus(STATUS_WORKFLOW);
+ 
+     if (newProperty.getExtra_field2() == null || newProperty.getExtra_field2().equals("")) {
+                newProperty.setExtra_field2(NOTICE127);
+        }
+        newProperty.setExtra_field3(null);
+        newProperty.setExtra_field4(null);
+        newProperty.setExtra_field5(null);
+
+        newProperty.setBasicProperty(basicProperty);
+
+        newProperty.getPtDemandSet().clear();
+       // createDemand(newProperty, oldProperty, propCompletionDate, false);
+     //   createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+        basicProperty.addProperty(newProperty);
+
+       // basicProperty = basicPrpertyService.update(basicProperty);
+        if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+          //      createAttributeValues(newProperty, null);
+        }
+        
+        LOGGER.debug("Exiting from creteNewPropertyForObjectionWorkflow");
+        return newProperty;
+}
+	
 	private Date getPropertyCompletionDate(BasicProperty basicProperty, PropertyImpl newProperty) {
 		LOGGER.debug("Entered into getPropertyCompletionDate - basicProperty.upicNo=" + basicProperty.getUpicNo());
 		Date propCompletionDate = null;
@@ -1500,8 +1573,8 @@ public class PropertyService  {
 	/*public Property createOwnersForNew(Property newProp, Property oldProp) {
 		LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; " + oldProp);
 		Address oldOwnAddr = null;
-		for (PropertyOwnerInfo owner : oldProp.getPropertyOwnerSet()) {
-			PropertyOwnerInfo newOwner = new PropertyOwnerInfo();
+		for (PropertyOwner owner : oldProp.getPropertyOwnerSet()) {
+			PropertyOwner newOwner = new PropertyOwner();
 			String ownerName = owner.getName();
 			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
 			newOwner.setName(ownerName);

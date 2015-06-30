@@ -76,7 +76,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -111,8 +110,8 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
-import org.egov.ptis.domain.entity.property.FloorIF;
-import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
@@ -301,11 +300,14 @@ public class CreatePropertyAction extends WorkflowAction {
 	public CreatePropertyAction() {
 		super();
 		property.setPropertyDetail(new BuiltUpProperty());
+		
 		this.addRelatedEntity("propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.unitType", PropertyTypeMaster.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyUsage", PropertyUsage.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyOccupation", PropertyOccupation.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.structureClassification", StructureClassification.class);
+		/*this.addRelatedEntity("propertyDetail.floorDetails",Floor.class);
+		this.addRelatedEntity("propertyDetail",PropertyDetail.class);*/
+		this.addRelatedEntity("propertyDetail.floorDetails.unitType", PropertyTypeMaster.class);
+		this.addRelatedEntity("propertyDetail.floorDetails.propertyUsage", PropertyUsage.class);
+		this.addRelatedEntity("propertyDetail.floorDetails.propertyOccupation", PropertyOccupation.class);
+		this.addRelatedEntity("propertyDetail.floorDetails.structureClassification", StructureClassification.class);
 		this.addRelatedEntity("propertyOwnerInfo.owner", Citizen.class);
 	
 	}
@@ -578,9 +580,9 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	private void setFloorDetails(Property property) {
 		LOGGER.debug("Entered into setFloorDetails, Property: " + property);
-		Set<FloorIF> flrDtSet = property.getPropertyDetail().getFloorDetails();
+		List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
 		int i = 0;
-		for (FloorIF flr : flrDtSet) {
+		for (Floor flr : flrDtSet) {
 			floorNoStr[i] = (propertyTaxUtil.getFloorStr(flr.getFloorNo()));
 			LOGGER.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
 			i++;
@@ -588,8 +590,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from setFloorDetails");
 	}
 
-	public List<FloorIF> getFloorDetails() {
-		return new ArrayList<FloorIF>(property.getPropertyDetail().getFloorDetails());
+	public List<Floor> getFloorDetails() {
+		return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
 	}
 
 	@Override
@@ -788,7 +790,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
 			} else {
 				propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail()
-						.getFloorDetailsProxy());
+						.getFloorDetails());
 			}
 		} else {
 			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
@@ -848,7 +850,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
 			} else {
 				propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail()
-						.getFloorDetailsProxy());
+						.getFloorDetails());
 			}
 		} else {
 			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
@@ -1034,7 +1036,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				addActionError(getText("mandatory.ownerName"));
 			}
 		}
-		for (FloorImpl floor : property.getPropertyDetail().getFloorDetailsProxy()) {
+		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			if (floor != null && floor.getBuiltUpArea() == null) {
 				addActionError(getText("mandatory.assbleArea"));
 			}
@@ -1043,6 +1045,10 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 
 		}
+		
+		//addActionError(getText("mandatory.assbleArea"));
+		
+		
 		if (getMutationId() == null || getMutationId() == -1) {
 			addActionError(getText("mandatory.createRsn"));
 		} else {
@@ -1208,10 +1214,11 @@ public class CreatePropertyAction extends WorkflowAction {
 				isfloorDetailsRequired = false;
 			}
 			List flrDetsProxy = new ArrayList();					
-			for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
+			for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 				flrDetsProxy.add(floor);
 			}
-			property.getPropertyDetail().setFloorDetailsProxy(flrDetsProxy);
+			//property.getPropertyDetail().setFloorDetails(property.getPropertyDetail().getFloorDetails());
+			property.getPropertyDetail().setFloorDetails(flrDetsProxy);
 		} else{
 			if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
 					.equalsIgnoreCase(PROPTYPE_STATE_GOVT)

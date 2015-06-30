@@ -41,9 +41,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
@@ -71,8 +69,8 @@ public class BuiltUpProperty extends AbstractProperty {
 	private String surveyNumber;
 	private Character fieldVerified;
 	private Date fieldVerificationDate;
-	private Set<FloorIF> floorDetails = new HashSet<FloorIF>();
-	private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();
+	private List<Floor> floorDetails = new ArrayList<Floor>();
+	/*private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();*/
 	private Integer propertyDetailsID;
 	private String water_Meter_Num;
 	private String elec_Meter_Num;
@@ -112,7 +110,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
 			Area commVacantLand, Area nonResPlotArea, 
 			Boolean irregular, String surveyNumber, Character fieldVerified,
-			Date fieldVerificationDate, Set<FloorIF> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
 			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date completion_year,
 			Date effective_date, Property property, Date updatedTime, PropertyUsage propertyUsage,
 			Date dateOfCompletion, PropertyCreationReason creationReason, PropertyTypeMaster propertyTypeMaster,
@@ -338,7 +336,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	/**
 	 * @return Returns the Set view for the FloorDetails.
 	 */
-	public Set<FloorIF> getFloorDetails() {
+	public List<Floor> getFloorDetails() {
 		return floorDetails;
 	}
 
@@ -346,7 +344,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	 * @param Set
 	 *            The Set view of floorDetails.
 	 */
-	public void setFloorDetails(Set<FloorIF> floorDetails) {
+	public void setFloorDetails(List<Floor> floorDetails) {
 		this.floorDetails = floorDetails;
 	}
 
@@ -371,10 +369,12 @@ public class BuiltUpProperty extends AbstractProperty {
 	 * @param floor
 	 *            The floor to set .
 	 */
-	public void addFloor(FloorIF floor) {
+	public void addFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.addFloor");
+		if(floor!=null){
 		getFloorDetails().add(floor);
 		no_of_floors = getFloorDetails().size();
+		}
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	 * @param floor
 	 *            The floor to set .
 	 */
-	public void removeFloor(FloorIF floor) {
+	public void removeFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.removeFloor");
 		getFloorDetails().remove(floor);
 		no_of_floors = getFloorDetails().size();
@@ -704,7 +704,7 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.propertyOccupation = propertyOccupation;
 	}
 
-	public List<FloorImpl> getFloorDetailsProxy() {
+	/*public List<FloorImpl> getFloorDetailsProxy() {
 		getFloorDetails().addAll(floorDetailsProxy);
 		return floorDetailsProxy;
 	}
@@ -712,7 +712,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
 		this.floorDetailsProxy = floorDetailsProxy;
 		getFloorDetails().addAll(floorDetailsProxy);
-	}
+	}*/
 
 	@Override
 	public String toString() {

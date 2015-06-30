@@ -1,15 +1,14 @@
 package org.egov.ptis.builder.entity.property;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.ptis.builder.entity.master.PropertyTypeMasterBuilder;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacantProperty;
-import org.junit.Ignore;
 
 /**
  * @author Ramki
@@ -35,14 +34,14 @@ public class PropertyDetailBuilder {
 		return this;
 	}
 
-	public PropertyDetailBuilder withFloorDetails(final Set<FloorIF> floorDetails) {
+	public PropertyDetailBuilder withFloorDetails(final List<Floor> floorDetails) {
 		propertyDetail.setFloorDetails(floorDetails);
 		return this;
 	}
 
 	public PropertyDetailBuilder withDefaults() {
-		Set<FloorIF> floorSet = new HashSet<FloorIF>();
-		FloorIF floor = new FloorBuilder().withDefaults().build();
+		List<Floor> floorSet = new ArrayList<Floor>();
+		Floor floor = new FloorBuilder().withDefaults().build();
 		floorSet.add(floor);
 		propertyDetail.setPropertyTypeMaster(new PropertyTypeMasterBuilder().withType("Residential").build());
 		propertyDetail.setFloorDetails(floorSet);

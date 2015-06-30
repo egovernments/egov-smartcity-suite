@@ -126,7 +126,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
-import org.egov.ptis.domain.entity.property.FloorIF;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
@@ -166,7 +166,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	@Autowired
 	private PropertyPersistenceService basicPrpertyService;
 	private PersistenceService<Property, Long> propertyImplService;
-	private PersistenceService<FloorIF, Long> floorService;
+	private PersistenceService<Floor, Long> floorService;
 	private BasicProperty basicProp;
 	private PropertyImpl oldProperty = new PropertyImpl();
 	private PropertyImpl propertyModel = new PropertyImpl();
@@ -269,13 +269,13 @@ public class ModifyPropertyAction extends WorkflowAction {
 		super();
 		propertyModel.setPropertyDetail(new BuiltUpProperty());
 		this.addRelatedEntity("propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.unitType",
+		this.addRelatedEntity("propertyDetail.floorDetails.unitType",
 				PropertyTypeMaster.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyUsage",
+		this.addRelatedEntity("propertyDetail.floorDetails.propertyUsage",
 				PropertyUsage.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyOccupation",
+		this.addRelatedEntity("propertyDetail.floorDetails.propertyOccupation",
 				PropertyOccupation.class);
-		this.addRelatedEntity("propertyDetail.floorDetailsProxy.structureClassification",
+		this.addRelatedEntity("propertyDetail.floorDetails.structureClassification",
 				StructureClassification.class);
 	}
 
@@ -359,15 +359,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 								.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
 					isfloorDetailsRequired = false;
 				}
-				List flrDetsProxy = new ArrayList();
-				for (FloorIF floor : propertyModel.getPropertyDetail().getFloorDetails()) {
+				//List flrDetsProxy = new ArrayList();
+				for (Floor floor : propertyModel.getPropertyDetail().getFloorDetails()) {
 					if (floor.getPropertyOccupation() != null && floor.getPropertyOccupation()
 							.getOccupancyCode().equalsIgnoreCase(PropertyTaxConstants.TENANT)) {
 						isTenantFloorPresent = true;
 					}
-					flrDetsProxy.add(floor);
+					//flrDetsProxy.add(floor);
 				}
-				propertyModel.getPropertyDetail().setFloorDetailsProxy(flrDetsProxy);
+				propertyModel.getPropertyDetail().setFloorDetails(propertyModel.getPropertyDetail().getFloorDetails());
 			} else {
 				if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
 						.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
@@ -775,7 +775,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
 			} else {
 				propCompletionDate = propService.getLowestDtOfCompFloorWise(
-						propertyModel.getPropertyDetail().getFloorDetailsProxy());
+						propertyModel.getPropertyDetail().getFloorDetails());
 			}
 
 		} else {
@@ -1207,9 +1207,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private void setFloorDetails(Property property) {
 		LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
-		Set<FloorIF> flrDtSet = property.getPropertyDetail().getFloorDetails();
+		List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
 		int i = 0;
-		for (FloorIF flr : flrDtSet) {
+		for (Floor flr : flrDtSet) {
 			floorNoStr[i] = (propertyTaxUtil.getFloorStr(flr.getFloorNo()));
 			i++;
 		}
@@ -1217,8 +1217,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from setFloorDetails: ");
 	}
 
-	public List<FloorIF> getFloorDetails() {
-		return new ArrayList<FloorIF>(propertyModel.getPropertyDetail().getFloorDetails());
+	public List<Floor> getFloorDetails() {
+		return new ArrayList<Floor>(propertyModel.getPropertyDetail().getFloorDetails());
 	}
 
 	@Override
@@ -1472,8 +1472,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propService.createFloors(propertyModel, mutationCode, propUsageId, propOccId,
 				isfloorDetailsRequired);
 
-		for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
-			for (FloorIF newFloorInfo : propertyModel.getPropertyDetail().getFloorDetails()) {
+		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+			for (Floor newFloorInfo : propertyModel.getPropertyDetail().getFloorDetails()) {
 				if (floor.getId().equals(newFloorInfo.getId())) {
 					floor.setExtraField1(newFloorInfo.getExtraField1());
 					floor.setUnitType(newFloorInfo.getUnitType());
@@ -1520,7 +1520,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
 			} else {
 				propCompletionDate = propService.getLowestDtOfCompFloorWise(
-						propertyModel.getPropertyDetail().getFloorDetailsProxy());
+						propertyModel.getPropertyDetail().getFloorDetails());
 			}
 
 		} else {
@@ -2014,11 +2014,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 		this.updateData = updateData;
 	}
 
-	public PersistenceService<FloorIF, Long> getFloorService() {
+	public PersistenceService<Floor, Long> getFloorService() {
 		return floorService;
 	}
 
-	public void setFloorService(PersistenceService<FloorIF, Long> floorService) {
+	public void setFloorService(PersistenceService<Floor, Long> floorService) {
 		this.floorService = floorService;
 	}
 

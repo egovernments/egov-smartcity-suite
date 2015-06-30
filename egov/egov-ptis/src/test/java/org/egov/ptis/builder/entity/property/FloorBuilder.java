@@ -3,7 +3,7 @@ package org.egov.ptis.builder.entity.property;
 import java.util.Date;
 
 import org.egov.commons.Area;
-import org.egov.ptis.domain.entity.property.FloorImpl;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.junit.Ignore;
@@ -13,13 +13,13 @@ import org.junit.Ignore;
  */
 
 public class FloorBuilder {
-	private final FloorImpl floor;
+	private final Floor floor;
 
 	public FloorBuilder() {
-		floor = new FloorImpl();
+		floor = new Floor();
 	}
 
-	public FloorImpl build() {
+	public Floor build() {
 		return floor;
 	}
 

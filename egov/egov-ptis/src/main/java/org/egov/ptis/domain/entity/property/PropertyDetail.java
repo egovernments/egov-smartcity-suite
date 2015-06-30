@@ -86,7 +86,7 @@ public interface PropertyDetail extends Property {
 
 	public void setDateOfCompletion(Date dateOfCompletion);
 
-	public void addFloor(FloorIF floor);
+	public void addFloor(Floor floor);
 
 	/**
 	 * This method removes the Floor Object from the Set view of the Floor
@@ -94,7 +94,7 @@ public interface PropertyDetail extends Property {
 	 * @param floor
 	 *            The floor to set .
 	 */
-	public void removeFloor(FloorIF floor);
+	public void removeFloor(Floor floor);
 
 	public Integer getNo_of_floors();
 
@@ -151,25 +151,15 @@ public interface PropertyDetail extends Property {
 	/**
 	 * @return Returns the Set for FloorDetails.
 	 */
-	public Set<FloorIF> getFloorDetails();
+	public List<Floor> getFloorDetails();
 
 	/**
 	 * @param floorDetails
 	 *            The Set view of floorDetails to set.
 	 */
-	public void setFloorDetails(Set<FloorIF> floorDetails);
+	public void setFloorDetails(List<Floor> floorDetails);
 
-	/**
-	 * @return Returns the List for FloorDetailsProxy.
-	 */
-	public List<FloorImpl> getFloorDetailsProxy();
-
-	/**
-	 * @param floorDetails
-	 *            The Set view of floorDetailsProxy to List.
-	 */
-	public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy);
-
+	
 	/**
 	 * @return Returns the Sital Area.
 	 */

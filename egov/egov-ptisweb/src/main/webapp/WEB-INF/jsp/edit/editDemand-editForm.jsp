@@ -472,7 +472,7 @@
 		<script type="text/javascript">
 			//alert('isFirstInstVisible' + isFirstInstVisible);
 			//rearrangeIndexes();	
-		</script
+		</script>
 	</s:if>
 </body>
 </html>
