@@ -182,7 +182,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
-			if (property.getPropertyDetail().getExtra_field6() != null) {
+			if (StringUtils.isNotBlank(property.getPropertyDetail().getExtra_field6())) {
 				viewMap.put(
 						"propertyCategory",
 						persistenceService.find("from Category c where c.id = ?",
