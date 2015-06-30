@@ -197,31 +197,97 @@
 								
 								<div class="panel-heading">
 									<div class="panel-title">
-										Details
+										Connection Details
 									</div>
 									
 								</div>
-								<div class="panel-body">
-									
-									<div class="row">
-										<div class="col-xs-3 add-margin">
-											Reason for change of use<span class="mandatory"></span>
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered">	
+									<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Connection Type<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select class="form-control"><option value="">Select from below</option><option value="">Metered</option><option value="">Non-Metered</option></select>
+											</div>
+											<label class="col-sm-2 control-label text-right">Usage Type<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select class="form-control"><option value="">Select from below</option><option value="">Commercial</option><option value="">Domestic</option><option value="">Residential</option><option value="">Non-Residential</option></select>
+											</div>
 										</div>
-										<div class="col-xs-6 add-margin view-content">
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Category<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select class="form-control"><option value="">Select from below</option><option value="">BPL</option><option value="">Domestic</option><option value="">Commercial</option><option value="">General</option></select>
+											</div>
+											<label class="col-sm-2 control-label text-right">Water Source Type<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select class="form-control"><option value="">Select from below</option><option value="">Ground Water</option><option value="">Surface Water</option></select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">H.S.C Pipe Size (Inches)<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select class="form-control"><option value="">Select from below</option><option value="">1 Inch</option><option value="">1/2 Inch</option><option value="">3/4 Inch</option><option value="">Zero Inch</option></select>
+											</div>
+											<label class="col-sm-2 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control">
+											</div>
+										</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label text-right">Reason for change of use<span class="mandatory"></span></label>
+										<div class="col-sm-3 add-margin">
 											<select class="form-control"><option>Select from below</select>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-xs-3 add-margin">
-											Comments<span class="mandatory"></span>
-										</div>
-										<div class="col-xs-6 add-margin view-content">
+									<div class="form-group">
+										<label class="col-sm-3 control-label text-right">Comments<span class="mandatory"></span></label>
+										<div class="col-sm-8 add-margin">
 											<textarea class="form-control"></textarea>
 										</div>
 									</div>
-									<div class="row text-center">
+									<div class="panel-heading custom_form_panel_heading">
+											<div class="panel-title">
+												Enclosed Documents - Check List
+											</div>
+										</div>
+										<div class="col-sm-12 view-content header-color hidden-xs">
+										<div class="col-sm-3 table-div-column">Document Name</div>											
+										<div class="col-sm-3 table-div-column">Document Number (<span class="mandatory"></span> )</div>										
+										<div class="col-sm-3 table-div-column">Document Date (<span class="mandatory"></span> )</div>					
+										<div class="col-sm-3 table-div-column">Attach Document(<span class="mandatory"></span> )</div>																					
+										</div>
+										<div class="form-group">
+											<div class="col-sm-3 add-margin">
+												<input type="checkbox"> House Tax Registration Document
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="textbox" class="form-control">
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control datepicker">
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="file" id="exampleInputFile" class="file-ellipsis">
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-3 add-margin">
+												<input type="checkbox"> House Tax Registration Document
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="textbox" class="form-control">
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control datepicker">
+											</div>
+											<div class="col-sm-3 add-margin">
+												<input type="file" id="exampleInputFile1" class="file-ellipsis">
+											</div>
+										</div>
+									<div class="form-group text-center">
 										<a href="changeofuseack.html" class="btn btn-primary">Submit</a>
 									</div>
+									</form>
 								</div>
 							</div>					
 						</div>
