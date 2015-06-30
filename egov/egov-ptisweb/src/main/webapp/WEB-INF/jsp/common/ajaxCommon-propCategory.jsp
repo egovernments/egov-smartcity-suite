@@ -1,5 +1,5 @@
 <%@page contentType="text/json" %>
-<%@taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>
+<%@taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
 { "ResultSet": { "Result":[
 <s:iterator var="s" value="propTypeCategoryMap" status="status">
     {"Text":"<s:property value="%{value}" />",

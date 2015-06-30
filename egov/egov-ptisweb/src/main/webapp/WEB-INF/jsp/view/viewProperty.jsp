@@ -39,7 +39,7 @@
 -->
 
 <%@page import="org.egov.ptis.domain.entity.property.PropertyOwnerInfo"%>
-<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
