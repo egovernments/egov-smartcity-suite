@@ -182,7 +182,8 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
-			if (property.getPropertyDetail().getExtra_field6() != null) {
+			
+			if (StringUtils.isNotBlank(property.getPropertyDetail().getExtra_field6())) {
 				viewMap.put(
 						"propertyCategory",
 						persistenceService.find("from Category c where c.id = ?",
@@ -257,7 +258,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			return "view";
 		} catch (Exception e) {
 			LOGGER.error("Exception in View Property: ", e);
-			throw new EGOVRuntimeException("Exception : " + e);
+			throw new EGOVRuntimeException("Exception in View Property: ", e);
 		}
 	}
 
