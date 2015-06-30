@@ -2005,3 +2005,7 @@ border-top: 1px solid #ccc;
 table.dataTable.nopointer tbody tr:hover {
 cursor:auto;
 }
+
+.file-ellipsis{
+	white-space: nowrap;width: 250px;overflow: hidden;text-overflow: ellipsis;
+}
