@@ -40,8 +40,6 @@
 package org.egov.ptis.domain.bill;
 
 import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
@@ -51,7 +49,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTAN
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +65,7 @@ import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
+import org.egov.demand.interfaces.RebateCalculator;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
@@ -89,17 +87,18 @@ import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.RebatePeriod;
+import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author satyam
  * 
  */
 public class PropertyTaxBillable extends AbstractBillable implements Billable,
-		LatePayPenaltyCalculator {
+		LatePayPenaltyCalculator,RebateCalculator {
 
 	private BasicProperty basicProperty;
 	private Long userId;
@@ -134,7 +133,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
 	private Boolean isMiscellaneous = Boolean.FALSE;
 	private BigDecimal mutationFee;
-
+	
+	@Autowired
+	private RebatePeriodService rebatePeriodService;
+	
 	@Override
 	public Boolean getOverrideAccountHeadsAllowed() {
 		Boolean retVal = Boolean.FALSE;
@@ -896,16 +898,29 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 		return reasonTax;
 	}
 
-	/**
-	 * Gives the Rebate applicable for advance payment
-	 * 
-	 * @param currentTax
-	 * @return applicable rebate amount
-	 */
-	public BigDecimal calculateAdvanceRebate(BigDecimal currentTax) {
-		return currentTax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100);
+	@Override
+	public BigDecimal calculateEarlyPayRebate(BigDecimal tax) {
+		if(isEarlyPayRebateActive()){
+			return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100);
+		}
+		else{
+			return BigDecimal.ZERO;
+		}
 	}
 
+	@Override
+	public boolean isEarlyPayRebateActive() {
+		boolean value=false;
+		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
+		if(rebatePeriod!=null){
+			if(rebatePeriod.getRebateDate().compareTo(new Date())!=1){
+				value = true;
+			}
+		}
+		return value;
+	}
+	
 	public Boolean isMiscellaneous() {
 		return isMiscellaneous;
 	}
