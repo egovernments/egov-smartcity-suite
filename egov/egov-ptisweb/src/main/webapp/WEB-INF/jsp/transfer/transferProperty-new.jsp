@@ -49,7 +49,7 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
-		document.getElementById("saleDtls").className = "hiddentext";
+		/*document.getElementById("saleDtls").className = "hiddentext";
 		document.getElementById("crtOrderNum").className = "hiddentext";
 		document.getElementById("saleDtls").readOnly = true;
 		document.getElementById("crtOrderNum").readOnly = true;
@@ -62,7 +62,7 @@
 		}
 		if (deedDate == "" || deedDate == "DD/MM/YYYY" || deedDate == undefined) {
 			waterMarkInitialize('deedDate', 'DD/MM/YYYY');
-		}
+		}*/
 
 		try { 
 			jQuery(".datepicker").datepicker({
@@ -94,50 +94,99 @@
 				<s:token/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<div class="headingbg">
-						<s:text name="transferProperty" />
+						<s:text name="transferortitle" />
 					</div>
+					<tr>
+						<td class="bluebox2" style="width:5%;">
+							&nbsp;
+						</td>
+						<td class="bluebox" style="width:20%">
+							<s:text name="prop.Id"></s:text> :
+						</td>
+						<td class="bluebox">
+							<span class="bold"><s:property value="indexNumber" /></span>
+						</td>
+						<td class="bluebox">
+							&nbsp;
+						</td>
+						<td style="width:25%;">&nbsp;</td>
+					</tr>
+
+					<tr>
+						<td colspan="5">
+							<table class="tablebottom" id="" width="100%" border="0"
+								cellpadding="0" cellspacing="0">
+								<tbody>
+									<tr>
+										<th class="bluebgheadtd">Aadhar No</th>
+										<th class="bluebgheadtd">Owner Name</th>
+										<th class="bluebgheadtd">Gender</th>
+										<th class="bluebgheadtd">Father/Husband Name</th>
+										<th class="bluebgheadtd">Mobile Number</th>
+										<th class="bluebgheadtd">Email Address</th>
+
+									</tr>
+									<tr>
+										<td class="blueborderfortd" align="center">-</td>
+										<td class="blueborderfortd" align="center"><span class="bold"><s:property value="oldOwnerName" /></span></td>
+										<td class="blueborderfortd" align="center">-</td>
+										<td class="blueborderfortd" align="center">-</td>
+										<td class="blueborderfortd" align="center">-</td>
+										<td class="blueborderfortd" align="center">-</td>
+									</tr>
+								</tbody>
+							  </table> 
+						</td>
+					</tr>
+
 					<tr>
 						<td class="bluebox2">
 							&nbsp;
 						</td>
 						<td class="bluebox">
-							<s:text name="prop.Id"></s:text>
+							<s:text name="PropertyAddress"></s:text> :
 						</td>
 						<td class="bluebox">
-							<s:property value="indexNumber" />
+							<span class="bold"><s:property value="propAddress" /></span>
 						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td class="bluebox">
+							<s:text name="Zone"></s:text> :
+						</td>
+						<td class="bluebox">
+							<span class="bold"><s:property value="propAddress" /></span>
 						</td>
 					</tr>
+					
 					<tr>
 						<td class="greybox2">
 							&nbsp;
 						</td>
 						<td class="greybox">
-							<s:text name="assesseeName"></s:text>
+							<s:text name="Ward" /> :
 						</td>
 						<td class="greybox">
-							<s:property value="oldOwnerName" />
+							<span class="bold"><s:property value="propAddress" /></span>
 						</td>
-						<td class="greybox" colspan="2">
-							&nbsp;
+						<td class="greybox">
+							<s:text name="block" /> :
+						</td>
+						<td class="greybox">
+							<span class="bold"><s:property value="propAddress" /></span>
 						</td>
 					</tr>
+					
 					<tr>
-						<td class="bluebox2">
+						<td class="greybox2">
 							&nbsp;
 						</td>
-						<td class="bluebox">
-							<s:text name="PropertyAddress"></s:text>
+						<td class="greybox">
+							<s:text name="currentpropertytax" /> :
 						</td>
-						<td class="bluebox">
-							<s:property value="propAddress" />
-						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td class="greybox">
+							<span class="bold"><s:property value="propAddress" /></span>
 						</td>
 					</tr>
+					
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
@@ -145,31 +194,16 @@
 							</div>
 						</td>
 					</tr>
+
 					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox" style="width: 20%;">
-							<s:text name="application.date"></s:text>
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:date name="noticeDate" var="applDate" format="dd/MM/yyyy" />
-							<s:textfield name="noticeDate" id="noticeDate" maxlength="10"
-								value="%{applDate}"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onfocus="waterMarkTextIn('noticeDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('noticeDate','DD/MM/YYYY');"
-								cssClass="datepicker" />
-						</td>
-						<td class="bluebox">
-							<s:text name="applicant.name"/>
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="applicantName" value="%{applicantName}" id="applicantName"/>
+						<td colspan="5">
+							<div id="OwnerNameDiv">
+								<%@ include file="../common/OwnerNameForm.jsp"%>
+							</div>
+							<br/>
 						</td>
 					</tr>
+
 					<tr>
 						<td class="greybox2">
 							&nbsp;
@@ -191,43 +225,12 @@
 							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:textarea cols="50" rows="2" name="extraField3" id="saleDtls"
+							<s:textarea cols="30" rows="2" name="extraField3" id="saleDtls"
 								onchange="return validateMaxLength(this);"
 								onblur="trim(this,this.value);" value="%{extraField3}"></s:textarea>
 						</td>
 					</tr>
-					<tr id="mutationRsnRow">
-						<td class="bluebox2" colspan="1">&nbsp;</td>
-						<td class="bluebox" colspan="1">
-							<s:text name="othertransreason"></s:text>
-							<span class="mandatory1">*</span>
-						</td>
-						<td class="bluebox">
-							<s:textfield id="mutationRsn" name="extraField4" value="%{extraField4}" size="40" maxlength="128"></s:textfield>
-						</td>
-						<td class="bluebox" colspan="2">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="subregoffName" />
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="extraField2" id="subRegName"
-								value="%{extraField2}" maxlength="256"/>
-						</td>
-						<td class="bluebox">
-							<s:text name="crtOrderNum" />
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="mutationNo" id="crtOrderNum"
-								value="%{mutationNo}" maxlength="60"/>
-						</td>
-					</tr>
+					
 					<tr>
 						<td class="greybox2">
 							&nbsp;
@@ -256,68 +259,98 @@
 							&nbsp;
 						</td>
 						<td class="bluebox">
-							Upload Document
-							
+							<s:text name="docValue" /> :
 						</td>
 						<td class="bluebox">
-							<input type="file" name="upload" class="button" width="500px" value="Upload Document"/>
+							<s:textfield name="txtdocval" id="txtdocval" maxlength="64"/>
 						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td class="bluebox">
+							<s:text name="payablefee" /><span class="mandatory1">*</span> :
 						</td>
-					</tr>
-					<tr>
-						<td colspan="6">
-							<div class="headingsmallbg">
-								<span class="bold"> Owner details</span>
-							</div>
+						<td class="bluebox">
+							<s:textfield name="txtfee" id="txtfee" />
 						</td>
 					</tr>
-					<tr>
-						<td class="bluebox" colspan="6">
-							<div id="OwnerNameDiv">
-								<%@ include file="../common/OwnerNameForm.jsp"%>
-							</div>
-						</td>
-					</tr>
+					
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<s:text name="feeDtls" />
+								<s:text name="docsectiontitle" /> 
 							</div>
 						</td>
 					</tr>
-					<tr>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="marketValue"></s:text>
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="marketValue" id="marketValue" value="%{marketValue}" maxlength="12"></s:textfield>
-						</td>
-					</tr>
-					<tr>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="mutationFee"></s:text>
-							<span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="mutationFee" id="mutationFee" value="%{mutationFee}" maxlength="12"></s:textfield>
-						</td>
-						<td class="bluebox">
-							<s:text name="otherFee"/> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="otherFee" id="otherFee" value="%{otherFee}" maxlength="12"></s:textfield>
-							<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}"></s:hidden>
-							<s:hidden id="oldOwnerName" name="oldOwnerName"
-								value="%{oldOwnerName}"></s:hidden>
-							<s:hidden id="propAddress" name="propAddress" value="%{propAddress}"></s:hidden>
-							<s:hidden name="modelId" id="modelId" value="%{modelId}" />	
-						</td>
-					</tr>
+
+                    <tr>
+						<td colspan="5">
+						<table class="tablebottom" id="nameTable" width="100%" border="0"
+							cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.docdate" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.docdetails" /></th>
+								</tr>
+	
+								<tr>
+									<td class="blueborderfortd" align="center">
+									  <s:checkbox name="docDetail[0].cbenclosed" id="docDetail[0].cbenclosed"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:select name="docDetail[0].selectdoctype" id="docDetail[0].selectdoctype"
+											list="#{'-1':'select', '1':'Document Type 1', '2':'Document Type 2'}"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:textfield name="docDetail[0].txtdocdate" id="docDetail[0].txtdocdate" cssClass='datepicker' maxlength="10"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+										<textarea name="docDetail[0].tadocdetail" id="docDetail[0].tadocdetail" cols="40", rows="2"></textarea>
+									</td>
+	
+								</tr>
+	
+	
+								<tr>
+									<td class="blueborderfortd" align="center">
+									  <s:checkbox name="docDetail[1].cbenclosed" id="docDetail[1].cbenclosed"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:select name="docDetail[1].selectdoctype" id="docDetail[1].selectdoctype"
+											list="#{'-1':'select', '1':'Document Type 1', '2':'Document Type 2'}"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:textfield name="docDetail[1].txtdocdate" id="docDetail[1].txtdocdate" cssClass='datepicker' maxlength="10"/>
+									</td>
+									<td class="blueborderfortd" align="center" style="width: 1--;">
+										<textarea name="docDetail[1].tadocdetail" id="docDetail[1].tadocdetail" cols="40", rows="2"></textarea>
+									</td>
+	
+								</tr>
+								
+								<tr>
+									<td class="blueborderfortd" align="center">
+									  <s:checkbox name="docDetail[2].cbenclosed" id="docDetail[2].cbenclosed"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:select name="docDetail[2].selectdoctype" id="docDetail[2].selectdoctype"
+											list="#{'-1':'select', '1':'Document Type 1', '2':'Document Type 2'}"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:textfield name="docDetail[2].txtdocdate" id="docDetail[2].txtdocdate" cssClass='datepicker' maxlength="10"/>
+									</td>
+									<td class="blueborderfortd" align="center" style="width: 1--;">
+										<textarea name="docDetail[2].tadocdetail" id="docDetail[2].tadocdetail" cols="40", rows="2"></textarea>
+									</td>
+	
+								</tr>
+	
+	
+							</tbody>
+						</table>
+					</td>
+				 </tr>
+
+
 				</table>
         		<%@ include file="../workflow/property-workflow.jsp" %>  
        			 <div class="buttonbottom">
