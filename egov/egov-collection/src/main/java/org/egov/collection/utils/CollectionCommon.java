@@ -186,7 +186,7 @@ public class CollectionCommon {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
                         + "]");
-                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                templateName = "PT_collection_receipt"; //CollectionConstants.RECEIPT_TEMPLATE_NAME;
 
                 if (!reportService.isValidTemplate(templateName)) {
                     // No template available for creating the receipt report.

@@ -45,7 +45,7 @@
 
 	 <tr>
     	<td width="100%" class="greyboxwithlink" >
-    		<table width="100%" cellpadding="0" cellspacing="0" border="0" align="left">
+    	<table width="100%" cellpadding="0" cellspacing="0" border="0" align="left">
 		<tr>
 			<td width="20%"><span class="boldblue"><s:text name="billreceipt.billnumber"/></span></td>
 			<td width="20%"><span class="boldblue"><s:text name="billreceipt.additionalinfo"/></span></td>
