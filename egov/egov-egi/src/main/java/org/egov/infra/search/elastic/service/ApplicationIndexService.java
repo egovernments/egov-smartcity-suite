@@ -75,7 +75,7 @@ public class ApplicationIndexService {
 	@Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
 	public ApplicationIndex createApplicationIndex(ApplicationIndex applicationIndex) {
 		
-		CityWebsite cityWebsite = cityWebsiteService.getCityWebsiteByCode(EgovThreadLocals.getCityCode());
+		CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
 		
 		applicationIndex.setUlbName(cityWebsite.getCityName());
 		applicationIndex.setDistrictName(cityWebsite.getDistrictName());
