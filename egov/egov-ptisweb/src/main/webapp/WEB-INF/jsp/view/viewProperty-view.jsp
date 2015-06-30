@@ -158,8 +158,8 @@
 			</c:if>		
 			<s:if test="basicProperty.isDemandActive == true">
 				<input type="button" class="buttonsubmit" name="btnModifyProperty"
-					id="btnModifyProperty" value="Modification"
-					onclick="window.location='../modify/modifyProperty!modifyOrDataUpdateForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
+					id="btnModifyProperty" value="Addition/Alteration of Assessment"
+					onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 			</s:if>
 			<s:if test="isUserOperator && basicProperty.isDemandActive == true}">
 				<input type="button" class="buttonsubmit" name="btnTrnsProperty"

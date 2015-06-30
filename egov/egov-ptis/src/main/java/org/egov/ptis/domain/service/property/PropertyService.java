@@ -433,7 +433,7 @@ public class PropertyService  {
 		List<Installment> instList = new ArrayList<Installment>();
 		instList = new ArrayList<Installment>(instTaxMap.keySet());
 		LOGGER.debug("createDemand: instList: " + instList);
-		currentInstall = propertyTaxUtil.getCurrentInstallment();
+		currentInstall = PropertyTaxUtil.getCurrentInstallment();
 
 		for (Installment installment : instList) {
 			TaxCalculationInfo taxCalcInfo = instTaxMap.get(installment);

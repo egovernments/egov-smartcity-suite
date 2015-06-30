@@ -40,12 +40,18 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTVERIFIER_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
 import java.io.File;
 import java.text.ParseException;
@@ -56,6 +62,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
@@ -84,6 +91,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -91,6 +99,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;
 
+	private static final String APPROVED = "Approved";
+	private static final String REJECTED = "Rejected";
 	protected PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	private SecurityUtils securityUtils;
@@ -109,6 +119,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	protected boolean allChangesCompleted;
 	protected String fromDataEntry;
 	protected String userRole;
+	@Autowired
 	private AssignmentService assignmentService;
 	@Autowired
 	private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
@@ -427,6 +438,64 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
 		property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED)
 				.withOwner(position).withComments("Property Workflow Ended");
+	}
+	
+	public void transitionWorkFlow(PropertyImpl property) {
+		final DateTime currentDate = new DateTime();
+		User user = securityUtils.getCurrentUser();
+		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+		String beanActionName[] = workflowBean.getActionName().split(":");
+		String nextAction = null;
+		Long approverUserdId = null;
+
+		if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
+			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
+				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+				Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean
+						.getApproverUserId());
+				property.transition().start().withSenderName(user.getName())
+						.withComments(workflowBean.getComments())
+						.withDateInfo(currentDate.toDate()).withStateValue(beanActionName[0])
+						.withOwner(nextOwner.getPosition()).withNextAction(nextAction);
+			} else if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+				property.transition().end();
+			} else {
+				property.transition().end();
+			}
+
+		} else if (REVENUE_OFFICER_DESGN.equals(userAssignment.getDesignation().getName())) {
+			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
+				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+				approverUserdId = workflowBean.getApproverUserId();
+			}
+			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+				nextAction = userAssignment.getDesignation().getName() + " " + REJECTED;
+				approverUserdId = property.getCreatedBy().getId();
+			}
+			transition(property, beanActionName, nextAction, approverUserdId);
+		} else if (COMMISSIONER_DESGN.equals(userAssignment.getDesignation().getName())) {
+			nextAction = userAssignment.getDesignation().getName();
+			approverUserdId = property.getCreatedBy().getId();
+			if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
+				nextAction = nextAction + " " + APPROVED;
+			}
+			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+				nextAction = nextAction + " " + REJECTED;
+			}
+			transition(property, beanActionName, nextAction, approverUserdId);
+		}
+
+		LOGGER.debug("Exiting method : transitionWorkFlow");
+	}
+
+	private void transition(PropertyImpl property, String[] beanActionName, String nextAction,
+			Long approverUserdId) {
+		final DateTime currentDate = new DateTime();
+		Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(approverUserdId);
+		property.transition().withSenderName(securityUtils.getCurrentUser().getName())
+				.withComments(workflowBean.getComments()).withDateInfo(currentDate.toDate())
+				.withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition())
+				.withNextAction(nextAction);
 	}
 
 	public WorkflowBean getWorkflowBean() {
