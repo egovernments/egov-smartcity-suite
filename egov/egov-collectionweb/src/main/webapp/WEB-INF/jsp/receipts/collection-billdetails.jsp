@@ -37,11 +37,12 @@
  
    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page language="java" pageEncoding="UTF-8"%>
 
 <%int i=1;%>
 <%int rcptDtlCnt=0; %>
-<s:iterator value="%{modelPayeeList}" status="rowpayeestatus">
- <s:iterator value="%{receiptHeaders}" status="receiptheaderrowstatus"> <!--  iterate through receipt headers -->
+
 	 <tr>
     	<td width="100%" class="greyboxwithlink" >
     		<table width="100%" cellpadding="0" cellspacing="0" border="0" align="left">
@@ -57,7 +58,7 @@
 			<td class="textholder"><s:property value="%{displayMsg}"/></td>
 			<td class="textholder"><s:property value="%{consumerCode}"/></td>
 			<td class="textholderl"><s:property value="%{payeename}"/>,<s:property value="%{referenceDesc}"/></td>
-			<td class="textholderl"><div id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />-title" class="billdetailaction"><s:text name="billreceipt.accountdetails"/></div></td>	
+			<td class="textholderl"><div id="bobcontent-title" class="billdetailaction"><s:text name="billreceipt.accountdetails"/></div></td>	
 		</tr>
 		</table>
         </td>
@@ -65,7 +66,7 @@
 
  	<tr>
 	  <td>
-	    <div class="switchgroup1" id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
+	    <div class="switchgroup1" id="bobcontent">
 		      <table width="80%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		        <tr>
 		          <td class="blueborderfortd"><div class="billscroller">
@@ -109,5 +110,3 @@
 	        </table> <!-- End of table enclosing all account detail tables -->
 	      </div></td>
 	  </tr>
-  </s:iterator><!-- end of iterating through receipt headers -->
-</s:iterator> <!--  iterating through receipt payee list(model) end -->

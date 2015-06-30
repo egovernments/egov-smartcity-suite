@@ -451,18 +451,18 @@ function readOnlyCheckBox() {
 					id="submitCollections" name="submitCollections"
 					value="Submit Collections" method="submitCollections"
 					disabled="false"
-					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow!submitCollections.action'" />
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-submitCollections.action'" />
 			</s:if> <!-- else show only approve and reject buttons --> <s:else>
 				<s:submit type="submit" cssClass="buttonsubmit"
 					id="approveCollections" name="approveCollections"
 					value="Approve Collections" method="approveCollections"
 					disabled="false"
-					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow!approveCollections.action'" />
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-approveCollections.action'" />
 				&nbsp;<s:submit type="submit" cssClass="buttonsubmit"
 					id="rejectCollections" name="rejectCollections"
 					value="Reject Collections" method="rejectCollections"
 					disabled="false"
-					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow!rejectCollections.action'" />
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-rejectCollections.action'" />
 			</s:else>
 			&nbsp;<input type="button" class="button" id="buttonClose"
 				value="<s:text name='common.buttons.close'/>"

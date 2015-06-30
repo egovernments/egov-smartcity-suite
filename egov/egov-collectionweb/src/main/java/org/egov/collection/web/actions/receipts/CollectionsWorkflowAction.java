@@ -56,7 +56,6 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.lib.security.terminal.model.Location;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for "Approve Collections"
@@ -74,6 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Results({
     @Result(name=ReceiptAction.SUCCESS,location="collectionsWorkflow-success.jsp"),
     @Result(name=ReceiptAction.INDEX, location="collectionsWorkflow-index.jsp"),
+    @Result(name=ReceiptAction.ERROR,location="collectionsWorkflow-error.jsp")
   })
 public class CollectionsWorkflowAction extends BaseFormAction {
 
@@ -540,6 +540,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 * 
 	 * @return SUCCESS/ERROR
 	 */
+	@Action(value="/receipts/collectionsWorkflow-submitCollections") 
 	public String submitCollections() {
 		wfAction = CollectionConstants.WF_ACTION_SUBMIT;
 		return updateReceiptWorkflowStatus(wfAction, remarks);
@@ -550,6 +551,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 * 
 	 * @return SUCCESS/ERROR
 	 */
+	@Action(value="/receipts/collectionsWorkflow-approveCollections") 
 	public String approveCollections() {
 		wfAction = CollectionConstants.WF_ACTION_APPROVE;
 		return updateReceiptWorkflowStatus(wfAction, remarks);
@@ -560,6 +562,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 * 
 	 * @return SUCCESS/ERROR
 	 */
+	@Action(value="/receipts/collectionsWorkflow-rejectCollections") 
 	public String rejectCollections() {
 		wfAction = CollectionConstants.WF_ACTION_REJECT;
 		return updateReceiptWorkflowStatus(wfAction, remarks);

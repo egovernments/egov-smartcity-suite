@@ -334,20 +334,13 @@ public class ReceiptAction extends BaseFormAction {
 				populateBankBranchList(true);
 				
 				receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
-
-				/*modelPayeeList = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
-				for (ReceiptPayeeDetails payeeDetails : modelPayeeList) {
-					for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders()) {
-						totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader
-								.getTotalAmountToBeCollected());
-						for (ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
-							rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
-									BigDecimal.ROUND_UP);
-						}
-						this.setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
-					}
-				}*/
-				
+	            totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader
+	                            .getTotalAmountToBeCollected());
+	            for (ReceiptDetail rDetails : receiptHeader.getReceiptDetails()) {
+	                    rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
+	                                    BigDecimal.ROUND_UP);
+	            }
+	            this.setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
 				if(totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1){
 					addActionError(getText("billreceipt.totalamountlessthanzero.error"));
 					LOGGER.info(getText("billreceipt.totalamountlessthanzero.error"));
