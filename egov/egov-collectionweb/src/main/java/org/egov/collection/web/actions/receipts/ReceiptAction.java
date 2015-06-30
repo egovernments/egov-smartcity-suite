@@ -694,11 +694,14 @@ public class ReceiptAction extends BaseFormAction {
 					+ (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode() : "")
 					+ "; Time taken(ms) = " + elapsedTimeMillis);
 			// Do not invoke print receipt in case of bulk upload.
-			if (!receiptBulkUpload) {
+			//FIXME Uncomment after jrxml changes
+			/*if (!receiptBulkUpload) {
 				returnValue =  printReceipts();
 			} else {
 				returnValue = SUCCESS;
-			} 
+			} */
+			addActionMessage("Payment is successfull...!");
+			returnValue =  NEW; 
 		} else {   
 			if(rhForValidation.getService().getCode().equals(CollectionConstants.SERVICECODE_PROPERTYTAX))
 				addActionError("Entered Manual receipt number already exists for the index number"+ rhForValidation.getConsumerCode() +".Please enter a valid manual receipt number and create the receipt.");  
