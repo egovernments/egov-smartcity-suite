@@ -163,26 +163,6 @@
 			<taglib-uri>/deptUser</taglib-uri>
 			<taglib-location>/WEB-INF/taglib/deptUser.tld</taglib-location>
 		</taglib>
-		<taglib>
-			<taglib-uri>/egovAuthz</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/egov-authz.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>/struts-tags</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/struts-tags.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>/adminBndry</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/adminBndry.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-decorator.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-page.tld</taglib-location>
-		</taglib>
 	</jsp-config>
 	
 	<session-config>
