@@ -43,7 +43,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.application.date" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input id="applicationdate" path="applicationDate" class="form-control datepicker today" required="required" data-inputmask="'mask': 'd/m/y'" />
+		<form:input id="applicationdate" path="applicationDate" class="form-control datepicker today" required="required" />
 		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
