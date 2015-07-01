@@ -50,6 +50,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -91,14 +92,21 @@ public class ConnectionDemandService {
     @Autowired
     private ModuleService moduleService;
 
+    @Autowired
+    private InstallmentDao installmentDao;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
         final Map<String, Object> feeDetails = new HashMap<String, Object>();
-
-        final ConnectionCharges connectionCharges = connectionChargesService.findByTypeAndDate("Connection fee");
+        // TODO: Passing hard coded application type for connection
+        // charges(Based on assumptions).
+        final ConnectionCharges connectionCharges = connectionChargesService
+                .findByTypeAndDate(WaterTaxConstants.CONNECTION_FEE);
+        // TODO: Hard coded number of months as 6 to get security deposit (Based
+        // on assumptions).
         final SecurityDeposit securityDeposit = securityDepositService
                 .findByUsageTypeAndNoOfMonths(waterConnectionDetails.getUsageType(), Long.valueOf(6));
         final DonationDetails donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
@@ -110,11 +118,8 @@ public class ConnectionDemandService {
         if (donationDetails != null)
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
 
-        final Query installmentQry = getCurrentSession().createQuery(
-                "from Installment where module = :module and installmentYear <= current_date order by installmentYear desc");
-        installmentQry.setEntity("module", moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME));
-        final Installment installment = (Installment) installmentQry.uniqueResult();
-
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date());
         double totalFee = 0.0;
 
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
@@ -149,6 +154,23 @@ public class ConnectionDemandService {
         demandDetail.setCreateDate(new Date());
         demandDetail.setModifiedDate(new Date());
         return demandDetail;
+    }
+
+    public HashMap<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand demand = waterConnectionDetails.getDemand();
+        final HashMap<String, Double> splitAmount = null;
+        if (demand != null && demand.getEgDemandDetails() != null && demand.getEgDemandDetails().size() > 0)
+            for (final EgDemandDetails detail : demand.getEgDemandDetails())
+                if (WaterTaxConstants.WATERTAX_CONNECTION_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, detail.getAmount().doubleValue());
+                else if (WaterTaxConstants.WATERTAX_SECURITY_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, detail.getAmount().doubleValue());
+                else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
+        return splitAmount;
     }
 
 }

@@ -105,14 +105,14 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private CityWebsiteService cityWebsiteService;
-
+    
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
     }
 
-    public WaterConnectionDetails findBy(final Long complaintTypeId) {
-        return waterConnectionDetailsRepository.findOne(complaintTypeId);
+    public WaterConnectionDetails findBy(final Long waterConnectionId) {
+        return waterConnectionDetailsRepository.findOne(waterConnectionId);
     }
 
     public List<WaterConnectionDetails> findAll() {
