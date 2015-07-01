@@ -229,10 +229,31 @@ public class AssignmentService {
 
     }
 
-    public List<Assignment> getAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId, final Date fromDate,
-            final Date toDate) {
-        return assignmentRepository
-                .findByDeptDesigAndDates(
-                        deptId, desigId, fromDate, toDate);
+    /**
+     * Get list of primary assignments for deparment,designation,fromdate and todate
+     * 
+     * @param deptId
+     * @param desigId
+     * @param fromDate
+     * @param toDate
+     * @return List of assignment objects if present
+     */
+    public List<Assignment> getAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId,
+            final Date fromDate, final Date toDate) {
+        return assignmentRepository.findByDeptDesigAndDates(deptId, desigId, fromDate, toDate);
+    }
+
+    /**
+     * Get all assignments for deparment,designation,fromdate and todate
+     * 
+     * @param deptId
+     * @param desigId
+     * @param fromDate
+     * @param toDate
+     * @return List of assignment objects if present
+     */
+    public List<Assignment> findAllAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId,
+            final Date fromDate, final Date toDate) {
+        return assignmentRepository.findAllAssignmentsByDeptDesigAndDates(deptId, desigId, fromDate, toDate);
     }
 }

@@ -110,4 +110,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     public List<Assignment> findByDeptDesigAndDates(@Param("deptId") Long deptId, @Param("desigId") Long desigId,
             @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
+    @Query(" from Assignment A where A.department.id=:deptId and A.designation.id=:desigId and "
+            + "((:fromDate between A.fromDate and A.toDate) or (:toDate between A.fromDate and A.toDate) or (A.fromDate<=:fromDate and A.toDate>=:toDate))")            
+    public List<Assignment> findAllAssignmentsByDeptDesigAndDates(@Param("deptId") Long deptId, @Param("desigId") Long desigId,
+            @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 }
