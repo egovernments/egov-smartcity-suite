@@ -6,15 +6,20 @@
 		<td class="greybox" width="20%"><s:text name="application.no"></s:text><span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="basicProperty.applicationNo"
-				id="basicProperty.applicationNo" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="applicationNo"
+				id="applicationNo" value="%{basicProperty.applicationNo}" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
-			
 		<td class="greybox">
+		<s:if test="basicProperty.createdDate != null">
+		<s:date name="%{basicProperty.createdDate}" var="createdDate" format="dd/MM/yyyy" />
+		<s:textfield name="applicationDate" id="createdDate" value="%{#createdDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
+		</s:if>
+		<s:else>
 		<s:date name="currDate" var="todaysDate" format="dd/MM/yyyy" />
 	    <s:textfield name="applicationDate" id="createdDate" value="%{#todaysDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
+	    </s:else>
 		</td>
 	</tr>
 
@@ -61,7 +66,6 @@
 			</div>
 		</td>
 	</tr>
-	
     <tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="rsnForCreatin" /> <span
@@ -69,7 +73,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="mutationId"
 				id="mutationId" listKey="id" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{mutationId}"
+				list="dropdownData.MutationList" value="%{propertyDetail.propertyMutationMaster.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="prntPropIndexNum" />
@@ -90,7 +94,7 @@
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox">
-		  <s:textfield name="vacantLandNo" id="vacantLandNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		  <s:textfield name="vacantLandNo" id="vacantLandNo" value="%{vacantLandNo}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -122,11 +126,12 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="regdDocNo" id="regdDocNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		   <s:textfield name="regdDocNo" id="regdDocNo" value="%{regdDocNo}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="regdDocDate" id="regdDocDate" size="12" maxlength="12" cssClass="datepicker"></s:textfield>
+		<s:date name="regdDocDate" var="docDate" format="dd/MM/yyyy" />
+		  <s:textfield name="regdDocDate" id="regdDocDate" value="%{#docDate}" size="12" maxlength="12" cssClass="datepicker"></s:textfield>
 		</td>
 	</tr>
 	
@@ -206,7 +211,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name"
-				list="dropdownData.floorType" value="%{floorTypeId}"
+				list="dropdownData.floorType" value="%{propertyDetail.floorType.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
@@ -214,7 +219,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name"
-				list="dropdownData.roofType" value="%{roofTypeId}"
+				list="dropdownData.roofType" value="%{propertyDetail.roofType.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
@@ -226,7 +231,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
-				list="dropdownData.wallType" value="%{wallTypeId}"
+				list="dropdownData.wallType"  value="%{propertyDetail.wallType.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
@@ -234,7 +239,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
-				list="dropdownData.woodType" value="%{woodTypeId}"
+				list="dropdownData.woodType" value="%{propertyDetail.woodType.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
@@ -258,7 +263,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
+				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		

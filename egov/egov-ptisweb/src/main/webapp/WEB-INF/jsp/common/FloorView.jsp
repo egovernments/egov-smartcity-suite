@@ -102,7 +102,10 @@
 	    	<s:property default="N/A" value="%{capitalValue}" />
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-	    	<s:property default="N/A" value="%{planApproved}" />
+	     <s:if test="%{planApproved == true}">
+	     Yes
+	     </s:if>
+	     <s:else>No</s:else>
 	    </td>
 	</tr>
    </s:iterator>
@@ -113,7 +116,7 @@
    if (val == 'no') {
  		var floorTable = document.getElementById("floorDetails");
 		var headerRow = floorTable.rows[0];
-		jQuery(headerRow.lastElementChild).hide();
+		//jQuery(headerRow.lastElementChild).hide();
    }
 </script>
 

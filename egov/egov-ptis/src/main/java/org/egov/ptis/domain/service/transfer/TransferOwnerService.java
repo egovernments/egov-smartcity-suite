@@ -85,7 +85,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
     private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
     private PersistenceService trnsfOwnerPerService;
-    protected PersistenceService<BasicProperty, Long> basicPrpertyService;
+    protected PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
     private UserService userService;
@@ -113,7 +113,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         clonedProperty.setExtra_field3("");
         clonedProperty.setExtra_field4("");
         basicProp.addProperty(clonedProperty);
-        basicPrpertyService.update(basicProp);
+        basicPropertyService.update(basicProp);
         LOGGER.debug("Exit from createPropertyClone method");
         return (PropertyImpl) clonedProperty;
     }
@@ -263,12 +263,12 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         this.trnsfOwnerPerService = trnsfOwnerPerService;
     }
 
-    public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-        return basicPrpertyService;
+    public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+        return basicPropertyService;
     }
 
-    public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-        this.basicPrpertyService = basicPrpertyService;
+    public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+        this.basicPropertyService = basicPropertyService;
     }
 
     public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {

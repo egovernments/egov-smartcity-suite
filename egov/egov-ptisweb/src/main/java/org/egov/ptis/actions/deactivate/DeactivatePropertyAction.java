@@ -130,7 +130,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	private static final String MSG_REJECT_SUCCESS = " Deactivate Property Rejected Successfully ";
 
 	private PropertyService propService;
-	private PersistenceService<BasicProperty, Long> basicPrpertyService;
+	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	FinancialUtil financialUtil = new FinancialUtil();
 	/* status values along with order date and order number */
@@ -238,7 +238,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: Property: " + property);
 		}
 		if (indexNumber != null && !"".equals(indexNumber)) {
-			basicProp = basicPrpertyService.findByNamedQuery(
+			basicProp = basicPropertyService.findByNamedQuery(
 					PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, indexNumber);
 			LOGGER.debug("prepare: BasicProperty: " + basicProp);
 		}
@@ -276,7 +276,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 
 			// docs upload
 			processAndStoreDocumentsWithReason(basicProp, DOCS_DEACTIVATE_PROPERTY);
-			basicProp = basicPrpertyService.update(basicProp);
+			basicProp = basicPropertyService.update(basicProp);
 			LOGGER.debug("Exit from save method");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -336,7 +336,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					LOGGER.debug("forward: PropertyStatusValues after setting status, isActive & reason fields: "
 							+ propStatusVal);
 					basicProp.addPropertyStatusValues(propStatusVal);
-					basicProp = basicPrpertyService.update(basicProp);
+					basicProp = basicPropertyService.update(basicProp);
 				}
 			} else {
 				propStatusVal = (PropertyStatusValues) getPersistenceService()
@@ -392,7 +392,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 
 			// upload docs
 			processAndStoreDocumentsWithReason(basicProp, DOCS_DEACTIVATE_PROPERTY);
-			basicProp = basicPrpertyService.update(basicProp);
+			basicProp = basicPropertyService.update(basicProp);
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -424,7 +424,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			property.setStatus(STATUS_ISACTIVE);
 			setAckMessage(MSG_REJECT_SUCCESS);
 			propertyImplService.update(property);
-			basicPrpertyService.update(basicProperty);
+			basicPropertyService.update(basicProperty);
 		} else {
 			setAckMessage(MSG_REJECT_SUCCESS + property.getCreatedBy().getUsername());
 		}
@@ -567,8 +567,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		this.propertyType = propertyType;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {

@@ -41,11 +41,11 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<s:if test="%{basicProp.upicNo!=null}">
-		<tr>
+<tr>
 			<td class="greybox2">
 				&nbsp;
 			</td>
+	<s:if test="%{basicProp.upicNo!=null}">
 			<td class="greybox">
 				<s:text name="prop.Id" />
 				:
@@ -54,62 +54,39 @@
 				<span class="bold"><s:property default="N/A"
 						value="%{basicProp.upicNo}" /> </span>
 			</td>
-			<td class="greybox" colspan="2">
-				&nbsp;
+	</s:if>
+	<td class="greybox">
+				<s:text name="application.date" />
+				:
+			</td>
+			<td class="greybox">
+			<s:date name="%{basicProperty.createdDate}" var="createdDate" format="dd/MM/yyyy" />
+				<span class="bold"><s:property default="N/A"
+						value="%{#createdDate}" /> </span>
 			</td>
 		</tr>
-	</s:if>
-	<tr>
-		<td class="bluebox2" width="5%">
-			&nbsp;
-		</td>
-		<td class="bluebox" width="">
-			<s:text name="rsnForCreatin" />
-			:
-		</td>
-		<td class="bluebox" width="">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.propertyMutationMaster.mutationName}" /> </span>
-		</td>
-		<td class="bluebox" width="">
-			<s:text name="Zone" />
-			:
-		</td>
-		<td class="bluebox" width="">
-			<span class="bold"><s:property
-					value="%{basicProp.boundary.parent.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProp.boundary.parent.name}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox2" width="5%">
-			&nbsp;&nbsp;&nbsp;
-		</td>
-		<td class="greybox" width="">
-			<s:text name="prntPropIndexNum" />
-			:
-		</td>
+		
+		<tr>
+		<td class="greybox2">
+				&nbsp;
+			</td>
 		<td class="greybox">
-			<b><s:property value="%{parentIndex}" default="N/A" />
-			</b>
-		</td>
-		<td class="greybox" width="">
-			<s:text name="Ward" />
-			:
-		</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property
-					value="%{basicProp.boundary.boundaryNum}" />-<s:property
-					default="N/A" value="%{basicProp.boundary.name}" /> </span>
-		</td>
-	</tr>
+				<s:text name="siteowner" />
+				:
+			</td>
+			<td class="greybox">
+				<span class="bold"><s:property default="N/A"
+						value="%{propertyDetail.siteOwner}" /> </span>
+			</td>
+		</tr>
+	
+	<!-- Owner details section -->
 	<tr>
-		<td class="bluebox2" width="5%">&nbsp;&nbsp;&nbsp;</td>
-		<td class="bluebox" width=""><s:text name="partNo" /> :</td>
-		<td class="bluebox" width="">
-			<span class="bold"><s:property value="%{basicProp.partNo}" default="N/A"/></span>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+			</div>
 		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
 	</tr>
 	<tr>
 		<td colspan="5">
@@ -118,29 +95,59 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td class="bluebox2">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			<s:text name="MobileNumber" />
-			:
-		</td>
-		<td class="bluebox">
-			<div>
-				<span class="bold">+91 <s:property default="N/A"
-						value="%{basicProp.address.mobileNo}" /> </span>
+    <tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"> Heading Not decided</span>
 			</div>
 		</td>
-		<td class="bluebox">
-			<s:text name="EmailAddress" />
-			:
+	</tr>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
+		<td class="greybox" width="">
+		   <span class="bold"><s:property value="%{propertyDetail.extentSite}" default="N/A"/></span>
 		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.address.emailAddress}" /> </span>
+		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"/> :</td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{basicProperty.vacantLandAssmtNo}" default="N/A"/></span>
 		</td>
 	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="extent.appurtntland"/> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{basicProperty.regdDocDate}" default="N/A"/></span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{buildingPermissionNo}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{buildingPermissionDate}" default="N/A"/></span>
+		</td>
+
+	</tr>
+	<!-- property address section -->
+	
 	<tr>
 		<td>
 			<div id="PropAddrDiv">
@@ -148,472 +155,141 @@
 			</div>
 		</td>
 	</tr>
+	
 	<tr>
-		<td class="bluebox2">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			<s:text name="ParcelID" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.gisReferenceNo}" /> </span>
-		</td>
-		<td class="bluebox">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			&nbsp;
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox2">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			<s:text name="ExemptedFromTax" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"><s:property value="%{isExemptedFromTax}"
-					default="N/A" />
-			</span>
-			<!--  how to retrieve this value -->
-		</td>
-		<td class="greybox">
-			<s:text name="TaxExmRsn" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"> <s:property value="%{taxExemptReason}"
-					default="N/A" /> </span>
-			<!--  where is this value persisted -->
-		</td>
-	</tr>
-	<tr>
-		<td>
+		<td colspan="5">
 			<div id="CorrAddrDiv">
 				<%@ include file="../common/CorrAddressView.jsp"%>
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="PropBoundedBy" /> </span>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox2">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			<s:text name="NorthWard" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.propertyID.northBoundary}" /> </span>
-		</td>
-		<td class="greybox">
-			<s:text name="SouthWard" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.propertyID.southBoundary}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td class="bluebox2">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			<s:text name="EastWard" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.propertyID.eastBoundary}" /> </span>
-		</td>
-		<td class="bluebox">
-			<s:text name="WestWard" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.propertyID.westBoundary}" /> </span>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="PropertyType" /> </span>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td class="greybox2">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			<s:text name="PropertyType" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"><s:property default="N/A"
-					value="%{propertyDetail.propertyTypeMaster.type}" /> </span>
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-	</tr>
-
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_RESD) ||
-					propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_NON_RESD) 
-					 || propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)}">
-		<tr>
-			<td class="greybox2">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				<s:text name="PropertyTypeCategory" />
-				:
-			</td>
-			<td class="greybox">
-				<span class="bold"> <s:if
-						test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_RESD)}">
-						<s:property default="N/A"
-							value="%{@org.egov.ptis.constants.PropertyTaxConstants@RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
-					</s:if>
-					<s:elseif test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)}">
-						<s:property default="N/A" value="%{@org.egov.ptis.constants.PropertyTaxConstants@OPEN_PLOT_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
-					</s:elseif>
-					 <s:else>
-						<s:property default="N/A"
-							value="%{@org.egov.ptis.constants.PropertyTaxConstants@NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
-					</s:else> </span>
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-		</tr>
-	</s:if>
-	<tr>
-		<td class="bluebox2">
-			&nbsp;
-		</td>
-		<s:if test="%{propertyDetail.extra_field5 == 'RESIDENTIAL_FLATS'}">
-			<td class="bluebox">
-				<s:text name="undivArea" />
-				:
-			</td>
-		</s:if>
-		<s:else>
-			<td class="bluebox">
-				<s:text name="PlotArea" />
-				:
-			</td>
-		</s:else>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{propertyDetail.sitalArea.area}" /> </span>
-		</td>
-
-		<td class="bluebox">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			&nbsp;
-		</td>
-	</tr>
-	<s:if test="%{propertyDetail.extra_field5 == @org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CAT_RESD_CUM_NON_RESD}">
-		<tr>
-			<td class="bluebox2">
-				&nbsp;
-			</td>					
-			<td class="bluebox">
-				<s:text name="nonResPlotArea" />
-				:
-			</td>
-			<td class="bluebox">
-				<span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.nonResPlotArea.area}" /> </span>
-			</td>
 	
-			<td class="bluebox">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-		</tr>
-	</s:if>
+	
 	<tr>
-		<td class="greybox2">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			<s:text name="locationFactor" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold">
-				<s:property default="N/A" value="%{propertyCategory.categoryName}" /> 
-			</span>
-			<s:hidden name="propertyDetail.extra_field6" value="%{propertyDetail.extra_field6}" />
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-	</tr>
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)
-		|| propertyDetail.floorDetails.size()==0}">
-
-		<tr>
-			<td class="bluebox2">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				<s:text name="OccupationDate" />
-				:
-			</td>
-			<td class="bluebox">
-				<span class="bold"><s:date
-						name="%{basicProperty.propCreateDate}" format="dd/MM/yyyy" />
-				</span>
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-		</tr>				
-	</s:if>
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)
-		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
-		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
-		<tr>
-			<td class="greybox2">&nbsp;</td>
-			<td class="greybox"><s:text name="GenWaterRate" /> :</td>
-			<td class="greybox"><span class="bold"><s:property
-						value="%{genWaterRate}" default="N/A" /></span></td>
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox">&nbsp;</td>
-		</tr>
-	</s:if>
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)}">
-		<tr>
-			<td class="bluebox2">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				<s:text name="Usage" />
-				<a onclick=openWindow('UsageMaster.jsp');> 
-					<img src="../resources/image/help.gif" style="border: none" /> 
-				</a> :
-			</td>
-			<td class="bluebox">
-				<span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.propertyUsage.usageName}" /> </span>
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-		</tr>
-		<tr>
-			<td class="greybox2">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				<s:text name="Occupancy" />
-				:
-			</td>
-			<td class="greybox">
-				<span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.propertyOccupation.occupation}" /> </span>
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-		</tr>
-		<tr>
-			<td class="bluebox2">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				<s:text name="rent" />
-				:
-			</td>
-			<td class="bluebox">
-				<span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.extra_field2}" /> </span>
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-		</tr>
-		<tr>
-			<td class="greybox2">&nbsp;</td>
-			<td class="greybox"><s:text name="openPLotManualAlv" />	: </td>
-			<td class="greybox"><span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.manualAlv}" /> </span>
-			</td>
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox">&nbsp;</td>
-		</tr>
-				<tr>
-			<td class="bluebox2">&nbsp;</td>
-			<td class="bluebox"><s:text name="OccupierName" />	: </td>
-			<td class="bluebox"><span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.occupierName}" /> </span>
-			</td>
-			<td class="bluebox">&nbsp;</td>
-			<td class="bluebox">&nbsp;</td>
-		</tr>
-	</s:if>
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
-					|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
-		<tr>
-			<td class="greybox2" width="5%">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				<s:text name="bldngCost" />
-				:
-			</td>
-			<td class="greybox">
-				<span class="bold"><s:property default="N/A"
-						value="%{propertyDetail.extra_field3}" /> </span>
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-			<td class="greybox">
-				&nbsp;
-			</td>
-		</tr>
-	</s:if>
-	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
-		<tr>
-			<td class="bluebox2" width="5%">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				<s:text name="amenities" />
-				:
-			</td>
-			<td class="bluebox">
-				<span class="bold"><s:property default="N/A"
-						value="%{amenities}" /> </span>
-				<s:hidden name="amenities" value="%{amenities}"></s:hidden>
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-			<td class="bluebox">
-				&nbsp;
-			</td>
-		</tr>
-	</s:if>
-	<tr>
-		<td class="greybox2">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			<s:text name="AuthProp" />
-			:
-		</td>
-		<td class="greybox">
-			<span class="bold"><s:property default="N/A"
-					value="%{basicProp.extraField1}" /> </span>
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			&nbsp;
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"> <s:text name="amenities"></s:text> </span>
+			</div>
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox2">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			<s:text name="NoticeGenConfirm" />
-			:
-		</td>
-		<td class="bluebox">
-			<span class="bold"><s:property default="N/A"
-					value="%{extra_field2}" /> </span>
-		</td>
-		<td class="bluebox">
-			&nbsp;
-		</td>
-		<td class="bluebox">
-			&nbsp;
+		<td colspan="5">
+		  <table width="100%" class="checkbox-section">
+	        <tr>
+	            <td width="10%"></td>
+				<td width="20%" align="right">
+				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift" disabled="true"/></label>
+				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage" disabled="true"/></label>
+				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" disabled="true"/></label> 
+				</td>
+				<td width="20%" align="right">
+				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets" disabled="true"/> </label>
+				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity" disabled="true"/> </label>
+				</td>
+				<td width="20%" align="right">
+				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap" disabled="true"/></label> 
+				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom" disabled="true"/> </label>
+			    </td>
+			    <td width="20%" align="right">
+				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/></label>
+				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting" disabled="true"/></label>
+			    </td>
+			    <td width="10%"></td>
+			</tr>
+			
+		   </table>
 		</td>
 	</tr>
-	<c:if test="${docNumber!=null && docNumber!='' }">
-		<tr>
-		<td class="greybox"></td><td class="greybox"></td>	
-	       <td class="greybox">
-	       <span class="bold">
-				<a
-					href='#'
-					target="_parent" 
-					onclick="window.open('/egi/docmgmt/basicDocumentManager!viewDocument.action?moduleName=ptis&docNumber=${docNumber}'
-					,'ViewDocuments','resizable=yes,scrollbars=yes,height=650,width=700,status=yes');">View Document</a>
-	        </span>
-	        </td>
-	        <td class="greybox">&nbsp;</td><td class="greybox">&nbsp;</td>       
-		</tr>
-	</c:if>
-	<s:if test="%{propertyDetail.propertyTypeMaster.code != 'OPEN_PLOT'  && propertyDetail.floorDetails.size()!=0}">
-		<tr>
-			<td colspan="5">
+	<!-- Floor type details -->
+	
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="title.constructiontypes"/></span>
+			</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="floortype"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.floorType.name}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.roofType.name}" default="N/A"/></span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="walltype"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.wallType.name}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.woodType.name}" default="N/A"/></span>
+		</td>
+	</tr>
+	<!-- Ownership section -->
+	
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="title.ownership"/></span>
+			</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.propertyTypeMaster.type}" default="N/A"/></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="bluebox">
+			<div id="plotArea">
+				<s:text name="PlotArea"/> :
+			</div>
+			<div id="undivArea">
+				<s:text name="undivArea"/> :
+			</div>
+		</td>
+		<td class="bluebox" colspan="2">
+			<span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
+		</td>
+		<td class="bluebox">&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox" width="">
+			
+		</td>
+	</tr>
+	<tr id="floorHeaderRow">
+			<td colspan="5" width="5%">
 				<div class="headingsmallbg">
-					<table width="35%" border="0" align="center" cellpadding="0"
-						cellspacing="0">
-						<tr id="floorHeader">
-							<td colspan="5" width="40%">
-								<div class="headingsmallbg">
-									<span class="bold"><s:text name="FloorDetailsHeader" />
-									</span>
-								</div>
-							</td>
-						</tr>
-					</table>
+					<span class="bold"><s:text name="FloorDetailsHeader" />
+					</span>
 				</div>
 			</td>
-		</tr>
+	 </tr>
+	
 		<tr>
 			<td colspan="5">
 				<div align="center">
@@ -621,8 +297,7 @@
 				</div>
 			</td>
 		</tr>
-	</s:if>
-	<tr>
+	<%-- <tr>
 		<td class="greybox">
 			&nbsp;
 		</td>
@@ -646,6 +321,6 @@
 		<td class="greybox">
 			&nbsp;
 		</td>
-	</tr>
+	</tr> --%>
 
 </table>

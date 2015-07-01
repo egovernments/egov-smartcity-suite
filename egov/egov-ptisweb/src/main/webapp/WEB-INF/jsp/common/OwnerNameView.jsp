@@ -38,22 +38,28 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <%@ include file="/includes/taglibs.jsp" %>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
   <tr>
-  	<td class="greybox2" width="5%">&nbsp;</td>
-	<td class="greybox" width="20%"><s:text name="OwnerName" /> : </td>
-    <td class="greybox" width="40%">
-    <table width="40%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable">
-    <s:iterator value="propOwnerProxy" status="ownerStatus">
+	<th class="bluebgheadtd"><s:text name="adharno"/></th>
+    <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
+	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
+	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+	</tr>
+   
+    <s:iterator value="propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
-        		<td class="greybox" align="center" nowrap="true">
-        			<span class="bold"><s:property value="%{firstName}" /></span>
+        		<td class="blueborderfortd" align="center">
+        			<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" /></span>
         		</td>
-        		<td class="greybox" nowrap="true">
+        		<td class="blueborderfortd" align="center">
+        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.name}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.emailId}" /></span>
         		</td>
         	</tr>
      </s:iterator>
-      </table>
-      </td>
-      <td class="greybox" width="20%">&nbsp;</td>
-      <td class="greybox" width="25%">&nbsp;</td>
-  </tr>
+</table>

@@ -93,7 +93,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	private String ackMessage;
 	private PropertyImpl property;
 	private PropertyAddress addr = new PropertyAddress();
-	private PersistenceService<BasicProperty, Long> basicPrpertyService;
+	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	public static final String NEW = "new";
 	public static final String VIEW = "view";
@@ -202,7 +202,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_ADDRESS_CHANGE_PROPERTY);
 
 		// propertyImplService.update(property);
-		basicProperty = basicPrpertyService.update(basicProperty);
+		basicProperty = basicPropertyService.update(basicProperty);
 		getWorkflowBean().setActionName(WFLOW_ACTION_NAME_CREATE);
 
 		LOGGER.debug("Exit from save method");
@@ -254,11 +254,11 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 				property.setDocNumber(propDocNum);
 				LOGGER.debug("Property is getting added to BasicProperty: " + property);
 				basicProperty.addProperty(property);
-				basicProperty = basicPrpertyService.update(basicProperty);
+				basicProperty = basicPropertyService.update(basicProperty);
 			} else {
 				property.getBasicProperty().setExtraField2(PropertyTaxUtil.buildAddress(address));
 				propertyImplService.update(property);
-				basicProperty = basicPrpertyService.update(basicProperty);
+				basicProperty = basicPropertyService.update(basicProperty);
 			}
 
 		} else {
@@ -305,7 +305,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			// upload docs
 			processAndStoreDocumentsWithReason(basicProperty, DOCS_ADDRESS_CHANGE_PROPERTY);
 			propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
-			basicProperty = basicPrpertyService.update(basicProperty);
+			basicProperty = basicPropertyService.update(basicProperty);
 
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e);
@@ -331,7 +331,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			property.setStatus(STATUS_ISACTIVE);
 			setAckMessage(MSG_REJECT_SUCCESS);
 			propertyImplService.update(property);
-			basicPrpertyService.update(basicProperty);
+			basicPropertyService.update(basicProperty);
 		} else {
 			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "
 					+ property.getCreatedBy().getUsername());
@@ -356,7 +356,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		}
 
 		if (indexNumber != null && !indexNumber.equals("")) {
-			basicProperty = basicPrpertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
+			basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
 					indexNumber);
 			LOGGER.debug("prepare: BasicProperty by index number : " + basicProperty);
 		}
@@ -461,8 +461,8 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		this.area = area;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public String getAckMessage() {
@@ -473,8 +473,8 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		this.ackMessage = ackMessage;
 	}
 
-	public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-		return basicPrpertyService;
+	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+		return basicPropertyService;
 	}
 
 	public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {

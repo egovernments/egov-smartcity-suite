@@ -67,8 +67,6 @@
 	});
 });
 </script>
-
-
 <div id="PropAddressDiv">
 	<tr>
 		<td colspan="5"><div class="headingsmallbg"><span class="bold"><s:text name="PropertyAddress"/></span></div></td>
@@ -78,7 +76,7 @@
   	<td class="greybox2">&nbsp;</td>
 	<td class="greybox"><s:text name="locality"></s:text> <span class="mandatory1">*</span> : </td>
 	<td class="greybox"><s:select name="locality" id="locality" list="dropdownData.localityList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{locality}"/>
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{basicProperty.propertyID.locality.id}"/>
 	</td>
     <td class="greybox" colspan="2">&nbsp;</td>
   </tr>
@@ -86,20 +84,20 @@
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
 	    <td class="bluebox" width="8%"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
-	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/></td>
-	    <s:hidden id="zoneId" name="zoneId"></s:hidden>
+	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{basicProperty.propertyID.zone.name}" maxlength="20" readOnly="true"/></td>
+	    <s:hidden id="zoneId" name="zoneId" value="%{basicProperty.propertyID.zone.id}"></s:hidden>
 	    <td class="bluebox" width="10%"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
-	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" /></td>
-	    <s:hidden id="wardId" name="wardId"></s:hidden>
+	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{basicProperty.propertyID.ward.name}" maxlength="20" /></td>
+	    <s:hidden id="wardId" name="wardId" value="%{basicProperty.propertyID.ward.id}"></s:hidden>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
 	    <td class="bluebox" width="8%"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
-	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" /></td>
-	    <s:hidden id="blockId" name="blockId"></s:hidden>
+	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{basicProperty.propertyID.area.name}"  maxlength="20" /></td>
+	    <s:hidden id="blockId" name="blockId" value="%{basicProperty.propertyID.area.id}"  ></s:hidden>
 	    <td class="bluebox" width="8%"><s:text name="Street"></s:text> : </td>
-	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" /></td>
+	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>
 	</tr>
 	
 	<tr>

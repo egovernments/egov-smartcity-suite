@@ -445,15 +445,20 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
             String nextAction = null;
             Long approverUserdId = null;
 
-            if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
-                    if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
-                            nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
-                            Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean
-                                            .getApproverUserId());
-                            property.transition().start().withSenderName(user.getName())
-                                            .withComments(workflowBean.getComments())
-                                            .withDateInfo(currentDate.toDate()).withStateValue(beanActionName[0])
-                                            .withOwner(nextOwner.getPosition()).withNextAction(nextAction);
+		if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
+			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
+				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+				Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean.getApproverUserId());
+				if (property.hasState()) {
+					approverUserdId = workflowBean.getApproverUserId();
+					transition(property, beanActionName, nextAction, approverUserdId);
+				} else {
+					property.transition().start().withSenderName(user.getName())
+							.withComments(workflowBean.getComments()).withDateInfo(currentDate.toDate())
+							.withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition())
+							.withNextAction(nextAction);
+				}
+                           
                     } else if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
                             property.transition().end();
                     } else {
@@ -494,6 +499,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
                             .withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition())
                             .withNextAction(nextAction);
     }
+    
 	public WorkflowBean getWorkflowBean() {
 		return workflowBean;
 	}

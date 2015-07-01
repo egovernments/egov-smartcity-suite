@@ -127,7 +127,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private static final String ACK = "ack";
 
 	private ReportService reportService;
-	private PersistenceService<BasicProperty, Long> basicPrpertyService;
+	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
@@ -419,7 +419,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 					.getBasicPropertyByPropertyID(indexNumber);
 			basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
-			basicPrpertyService.update(basicProperty);
+			basicPropertyService.update(basicProperty);
 			setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
 		}
 		return ACK;
@@ -624,16 +624,16 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		this.reasonwiseDues = reasonwiseDues;
 	}
 
-	public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-		return basicPrpertyService;
+	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+		return basicPropertyService;
 	}
 
 	public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {
 		this.propertyImplService = propertyImplService;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public BasicProperty getBasicProperty() {

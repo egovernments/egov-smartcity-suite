@@ -50,7 +50,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" default-lazy-init="true">
 	<context:component-scan base-package="org.egov.ptis" />
 
-	<bean id="basicPrpertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService">
+	<bean id="basicPropertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService">
 		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
 	</bean>
 	
@@ -84,8 +84,8 @@
 	<bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 	
 	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService">
-		<property name="trnsfOwnerPerService" ref="persistenceService"/>
-		<property name="basicPrpertyService" ref="basicPrpertyService"/>
+		<property name="trnsfOwnerPerService" ref="persistenceService"/> 
+		<property name="basicPropertyService" ref="basicPropertyService"/>
 		<property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>
 	</bean> 
 	
@@ -94,7 +94,7 @@
 		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
 		<property name="taxCalculator" ref="taxCalculator" />
 		<property name="eisCommonsService" ref="eisCommonsService" />
-		<property name="basicPrpertyService" ref="basicPrpertyService" />
+		<property name="basicPropertyService" ref="basicPropertyService" />
 		<property name="ptNumberGenerator" ref="propertyTaxNumberGenerator" />  
 	</bean> 
   
@@ -126,7 +126,7 @@
 	</bean>
 	
 	<bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">
-		<property name="basicPrpertyService" ref="basicPrpertyService"/>
+		<property name="basicPropertyService" ref="basicPropertyService"/>
 	</bean>
 	<bean id="financialUtil" class="org.egov.ptis.client.util.FinancialUtil" scope="prototype">
 	</bean>

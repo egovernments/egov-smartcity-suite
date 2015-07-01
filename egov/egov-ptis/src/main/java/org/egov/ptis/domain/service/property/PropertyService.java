@@ -158,7 +158,7 @@ public class PropertyService  {
 	@Autowired
 	private UserService userService;
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	protected PersistenceService<BasicProperty, Long> basicPrpertyService;
+	protected PersistenceService<BasicProperty, Long> basicPropertyService;
 	private Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
 	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
 	private PropertyTaxNumberGenerator ptNumberGenerator;
@@ -1417,7 +1417,7 @@ public class PropertyService  {
 		createArrearsDemand(oldProperty, propCompletionDate, newProperty);
 		basicProperty.addProperty(newProperty);
 
-		basicProperty = basicPrpertyService.update(basicProperty);
+		basicProperty = basicPropertyService.update(basicProperty);
 		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			createAttributeValues(newProperty, null);
 		}
@@ -1590,8 +1590,8 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setBasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	// setting property status values to Basic Property
@@ -2013,7 +2013,7 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 			createAttributeValues(newProperty, null);
 		}
 
-		basicProperty = basicPrpertyService.update(basicProperty);
+		basicProperty = basicPropertyService.update(basicProperty);
 		LOGGER.debug("Exiting from initiateDataEntryWorkflow");
 
 	}

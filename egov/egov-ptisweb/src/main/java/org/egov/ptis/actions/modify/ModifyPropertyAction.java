@@ -164,7 +164,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private static final String VIEW = "view";
 	private Logger LOGGER = Logger.getLogger(getClass());
 	@Autowired
-	private PropertyPersistenceService basicPrpertyService;
+	private PropertyPersistenceService basicPropertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	private PersistenceService<Floor, Long> floorService;
 	private BasicProperty basicProp;
@@ -503,7 +503,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		oldProperty = (PropertyImpl) basicProp.getProperty();
 		modifyBasicProp(getDocNumber());
 		transitionWorkFlow(propertyModel);
-		basicPrpertyService.applyAuditing(propertyModel.getState());
+		basicPropertyService.applyAuditing(propertyModel.getState());
 		propertyImplService.persist(propertyModel);
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
@@ -601,7 +601,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			updateAddress();
 		}
 
-		basicPrpertyService.update(basicProp);
+		basicPropertyService.update(basicProp);
 		setBasicProp(basicProp);
 		setAckMessage(getText("property.approve.success",
 				new String[] { propertyModel.getBasicProperty().getUpicNo() }));
@@ -987,7 +987,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			basicProp.addProperty(modProperty);
 		}
 
-		basicPrpertyService.update(basicProp);
+		basicPropertyService.update(basicProp);
 
 		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
@@ -1562,7 +1562,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		basicProp.getPropertyID().setWestBoundary(westBound);
 
 		HibernateUtil.getCurrentSession().merge(existingProp);
-		basicPrpertyService.update(basicProp);
+		basicPropertyService.update(basicProp);
 
 		LOGGER.debug("Exiting modifyBasicPropForMigratedProp");
 	}
@@ -2199,8 +2199,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		this.ptDemandDAO = ptDemandDAO;
 	}
 
-	public void setBasicPrpertyService(PropertyPersistenceService basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PropertyPersistenceService basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public Boolean getInWorkflow() {

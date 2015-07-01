@@ -96,7 +96,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	public static final String RESULT_VIEW = "view";
 	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
 
-	private PersistenceService<BasicProperty, Long> basicPrpertyService;
+	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private PropertyTaxCollection propertyTaxCollection;
 	private PTBillServiceImpl nmcPtBillServiceImpl;
@@ -130,7 +130,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 
 		PropertyTaxBillable nmcPTBill = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
 
-		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
+		BasicProperty basicProperty = basicPropertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
 
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
@@ -149,8 +149,8 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		return RESULT_VIEW;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public String getPropertyId() {

@@ -70,8 +70,9 @@
 	</s:if>
    }
 
- function onSubmit(obj) {
-		document.forms[0].action=obj;
+ function onSubmit(action,obj) {
+	 document.getElementById('workflowBean.actionName').value = obj.id;
+		document.forms[0].action = action;
 		document.forms[0].submit;
 	   return true;
 	}
@@ -114,6 +115,7 @@
 		<!-- Area for error display -->
 		<div class="errorstyle" id="property_error_area"
 			style="display: none;"></div>
+	    <div class="formmainbox">
 		<s:form name="CreatePropertyForm" action="createProperty"
 			theme="simple" validate="true">
 			<s:token />
@@ -123,8 +125,7 @@
 
 				<s:hidden label="noticeType" id="noticeType" name="noticeType"
 					value="%{extra_field2}" />
-				<div class="formmainbox">
-					<div class="formheading"></div>
+				
 					<div class="headingbg">
 						<s:text name="CreatePropertyHeader" />
 					</div>
@@ -132,12 +133,11 @@
 						<tr>
 							<%@ include file="../create/createPropertyView.jsp"%>
 						</tr>
-						<s:if test="%{isApprPageReq}">
+						<%-- <s:if test="%{isApprPageReq}">
 							<tr>
 								<%@ include file="../workflow/property-workflow.jsp"%>
 							</tr>
-						</s:if>
-						<s:else>
+						</s:if> --%>
 							<table width="100%" border="0" cellspacing="0" cellpadding="0">
 								<tr>
 									<td class="bluebox" width="6%">
@@ -152,10 +152,8 @@
 									</td>
 									<td class="bluebox" width="15%" colspan="2"></td>
 								</tr>
-								<s:hidden name="workflowBean.actionName"
-							id="workflowBean.actionName" />
+								<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
 							</table>
-						</s:else>
 						
 						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 						<tr>
@@ -167,7 +165,7 @@
 						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 						<div class="buttonbottom" align="center">
 						<tr>
-							<s:if
+							<%-- <s:if
 								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
 								<s:if test="%{extra_field3!='Yes'}">
 									<input type="button" name="GenerateNotice" id="GenerateNotice"
@@ -205,16 +203,24 @@
 											id="PreviewPrativrutta" value="Preview Prativrutta"
 											class="button" onclick="return previewPrativrutta();" />
 									</td> -->
-							</s:else>
-									<td>
-										<input type="button" name="button2" id="button2" value="Close"
-										class="button" onclick="window.close();" />
+							</s:else> --%>
+							<td><s:submit value="Approve" name="Approve"
+									id='Create:Approve' cssClass="buttonsubmit" method="approve"
+									onclick="return onSubmit('createProperty-approve.action',this);" />
+							</td>
+							<td>
+										<s:submit value="Reject" name="Reject" id='Create:Reject'
+											cssClass="buttonsubmit" method="reject"
+											 onclick="return onSubmit('createProperty-reject.action',this);"/>
 									</td>
+							<td><input type="button" name="button2" id="button2"
+								value="Close" class="button" onclick="window.close();" /></td>
 						</tr>
 						</div>
 					</table>
-				</div>
+				
 			</s:push>
 		</s:form>
+		</div>
 	</body>
 </html>

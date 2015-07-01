@@ -44,8 +44,7 @@
 <html>
   <head>  	
     <title>
-    	<%-- <s:text name='NewProp.title'/>     --%>	
-    	New Property
+    	<s:text name='NewProp.title'/>
     </title>
 	<sx:head/>	
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
@@ -129,10 +128,11 @@ function loadOnStartUp() {
 	} 	
 	
 	document.getElementById("taxExemptRow").style.display = "none";		 */
-	//enableSubmitButton();
+	//enableSubmitButton();  
 }
-function onSubmit(obj) {
-	document.forms[0].action=obj;
+function onSubmit(action,obj) { 
+	document.getElementById('workflowBean.actionName').value = obj.id;
+	document.forms[0].action = action;
 	document.forms[0].submit;
    return true;
 }
@@ -428,8 +428,18 @@ function finishAllChangesMsg(button) {
 							onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 					<td><input type="button" name="button2" id="button2"
 							value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
-					<s:submit value="Approve" name="Approve" id='approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action');"/>&nbsp;			
+					<s:if test="mode=='create'">
+					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action',this);"/>&nbsp;			
 					<input type="button" class="button" onclick="window.close();" value="Close">
+					</s:if>
+					<s:if test="mode=='edit'">
+					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-forward.action',this);"/>&nbsp;
+					<s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE}">
+								<s:submit value="Approve" name="Approve" id='Create:Approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-approve.action',this);"/>&nbsp;	
+					</s:if>	
+					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;		
+					<input type="button" class="button" onclick="window.close();" value="Close">
+					</s:if>
 				</div>
 			</td>
 		</tr> 

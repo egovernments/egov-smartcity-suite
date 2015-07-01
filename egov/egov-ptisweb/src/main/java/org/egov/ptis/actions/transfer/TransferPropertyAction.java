@@ -108,7 +108,7 @@ public class TransferPropertyAction extends WorkflowAction {
     private String corrAddress1;
     private String corrAddress2;
     private String corrPinCode;
-    private PersistenceService<BasicProperty, Long> basicPrpertyService;
+    private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PersistenceService<PropertyImpl, Long> propertyImplService;
     private List<PropertyMutation> propMutationList;
     private TransferOwnerService transferOwnerService;
@@ -176,7 +176,7 @@ public class TransferPropertyAction extends WorkflowAction {
         final BasicProperty basicProperty = property.getBasicProperty();
         processAndStoreDocumentsWithReason(basicProperty, DOCS_MUTATION_PROPERTY);
         propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
-        basicPrpertyService.persist(basicProperty);
+        basicPropertyService.persist(basicProperty);
         return ACK;
     }
 
@@ -242,7 +242,7 @@ public class TransferPropertyAction extends WorkflowAction {
             }
         transitionWorkFlow();
         setNextUser(UserService.getUserById(getWorkflowBean().getApproverUserId().longValue()).getUsername());
-        basicPrpertyService.update(basicProp);
+        basicPropertyService.update(basicProp);
         return ACK;
 
     }
@@ -448,8 +448,8 @@ public class TransferPropertyAction extends WorkflowAction {
         this.propertyImplService = propertyImplService;
     }
 
-    public void setBasicPrpertyService(final PersistenceService<BasicProperty, Long> basicPrpertyService) {
-        this.basicPrpertyService = basicPrpertyService;
+    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
+        this.basicPropertyService = basicPropertyService;
     }
 
     public List<PropertyMutation> getPropMutationList() {

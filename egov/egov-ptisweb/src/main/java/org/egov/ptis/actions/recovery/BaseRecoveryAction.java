@@ -108,7 +108,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected Integer reportId = -1;
         protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	protected PersistenceService<BasicProperty, Long> basicPrpertyService;
+	protected PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	protected FinancialUtil financialUtil;
@@ -352,9 +352,9 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public void setBasicPrpertyService(
-			PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(
+			PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 
 	public String getOwnerName() {

@@ -60,7 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class NoticeService {
 	private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
-	PersistenceService<BasicProperty, Long> basicPrpertyService;
+	PersistenceService<BasicProperty, Long> basicPropertyService;
 	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	@Autowired
 	private ModuleService moduleDao;
@@ -94,15 +94,15 @@ public class NoticeService {
 			throw new EGOVRuntimeException("Exception while saving Bill notice.", e);
 		}
 		basicProperty.addNotice(ptNotice);
-		basicPrpertyService.update(basicProperty);
+		basicPropertyService.update(basicProperty);
 		return ptNotice;
 	}
 
-	public PersistenceService<BasicProperty, Long> getBasicPrpertyService() {
-		return basicPrpertyService;
+	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+		return basicPropertyService;
 	}
 
-	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
-		this.basicPrpertyService = basicPrpertyService;
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
 	}
 }
