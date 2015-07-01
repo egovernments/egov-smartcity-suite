@@ -104,50 +104,61 @@
 			</div>
 			<s:form action="#" theme="simple">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<s:if test="propertyId!=null">
-						<tr>
-							<td class="bluebox" width="10%%"></td>
-							<td class="bluebox" width="13%" colspan="2">
-								<s:text name="prop.Id" /> :
-							</td>
-							<td class="bluebox" colspan="2">
-								<span class="bold"> <s:property value="%{propertyId}" />
-								</span>
-							</td>
-						</tr>
-						<tr>
-							<td class="bluebox" width="10%%"></td>
-							<td class="bluebox" width="13%" colspan="2">
-								<s:text name="Zone" /> :
-							</td>
-							<td class="bluebox" colspan="2">
-								<span class="bold"> <s:property value="%{propertyId}" />
-								</span>
-							</td>
-						</tr>
-						<tr>
-							<td class="greybox" width="10%"></td>
-							<td class="greybox" width="5%" colspan="2">
-								<s:text name="Ward" /> :
-							</td>
-							<td class="greybox" colspan="2">
-								<span class="bold"> <s:property value="%{wardName}" /> </span>
-							</td>
-
-						</tr>
-						
-						<tr>
-							<td class="greybox" width="10%"></td>
-							<td class="greybox" width="5%" colspan="2">
-								<s:text name="locality" /> :
-							</td>
-							<td class="greybox" colspan="2">
-								<span class="bold"> <s:property value="%{wardName}" /> </span>
-							</td>
-
-						</tr>
-
-					</s:if>
+					<tr>
+						<td class="bluebox" width="20%"></td>
+						<td class="bluebox" width="25%" colspan="2">
+							<s:text name="prop.Id" /> :
+						</td>
+						<td class="bluebox" colspan="2">
+							<span class="bold"> <s:property value="%{propertyId}" />
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="bluebox" width="10%"></td>
+						<td class="bluebox" width="13%" colspan="2">
+							<s:text name="Zone" /> :
+						</td>
+						<td class="bluebox" colspan="2">
+							<span class="bold">
+								<s:property default="N/A" value="%{viewMap.propID.zone.id}" />-
+								<s:property default="N/A" value="%{viewMap.propID.zone.name}" /> 
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" width="5%" colspan="2">
+							<s:text name="Ward" /> :
+						</td>
+						<td class="greybox" colspan="2">
+							<span class="bold">
+								<s:property default="N/A" value="%{viewMap.propID.ward.id}" />-
+								<s:property default="N/A" value="%{viewMap.propID.ward.name}" /> 
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" width="5%" colspan="2">
+							<s:text name="Block" /> :
+						</td>
+						<td class="greybox" colspan="2">
+							<span class="bold">
+								<s:property default="N/A" value="%{viewMap.propID.area.id}" />-
+								<s:property default="N/A" value="%{viewMap.propID.area.name}" /> 
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" width="5%" colspan="2">
+							<s:text name="locality" /> :
+						</td>
+						<td class="greybox" colspan="2">
+							<span class="bold"> <s:property value="%{viewMap.propID.locality.name}" /> </span>
+						</td>
+					</tr>
 					<tr>
 						<td class="bluebox" width="10%"></td>
 						<td class="bluebox" colspan="2">
@@ -163,7 +174,7 @@
 							<s:text name="PropertyAddress" /> :
 						</td>
 						<td class="greybox" colspan="2">
-							<span class="bold"> <s:property value="%{propertyAddress}" />
+							<span class="bold"> <s:property value="%{viewMap.propAddress}" />
 							</span>
 						</td>
 
@@ -174,11 +185,10 @@
 							<s:text name="ownership.type"></s:text> :
 						</td>
 						<td class="bluebox" colspan="2">
-							<span class="bold"> <s:property value="%{propertyType}" />
+							<span class="bold"> <s:property default="N/A" value="%{viewMap.ownershipType}" />
 							</span>
 						</td>
 					</tr>
-					<s:if test="!dcbReport.getRecords().isEmpty()">
 					<tr>
 						<td class="greybox" width="10%"></td>
 						<td class="greybox" colspan="2">
@@ -233,17 +243,12 @@
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Balance" />
 									</th>
-
-									<th class="bluebgheadtd" width="35%" align="center">
-										<s:text name="PaymentDetails" />
-									</th>
 								</tr>
 								<tr>
 
 									<td class="blueborderfortd">
-										<div align="center">											
-											<a href="javascript:openHeadwiseDCBWindow();"> View DCB Head wise  </a>
-										</div><br/>
+										<div align="center">
+										</div>
 										<div align="center">											
 											<s:if test="%{basicProperty.isMigrated == 'Y'}">
 												<a href="" onclick="openNewWindow();"> Show Arrears </a>
@@ -314,15 +319,9 @@
 											</span>
 										</div>
 									</td>
-
-									<td class="blueborderfortd">
-										<div align="center">
-											<span class="bold">&nbsp; </span>
-										</div>
-									</td>
 								</tr>
 								<s:set value="0" var="advance" />
-								<s:set value="0" var="advrebate" />
+								<s:set value="0" var="advrebate" />	
 
 								<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
 									<tr>
@@ -490,9 +489,6 @@
 											</td>
 										</c:if>
 									</s:iterator>
-									<td class="blueborderfortd">
-										&nbsp;
-									</td>
 								</tr>
 
 								<c:if test="${advance != null && advance != 0}">
@@ -625,9 +621,6 @@
 										<td class="blueborderfortd">
 											&nbsp;
 										</td>
-										<td class="blueborderfortd">
-											&nbsp;
-										</td>
 									</tr>
 								</c:if>
 
@@ -692,9 +685,6 @@
 									<td class="blueborderfortd">
 										&nbsp;
 									</td>
-									<td class="blueborderfortd">
-										&nbsp;
-									</td>
 								</tr>
 								<s:if
 									test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
@@ -753,7 +743,44 @@
 							</table>				
 							</td>
 							</tr>
-							</s:if>		
+							<s:if test="%{activeRcpts != null}">
+								<tr>
+									<td colspan="5" align="center">
+										<s:text name="PaymentDetails" />
+									</td>
+								</tr>
+								<tr>
+									<td colspan="5" align="center">
+										<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+											<tr>
+												<th class="bluebgheadtd"><s:text name="receiptNo" /></th>
+												<th class="bluebgheadtd"><s:text name="receiptDate" /></th>
+												<th class="bluebgheadtd"><s:text name="totalAmount" /></th>
+											</tr>
+											<s:iterator value="activeRcpts" var="activeRcpt">
+												<tr>
+													<td class="blueborderfortd">
+														<div align="center">
+															<s:property default="N/A" value="%{receiptNumber}" />
+														</div>
+													</td>
+													<td class="blueborderfortd">
+														<div align="center">
+															<s:property default="N/A" value="%{receiptDate}" />
+														</div>
+													</td>
+													<td class="blueborderfortd">
+														<div align="center">
+															<s:property default="N/A" value="%{receiptAmt}" />
+														</div>
+													</td>
+												</tr>
+											</s:iterator>
+										</table>
+									</td>
+								</tr>
+							</s:if>
 							</table>
 							<div class="buttonbottom" align="center">
 									<s:if test="%{errorMessage != null}">
@@ -787,10 +814,10 @@
 										</s:else>
 										</div>
 									</s:else><br> 
-									<input type="button" name="button2" id="button2" value="Close"
-										class="button" onclick="return confirmClose();" />
 									<input type="button" name="button2" id="button2" value="Back"
 										class="button" onclick="history.back(-1)" />
+									<input type="button" name="button2" id="button2" value="Close"
+										class="button" onclick="return confirmClose();" />
 							</div>
 					</s:form>
 				</div>

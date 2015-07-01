@@ -418,13 +418,14 @@ public class DCBServiceImpl implements DCBService {
     private List<InstallmentReceiptTuple> enumerateTuples() {
         final List<InstallmentReceiptTuple> allReceiptTuples = new ArrayList<InstallmentReceiptTuple>();
         InstallmentReceiptTuple tuple = null;
-        for (final EgDemand demand : billable.getAllDemands())
-            for (final EgDemandDetails det : demand.getEgDemandDetails())
-                for (final EgdmCollectedReceipt collReceipt : det.getEgdmCollectedReceipts()) {
-                    tuple = new InstallmentReceiptTuple(det.getEgDemandReason().getEgInstallmentMaster(),
+        if(billable.getAllDemands() != null) 
+        	for (final EgDemand demand : billable.getAllDemands())
+        		for (final EgDemandDetails det : demand.getEgDemandDetails())
+        			for (final EgdmCollectedReceipt collReceipt : det.getEgdmCollectedReceipts()) {
+        				tuple = new InstallmentReceiptTuple(det.getEgDemandReason().getEgInstallmentMaster(),
                             Receipt.mapFrom(collReceipt));
-                    allReceiptTuples.add(tuple);
-                }
+        				allReceiptTuples.add(tuple);
+        			}
 
         Collections.sort(allReceiptTuples);
         LOGGER.info("enumerateTuples() returned: " + allReceiptTuples);

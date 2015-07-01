@@ -54,6 +54,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -94,20 +96,19 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Namespace("/view")
-@ResultPath("/WEB-INF/jsp/")
-@Results({ 
-    @Result(name = ViewDCBPropertyAction.VIEW, location = "view/viewDCBProperty-view.jsp")
-})
 @SuppressWarnings("serial")
 @ParentPackage("egov")
+
+@Results({@Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp")})
 public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequestAware {
 
 	private static final String HEADWISE_DCB = "headwiseDcb";
@@ -141,6 +142,8 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	private Integer noOfDaysForInactiveDemand;
 	private String errorMessage;
 	
+	private Map<String, Object> viewMap;
+	
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -171,7 +174,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	 */
 
 	@ValidationErrorPage(value = VIEW)
-	@Action(value = "/viewDCBProperty-displayPropInfo")
+	@Action(value = "/view/viewDCBProperty-viewForm")
 	public String displayPropInfo() {
 
 		LOGGER.debug("Entered into method displayPropInfo");
@@ -193,8 +196,17 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 			setCitizen(Boolean.FALSE);
 		}
 
+		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+		PropertyDetail propertyDetail = basicProperty.getProperty().getPropertyDetail();
+		viewMap = new HashMap<String, Object>();
+		viewMap.put("propDetail", propertyDetail);
+		viewMap.put("propID", basicProperty.getPropertyID());
+		PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster();
+		viewMap.put("ownershipType", propertyTypeMaster.getType());
 		Property property = getBasicProperty().getProperty();
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
+		viewMap.put("propAddress",
+				ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
 		Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 		try {
@@ -237,6 +249,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 		try {
 			dcbReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
+			//Display active receipt
+			activeRcpts = populateActiveReceiptsOnly(dcbReport.getReceipts());
+			//Display cancelled receipt
+			cancelRcpt = populateCancelledReceiptsOnly(dcbReport.getReceipts());
 		} catch (DCBException e) {
 			errorMessage = "Demand details does not exists !";
 			LOGGER.warn(errorMessage);
@@ -341,7 +357,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	@SuppressWarnings("unchecked")
 	public String getPropertyArrears() {
 		LOGGER.debug("Entered into getPropertyArrears");
-		LOGGER.debug("getPropertyArrears - propertyid: " + getPropertyId());
+		LOGGER.debug("getPropertyArrears - propertyId: " + getPropertyId());
 		PropertyTaxUtil ptUtil = new PropertyTaxUtil();
 		List<PropertyArrear> arrears = getPersistenceService().findAllBy(
 				"from PropertyArrear pa where pa.basicProperty = ?", getBasicProperty());
@@ -519,6 +535,14 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
 	public String getErrorMessage() {
 		return errorMessage;
+	}
+
+	public Map<String, Object> getViewMap() {
+		return viewMap;
+	}
+
+	public void setViewMap(Map<String, Object> viewMap) {
+		this.viewMap = viewMap;
 	}
 
 	public void setErrorMessage(String errorMessage) {

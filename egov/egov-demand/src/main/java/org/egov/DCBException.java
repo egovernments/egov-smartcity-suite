@@ -46,8 +46,11 @@ public class DCBException extends RuntimeException {
     private static final long serialVersionUID = 1118286182458257153L;
     public final Logger logger = Logger.getLogger(getClass());
 
+    private String msg;
+    
     public DCBException(String msg) {
         super(msg);
+        this.msg = msg;
         logger.error(msg);
     }
 
@@ -61,4 +64,9 @@ public class DCBException extends RuntimeException {
         logger.error(cause);
     }
 
+    @Override
+    public String toString() {
+    	return msg;
+    }
+    
 }
