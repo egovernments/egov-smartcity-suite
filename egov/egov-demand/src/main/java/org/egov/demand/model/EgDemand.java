@@ -39,6 +39,7 @@
  */
 package org.egov.demand.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ import org.egov.commons.Installment;
  * @author MyEclipse Persistence Tools
  */
 
-public class EgDemand implements Cloneable {
+public class EgDemand implements Serializable, Cloneable {
 
 	private Long id;
 	private Installment egInstallmentMaster;

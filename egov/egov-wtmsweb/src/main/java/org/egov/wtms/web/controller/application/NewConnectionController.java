@@ -127,10 +127,10 @@ public class NewConnectionController extends GenericConnectionController {
         processAndStoreApplicationDocuments(waterConnectionDetails);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+        redirectAttributes.addFlashAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
-        return "application-success";
+        redirectAttributes.addFlashAttribute("cityName", waterConnectionDetailsService.getCityName());
+        return "redirect:/application-success";
     }
 
     private boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {

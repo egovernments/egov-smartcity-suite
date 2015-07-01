@@ -39,6 +39,7 @@
  */
 package org.egov.commons;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
@@ -50,7 +51,7 @@ import org.egov.infra.admin.master.entity.Module;
  * untill the end of the current financial year,which falls in the next year. 
  * There can be one or more installments in a year, each representing a particular period in that year.
  */
-public class Installment implements Comparable<Installment> {
+public class Installment implements Serializable, Comparable<Installment> {
 
 	private Integer id;
 	private java.util.Date fromDate;
