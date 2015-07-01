@@ -916,8 +916,8 @@ public class PropertyInfo {
 		int tenants = 0;
 
 		if (taxCalInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-			for (List<UnitTaxCalculationInfo> units : taxCalInfo.getUnitTaxCalculationInfos()) {
-				if (TENANT.equals(units.get(0).getUnitOccupation()))
+			for (UnitTaxCalculationInfo unit : taxCalInfo.getUnitTaxCalculationInfos()) {
+				if (TENANT.equals(unit.getUnitOccupation()))
 					tenants++;
 			}
 		} else {

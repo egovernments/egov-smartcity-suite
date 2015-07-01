@@ -53,18 +53,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
@@ -80,8 +83,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	private PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 	private BigDecimal totalTaxPayable = BigDecimal.ZERO;
 	private HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<Installment, TaxCalculationInfo>();
-	private static final BigDecimal BUILDING_VALUE_FACTOR = new BigDecimal(2 / 3);
-	private static final BigDecimal SITE_VALUE_FACTOR = new BigDecimal(2 / 3);
 
 	/**
 	 *
@@ -99,7 +100,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		Boundary propertyZone = null;
 		BigDecimal totalNetArv = BigDecimal.ZERO;
 		BoundaryCategory boundaryCategory = null;
-		List<UnitTaxCalculationInfo> calculationInfos = null;
 		// TODO move method prepareApplicableTaxes to tax calculator
 		List<String> applicableTaxes = prepareApplicableTaxes(property);
 		List<Installment> taxInstallments = getInstallmentListByStartDate(occupationDate);
@@ -113,22 +113,21 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 				for (Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
 					if (floorIF != null) {
 						// TODO think about, these beans to be client specific
-						APUnitTaxCalculationInfo unitTaxCalculationInfo = prepareUnitCalcInfo(floorIF, boundaryCategory);
-						totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
-
 						boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
 								.getId(), occupationDate);
-						calculationInfos = new ArrayList<UnitTaxCalculationInfo>();
-
-						calculationInfos.add(unitTaxCalculationInfo);
+						APUnitTaxCalculationInfo unitTaxCalculationInfo = prepareUnitCalcInfo(floorIF, boundaryCategory);
+						totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
 
 						calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property,
 								boundaryCategory, taxCalculationInfo);
 
 						totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
-						taxCalculationInfo.addUnitTaxCalculationInfo(calculationInfos);
+						taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
 					}
 				}
+				taxCalculationInfo.setTotalNetARV(totalNetArv);
+				taxCalculationInfo.setTotalTaxPayable(totalTaxPayable);
+				taxCalculationInfo.setTaxCalculationInfoXML(generateTaxCalculationXML(taxCalculationInfo));
 				taxCalculationMap.put(installment, taxCalculationInfo);
 			}
 		}
@@ -197,7 +196,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
 		for (String applicableTax : applicableTaxes) {
 			reasonDetail = getDemandReasonDetails(applicableTax, alv, installment).get(0);
-			calculatedTax = alv.multiply(reasonDetail.getPercentage().divide(new BigDecimal("100")));
+			calculatedTax = (alv.multiply(reasonDetail.getPercentage().divide(new BigDecimal("100")))).setScale(0,
+					BigDecimal.ROUND_HALF_UP);
 			APMiscellaneousTax miscellaneousTax = new APMiscellaneousTax();
 			miscellaneousTax.setTaxName(applicableTax);
 			miscellaneousTax.setTotalCalculatedTax(calculatedTax);
@@ -251,6 +251,37 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 				demandReasonCode, grossAnnualRentAfterDeduction, installment.getFromDate(), installment.getToDate());
 	}
 
+	public Map<String, BigDecimal> getMiscTaxesForProp(List<UnitTaxCalculationInfo> unitTaxCalcInfos) {
+
+		Map<String, BigDecimal> taxMap = new HashMap<String, BigDecimal>();
+		for (UnitTaxCalculationInfo unitTaxCalcInfo : unitTaxCalcInfos) {
+			for (MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes()) {
+				if (taxMap.get(miscTax.getTaxName()) == null) {
+					taxMap.put(miscTax.getTaxName(), miscTax.getTotalCalculatedTax());
+				} else {
+					taxMap.put(miscTax.getTaxName(),
+							taxMap.get(miscTax.getTaxName()).add(miscTax.getTotalCalculatedTax()));
+				}
+			}
+		}
+
+		return taxMap;
+	}
+
+	public String generateTaxCalculationXML(TaxCalculationInfo taxCalculationInfo) {
+		TaxCalculationInfoXmlHandler handler = new TaxCalculationInfoXmlHandler();
+		String taxCalculationInfoXML = "";
+
+		if (taxCalculationInfo != null) {
+
+			taxCalculationInfoXML = handler.toXML(taxCalculationInfo);
+
+		}
+
+		return taxCalculationInfoXML;
+
+	}
+
 	public Boolean between(Date date, Date fromDate, Date toDate) {
 		return ((date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate));
 	}
@@ -265,11 +296,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	}
 
 	private BigDecimal calculateFloorBuildingValue(BigDecimal floorMrv) {
-		return floorMrv.multiply(BUILDING_VALUE_FACTOR);
+		return floorMrv.multiply(new BigDecimal(0.66));
 	}
 
 	private BigDecimal calculateFloorSiteValue(BigDecimal floorMrv) {
-		return floorMrv.multiply(SITE_VALUE_FACTOR);
+		return floorMrv.multiply(new BigDecimal(0.33));
 	}
 
 	private BigDecimal calculateFloorDepreciation(BigDecimal grossArv, Floor floor) {

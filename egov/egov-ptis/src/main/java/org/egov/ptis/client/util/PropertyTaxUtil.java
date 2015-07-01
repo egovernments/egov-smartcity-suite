@@ -1377,16 +1377,13 @@ public class PropertyTaxUtil {
 	 * @param clone
 	 */
 	private void addUnitTaxCalculationInfoClone(TaxCalculationInfo taxCalInfo, TaxCalculationInfo clone) {
-		List<List<UnitTaxCalculationInfo>> units = new ArrayList<List<UnitTaxCalculationInfo>>();
+		List<UnitTaxCalculationInfo> units = new ArrayList<UnitTaxCalculationInfo>();
 
-		for (List<UnitTaxCalculationInfo> unitInfos : taxCalInfo.getUnitTaxCalculationInfos()) {
-			List<UnitTaxCalculationInfo> unitsByDate = new ArrayList<UnitTaxCalculationInfo>();
+		List<UnitTaxCalculationInfo> unitsByDate = new ArrayList<UnitTaxCalculationInfo>();
 
-			for (UnitTaxCalculationInfo unitInfo : unitInfos) {
-				UnitTaxCalculationInfo newUnitInfo = getUnitTaxCalculationInfoClone(unitInfo);
-				unitsByDate.add(newUnitInfo);
-			}
-			units.add(unitsByDate);
+		for (UnitTaxCalculationInfo unitInfo : taxCalInfo.getUnitTaxCalculationInfos()) {
+			UnitTaxCalculationInfo newUnitInfo = getUnitTaxCalculationInfoClone(unitInfo);
+			unitsByDate.add(newUnitInfo);
 		}
 		clone.setUnitTaxCalculationInfo(units);
 	}

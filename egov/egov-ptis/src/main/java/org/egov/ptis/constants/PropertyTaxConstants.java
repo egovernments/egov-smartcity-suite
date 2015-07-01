@@ -183,7 +183,7 @@ public interface PropertyTaxConstants {
 	public static final String PROP_SOURCE = "MNCPL-RECORDS";
 
 	// hierarchy types
-	public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+	public static final String ELECTION_HIERARCHY_TYPE = "ELECTION";
 	public static final String ADMIN_HIERARCHY_TYPE = "ADMINISTRATION";
 	public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
 	// boundary Types
@@ -195,6 +195,7 @@ public interface PropertyTaxConstants {
 	public static final String WARD = "Ward";
 	public static final String STREET = "Street";
 	public static final String LOCALITY = "locality";
+	public static final String ELECTIONWARD_BNDRY_TYPE = "Election Ward";
 
 	// Property Types
 	public static final String PROPTYPE_RESD = "RESIDENTIAL";

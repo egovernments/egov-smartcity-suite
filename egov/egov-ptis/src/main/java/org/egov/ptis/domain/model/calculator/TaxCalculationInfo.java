@@ -72,7 +72,7 @@ public abstract class TaxCalculationInfo {
 	 * different base rents
 	 */
 	@XStreamAlias("unittax")
-	private List<List<UnitTaxCalculationInfo>> unitTaxCalculationInfos = new ArrayList<List<UnitTaxCalculationInfo>>();
+	private List<UnitTaxCalculationInfo> unitTaxCalculationInfos = new ArrayList<UnitTaxCalculationInfo>();
 
 	public String getPropertyOwnerName() {
 		return propertyOwnerName;
@@ -98,7 +98,7 @@ public abstract class TaxCalculationInfo {
 		return totalTaxPayable;
 	}
 
-	public List<List<UnitTaxCalculationInfo>> getUnitTaxCalculationInfos() {
+	public List<UnitTaxCalculationInfo> getUnitTaxCalculationInfos() {
 		return unitTaxCalculationInfos;
 	}
 
@@ -126,7 +126,7 @@ public abstract class TaxCalculationInfo {
 		this.totalTaxPayable = totalTaxPayable;
 	}
 
-	public void setUnitTaxCalculationInfo(List<List<UnitTaxCalculationInfo>> unitTaxCalculationInfos) {
+	public void setUnitTaxCalculationInfo(List<UnitTaxCalculationInfo> unitTaxCalculationInfos) {
 		this.unitTaxCalculationInfos = unitTaxCalculationInfos;
 	}
 
@@ -138,8 +138,8 @@ public abstract class TaxCalculationInfo {
 		this.propertyArea = propertyArea;
 	}
 
-	public void addUnitTaxCalculationInfo(List<UnitTaxCalculationInfo> unitTaxCalculationInfos) {
-		getUnitTaxCalculationInfos().add(unitTaxCalculationInfos);
+	public void addUnitTaxCalculationInfo(UnitTaxCalculationInfo unitTaxCalculationInfo) {
+		getUnitTaxCalculationInfos().add(unitTaxCalculationInfo);
 	}
 
 	public String getPropertyType() {
@@ -196,10 +196,6 @@ public abstract class TaxCalculationInfo {
 
 	public void setTotalNetARV(BigDecimal totalNetARV) {
 		this.totalNetARV = totalNetARV;
-	}
-
-	public void setUnitTaxCalculationInfos(List<List<UnitTaxCalculationInfo>> unitTaxCalculationInfos) {
-		this.unitTaxCalculationInfos = unitTaxCalculationInfos;
 	}
 
 	@Override

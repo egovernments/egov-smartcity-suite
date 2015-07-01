@@ -572,7 +572,7 @@ public class PropertyNoticeService {
 
 		Map<String, BigDecimal> taxNameAndALV = new TreeMap<String, BigDecimal>();
 
-		List<List<UnitTaxCalculationInfo>> unitTaxes = taxCalcInfo.getUnitTaxCalculationInfos();
+		List<UnitTaxCalculationInfo> unitTaxes = taxCalcInfo.getUnitTaxCalculationInfos();
 
 		LOGGER.debug("setAnnualLettingValues - unitCalculationDetail=" + unitCalculationDetail);
 		LOGGER.debug("Exiting from setAnnualLettingValues");

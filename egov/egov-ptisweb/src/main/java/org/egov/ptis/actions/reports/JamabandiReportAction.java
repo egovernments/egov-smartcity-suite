@@ -48,7 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_JAMABANDI;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -101,7 +101,7 @@ public class JamabandiReportAction extends ReportFormAction {
 		super.prepare();
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 
 		addDropdownData("Zone", zoneList);
 		LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);

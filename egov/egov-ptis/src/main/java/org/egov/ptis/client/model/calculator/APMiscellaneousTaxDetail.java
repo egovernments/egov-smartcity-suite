@@ -39,105 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.client.model.calculator;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("taxdetail")
 public class APMiscellaneousTaxDetail extends MiscellaneousTaxDetail {
-	// %value or amount value
-	private BigDecimal taxValue;
-	private BigDecimal actualTaxValue;
-	private BigDecimal calculatedTaxValue;
-	private Integer noOfDays;
-	private BigDecimal historyALV;
-
-	@XStreamAsAttribute
-	private Date fromDate;
-
-	@XStreamAsAttribute
-	private Character isHistory = 'N';
-
-	public APMiscellaneousTaxDetail() {
-	}
-
-	public APMiscellaneousTaxDetail(APMiscellaneousTaxDetail taxDetail) {
-		this.taxValue = taxDetail.getTaxValue();
-		this.actualTaxValue = taxDetail.getActualTaxValue();
-		this.calculatedTaxValue = taxDetail.getCalculatedTaxValue();
-		this.fromDate = taxDetail.getFromDate();
-		this.noOfDays = taxDetail.getNoOfDays();
-		this.isHistory = taxDetail.getIsHistory();
-		this.historyALV = taxDetail.getHistoryALV();
-	}
-
-	public BigDecimal getTaxValue() {
-		return taxValue;
-	}
-
-	public void setTaxValue(BigDecimal taxValue) {
-		this.taxValue = taxValue;
-	}
-
-	public BigDecimal getActualTaxValue() {
-		return actualTaxValue;
-	}
-
-	public void setActualTaxValue(BigDecimal actualTaxValue) {
-		this.actualTaxValue = actualTaxValue;
-	}
-
-	public BigDecimal getCalculatedTaxValue() {
-		return calculatedTaxValue;
-	}
-
-	public void setCalculatedTaxValue(BigDecimal calculatedTaxValue) {
-		this.calculatedTaxValue = calculatedTaxValue;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Integer getNoOfDays() {
-		return noOfDays;
-	}
-
-	public void setNoOfDays(Integer noOfDays) {
-		this.noOfDays = noOfDays;
-	}
-
-	public Character getIsHistory() {
-		return isHistory;
-	}
-
-	public void setIsHistory(Character isHistory) {
-		this.isHistory = isHistory;
-	}
-
-	public BigDecimal getHistoryALV() {
-		return historyALV;
-	}
-
-	public void setHistoryALV(BigDecimal historyALV) {
-		this.historyALV = historyALV;
-	}
-
-	@Override
-	public String toString() {
-		return new StringBuilder().append("MiscellaneousTaxDetail [").append("taxValue=").append(getTaxValue())
-				.append(", actualTaxValue=").append(getActualTaxValue()).append(", calculatedTaxValue=")
-				.append(getCalculatedTaxValue()).append(", fromDate=").append(getFromDate()).append(", noOfDays=")
-				.append(getNoOfDays()).append(", isHistory=").append(getIsHistory()).append(", historyALV=")
-				.append(getHistoryALV()).append("]").toString();
-	}
 
 }

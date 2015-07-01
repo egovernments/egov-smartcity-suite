@@ -44,7 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -101,7 +101,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		@SuppressWarnings("unchecked")
 		List<Boundary> zoneList = persistenceService.findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 		
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1), wardId != null && !wardId.equals(-1));
@@ -131,10 +131,10 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		
 		Boundary zone = (Boundary) persistenceService.find(
 				"from BoundaryImpl BI where BI.id = ? and BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", getZoneId(), ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", getZoneId(), ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 		Boundary ward = (Boundary) persistenceService.find(
 				"from BoundaryImpl BI where BI.id = ? and BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", getWardId(), WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", getWardId(), WARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 		
 		reportInfo.setZoneNo(zone.getBoundaryNum().toString());
 		reportInfo.setWardNo(ward.getBoundaryNum().toString());

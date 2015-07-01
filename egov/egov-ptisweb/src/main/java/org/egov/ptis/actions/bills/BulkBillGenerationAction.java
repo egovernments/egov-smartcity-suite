@@ -40,7 +40,7 @@
 package org.egov.ptis.actions.bills;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_KEY_WARDSFOR_BULKBILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		wardList = getPersistenceService().findAllBy(
 				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.boundaryNum", WARD_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+				ELECTION_HIERARCHY_TYPE);
 		return NEW;
 	}
 

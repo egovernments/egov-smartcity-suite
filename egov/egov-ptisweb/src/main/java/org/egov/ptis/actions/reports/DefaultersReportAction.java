@@ -44,7 +44,7 @@ import static java.lang.Boolean.TRUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -138,7 +138,7 @@ public class DefaultersReportAction extends BaseFormAction {
 		List<Boundary> zoneList = persistenceService.findAllBy("FROM BoundaryImpl BI "
 				+ "WHERE BI.boundaryType.name=? " + "AND BI.boundaryType.heirarchyType.name=? "
 				+ "AND BI.isHistory='N' " + "ORDER BY BI.id", ZONE_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+				ELECTION_HIERARCHY_TYPE);
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1),
 				wardId != null && !wardId.equals(-1));
@@ -161,7 +161,7 @@ public class DefaultersReportAction extends BaseFormAction {
 				+ "AND BI.boundaryType.name = ? " + "AND BI.boundaryType.heirarchyType.name = ? "
 				+ "AND BI.isHistory = 'N' " + "ORDER BY BI.id";
 		ward = (Boundary) persistenceService.find(boundaryQuery, getWardId(), WARD_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+				ELECTION_HIERARCHY_TYPE);
 		String[] amounts = amountRange.split(" ");
 		StringBuilder query = new StringBuilder(100);
 		query.append(

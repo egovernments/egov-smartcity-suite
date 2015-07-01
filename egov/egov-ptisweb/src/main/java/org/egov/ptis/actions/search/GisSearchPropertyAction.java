@@ -46,7 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISCITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISVERSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -518,7 +518,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+				ELECTION_HIERARCHY_TYPE);
 
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 

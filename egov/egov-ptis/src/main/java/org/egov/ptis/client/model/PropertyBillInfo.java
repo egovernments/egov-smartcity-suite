@@ -94,7 +94,7 @@ public class PropertyBillInfo {
 	@Autowired
 	private PtDemandDao ptDemandDAO;
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
+	private PropertyTaxUtil propertyTaxUtil;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private BasicProperty basicProperty;
 	private String billNo;
@@ -419,11 +419,9 @@ public class PropertyBillInfo {
 		BigDecimal totalALV = BigDecimal.ZERO;
 
 		if (this.taxCalcInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-			for (List<UnitTaxCalculationInfo> unitTaxCalcs : this.taxCalcInfo.getUnitTaxCalculationInfos()) {
-				for (UnitTaxCalculationInfo unitTax : unitTaxCalcs) {
-					if (usages.contains(unitTax.getUnitUsage())) {
-						totalALV = totalALV.add(unitTax.getNetARV());
-					}
+			for (UnitTaxCalculationInfo unitTaxInfo : this.taxCalcInfo.getUnitTaxCalculationInfos()) {
+				if (usages.contains(unitTaxInfo.getUnitUsage())) {
+					totalALV = totalALV.add(unitTaxInfo.getNetARV());
 				}
 			}
 		} else {

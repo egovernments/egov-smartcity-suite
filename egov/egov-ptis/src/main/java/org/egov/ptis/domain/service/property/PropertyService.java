@@ -105,6 +105,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
+import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -143,6 +144,7 @@ public class PropertyService  {
     
 	private PersistenceService propPerServ;
 	private Installment currentInstall;
+	@Autowired
 	private APTaxCalculator taxCalculator;
 	private HashMap<Installment, TaxCalculationInfo> instTaxMap;
 	@Autowired
@@ -439,8 +441,8 @@ public class PropertyService  {
 		currentInstall = propertyTaxUtil.getCurrentInstallment();
 
 		for (Installment installment : instList) {
-			TaxCalculationInfo taxCalcInfo = instTaxMap.get(installment);
-			dmdDetailSet = createAllDmdDeatails(installment, instList, instTaxMap);
+			APTaxCalculationInfo taxCalcInfo = (APTaxCalculationInfo)instTaxMap.get(installment);
+			dmdDetailSet = createAllDmdDetails(installment, instList, instTaxMap);
 			PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
 			ptDemand = new Ptdemand();
 			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable());
@@ -458,18 +460,9 @@ public class PropertyService  {
 
 			// In case of Property Type as (Open Plot,State Govt,Central Govt),
 			// set the alv to PTDemandCalculations
-			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
-					|| property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
-					|| property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
+			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 				ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
-			} else if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
-					.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
-					&& !property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
-					&& !property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
+			} else {
 				if (installment.equals(currentInstall)) {
 					// FloorwiseDemandCalculations should be set only for the
 					// current installment for each floor.
@@ -536,7 +529,7 @@ public class PropertyService  {
 			LOGGER.info("------------------------End New Property demand set ---------------------------");
 
 			for (Installment installment : instList) {
-				createAllDmdDeatails(oldProperty, newProperty, installment, instList, instTaxMap);
+				createAllDmdDetails(oldProperty, newProperty, installment, instList, instTaxMap);
 			}
 
 			LOGGER.info("----------------------------------------------- Adjustments --------------------------------------------------");
@@ -601,20 +594,20 @@ public class PropertyService  {
 		return occupationDate;
 	}
 
-	private Set<EgDemandDetails> createAllDmdDeatails(Installment installment, List<Installment> instList,
+	private Set<EgDemandDetails> createAllDmdDetails(Installment installment, List<Installment> instList,
 			HashMap<Installment, TaxCalculationInfo> instTaxMap) {
 		LOGGER.debug("Entered into createAllDmdDeatails");
-		LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: " + instList + ", instTaxMap: "
-				+ instTaxMap);
+		/*LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: " + instList + ", instTaxMap: "
+				+ instTaxMap);*/
 
 		Set<EgDemandDetails> dmdDetSet = new HashSet<EgDemandDetails>();
 
 		for (Installment inst : instList) {
 			if (inst.getFromDate().before(installment.getFromDate())
 					|| inst.getFromDate().equals(installment.getFromDate())) {
-				TaxCalculationInfo taxCalcInfo = instTaxMap.get(inst);
 
-				Map<String, BigDecimal> taxMap = new HashMap<String, BigDecimal>();
+				TaxCalculationInfo taxCalcInfo = instTaxMap.get(inst);
+				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(taxCalcInfo.getUnitTaxCalculationInfos());
 
 				for (Map.Entry<String, BigDecimal> tax : taxMap.entrySet()) {
 					EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(tax.getKey(), inst);
@@ -628,7 +621,7 @@ public class PropertyService  {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createAllDmdDeatails(Property oldProperty, Property newProperty, Installment installment,
+	private void createAllDmdDetails(Property oldProperty, Property newProperty, Installment installment,
 			List<Installment> instList, HashMap<Installment, TaxCalculationInfo> instTaxMap) {
 		LOGGER.debug("Entered into createAllDmdDeatails");
 		LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + ", newProperty: " + newProperty
@@ -1129,41 +1122,12 @@ public class PropertyService  {
 		// + ", floor: " + floor + ", taxCalcInfo: " + taxCalcInfo);
 		FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
 
-		try {
-			for (List<UnitTaxCalculationInfo> unitTaxs : taxCalcInfo.getUnitTaxCalculationInfos()) {
+		floorDmdCalc.setPTDemandCalculations(ptDmdCal);
+		floorDmdCalc.setFloor(floor);
 
-				floorDmdCalc.setPTDemandCalculations(ptDmdCal);
-				floorDmdCalc.setFloor(floor);
+		for (UnitTaxCalculationInfo unitTax : taxCalcInfo.getUnitTaxCalculationInfos()) {
 
-				for (UnitTaxCalculationInfo unitTax : unitTaxs) {
-					/**
-					 * This condition is applied because floor number is not
-					 * mandatory in case of Mixed Property.(for UnitType =
-					 * OPEN_PLOT). So UnitType(mandatory only in case of Mixed
-					 * Property) is considered. The main purpose of this
-					 * condition is to check each unitTax corresponds to which
-					 * floor
-					 */
-					if (((floor.getUnitType() == null || !floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT))
-							&& unitTax.getFloorNumber().equals(floor.getFloorNo())
-							&& unitTax.getFloorNumber().equals(Integer.valueOf(floor.getExtraField1())) && (unitTax
-								.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea().toString()))
-							|| (floor.getUnitType() != null
-									&& floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT)
-									&& unitTax.getFloorNumber().equals(Integer.valueOf(floor.getExtraField1()))
-									&& (unitTax.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea()
-											.toString())
-									&& unitTax.getUnitUsage().equals(floor.getPropertyUsage().getUsageName())
-									&& unitTax.getUnitOccupation()
-											.equals(floor.getPropertyOccupation().getOccupation()) && unitTax
-									.getOccpancyDate().equals(sdf.parse(floor.getExtraField3())))) {
-
-						setFloorDmdCalTax(unitTax, floorDmdCalc);
-					}
-				}
-			}
-		} catch (ParseException e) {
-			LOGGER.error(e.getMessage(), e);
+			setFloorDmdCalTax(unitTax, floorDmdCalc);
 		}
 
 		LOGGER.debug("floorDmdCalc: " + floorDmdCalc + "\nExiting from createFloorDmdCalc");
@@ -1207,7 +1171,7 @@ public class PropertyService  {
 			Set<FloorwiseDemandCalculations> floorDmdCalcSet = propPtDemand.getDmdCalculations()
 					.getFlrwiseDmdCalculations();
 			if (floorDmdCalcSet != null && floorDmdCalcSet.size() > 0) {
-				List<List<UnitTaxCalculationInfo>> unitTaxCalInfos = taxCalInfo.getUnitTaxCalculationInfos();
+				List<UnitTaxCalculationInfo> unitTaxCalInfos = taxCalInfo.getUnitTaxCalculationInfos();
 				for (FloorwiseDemandCalculations floorDmdCalc : floorDmdCalcSet) {
 					Floor floor = floorDmdCalc.getFloor();
 					UnitTaxCalculationInfo unitTaxCalInfo1 = null;
@@ -1216,9 +1180,7 @@ public class PropertyService  {
 							: propertyTaxUtil.getFloorStr(floor.getFloorNo());
 
 					try {
-						for (List<UnitTaxCalculationInfo> unitTaxCalcs : unitTaxCalInfos) {
-
-							UnitTaxCalculationInfo unitTaxCalInfo = unitTaxCalcs.get(0);
+							UnitTaxCalculationInfo unitTaxCalInfo = unitTaxCalInfos.get(0);
 							/**
 							 * This condition is applied because floor number is
 							 * not mandatory in case of Mixed Property.(for
@@ -1251,7 +1213,6 @@ public class PropertyService  {
 								unitTaxCalInfo1 = unitTaxCalInfo;
 								break;
 							}
-						}
 					} catch (ParseException e) {
 						LOGGER.error(e.getMessage(), e);
 					}

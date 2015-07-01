@@ -43,6 +43,8 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
@@ -652,6 +654,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
 		
 		List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
+		List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 
 		authPropList.add(YES);
 		authPropList.add(NO);
@@ -689,6 +692,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		setAmenitiesMap(CommonServices.getAmenities());
 		setFloorNoMap(CommonServices.floorMap());
 		addDropdownData("localityList", localityList);
+		addDropdownData("electionWardList", electionWardList);
 
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
 			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -812,7 +816,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		property.getPropertyDetail().setEffective_date(calendar.getTime());
 		basicProperty.addProperty(property);
-		//propService.createDemand(property,  null, propCompletionDate, isfloorDetailsRequired);
+		propService.createDemand(property,  null, propCompletionDate, isfloorDetailsRequired);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
