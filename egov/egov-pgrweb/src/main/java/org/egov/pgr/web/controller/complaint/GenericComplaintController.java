@@ -1,10 +1,9 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +17,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -44,10 +43,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -56,7 +58,10 @@ import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 public abstract class GenericComplaintController {
 
@@ -66,35 +71,39 @@ public abstract class GenericComplaintController {
     @Autowired
     protected ComplaintTypeService complaintTypeService;
 
-    @Autowired(required=true)
+    @Autowired(required = true)
     protected ComplaintService complaintService;
-    
+
     @Autowired
     protected ReceivingCenterService receivingCenterService;
 
     public @ModelAttribute("complaintTypes") List<ComplaintType> frequentlyFiledComplaintTypes() {
         return complaintTypeService.getFrequentlyFiledComplaints();
     }
-    
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
+    @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
+    public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
+        if (request.getParameter("crn") != null && complaint.isNew())
+            complaint = complaintService.getComplaintByCRN(request.getParameter("crn"));
+        return new ModelAndView("complaint/reg-success", "complaint", complaint);
+
+    }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if(ArrayUtils.isNotEmpty(files)) {
-            return Arrays.asList(files)
-                    .stream().filter(file -> !file.isEmpty())
-                    .map(file -> {
-                        try {
-                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), PGRConstants.MODULE_NAME);
-                        } catch (Exception e) {
-                            throw new EGOVRuntimeException("Error occurred while getting inputstream",e);
-                        }
-                    })
-                    .collect(Collectors.toSet());
-        } else {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),
+                            PGRConstants.MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
             return null;
-        }
     }
 }

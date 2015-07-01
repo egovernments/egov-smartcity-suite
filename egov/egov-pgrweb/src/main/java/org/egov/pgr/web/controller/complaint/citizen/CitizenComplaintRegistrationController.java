@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -85,16 +84,17 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/reg-success";
+        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }
 
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, @RequestParam("files") final MultipartFile[] files) {
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request,
+            @RequestParam("files") final MultipartFile[] files) {
 
         if (!ValidatorUtils.isCaptchaValid(request))
             resultBinder.reject("captcha.not.valid");
-                
+
         if (StringUtils.isBlank(complaint.getComplainant().getEmail())
                 && StringUtils.isBlank(complaint.getComplainant().getMobile()))
             resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
@@ -112,7 +112,6 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/reg-success";
+        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }
-
 }

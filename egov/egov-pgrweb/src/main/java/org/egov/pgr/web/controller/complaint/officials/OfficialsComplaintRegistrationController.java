@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -79,8 +78,8 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files) {
 
-        if (ReceivingMode.PAPER.equals(complaint.getReceivingMode()) && complaint.getReceivingCenter() != null && complaint.getReceivingCenter().isCrnRequired()
-                && complaint.getCrn().isEmpty())
+        if (ReceivingMode.PAPER.equals(complaint.getReceivingMode()) && complaint.getReceivingCenter() != null
+                && complaint.getReceivingCenter().isCrnRequired() && complaint.getCrn().isEmpty())
             resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
 
         if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
@@ -93,6 +92,6 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/reg-success";
+        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
     }
 }
