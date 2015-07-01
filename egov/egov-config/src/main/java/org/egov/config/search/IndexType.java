@@ -40,7 +40,7 @@
 package org.egov.config.search;
 
 public enum IndexType {
-    COMPLAINT_TYPE, COMPLAINT, APPLICATIONSEARCH;
+    COMPLAINT_TYPE, COMPLAINT, APPLICATIONSEARCH, CONNECTIONSEARCH;
 
     @Override
     public String toString() {

@@ -41,7 +41,6 @@ package org.egov.wtms.elasticSearch.repository;
 
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

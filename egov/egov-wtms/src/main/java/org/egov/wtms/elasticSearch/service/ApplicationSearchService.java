@@ -63,12 +63,11 @@ public class ApplicationSearchService {
     public ApplicationSearchService(final ApplicationSearchRepository applicationSearchRepository) {
         this.applicationSearchRepository = applicationSearchRepository;
     }
-
-    
-
+	
     public ApplicationIndex load(final Long id) {
         return applicationSearchRepository.getOne(id);
     }
+    
     public List<ApplicationIndex> findApplicationIndexModules() {
         return applicationSearchRepository.findApplicationIndexModules();
     }
