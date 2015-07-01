@@ -288,4 +288,31 @@ public abstract class Address extends AbstractPersistable<Long> {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        if (houseNoBldgApt != null)
+            builder.append(houseNoBldgApt).append(", ");
+        if (streetRoadLine != null)
+            builder.append(streetRoadLine).append(", ");
+        if (areaLocalitySector != null)
+            builder.append(areaLocalitySector).append(", ");
+        if (landmark != null)
+            builder.append(landmark).append(", ");
+        if (cityTownVillage != null)
+            builder.append(cityTownVillage).append(", ");
+        if (postOffice != null)
+            builder.append(postOffice).append(", ");
+        if (subdistrict != null)
+            builder.append(subdistrict).append(", ");
+        if (district != null)
+            builder.append(district).append(", ");
+        if (state != null)
+            builder.append(state).append(", ");
+        if (country != null)
+            builder.append(country).append(", ");
+        builder.append("PIN : ").append(pinCode);
+        return builder.toString();
+    }
 }
