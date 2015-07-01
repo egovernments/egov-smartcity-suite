@@ -13,7 +13,6 @@ $(document).ready(function(){
 					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
 						$('#propertyIdentifier').html('');
 						$('#applicantname').html('');
-						$('#mobileNumber').html('');
 						$('#propertyaddress').html('');
 						$('#zonewardblock').html('');
 						$('#propertytaxdue').html('0.00');
@@ -28,8 +27,6 @@ $(document).ready(function(){
 								applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
 						}
 						$("#applicantname").html(applicantName);
-						if(response.ownerNames[0].mobileNumber != '')
-							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
 						$("#propertyaddress").html(response.propertyAddress);
 						boundaryData = '';
 						if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
