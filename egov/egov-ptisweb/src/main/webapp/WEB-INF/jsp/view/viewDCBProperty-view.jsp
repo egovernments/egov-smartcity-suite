@@ -392,47 +392,8 @@
 												</td>
 											</c:if>
 										</s:iterator>
-
-										<s:set name="InstallmentKey" value="key" />
-										<!-- i and j variables are used for UI purpose only-->
-										<c:set value="0" var="j" />
-										<c:set value="0" var="i" />
-										<s:iterator value="dcbReport.getReceipts()" var="dcbreport">
-											<c:set value="${j+1}" var="j" />
-											<s:if test="%{key== #InstallmentKey}">
-												<c:set value="${i+1}" var="i" />
-												<td class="blueborderfortd">
-													<s:iterator value="value" var="receipt">
-														<s:if test="%{#receipt.getReceiptStatus() != 'C'}">
-													    <a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#receipt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
-															<s:property value="#receipt.getReceiptNumber()" />
-														</a>	
-																dated
-														<s:date name="#receipt.getReceiptDate()"
-																format="dd/MM/yyyy" var="rcptdate" />
-															<s:property value="rcptdate" />
-																with amount Rs.
-														<s:text name="format.money">
-															<s:param value="#receipt.getReceiptAmt()" />
-														</s:text>
-															<br />
-														</s:if>
-													</s:iterator>
-												</td>
-											</s:if>
-
-											<c:if test="${fn:length(dcbReport.receipts)==j && i==0}">
-												<td class="blueborderfortd">
-													&nbsp;
-												</td>
-											</c:if>
-
-										</s:iterator>
 									</tr>
-
 								</s:iterator>
-
-
 								<tr>
 									<td class="blueborderfortd">
 										<div align="center">
@@ -687,6 +648,63 @@
 									</td>
 								</tr>
 								<s:if
+									test="%{getActiveRcpts() != null && !getActiveRcpts().isEmpty()}">
+									<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+									<tr>
+										<td align="center">
+											<div class="headingsmallbg">
+												<s:text name="propRcptDet" />
+											</div>
+										</td>
+									</tr>
+
+									<tr>
+										<td align="center">
+											<table width="100%" border="0" align="center" cellpadding="0"
+												cellspacing="0" class="tablebottom">
+		
+												<tr>
+													<th class="bluebgheadtd">
+														<s:text name="receiptNo" />
+													</th>
+													<th class="bluebgheadtd">
+														<s:text name="receiptDate" />
+													</th>
+													<th class="bluebgheadtd">
+														<s:text name="totalAmount" />
+													</th>
+												</tr>
+		
+												<s:iterator value="getActiveRcpts()" var="rcpt">
+													<tr>
+														<td class="blueborderfortd">
+															<div align="center">
+																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#receipt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
+																	<s:property value="#rcpt.getReceiptNumber()" />
+																</a>
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:date name="#rcpt.getReceiptDate()" format="d/M/yy h:mm:ss"/>
+															</div>
+														</td>
+														<td class="blueborderfortd">
+															<div align="center">
+																<s:text name="format.money">
+																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
+																</s:text>
+															</div>
+														</td>
+													</tr>
+												</s:iterator>
+											</table>
+										</td>
+									</tr>
+									</table>
+								</s:if>
+								<s:if
 									test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
 												cellspacing="0" class="tablebottom">
@@ -720,17 +738,21 @@
 													<tr>
 														<td class="blueborderfortd">
 															<div align="center">
-																<s:property value="#rcpt.getReceiptNumber()" />
+																<a href="/../collection/citizen/onlineReceipt!viewReceipt.action?receiptNumber=<s:property value="#receipt.getReceiptNumber()" />&consumerCode=<s:property value="%{encodedConsumerCode}" />&serviceCode=PT" target="_blank" >
+																	<s:property value="#rcpt.getReceiptNumber()" />
+																</a>
 															</div>
 														</td>
 														<td class="blueborderfortd">
 															<div align="center">
-																<s:property value="#rcpt.getReceiptDate()" />
+																<s:date name="#rcpt.getReceiptDate()" format="d/M/yy h:mm:ss"/>
 															</div>
 														</td>
 														<td class="blueborderfortd">
 															<div align="center">
-																<s:property value="#rcpt.getReceiptAmt()" />
+																<s:text name="format.money">
+																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
+																</s:text>
 															</div>
 														</td>
 													</tr>
@@ -743,44 +765,6 @@
 							</table>				
 							</td>
 							</tr>
-							<s:if test="%{activeRcpts != null}">
-								<tr>
-									<td colspan="5" align="center">
-										<s:text name="PaymentDetails" />
-									</td>
-								</tr>
-								<tr>
-									<td colspan="5" align="center">
-										<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-											<tr>
-												<th class="bluebgheadtd"><s:text name="receiptNo" /></th>
-												<th class="bluebgheadtd"><s:text name="receiptDate" /></th>
-												<th class="bluebgheadtd"><s:text name="totalAmount" /></th>
-											</tr>
-											<s:iterator value="activeRcpts" var="activeRcpt">
-												<tr>
-													<td class="blueborderfortd">
-														<div align="center">
-															<s:property default="N/A" value="%{receiptNumber}" />
-														</div>
-													</td>
-													<td class="blueborderfortd">
-														<div align="center">
-															<s:property default="N/A" value="%{receiptDate}" />
-														</div>
-													</td>
-													<td class="blueborderfortd">
-														<div align="center">
-															<s:property default="N/A" value="%{receiptAmt}" />
-														</div>
-													</td>
-												</tr>
-											</s:iterator>
-										</table>
-									</td>
-								</tr>
-							</s:if>
 							</table>
 							<div class="buttonbottom" align="center">
 									<s:if test="%{errorMessage != null}">

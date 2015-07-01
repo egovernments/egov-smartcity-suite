@@ -74,7 +74,7 @@
 			<%-- <jsp:include page="viewObjection.jsp"/>
 			<jsp:include page="../recovery/viewRecovery.jsp"/> --%>
 			<div class="buttonbottom" align="center">
-			<s:if test="isUserOperator == true">
+			<s:if test="%{isUserOperator}">
 				<div align="center">
 					<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 					<span style="font-size:15px; color:red">
