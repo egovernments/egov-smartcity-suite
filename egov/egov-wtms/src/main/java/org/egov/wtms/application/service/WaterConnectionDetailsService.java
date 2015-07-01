@@ -39,8 +39,12 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +53,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.EgModules;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -107,6 +116,9 @@ public class WaterConnectionDetailsService {
     private CityWebsiteService cityWebsiteService;
     
     @Autowired
+    private EisCommonService eisCommonService;
+
+    @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
     }
@@ -116,8 +128,8 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> findAll() {
-        return waterConnectionDetailsRepository
-                .findAll(new Sort(Sort.Direction.ASC, WaterTaxConstants.APPLICATION_NUMBER));
+        return waterConnectionDetailsRepository.findAll(new Sort(Sort.Direction.ASC,
+                WaterTaxConstants.APPLICATION_NUMBER));
     }
 
     public WaterConnectionDetails findByApplicationNumber(final String applicationNumber) {
@@ -132,8 +144,7 @@ public class WaterConnectionDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
-            final Integer pageSize) {
+    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,
                 WaterTaxConstants.APPLICATION_NUMBER);
         return waterConnectionDetailsRepository.findAll(pageable);
@@ -206,5 +217,60 @@ public class WaterConnectionDetailsService {
 
     public String getCityName() {
         return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
+    }
+
+    public WaterConnectionDetails findByApplicationNumberOrConsumerCode(final String number) {
+        return waterConnectionDetailsRepository.findByApplicationNumberOrConnection_ConsumerCode(number, number);
+    }
+
+    public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
+        User user = null;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        final State state = waterConnectionDetails.getState();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        if (null != state) {
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments());
+            map.put("updatedBy", state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put("user", user.getUsername());
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != user.getUsername() ? user.getUsername() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+            if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
+                Collections.reverse(waterConnectionDetails.getStateHistory());
+            for (final StateHistory stateHistory : waterConnectionDetails.getStateHistory()) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments());
+                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername());
+                    HistoryMap.put("department",
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
+            }
+        }
+        return historyTable;
     }
 }

@@ -69,5 +69,9 @@
         <put-attribute name="body" value="/WEB-INF/views/elasticSearch/applicationSearch-newForm.jsp"/>
     </definition>
 	 
+     <definition name="application-view" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/application-view.jsp"/>
+    </definition>
 	
 </tiles-definitions>

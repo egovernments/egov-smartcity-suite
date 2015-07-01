@@ -66,4 +66,5 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     List<WaterConnectionDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
             ApplicationType applicationType, ConnectionStatus connectionStatus);
 
+    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCode(String applicationNumber,String consumerCode);
 }

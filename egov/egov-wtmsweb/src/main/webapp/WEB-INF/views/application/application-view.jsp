@@ -41,68 +41,59 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
+
+<form:form  id="waterConnectionSuccess" method ="get" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >				
+<div class="page-container" id="page-container">
+	<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+		<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header col-md-10 col-xs-10">
+					<a class="navbar-brand" href="javascript:void(0);">
+						<img src="<c:url value='/resources/global/images/rmclogo.jpg' context='/egi'/>" height="60">
+							
+							<span class="title2">View Connection</span>
+					</a>
+				</div>
+				
+				<div class="nav-right-menu col-md-2 col-xs-2">
+					<ul class="hr-menu text-right">
+						<li class="ico-menu">
+							<a href="javascript:void(0);">
+								<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>">
+							</a>
+						</li>
+						
+					</ul>
+				</div>
+				
+			</div>
+		</nav>
+				
+	</header>
+	
+	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.connection.details"/>
+				<div class="panel-title text-center no-float">
+					Applicant Information
 				</div>
 			</div>
-			<div class="panel-body">
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.category"/></div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.category.name}" /></div>
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.watersourcetype"/></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.waterSource.waterSourceType}" />
+				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+		</div>
+	<jsp:include page="connectiondetails-view.jsp"></jsp:include>
+	<c:if test="${null!=mode && mode!='search' }">
+		<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title text-center no-float">
+						Application History
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.hscpipesize.inches" /></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.pipeSize.code}" />
-					</div>
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.sumpcapacity.litres" /></div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
-				</div>
+					<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 			</div>
-		</div>					
-	</div>
-</div>
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.slno" /></th>
-				<th><spring:message code="lbl.documentname" /></th>
-				<th><spring:message code="lbl.documentnumber" /></th>
-				<th><spring:message code="lbl.documentdate" /></th>
-				<th><spring:message code="lbl.files"/></th>
-			</tr>
-		</thead>
-		<c:choose>
-			<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
-				<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">
-					<tbody>
-						<tr>
-							<td><c:out value="${serialNo.count}"/></td>
-							<td><c:out value="${docs.documentNames.documentName}" /></td>
-							<td><c:out value="${docs.documentNumber}" /></td>
-							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
-							<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax"> 
-									<c:out value="${file.fileName}"/></a>
-								</c:forEach>
-							</td>
-						</tr>
-					</tbody>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<div class="col-md-3 col-xs-6 add-margin">No Documents found</div>
-			</c:otherwise>
-		</c:choose>
-	</table>
+	</c:if>
+</div>			
+</form:form>
 <script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
