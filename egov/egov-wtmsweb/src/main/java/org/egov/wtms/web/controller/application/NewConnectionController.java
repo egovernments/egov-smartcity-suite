@@ -45,6 +45,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -56,7 +57,6 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -91,16 +91,10 @@ public class NewConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model) {
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request) {
 
-        if (waterConnectionDetails.getConnection() != null
-                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
-                && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            final String errorMessage = waterConnectionDetailsService
-                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (errorMessage != null && !errorMessage.equals(""))
-                resultBinder.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
-        }
+        validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -125,7 +119,19 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationDocs(applicationDocs);
 
         processAndStoreApplicationDocuments(waterConnectionDetails);
-        waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails);
+
+        Long approvalPosition = 0l;
+        String approvalComent = "";
+
+        if (request.getParameter("approvalComent") != null)
+            approvalComent = request.getParameter("approvalComent");
+
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
+                approvalComent);
+
         redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
         redirectAttributes.addFlashAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
@@ -140,4 +146,14 @@ public class NewConnectionController extends GenericConnectionController {
         return true;
     }
 
+    private void validatePropertyID(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+        if (waterConnectionDetails.getConnection() != null
+                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
+                && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
+            final String errorMessage = waterConnectionDetailsService
+                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            if (errorMessage != null && !errorMessage.equals(""))
+                errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+        }
+    }
 }

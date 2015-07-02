@@ -54,11 +54,13 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.EgModules;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
@@ -114,9 +116,15 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private CityWebsiteService cityWebsiteService;
-    
+
     @Autowired
     private EisCommonService eisCommonService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -128,8 +136,8 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> findAll() {
-        return waterConnectionDetailsRepository.findAll(new Sort(Sort.Direction.ASC,
-                WaterTaxConstants.APPLICATION_NUMBER));
+        return waterConnectionDetailsRepository
+                .findAll(new Sort(Sort.Direction.ASC, WaterTaxConstants.APPLICATION_NUMBER));
     }
 
     public WaterConnectionDetails findByApplicationNumber(final String applicationNumber) {
@@ -144,15 +152,16 @@ public class WaterConnectionDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber, final Integer pageSize) {
+    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
+            final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,
                 WaterTaxConstants.APPLICATION_NUMBER);
         return waterConnectionDetailsRepository.findAll(pageable);
     }
 
     @Transactional
-    public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails) {
-
+    public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
+            final Long approvalPosition, final String approvalComent) {
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
@@ -171,6 +180,7 @@ public class WaterConnectionDetailsService {
         }
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
         createApplicationIndex(savedWaterConnectionDetails);
         return savedWaterConnectionDetails;
     }
@@ -238,13 +248,13 @@ public class WaterConnectionDetailsService {
             user = state.getOwnerUser();
             if (null != user) {
                 map.put("user", user.getUsername());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 map.put("user", null != user.getUsername() ? user.getUsername() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
+                        ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
             if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
@@ -259,18 +269,28 @@ public class WaterConnectionDetailsService {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     HistoryMap.put("user", user.getUsername());
-                    HistoryMap.put("department",
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
+                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
+                            ? owner.getDeptDesig().getDepartment().getName() : "");
                 }
                 historyTable.add(HistoryMap);
             }
         }
         return historyTable;
+    }
+
+    private void createWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
+            final Long approvalPosition, final String approvalComent) {
+        final User user = securityUtils.getCurrentUser();
+        final Position assignee = positionMasterService.getPositionById(approvalPosition);
+        waterConnectionDetails.transition().start().withSenderName(user.getName())
+                .withComments("New Water Tap connection application created with Application Number : "
+                        + waterConnectionDetails.getApplicationNumber())
+                .withStateValue(WaterConnectionDetails.WorkFlowState.CREATED.toString()).withOwner(assignee)
+                .withNextAction("").withComments(approvalComent).withDateInfo(new Date());
     }
 }

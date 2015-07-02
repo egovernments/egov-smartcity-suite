@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,49 +36,54 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-
-lbl.select=Select
-lbl.submit=Submit
-lbl.reset=Reset
-lbl.ok=OK
-lbl.close=Close
-lbl.cancel=Cancel
-lbl.print=Print
-lbl.yes=Yes
-lbl.no=No
-lbl.department=Department
-lbl.name=Name
-lbl.contactNo=Contact Number
-lbl.email=Email
-lbl.mobileNo=Mobile Number
-lbl.priority=Priority
-lbl.location=Location
-lbl.more=More
-lbl.when=When
-lbl.today=Today
-lbl.contact.info=Contact Information
-lbl.fromDate=From Date
-lbl.toDate=To Date
-lbl.status=Status
-lbl.search=Search
-
-lbl.create=Create
-lbl.edit=Edit
-lbl.delete=Delete
-lbl.update=Update
-
-lbl.selectdepartment=Select Department
-lbl.selectdesignation=Select Designation
-lbl.selectuser=Select User
-lbl.selectzone=Select Zone
-lbl.selectward=Select Ward
-lbl.back=Back
-lbl.clear=Clear
-lbl.slno=S. No.
-lbl.attachdocument=Attach Document
-lbl.approverdetails=Approval Details
-lbl.approverdepartment=Approver Department
-lbl.approverdesignation=Approver Designation
-lbl.approver=Approver
-lbl.comments=Comments
+#-------------------------------------------------------------------------------*/
+$(document).ready(function()
+{	
+	$('#approvalDepartment').change(function(){
+		$.ajax({
+			url: "/wtms/ajax-designationsByDepartment",     
+			type: "GET",
+			data: {
+				approvalDepartment : $('#approvalDepartment').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#approvalDesignation').empty();
+				$('#approvalDesignation').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
+	
+	$('#approvalDesignation').change(function(){
+		$.ajax({
+			url: "/wtms/ajax-positionsByDepartmentAndDesignation",     
+			type: "GET",
+			data: {
+				approvalDesignation : $('#approvalDesignation').val(),
+				approvalDepartment : $('#approvalDepartment').val()    
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#approvalPosition').empty();
+				$('#approvalPosition').append($("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
+	
+});

@@ -47,6 +47,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -92,6 +94,13 @@ public abstract class GenericConnectionController {
     @Autowired
     private DocumentNamesService documentNamesService;
 
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
@@ -116,9 +125,9 @@ public abstract class GenericConnectionController {
         return propertyTypeService.getAllActivePropertyTypes();
     }
 
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    public @ModelAttribute("approvalDepartmentList") List<Department> approverDepartments() {
+        return departmentService.getAllDepartments();
+    }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))

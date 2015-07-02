@@ -58,7 +58,8 @@
 				<div class="panel-body custom-form ">
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
-					<jsp:include page="documentdetails.jsp"></jsp:include>			
+					<jsp:include page="documentdetails.jsp"></jsp:include>	
+					<jsp:include page="../common/workflow.jsp"></jsp:include>	
 				</div>
 			</div>
 			<div class="row">
@@ -77,6 +78,7 @@
 </div>
 
 <script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
+<script src="<c:url value='/resources/js/app/workflow.js'/>"></script>
 <script>
 	
 </script>

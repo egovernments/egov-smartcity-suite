@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,6 +80,10 @@ public class WaterConnectionDetails extends StateAware {
 
     private static final long serialVersionUID = -4667948558401042849L;
     public static final String SEQ_CONNECTIONDETAILS = "SEQ_EGWTR_CONNECTIONDETAILS";
+
+    public enum WorkFlowState {
+        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
+    }
 
     @Id
     @GeneratedValue(generator = SEQ_CONNECTIONDETAILS, strategy = GenerationType.SEQUENCE)
@@ -151,7 +156,7 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
 
@@ -166,6 +171,12 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String myLinkId() {
+        return applicationNumber;
+
     }
 
     public ApplicationType getApplicationType() {
@@ -330,7 +341,8 @@ public class WaterConnectionDetails extends StateAware {
 
     @Override
     public String getStateDetails() {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return String.format("Application Number %s for %s with application date %s.", applicationNumber,
-                applicationType.getName(), applicationDate);
+                applicationType.getName(), formatter.format(applicationDate));
     }
 }
