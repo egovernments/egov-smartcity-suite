@@ -448,6 +448,7 @@ td.totalbg {
 		  background-color: #F2851F;
 		  border-color: #F2851F;
 		  font-weight: bold;
+		  font-size:15px;
 	}
 	
 div.subheadsmallnew {
@@ -733,16 +734,19 @@ td.greyboxwithlink {
 	
 div.errorstyle {
 	font-size: 11px;
-	font-weight: bold;
 	color: #F00;
 	text-align: center;
 	margin-bottom: 10px;
 	padding:10px;
 	background-color:#FFFFEE;
-	font-family: Arial, Helvetica, sans-serif;
-	border: 1px solid #EEEE00;
+	font-family: semibold;
+	border: 1px solid #F00;
 	}
 	
+.justbold
+{
+	font-family:semibold;
+}
 
 .mandatorycoll {
 	font-weight: normal;
@@ -895,4 +899,67 @@ textarea
   -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
   -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.container-medium
+{
+  max-width: 900px;
+  margin: 10 auto;
+}
+
+td.blueborderfortd > select
+{
+  min-width: 106px;
+  font-family: regular;
+  font-size: 11px;
+  background-color: white;
+  border: 1px solid #d4d4d4;
+  color: #000000;
+  padding-top: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+}
+
+td.blueborderfortd.bg-gray
+{
+	background:#F5F5F5;
+}
+
+td.blueborderfortd.text-center
+{
+	text-align:center;
+}
+
+td.blueborderfortd.text-right
+{
+	text-align:right;
+}
+
+table.table-payment
+{
+	width:100%;
+}
+
+table.table-payment td
+{
+	padding:10px;
+	vertical-align: top;
+}
+
+table.table-payment label
+{
+	font-size:14px;
+	font-family:semibold;
+}
+
+th.bluebgheadtd.text-left
+{
+	text-align:left;
+}
+
+.padding-5
+{
+	padding:5px;
+	display:block;
 }

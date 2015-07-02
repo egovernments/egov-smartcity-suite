@@ -49,6 +49,8 @@
 
         <title>eGov  - <decorator:title/> </title>
 
+   
+    <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css"/>
 	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
