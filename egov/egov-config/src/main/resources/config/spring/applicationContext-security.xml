@@ -143,7 +143,7 @@
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager" ref="accessDecisionManager" />
 		<property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource" />
-		<property name="rejectPublicInvocations" value="false" />
+		<property name="rejectPublicInvocations" value="true" />
 	</bean>
 	
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
@@ -191,14 +191,7 @@
 		<constructor-arg ref="userService"/>
 	</bean>
 	
-	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource">
-		<property name="excludePatterns">
-          <list>              
-              <value>/citizen</value>
-              <value>/view</value>
-           </list>
-      	</property>
-	</bean>
+	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource" />
 	
 	<!-- SSL Switching: to use this, configure it in the securityFilterChain bean -->
 	<bean id="channelProcessingFilter" class="org.springframework.security.web.access.channel.ChannelProcessingFilter">
