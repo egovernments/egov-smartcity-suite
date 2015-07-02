@@ -174,7 +174,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	 */
 
 	@ValidationErrorPage(value = VIEW)
-	@Action(value = "/view/viewDCBProperty-viewForm")
+	@Action(value = "/view/viewDCBProperty-displayPropInfo")
 	public String displayPropInfo() {
 
 		LOGGER.debug("Entered into method displayPropInfo");

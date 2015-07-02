@@ -171,7 +171,7 @@
 				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
 			<input type="button" class="buttonsubmit" name="btnViewDCB"
 				id="btnViewDCB" value="View DCB"
-				onclick="window.location='../view/viewDCBProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+				onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 			<input type="button" name="btnPrint" id="btnPrint" value="Print"
 				class="buttonsubmit" onclick="window.print();" />
 			<input type="button" name="button2" id="button2" value="Close"
