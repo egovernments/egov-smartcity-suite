@@ -1,10 +1,9 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +17,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -41,6 +40,7 @@ package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
+import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class InboxRenderServiceDeligate<T extends StateAware> {
     private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDeligate.class);
 
@@ -121,8 +121,8 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         }
         return assignedWFItems;
     }
-    
-    public List<T> fetchInboxDraftItems(final Long userId,  final List<Long> owners) {
+
+    public List<T> fetchInboxDraftItems(final Long userId, final List<Long> owners) {
         final List<T> draftWfItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owners);
         for (final String wfType : wfTypes) {
@@ -132,7 +132,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         }
         return draftWfItems;
     }
-    
+
     public WorkflowTypes getWorkflowType(final String wfType) {
         return this.workflowTypePersistenceService.findByNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y, wfType);
     }
@@ -144,8 +144,9 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     public Optional<InboxRenderService<T>> getWorkflowTypeService(final String wfType) {
         InboxRenderService<T> workflowTypeService = null;
         try {
-            workflowTypeService = (InboxRenderService<T>) applicationContext.getBean(wfType
-                    .concat(INBOX_RENDER_SERVICE_SUFFIX));
+            if (getWorkflowType(wfType).getRenderYN().equals(RENDER_Y))
+                workflowTypeService = (InboxRenderService<T>) applicationContext
+                        .getBean(wfType.concat(INBOX_RENDER_SERVICE_SUFFIX));
         } catch (final BeansException e) {
             LOG.warn("InboxRenderService bean for {} not found, have you defined {}InboxRenderService bean ?", wfType, wfType);
         }
@@ -161,15 +162,14 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
             wfTypes = this.getAssignedWorkflowTypes(Arrays.asList(owner));
         else {
             wfTypes = new ArrayList<String>();
-            final WorkflowTypes wfType = this.workflowTypePersistenceService.find(
-                    "from org.egov.infstr.models.WorkflowTypes  where displayName=?", taskName);
+            final WorkflowTypes wfType = this.workflowTypePersistenceService
+                    .find("from org.egov.infstr.models.WorkflowTypes  where displayName=?", taskName);
             wfTypes.add(wfType.getType());
         }
         for (final String wfType : wfTypes) {
             final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
             if (wfTypeService.isPresent())
-                filteredWFItems.addAll(wfTypeService.get().getFilteredWorkflowItems(owner,userId, sender, fromDate,
-                        toDate));
+                filteredWFItems.addAll(wfTypeService.get().getFilteredWorkflowItems(owner, userId, sender, fromDate, toDate));
         }
         return filteredWFItems;
     }
