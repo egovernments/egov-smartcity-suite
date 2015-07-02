@@ -73,7 +73,7 @@
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-citizen-edit.jsp"/>
     </definition>
     
-     <definition name="complaint-update-success" extends="base_layout">
+     <definition name="update-success" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-update-success.jsp"/>
     </definition>

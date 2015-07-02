@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -63,13 +62,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/complaint/update/{crnNo}")
 public class ComplaintUpdationController {
 
-    private static final String COMPLAINT_UPDATE_SUCCESS = "complaint-update-success";
+    private static final String COMPLAINT_UPDATE_SUCCESS = "/update-success";
     private static final String COMPLAINT_EDIT = "complaint-edit";
     private static final String COMPLAINT_CITIZEN_EDIT = "complaint-citizen-edit";
     private final ComplaintService complaintService;
@@ -100,19 +100,21 @@ public class ComplaintUpdationController {
     public String edit(final Model model, @PathVariable final String crnNo) {
         final Complaint complaint = getComplaint(crnNo);
         model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
-        model.addAttribute("status", complaintStatusMappingService.
-                getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
+        model.addAttribute("status", complaintStatusMappingService
+                .getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("complaint", complaint);
 
-        if (securityUtils.currentUserType().equals(UserType.CITIZEN)) {
+        if (securityUtils.currentUserType().equals(UserType.CITIZEN))
             return COMPLAINT_CITIZEN_EDIT;
-        } else {
+        else {
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
+            model.addAttribute("zone",
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             if (complaint.getComplaintType().isLocationRequired() && complaint.getLocation() != null)
-                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                model.addAttribute("ward",
+                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             return COMPLAINT_EDIT;
         }
     }
@@ -138,22 +140,30 @@ public class ComplaintUpdationController {
         if (!errors.hasErrors()) {
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
-            result = COMPLAINT_UPDATE_SUCCESS;
+            result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
         } else {
             final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
             model.addAttribute("complaintHistory", historyTable);
             model.addAttribute("complaintType", complaintTypeService.findAll());
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
+            model.addAttribute("zone",
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired() && complaint.getLocation() != null)
-                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired()
+                    && complaint.getLocation() != null)
+                model.addAttribute("ward",
+                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else
                 result = COMPLAINT_EDIT;
         }
         return result;
+    }
+
+    @RequestMapping(COMPLAINT_UPDATE_SUCCESS)
+    public ModelAndView successView(@ModelAttribute final Complaint complaint) {
+        return new ModelAndView("complaint/reg-success", "complaint", complaint);
     }
 
     private void validateUpdate(final Complaint complaint, final BindingResult errors, final HttpServletRequest request) {
