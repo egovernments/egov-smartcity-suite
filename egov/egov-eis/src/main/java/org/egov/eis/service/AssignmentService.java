@@ -244,16 +244,15 @@ public class AssignmentService {
     }
 
     /**
-     * Get all assignments for deparment,designation,fromdate and todate
+     * Get all assignments for department,designation and givendate
      * 
      * @param deptId
      * @param desigId
-     * @param fromDate
-     * @param toDate
+     * @param givenDate
      * @return List of assignment objects if present
      */
     public List<Assignment> findAllAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId,
-            final Date fromDate, final Date toDate) {
-        return assignmentRepository.findAllAssignmentsByDeptDesigAndDates(deptId, desigId, fromDate, toDate);
+            final Date givenDate) {
+        return assignmentRepository.findAllAssignmentsByDeptDesigAndGivenDate(deptId, desigId, givenDate);
     }
 }
