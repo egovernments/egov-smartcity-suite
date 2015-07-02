@@ -245,7 +245,6 @@ public class WaterConnectionDetailsService {
             map.put("status", state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
-            user = state.getOwnerUser();
             if (null != user) {
                 map.put("user", user.getUsername());
                 map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())

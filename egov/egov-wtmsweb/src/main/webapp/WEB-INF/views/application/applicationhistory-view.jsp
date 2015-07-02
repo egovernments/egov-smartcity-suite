@@ -37,6 +37,9 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="panel-body history-slide">
 					<div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
 						<div class="col-sm-2 col-xs-6 add-margin">Date</div>
@@ -75,7 +78,7 @@
 							</c:when>
 							<c:otherwise>
 								<div class="col-md-3 col-xs-6 add-margin">No history
-									details for complaint</div>
+									details for water connection</div>
 							</c:otherwise>
 						</c:choose>
 					

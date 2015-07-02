@@ -96,6 +96,11 @@
 	</c:if>
 </div>			
 </form:form>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+	</div>
+</div>
 <script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
