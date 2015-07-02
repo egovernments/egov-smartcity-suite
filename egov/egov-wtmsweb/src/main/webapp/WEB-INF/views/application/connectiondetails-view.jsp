@@ -78,7 +78,9 @@
 				<th><spring:message code="lbl.documentname" /></th>
 				<th><spring:message code="lbl.documentnumber" /></th>
 				<th><spring:message code="lbl.documentdate" /></th>
-				<th><spring:message code="lbl.files"/></th>
+				<c:if test="${null!=mode}">
+					<th><spring:message code="lbl.files"/></th>
+				</c:if>
 			</tr>
 		</thead>
 		<c:choose>
@@ -90,11 +92,13 @@
 							<td><c:out value="${docs.documentNames.documentName}" /></td>
 							<td><c:out value="${docs.documentNumber}" /></td>
 							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+							<c:if test="${null!=mode}">
 							<td><c:forEach items="${docs.getSupportDocs()}" var="file">
 									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax"> 
 									<c:out value="${file.fileName}"/></a>
 								</c:forEach>
 							</td>
+							</c:if>
 						</tr>
 					</tbody>
 				</c:forEach>
