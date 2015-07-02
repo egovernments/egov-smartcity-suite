@@ -103,8 +103,8 @@
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
 	    <td class="bluebox" width="10%"><s:text name="elec.wardno"></s:text> : </td>
-	    <td class="bluebox"><s:select name="sbelecwardno" id="sbelecwardno" list="dropdownData.electionWardList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{areaId}"/></td>
+	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
+	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{basicProperty.propertyID.electionBoundary.id}"/></td>
 	    <td class="bluebox" width="8%"><s:text name="doorno"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="50" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>

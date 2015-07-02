@@ -43,7 +43,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -52,8 +51,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVEL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
@@ -63,16 +60,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -94,7 +88,6 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -128,7 +121,6 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
-import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
@@ -136,11 +128,9 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -173,6 +163,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private Long zoneId;
 	private Long wardId;
 	private Long blockId;
+	private Long electionWardId;
 	private String wardName;
 	private String zoneName;
 	private String blockName;
@@ -388,11 +379,10 @@ public class CreatePropertyAction extends WorkflowAction {
 	public String view() {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
-		if (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
+		String nextAction = property.getState().getNextAction();
+		if ((ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) && !nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)) || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
 			return RESULT_NEW;
 		} else {
-			String currWfState = property.getState().getValue();
-
 			/*
 			 * if (currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING) ||
 			 * userDesgn.equalsIgnoreCase(END_APPROVER_DESGN)) {
@@ -953,7 +943,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyID propertyId = new PropertyID();
 		propertyId.setZone(boundaryService.getBoundaryById(getZoneId()));
 		propertyId.setWard(boundaryService.getBoundaryById(getWardId()));
-
+		propertyId.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
 		propertyId.setCreatedDate(new Date());
 		propertyId.setModifiedDate(new Date());
 		propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
@@ -1867,5 +1857,14 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
 	}
+
+	public Long getElectionWardId() {
+		return electionWardId;
+	}
+
+	public void setElectionWardId(Long electionWardId) {
+		this.electionWardId = electionWardId;
+	}
+	
 	
 }

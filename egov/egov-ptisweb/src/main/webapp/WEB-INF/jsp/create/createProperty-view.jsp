@@ -204,6 +204,13 @@
 											class="button" onclick="return previewPrativrutta();" />
 									</td> -->
 							</s:else> --%>
+							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
+							<td><s:submit value="Generate Notice" name="Generate Notice"
+									cssClass="buttonsubmit" method="approve"
+									onclick="" />
+							</td>
+							</s:if>
+							<s:else>
 							<td><s:submit value="Approve" name="Approve"
 									id='Create:Approve' cssClass="buttonsubmit" method="approve"
 									onclick="return onSubmit('createProperty-approve.action',this);" />
@@ -213,6 +220,7 @@
 											cssClass="buttonsubmit" method="reject"
 											 onclick="return onSubmit('createProperty-reject.action',this);"/>
 									</td>
+									</s:else>
 							<td><input type="button" name="button2" id="button2"
 								value="Close" class="button" onclick="window.close();" /></td>
 						</tr>
