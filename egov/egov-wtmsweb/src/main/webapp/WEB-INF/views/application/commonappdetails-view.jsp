@@ -94,7 +94,12 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
-			<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+			<c:if test="${null!=mode && mode=='inbox' && waterConnectionDetails.demand.baseDemand>0}"><!-- This checking is added to highlight the due amount only in case of workflow -->
+				<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+			</c:if>
+			<c:if test="${null!=mode && mode!='inbox'}"><!-- else show the amount in normal regular css -->
+				<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+			</c:if>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.arrear.due"/></div>
 			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>

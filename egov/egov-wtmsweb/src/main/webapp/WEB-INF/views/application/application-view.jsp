@@ -52,8 +52,9 @@
 				<div class="navbar-header col-md-10 col-xs-10">
 					<a class="navbar-brand" href="javascript:void(0);">
 						<img src="<c:url value='/resources/global/images/rmclogo.jpg' context='/egi'/>" height="60">
-							
-							<span class="title2">View Connection</span>
+						<div>
+							<span class="title2"><spring:message  code="title.viewconnection"/></span>
+						</div>	
 					</a>
 				</div>
 				
@@ -72,21 +73,22 @@
 		</nav>
 				
 	</header>
-	
+	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					Applicant Information
+				<div class="panel-title">
+					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
+									
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
 	<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	<c:if test="${null!=mode && mode!='search' }">
 		<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title text-center no-float">
-						Application History
+					<div class="panel-title">
+						<spring:message  code="lbl.apphistory"/>
 					</div>
 				</div>
 					<jsp:include page="applicationhistory-view.jsp"></jsp:include>

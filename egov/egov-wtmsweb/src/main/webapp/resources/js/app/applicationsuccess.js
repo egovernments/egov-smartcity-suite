@@ -53,4 +53,9 @@ $(document).ready(function(){
 			});
 		}		
 	}
+	
+	var mode = $("#mode").val();
+	if(mode=='inbox') {
+		$("#propertytaxdue").addClass("error-msg");
+	}
 });
