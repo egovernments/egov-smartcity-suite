@@ -28,6 +28,13 @@ public class ConsumerSearch implements Indexable {
 	@Searchable(name="totaldue", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalDue;
 
+	public ConsumerSearch(String consumerCode, String mobileNumber,String usageType) {
+		this.consumerCode = consumerCode;
+		this.mobileNumber = mobileNumber;
+		this.usageType = usageType;
+	}
+	
+	
 	@Override
 	public String getIndexId() {
 		return this.consumerCode;
@@ -39,10 +46,6 @@ public class ConsumerSearch implements Indexable {
 
 	public void setWard(String ward) {
 		this.ward = ward;
-	}
-	
-	public void setConsumerCode(String consumerCode) {
-		this.consumerCode = consumerCode;
 	}
 	
 	public void setPropertyId(String propertyId) {
@@ -57,6 +60,10 @@ public class ConsumerSearch implements Indexable {
 		this.mobileNumber = mobileNumber;
 	}
 
+	public String getConsumerName() {
+		return this.consumerName;
+	}
+	
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
 	}

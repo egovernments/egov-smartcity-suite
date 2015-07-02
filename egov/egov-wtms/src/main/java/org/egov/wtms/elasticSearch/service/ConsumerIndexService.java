@@ -39,35 +39,38 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
-import java.util.List;
-
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.wtms.elasticSearch.repository.ApplicationSearchRepository;
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
+import org.egov.infra.search.elastic.annotation.Indexing;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.elasticSearch.entity.ConsumerSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ApplicationSearchService {
+public class ConsumerIndexService {
 
-    private final ApplicationSearchRepository applicationSearchRepository;
 
-    @Autowired
-    public ApplicationSearchService(final ApplicationSearchRepository applicationSearchRepository) {
-        this.applicationSearchRepository = applicationSearchRepository;
-    }
+	@Autowired
+    private PropertyExternalService propertyExternalService;
 	
-    public ApplicationIndex load(final Long id) {
-        return applicationSearchRepository.getOne(id);
-    }
-    
-    public List<ApplicationIndex> findApplicationIndexModules() {
-        return applicationSearchRepository.findApplicationIndexModules();
-    }
-    
-    public List<ApplicationIndex> findApplicationIndexApplicationTypes() {
-        return applicationSearchRepository.findAllApplicationTypes();
-    }
-    
+	@Indexing(name = Index.WATERTAX, type = IndexType.CONNECTIONSEARCH)
+	public void createConsumerIndex(WaterConnectionDetails waterConnectionDetails) {
+		ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection().getConsumerCode(), 
+				waterConnectionDetails.getConnection().getMobileNumber(),waterConnectionDetails.getUsageType().getName());
+		
+		AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+		
+		consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
+		consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+		consumerSearch.setLocality(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
+		consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
+		consumerSearch.setConsumerName(assessmentDetails.getOwnerNames().iterator().next().getOwnerName());
+		assessmentDetails.getOwnerNames().forEach(owner -> consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(",".concat(owner.getOwnerName()))));
+		
+	}
 }
