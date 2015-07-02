@@ -89,13 +89,7 @@
 			        
     	</table>    
     	<br/>            
-    	<div class="buttonbottom" >
-    	<table align="center">  
-    	 <tr>  
-			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
-		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
-	  </table>
-	  </div>
+    	
 	  	<s:if test="%{schemeList.size!=0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr>   
@@ -138,6 +132,15 @@
 		
 		</table>
 		</s:if>              
+		 
+		</div>  
+		<div class="buttonbottom" >
+    	<table align="center">  
+    	 <tr>  
+			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
+		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
+	  </table>
+	  </div>
 		<s:if test="%{schemeList.size==0}">
 			<div id="msgdiv" style="display: block">
 				<table align="center" class="tablebottom" width="80%">
@@ -148,8 +151,7 @@
 					</tr>
 				</table>
 			</div>
-		</s:if>  
-		</div>         
+		</s:if>        
 	  </s:form>
 	 
 	
