@@ -40,7 +40,6 @@ package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,7 +143,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     public Optional<InboxRenderService<T>> getWorkflowTypeService(final String wfType) {
         InboxRenderService<T> workflowTypeService = null;
         try {
-            if (getWorkflowType(wfType).getRenderYN().equals(RENDER_Y))
+            if (getWorkflowType(wfType) != null)
                 workflowTypeService = (InboxRenderService<T>) applicationContext
                         .getBean(wfType.concat(INBOX_RENDER_SERVICE_SUFFIX));
         } catch (final BeansException e) {
