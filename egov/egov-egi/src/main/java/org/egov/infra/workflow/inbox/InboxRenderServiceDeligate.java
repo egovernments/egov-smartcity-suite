@@ -23,16 +23,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -40,6 +40,7 @@ package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
+import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.egov.infra.workflow.entity.State;
@@ -56,6 +58,9 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.Action;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -87,6 +92,8 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
 
     @Qualifier("eisService")
     private @Autowired EISServeable eisService;
+
+    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
 
     public List<T> getInboxItems(final Long userId) {
         return fetchInboxItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
@@ -133,7 +140,18 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     }
 
     public WorkflowTypes getWorkflowType(final String wfType) {
-        return this.workflowTypePersistenceService.findByNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y, wfType);
+        WorkflowTypes workflowType = WORKFLOWTYPE_CACHE.get(wfType);
+        if (workflowType == null) {
+            workflowType = (WorkflowTypes) this.workflowTypePersistenceService.getSession().createCriteria(WorkflowTypes.class)
+                    .add(Restrictions.eq("renderYN", RENDER_Y)).add(Restrictions.eq("type", wfType))
+                    .setProjection(Projections.projectionList().add(Projections.property("type"), "type")
+                            .add(Projections.property("link"), "link").add(Projections.property("displayName"), "displayName")
+                            .add(Projections.property("renderYN"), "renderYN").add(Projections.property("groupYN"), "groupYN"))
+                    .setReadOnly(true).setResultTransformer(Transformers.aliasToBean(WorkflowTypes.class)).uniqueResult();
+            if (workflowType != null)
+                WORKFLOWTYPE_CACHE.put(wfType, workflowType);
+        }
+        return workflowType;
     }
 
     public List<String> getAssignedWorkflowTypes(final List<Long> owners) {
