@@ -178,7 +178,7 @@ public class WaterConnectionDetailsService {
     private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
         final String strQuery = "select md from EgModules md where md.name=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
-        hql.setParameter("name", WaterTaxConstants.MODULES_NAME);
+        hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                 ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                 waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
