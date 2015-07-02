@@ -803,17 +803,47 @@ function deleteOwner(obj)
 	var rowo=tbl.rows.length;
 	if(rowo<=11)
     {
-    	document.getElementById('addOwnerBtn').disabled=false;
+    	document.getElementById('addOwnerBtn').disabled=false; 
     }
-    if(rowo<=1)
+    if(rowo<=2)
 	{
-		alert("Atleast One Owner Name is Mandatory");
+		alert("Atleast One Owner Details are Mandatory!");
 		return false;
 	}
 	else
 	{
 		tbl.deleteRow(rIndex);
-		rearrangeOwnerIndex();
+		jQuery("#nameTable tr:eq(1) td img[alt='Add']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#nameTable tr:not(:first)").each(function() {
+			jQuery(this).find("input").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+		    });
+			
+			//hide add option except first row
+			if(idx === 0)
+			{
+				jQuery(this).find('img [name="addOwnerBtn"]').show();
+			}
+			else
+			{
+				jQuery(this).find('img [name="addOwnerBtn"]').hide();
+			}
+			
+			idx++;
+		});
+		
+		//rearrangeOwnerIndex();
 		return true;
 	}	
 }
@@ -868,34 +898,37 @@ function addOwner()
     {
     	if(document.getElementById('nameRow') != null)
     	{
-    		var rowObj = document.getElementById('nameRow').cloneNode(true);			
-    		var tbody=tbl.tBodies[0];
-    		tbody.appendChild(rowObj);	
-			var lastRow = tbl.rows.length;
-			var s = lastRow-1;
-			document.forms[0].ownerName[lastRow-1].setAttribute('name','propertyOwnerProxy['+s+'].firstName');
-		/*	if(document.forms[0].firstName[lastRow-1].value="" || document.forms[0].firstName[lastRow].value==null)
-			{
-			alert("Please Enter Owner FirstName ");
-			document.forms[0].firstName[lastRow-1].focus();
-			return false;
-			}
-*/
-			resetRowValues(lastRow);
-	}
-	else
-	{
-	//alert("Im in else");
-		//var tbl = document.getElementById('nameTable');
-		var lastRow = tbl.rows.length;
-		var txt1 = 'firstName';
-		var txt2 = 'middleName';
-		var txt3 = 'lastName';
-		//var txt4 = 'fatherName';
-		//var btnName = 'deleteOwnr';
-		//var idName = 'idOwner';
-		createTextNodes(tbl,lastRow,txt1, txt2, txt3);
-	}
+	    		//get Next Row Index to Generate
+	    		var nextIdx = tbl.rows.length-1;
+	    		
+	    		//Generate all textboxes Id and name with new index
+				jQuery("#nameRow").clone().find("input").each(function() {
+					jQuery(this).attr({
+				      'id': function(_, id) { 
+				    	  return id.replace('[0]', '['+ nextIdx +']'); 
+				       },
+				      'name': function(_, name) { 
+				    	  return name.replace('[0]', '['+ nextIdx +']'); 
+				      },
+				    }).val('');
+			    }).end().appendTo("#nameTable");
+				
+				jQuery("#nameTable tr:last td img[alt='Add']").hide();
+
+		}
+		else
+		{
+			//alert("Im in else");
+				//var tbl = document.getElementById('nameTable');
+				var lastRow = tbl.rows.length;
+				var txt1 = 'firstName';
+				var txt2 = 'middleName';
+				var txt3 = 'lastName';
+				//var txt4 = 'fatherName';
+				//var btnName = 'deleteOwnr';
+				//var idName = 'idOwner';
+				createTextNodes(tbl,lastRow,txt1, txt2, txt3);
+		}
     }
     //else
     	//document.getElementById('addOwnerBtn').disabled=true;
