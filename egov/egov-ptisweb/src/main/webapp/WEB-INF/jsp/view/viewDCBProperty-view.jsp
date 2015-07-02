@@ -105,21 +105,21 @@
 			<s:form action="#" theme="simple">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td class="bluebox" width="20%"></td>
-						<td class="bluebox" width="25%" colspan="2">
+						<td class="greybox" width="20%"></td>
+						<td class="greybox" width="25%">
 							<s:text name="prop.Id" /> :
 						</td>
-						<td class="bluebox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{propertyId}" />
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td class="bluebox" width="10%"></td>
-						<td class="bluebox" width="13%" colspan="2">
+						<td class="greybox" width="10%"></td>
+						<td class="greybox" width="13%">
 							<s:text name="Zone" /> :
 						</td>
-						<td class="bluebox" colspan="2">
+						<td class="bluebox">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.zone.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.zone.name}" /> 
@@ -128,10 +128,10 @@
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="5%" colspan="2">
+						<td class="greybox" width="5%">
 							<s:text name="Ward" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.ward.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.ward.name}" /> 
@@ -140,10 +140,10 @@
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="5%" colspan="2">
+						<td class="greybox" width="5%">
 							<s:text name="Block" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold">
 								<s:property default="N/A" value="%{viewMap.propID.area.id}" />-
 								<s:property default="N/A" value="%{viewMap.propID.area.name}" /> 
@@ -152,75 +152,75 @@
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" width="5%" colspan="2">
+						<td class="greybox" width="5%">
 							<s:text name="locality" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{viewMap.propID.locality.name}" /> </span>
 						</td>
 					</tr>
 					<tr>
-						<td class="bluebox" width="10%"></td>
-						<td class="bluebox" colspan="2">
+						<td class="greybox" width="10%"></td>
+						<td class="greybox">
 							<s:text name="OwnerName" /> :
 						</td>
-						<td class="bluebox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{ownerName}" /> </span>
 						</td>
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<s:text name="PropertyAddress" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{viewMap.propAddress}" />
 							</span>
 						</td>
 
 					</tr>
 					<tr>
-						<td class="bluebox" width="10%"></td>
-						<td class="bluebox" colspan="2">
+						<td class="greybox" width="10%"></td>
+						<td class="greybox">
 							<s:text name="ownership.type"></s:text> :
 						</td>
-						<td class="bluebox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property default="N/A" value="%{viewMap.ownershipType}" />
 							</span>
 						</td>
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<s:text name="CurrentTax" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<s:text name="CurrentTaxDue" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<s:text name="ArrearsDue" /> :
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
 							<span class="bold"> <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="8">
+						<td colspan="3">
 							<table width="100%" border="0" align="center" cellpadding="0"
 								cellspacing="0" class="tablebottom">
 

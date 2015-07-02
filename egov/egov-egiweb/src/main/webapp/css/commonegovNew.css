@@ -196,14 +196,14 @@ div.navibar {
 
 div.mainheading { 
 	padding-top:6px;
-	}
+}
 	
 div.formmainbox { 
 	border:1px solid #F2851F;
 	border-radius:3px;
 	display:inline-block;
-	width:100%;
-	}	
+	min-width:100%;
+}	
 
 td.greybox {
 	background-color: #fff;
