@@ -2009,3 +2009,9 @@ cursor:auto;
 .file-ellipsis{
 	white-space: nowrap;width: 250px;overflow: hidden;text-overflow: ellipsis;
 }
+
+@media (max-width: 980px){
+	.file-ellipsis{
+		white-space: nowrap;width:200px;overflow: hidden;text-overflow: ellipsis;
+	}
+} 
