@@ -117,9 +117,9 @@ public interface BasicProperty {
 
 	public void setPropertyReference(PropertyReference propertyReference);
 
-	public Set<PropertyMutation> getPropMutationSet();
+	public Set<PropertyMutation> getPropertyMutations();
 
-	public void setPropMutationSet(Set<PropertyMutation> propMutationSet);
+	public void setPropertyMutations(Set<PropertyMutation> propMutationSet);
 
 	public PropertyMutationMaster getPropertyMutationMaster();
 

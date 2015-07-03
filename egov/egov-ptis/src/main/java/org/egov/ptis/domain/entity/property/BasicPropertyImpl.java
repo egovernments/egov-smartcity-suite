@@ -77,7 +77,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private Boundary boundary;
     private String oldMuncipalNum;
     private Set<PropertyStatusValues> propertyStatusValuesSet = new HashSet<PropertyStatusValues>();
-    private Set<PropertyMutation> propMutationSet = new HashSet<PropertyMutation>();
+    private Set<PropertyMutation> propertyMutations = new HashSet<PropertyMutation>();
     private PropertyMutationMaster propertyMutationMaster;
     private Date propOccupationDate;
     private Set<Property> propertySet = new HashSet<Property>();
@@ -258,13 +258,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     @Override
-    public Set<PropertyMutation> getPropMutationSet() {
-        return propMutationSet;
+    public Set<PropertyMutation> getPropertyMutations() {
+        return propertyMutations;
     }
 
     @Override
-    public void setPropMutationSet(Set<PropertyMutation> propMutationSet) {
-        this.propMutationSet = propMutationSet;
+    public void setPropertyMutations(Set<PropertyMutation> propertyMutations) {
+        this.propertyMutations = propertyMutations;
     }
 
     @Override

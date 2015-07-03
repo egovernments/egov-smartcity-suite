@@ -239,7 +239,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			BasicPropertyImpl basicProperty) {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		PropertyMutationInfo propMutationInfo = new PropertyMutationInfo();
-		propMutationInfo.setReceiptNo(propMutation.getReceiptNum());
+		/*
+		 * TODO PHOENIX
+		 * propMutationInfo.setReceiptNo(propMutation.getReceiptNum());
 		propMutationInfo.setApplicationDate(DateUtils.getDefaultFormattedDate(propMutation
 				.getNoticeDate()));
 		if (propMutation.getDeedDate() != null) {
@@ -256,21 +258,21 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		propMutationInfo.setNewOwnerName(ptisCacheMgr.buildOwnerFullName(property
 				.getPropertyOwnerInfo()));
 		propMutationInfo.setOldOwnerName(propMutation.getOwnerNameOld());
-		propMutationInfo.setAddress(ptisCacheMgr.buildAddress(basicProperty));
+		propMutationInfo.setAddress(ptisCacheMgr.buildAddress(basicProperty));*/
 		return propMutationInfo;
 	}
 
 	private PropertyMutation getLatestPropMutation(BasicPropertyImpl basicProperty) {
 		PropertyMutation propertyMutation = null;
 		Date tempDate = null;
-		for (PropertyMutation propMutation : basicProperty.getPropMutationSet()) {
+		for (PropertyMutation propMutation : basicProperty.getPropertyMutations()) {
 			if (tempDate == null) {
-				tempDate = propMutation.getCreatedDate();
+				tempDate = propMutation.getCreatedDate().toDate();
 				propertyMutation = propMutation;
 			} else {
-				if (propMutation.getCreatedDate().after(tempDate)) {
+				if (propMutation.getCreatedDate().toDate().after(tempDate)) {
 					propertyMutation = propMutation;
-					tempDate = propMutation.getCreatedDate();
+					tempDate = propMutation.getCreatedDate().toDate();
 				}
 			}
 		}

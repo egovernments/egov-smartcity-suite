@@ -888,7 +888,7 @@ public class PropertyInfo {
 		// property.
 		// so date of approval of transfer will be the date this property was
 		// created.
-		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
+		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
 			return property.getCreatedDate().toDate();
 
 		return null;
@@ -901,7 +901,7 @@ public class PropertyInfo {
 	 * @return a <code>String</code> representing the name of the current owner
 	 */
 	public String getNewOwnerName() {
-		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
+		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
 			return ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
 
 		return "";
@@ -944,7 +944,7 @@ public class PropertyInfo {
 	 *         property was transfered
 	 */
 	public Date getTransferDate() {
-		Set<PropertyMutation> propMutSet = property.getBasicProperty().getPropMutationSet();
+		Set<PropertyMutation> propMutSet = property.getBasicProperty().getPropertyMutations();
 
 		if (propMutSet.isEmpty()) {
 			return null;
@@ -952,7 +952,7 @@ public class PropertyInfo {
 
 		SortedSet<Date> mutationDates = new TreeSet<Date>();
 		for (PropertyMutation propertyMutation : propMutSet) {
-			mutationDates.add(propertyMutation.getMutationDate());
+			mutationDates.add(propertyMutation.getCreatedDate().toDate());
 		}
 
 		return mutationDates.last();

@@ -40,10 +40,7 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.dcb.bean.Payment.AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,23 +49,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.CorrespondenceAddress;
-import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
@@ -76,9 +67,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyMutationOwner;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -90,33 +79,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     private UserService userService;
     
-    /*
-     * This method returns property's basic property which is undergoing
-     * mutation
-     */
-    public PropertyImpl createPropertyClone(BasicProperty basicProp, PropertyMutation propertyMutation,
-            List<PropertyOwnerInfo> propertyOwnerProxy, boolean chkIsCorrIsDiff, String corrAddress1, String corrAddress2,
-            String corrPinCode, String email, String mobileNo) {
-        LOGGER.debug("Inside createPropertyClone method");
-        Property oldProperty = basicProp.getProperty();
-        Set<PropertyMutation> propertyMutationSet = getPropMutationSet(basicProp, propertyMutation, oldProperty);
-        basicProp.setPropMutationSet(propertyMutationSet);
-        // cloning property
-        Property clonedProperty = oldProperty.createPropertyclone();
-        clonedProperty.setPropertyOwnerInfo(
-                getNewPropOwnerAdd(clonedProperty, chkIsCorrIsDiff, corrAddress1, corrAddress2, corrPinCode, propertyOwnerProxy));
-        clonedProperty.setPtDemandSet(cloneDemandSet(clonedProperty, oldProperty));
-        basicProp.setAddress(getChangedOwnerContact(basicProp, email, mobileNo));
-        clonedProperty.setStatus(STATUS_WORKFLOW);
-        clonedProperty.setExtra_field1("");
-        clonedProperty.setExtra_field2(NOTICE_PRATIVRUTTA);
-        clonedProperty.setExtra_field3("");
-        clonedProperty.setExtra_field4("");
-        basicProp.addProperty(clonedProperty);
-        basicPropertyService.update(basicProp);
-        LOGGER.debug("Exit from createPropertyClone method");
-        return (PropertyImpl) clonedProperty;
-    }
+    
 
     private Map<Installment, PTDemandCalculations> getDemandCalMap(Property oldProperty) {
         Map<Installment, PTDemandCalculations> dmdCalMap = new HashMap<Installment, PTDemandCalculations>();
@@ -153,35 +116,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return floorDmdCalSet;
     }
 
-    /*
-     * This method returns Property Mutation as a Set
-     */
-    private Set<PropertyMutation> getPropMutationSet(BasicProperty basicProp, PropertyMutation propertyMutation,
-            Property oldProperty) {
-        propertyMutation.setRefPid(null);
-        propertyMutation.setBasicProperty(basicProp);
-        propertyMutation.setApplicationNo(propertyTaxNumberGenerator.generateNameTransApplNo(basicProp.getBoundary()));
-        propertyMutation.setMutationDate(propertyMutation.getMutationDate());
-        propertyMutation.setMutationOwnerSet(getMutOwners(oldProperty, propertyMutation));
-        Set<PropertyMutation> propertyMutationSet = new HashSet();
-        propertyMutationSet.add(propertyMutation);
-        return propertyMutationSet;
-    }
-
-    /*
-     * This method returns Mutation Owner details as a Set for Property
-     * undergoing Mutation
-     */
-    private Set<PropertyMutationOwner> getMutOwners(Property prop, PropertyMutation propertyMutation) {
-        Set<PropertyMutationOwner> mutOwnerSet = new HashSet<PropertyMutationOwner>();
-        for (PropertyOwnerInfo ownerprop : prop.getPropertyOwnerInfo()) {
-            PropertyMutationOwner propMutOwner = new PropertyMutationOwner();
-            propMutOwner.setOwnerId(ownerprop.getId().intValue());
-            propMutOwner.setPropertyMutation(propertyMutation);
-            mutOwnerSet.add(propMutOwner);
-        }
-        return mutOwnerSet;
-    }
 
     /*
      * This method returns changed owner corr address as a Set

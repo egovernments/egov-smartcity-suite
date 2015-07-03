@@ -141,7 +141,7 @@ public class PropertyNoticeInfo {
 		// property.
 		// so date of approval of transfer will be the date this property was
 		// created.
-		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
+		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
 			return property.getCreatedDate().toDate();
 
 		return null;
@@ -154,7 +154,7 @@ public class PropertyNoticeInfo {
 	 * @return a <code>String</code> representing the name of the current owner
 	 */
 	public String getNewOwnerName() {
-		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
+		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
 			return ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
 
 		return "";
@@ -185,7 +185,7 @@ public class PropertyNoticeInfo {
 	 *         property was transfered
 	 */
 	public Date getTransferDate() {
-		Set<PropertyMutation> propMutSet = property.getBasicProperty().getPropMutationSet();
+		Set<PropertyMutation> propMutSet = property.getBasicProperty().getPropertyMutations();
 
 		if (propMutSet.isEmpty()) {
 			return null;
