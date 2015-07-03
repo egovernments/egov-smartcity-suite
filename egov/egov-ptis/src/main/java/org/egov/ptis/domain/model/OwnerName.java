@@ -54,6 +54,7 @@ public class OwnerName implements Serializable {
 	private String aadhaarNumber;
 	private String ownerName;
 	private String mobileNumber;
+	private String emailId;
 	
 	public String getAadhaarNumber() {
 		return aadhaarNumber;
@@ -73,10 +74,16 @@ public class OwnerName implements Serializable {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
 	@Override
 	public String toString() {
 		return "OwnerName [aadhaarNumber=" + aadhaarNumber + ", ownerName=" + ownerName + ", mobileNumber="
-				+ mobileNumber + "]";
+				+ mobileNumber + ", emailId=" + emailId + "]";
 	}
 	
 }

@@ -128,6 +128,7 @@ public class PropertyExternalService {
 				ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber());
 				ownerName.setOwnerName(propertyOwner.getOwner().getName());
 				ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber());
+				ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
 				ownerNames.add(ownerName);
 			}
 		}
