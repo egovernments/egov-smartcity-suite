@@ -313,12 +313,12 @@
 		</dependency>
 		
 	<!-- Jasper Report Compiler Dep -->
-       	<dependency>
+       	<!-- <dependency>
 			<groupId>com.alexnederlof</groupId>
 			<artifactId>jasperreports-plugin</artifactId>
 			<version>1.6</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
@@ -354,7 +354,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 	            <groupId>com.alexnederlof</groupId>
 	            <artifactId>jasperreports-plugin</artifactId>
 	            <version>1.6</version>
@@ -379,7 +379,7 @@
 					</dependency>
 				</dependencies>
 	            <configuration>
-	                <!-- These are the default configurations: -->
+	                These are the default configurations:
 	                <compiler>net.sf.jasperreports.engine.design.JRJdtCompiler</compiler>
 	                <sourceDirectory>src/main/java/reports/templates</sourceDirectory>
 	                <outputDirectory>${project.build.directory}/reports/templates</outputDirectory>
@@ -388,7 +388,7 @@
 	                <verbose>false</verbose>
 	                <numberOfThreads>4</numberOfThreads>
 	            </configuration>
-	        </plugin>
+	        </plugin> -->
 		</plugins>
 	</build>
 </project>
