@@ -711,7 +711,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		List<PropertyTypeMaster> propTypeList = getPersistenceService()
 				.findAllBy("from PropertyTypeMaster order by orderNo");
 		List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
-				"from PropertyMutationMaster where type = 'MODIFY' and code not in('AMALG','BIFURCATE','OBJ', 'DATA_ENTRY')");
+				"from PropertyMutationMaster where type = 'MODIFY' and code not in('AMALG','BIFURCATE', 'DATA_ENTRY')");
 		List<String> StructureList = getPersistenceService()
 				.findAllBy("from StructureClassification");
 		List<PropertyUsage> usageList = getPersistenceService()

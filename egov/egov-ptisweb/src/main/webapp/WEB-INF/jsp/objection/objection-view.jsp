@@ -180,6 +180,8 @@
 		</tr>             
 		</table></div>      
 		<s:hidden name="model.id" id="model.id"/>
+	<%-- 	<s:hidden name="model.referenceProperty" id="model.referenceProperty"/>
+		 --%>
 		</s:push>
 	</s:form>
 

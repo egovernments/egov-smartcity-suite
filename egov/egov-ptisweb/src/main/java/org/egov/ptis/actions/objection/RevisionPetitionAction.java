@@ -43,6 +43,8 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
@@ -50,6 +52,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -71,9 +74,9 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
-import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -81,9 +84,12 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -92,13 +98,13 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -123,10 +129,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private String ownerName;
 	private String propertyAddress;
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-	private PropertyService propService;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-        private PropertyStatusValues propStatVal ;
+	private PersistenceService<Property, Long> propertyImplService;
 	
+	private PropertyService propService;
+	   private PropertyStatusValues propStatVal ;
+        private String reasonForModify;
+        private TreeMap<Integer, String> floorNoMap;
+        
 	@Autowired
         private PropertyStatusValuesDAO propertyStatusValuesDAO;
         
@@ -153,81 +162,74 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	
 	public RevisionPetitionAction() {
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
+		addRelatedEntity("referenceProperty.propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
+                addRelatedEntity("basicProperty", BasicProperty.class);
+                addRelatedEntity("referenceProperty", PropertyImpl.class);
+                
+                addRelatedEntity("referenceProperty.propertyDetail.floorType", FloorType.class);
+                addRelatedEntity("referenceProperty.propertyDetail.roofType", RoofType.class);
+                addRelatedEntity("referenceProperty.propertyDetail.wallType", WallType.class);
+                addRelatedEntity("referenceProperty.propertyDetail.woodType", WoodType.class);
+        
+                 
+                this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.unitType",
+                                PropertyTypeMaster.class);
+                this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.propertyUsage",
+                                PropertyUsage.class);
+                this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.propertyOccupation",
+                                PropertyOccupation.class);
+                this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.structureClassification",
+                                StructureClassification.class);
+                this.addRelatedEntity("structureClassification",
+                        StructureClassification.class);
 	}
 
 	@Override
-	public Object getModel() {
+	public Objection getModel() {
 
 		return objection;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void prepare() {
-		// to merge the new values from jsp with existing
-		if (objection.getId() != null) {
-			objection = objectionService.findById(objection.getId(), false);
-		}
-		super.prepare();
-		setUserInfo();
-		setupWorkflowDetails();
-		this.addRelatedEntity("propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
-                this.addRelatedEntity("propertyDetail.floorDetailsProxy.unitType",
-                                PropertyTypeMaster.class);
-                this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyUsage",
-                                PropertyUsage.class);
-                this.addRelatedEntity("propertyDetail.floorDetailsProxy.propertyOccupation",
-                                PropertyOccupation.class);
-                this.addRelatedEntity("propertyDetail.floorDetailsProxy.structureClassification",
-                                StructureClassification.class);
-                List<FloorType> floorTypes = getPersistenceService()
-                        .findAllBy("from FloorType order by name");
-        List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
-        List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
-        List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
-        List<PropertyTypeMaster> propTypeList = getPersistenceService()
-                        .findAllBy("from PropertyTypeMaster order by orderNo");
-        List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
-                        "from PropertyMutationMaster where type = 'MODIFY' and code not in('AMALG','BIFURCATE','OBJ', 'DATA_ENTRY')");
-        List<String> StructureList = getPersistenceService()
-                        .findAllBy("from StructureClassification");
-        List<PropertyUsage> usageList = getPersistenceService()
-                        .findAllBy("from PropertyUsage order by usageName");
-        List<PropertyOccupation> propOccList = getPersistenceService()
-                        .findAllBy("from PropertyOccupation");
-        List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
- //       setFloorNoMap(CommonServices.floorMap());
-        addDropdownData("floorType", floorTypes);
-        addDropdownData("roofType", roofTypes);
-        addDropdownData("wallType", wallTypes);
-        addDropdownData("woodType", woodTypes);
-        addDropdownData("PropTypeMaster", propTypeList);
-        addDropdownData("OccupancyList", propOccList);
-        addDropdownData("UsageList", usageList);
-        addDropdownData("MutationList", propMutList);
-        addDropdownData("StructureList", StructureList);
-        addDropdownData("AgeFactorList", ageFacList);
-        addDropdownData("Appartments", Collections.EMPTY_LIST);
-
-
-                
-	}
+        public void prepare() {
+            // to merge the new values from jsp with existing
+            if (objection.getId() != null) {
+                objection = objectionService.findById(objection.getId(), false);
+    
+            }
+            super.prepare();
+            setUserInfo();
+            setupWorkflowDetails();
+    
+            List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
+            List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
+            List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
+                    "from PropertyTypeMaster order by orderNo");
+            List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
+                    "from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
+            List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
+            List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
+            List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
+            List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+            setFloorNoMap(CommonServices.floorMap());
+            addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
+            addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
+            addDropdownData("wallType", wallTypes);
+            addDropdownData("woodType", woodTypes);
+            addDropdownData("PropTypeMaster", propTypeList);
+            addDropdownData("OccupancyList", propOccList);
+            addDropdownData("UsageList", usageList);
+            addDropdownData("MutationList", propMutList);
+            addDropdownData("StructureList", StructureList);
+            addDropdownData("AgeFactorList", ageFacList);
+            addDropdownData("Appartments", Collections.EMPTY_LIST);
+    
+        }
 	@SkipValidation
         @Action(value = "/objection/objection-newForm")
 	public String newForm() {
 		LOGGER.debug("Entered into newForm");
-
-		/*BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
-
-		if (basicProperty.getIsMigrated().equals(PropertyTaxConstants.STATUS_MIGRATED)
-				&& basicProperty.getPropertySet().size() == 1) {
-			isShowAckMessage = true;
-			return STRUTS_RESULT_MESSAGE;
-
-		}
-*/
-		//objection.setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-		//viewMap = viewPropertyAction.getViewMap();
 		getPropertyView(propertyId);
 		
 		Map<String, String> wfMap = objection.getBasicProperty().getPropertyWfStatus();
@@ -242,64 +244,194 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		return NEW;
 	}
 	@Action(value = "/objection/objection") 
-                public String create() {
-                    LOGGER.debug("ObjectionAction | Create | start " + objection);
-                    setupWorkflowDetails();
-                    // objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber());
-                    // //COMMENTED EARLIER NUMBER GENERATION LOGIC.
-                    objection.setObjectionNumber(applicationNumberGenerator.generate());
-            
-                    objection.getBasicProperty().setStatus(
-                            propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
-                    EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
-                            PropertyTaxConstants.OBJECTION_CREATED);
-                    objection.setEgwStatus(egwStatus);
-            
-                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
-                        // FIX ME
-                        // objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
-                    } else {
-                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-                    }
-            
-                    addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-                    objectionService.applyAuditing(objection.getState());
-                    
-                    PropertyImpl refNewProperty=   propService.creteNewPropertyForObjectionWorkflow(objection.getBasicProperty(),
-                            objection.getObjectionNumber(), objection.getRecievedOn(), objection.getCreatedBy(), null,
-                            PROPERTY_MODIFY_REASON_OBJ);
-                    objection.setReferenceProperty(refNewProperty);
-                    objectionService.persist(objection);
-                    LOGGER.debug("ObjectionAction | Create | End " + objection);
-                    return STRUTS_RESULT_MESSAGE;
-                }
+        public String create() {
+            LOGGER.debug("ObjectionAction | Create | start " + objection);
+            setupWorkflowDetails();
+            // objection.setObjectionNumber(propertyTaxNumberGenerator.getObjectionNumber());
+            // //COMMENTED EARLIER NUMBER GENERATION LOGIC.
+            objection.setObjectionNumber(applicationNumberGenerator.generate());
+    
+            objection.getBasicProperty().setStatus(
+                    propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
+            EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                    PropertyTaxConstants.OBJECTION_CREATED);
+            objection.setEgwStatus(egwStatus);
+    
+            if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
+                // FIX ME
+                // objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
+            } else {
+                updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
+            }
+    
+            addActionMessage(getText("objection.success") + objection.getObjectionNumber());
+            objectionService.applyAuditing(objection.getState());
+    
+            PropertyImpl refNewProperty = propService.creteNewPropertyForObjectionWorkflow(objection.getBasicProperty(),
+                    objection.getObjectionNumber(), objection.getRecievedOn(), objection.getCreatedBy(), null,
+                    PROPERTY_MODIFY_REASON_OBJ);
+            objection.setReferenceProperty(refNewProperty);
+            objectionService.persist(objection);
+            LOGGER.debug("ObjectionAction | Create | End " + objection);
+            return STRUTS_RESULT_MESSAGE;
+        }
 
-	@Action(value = "/objection/objection-addHearingDate")  
-                public String addHearingDate() {
-                    LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
-            
-                    if (objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()
-                            .before(objection.getRecievedOn())) {
-                        setupWorkflowDetails();
-                        throw new ValidationException(Arrays.asList(new ValidationError("accountdetailkey",
-                                getText("receivedon.greaterThan.plannedhearingdate"))));
-            
-                    }
-                    if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-                        // FIX ME
-                        // objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
-            
-                    } else {
-                        updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
-                                PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
-                    }
-                    objectionService.persist(objection);
-                    LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
-                    return STRUTS_RESULT_MESSAGE;
-                }
+    public void vaidatePropertyDetails() {
+        if (reasonForModify == null || reasonForModify.equals("-1")) {
+            addActionError(getText("mandatory.rsnForMdfy"));
+        }
+        validateProperty(objection.getReferenceProperty(), (objection.getReferenceProperty().getPropertyDetail()
+                .getSitalArea() != null
+                && objection.getReferenceProperty().getPropertyDetail().getSitalArea().getArea() != null ? objection
+                .getReferenceProperty().getPropertyDetail().getSitalArea().getArea().toString() : ""), (objection
+                .getReferenceProperty().getPropertyDetail().getDateOfCompletion() != null ? objection
+                .getReferenceProperty().getPropertyDetail().getDateOfCompletion().toString() : ""), isShowAckMessage,
+                "", "",
+                (objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection
+                        .getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString() : null),
+                ownerName, ownerName, Boolean.TRUE, Boolean.TRUE, objection.getReferenceProperty().getPropertyDetail()
+                        .getFloorType().getId(), objection.getReferenceProperty().getPropertyDetail().getRoofType()
+                        .getId(), objection.getReferenceProperty().getPropertyDetail().getWallType().getId(), objection
+                        .getReferenceProperty().getPropertyDetail().getWoodType().getId());
 
+    }
+    
+        @Action(value = "/objection/objection-addHearingDate")
+        public String addHearingDate() {
+            LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
+            vaidatePropertyDetails();
+    
+            if (hasErrors()) {
+                return "view";
+            }
+            if (objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()
+                    .before(objection.getRecievedOn())) {
+                setupWorkflowDetails();
+                throw new ValidationException(Arrays.asList(new ValidationError("accountdetailkey",
+                        getText("receivedon.greaterThan.plannedhearingdate"))));
+    
+            }
+            modifyBasicProp();
+            if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
+                updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
+                // FIX ME
+                // objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
+    
+            } else {
+                updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
+                        PropertyTaxConstants.OBJECTION_RECORD_HEARINGDETAILS);
+            }
+         //   propertyImplService.update(objection.getReferenceProperty());
+            objectionService.update(objection); 
+            LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
+            return STRUTS_RESULT_MESSAGE;
+        }
+	private void modifyBasicProp() {
+	
+	    System.out.println("            Lift details             "+objection.getReferenceProperty().getPropertyDetail().isLift());
+	    
+	    propService.createProperty(objection.getReferenceProperty(), (objection.getReferenceProperty().getPropertyDetail()
+                    .getSitalArea() != null
+                    && objection.getReferenceProperty().getPropertyDetail().getSitalArea().getArea() != null ? objection
+                    .getReferenceProperty().getPropertyDetail().getSitalArea().getArea().toString() : ""),  reasonForModify,
+                    (objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection
+                            .getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString() : null), 
+                            ( objection.getReferenceProperty().getPropertyDetail().getPropertyUsage()!=null?
+                                    objection.getReferenceProperty().getPropertyDetail().getPropertyUsage().getId().toString():null),
+                            ( objection.getReferenceProperty().getPropertyDetail().getPropertyOccupation()!=null?
+                                    objection.getReferenceProperty().getPropertyDetail().getPropertyOccupation().getId().toString():null),
+                            STATUS_WORKFLOW, objection.getReferenceProperty().getDocNumber(), "",
+                    Boolean.TRUE,  objection.getReferenceProperty().getPropertyDetail()
+                    .getFloorType().getId(), objection.getReferenceProperty().getPropertyDetail().getRoofType()
+                    .getId(), objection.getReferenceProperty().getPropertyDetail().getWallType().getId(), objection
+                    .getReferenceProperty().getPropertyDetail().getWoodType().getId());
+	    
+	    PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
+                    .find("from PropertyTypeMaster ptm where ptm.code = ?", PROPTYPE_OPEN_PLOT);
+
+	    if(objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster()!=null &&
+	            objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId()!=null)
+	    {
+	        if ((propTypeMstr != null)
+                        && (propTypeMstr.getId()==objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId())) {
+	            
+	            if(objection.getReferenceProperty().getPropertyDetail().getFloorDetails()!=null &&
+	                    objection.getReferenceProperty().getPropertyDetail().getFloorDetails().size()>0)
+	            {
+	                //Mean currently floor details are present. Change to vacant property type.
+	                changePropertyDetail(objection.getReferenceProperty(), new VacantProperty(), 0); 
+	            }
+	        }else
+	        {
+	            if(objection.getReferenceProperty().getPropertyDetail().getFloorDetails()!=null &&
+                            objection.getReferenceProperty().getPropertyDetail().getFloorDetails().size()==0)
+                    {
+	              //Mean currently plot details are present. Change to build up property type.
+	        
+	                changePropertyDetail(objection.getReferenceProperty(), new BuiltUpProperty(),
+	                        objection.getReferenceProperty().getPropertyDetail().getFloorDetails().size());
+	                propService.createAttributeValues(objection.getReferenceProperty(), null);
+                    } 
+	            
+	        }
+	        
+	    }
+	}
+	
+	private void changePropertyDetail(Property modProperty, PropertyDetail propDetail,
+                Integer numOfFloors) {
+
+        LOGGER.debug("Entered into changePropertyDetail, Property is Vacant Land");
+
+        PropertyDetail propertyDetail = modProperty.getPropertyDetail();
+
+        propDetail.setSitalArea(propertyDetail.getSitalArea());
+        propDetail.setTotalBuiltupArea(propertyDetail.getTotalBuiltupArea());
+        propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
+        propDetail.setPlinthArea(propertyDetail.getPlinthArea());
+        propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
+        propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
+        propDetail.setFieldVerified(propertyDetail.getFieldVerified());
+        propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
+        propDetail.setFloorDetails(propertyDetail.getFloorDetails());
+        propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
+        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
+        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setNo_of_floors(numOfFloors);
+        propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
+        propDetail.setCompletion_year(propertyDetail.getCompletion_year());
+        propDetail.setEffective_date(propertyDetail.getEffective_date());
+        propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
+        propDetail.setProperty(propertyDetail.getProperty());
+        propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
+        propDetail.setPropertyTypeMaster(propertyDetail.getPropertyTypeMaster());
+        propDetail.setPropertyType(propertyDetail.getPropertyType());
+        propDetail.setInstallment(propertyDetail.getInstallment());
+        propDetail.setPropertyOccupation(propertyDetail.getPropertyOccupation());
+        propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
+        propDetail.setComZone(propertyDetail.getComZone());
+        propDetail.setCornerPlot(propertyDetail.getCornerPlot());
+
+        if (numOfFloors == 0) {
+                propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
+        } else {
+                propDetail.setPropertyUsage(null);
+        }
+
+        propDetail.setExtra_field1(propertyDetail.getExtra_field1());
+        propDetail.setExtra_field2(propertyDetail.getExtra_field2());
+        propDetail.setExtra_field3(propertyDetail.getExtra_field3());
+        propDetail.setExtra_field4(propertyDetail.getExtra_field4());
+        propDetail.setExtra_field5(propertyDetail.getExtra_field5());
+        propDetail.setExtra_field6(propertyDetail.getExtra_field6());
+        propDetail.setManualAlv(propertyDetail.getManualAlv());
+        propDetail.setOccupierName(propertyDetail.getOccupierName());
+
+        modProperty.setPropertyDetail(propDetail);
+
+        LOGGER.debug("Exiting from changePropertyDetail");
+}
 	@ValidationErrorPage(value = "view")
 	@Action(value = "/objection/objection-recordHearingDetails")  
           public String recordHearingDetails() {
@@ -412,10 +544,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	@Action(value = "/objection/objection-view") 
 	public String view() {
 		LOGGER.debug("ObjectionAction | view | Start");
-		objection = objectionService
-				.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
-		getPropertyView(objection.getBasicProperty().getUpicNo());
-		
+                objection = objectionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
+                getPropertyView(objection.getBasicProperty().getUpicNo());
+                if (objection != null && objection.getReferenceProperty() != null) {
+                    setReasonForModify(objection.getReferenceProperty().getPropertyDetail().getPropertyMutationMaster()
+                            .getCode());
+                }
 
 
                 setOwnerName(objection.getBasicProperty().getProperty());
@@ -483,12 +617,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                 .withOwner(user).withComments(workflowBean.getComments());
                             }   else
                             {  
-                               if(!actionToPerform.equals("END")) 
-                                objection.transition(true).withNextAction(actionToPerform).withStateValue(status).withOwner(position)
-                                    .withOwner(user).withComments(workflowBean.getComments());
-                               else
+                               if(!actionToPerform.equals("END")){ 
+                             //   objection.transition(true).withNextAction(actionToPerform).withStateValue(status).withOwner(position)
+                               //     .withOwner(user).withComments(workflowBean.getComments());
+                               }else{
                                    objection.end().withStateValue(status).withOwner(position)
                                    .withOwner(user).withComments(workflowBean.getComments());
+                               }
                             }
                             addActionMessage(getText("file.save"));
         
@@ -559,7 +694,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		this.objectionService = objectionService;
 	}
 
-	public void setViewPropertyAction(ViewPropertyAction viewPropertyAction) {
+	public PersistenceService<Property, Long> getPropertyImplService() {
+        return propertyImplService;
+    }
+
+    public void setPropertyImplService(PersistenceService<Property, Long> propertyImplService) {
+        this.propertyImplService = propertyImplService;
+    }
+
+    public void setViewPropertyAction(ViewPropertyAction viewPropertyAction) {
 		this.viewPropertyAction = viewPropertyAction;
 	}
 
@@ -589,10 +732,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		this.propService = propService;
 	}
 
-	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
-		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-	}
-
+	
 	public boolean getIsShowAckMessage() {
 		return isShowAckMessage;
 	}
@@ -615,6 +755,22 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setPropStatVal(PropertyStatusValues propStatVal) {
         this.propStatVal = propStatVal;
+    }
+
+    public String getReasonForModify() {
+        return reasonForModify;
+    }
+
+    public void setReasonForModify(String reasonForModify) {
+        this.reasonForModify = reasonForModify;
+    }
+
+    public TreeMap<Integer, String> getFloorNoMap() {
+        return floorNoMap;
+    }
+
+    public void setFloorNoMap(TreeMap<Integer, String> floorNoMap) {
+        this.floorNoMap = floorNoMap;
     }
 	
 }

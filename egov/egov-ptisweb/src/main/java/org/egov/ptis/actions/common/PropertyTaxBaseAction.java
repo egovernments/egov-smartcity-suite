@@ -294,7 +294,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 						} catch (ParseException e) {
 							LOGGER.error(e.getMessage(), e);
 						}
-						if (occupationDate.after(new Date())) {
+						if (occupationDate!=null && occupationDate.after(new Date())) {
 							addActionError(getText("mandatory.dtBeforeCurr"));
 						}
 					}

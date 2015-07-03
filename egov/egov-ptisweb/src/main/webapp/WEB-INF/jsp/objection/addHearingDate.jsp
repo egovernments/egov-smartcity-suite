@@ -64,6 +64,7 @@
 						<s:textfield name="objection.hearings[%{hearingIdx}].plannedHearingDt"
 							id="plannedHearingDt" value="%{plannedHearingDtId}" maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" size="10" />
+						<s:hidden name="objection.hearings[%{hearingIdx}].id" id="objection.hearings[%{hearingIdx}].id"/>	
 						<a
 							href="javascript:show_calendar('objectionViewForm.plannedHearingDt',null,null,'DD/MM/YYYY');"
 							style="text-decoration: none">&nbsp;<img
