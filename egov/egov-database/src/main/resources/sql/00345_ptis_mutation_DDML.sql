@@ -33,8 +33,7 @@ ALTER TABLE EGPT_PROPERTY_MUTATION RENAME OTHER_FEE TO OTHERFEE;
 
 ALTER TABLE EGPT_PROPERTY_MUTATION ADD COLUMN receiptDate date;
 ALTER TABLE EGPT_PROPERTY_MUTATION ADD COLUMN PROPERTY bigint;
-
-﻿update eg_action set url='/property/transfer/new.action' where url = '/transfer/property-new.action';
+update eg_action set url='/property/transfer/new.action' where url = '/transfer/property-new.action';
 update eg_action set url='/property/transfer/save.action' where url = '/transfer/property-save.action';
 update eg_action set url='/property/transfer/view.action' where url = '/transfer/property-view.action';
 update eg_action set url='/property/transfer/approve.action' where url = '/transfer/property-approve.action';
