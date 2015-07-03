@@ -59,9 +59,9 @@
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
-					<jsp:include page="../common/workflow.jsp"></jsp:include>	
 				</div>
-			</div>
+			</div>			
+			<jsp:include page="../common/workflow.jsp"></jsp:include>	
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
@@ -78,7 +78,6 @@
 </div>
 
 <script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
-<script src="<c:url value='/resources/js/app/workflow.js'/>"></script>
 <script>
 	
 </script>
