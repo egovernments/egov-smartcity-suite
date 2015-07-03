@@ -68,10 +68,6 @@ public class ViewConnectionController {
         model.addAttribute("connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
         model.addAttribute("mode", "search");
-        if (null == request.getAttribute("mode")) {
-            model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(details));
-            model.addAttribute("mode", "inbox");
-        }
         return "application-view";
     }
 }
