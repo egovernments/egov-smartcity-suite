@@ -423,7 +423,8 @@ public class SearchNoticesAction extends SearchFormAction {
 				LOGGER.debug("Property : " + prop);
 				if (ownerName != null && !ownerName.equals("")) {
 					boolean isOwnerExist = true;
-					for (PropertyOwnerInfo propOwner : prop.getPropertyOwnerInfo()) {
+					//TODO PHOENIX If all owner other than current owner is required then iterate over Mutation
+					for (PropertyOwnerInfo propOwner : notice.getBasicProperty().getPropertyOwnerInfo()) {
 						if (!getOwnerName().equalsIgnoreCase(propOwner.getOwner().getName())) {
 							noticeRmvList.add(notice);
 							isOwnerExist = false;
@@ -453,8 +454,7 @@ public class SearchNoticesAction extends SearchFormAction {
 	public String getNonHistoryOwnerName(BasicProperty basicProperty) {
 		LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-		String NonHistoryOwnerName = ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty()
-				.getPropertyOwnerInfo());
+		String NonHistoryOwnerName = ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo());
 		LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
 		LOGGER.debug("Exit from getNonHistoryOwnerName method");
 		return NonHistoryOwnerName;

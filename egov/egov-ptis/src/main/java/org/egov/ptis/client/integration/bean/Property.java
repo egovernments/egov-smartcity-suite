@@ -168,8 +168,7 @@ public abstract class Property {
 			return;
 		}
 		this.propertyID = basicProperty.getUpicNo();
-		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty()
-				.getPropertyOwnerInfo());
+		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo());
 		if (basicProperty.getPropertyID() != null
 				&& basicProperty.getPropertyID().getWard() != null) {
 			this.wardName = basicProperty.getPropertyID().getWard().getName();

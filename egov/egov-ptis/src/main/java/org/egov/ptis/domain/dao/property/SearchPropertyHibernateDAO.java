@@ -146,7 +146,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			if (basicProperty != null) {
 				property = basicProperty.getProperty();
 				if (property != null) {
-					ownerSet = property.getPropertyOwnerInfo();
+					ownerSet = basicProperty.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(regNum);
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -197,7 +197,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.debug("getPropertyByPropertyId : property id : " + property.getId());
-					ownerSet = property.getPropertyOwnerInfo();
+					ownerSet = basicProperty.getPropertyOwnerInfo();
 					Map<String, BigDecimal> DmdCollMap = ptDemandDAO.getDemandCollMap(property);
 					currDemand = DmdCollMap.get(PropertyTaxConstants.CURR_DMD_STR);
 					arrDemand = DmdCollMap.get(PropertyTaxConstants.ARR_DMD_STR);
@@ -278,7 +278,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
 							address = basicProperty.getAddress();
 							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = property.getPropertyOwnerInfo();
+							ownerSet = basicProperty.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -356,7 +356,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
 							address = basicProperty.getAddress();
 							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = property.getPropertyOwnerInfo();
+							ownerSet = basicProperty.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
@@ -427,7 +427,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					property = basicProperty.getProperty();
 					if (property != null) {
 						retSearchResult = new SearchResult();
-						ownerSet = property.getPropertyOwnerInfo();
+						ownerSet = basicProperty.getPropertyOwnerInfo();
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 						retSearchResult.setUpicNumber(basicProperty.getUpicNo());
 						retSearchResult.setAssesseeFullName(ptisManager
@@ -589,7 +589,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					basicProperty = (BasicProperty) iter.next();
 					property = basicProperty.getProperty();
 					if (property != null) {
-						ownerSet = property.getPropertyOwnerInfo();
+						ownerSet = basicProperty.getPropertyOwnerInfo();
 						retSearchResult = new SearchResult();
 
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
@@ -754,7 +754,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.info("property id" + property.getId());
-					ownerSet = property.getPropertyOwnerInfo();
+					ownerSet = basicProperty.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());

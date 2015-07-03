@@ -45,7 +45,7 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8312113778477511698L;
     private Long id;
-    private PropertyImpl property;
+    private BasicPropertyImpl basicProperty;
     private PropertySource source;
     private Integer orderNo;
     private User owner;
@@ -54,11 +54,11 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
     }
 
-    public PropertyOwnerInfo(final PropertyImpl property, final PropertySource propSource, final User owner,
+    public PropertyOwnerInfo(final BasicPropertyImpl basicProperty, final PropertySource propSource, final User owner,
             final Integer orderNo) {
 
         this.orderNo = orderNo;
-        this.property = property;
+        this.basicProperty = basicProperty;
         source = propSource;
         this.owner = owner;
     }
@@ -73,12 +73,12 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
         return id;
     }
 
-    public PropertyImpl getProperty() {
-        return property;
+    public BasicPropertyImpl getBasicProperty() {
+        return basicProperty;
     }
 
-    public void setProperty(final PropertyImpl property) {
-        this.property = property;
+    public void setBasicProperty(final BasicPropertyImpl basicProperty) {
+        this.basicProperty = basicProperty;
     }
 
     public PropertySource getSource() {
@@ -111,7 +111,7 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
         int result = super.hashCode();
         result = prime * result + (id == null ? 0 : id.hashCode());
         result = prime * result + (owner == null ? 0 : owner.hashCode());
-        result = prime * result + (property == null ? 0 : property.hashCode());
+        result = prime * result + (basicProperty == null ? 0 : basicProperty.hashCode());
         return result;
     }
 
@@ -134,10 +134,10 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
                 return false;
         } else if (!owner.equals(other.owner))
             return false;
-        if (property == null) {
-            if (other.property != null)
+        if (basicProperty == null) {
+            if (other.basicProperty != null)
                 return false;
-        } else if (!property.equals(other.property))
+        } else if (!basicProperty.equals(other.basicProperty))
             return false;
         return true;
     }

@@ -181,7 +181,7 @@ public class PropertyBillInfo {
 
 	public String getName() {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-		return (ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty().getPropertyOwnerInfo()));
+		return (ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo()));
 	}
 
 	public BigDecimal getArrGeneralTax() {

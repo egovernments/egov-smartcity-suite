@@ -163,7 +163,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
-				List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
+				List<PropertyOwnerInfo> ownerSet = basicProperty.getPropertyOwnerInfo();
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("assessmentNum", assessmentNumber);

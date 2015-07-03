@@ -716,7 +716,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	public void setOwnerName(Property property) {
 	    if(property!=null)
-		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
+		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo());
 	}
 
 	public String getPropertyAddress() {

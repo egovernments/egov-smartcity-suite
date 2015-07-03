@@ -902,7 +902,7 @@ public class PropertyInfo {
 	 */
 	public String getNewOwnerName() {
 		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
-			return ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo());
+			return ptisCacheMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo());
 
 		return "";
 	}

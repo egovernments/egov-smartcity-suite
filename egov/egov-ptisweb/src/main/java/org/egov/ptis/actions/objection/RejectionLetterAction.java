@@ -114,7 +114,7 @@ public class RejectionLetterAction extends BaseFormAction {
 		Boundary zone = objection.getBasicProperty().getBoundary().getParent();
 		paramMap.put("zoneNo",zone!=null?zone.getBoundaryNum().toString():"");
 		paramMap.put("slNo", propertyTaxNumberGenerator.getRejectionLetterSerialNum());
-		paramMap.put("owner", ptisCacheMgr.buildOwnerFullName(objection.getBasicProperty().getProperty().getPropertyOwnerInfo()));
+		paramMap.put("owner", ptisCacheMgr.buildOwnerFullName(objection.getBasicProperty().getPropertyOwnerInfo()));
 		paramMap.put("address", ptisCacheMgr.buildAddressByImplemetation(objection.getBasicProperty().getAddress()));
 		return paramMap;
 	}

@@ -179,8 +179,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					getSession().put(WFOWNER, wfMap.get(WFOWNER));
 					target = "workFlowError";
 				} else {
-					setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getProperty()
-							.getPropertyOwnerInfo()));
+					setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
 					setAddress(ptisCacheMgr.buildAddressByImplemetation(basicProp.getAddress()));
 					setDocNumber(basicProp.getProperty().getDocNumber());
 					target = NEW;
@@ -213,7 +212,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 				.find("from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = 'N' and PSV.propertyStatus.statusCode=?",
 						basicProp.getUpicNo(), PROP_STATUS_INACTIVE);
 		setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
-		setOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
+		setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
 		setAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
 		setDocNumber(property.getDocNumber());
 		LOGGER.debug("Exit from viewForm");

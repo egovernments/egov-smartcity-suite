@@ -214,7 +214,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 				throw new PropertyNotFoundException();
 			} else {
 				LOGGER.debug("BasicProperty : " + basicProperty);
-				setOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
+				setOwnerName(ptisCacheMgr.buildOwnerFullName(getBasicProperty().getPropertyOwnerInfo()));
 				setPropertyAddress(ptisCacheMgr.buildAddressByImplemetation(basicProperty
 						.getAddress()));
 				setWardName(basicProperty.getPropertyID().getWard().getName());

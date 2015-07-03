@@ -120,7 +120,7 @@ public class PropertyExternalService {
 	}
 
 	private Set<OwnerName> prepareOwnerInfo(Property property) {
-		List<PropertyOwnerInfo> propertyOwners = property.getPropertyOwnerInfo();
+		List<PropertyOwnerInfo> propertyOwners = property.getBasicProperty().getPropertyOwnerInfo();
 		Set<OwnerName> ownerNames = new HashSet<OwnerName>();
 		if (propertyOwners != null && !propertyOwners.isEmpty()) {
 			for (PropertyOwnerInfo propertyOwner : propertyOwners) {

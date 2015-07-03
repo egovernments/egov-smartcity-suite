@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -250,6 +251,14 @@ public interface BasicProperty {
 	public String getSource();
 	
 	public void setSource(String source);
+	
+	List<PropertyOwnerInfo> getPropertyOwnerInfo();
+	
+	void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet);
+	
+	void addPropertyOwners(PropertyOwnerInfo ownerInfo);
+	
+	void removePropertyOwners(PropertyOwnerInfo ownerInfo);
 	
 
 }

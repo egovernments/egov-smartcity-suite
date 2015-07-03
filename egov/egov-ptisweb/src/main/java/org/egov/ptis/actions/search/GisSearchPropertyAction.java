@@ -578,7 +578,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
-				List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
+				List<PropertyOwnerInfo> ownerSet = basicProperty.getPropertyOwnerInfo();
 				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();

@@ -325,8 +325,7 @@ public class EditDemandAction extends BaseFormAction {
 			setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
 			resultPage = RESULT_ERROR;
 		} else {
-			ownerName = new PTISCacheManager().buildOwnerFullName(basicProperty.getProperty()
-					.getPropertyOwnerInfo());
+			ownerName = new PTISCacheManager().buildOwnerFullName(basicProperty.getPropertyOwnerInfo());
 			propertyAddress = new PTISCacheManager().buildAddressByImplemetation(basicProperty
 					.getAddress());
 

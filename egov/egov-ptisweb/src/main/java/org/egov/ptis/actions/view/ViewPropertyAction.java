@@ -167,7 +167,7 @@ public class ViewPropertyAction extends BaseFormAction {
 
 			LOGGER.debug("viewForm : Property : " + property);
 			viewMap.put("ownerName",
-					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
+					ptisCacheMgr.buildOwnerFullName(getBasicProperty().getPropertyOwnerInfo()));
 			viewMap.put("fatherName", new String());
 			viewMap.put("propAddress",
 					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
@@ -180,7 +180,7 @@ public class ViewPropertyAction extends BaseFormAction {
 				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);
 			}
 
-			propertyOwners = property.getPropertyOwnerInfo();
+			propertyOwners = getBasicProperty().getPropertyOwnerInfo();
 			if (propertyOwners != null && !propertyOwners.isEmpty()) {
 				for (PropertyOwnerInfo owner : propertyOwners) {
 					List<Address> addrSet =  (List<Address>) owner.getOwner().getAddress();

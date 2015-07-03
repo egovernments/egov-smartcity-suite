@@ -405,7 +405,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
 				checkIsDemandActive(property);
 
-				List<PropertyOwnerInfo> ownerSet = property.getPropertyOwnerInfo();
+				List<PropertyOwnerInfo> ownerSet = basicProperty.getPropertyOwnerInfo();
 				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();

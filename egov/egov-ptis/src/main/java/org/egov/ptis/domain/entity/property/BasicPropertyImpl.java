@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*    eGov suite of products aim to improve the internal efficiency,transparency, 
  *    accountability and the service delivery of the government  organizations.
  * 
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -52,21 +51,12 @@ import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.Objection;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
-
-/**
- * BasicPropertyImpl is the Implementation Class for BasicProperty
- *
- * @author Neetu
- * @version 2.00
- * @see BasicProperty
- */
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private String applicationNo;
@@ -104,12 +94,33 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private Date regdDocDate;
     private String vacantLandAssmtNo;
     private String source;
+    private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
+
+    @Override
+    public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
+        return propertyOwnerInfo;
+    }
+
+    @Override
+    public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet) {
+            this.propertyOwnerInfo = propertyOwnerSet;
+    }
 
     @Override
     public Set<PropertyDocs> getPropertyDocsSet() {
         return propertyDocsSet;
     }
 
+    @Override
+    public void addPropertyOwners(PropertyOwnerInfo ownerInfo) {
+            getPropertyOwnerInfo().add(ownerInfo);
+    }
+
+    @Override
+    public void removePropertyOwners(PropertyOwnerInfo ownerInfo) {
+            getPropertyOwnerInfo().remove(ownerInfo);
+    }
+    
     @Override
     public void setPropertyDocsSet(Set<PropertyDocs> propertyDocsSet) {
         this.propertyDocsSet = propertyDocsSet;

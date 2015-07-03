@@ -333,11 +333,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 			setProperty(propertyImpl);
 
-			setOwnerName(ptisCacheMgr.buildOwnerFullName(propertyModel.getPropertyOwnerInfo()));
+			setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
 			setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
 			propertyAddr = basicProp.getAddress();
 
-			corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerInfo());
+			corrsAddress = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
 
 			if (propertyModel.getPropertyDetail().getFloorType() != null) {
 				floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
@@ -419,7 +419,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		String currWfState = propertyModel.getState().getNextAction();
 		populateFormData(Boolean.TRUE);
-		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getPropertyOwnerInfo());
+		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
 
 		amalgPropIds = new String[10];
 
@@ -647,15 +647,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 				"Entered into editOwnerForm, edit facility for Owner Name and PartNO, indexNumber: "
 						+ indexNumber);
 		setOwnerName(
-				ptisCacheMgr.buildOwnerFullName(basicProp.getProperty().getPropertyOwnerInfo()));
-		setPropertyOwners(basicProp.getProperty().getPropertyOwnerInfo());
+				ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
+		setPropertyOwners(basicProp.getPropertyOwnerInfo());
 		return "ownerForm";
 	}
 
 	@SkipValidation
 	public String updateOwner() {
 		LOGGER.debug("Entered into updateOwner");
-		List<PropertyOwnerInfo> existingOwners = basicProp.getProperty().getPropertyOwnerInfo();
+		List<PropertyOwnerInfo> existingOwners = basicProp.getPropertyOwnerInfo();
 		List<PropertyOwnerInfo> newOwners = getPropertyOwners();
 		StringBuilder auditDetail1 = new StringBuilder();
 		PropertyOwnerInfo propertyOwner = null;
@@ -737,8 +737,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		if (propWF != null) {
-			setOwnerName(ptisCacheMgr.buildOwnerFullName(propWF.getPropertyOwnerInfo()));
-			List<PropertyOwnerInfo> ownerSet = propWF.getPropertyOwnerInfo();
+			setOwnerName(ptisCacheMgr.buildOwnerFullName(propWF.getBasicProperty().getPropertyOwnerInfo()));
+			List<PropertyOwnerInfo> ownerSet = propWF.getBasicProperty().getPropertyOwnerInfo();
 			if (ownerSet != null && !ownerSet.isEmpty()) {
 				for (PropertyOwnerInfo owner : ownerSet) {
 					for (Address address : owner.getOwner().getAddress()) {

@@ -78,14 +78,6 @@ public interface Property extends Auditable {
 
 	public void setCreatedDate(DateTime createdDate);
 
-	public List<PropertyOwnerInfo> getPropertyOwnerInfo();
-
-	public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerInfo);
-
-	//public Set<Citizen> getPropertyTenantSet();
-
-	//public void setPropertyTenantSet(Set<Citizen> propertyTenantSet);
-
 	public BasicProperty getBasicProperty();
 
 	public void setBasicProperty(BasicProperty basicProperty);
@@ -115,10 +107,6 @@ public interface Property extends Auditable {
 	public void setPropertySource(PropertySource propertySource);
 
 	public boolean validateProperty() throws InvalidPropertyException;
-
-	public void addPropertyOwners(PropertyOwnerInfo owner);
-
-	public void removePropertyOwners(PropertyOwnerInfo owner);
 
 	/*public void addPropertyTenants(Citizen citzen);
 

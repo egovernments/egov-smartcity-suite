@@ -168,7 +168,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	private APTaxCalculationInfo addPropertyInfo(Property property) {
 		APTaxCalculationInfo taxCalculationInfo = new APTaxCalculationInfo();
 		// Add Property Info
-		taxCalculationInfo.setPropertyOwnerName(ptisCachMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
+		taxCalculationInfo.setPropertyOwnerName(ptisCachMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo()));
 		taxCalculationInfo.setPropertyAddress(ptisCachMgr.buildAddressByImplemetation(property.getBasicProperty()
 				.getAddress()));
 		taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNoBldgApt());

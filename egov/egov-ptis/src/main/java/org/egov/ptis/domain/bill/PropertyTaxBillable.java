@@ -209,7 +209,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	 */
 	@Override
 	public String getBillPayee() {
-		return (ptcm.buildOwnerFullName(getBasicProperty().getProperty().getPropertyOwnerInfo()))
+		return (ptcm.buildOwnerFullName(getBasicProperty().getPropertyOwnerInfo()))
 				.trim();
 	}
 

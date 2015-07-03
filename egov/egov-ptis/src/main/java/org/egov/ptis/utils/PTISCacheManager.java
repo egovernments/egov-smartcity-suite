@@ -484,8 +484,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	 */
 	@Override
 	public String buildOwnerFullName(BasicProperty bp) {
-		Property property = bp.getProperty();
-		return buildOwnerFullName(property.getPropertyOwnerInfo());
+		return buildOwnerFullName(bp.getPropertyOwnerInfo());
 	}
 
 	@Override

@@ -426,8 +426,8 @@ public class CreatePropertyAction extends WorkflowAction {
 				floor.setModifiedBy(user);
 			}
 		}
-		int ownersCount = property.getPropertyOwnerInfo().size();
-		for (PropertyOwnerInfo ownerInfo : property.getPropertyOwnerInfo()) {
+		int ownersCount = property.getBasicProperty().getPropertyOwnerInfo().size();
+		for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (ownerInfo.getId() == null) {
 				ownerInfo.setOrderNo(ownersCount++);
 				ownerInfo.getOwner().setPassword("NOT SET");
@@ -881,7 +881,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		String addrStr1;
 		String addrStr2;
 		int orderNo = 0;
-		for (PropertyOwnerInfo ownerInfo : property.getPropertyOwnerInfo()) {
+		for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
 			orderNo++;
 			if (ownerInfo != null) {
 			    ownerInfo.setOrderNo(orderNo);
@@ -980,7 +980,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (null == property.getPropertyDetail() && property.getPropertyDetail().getExtentAppartenauntLand() == 0.0) {
 			addActionError(getText("mandatory.extentAppartenauntLand"));
 		}
-		for (PropertyOwnerInfo owner : property.getPropertyOwnerInfo()) {
+		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (owner != null && owner.getOwner().getName().equals("")) {
 				addActionError(getText("mandatory.ownerName"));
 			}

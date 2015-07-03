@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency, 
  *    accountability and the service delivery of the government  organizations.
  * 
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -49,8 +48,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN; 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,25 +64,18 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Designation;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 
-/**
- * The Implementation of the Property Interface
- *
- * @author Neetu
- * @version 2.00
- * @see org.egov.ptis.domain.entity.property.Property
- */
 public class PropertyImpl extends StateAware implements Property {
-	private static final Logger LOGGER = Logger.getLogger(PropertyImpl.class);
+	
+    private static final long serialVersionUID = -5353928708732980539L;
+
+    private static final Logger LOGGER = Logger.getLogger(PropertyImpl.class);
 	
 	private Long id;
 	
-	private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
-
 	private Set<Citizen> propertyTenantSet = new HashSet<Citizen>();
 
 	private Citizen citizen;
@@ -279,16 +269,6 @@ public class PropertyImpl extends StateAware implements Property {
 		this.isDefaultProperty = isDefaultProperty;
 	}
 
-	@Override
-        public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
-            return propertyOwnerInfo;
-        }
-
-        @Override
-        public void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet) {
-                this.propertyOwnerInfo = propertyOwnerSet;
-        }
-
 	public AbstractProperty getAbstractProperty() {
 		return abstractProperty;
 	}
@@ -336,15 +316,6 @@ public class PropertyImpl extends StateAware implements Property {
 		getPtDemandSet().remove(ptDmd);
 	}
 
-	@Override
-        public void addPropertyOwners(PropertyOwnerInfo ownerInfo) {
-                getPropertyOwnerInfo().add(ownerInfo);
-        }
-
-        @Override
-        public void removePropertyOwners(PropertyOwnerInfo ownerInfo) {
-                getPropertyOwnerInfo().remove(ownerInfo);
-        }
 
 	/*@Override
 	public void addPropertyTenants(Citizen citizen) {
@@ -558,9 +529,7 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setStatus(getStatus());
 		newProp.setPropertyDetail(clonePropertyDetail(newProp));
 		newProp.setPropertyModifyReason(getPropertyModifyReason());
-		//newProp.setPropertyOwnerSet(cloneOwners());
 		newProp.setPropertySource(getPropertySource());
-		//newProp.setPropertyTenantSet(cloneTenants());
 		newProp.setPtDemandSet(cloneDemand());
 		newProp.setRemarks(getRemarks());
 		newProp.setVacant(getVacant());
@@ -589,18 +558,7 @@ public class PropertyImpl extends StateAware implements Property {
 		return sbf.toString();
 	}
 
-	/*
-	 * This method returns Owner details as a Set
-	 */
-	private List<PropertyOwnerInfo> cloneOwners() {
-            List<PropertyOwnerInfo> newOwnerSet = new ArrayList<PropertyOwnerInfo>();
-            for (PropertyOwnerInfo ownerInfo : getPropertyOwnerInfo()) {
-                PropertyOwnerInfo newOwner = new PropertyOwnerInfo(ownerInfo.getProperty(), ownerInfo.getSource(), ownerInfo.getOwner(), ownerInfo.getOrderNo());
-                newOwnerSet.add(newOwner);
-            }
-            return newOwnerSet;
-    }
-
+	
 	/*
 	 * This method returns Demand details as a Set
 	 */
