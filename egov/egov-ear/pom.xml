@@ -189,7 +189,7 @@
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-egfweb</artifactId>
-							<contextRoot>/egf</contextRoot>
+							<contextRoot>/EGF</contextRoot>
 						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
