@@ -173,8 +173,4 @@ public class ConnectionDemandService {
         return splitAmount;
     }
 
-    public WaterTaxDue getWaterTaxDues(final String propertyIdentifier) {
-        return new WaterTaxDue();
-    }
-
 }
