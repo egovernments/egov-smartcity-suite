@@ -137,12 +137,7 @@ public class NewConnectionController extends GenericConnectionController {
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                 approvalComent);
-
-        redirectAttributes.addFlashAttribute("waterConnectionDetails", waterConnectionDetails);
-        redirectAttributes.addFlashAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
-        redirectAttributes.addFlashAttribute("cityName", waterConnectionDetailsService.getCityName());
-        redirectAttributes.addFlashAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        
         return "redirect:/application/application-success?applicationNumber="
                 + waterConnectionDetails.getApplicationNumber();
     }
