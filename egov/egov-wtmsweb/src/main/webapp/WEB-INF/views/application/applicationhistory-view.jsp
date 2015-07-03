@@ -40,14 +40,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="panel-body history-slide">
 					<div class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-						<div class="col-sm-2 col-xs-6 add-margin">Date</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Updated By</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Status</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Current Owner</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Department</div>
-						<div class="col-sm-2 col-xs-6 add-margin">Comments</div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updatedby"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status" /></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.currentowner"/></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department" /></div>
+						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments" /></div>
 					</div>
 					<c:choose>
 							<c:when test="${!applicationHistory.isEmpty()}">
