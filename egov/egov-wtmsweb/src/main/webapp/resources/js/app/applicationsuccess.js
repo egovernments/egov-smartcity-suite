@@ -10,15 +10,6 @@ $(document).ready(function(){
 				dataType: "json",
 				success: function (response) { 
 					console.log("success"+response);
-					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-						$('#propertyIdentifier').html('');
-						$('#applicantname').html('');
-						$('#propertyaddress').html('');
-						$('#zonewardblock').html('');
-						$('#propertytaxdue').html('0.00');
-						alert(response.errorDetails.errorMessage);
-					}
-					else {	
 						applicantName = '';
 						for(i=0; i<response.ownerNames.length; i++) {
 							if(applicantName == '')
@@ -45,7 +36,7 @@ $(document).ready(function(){
 						}
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
-					}					
+										
 				}, 
 				error: function (response) {
 					console.log("failed");
