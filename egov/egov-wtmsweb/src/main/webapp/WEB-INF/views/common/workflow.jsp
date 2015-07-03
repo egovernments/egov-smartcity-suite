@@ -49,37 +49,37 @@
 				</div>					
 			</div>
 			<div class="panel-body">
-				<div class="row">
+				<div class="row show-row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approverdepartment"/><span class="mandatory"></span>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
-					<form:select path="" data-first-option="false"
-						id="approvalDepartment" cssClass="form-control"
-						cssErrorClass="form-control error" required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${approvalDepartmentList}" itemValue="id"
-							itemLabel="name" />     
-					</form:select>
+						<form:select path="" data-first-option="false"
+							id="approvalDepartment" cssClass="form-control"
+							cssErrorClass="form-control error" required="required">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${approvalDepartmentList}" itemValue="id"
+								itemLabel="name" />     
+						</form:select>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approverdesignation"/><span class="mandatory"></span>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">
-					<form:select path="" data-first-option="false"
-						id="approvalDesignation" cssClass="form-control"
-						cssErrorClass="form-control error" required="required">  
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${approvalDesignationList}" itemValue="id"
-							itemLabel="name" />
-					</form:select>					
+						<form:select path="" data-first-option="false"
+							id="approvalDesignation" cssClass="form-control"
+							cssErrorClass="form-control error" required="required">  
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${approvalDesignationList}" itemValue="id"
+								itemLabel="name" />
+						</form:select>					
+					</div>
 				</div>
-				</div>
-				<div class="row">
+				<div class="row show-row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approver"/><span class="mandatory"></span>
 					</div>

@@ -150,7 +150,7 @@ public class NewConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/application-success", method = GET)
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
-        if (request.getParameter("applicationNumber") != null && waterConnectionDetails.isNew())
+        if (request.getParameter("applicationNumber") != null)
             waterConnectionDetails = waterConnectionDetailsService
                     .findByApplicationNumber(request.getParameter("applicationNumber"));
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()

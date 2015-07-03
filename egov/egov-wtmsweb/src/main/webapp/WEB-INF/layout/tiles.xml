@@ -73,5 +73,9 @@
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/application-view.jsp"/>
     </definition>
-	
+    
+	<definition name="newconnection-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/newConnection-edit.jsp"/> 
+    </definition>
 </tiles-definitions>

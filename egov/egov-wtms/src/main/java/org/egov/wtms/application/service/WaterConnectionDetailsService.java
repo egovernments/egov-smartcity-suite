@@ -165,10 +165,6 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
-        if (waterConnectionDetails.getState() != null
-                && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED))
-            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
         waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
@@ -287,9 +283,31 @@ public class WaterConnectionDetailsService {
         final User user = securityUtils.getCurrentUser();
         final Position assignee = positionMasterService.getPositionById(approvalPosition);
         waterConnectionDetails.transition().start().withSenderName(user.getName())
-                .withComments("New Water Tap connection application created with Application Number : "
-                        + waterConnectionDetails.getApplicationNumber())
                 .withStateValue(WaterConnectionDetails.WorkFlowState.CREATED.toString()).withOwner(assignee)
-                .withNextAction("").withComments(approvalComent).withDateInfo(new Date());
+                .withComments(approvalComent).withDateInfo(new Date());
+    }
+
+    @Transactional
+    public WaterConnectionDetails updateNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
+            final Long approvalPosition, final String approvalComent) {
+        final User user = securityUtils.getCurrentUser();
+
+        if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
+            final Position owner = eisCommonService.getPrimaryAssignmentPositionForEmp(approvalPosition);
+            waterConnectionDetails.transition(true).withOwner(owner).withComments(approvalComent)
+                    .withSenderName(user.getName())
+                    .withStateValue(WaterConnectionDetails.WorkFlowState.CHECKED.toString()).withDateInfo(new Date());
+        } else
+            waterConnectionDetails.transition(true).end().withComments(approvalComent).withSenderName(user.getName())
+                    .withStateValue(WaterConnectionDetails.WorkFlowState.APPROVED.toString()).withDateInfo(new Date());
+
+        if (waterConnectionDetails.getState() != null
+                && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
+            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+            waterConnectionDetails.setApprovalDate(new Date());
+        }
+        final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
+                .save(waterConnectionDetails);
+        return updatedWaterConnectionDetails;
     }
 }

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,50 +36,40 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-lbl.select=Select
-lbl.submit=Submit
-lbl.reset=Reset
-lbl.ok=OK
-lbl.close=Close
-lbl.cancel=Cancel
-lbl.print=Print
-lbl.yes=Yes
-lbl.no=No
-lbl.department=Department
-lbl.name=Name
-lbl.contactNo=Contact Number
-lbl.email=Email
-lbl.mobileNo=Mobile Number
-lbl.priority=Priority
-lbl.location=Location
-lbl.more=More
-lbl.when=When
-lbl.today=Today
-lbl.contact.info=Contact Information
-lbl.fromDate=From Date
-lbl.toDate=To Date
-lbl.status=Status
-lbl.search=Search
-
-lbl.create=Create
-lbl.edit=Edit
-lbl.delete=Delete
-lbl.update=Update
-
-lbl.selectdepartment=Select Department
-lbl.selectdesignation=Select Designation
-lbl.selectuser=Select User
-lbl.selectzone=Select Zone
-lbl.selectward=Select Ward
-lbl.back=Back
-lbl.clear=Clear
-lbl.slno=S. No.
-lbl.attachdocument=Attach Document
-lbl.approverdetails=Approval Details
-lbl.approverdepartment=Approver Department
-lbl.approverdesignation=Approver Designation
-lbl.approver=Approver
-lbl.comments=Comments
-lbl.approve=Approve
+<form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
+id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">				
+<div class="page-container" id="page-container">
+	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
+	<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message  code="lbl.basicdetails"/>
+				</div>
+			</div>
+			<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+	</div>
+	<jsp:include page="connectiondetails-view.jsp"></jsp:include>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message  code="lbl.apphistory"/>
+				</div>
+			</div>
+			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+		</div>	
+</div>	
+<div class="row">
+	<div class="text-center">
+		<button type="submit" id="submitBtn" class="btn btn-primary"><spring:message code="lbl.approve"/></button>	
+		<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message code='lbl.close' /></a>
+	</div>
+</div>	 		
+</form:form>
+<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+<script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>

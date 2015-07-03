@@ -49,7 +49,16 @@
 		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float"><spring:message code="msg.newconnection.ack.success" /></div>
+				<div class="panel-title text-center no-float">
+				<c:choose>
+					<c:when test="${waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+						<spring:message code="msg.newconnection.approved.success" />
+					</c:when>
+					<c:otherwise>
+						<spring:message code="msg.newconnection.ack.success" />
+					</c:otherwise>
+				</c:choose>
+				</div>
 			</div>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
