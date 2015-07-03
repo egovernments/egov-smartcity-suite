@@ -50,6 +50,7 @@ import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -57,10 +58,12 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -69,12 +72,15 @@ public class NewConnectionController extends GenericConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
+    private final ConnectionDemandService connectionDemandService;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ApplicationTypeService applicationTypeService, final SmartValidator validator) {
+            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
+            final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
+        this.connectionDemandService = connectionDemandService;
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -136,7 +142,23 @@ public class NewConnectionController extends GenericConnectionController {
         redirectAttributes.addFlashAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
         redirectAttributes.addFlashAttribute("cityName", waterConnectionDetailsService.getCityName());
-        return "redirect:/application-success";
+        redirectAttributes.addFlashAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        return "redirect:/application/application-success?applicationNumber="
+                + waterConnectionDetails.getApplicationNumber();
+    }
+
+    @RequestMapping(value = "/application-success", method = GET)
+    public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+            final HttpServletRequest request, final Model model) {
+        if (request.getParameter("applicationNumber") != null && waterConnectionDetails.isNew())
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumber(request.getParameter("applicationNumber"));
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
+
     }
 
     private boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
