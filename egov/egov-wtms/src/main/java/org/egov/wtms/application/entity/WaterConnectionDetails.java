@@ -55,6 +55,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -159,7 +160,7 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-
+    @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>(0);
 
