@@ -115,6 +115,8 @@
 		<property name="alv" column="ALV"/>
 		<property name="capitalValue" column="capitalvalue" type="java.lang.String"/>
 		<property name="planApproved" column="planapproved" type="boolean" />
+		<property name="occupancyDate" column="occupancydate" type="java.util.Date" />
+		<property name="occupantName" column="occupantname" type="java.lang.String" />
 		<!--
 		EXTRA_FIELD1 varchar
 		

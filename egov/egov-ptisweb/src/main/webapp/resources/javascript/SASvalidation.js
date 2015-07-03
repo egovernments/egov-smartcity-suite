@@ -901,22 +901,41 @@ function addOwner()
 	    		//get Next Row Index to Generate
 	    		var nextIdx = tbl.rows.length-1;
 	    		
-	    		//Generate all textboxes Id and name with new index
+	    		//validate status variable for exiting function
+	    		var isValid=1;//for default have success value 0
+	    		
+	    		//validate existing rows in table
+	    		jQuery("#nameTable tr:not(:first)").find('input').each(function(){
+	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
+	    			{
+	    				jQuery(this).focus();
+	    				alert(jQuery(this).data('errormsg'));
+	    				isValid=0;//set validation failure
+	    				return false;
+	    			}
+	    		});
+	    		
+	    		if(isValid===0)
+	    		{
+	    			return false;
+	    		}
+	    		
+	    		// Generate all textboxes Id and name with new index
 				jQuery("#nameRow").clone().find("input").each(function() {
-					jQuery(this).attr({
-				      'id': function(_, id) { 
-				    	  return id.replace('[0]', '['+ nextIdx +']'); 
-				       },
-				      'name': function(_, name) { 
-				    	  return name.replace('[0]', '['+ nextIdx +']'); 
-				      },
-				    }).val('');
+						 jQuery(this).attr({
+					      'id': function(_, id) { 
+					    	  return id.replace('[0]', '['+ nextIdx +']'); 
+					       },
+					      'name': function(_, name) { 
+					    	  return name.replace('[0]', '['+ nextIdx +']'); 
+					      },
+					    }).val('');
 			    }).end().appendTo("#nameTable");
 				
 				jQuery("#nameTable tr:last td img[alt='Add']").hide();
 
 		}
-		else
+	/*	else
 		{
 			//alert("Im in else");
 				//var tbl = document.getElementById('nameTable');
@@ -928,7 +947,7 @@ function addOwner()
 				//var btnName = 'deleteOwnr';
 				//var idName = 'idOwner';
 				createTextNodes(tbl,lastRow,txt1, txt2, txt3);
-		}
+		}*/
     }
     //else
     	//document.getElementById('addOwnerBtn').disabled=true;
@@ -1219,138 +1238,64 @@ function deleteMutationOwner(obj)
 function addFloor()
 {		
 	var tbl = document.getElementById('floorDetails');
-	var rowObj = document.getElementById('Floorinfo').cloneNode(true);
-	var browser = navigator.appName;
-	
-	// change the index for Structural Factor dropdown cell
-	// cell begins with 0 
-	var sfCellIndex = 12;
-	var usageCellIndex = 8;	
-	
-	//removing the rent agreement icon, this is added when the floor is tenanted	
+    var rowO=tbl.rows.length;
+   //alert("rowO="+rowO);
+    if(rowO<11)
+    {
+    	if(document.getElementById('Floorinfo') != null)
+    	{
+	    		//get Next Row Index to Generate
+	    		var nextIdx = tbl.rows.length-1;
+	    		
+	    		//validate status variable for exiting function
+	    		var isValid=1;//for default have success value 0
+	    		
+	    		//validate existing rows in table
+	    		jQuery("#floorDetails tr:not(:first)").find('input, select').each(function(){
+	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
+	    			{
+	    				jQuery(this).focus();
+	    				console.log('called =>' + jQuery(this).attr('id'));
+	    				alert(jQuery(this).data('errormsg'));
+	    				isValid=0;//set validation failure
+	    				return false;
+	    			}
+	    		});
+	    		
+	    		if(isValid===0)
+	    		{
+	    			return false;
+	    		}
+	    		
+	    		// Generate all textboxes Id and name with new index
+				jQuery("#Floorinfo").clone().find("input, select").each(function() {
+						 jQuery(this).attr({
+					      'id': function(_, id) { 
+					    	  return id.replace('[0]', '['+ nextIdx +']'); 
+					       },
+					      'name': function(_, name) { 
+					    	  return name.replace('[0]', '['+ nextIdx +']'); 
+					      },
+					    }).val('');
+						
+						 //set default selection for dropdown
+						if(jQuery(this).is( "select" ))
+						{
+							jQuery(this).prop('selectedIndex', 0);
+						}
+						 
+			    }).end().appendTo("#floorDetails");
+							
+				jQuery("#floorDetails tr:last td img[alt='Add']").hide();
 
-	jQuery(rowObj.cells[rowObj.cells.length - 4]).hide();
-	
-	if (browser == 'Microsoft Internet Explorer') {		
-		cell = rowObj.children[usageCellIndex]; 
-		cell1 = cell.childNodes[0];
-		sel = cell1.childNodes[1];
-		
-		//for Structural Factor		
-		dropdownSF = rowObj.children[sfCellIndex].childNodes[0].childNodes[0];		
-	} else {		
-		cell = rowObj.cells[usageCellIndex]; 
-		cell1 = cell.childNodes[1];
-		sel = cell1.childNodes[3];
-		
-		//for Structural Factor
-		dropdownSF = rowObj.cells[sfCellIndex].childNodes[1].childNodes[1];		
+		}
 	}
-	
-	var tbody=tbl.tBodies[0];
-		
-	var lastRow = tbl.rows.length;		
-	var s = lastRow-2;
-	var usgId = 'floorUsage'+s;
-	var constTypeId = 'floorConstType'+s;
-	
-	var prevUsgId = (s == 0) ? 'floorUsage' : 'floorUsage'+(s-1);
-	var prevConstTypeId = (s == 0) ? 'floorConstType' : 'floorConstType'+(s-1);
-	
-
-	sel.id = usgId;	
-	dropdownSF.id = constTypeId;
-		
-	tbody.appendChild(rowObj);
-
-	document.forms[0].extraField1[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField1');
-	document.forms[0].unitType[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].unitType.id');
-	document.forms[0].unitTypeCategory[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].unitTypeCategory');
-	document.forms[0].floorNo[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].floorNo');
-	document.forms[0].floorTaxExemptReason[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].taxExemptedReason');
-	document.forms[0].floorType[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField7');
-	document.forms[0].extraField2[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField2');
-	document.forms[0].assessableArea[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].builtUpArea.area');
-	eval("document.forms[0]."+usgId+".setAttribute('name','propertyDetail.floorDetails["+(s+1)+"].propertyUsage.id')");
-	document.forms[0].floorOccupation[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].propertyOccupation.id');
-	document.forms[0].floorWaterRate[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].waterRate');
-	eval("document.forms[0]."+constTypeId+".setAttribute('name','propertyDetail.floorDetails["+(s+1)+"].structureClassification.id')");
-	document.forms[0].constrYear[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].depreciationMaster.id');
-	document.forms[0].occupancyDate[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField3');
-	document.forms[0].rent[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].rentPerMonth');
-	document.forms[0].width[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField4');
-	document.forms[0].length[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField5');
-	document.forms[0].interWallArea[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].extraField6');
-	document.forms[0].manualAlv[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].manualAlv');
-	document.forms[0].agreementPeriod[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].rentAgreementDetail.agreementPeriod');
-	document.forms[0].agreementDate[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].rentAgreementDetail.agreementDate');
-	document.forms[0].incrementInRent[lastRow-1].setAttribute('name','propertyDetail.floorDetails['+(s+1)+'].rentAgreementDetail.incrementInRent');
-	
-	document.forms[0].extraField1[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField1');
-	document.forms[0].unitType[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].unitType.id');
-	document.forms[0].unitTypeCategory[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].unitTypeCategory');
-	document.forms[0].floorNo[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].floorNo');
-	document.forms[0].floorTaxExemptReason[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].taxExemptedReason');
-	document.forms[0].floorType[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField7');
-	document.forms[0].extraField2[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField2');
-	document.forms[0].assessableArea[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].builtUpArea.area');
-	eval("document.forms[0]."+prevUsgId+".setAttribute('name','propertyDetail.floorDetails["+s+"].propertyUsage.id')");
-	document.forms[0].floorOccupation[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].propertyOccupation.id');
-	document.forms[0].floorWaterRate[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].waterRate');
-	eval("document.forms[0]."+prevConstTypeId+".setAttribute('name','propertyDetail.floorDetails["+s+"].structureClassification.id')");	
-	document.forms[0].constrYear[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].depreciationMaster.id');
-	document.forms[0].occupancyDate[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField3');
-	document.forms[0].rent[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].rentPerMonth');
-	document.forms[0].width[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField4');
-	document.forms[0].length[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField5');
-	document.forms[0].interWallArea[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].extraField6');
-	document.forms[0].manualAlv[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].manualAlv');
-	document.forms[0].agreementPeriod[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].rentAgreementDetail.agreementPeriod');
-	document.forms[0].agreementDate[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].rentAgreementDetail.agreementDate');
-	document.forms[0].incrementInRent[lastRow-2].setAttribute('name','propertyDetail.floorDetails['+s+'].rentAgreementDetail.incrementInRent');
-	
-	document.forms[0].extraField1[lastRow-1].value="";
-	document.forms[0].unitType[lastRow-1].value="-1";
-	document.forms[0].unitTypeCategory[lastRow-1].options.length=0;
-	document.forms[0].unitTypeCategory[lastRow-1].options[0] = new Option("select", "-1");
-	document.forms[0].unitTypeCategory[lastRow-1].value="-1";
-	document.forms[0].floorNo[lastRow-1].value="-10";
-	document.forms[0].floorTaxExemptReason[lastRow-1].value="-1";
-	document.forms[0].floorType[lastRow-1].value="-1";
-	document.forms[0].extraField2[lastRow-1].value="";
-	document.forms[0].assessableArea[lastRow-1].value="";
-	
-	var propType = document.getElementById('propTypeMaster');
-
-	if (propType.options[propType.selectedIndex].text == 'Mixed') {
-		eval('document.forms[0].'+usgId+'.options.length=0');
-		eval('document.forms[0].'+usgId+'.options[0] = new Option("select", "-1")');
-	}
-	
-	eval('document.forms[0].'+usgId+'.value="-1"');
-	
-	document.forms[0].floorOccupation[lastRow-1].value="-1";
-	document.forms[0].floorWaterRate[lastRow-1].value="-1";
-	eval('document.forms[0].'+constTypeId+'.options.length=0');
-	eval('document.forms[0].'+constTypeId+'.options[0] = new Option("select", "-1")');
-	eval('document.forms[0].'+constTypeId+'.value="-1"');	
-	document.forms[0].constrYear[lastRow-1].value="-1";	
-	document.forms[0].occupancyDate[lastRow-1].value="";
-	document.forms[0].rent[lastRow-1].value="";
-    document.forms[0].width[lastRow-1].value="";
-    document.forms[0].length[lastRow-1].value="";
-    document.forms[0].interWallArea[lastRow-1].value="";
-    document.forms[0].manualAlv[lastRow-1].value="";
-    document.forms[0].agreementPeriod[lastRow-1].value="";
-    document.forms[0].agreementDate[lastRow-1].value="";
-    document.forms[0].incrementInRent[lastRow-1].value="";
 }
-
 function delFloor(obj)
 {
 	rIndex = getRow(obj).rowIndex;
 	var tbl=document.getElementById('floorDetails');
-	var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
+	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	var rowo=tbl.rows.length;
 	if(rowo<=2)
 	{

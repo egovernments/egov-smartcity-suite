@@ -42,9 +42,14 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>  	
+  <head> 
     <title>
+    <s:if test="mode=='create' || mode=='edit'">
     	<s:text name='NewProp.title'/>
+    	</s:if>
+    	<s:if test="mode=='view'">
+    	View Property Form
+    	</s:if>
     </title>
 	<sx:head/>	
 	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->

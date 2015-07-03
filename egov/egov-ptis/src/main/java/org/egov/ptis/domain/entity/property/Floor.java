@@ -86,6 +86,8 @@ public class Floor extends BaseModel implements Auditable {
     private BigDecimal alv;
     private String waterRate;
     private PropertyDetail propertyDetail;
+    private Date occupancyDate;
+    private String occupantName;
 
     // This field contains Unit No For NMC Impl
     private String extraField1;
@@ -545,9 +547,25 @@ public class Floor extends BaseModel implements Auditable {
     public void setPlanApproved(boolean planApproved) {
             this.planApproved = planApproved;
     }
-
     
-    public String toString() {
+    
+    public Date getOccupancyDate() {
+		return occupancyDate;
+	}
+
+	public void setOccupancyDate(Date occupancyDate) {
+		this.occupancyDate = occupancyDate;
+	}
+
+	public String getOccupantName() {
+		return occupantName;
+	}
+
+	public void setOccupantName(String occupantName) {
+		this.occupantName = occupantName;
+	}
+
+	public String toString() {
             return new StringBuilder(256)
                             .append("FloorImpl [Id: ")
                             .append(getId())

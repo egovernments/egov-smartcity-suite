@@ -39,38 +39,30 @@
 -->
 
 <%@ include file="/includes/taglibs.jsp" %>
-  	<%-- <td class="greybox2">&nbsp;</td>
-	<td class="greybox"><s:text name="OwnerName" /><span class="mandatory1">*</span> : </td>
-    <td class="greybox"> --%>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
     <tr>
     <th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
-	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
-	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)<span class="mandatory1">*</span></th>
+	<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
     <s:if test="%{propertyOwnerInfo.isEmpty()}">
       <tr id="nameRow" >
-       <!-- <td class="greybox" width="10%"> </td>  -->
-      <%-- <td class="" align="center">
-        	<s:textfield name="title" maxlength="512" size="20" id="title"  value="%{propertyOwnerInfo[0].owner.name}" 
-        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
-        </td> --%>
         <td class="blueborderfortd" align="center">
-		   <s:textfield name="propertyOwnerInfo[0].owner.aadhaarNumber" id="propertyOwnerInfo[0].owner.aadhaarNumber" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="propertyOwnerInfo[0].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="0" data-errormsg="Aadhar no is mandatory!"></s:textfield>
 		</td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerInfo[0].owner.name}" 
-        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{propertyOwnerInfo[0].owner.mobileNumber}" 
-        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+        		onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="propertyOwnerInfo[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{propertyOwnerInfo[0].owner.emailId}" 
-        		onblur="trim(this,this.value);validateEmail(this);"/>
+        		onblur="trim(this,this.value);validateEmail(this);" data-optional="0" data-errormsg="emailid is mandatory!"/>
         </td>
         
         <td class="blueborderfortd">
@@ -83,19 +75,19 @@
         <s:iterator value="propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
 			  <td class="blueborderfortd" align="center">
-			  <s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" size="12" maxlength="12"></s:textfield>
+			  <s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"></s:textfield>
 			  </td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerInfo[#ownerStatus.index].owner.name}" 
-        				onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+        				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNo" value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
-        				onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
+        				onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!" />
         		</td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.emailId" maxlength="64" size="20" id="emailId" value="%{propertyOwnerInfo[#ownerStatus.index].owner.emailId}" 
-        				onblur="trim(this,this.value);validateEmail(this);"/>
+        				onblur="trim(this,this.value);validateEmail(this);" data-optional="1" data-errormsg="emailid is mandatory!"/>
         		</td>
         		<td class="blueborderfortd">
         			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />

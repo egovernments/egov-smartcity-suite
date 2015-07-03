@@ -69,7 +69,7 @@
 	<tr>
 		<td class="bluebox2" width="8%">&nbsp;</td>
 	    <td class="bluebox" width="8%"><s:text name="elec.wardno"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProp.address.extraField1}" /> </span></td>
+	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
 	    <td class="bluebox" width="10%"><s:text name="doorno"/> : </td>
 	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProp.address.extraField2}" /> </span></td>
 	</tr>

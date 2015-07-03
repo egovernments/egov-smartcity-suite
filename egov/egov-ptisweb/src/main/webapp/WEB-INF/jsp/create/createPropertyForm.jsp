@@ -180,11 +180,11 @@
 				  <br/> <label><s:text name="electricity"></s:text>  <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity"/> </label>
 				</td>
 				<td width="20%" align="right">
-				  <label><s:text name="watertap"></s:text> <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap"/></label> 
+				  <label><s:text name="watertap"></s:text> <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap" value="%{propertyDetail.waterTap}"/></label> 
 				   <br/><label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom"/> </label>
 			    </td>
 			    <td width="20%" align="right">
-				  <label><s:text name="superstructure"></s:text> <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"/></label>
+				  <label><s:text name="superstructure"></s:text> <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" value="%{propertyDetail.structure}"/></label>
 				  <br/> <label><s:text name="waterharvesting"></s:text> <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting"/></label>
 			    </td>
 			    <td width="10%"></td>
@@ -281,8 +281,7 @@
 				<span class="mandatory1">*</span> :
 			</div>
 		</td>
-		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot"
-				maxlength="15"
+		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot" maxlength="15" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
 			<span class="highlight2"><s:text
 					name="msgForCompulsionOfOpenPlot" /> </span>
@@ -301,31 +300,6 @@
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
-	
-	
-	<!-- property type section -->
-	
-	<%-- <tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="PropertyType" /> </span>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="PropertyType" /> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox"><s:select name="propTypeId"
-				id="propTypeMaster" list="dropdownData.PropTypeMaster" listKey="id"
-				listValue="type" headerKey="-1"
-				headerValue="%{getText('default.select')}" value="%{propTypeId}"
-				onchange="enableFieldsForPropType(); populateUsg(); populatePropTypeCategory(); toggleForResNonRes();toggleFloorDetails(); " />
-		</td>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
-	 --%>
 	
 	<tr id="floorHeaderRow">
 			<td colspan="5" width="5%">
@@ -348,10 +322,11 @@
 	</tr>
 
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" cssClass="form-control datepicker" size="10" maxlength="10"></s:textfield>
+		<s:date name="%{basicProperty.propOccupationDate}" var="occupationDate" format="dd/MM/yyyy" />
+		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
 	

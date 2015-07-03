@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
@@ -67,6 +68,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -339,7 +341,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setUpicNo(indexNum);
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
-		//initiateWorkflow();
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.persist(basicProperty);
@@ -380,18 +381,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
 		String nextAction = property.getState().getNextAction();
-		if ((ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) && !nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)) || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
+		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED) && (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))  ) {
+			mode = EDIT;
 			return RESULT_NEW;
 		} else {
-			/*
-			 * if (currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING) ||
-			 * userDesgn.equalsIgnoreCase(END_APPROVER_DESGN)) {
-			 * setIsApprPageReq(Boolean.FALSE); if (basicProp != null &&
-			 * basicProp.getUpicNo() != null &&
-			 * !basicProp.getUpicNo().isEmpty()) {
-			 * setIndexNumber(basicProp.getUpicNo()); } }
-			 */
-
+            mode = VIEW;
 			PropertyDetail propertyDetail = property.getPropertyDetail();
 
 			if (propertyDetail.getExtra_field4() != null && !propertyDetail.getExtra_field4().trim().isEmpty()) {
@@ -407,16 +401,8 @@ public class CreatePropertyAction extends WorkflowAction {
 			if (propertyDetail.getFloorDetails().size() > 0) {
 				setFloorDetails(property);
 			}
-			/*List<PropertyOwnerInfo> propOwners = new ArrayList<PropertyOwnerInfo>(property.getPropertyOwnerInfo());
-			Collections.sort(propOwners, new OwnerNameComparator());
-			setPropOwnerProxy(propOwners);*/
+			
 			setDocNumber(property.getDocNumber());
-			/*
-			 * setPropertyCategory((Category) persistenceService.find(
-			 * "from Category c where c.id = ?",
-			 * Long.valueOf(property.getPropertyDetail().getExtra_field6())));
-			 */
-
 			LOGGER.debug("IndexNumber: " + indexNumber + ", GenWaterRate: " + genWaterRate + ", Amenities: " + amenities
 					+ "NoOfFloors: " + ((getFloorDetails() != null) ? getFloorDetails().size() : "Floor list is NULL")
 					+ " Exiting from view");
@@ -428,12 +414,27 @@ public class CreatePropertyAction extends WorkflowAction {
 	public String forward() {
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();
-		//BasicProperty basicProperty = createBasicProp(STATUS_WORKFLOW, isfloorDetailsRequired);
-		//Assignment assignment = assignmentService.getPrimaryAssignmentForUser(getWorkflowBean().getApproverUserId());
-		//updateWorkflow(WFLOW_ACTION_STEP_CREATE,PROPERTY_STATUS_APPROVEL_PENDING,assignment);
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
-		setBasicProp(basicProp);
+		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+			User user = securityUtils.getCurrentUser();
+			if (floor.getId() == null) {
+				floor.setPropertyDetail(property.getPropertyDetail());
+				floor.setCreatedDate(new Date());
+				floor.setModifiedDate(new Date());
+				floor.setCreatedBy(user);
+				floor.setModifiedBy(user);
+			}
+		}
+		int ownersCount = property.getPropertyOwnerInfo().size();
+		for (PropertyOwnerInfo ownerInfo : property.getPropertyOwnerInfo()) {
+			if (ownerInfo.getId() == null) {
+				ownerInfo.setOrderNo(ownersCount++);
+				ownerInfo.getOwner().setPassword("NOT SET");
+				ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
+			}
+		}
+		basicProp.addProperty(property);
 		basicPropertyService.persist(basicProp);
 		setDocNumber(getDocNumber());
 
@@ -457,9 +458,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
 		property.setStatus(STATUS_ISACTIVE);
 		setWardId(basicProp.getPropertyID().getWard().getId());
-		/*String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
-		basicProp.setUpicNo(indexNum);*/
-		
 		if (allChangesCompleted) {
 			Map<Installment, Map<String, BigDecimal>> amounts = propService.populateTaxesForVoucherCreation(property);
 			financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_CREATE);
@@ -530,7 +528,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		currDate = new Date(); 
 		setUserInfo();
 		if (isNotBlank(getModelId())) {
-			mode = EDIT;
 			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
 					Long.valueOf(getModelId()));
 			basicProp = property.getBasicProperty();
@@ -890,7 +887,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			    ownerInfo.setOrderNo(orderNo);
 			    ownerInfo.getOwner().setPassword("NOT SET");
 			    ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
-				//Use Correspondence adress 
+			    //ownerInfo.getOwner().setGender("Male");
 				Address ownerAddr = new CorrespondenceAddress();
 				addrStr1 = getCorrAddress1();
 				addrStr2 = getCorrAddress2();
@@ -932,7 +929,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (getPinCode() != null && !getPinCode().isEmpty()) {
 			propAddr.setPinCode((getPinCode()));
 		}
-		if (isChkIsCorrIsDiff()) {
+		if (!isChkIsCorrIsDiff()) {
 			setCorrAddress1(addrStr1.toString());
 			setCorrAddress2(addrStr2.toString());
 			if (getPinCode() != null && !getPinCode().isEmpty()) {

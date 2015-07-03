@@ -60,52 +60,52 @@
 		
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center"> 
-	    	<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />
+	    	<span class="bold"><s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" /></span>
 	        </div>
 	    </td>
 	     <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
-	    	<s:property default="N/A" value="%{structureClassification.typeName}" /> 
+	    	<span class="bold"><s:property default="N/A" value="%{structureClassification.typeName}" /> </span>
 	        </div>
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
-	    	<s:property default="N/A" value="%{propertyUsage.usageName}" />
+	    	<span class="bold"><s:property default="N/A" value="%{propertyUsage.usageName}" /></span>
 	        </div>
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
-	    	<s:property default="N/A" value="%{propertyOccupation.occupation}" />  
+	    	<span class="bold"><s:property default="N/A" value="%{propertyOccupation.occupation}" /> </span>
 	        </div>
 	    </td>	
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<div align="center"><s:property default="N/A" value="%{depreciationMaster.depreciationName}" /></div>
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{depreciationMaster.depreciationName}" /></div></span>
 	    </td>	
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    <s:date name="createdDate" var="cdFormat" format="dd/MM/yyyy"/>
-	    <s:property default="N/A" value="%{cdFormat}"/>
+	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
         <div align="center">
-        	<s:property default="N/A" value="%{extraField5}" />
+        	<span class="bold"><s:property default="N/A" value="%{extraField5}" /></span>
         </div>
         </td>
          <td class="blueborderfortd" style="padding: 2px 2px">
         <div align="center">
-        	<s:property default="N/A" value="%{extraField4}" />
+        	<span class="bold"><s:property default="N/A" value="%{extraField4}" /></span>
         </div>
         </td>
         <td class="blueborderfortd" style="padding: 2px 2px">
-			<div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div>
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div></span>
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-	    	<s:property default="N/A" value="%{capitalValue}" />
+	    	<span class="bold"><s:property default="N/A" value="%{capitalValue}" /></span>
 	    </td>
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	     <s:if test="%{planApproved == true}">
-	     Yes
+	    <span class="bold"> Yes</span>
 	     </s:if>
-	     <s:else>No</s:else>
+	    <span class="bold"> <s:else>No</s:else></span>
 	    </td>
 	</tr>
    </s:iterator>
@@ -116,7 +116,6 @@
    if (val == 'no') {
  		var floorTable = document.getElementById("floorDetails");
 		var headerRow = floorTable.rows[0];
-		//jQuery(headerRow.lastElementChild).hide();
    }
 </script>
 
