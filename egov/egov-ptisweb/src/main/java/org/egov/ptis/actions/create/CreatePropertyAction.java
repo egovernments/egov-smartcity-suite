@@ -842,17 +842,26 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyDetail propertyDetail = property.getPropertyDetail();
 		VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
 				propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
-				propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
-				false, propertyDetail.getSurveyNumber(), propertyDetail.getFieldVerified(),
-				propertyDetail.getFieldVerificationDate(), propertyDetail.getFloorDetails(),
-				propertyDetail.getPropertyDetailsID(), propertyDetail.getWater_Meter_Num(),
-				propertyDetail.getElec_Meter_Num(), 0, propertyDetail.getFieldIrregular(),
-				propertyDetail.getCompletion_year(), propertyDetail.getEffective_date(),
-				propertyDetail.getDateOfCompletion(), propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
+				propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(),
+				propertyDetail.getNonResPlotArea(), false, propertyDetail.getSurveyNumber(),
+				propertyDetail.getFieldVerified(), propertyDetail.getFieldVerificationDate(),
+				propertyDetail.getFloorDetails(), propertyDetail.getPropertyDetailsID(),
+				propertyDetail.getWater_Meter_Num(), propertyDetail.getElec_Meter_Num(), 0,
+				propertyDetail.getFieldIrregular(), propertyDetail.getCompletion_year(),
+				propertyDetail.getEffective_date(), propertyDetail.getDateOfCompletion(),
+				propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
 				propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
 				propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
 				propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
-				propertyDetail.getComZone(), propertyDetail.getCornerPlot());
+				propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
+				propertyDetail.getExtentSite(), propertyDetail.getExtentAppartenauntLand(),
+				propertyDetail.getFloorType(), propertyDetail.getRoofType(),
+				propertyDetail.getWallType(), propertyDetail.getWoodType(),
+				propertyDetail.isLift(), propertyDetail.isToilets(), propertyDetail.isWaterTap(),
+				propertyDetail.isStructure(), propertyDetail.isDrainage(),
+				propertyDetail.isElectricity(), propertyDetail.isAttachedBathRoom(),
+				propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+				propertyDetail.getSiteOwner());
 
 		vacantProperty.setExtra_field1(propertyDetail.getExtra_field1());
 		vacantProperty.setExtra_field2(propertyDetail.getExtra_field2());

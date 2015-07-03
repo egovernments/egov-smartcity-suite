@@ -43,6 +43,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCAT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
@@ -152,6 +153,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		floorDepreciation = calculateFloorDepreciation(floorGrossArv, floorIF);
 		floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
 
+		unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floorIF.getFloorNo()));
 		unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
 		unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
 		unitTaxCalculationInfo.setMrv(floorMrv);

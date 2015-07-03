@@ -47,9 +47,7 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
@@ -66,7 +64,7 @@ import org.egov.exceptions.InvalidPropertyException;
  * 
  */
 public class VacantProperty extends AbstractProperty {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(VacantProperty.class);
 	private Area sitalArea;
 	private Area totalBuiltupArea;
@@ -79,7 +77,7 @@ public class VacantProperty extends AbstractProperty {
 	private Character fieldVerified;
 	private java.util.Date fieldVerificationDate;
 	private java.util.List<Floor> floorDetails = new ArrayList<Floor>();
-	/*private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();*/
+	/* private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>(); */
 	private Integer propertyDetailsID;
 	private String water_Meter_Num;
 	private String elec_Meter_Num;
@@ -115,16 +113,21 @@ public class VacantProperty extends AbstractProperty {
 	private RoofType roofType;
 	private WallType wallType;
 	private WoodType woodType;
-	
 
-	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
-			Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
-			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
+			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
+			String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
+			List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
 			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date completion_year,
 			Date effective_date, Date dateOfCompletion, Property property, Date updatedTime,
-			PropertyUsage propertyUsage, PropertyCreationReason creationReason, PropertyTypeMaster propertyTypeMaster,
-			String propertyType,Installment installment, PropertyOccupation propertyOccupation,
-			PropertyMutationMaster propertyMutationMaster, Character comZone, Character cornerPlot) {
+			PropertyUsage propertyUsage, PropertyCreationReason creationReason,
+			PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
+			PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster,
+			Character comZone, Character cornerPlot, double extentSite,
+			double extentAppartenauntLand, FloorType floorType, RoofType roofType,
+			WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
+			boolean structure, boolean drainage, boolean electricity, boolean attachedBathRoom,
+			boolean waterHarvesting, boolean cable, String siteOwner) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -156,6 +159,22 @@ public class VacantProperty extends AbstractProperty {
 		this.propertyMutationMaster = propertyMutationMaster;
 		this.comZone = comZone;
 		this.cornerPlot = cornerPlot;
+		this.extentSite = extentSite;
+		this.extentAppartenauntLand = extentAppartenauntLand;
+		this.wallType = wallType;
+		this.roofType = roofType;
+		this.woodType = woodType;
+		this.floorType = floorType;
+		this.lift = lift;
+		this.toilets = toilets;
+		this.waterTap = waterTap;
+		this.structure = structure;
+		this.drainage = drainage;
+		this.electricity = electricity;
+		this.attachedBathRoom = attachedBathRoom;
+		this.waterHarvesting = waterHarvesting;
+		this.cable = cable;
+		this.siteOwner = siteOwner;
 	}
 
 	public Date getDateOfCompletion() {
@@ -168,9 +187,9 @@ public class VacantProperty extends AbstractProperty {
 
 	public void addFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.addFloor");
-		if(floor!=null){
-		getFloorDetails().add(floor);
-		no_of_floors = getFloorDetails().size();
+		if (floor != null) {
+			getFloorDetails().add(floor);
+			no_of_floors = getFloorDetails().size();
 		}
 	}
 
@@ -593,7 +612,8 @@ public class VacantProperty extends AbstractProperty {
 	 */
 	public boolean validateProperty() throws InvalidPropertyException {
 		if (getSitalArea() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
 		}
 		/*
 		 * if(getTotalBuiltupArea() == null) throw newEGOVRuntimeException(
@@ -602,12 +622,15 @@ public class VacantProperty extends AbstractProperty {
 		 */
 
 		if (getPropertyAddress() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
-		} 
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
+		}
 		if (getProperty() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : Property is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : Property is NULL, Please Check !!");
 		} else if (!getProperty().validateProperty()) {
-			throw new InvalidPropertyException("VacantProperty.validate : Property Validate() failed, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : Property Validate() failed, Please Check !!");
 		}
 		// can't use validate, not implemented
 		/*
@@ -622,7 +645,8 @@ public class VacantProperty extends AbstractProperty {
 		 * !!" );
 		 */
 		if (getPropertySource() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : PropertySource is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : PropertySource is NULL, Please Check !!");
 		} else if (!getPropertySource().validate()) {
 			throw new InvalidPropertyException(
 					"VacantProperty.validate : PropertySource Validate() failed, Please Check !!");
@@ -676,15 +700,14 @@ public class VacantProperty extends AbstractProperty {
 		this.propertyOccupation = propertyOccupation;
 	}
 
-	/*public List<FloorImpl> getFloorDetailsProxy() {
-		getFloorDetails().addAll(floorDetailsProxy);
-		return floorDetailsProxy;
-	}
-
-	public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
-		this.floorDetailsProxy = floorDetailsProxy;
-		getFloorDetails().addAll(floorDetailsProxy);
-	}*/
+	/*
+	 * public List<FloorImpl> getFloorDetailsProxy() {
+	 * getFloorDetails().addAll(floorDetailsProxy); return floorDetailsProxy; }
+	 * 
+	 * public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
+	 * this.floorDetailsProxy = floorDetailsProxy;
+	 * getFloorDetails().addAll(floorDetailsProxy); }
+	 */
 
 	public VacantProperty() {
 		super();
@@ -694,8 +717,8 @@ public class VacantProperty extends AbstractProperty {
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
 
-		objStr.append("Id: ").append(getId()).append("|Sital Area: ").append(getSitalArea().getArea()).append(
-				"|NoOfFloors: ").append(getNo_of_floors());
+		objStr.append("Id: ").append(getId()).append("|Sital Area: ")
+				.append(getSitalArea().getArea()).append("|NoOfFloors: ").append(getNo_of_floors());
 
 		return objStr.toString();
 	}
@@ -709,7 +732,7 @@ public class VacantProperty extends AbstractProperty {
 	public void setNonResPlotArea(Area nonResPlotArea) {
 		this.nonResPlotArea = nonResPlotArea;
 	}
-	
+
 	@Override
 	public boolean isLift() {
 		return lift;
@@ -869,6 +892,5 @@ public class VacantProperty extends AbstractProperty {
 	public void setWoodType(WoodType woodType) {
 		this.woodType = woodType;
 	}
-
 
 }

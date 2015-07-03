@@ -107,15 +107,20 @@ public class BuiltUpProperty extends AbstractProperty {
 	private WallType wallType;
 	private WoodType woodType;
 
-	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
-			Area commVacantLand, Area nonResPlotArea, 
-			Boolean irregular, String surveyNumber, Character fieldVerified,
-			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
+			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
+			String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
+			List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
 			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date completion_year,
 			Date effective_date, Property property, Date updatedTime, PropertyUsage propertyUsage,
-			Date dateOfCompletion, PropertyCreationReason creationReason, PropertyTypeMaster propertyTypeMaster,
-			String propertyType,Installment installment, PropertyMutationMaster propertyMutationMaster, Character comZone,
-			Character cornerPlot, PropertyOccupation propertyOccupation) {
+			Date dateOfCompletion, PropertyCreationReason creationReason,
+			PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
+			PropertyMutationMaster propertyMutationMaster, Character comZone, Character cornerPlot,
+			PropertyOccupation propertyOccupation, double extentSite,
+			double extentAppartenauntLand, FloorType floorType, RoofType roofType,
+			WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
+			boolean structure, boolean drainage, boolean electricity, boolean attachedBathRoom,
+			boolean waterHarvesting, boolean cable, String siteOwner) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -147,6 +152,22 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.comZone = comZone;
 		this.cornerPlot = cornerPlot;
 		this.propertyOccupation = propertyOccupation;
+		this.extentSite = extentSite;
+		this.extentAppartenauntLand = extentAppartenauntLand;
+		this.wallType = wallType;
+		this.roofType = roofType;
+		this.woodType = woodType;
+		this.floorType = floorType;
+		this.lift = lift;
+		this.toilets = toilets;
+		this.waterTap = waterTap;
+		this.structure = structure;
+		this.drainage = drainage;
+		this.electricity = electricity;
+		this.attachedBathRoom = attachedBathRoom;
+		this.waterHarvesting = waterHarvesting;
+		this.cable = cable;
+		this.siteOwner = siteOwner;
 	}
 
 	public BuiltUpProperty() {
@@ -371,9 +392,9 @@ public class BuiltUpProperty extends AbstractProperty {
 	 */
 	public void addFloor(Floor floor) {
 		LOGGER.debug("BuildUpFloor.addFloor");
-		if(floor!=null){
-		getFloorDetails().add(floor);
-		no_of_floors = getFloorDetails().size();
+		if (floor != null) {
+			getFloorDetails().add(floor);
+			no_of_floors = getFloorDetails().size();
 		}
 	}
 
@@ -604,9 +625,11 @@ public class BuiltUpProperty extends AbstractProperty {
 		 * Validate() failed, Please Check !!" );
 		 */
 		if (getProperty() == null)
-			throw new InvalidPropertyException("BuiltUpProperty.validate : Property is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"BuiltUpProperty.validate : Property is NULL, Please Check !!");
 		else if (getProperty().validateProperty() == false)
-			throw new InvalidPropertyException("BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
+			throw new InvalidPropertyException(
+					"BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
 
 		// can't use validate, not implemented
 		/*
@@ -621,7 +644,8 @@ public class BuiltUpProperty extends AbstractProperty {
 		 * !!" );
 		 */
 		if (getPropertySource() == null)
-			throw new InvalidPropertyException("BuiltUpProperty.validate : PropertySource is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"BuiltUpProperty.validate : PropertySource is NULL, Please Check !!");
 		else if (getPropertySource().validate() == false)
 			throw new InvalidPropertyException(
 					"BuiltUpProperty.validate : PropertySource Validate() failed, Please Check !!");
@@ -719,8 +743,8 @@ public class BuiltUpProperty extends AbstractProperty {
 		StringBuilder objStr = new StringBuilder();
 
 		objStr.append("Id: ").append(getId()).append("|").append("Sital Area: ");
-		objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr.append("NULL").append(
-				"|NoOfFloors: ").append(getNo_of_floors());
+		objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr
+				.append("NULL").append("|NoOfFloors: ").append(getNo_of_floors());
 
 		return objStr.toString();
 	}
@@ -843,7 +867,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	public void setExtentAppartenauntLand(double extentAppartenauntLand) {
 		this.extentAppartenauntLand = extentAppartenauntLand;
 	}
-	
+
 	@Override
 	public String getSiteOwner() {
 		return siteOwner;
@@ -893,7 +917,5 @@ public class BuiltUpProperty extends AbstractProperty {
 	public void setWoodType(WoodType woodType) {
 		this.woodType = woodType;
 	}
-	
-	
-	
+
 }

@@ -54,7 +54,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -115,7 +114,7 @@ public class PropertyImpl extends StateAware implements Property {
 
 	private PropertyDetail propertyDetail;
 	private PropertyModifyReason propertyModifyReason;
-	private Set<PtDemandARV> ptDemandARVSet = new HashSet<PtDemandARV>();
+	//private Set<PtDemandARV> ptDemandARVSet = new HashSet<PtDemandARV>();
 
 	private Installment installment;
 	private String extra_field1;
@@ -441,7 +440,7 @@ public class PropertyImpl extends StateAware implements Property {
 		this.propertyModifyReason = propertyModifyReason;
 	}
 
-	@Override
+	/*@Override
 	public Set<PtDemandARV> getPtDemandARVSet() {
 		return ptDemandARVSet;
 	}
@@ -449,13 +448,13 @@ public class PropertyImpl extends StateAware implements Property {
 	@Override
 	public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet) {
 		this.ptDemandARVSet = ptDemandARVSet;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void addPtDemandARV(PtDemandARV ptDemandARV) {
 		LOGGER.debug("PropertyImpl.addPtDemandARVSet");
 		getPtDemandARVSet().add(ptDemandARV);
-	}
+	}*/
 
 	@Override
 	public String getExtra_field1() {
@@ -659,36 +658,61 @@ public class PropertyImpl extends StateAware implements Property {
 		PropertyDetail propDetails = null;
 		if (getPropertyDetail().getPropertyType().toString().equals(BUILT_UP_PROPERTY)) {
 			BuiltUpProperty bup = (BuiltUpProperty) getPropertyDetail();
-			propDetails = new BuiltUpProperty(getPropertyDetail().getSitalArea(), getPropertyDetail()
-					.getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(), getPropertyDetail()
-					.getPlinthArea(), getPropertyDetail().getCommVacantLand(), getPropertyDetail().getNonResPlotArea(),
-					bup.isIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
-					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
-							.getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-							.getNo_of_floors(), getPropertyDetail().getFieldIrregular(), getPropertyDetail()
-							.getDateOfCompletion(), getPropertyDetail().getEffective_date(), newProperty,
-					getPropertyDetail().getUpdatedTime(), getPropertyDetail().getPropertyUsage(), getPropertyDetail()
-							.getDateOfCompletion(), bup.getCreationReason(), getPropertyDetail()
-							.getPropertyTypeMaster(), getPropertyDetail().getPropertyType(), getPropertyDetail()
-							.getInstallment(), getPropertyDetail().getPropertyMutationMaster(), getPropertyDetail()
+			propDetails = new BuiltUpProperty(getPropertyDetail().getSitalArea(),
+					getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail()
+							.getCommBuiltUpArea(), getPropertyDetail().getPlinthArea(),
+					getPropertyDetail().getCommVacantLand(), getPropertyDetail()
+							.getNonResPlotArea(), bup.isIrregular(), getPropertyDetail()
+							.getSurveyNumber(), getPropertyDetail().getFieldVerified(),
+					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null,
+					getPropertyDetail().getWater_Meter_Num(), getPropertyDetail()
+							.getElec_Meter_Num(), getPropertyDetail().getNo_of_floors(),
+					getPropertyDetail().getFieldIrregular(), getPropertyDetail()
+							.getDateOfCompletion(), getPropertyDetail().getEffective_date(),
+					newProperty, getPropertyDetail().getUpdatedTime(), getPropertyDetail()
+							.getPropertyUsage(), getPropertyDetail().getDateOfCompletion(),
+					bup.getCreationReason(), getPropertyDetail().getPropertyTypeMaster(),
+					getPropertyDetail().getPropertyType(), getPropertyDetail().getInstallment(),
+					getPropertyDetail().getPropertyMutationMaster(), getPropertyDetail()
 							.getComZone(), getPropertyDetail().getCornerPlot(), getPropertyDetail()
-							.getPropertyOccupation());
+							.getPropertyOccupation(), getPropertyDetail().getExtentSite(),
+					getPropertyDetail().getExtentAppartenauntLand(), getPropertyDetail()
+							.getFloorType(), getPropertyDetail().getRoofType(), getPropertyDetail()
+							.getWallType(), getPropertyDetail().getWoodType(), getPropertyDetail()
+							.isLift(), getPropertyDetail().isToilets(), getPropertyDetail()
+							.isWaterTap(), getPropertyDetail().isStructure(), getPropertyDetail()
+							.isDrainage(), getPropertyDetail().isElectricity(), getPropertyDetail()
+							.isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(),
+					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner());
+
 		} else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
 			VacantProperty vcp = (VacantProperty) getPropertyDetail();
-			propDetails = new VacantProperty(getPropertyDetail().getSitalArea(), getPropertyDetail()
-					.getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(), getPropertyDetail()
-					.getPlinthArea(), getPropertyDetail().getCommVacantLand(), getPropertyDetail().getNonResPlotArea(),
-					vcp.getIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
-					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
-							.getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-							.getNo_of_floors(), getPropertyDetail().getFieldIrregular(), getPropertyDetail()
-							.getCompletion_year(), getPropertyDetail().getEffective_date(), getPropertyDetail()
-							.getDateOfCompletion(), newProperty, getPropertyDetail().getUpdatedTime(),
-					getPropertyDetail().getPropertyUsage(), vcp.getCreationReason(), getPropertyDetail()
-							.getPropertyTypeMaster(), getPropertyDetail().getPropertyType(), getPropertyDetail()
-							.getInstallment(), getPropertyDetail().getPropertyOccupation(), getPropertyDetail()
-							.getPropertyMutationMaster(), getPropertyDetail().getComZone(), getPropertyDetail()
-							.getCornerPlot());
+			propDetails = new VacantProperty(getPropertyDetail().getSitalArea(),
+					getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail()
+							.getCommBuiltUpArea(), getPropertyDetail().getPlinthArea(),
+					getPropertyDetail().getCommVacantLand(), getPropertyDetail()
+							.getNonResPlotArea(), vcp.getIrregular(), getPropertyDetail()
+							.getSurveyNumber(), getPropertyDetail().getFieldVerified(),
+					getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null,
+					getPropertyDetail().getWater_Meter_Num(), getPropertyDetail()
+							.getElec_Meter_Num(), getPropertyDetail().getNo_of_floors(),
+					getPropertyDetail().getFieldIrregular(), getPropertyDetail()
+							.getCompletion_year(), getPropertyDetail().getEffective_date(),
+					getPropertyDetail().getDateOfCompletion(), newProperty, getPropertyDetail()
+							.getUpdatedTime(), getPropertyDetail().getPropertyUsage(),
+					vcp.getCreationReason(), getPropertyDetail().getPropertyTypeMaster(),
+					getPropertyDetail().getPropertyType(), getPropertyDetail().getInstallment(),
+					getPropertyDetail().getPropertyOccupation(), getPropertyDetail()
+							.getPropertyMutationMaster(), getPropertyDetail().getComZone(),
+					getPropertyDetail().getCornerPlot(), getPropertyDetail().getExtentSite(),
+					getPropertyDetail().getExtentAppartenauntLand(), getPropertyDetail()
+							.getFloorType(), getPropertyDetail().getRoofType(), getPropertyDetail()
+							.getWallType(), getPropertyDetail().getWoodType(), getPropertyDetail()
+							.isLift(), getPropertyDetail().isToilets(), getPropertyDetail()
+							.isWaterTap(), getPropertyDetail().isStructure(), getPropertyDetail()
+							.isDrainage(), getPropertyDetail().isElectricity(), getPropertyDetail()
+							.isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(),
+					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner());
 		}
 		propDetails.setExtra_field1(getPropertyDetail().getExtra_field1());
 		propDetails.setExtra_field2(getPropertyDetail().getExtra_field2());

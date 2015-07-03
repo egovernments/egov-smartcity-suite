@@ -136,12 +136,12 @@
 		<property name="isChecked" column="ISCHECKED" />
 		<property name="remarks" column="REMARKS" type="string" />
 
-		<set name="ptDemandARVSet" order-by="FROMDATE" cascade="all-delete-orphan"
+		<!-- <set name="ptDemandARVSet" order-by="FROMDATE" cascade="all-delete-orphan"
 			table="EGPT_PTDEMAND_ARV"
 			where="IS_HISTORY='N' and (ARV_TYPE ='Assessed' or ARV_TYPE ='Confirmed')">
 			<key column="ID_PROPERTY" not-null="true" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.PtDemandARV" />
-		</set>
+		</set> -->
 		<many-to-one name="installment" class="org.egov.commons.Installment"
 			column="ID_INSTALLMENT" />
 				

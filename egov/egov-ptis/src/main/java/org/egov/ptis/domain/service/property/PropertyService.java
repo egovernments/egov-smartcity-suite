@@ -135,7 +135,9 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class PropertyService  {
 
 	private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
@@ -438,8 +440,8 @@ public class PropertyService  {
 		List<Installment> instList = new ArrayList<Installment>();
 		instList = new ArrayList<Installment>(instTaxMap.keySet());
 		LOGGER.debug("createDemand: instList: " + instList);
-		currentInstall = propertyTaxUtil.getCurrentInstallment();
-
+		currentInstall = PropertyTaxUtil.getCurrentInstallment();
+		property.getPtDemandSet().clear();
 		for (Installment installment : instList) {
 			APTaxCalculationInfo taxCalcInfo = (APTaxCalculationInfo)instTaxMap.get(installment);
 			dmdDetailSet = createAllDmdDetails(installment, instList, instTaxMap);
@@ -456,6 +458,7 @@ public class PropertyService  {
 			ptDmdCalc.setPtDemand(ptDemand);
 			ptDmdCalc.setPropertyTax(taxCalcInfo.getTotalTaxPayable());
 			ptDmdCalc.setTaxInfo(taxCalcInfo.getTaxCalculationInfoXML().getBytes());
+			propPerServ.applyAuditing(ptDmdCalc);
 			ptDemand.setDmdCalculations(ptDmdCalc);
 
 			// In case of Property Type as (Open Plot,State Govt,Central Govt),
@@ -472,8 +475,7 @@ public class PropertyService  {
 				}
 			}
 		}
-
-		property.setPtDemandSet(ptDmdSet);
+		property.getPtDemandSet().addAll(ptDmdSet);
 
 		LOGGER.debug("Exiting from createDemand");
 		return property;
@@ -498,7 +500,7 @@ public class PropertyService  {
 		Ptdemand ptDemandOld = new Ptdemand();
 		Ptdemand ptDemandNew = new Ptdemand();
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		Installment currentInstall = PropertyTaxUtil.getCurrentInstallment();
 		Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
 		ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
 		PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
@@ -507,8 +509,8 @@ public class PropertyService  {
 
 		if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
-				|| !oldProperty.getPropertyDetail().getExtra_field1()
-						.equals(newProperty.getPropertyDetail().getExtra_field1())
+				/*|| !oldProperty.getPropertyDetail().getExtra_field1()
+						.equals(newProperty.getPropertyDetail().getExtra_field1())*/
 				|| (isBigResidentialType(oldProperty.getPtDemandSet()) ^ isBigResidentialType(newProperty
 						.getPtDemandSet()))
 				|| oldProperty.getTaxExemptReason() == null
@@ -1302,7 +1304,7 @@ public class PropertyService  {
 		Ptdemand oldCurrPtDmd = null;
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
 		Installment effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
-		Installment currInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
 		for (Ptdemand demand : property.getPtDemandSet()) {
 			if (demand.getIsHistory().equalsIgnoreCase("N")) {
 				if (demand.getEgInstallmentMaster().equals(currInstall)) {

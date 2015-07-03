@@ -167,11 +167,11 @@ public interface Property extends Auditable {
 
 	public void setPropertyModifyReason(PropertyModifyReason propertyModifyReason);
 
-	public Set<PtDemandARV> getPtDemandARVSet();
+	/*public Set<PtDemandARV> getPtDemandARVSet();
 
 	public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet);
 
-	public void addPtDemandARV(PtDemandARV ptDemandARV);
+	public void addPtDemandARV(PtDemandARV ptDemandARV);*/
 
 	public void setExtra_field4(String extra_field4);
 

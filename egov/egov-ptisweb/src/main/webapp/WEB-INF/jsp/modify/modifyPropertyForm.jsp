@@ -110,6 +110,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="">
 		   <span class="bold"><s:property value="%{propertyDetail.extentSite}" default="N/A"/></span>
+		   <s:hidden name="propertyDetail.extentSite" value="%{propertyDetail.extentSite}"/>
 		</td>
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"/> :</td>
 		<td class="greybox">
@@ -122,6 +123,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.appurtntland"/> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+			<s:hidden name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
 		</td>
 	</tr>
 	

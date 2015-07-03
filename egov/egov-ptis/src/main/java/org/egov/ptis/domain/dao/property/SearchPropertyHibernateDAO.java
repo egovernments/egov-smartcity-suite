@@ -968,7 +968,8 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							// by
 							// Rajalskhmi
 							// D.N.
-							Set<PtDemandARV> ptDemandARVSet = basicProperty.getProperty()
+							//FIX ME
+							/*Set<PtDemandARV> ptDemandARVSet = basicProperty.getProperty()
 									.getPtDemandARVSet();
 							if (ptDemandARVSet != null && !ptDemandARVSet.isEmpty()) {
 								for (PtDemandARV ptDmdARV : ptDemandARVSet) {
@@ -979,7 +980,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 										}
 									}
 								}
-							}
+							}*/
 							retSearchResult.setCurrYearArv(existARV.toString());
 
 							demand = (BigDecimal) propertyDAO.getPropertyDemand(
