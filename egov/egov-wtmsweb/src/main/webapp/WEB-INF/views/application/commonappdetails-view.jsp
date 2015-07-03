@@ -40,8 +40,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.ack.number"/></div>
+			<div class="col-xs-3 add-margin view-content" id="applicationNumber">
+				<c:choose>
+					<c:when test="${not empty waterConnectionDetails.applicationNumber}">
+						<c:out value="${waterConnectionDetails.applicationNumber}" />
+					</c:when>
+					<c:otherwise>N/A</c:otherwise>
+				</c:choose>
+			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.application.date"/></div>
+			<div class="col-xs-3 add-margin view-content" id="applicationDate">
+				<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" />
+			</div>
+		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.consumer.number"/></div>
 			<div class="col-xs-3 add-margin view-content">
@@ -51,10 +66,6 @@
 					</c:when>
 					<c:otherwise>N/A</c:otherwise>
 				</c:choose>
-			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
-			<div class="col-xs-3 add-margin view-content" id="mobileNumber">
-				<c:out value="${waterConnectionDetails.connection.mobileNumber}" />
 			</div>
 		</div>
 		<div class="row add-border">
@@ -75,6 +86,10 @@
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
 			<div class="col-xs-3 add-margin view-content" id="applicantname"></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
+			<div class="col-xs-3 add-margin view-content" id="mobileNumber">
+				<c:out value="${waterConnectionDetails.connection.mobileNumber}" />
+			</div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.address" /></div>
@@ -95,17 +110,15 @@
 		<div class="row">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
-				<c:when test="${null!=mode && mode=='inbox' && waterConnectionDetails.demand.baseDemand>0}"><!-- This checking is added to highlight the due amount only in case of workflow -->
+				<c:when test="${null!=mode && mode=='search' && waterConnectionDetails.demand.baseDemand>0}">
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
 				</c:when>	
-				<c:otherwise><!-- else show the amount in normal regular css -->
-					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+				<c:otherwise>
+					<div class="col-xs-3 add-margin view-content">N/A</div>
 				</c:otherwise>
 			</c:choose>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.arrear.due"/></div>
 			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>
 	</div>
-	
-<script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+

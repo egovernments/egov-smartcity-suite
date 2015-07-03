@@ -49,15 +49,10 @@
 		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<spring:message code="msg.newconnection.ack.success" /><span id="ctn_no"><strong>${waterConnectionDetails.applicationNumber}</strong></span> on 
-					<strong><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></strong>
-				</div>
+				<div class="panel-title text-center no-float"><spring:message code="msg.newconnection.ack.success" /></div>
 			</div>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 		</div>
-			
-		
 <jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	<div class="panel panel-default" data-collapsed="0">
 		<div class="panel-body">
@@ -82,8 +77,6 @@
 	</div>
 </div>
 
-<script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script type="text/javascript">
 function printDiv(divName) {

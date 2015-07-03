@@ -59,13 +59,25 @@
 						<c:out value="${waterConnectionDetails.waterSource.waterSourceType}" />
 					</div>
 				</div>
-				<div class="row">
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.hscpipesize.inches" /></div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out value="${waterConnectionDetails.pipeSize.code}" />
 					</div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.sumpcapacity.litres" /></div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.connectioncharge"/></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXCONCHARGE}" /></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${feeDetails.WTAXDONATION}" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.securitycharge"/></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXSECURITY}" /></div>
 				</div>
 			</div>
 		</div>					
@@ -108,5 +120,3 @@
 			</c:otherwise>
 		</c:choose>
 	</table>
-<script  type="text/javascript"  src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"  src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>

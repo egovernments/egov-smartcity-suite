@@ -158,19 +158,23 @@ public class ConnectionDemandService {
 
     public HashMap<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand demand = waterConnectionDetails.getDemand();
-        final HashMap<String, Double> splitAmount = null;
+        final HashMap<String, Double> splitAmount = new HashMap<>();
         if (demand != null && demand.getEgDemandDetails() != null && demand.getEgDemandDetails().size() > 0)
             for (final EgDemandDetails detail : demand.getEgDemandDetails())
                 if (WaterTaxConstants.WATERTAX_CONNECTION_CHARGE
-                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_SECURITY_CHARGE
-                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
-                    splitAmount.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, detail.getAmount().doubleValue());
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE
-                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
         return splitAmount;
+    }
+
+    public WaterTaxDue getWaterTaxDues(final String propertyIdentifier) {
+        return new WaterTaxDue();
     }
 
 }
