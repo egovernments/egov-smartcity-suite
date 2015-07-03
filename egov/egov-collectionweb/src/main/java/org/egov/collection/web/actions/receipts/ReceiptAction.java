@@ -101,7 +101,6 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
@@ -297,7 +296,7 @@ public class ReceiptAction extends BaseFormAction {
 	private EgwStatusHibernateDAO statusDAO;
 	
 	private List<CChartOfAccounts> bankCOAList;
-
+	
 	@Override
 	public void prepare() {
 		super.prepare();
@@ -694,14 +693,11 @@ public class ReceiptAction extends BaseFormAction {
 					+ (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode() : "")
 					+ "; Time taken(ms) = " + elapsedTimeMillis);
 			// Do not invoke print receipt in case of bulk upload.
-			//FIXME Uncomment after jrxml changes
-			/*if (!receiptBulkUpload) {
+			if (!receiptBulkUpload) {
 				returnValue =  printReceipts();
 			} else {
 				returnValue = SUCCESS;
-			} */
-			addActionMessage("Payment is successfull...!");
-			returnValue =  NEW; 
+			} 
 		} else {   
 			if(rhForValidation.getService().getCode().equals(CollectionConstants.SERVICECODE_PROPERTYTAX))
 				addActionError("Entered Manual receipt number already exists for the index number"+ rhForValidation.getConsumerCode() +".Please enter a valid manual receipt number and create the receipt.");  

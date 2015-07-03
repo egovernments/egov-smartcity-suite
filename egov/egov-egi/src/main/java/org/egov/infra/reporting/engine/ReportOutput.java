@@ -39,13 +39,16 @@
  */
 package org.egov.infra.reporting.engine;
 
+import java.io.Serializable;
+
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 
 /**
  * Class to represent a generated report
  */
-public class ReportOutput {
-	private byte[] reportOutputData;
+public class ReportOutput implements Serializable {
+    private static final long serialVersionUID = -2559611205589631905L;
+    private byte[] reportOutputData;
 	private FileFormat reportFormat;
 
 	/**

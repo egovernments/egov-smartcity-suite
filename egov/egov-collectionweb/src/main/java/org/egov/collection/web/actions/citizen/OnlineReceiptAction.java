@@ -626,7 +626,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
 
         try {
-            setReportId(collectionCommon.generateReport(receipts, getSession(), true));
+            /*setReportId(collectionCommon.generateReport(receipts, getSession(), true));*/
         } catch (Exception e) {
             LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
             throw new EGOVRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);

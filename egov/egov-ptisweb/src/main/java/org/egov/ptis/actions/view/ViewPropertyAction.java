@@ -165,17 +165,6 @@ public class ViewPropertyAction extends BaseFormAction {
 			Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
 			Property property = getBasicProperty().getProperty();
 
-			if (!basicProperty.getStatus().getStatusCode()
-					.equalsIgnoreCase(PropertyTaxConstants.STATUS_OBJECTED_STR)
-					&& property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-				basicProperty.setIsDemandActive(false);
-				demandEffectiveYear = PropertyTaxUtil.getRevisedDemandYear(property);
-				noOfDaysForInactiveDemand = PropertyTaxUtil
-						.getNoticeDaysForInactiveDemand(property);
-			} else {
-				basicProperty.setIsDemandActive(true);
-			}
-
 			LOGGER.debug("viewForm : Property : " + property);
 			viewMap.put("ownerName",
 					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerInfo()));
@@ -231,7 +220,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			Long userId = (Long) session().get(SESSIONLOGINID);
 			if (userId != null) {
 				setRoleName(getRolesForUserId(userId));
-				if (roleName.contains(PropertyTaxConstants.PROPERTY_CSC_OPERATOR.toUpperCase())) {
+				if (roleName.contains(PropertyTaxConstants.ROLE_ULB_OPERATOR.toUpperCase())) {
 				    isUserOperator = true;
 				}
 			}

@@ -149,7 +149,7 @@ public final class ReportUtil {
 	
 	public static String getCityName() {
 	    try {
-                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT CITYNAME FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
+                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT CITYNAME FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
         } catch (final HibernateException e) {
                 throw new EGOVRuntimeException("Exception in getting city name!", e);
         }

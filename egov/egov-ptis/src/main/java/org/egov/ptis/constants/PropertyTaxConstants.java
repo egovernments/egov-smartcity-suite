@@ -686,7 +686,7 @@ public interface PropertyTaxConstants {
 	public static final String PTAPPROVER_ROLE = "Property Approver";
 	public static final String PTCREATOR_ROLE = "PTCreator";
 	public static final String PTVALIDATOR_ROLE = "PTValidator";
-	//public static final String PTAPPROVER_ROLE = "PTApprover";
+	public static final String ROLE_ULB_OPERATOR = "ULB Operator";
 
 	// Designations
 	public static final String ASSISTANT_DESGN = "Assistant";
