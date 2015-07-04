@@ -39,9 +39,6 @@
  */
 package org.egov.ptis.actions.transfer;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
@@ -57,13 +54,12 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.service.transfer.TransferOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -82,22 +78,19 @@ public class PropertyTransferAction extends BaseFormAction {
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
-    private PropertyImpl propertyImpl;
+    // Dependent Services
+    @Autowired
+    @Qualifier("transferOwnerService")
+    private TransferOwnerService transferOwnerService;
     
-    // Dependency Services
-    @Autowired
-    @Qualifier("propertyImplService")
-    private PersistenceService<PropertyImpl, Long> propertyImplService;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
-    @Autowired
-    private PropertyMutationMasterDAO propertyMutationMasterDAO;
     
-    // Request Parameters
+    // Model and View data
     private String indexNumber;
     private String wfErrorMsg;
     private String currentPropertyTax;
     private List<PropertyOwnerInfo> newOwnerInfos = new ArrayList<>();
+    private List<DocumentType> documentTypes = new ArrayList<>();
+    private PropertyImpl propertyImpl;
     
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -123,15 +116,18 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
+        transferOwnerService.doPropertyTransfer(propertyMutation, indexNumber, newOwnerInfos);
         return ACK;
     }
     
     @Override
     public void prepare() {
+        super.prepare();
         if (StringUtils.isNotBlank(indexNumber))
-            propertyImpl = propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", indexNumber, STATUS_ISACTIVE);
-        this.currentPropertyTax = ptDemandDAO.getDemandCollMap(propertyImpl).get(CURR_DMD_STR).toString();
-        addDropdownData("MutationReason", propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER));
+            propertyImpl = transferOwnerService.getActiveProperty(indexNumber);
+        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(propertyImpl);
+        this.documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
+        addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
     }
 
     public String getCurrentPropertyTax() {
@@ -165,5 +161,9 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setNewOwnerInfos(List<PropertyOwnerInfo> newOwnerInfos) {
         this.newOwnerInfos = newOwnerInfos;
+    }
+
+    public List<DocumentType> getDocumentTypes() {
+        return documentTypes;
     }
 }

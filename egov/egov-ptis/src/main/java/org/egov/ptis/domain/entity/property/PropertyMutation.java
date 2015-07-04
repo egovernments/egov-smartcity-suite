@@ -60,11 +60,13 @@ public class PropertyMutation extends StateAware {
     private String applicantName;
     private BasicProperty basicProperty;
     private Property property;
-    private List<PropertyOwnerInfo> transferorInfos = new ArrayList<PropertyOwnerInfo>();
+    private List<PropertyOwnerInfo> transferorInfos = new ArrayList<>();
     private boolean feePayable;
     private String deedNo;
     private Date deedDate;
     private String documentNumber;
+    private String saleDetail;
+    private List<Document> documents = new ArrayList<>();
 
     @Override
     protected void setId(final Long id) {
@@ -207,5 +209,21 @@ public class PropertyMutation extends StateAware {
 
     public void setDocumentNumber(final String documentNumber) {
         this.documentNumber = documentNumber;
+    }
+
+    public String getSaleDetail() {
+        return saleDetail;
+    }
+
+    public void setSaleDetail(String saleDetail) {
+        this.saleDetail = saleDetail;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 }

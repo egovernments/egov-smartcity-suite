@@ -40,7 +40,11 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.dcb.bean.Payment.AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,31 +60,103 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
     private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
-    private PersistenceService trnsfOwnerPerService;
-    protected PersistenceService<BasicProperty, Long> basicPropertyService;
-    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+   
     @Autowired
-    private UserService userService;
+    @Qualifier("propertyImplService")
+    private PersistenceService<PropertyImpl, Long> propertyImplService;
     
+    @Autowired
+    @Qualifier("basicPropertyService")
+    private PersistenceService<BasicProperty, Long> basicPropertyService;
+    
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    
+    @Autowired
+    private PropertyMutationMasterDAO propertyMutationMasterDAO;
+    
+    @Autowired
+    @Qualifier("fileStoreService")
+    private FileStoreService fileStoreService;
+    
+    @Autowired
+    @Qualifier("propertyTaxNumberGenerator")
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    
+    @Autowired
+    @Qualifier("documentTypePersistenceService")
+    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
+    
+    public void doPropertyTransfer(PropertyMutation propertyMutation, String upicNo, List<PropertyOwnerInfo> newOwnerInfos) {
+        processAndStoreDocument(propertyMutation.getDocuments());
+        PropertyImpl propertyImpl = getActiveProperty(upicNo);
+        BasicProperty basicProperty = propertyImpl.getBasicProperty();
+        propertyMutation.setBasicProperty(basicProperty);
+        propertyMutation.setProperty(propertyImpl);
+        propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
+        basicProperty.getPropertyOwnerInfo().clear();
+        basicProperty.getPropertyOwnerInfo().addAll(newOwnerInfos);
+        basicProperty.getPropertyMutations().add(propertyMutation);
+        basicPropertyService.persist(basicProperty);
+    }
     
 
+    public PropertyImpl getActiveProperty(String upicNo) {
+        return propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", upicNo, STATUS_ISACTIVE);
+    }
+    
+    public String getCurrentPropertyTax(Property propertyImpl) {
+        return ptDemandDAO.getDemandCollMap(propertyImpl).get(CURR_DMD_STR).toString();
+    }
+    
+    public List<DocumentType> getPropertyTransferDocumentTypes() {
+        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_MODULE_AND_SUBMODULE, "PTIS", TRANSFER);
+    }
+    
+    public List<PropertyMutationMaster> getPropertyTransferReasons() {
+        return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
+    }
+    
+    private void processAndStoreDocument(List<Document> documents) {
+        documents.forEach(document -> {
+            if (!document.getUploads().isEmpty()) {
+                int fileCount = 0;
+                for (File file : document.getUploads()) {
+                        FileStoreMapper fileStore = fileStoreService
+                                        .store(file, document.getUploadFileNames().get(fileCount),
+                                                document.getUploadFileMimeTypes().get(fileCount++), "PTIS");
+                        document.getFiles().add(fileStore);
+                }
+            }
+        });
+    }
+    
     private Map<Installment, PTDemandCalculations> getDemandCalMap(Property oldProperty) {
         Map<Installment, PTDemandCalculations> dmdCalMap = new HashMap<Installment, PTDemandCalculations>();
         for (Ptdemand dmd : oldProperty.getPtDemandSet()) {
@@ -187,30 +263,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         Payment payment = Payment.create(Payment.CASH, payDetailMap);
         LOGGER.debug("Exit from preparePayment method ");
         return payment;
-    }
-
-    public PersistenceService getTrnsfOwnerPerService() {
-        return trnsfOwnerPerService;
-    }
-
-    public void setTrnsfOwnerPerService(PersistenceService trnsfOwnerPerService) {
-        this.trnsfOwnerPerService = trnsfOwnerPerService;
-    }
-
-    public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
-        return basicPropertyService;
-    }
-
-    public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
-        this.basicPropertyService = basicPropertyService;
-    }
-
-    public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
-        return propertyTaxNumberGenerator;
-    }
-
-    public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
-        this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
     }
 
 }

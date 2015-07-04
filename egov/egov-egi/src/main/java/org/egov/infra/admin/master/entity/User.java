@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -91,8 +90,8 @@ import com.google.gson.annotations.Expose;
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 @Indexed
-@Unique(id = "id", tableName = "eg_user",columnName = { "username", "mobileNumber","pan","aadhaarNumber","emailId" },
-fields = { "username", "mobileNumber","pan","aadhaarNumber","emailId" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_user", columnName = { "username", "mobileNumber", "pan", "aadhaarNumber",
+        "emailId" }, fields = { "username", "mobileNumber", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true)
 public class User extends AbstractAuditable {
     private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";
@@ -110,16 +109,16 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 8, max = 64)
-    @Pattern(regexp=Constants.PASSWORD)
+    @Pattern(regexp = Constants.PASSWORD)
     private String password;
 
     private String salutation;
-    
+
     @SafeHtml
-    private String gardian;
-    
+    private String guardian;
+
     @SafeHtml
-    private String gardianRelation;
+    private String guardianRelation;
 
     @NotNull
     @SafeHtml
@@ -346,20 +345,20 @@ public class User extends AbstractAuditable {
         type = userType;
     }
 
-	public String getGardian() {
-		return gardian;
-	}
+    public String getGuardian() {
+        return guardian;
+    }
 
-	public void setGardian(String gardian) {
-		this.gardian = gardian;
-	}
+    public void setGuardian(final String guardian) {
+        this.guardian = guardian;
+    }
 
-	public String getGardianRelation() {
-		return gardianRelation;
-	}
+    public String getGuardianRelation() {
+        return guardianRelation;
+    }
 
-	public void setGardianRelation(String gardianRelation) {
-		this.gardianRelation = gardianRelation;
-	}
+    public void setGuardianRelation(final String guardianRelation) {
+        this.guardianRelation = guardianRelation;
+    }
 
 }

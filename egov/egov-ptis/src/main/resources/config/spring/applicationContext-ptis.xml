@@ -57,6 +57,10 @@
 	<bean id="propertyImplService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
 	</bean>
+	
+	<bean id="documentTypePersistenceService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.DocumentType" />
+	</bean>
 
 	<bean id="floorService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
@@ -83,11 +87,7 @@
     
 	<bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 	
-	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService">
-		<property name="trnsfOwnerPerService" ref="persistenceService"/> 
-		<property name="basicPropertyService" ref="basicPropertyService"/>
-		<property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>
-	</bean> 
+	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService" />
 	
 	<bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
 		<property name="propPerServ" ref="persistenceService"/>
