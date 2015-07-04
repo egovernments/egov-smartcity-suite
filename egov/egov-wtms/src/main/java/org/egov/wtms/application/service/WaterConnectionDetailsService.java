@@ -76,6 +76,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.utils.ConsumerNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -125,6 +126,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private PositionMasterService positionMasterService;
+
+    @Autowired
+    private ConsumerNumberGenerator consumerNumberGenerator;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -225,6 +229,10 @@ public class WaterConnectionDetailsService {
         return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
     }
 
+    public String getCityCode() {
+        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCode();
+    }
+
     public WaterConnectionDetails findByApplicationNumberOrConsumerCode(final String number) {
         return waterConnectionDetailsRepository.findByApplicationNumberOrConnection_ConsumerCode(number, number);
     }
@@ -305,7 +313,10 @@ public class WaterConnectionDetailsService {
                 && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
             waterConnectionDetails.setApprovalDate(new Date());
+            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
         }
+
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         return updatedWaterConnectionDetails;
