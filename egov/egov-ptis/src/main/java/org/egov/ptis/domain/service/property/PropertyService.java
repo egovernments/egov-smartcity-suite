@@ -356,10 +356,16 @@ public class PropertyService  {
 					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 				}
-				PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
+				PropertyOccupation occupancy = null;
+				PropertyUsage usage = null;
+				if(propOccId != null) {
+					occupancy = (PropertyOccupation) getPropPerServ().find(
 						"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-				PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+			    }
+			    if(usage != null) {
+			    	usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
 						Long.valueOf(propUsageId));
+			    }
 				LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
 				property.getPropertyDetail().setPropertyOccupation(occupancy);
 				property.getPropertyDetail().setPropertyUsage(usage);
@@ -374,10 +380,16 @@ public class PropertyService  {
 				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 			}
-			PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
+			PropertyOccupation occupancy = null;
+			PropertyUsage usage = null;
+			if(propOccId != null) {
+				occupancy = (PropertyOccupation) getPropPerServ().find(
 					"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-			PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+		    }
+		    if(usage != null) {
+		    	usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
 					Long.valueOf(propUsageId));
+		    }
 			LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
 			property.getPropertyDetail().setPropertyOccupation(occupancy);
 			property.getPropertyDetail().setPropertyUsage(usage);

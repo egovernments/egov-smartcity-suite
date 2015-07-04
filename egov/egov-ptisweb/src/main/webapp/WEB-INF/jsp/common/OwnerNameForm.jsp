@@ -61,7 +61,7 @@
 				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
         </td>
 		<td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.basicPropertypropertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfo[0].owner.name}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfo[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
@@ -93,18 +93,19 @@
         <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
 			  <td class="blueborderfortd" align="center">
-			  <s:textfield name="basicProperty.basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"></s:textfield>
+			  <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"
+			  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}"></s:textfield>
 			  </td>
 			  <td class="blueborderfortd" align="center">
-               <s:select name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" id="propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{propertyOwnerInfo[0].owner.salutation}"
+               <s:select name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" id="propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.salutation}"
 				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
             </td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
         		</td>
-        		<td><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender}"
-				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+        		<td><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}"
+				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
@@ -115,11 +116,11 @@
         				onblur="trim(this,this.value);validateEmail(this);" data-optional="1" data-errormsg="emailid is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center">
-        	        <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian}" 
+        	        <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardian}" 
         		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
                 </td>
                 <td class="blueborderfortd" align="center">
-        	      <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation}" 
+        	      <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardianRelation}" 
         		    onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
                   </td>
         		<td class="blueborderfortd">

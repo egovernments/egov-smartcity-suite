@@ -51,9 +51,9 @@
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="Width" /></th>
-		<th class="bluebgheadtd"><s:text name="Length" /></th>
-		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="Width" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="Length" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
 		<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
 		<th class="bluebgheadtd"><s:text name="planappr" /></th>
 		<s:if test="modifyRsn != 'DATA_UPDATE'">
