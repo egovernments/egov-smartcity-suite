@@ -106,6 +106,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	private RoofType roofType;
 	private WallType wallType;
 	private WoodType woodType;
+	private Apartment apartment;
 
 	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
 			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
@@ -918,4 +919,15 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.woodType = woodType;
 	}
 
+	@Override
+	public Apartment getApartment() {
+		return apartment;
+	}
+    
+	@Override
+	public void setApartment(Apartment apartment) {
+		this.apartment = apartment;
+	}
+
+	
 }

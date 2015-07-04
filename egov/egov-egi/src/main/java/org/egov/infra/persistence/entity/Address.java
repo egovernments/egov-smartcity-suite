@@ -83,12 +83,6 @@ public abstract class Address extends AbstractPersistable<Long> {
     private User user;
 
     @SafeHtml
-    private String identityBy;
-
-    @SafeHtml
-    private String identityType;
-
-    @SafeHtml
     private String houseNoBldgApt;
 
     @SafeHtml
@@ -135,7 +129,7 @@ public abstract class Address extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public String getIdentityBy() {
+   /* public String getIdentityBy() {
         return identityBy;
     }
 
@@ -149,7 +143,7 @@ public abstract class Address extends AbstractPersistable<Long> {
 
     public void setIdentityType(final String identityType) {
         this.identityType = identityType;
-    }
+    }*/
 
     public String getHouseNoBldgApt() {
         return houseNoBldgApt;

@@ -42,53 +42,86 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
     <tr>
     <th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
+    <th class="bluebgheadtd"><s:text name="salutation"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
+    <th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)<span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
+	<th class="bluebgheadtd"><s:text name="Gardian"/></th>
+	<th class="bluebgheadtd"><s:text name="GardianRelation"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
-    <s:if test="%{propertyOwnerInfo.isEmpty()}">
+    <s:if test="%{basicProperty.propertyOwnerInfo.isEmpty()}">
       <tr id="nameRow" >
         <td class="blueborderfortd" align="center">
-		   <s:textfield name="propertyOwnerInfo[0].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="0" data-errormsg="Aadhar no is mandatory!"></s:textfield>
+		   <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="0" data-errormsg="Aadhar no is mandatory!"></s:textfield>
 		</td>
-        <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{propertyOwnerInfo[0].owner.name}" 
+		<td class="blueborderfortd" align="center">
+           <s:select name="basicProperty.propertyOwnerInfo[0].owner.salutation" id="propertyOwnerInfo[0].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{propertyOwnerInfo[0].owner.salutation}"
+				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
+        </td>
+		<td class="blueborderfortd" align="center">
+        	<s:textfield name="basicProperty.basicPropertypropertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfo[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
+        <td><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
+				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+		</s:select></td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{propertyOwnerInfo[0].owner.mobileNumber}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfo[0].owner.mobileNumber}" 
         		onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="propertyOwnerInfo[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{propertyOwnerInfo[0].owner.emailId}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfo[0].owner.emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);" data-optional="0" data-errormsg="emailid is mandatory!"/>
         </td>
-        
+         <td class="blueborderfortd" align="center">
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 
+        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardianRelation}" 
+        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+        </td>
         <td class="blueborderfortd">
         	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
         </td>
         </tr>
-     </s:if>
+      </s:if>
       <s:else>
-        <s:iterator value="propertyOwnerInfo" status="ownerStatus">
+        <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
 			  <td class="blueborderfortd" align="center">
-			  <s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"></s:textfield>
+			  <s:textfield name="basicProperty.basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"></s:textfield>
 			  </td>
+			  <td class="blueborderfortd" align="center">
+               <s:select name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" id="propertyOwnerInfo[%{#ownerStatus.index}].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{propertyOwnerInfo[0].owner.salutation}"
+				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
+            </td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{propertyOwnerInfo[#ownerStatus.index].owner.name}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
         		</td>
+        		<td><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender}"
+				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+		       </s:select></td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!" />
         		</td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="propertyOwnerInfo[%{#ownerStatus.index}].owner.emailId" maxlength="64" size="20" id="emailId" value="%{propertyOwnerInfo[#ownerStatus.index].owner.emailId}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.emailId" maxlength="64" size="20" id="emailId" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.emailId}" 
         				onblur="trim(this,this.value);validateEmail(this);" data-optional="1" data-errormsg="emailid is mandatory!"/>
         		</td>
+        		<td class="blueborderfortd" align="center">
+        	        <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian}" 
+        		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+                </td>
+                <td class="blueborderfortd" align="center">
+        	      <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation}" 
+        		    onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
+                  </td>
         		<td class="blueborderfortd">
         			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       				<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />

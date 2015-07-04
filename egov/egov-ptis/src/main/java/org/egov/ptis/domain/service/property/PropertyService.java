@@ -113,6 +113,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
@@ -199,6 +200,13 @@ public class PropertyService  {
 			Area area = new Area();
 			area.setArea(new Float(areaOfPlot));
 			property.getPropertyDetail().setSitalArea(area);
+		}
+
+		if (property.getPropertyDetail().getApartment().getId() != null) {
+			Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?", property.getPropertyDetail().getApartment().getId());
+			property.getPropertyDetail().setApartment(apartment);;
+		} else {
+			property.getPropertyDetail().setApartment(null);
 		}
 
 		if (nonResPlotArea != null && !nonResPlotArea.isEmpty()) {

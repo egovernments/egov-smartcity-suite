@@ -252,7 +252,7 @@ public interface BasicProperty {
 	
 	public void setSource(String source);
 	
-	List<PropertyOwnerInfo> getPropertyOwnerInfo();
+	public List<PropertyOwnerInfo> getPropertyOwnerInfo();
 	
 	void setPropertyOwnerInfo(List<PropertyOwnerInfo> propertyOwnerSet);
 	

@@ -1,0 +1,20 @@
+CREATE SEQUENCE SEQ_EGPT_APARTMENTS;
+ALTER TABLE egpt_appartments RENAME TO egpt_apartment;
+ALTER TABLE eg_address DROP COLUMN identityby;
+ALTER TABLE eg_address DROP COLUMN identitytype;
+ALTER TABLE eg_user ADD COLUMN gardian char varying(32);
+ALTER TABLE eg_user ADD COLUMN gardianrelation char varying(32);
+ALTER TABLE egpt_property_detail ADD COLUMN apartment BIGINT;
+ALTER TABLE egpt_property_detail ADD CONSTRAINT fk_egpt_apartment FOREIGN KEY(apartment) REFERENCES egpt_apartment(id);
+ALTER TABLE egpt_property_owner_info DROP CONSTRAINT fk_prop_owner_propid;
+ALTER TABLE egpt_property_owner_info ADD CONSTRAINT fk_prop_owner_propid FOREIGN KEY(basicproperty) REFERENCES egpt_basic_property(id);
+
+--rollback DROP SEQUENCE SEQ_EGPT_APARTMENTS;
+--rollback ALTER TABLE egpt_apartment RENAME TO egpt_appartments;
+--rollback ALTER TABLE eg_address ADD COLUMN identityby char varying(32);
+--rollback ALTER TABLE eg_address ADD COLUMN identitytype char varying(32);
+--rollback ALTER TABLE eg_user DROP COLUMN gardian;
+--rollback ALTER TABLE eg_user DROP COLUMN gardianrelation;
+--rollback ALTER TABLE egpt_property_detail DROP CONSTRAINT fk_egpt_apartment;
+--rollback ALTER TABLE egpt_property_detail DROP COLUMN apartment;
+--rollback ALTER TABLE egpt_property_owner_info ADD CONSTRAINT fk_prop_owner_propid FOREIGN KEY(basicproperty) REFERENCES egpt_property(id);

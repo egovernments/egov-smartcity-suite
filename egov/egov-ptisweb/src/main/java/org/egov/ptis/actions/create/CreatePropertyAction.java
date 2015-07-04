@@ -297,6 +297,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	public CreatePropertyAction() {
 		super();
 		property.setPropertyDetail(new BuiltUpProperty());
+		property.setBasicProperty(new BasicPropertyImpl());
 		
 		this.addRelatedEntity("propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
 		/*this.addRelatedEntity("propertyDetail.floorDetails",Floor.class);
@@ -579,6 +580,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
+		List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
 		
 		List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
 		List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
@@ -593,6 +595,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		addDropdownData("roofType", roofTypeList);
 		addDropdownData("wallType", wallTypeList);
 		addDropdownData("woodType", woodTypeList);
+		addDropdownData("apartments", apartmentsList);
 
 		StringBuilder unitTypeQuery = new StringBuilder().append("from PropertyTypeMaster where code in ('")
 				.append(PROPTYPE_OPEN_PLOT).append("', '").append(PROPTYPE_RESD).append("', '")
@@ -615,7 +618,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		addDropdownData("NoticeTypeList", noticeTypeList);
 		addDropdownData("MutationList", mutationList);
 		addDropdownData("LocationFactorList", Collections.EMPTY_LIST);
-		//setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		setAmenitiesMap(CommonServices.getAmenities());
 		setFloorNoMap(CommonServices.floorMap());
 		addDropdownData("localityList", localityList);
@@ -700,6 +702,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				null, getParentIndex(),getBuildingPermissionDate(),getBuildingPermissionNo()));
 		basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
+		createOwners(basicProperty);
 		property.setBasicProperty(basicProperty);
 		
 		/*
@@ -734,7 +737,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		}*/
 
 		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
-		createOwners();
 
 		if ((propTypeMstr != null) 	&& propTypeMstr.getCode().equals(PROPTYPE_OPEN_PLOT)) {
 			property.setPropertyDetail(changePropertyDetail());
@@ -793,7 +795,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		basicProp.setPropOccupationDate(propCompletionDate);
-		createOwners();
+		createOwners(basicProp);
 		newProperty.setBasicProperty(basicProp);
 		//newProperty.getCitizen().setMobileNumber(getMobileNo());
 		//newProperty.getCitizen().setEmailId(getEmail());
@@ -862,7 +864,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		return vacantProperty;
 	}
 
-	private void createOwners() {
+	private void createOwners(BasicProperty basicProperty) {
 		LOGGER.debug("Entered into createOwners, Property: " + property);
 
 		LOGGER.debug("createOwners:  CorrAddress1: " + getCorrAddress1()
@@ -889,7 +891,9 @@ public class CreatePropertyAction extends WorkflowAction {
 				}
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				ownerInfo.getOwner().addAddress(ownerAddr);
+				ownerInfo.setBasicProperty(basicProperty);
 			}
+			basicProperty.addPropertyOwners(ownerInfo);
 		}
 	}
 
@@ -969,11 +973,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (null == property.getPropertyDetail() && property.getPropertyDetail().getExtentAppartenauntLand() == 0.0) {
 			addActionError(getText("mandatory.extentAppartenauntLand"));
 		}
-		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
+		/*for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (owner != null && owner.getOwner().getName().equals("")) {
 				addActionError(getText("mandatory.ownerName"));
 			}
-		}
+		} */
 		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			if (floor != null && floor.getBuiltUpArea() == null) {
 				addActionError(getText("mandatory.assbleArea"));

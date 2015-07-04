@@ -23,7 +23,7 @@
 		</td>
 	</tr>
 
-	<tr>
+	<%-- <tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="gender"></s:text>:</td>
 		<td class="greybox" width=""><s:select name="gender" id="gender"
@@ -34,7 +34,7 @@
 			:</td>
 		<td class="greybox"><s:textfield name="guardname" id="guardname"
 				maxlength="30"></s:textfield></td>
-	</tr>
+	</tr> --%>
 
 	<tr>
 	<td class="greybox" width="5%">&nbsp;</td>
@@ -289,15 +289,12 @@
 		<td class="bluebox">&nbsp;</td>
 	</tr>
 	
-	
 	<tr>
 	<td class="bluebox">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="sbapartcomplex"
-				id="sbapartcomplex" listKey="idMutation" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{mutationId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+		<td class="greybox" width=""><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.apartment.id"
+				id="propertyDetail.apartment" listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
+				list="dropdownData.apartments" cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
 	

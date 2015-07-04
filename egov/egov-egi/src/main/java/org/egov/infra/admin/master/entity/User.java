@@ -114,6 +114,12 @@ public class User extends AbstractAuditable {
     private String password;
 
     private String salutation;
+    
+    @SafeHtml
+    private String gardian;
+    
+    @SafeHtml
+    private String gardianRelation;
 
     @NotNull
     @SafeHtml
@@ -339,5 +345,21 @@ public class User extends AbstractAuditable {
     public void setType(final UserType userType) {
         type = userType;
     }
+
+	public String getGardian() {
+		return gardian;
+	}
+
+	public void setGardian(String gardian) {
+		this.gardian = gardian;
+	}
+
+	public String getGardianRelation() {
+		return gardianRelation;
+	}
+
+	public void setGardianRelation(String gardianRelation) {
+		this.gardianRelation = gardianRelation;
+	}
 
 }

@@ -45,16 +45,16 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8312113778477511698L;
     private Long id;
-    private BasicPropertyImpl basicProperty;
+    private BasicProperty basicProperty;
     private PropertySource source;
     private Integer orderNo;
     private User owner;
 
     public PropertyOwnerInfo() {
-
+    	owner = new User();
     }
 
-    public PropertyOwnerInfo(final BasicPropertyImpl basicProperty, final PropertySource propSource, final User owner,
+    public PropertyOwnerInfo(final BasicProperty basicProperty, final PropertySource propSource, final User owner,
             final Integer orderNo) {
 
         this.orderNo = orderNo;
@@ -73,11 +73,11 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
         return id;
     }
 
-    public BasicPropertyImpl getBasicProperty() {
+    public BasicProperty getBasicProperty() {
         return basicProperty;
     }
 
-    public void setBasicProperty(final BasicPropertyImpl basicProperty) {
+    public void setBasicProperty(final BasicProperty basicProperty) {
         this.basicProperty = basicProperty;
     }
 

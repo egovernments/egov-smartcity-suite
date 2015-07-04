@@ -372,4 +372,8 @@ public interface PropertyDetail extends Property {
 	public WoodType getWoodType();
 	
 	public void setWoodType(WoodType woodType);
+	
+	public Apartment getApartment();
+	
+	public void setApartment(Apartment apartment);
 }
