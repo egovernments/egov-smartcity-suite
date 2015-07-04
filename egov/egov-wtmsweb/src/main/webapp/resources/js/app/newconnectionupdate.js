@@ -39,11 +39,14 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
-	//TODO - hiding the approver dropdowns in the final approver inbox view for time being
-	//$(".show-row").hide(); 
+	//TODO - As of now hiding the approver dropdowns in the final approver inbox view for time being. 
+	//TODO - This needs to be condition driven based on number of level of workflow
+	$(".show-row").hide(); 
+	$('#approvalDepartment').removeAttr('required');
+	$('#approvalDesignation').removeAttr('required');
+	$('#approvalPosition').removeAttr('required');
 	
 	$("#submitBtn").click(function(){
-			event.preventDefault();
 			document.forms[0].submit();		
 	});		
 });

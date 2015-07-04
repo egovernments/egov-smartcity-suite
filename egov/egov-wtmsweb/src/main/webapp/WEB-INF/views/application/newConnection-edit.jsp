@@ -63,6 +63,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
+		<jsp:include page="../common/workflow.jsp"></jsp:include>	
 </div>	
 <div class="row">
 	<div class="text-center">

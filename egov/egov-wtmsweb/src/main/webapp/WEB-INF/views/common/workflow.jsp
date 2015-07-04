@@ -98,7 +98,7 @@
 						<spring:message code="lbl.comments"/>
 					</div>
 					<div class="col-md-6 col-xs-6 add-margin">
-						<form:textarea class="form-control" path=""  id="approvalPosition" name="approvalPosition" />
+						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
 			</div>				
