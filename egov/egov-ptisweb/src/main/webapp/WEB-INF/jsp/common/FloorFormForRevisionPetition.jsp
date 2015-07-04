@@ -130,10 +130,13 @@
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield
-						name="referenceProperty.propertyDetail.floorDetails[0].extraField3"
-						id="constructionDate" size="10"
-						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+						<s:date name="%{referenceProperty.propertyDetail.floorDetails[0].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
+						<s:textfield
+							name="referenceProperty.propertyDetail.floorDetails[0].occupancyDate" value="%{referenceProperty.propertyDetail.floorDetails[0].occupancyDate}"
+							id="referenceProperty.propertyDetail.floorDetails[0].occupancyDate" size="10"
+							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+					</div>
+						
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -312,7 +315,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="referenceProperty.propertyDetail.floorDetails[0].extraField3"
+							name="referenceProperty.propertyDetail.floorDetails[0].occupancyDate"
 							id="constructionDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>

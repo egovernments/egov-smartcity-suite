@@ -202,7 +202,7 @@ public class PropertyService  {
 			property.getPropertyDetail().setSitalArea(area);
 		}
 
-		if (property.getPropertyDetail().getApartment().getId() != null) {
+		if (property.getPropertyDetail().getApartment()!=null && property.getPropertyDetail().getApartment().getId() != null) {
 			Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?", property.getPropertyDetail().getApartment().getId());
 			property.getPropertyDetail().setApartment(apartment);;
 		} else {

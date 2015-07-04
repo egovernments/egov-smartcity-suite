@@ -420,6 +420,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		LOGGER.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
 	//	objection.getBasicProperty().setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
 		  vaidatePropertyDetails();
+		  if (hasErrors()) {
+                      return "view";
+                  }
                 if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
                       //      updateStateAndStatus("END", "END");
                 

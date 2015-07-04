@@ -438,7 +438,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
         if (wfProperty != null) {
             isPropInWf = Boolean.TRUE;
-            wfOwner = wfProperty.getState().getOwnerPosition().getName();
+            wfOwner = (wfProperty.getState()!=null ? wfProperty.getState().getOwnerPosition().getName():"");
         }
         wfMap.put(WFSTATUS, isPropInWf.toString());
         wfMap.put(WFOWNER, wfOwner);
