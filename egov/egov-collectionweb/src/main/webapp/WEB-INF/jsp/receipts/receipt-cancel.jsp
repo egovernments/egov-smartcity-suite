@@ -140,25 +140,29 @@ function warningInfo()
 			</tr>
 			<tr>
 				<td colspan="5">
-					<table cellspacing="0" cellpadding="0" align="center" width="100%" class="tablebottom" style="empty-cells:show;">
-						<tr><td colspan="4">
+					<table cellspacing="0" cellpadding="0" align="center" width="100%" class="tablebottom no-border" style="empty-cells:show;">
+						<tr><td>
 						<div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Credit"/></span></div>
 						</td></tr>
+						
 						<tr>
+						 <td>
+						 <table width="100%" class="tablebottom">
+						 <tr>
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.function"/></th>
 							<th class="bluebgheadtd" width="25%"><s:text name="viewReceipt.accountcode"/></th>
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.accounthead.desc"/></th>
 							<th class="bluebgheadtd" width="25%"><s:text name="viewReceipt.accounthead.amt"/>&nbsp;(<s:text name="viewReceipt.amt.denom"/>)</th>
 						</tr>
-<%! int rebateaccountavalailable=0;%>
+<! int rebateaccountavalailable=0;>
 						<s:iterator value="%{receiptDetails}" >
 
 						<s:if test="cramount!=0">
 						<tr>
-							<td class="blueborderfortd"><div align="center"><s:property value="%{function.name}" /></div></td>
-							<td class="blueborderfortd"><div align="center"><s:property value="%{accounthead.glcode}" /></div></td>
-							<td class="blueborderfortd"><div align="center"><s:property value="%{accounthead.name}" /></div></td>						<fmt:formatNumber var="newcramount" value='${cramount}' pattern='#0.00' />
-							<td class="blueborderfortd"><div align="center">${newcramount}</div></td>
+							<td class="blueborderfortd"><div align="center">1<s:property value="%{function.name}" /></div></td>
+							<td class="blueborderfortd"><div align="center">2<s:property value="%{accounthead.glcode}" /></div></td>
+							<td class="blueborderfortd"><div align="center">3<s:property value="%{accounthead.name}" /></div></td>						<fmt:formatNumber var="newcramount" value='${cramount}' pattern='#0.00' />
+							<td class="blueborderfortd"><div align="center">4${newcramount}</div></td>
 						</tr>
 						</s:if>
 						<s:if test="dramount!=0 && !isRevenueAccountHead(accounthead)">
@@ -166,12 +170,15 @@ function warningInfo()
 						</s:if>
 						
 						</s:iterator>
+						</table>
+						</td>
+						</tr>
 						
-						<%if(rebateaccountavalailable==1){ %>
-						<tr><td colspan="4">
+						<if(rebateaccountavalailable==1){ >
+						<tr><td>
 						<div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Rebate"/></span></div>
 						</td></tr>
-						<tr><td colspan="4">
+						<tr><td>
 						<table cellspacing="0" cellpadding="0" align="center" width="100%" class="tablebottom" style="empty-cells:show;">
 						<tr>
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.function"/></th>
@@ -179,7 +186,7 @@ function warningInfo()
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.accounthead.desc"/></th>
 							<th class="bluebgheadtd" width="25%"><s:text name="viewReceipt.accounthead.amt"/>&nbsp;(<s:text name="viewReceipt.amt.denom"/>)</th>
 						</tr>
-						<%} %>
+						<} >
 						<s:iterator value="%{receiptDetails}" >
 						<s:if test="dramount!=0 && !isRevenueAccountHead(accounthead)">
 						<tr>
@@ -192,15 +199,16 @@ function warningInfo()
 						
 						</s:if>
 						</s:iterator>
-						<%if(rebateaccountavalailable==1){ %>
-						</table>
-						</td></tr>
-						<%} %>
 						<tr>
-						      	<td colspan="2" class="blueborderfortd">&nbsp;</td>
+						    <td colspan="2" class="blueborderfortd">&nbsp;</td>
 							<td class="blueborderfortd"><div align="right"><b>Total&nbsp;&nbsp;</b></div></td>							<fmt:formatNumber var="newtotalamount" value='${amount}' pattern='#0.00' />	
 							<td class="blueborderfortd"><div align="center"><b>${newtotalamount}</b></div></td>			
-						</tr>	
+						</tr>
+						<if(rebateaccountavalailable==1){ >
+						</table>
+						</td></tr>
+						<} >
+							
 					</table>
 					
 				</td>
@@ -271,7 +279,7 @@ function warningInfo()
 						
 						<tr>
 							<td width="4%" class="bluebox2">&nbsp;</td>
-							<td width="21%" class="bluebox2"><s:text name="billreceipt.reasonforcancellation"/><span class="mandatory">*</span></td>
+							<td width="21%" class="bluebox2"><s:text name="billreceipt.reasonforcancellation"/><span class="mandatory1">*</span></td>
 							<td width="24%" class="bluebox2" colspan="7"><s:textarea id="reasonForCancellation" label="reasonforcancellation" cols="90" rows="8" name="reasonForCancellation"/></td>
 						</tr>
 					</table>

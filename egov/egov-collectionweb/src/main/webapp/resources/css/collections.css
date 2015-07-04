@@ -50,6 +50,11 @@ table.tablebottom {
 	border-top-color: #C5C5C5;
 	border-left-color: #C5C5C5;
 	}
+	
+table.tablebottom.no-border
+{
+	border:0;
+}
 
 table.tablebottom2 {
 	border-top-width: 1px;
@@ -453,22 +458,12 @@ td.totalbg {
 	
 div.subheadsmallnew {
   font-family: semibold;
-  font-size: 12px;
-  font-weight: bold;
-  color: #000000;
-  background-color: #F9F9F9;
-  padding-top: 5px;
-  padding-right: 3px;
-  padding-bottom: 5px;
-  padding-left: 3px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #DFDFDF;
-  border-top-width: 1px;
-  border-top-style: solid;
-  border-top-color: #DFDFDF;
+  font-size: 13px;
+  color: #fff;
+  background-color: #F2851F;
+  padding: 10px 15px;
   text-align: center;
-  text-align: center;
+  margin: 10px 0;
 }
 input.righttext {
 	text-align: right;
@@ -962,4 +957,9 @@ th.bluebgheadtd.text-left
 {
 	padding:5px;
 	display:block;
+}
+
+b
+{
+	font-family:semibold;
 }
