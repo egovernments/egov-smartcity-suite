@@ -471,6 +471,10 @@
 				document.getElementById("deedDate").value = "";
 			}
 		}
+
+        //hide delete option in first row of owner table
+        jQuery('#nameTable tr:eq(1) td img[alt="Remove"]').hide();
+        
 </script>
 <div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>

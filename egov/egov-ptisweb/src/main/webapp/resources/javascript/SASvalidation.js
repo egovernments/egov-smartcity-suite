@@ -905,7 +905,7 @@ function addOwner()
 	    		var isValid=1;//for default have success value 0
 	    		
 	    		//validate existing rows in table
-	    		jQuery("#nameTable tr:not(:first)").find('input').each(function(){
+	    		jQuery("#nameTable tr:not(:first)").find('input, select').each(function(){
 	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
 	    			{
 	    				jQuery(this).focus();
@@ -921,7 +921,7 @@ function addOwner()
 	    		}
 	    		
 	    		// Generate all textboxes Id and name with new index
-				jQuery("#nameRow").clone().find("input").each(function() {
+				jQuery("#nameRow").clone().find("input, select").each(function() {
 						 jQuery(this).attr({
 					      'id': function(_, id) { 
 					    	  return id.replace('[0]', '['+ nextIdx +']'); 
@@ -933,6 +933,7 @@ function addOwner()
 			    }).end().appendTo("#nameTable");
 				
 				jQuery("#nameTable tr:last td img[alt='Add']").hide();
+				jQuery("#nameTable tr:last td img[alt='Remove']").show();
 
 		}
 	/*	else

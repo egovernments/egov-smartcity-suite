@@ -97,3 +97,8 @@
         </s:iterator>
       </s:else>
       </table>
+      
+      <script>
+        //hide delete option for first row
+        jQuery('#nameTable tr:eq(1) td img[alt="Remove"]').hide();
+      </script>
