@@ -143,6 +143,11 @@ $(document).ready(function()
         $(".alert-danger").alert('close');
     }); */
 	
+	$('.inboxload').click(function(){
+		window.close();
+		parent.window.opener.inboxloadmethod();
+	});
+	
 });
 
 /*$(".refreshInBox refeshDraft").on('click', function() {

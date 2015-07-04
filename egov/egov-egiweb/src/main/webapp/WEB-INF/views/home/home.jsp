@@ -420,6 +420,7 @@
 		</div>
 		<script>
 		var menuItems = ${menu};
+		var focussedmenu = "worklist";
 		</script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>
