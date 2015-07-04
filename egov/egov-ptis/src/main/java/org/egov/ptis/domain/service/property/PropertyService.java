@@ -1231,13 +1231,7 @@ public class PropertyService  {
 		for (Floor floor : floorList) {
 			Date floorDate = null;
 			if (floor != null) {
-				try {
-					if (floor.getExtraField3() != null) {
-						floorDate = sdf.parse(floor.getExtraField3());
-					}
-				} catch (ParseException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
+				floorDate = floor.getOccupancyDate();
 				if (floorDate != null) {
 					if (completionDate == null) {
 						completionDate = floorDate;
@@ -1247,7 +1241,8 @@ public class PropertyService  {
 				}
 			}
 		}
-		LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
+		LOGGER.debug("completionDate: " + completionDate
+				+ "\nExiting from getLowestDtOfCompFloorWise");
 		return completionDate;
 	}
 

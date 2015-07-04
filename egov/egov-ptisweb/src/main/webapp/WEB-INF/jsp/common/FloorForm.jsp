@@ -199,18 +199,6 @@
 					width="18" height="18" border="0" /></td>
 
 			</s:if>
-			<td id="tdAgreementPeriod"><s:hidden id="agreementPeriod"
-					name="propertyDetail.floorDetails[0].rentAgreementDetail.agreementPeriod"
-					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.agreementPeriod}" />
-			</td>
-			<td id="tdAgreementDate"><s:hidden id="agreementDate"
-					name="propertyDetail.floorDetails[0].rentAgreementDetail.agreementDate"
-					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.agreementDate}" />
-			</td>
-			<td id="tdIncrementInRent"><s:hidden id="incrementInRent"
-					name="propertyDetail.floorDetails[0].rentAgreementDetail.incrementInRent"
-					value="%{propertyDetail.floorDetails[0].rentAgreementDetail.incrementInRent}" />
-			</td>
 		</tr>
 	</s:if>
 	<s:else>
@@ -287,7 +275,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						
-						<s:textfield name="propertyDetail.floorDetails[#floorsstatus.index].occupantName"
+						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
 							id="occupantname" size="25" maxlength="25" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
 						
@@ -298,7 +286,7 @@
 					<div align="center">
 						<s:select headerKey=""
 							headerValue="%{getText('default.select')}"
-							name="propertyDetail.floorDetails[#floorsstatus.index].depreciationMaster.id"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].depreciationMaster.id"
 							id="constrYear" listKey="id" listValue="depreciationName"
 							list="dropdownData.AgeFactorList" cssClass="selectnew"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].depreciationMaster.id}"
@@ -307,9 +295,9 @@
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
+					<s:date name="%{propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
 						<s:textfield
-							name="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" value="%{#occupationDate}"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
 							id="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
@@ -318,7 +306,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[0].extraField5"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5"
 							id="length" size="5" maxlength="7"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField5}"
@@ -329,7 +317,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[0].extraField4" id="width"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" id="width"
 							size="5" maxlength="7"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField4}"
@@ -350,7 +338,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[#floorsstatus.index].capitalValue"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].capitalValue"
 							maxlength="100" size="10" id="propertyDetail.floorDetails[#floorsstatus.index].capitalValue" value="%{propertyDetail.floorDetails[#floorsstatus.index].capitalValue}"
 							cssStyle="width:100%" />
 					</div>
@@ -358,7 +346,7 @@
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetails[#floorsstatus.index].planApproved" id="propertyDetail.floorDetails[#floorsstatus.index].planApproved" headerValue="Choose"
+						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].planApproved" id="propertyDetail.floorDetails[#floorsstatus.index].planApproved" headerValue="Choose"
 							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[#floorsstatus.index].planApproved}"
 							cssClass="selectwk">
 						</s:select>
@@ -375,144 +363,8 @@
 						alt="Remove" onclick="javascript:delFloor(this);return false;"
 						width="18" height="18" border="0" /></td>
 
-					<td><s:hidden id="agreementPeriod"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.agreementPeriod"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.agreementPeriod}" />
-					</td>
-					<td><s:hidden id="agreementDate"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.agreementDate"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.agreementDate}" />
-					</td>
-					<td><s:hidden id="incrementInRent"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].rentAgreementDetail.incrementInRent"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].rentAgreementDetail.incrementInRent}" />
-					</td>
 				</s:if>
 			</tr>
 		</s:iterator>
 	</s:else>
 </table>
-<script>
-
-	function checkForPropType(){
-		var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;	
-		if(propType == "--select--") {
-			alert('Please select Property Type before proceeding..!');
-			return false;
-		}
-		return true;
-	}
-	
-	function populateFloorUsages(){
-		populatefloorUsage({
-			propTypeId: document.getElementById("propTypeMaster").value
-		});			
-	}
-
-	function populateFloorConstTypesOnValidationErrors() {
-
-		<s:iterator value="(propertyDetail.floorDetails.size).{#this}" status="floorsstatus">
-			constTypeValues[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}" />';		
-		</s:iterator>
-		
-		var noOfFloors = document.getElementById("floorDetails").rows.length - 1;
-		var untyp = "select";
-		propTypeDropDown = document.getElementById("propTypeMaster");
-		propType = propTypeDropDown.options[propTypeDropDown.selectedIndex].text;
-		for (var k = 0; k < noOfFloors; k++) {			
-			
-			dropdown = null;
-			if (noOfFloors == 1) {
-				oDate = document.forms[0].occupancyDate;
-				dropdown = document.getElementById('floorConstType');
-				var utObject = document.forms[0].unitType;
-				if (utObject != null) {
-					untyp = utObject.options[utObject.selectedIndex].text;	
-				}
-				 					
-			} else {
-				oDate = document.forms[0].occupancyDate[k];
-				
-				dropdown = (k == 0) ? document.getElementById('floorConstType') : document.getElementById('floorConstType'+(k-1));
-				var utObject = document.forms[0].unitType[k];
-				if (utObject != null) {
-					untyp = utObject.options[utObject.selectedIndex].text;
-				}
-			}								
-			if ((propType == 'Mixed' && untyp != 'select' && untyp != 'Open Plot') || propType != 'Mixed') {
-				(constTypeValues.length == 0) ? populateDropDown(null) : populateDropDown(constTypeValues[k]); 
-			}
-		}	
-	}
-	
-	var unitTypeCats = new Array();
-	var unitTypeUsages = new Array();
-	
-	function populateUnitTypeCatAndUsageOnValidationErrors() {
-		<s:iterator value="(propertyDetail.floorDetails.size).{#this}" status="floorsstatus">
-			unitTypeCats[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].unitTypeCategory}" />';
-			unitTypeUsages[<s:property value="%{#floorsstatus.index}" />] = '<s:property value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}" />';
-		</s:iterator>
-		
-		var floorDetails = document.getElementById("floorDetails");
-		var currUnitType = null;
-		
-		for (var k = 1; k <= floorDetails.rows.length-1; k++) {			
-			unitTypeCatDropDown = null;
-			usageDropDown = null;
-			setUnitTypeCatAndUsageDropDwn(floorDetails.rows[k], true);			
-			
-			if (navigator.appName == 'Microsoft Internet Explorer') {	
-				currUnitType = floorDetails.rows[k].cells[1].childNodes[0].childNodes[0];
-			} else {
-				currUnitType = floorDetails.rows[k].cells[1].childNodes[1].childNodes[1];
-			}
-			
-			if (currUnitType.options[currUnitType.selectedIndex].text != 'select') {
-				populateUnitTypeCatDropDown(currUnitType, unitTypeCats[k-1]);
-				populateUnitTypeUsageDropDown(currUnitType, unitTypeUsages[k-1]);
-				toggleFields(floorDetails.rows[k], null);	
-			}			
-		}
-		
-		areUnitTypeCatsAndUsagePopulated = true;
-	}
-
-	var rentAgreementIcon;
-	var rentalUnits = 0;
-		
-	function toggleDisplayOfRentAgreementFields(occupationDropDown) {
-		var tenantOccupation = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@TENANT_OCC}" />';
-		var row = occupationDropDown.parentNode.parentNode.parentNode;
-		var floorTable = document.getElementById('floorDetails');
-		var noOfFloors = floorTable.rows.length - 1;
-		var tableCell = row.cells[row.cells.length - 4];
-
-		if (occupationDropDown.options[occupationDropDown.selectedIndex].text == tenantOccupation) {
-			jQuery(floorTable.rows[0].lastElementChild).show();
-			jQuery(tableCell).show();			
-			rentalUnits += 1;
-		} 
-	}
-
-	/* jQuery(function () {
-		var mode = '<s:property value="%{mode}" />';
-		var isTenantFloorPresent = '<s:property value="%{isTenantFloorPresent}" />';
-		var noOfFloors = document.getElementById('floorDetails').rows.length - 1;
-		if ( (mode != "view" && isTenantFloorPresent == "false") || (mode == "" && isTenantFloorPresent == "") ) {
-			jQuery(rentAgrmntHeader).hide();
-			if (noOfFloors == 1) {
-				jQuery(rentAgrmntIconCell).hide();
-			}
-		}		
-	}) */
-	
-	function handleRentIconClick(obj) {
-		if (setFloorEffectiveDate(obj) == false) {
-			return false;
-		} 
-		openRentAgreementWindow(obj, 'form');
-		return true;
-	}
-	
-</script>

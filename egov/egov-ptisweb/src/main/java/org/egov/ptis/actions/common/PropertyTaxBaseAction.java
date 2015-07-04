@@ -321,20 +321,12 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 								addActionError(getText("mandatory.ageFactor", msgParams));
 							}
 
-							if (floor.getExtraField3() == null || floor.getExtraField3().equals("")) {
+							if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals("")) {
 								addActionError(getText("mandatory.floor.docOcc"));
 							}
-							if (floor.getExtraField3() != null
-									&& !floor.getExtraField3().equals("")
-									&& !floor.getExtraField3().equalsIgnoreCase("DD/MM/YYYY")) {
-								SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-								Date occupationDate = null;
-								try {
-									occupationDate = sdf.parse(floor.getExtraField3());
-								} catch (ParseException e) {
-									LOGGER.error(e.getMessage(), e);
-								}
-								if (occupationDate.after(new Date())) {
+							if (floor.getOccupancyDate() != null
+									&& !floor.getOccupancyDate().equals("")) {
+								if (floor.getOccupancyDate().after(new Date())) {
 									addActionError(getText("mandatory.dtFlrBeforeCurr"));
 								}
 							}
