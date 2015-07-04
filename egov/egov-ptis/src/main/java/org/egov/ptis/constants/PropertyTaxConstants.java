@@ -111,7 +111,7 @@ public interface PropertyTaxConstants {
 	public static final String OBJECTION_INSPECTION_COMPLETED = "INSPECTION COMPLETED";
 	public static final String OBJECTION_ACCEPTED = "OBJECTION ACCEPTED";
 	public static final String OBJECTION_REJECTED = "OBJECTION REJECTED";
-
+	public static final String OBJECTION_GENERATE_ENDORSEMENT_NOTICE = "GENERATE ENDORSEMENT NOTICE";
 	public static final String OBJECTION_ADDHEARING_DATE = "ADD HEARING DATE";
 	public static final String OBJECTION_RECORD_HEARINGDETAILS = "RECORD HEARING DETAILS";
 	
@@ -610,7 +610,8 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_NAME_AMALGAMATE = "Amalgamate";
 	public static final String WFLOW_ACTION_NAME_BIFURCATE = "Bifurcate";
 	public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
-
+	public static final String WFLOW_ACTION_END = "END";
+	
 	// WORKFLOW property states
 	public static final String WF_STATE_NEW = "New";
 	public static final String WF_STATE_APPROVAL_PENDING = "Approval_Pending";

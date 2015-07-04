@@ -59,14 +59,14 @@
 		
 		<div class="formheading"></div>
 		<div class="headingbg"><s:text name="objection.record.message.title" /></div>
-		<s:if test="objectionRejected == true">
+		<%-- <s:if test="objectionRejected == true">
 			<script>
 	 			if(opener && opener.top.document.getElementById('inboxframe'))
 					opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 				alert("Generating Rejection Letter");
 				window.location = "${pageContext.request.contextPath}/objection/rejectionLetter-print.action?model.id="+'<s:property value="objection.id"/>';
 			</script>
-		</s:if>
+		</s:if> --%>
 		<s:if test="isShowAckMessage == true">			
 			<div align="center" style="font-size:15px;">
 				<p>

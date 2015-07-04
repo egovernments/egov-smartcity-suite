@@ -65,11 +65,11 @@
 					</td>
 					<td class="bluebox" width="25%">
 						<s:radio name="objection.hearings[%{hearingIdx}].inspectionRequired"
-							list="#{'true':'Yes','false':'No'}" id="inspectionRequired" />
+							list="#{'true':'Yes'}"  value="true"  id="inspectionRequired" />
 					</td>
 
 				</tr>
-				<tr>
+			<%-- 	<tr>
 					<td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
 					<td class="greybox" width="25%">
 						<input type="button" class="button" value="Upload Document"
@@ -77,7 +77,7 @@
 							<s:hidden name="objection.hearings[%{hearingIdx}].documentNumber" id="docNumber" />
 					</td>
 				
-				</tr>
+				</tr> --%>
 			</table>
 		</td>
 	</tr>

@@ -54,18 +54,18 @@
 				<s:else>  <s:set var="inspectionIdx" value="%{inspections.size()-1}"/> </s:else>
 				<tr>
 					<td class="bluebox" width="25%">
-						<s:text name="inspection.remarks" />
+						<s:text name="inspection.remarks" />	<span class="mandatory1">*</span>
 					</td>
 					<td class="bluebox" width="25%">
 						<s:textarea name="objection.inspections[%{inspectionIdx}].inspectionRemarks"
 							id="inspectionRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-					<td class="bluebox" width="25%"><s:text name="objection.upload.document"/></td>
+					<%-- <td class="bluebox" width="25%"><s:text name="objection.upload.document"/></td>
 					<td class="bluebox" width="25%">
 						<input type="button" class="button" value="Upload Document"
 							id="docUploadButton" onclick="showDocumentManager();" />
 						<s:hidden name="objection.inspections[%{inspectionIdx}].documentNumber" id="docNumber" />
-					</td>
+					</td> --%>
 
 				</tr>
 				

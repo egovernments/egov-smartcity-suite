@@ -76,7 +76,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}"
-						name="referenceProperty.propertyDetail.floorDetails[0].structureClassification"
+						name="referenceProperty.propertyDetail.floorDetails[0].structureClassification.id"
 						listKey="id" id="floorConstType"
 						value="%{referenceProperty.propertyDetail.floorDetails[0].structureClassification.id}"
 						listValue="typeName" list="dropdownData.StructureList"
@@ -231,7 +231,7 @@
 						<s:if test="%{#floorsstatus.index == 0}">
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification"
+								name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType"
 								value="%{referenceProperty.propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
@@ -240,7 +240,7 @@
 						<s:else>
 							<s:select headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification"
+								name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType%{#floorsstatus.index-1}"
 								value="%{referenceProperty.propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
@@ -279,7 +279,7 @@
 					<div align="center">
 						<s:select headerKey="-1"
 							headerValue="%{getText('default.select')}"
-							name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].propertyOccupation.id"
+							name="referenceProperty.propertyDetail.floorDetails[%{#floorsstatus.index}].propertyOccupation.id" 
 							listKey="id" id="floorOccupation" listValue="occupation"
 							list="dropdownData.OccupancyList" cssClass="selectnew"
 							value="%{referenceProperty.propertyDetail.floorDetails[#floorsstatus.index].propertyOccupation.id}"

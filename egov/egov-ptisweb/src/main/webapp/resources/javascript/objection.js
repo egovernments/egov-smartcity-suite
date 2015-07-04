@@ -139,6 +139,9 @@ function validateHearingDate(obj){
 }
 function validateIsHearningNoticeGenerated(obj)
 {  
+	document.getElementById("lblError").style.display='none';
+	document.getElementById("workflowBean.actionName").value=obj.value;
+
 	if(validateApproval(obj))
 		onSubmit('revPetition-generateHearingNotice.action');  
 	else
@@ -193,6 +196,16 @@ function validateRecordInspection(obj){
 	}
 }
 
+function validateEndoresementNoticeGenerated(obj)
+{	document.getElementById("lblError").style.display='none';
+document.getElementById("workflowBean.actionName").value=obj.value;
+if(validateApproval(obj))
+{	
+	onSubmit('revPetition-generateEnodresementNotice.action');  
+}
+	else
+	return false;  
+	}
 function validateObjectionOutcome(obj){
 	document.getElementById("lblError").style.display='none';
 	document.getElementById("workflowBean.actionName").value=obj.value;
@@ -224,7 +237,7 @@ function validateObjectionOutcome(obj){
 }
 
 function validateApproval(obj){
-	 if(obj.value.toUpperCase()=="REJECT" || obj.value.toUpperCase()=="SAVE" || obj.value.toUpperCase()=="APPROVE")
+	 if(obj.value.toUpperCase()=="REJECT" || obj.value.toUpperCase()=="SAVE" || obj.value.toUpperCase()=="APPROVE" || obj.value.toUpperCase()=="Generate Notice")
 	{
 		return true;
 	}

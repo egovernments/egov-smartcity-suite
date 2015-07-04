@@ -111,7 +111,7 @@
 					</s:elseif>
 					<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED))
-							|| hearings[hearings.size()-1].inspectionRequired == false">
+							">
 							<jsp:include page="objectionOutcome.jsp"/>	
 					</s:elseif>
 		
@@ -126,8 +126,8 @@
 	  		
 	  		       
        			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) || 
-       					 egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE) ||
-							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
+       			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||       			 
+       					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
        			 	<jsp:include page="../workflow/revisionPetition-workflow.jsp"/>
        			 </s:if>
        			 <s:elseif test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
@@ -178,7 +178,7 @@
 		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE)">
-		   				<td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td>
+		   				<%-- <td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td> --%>
 		    			<td><s:submit value="Save" name="save" id="save"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this);"/></td>
 		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
@@ -190,9 +190,16 @@
 		   		<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED))
 							|| hearings[hearings.size()-1].inspectionRequired == false">
-		    			<td><s:submit value="SAVE" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateObjectionOutcome(this)"/></td>
+		    			<td><s:submit value="Forward" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateObjectionOutcome(this)"/></td>
+		   				<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="alert('Hyper link to View Old property detail');" >View Old property detail</button> </td>
+		
 		   		</s:elseif>
-
+				<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
+							">
+		    			<td><s:submit value="Generate Notice" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateEndoresementNoticeGenerated(this)"/></td>
+		    	</s:elseif>
 		    	<td><input type="button" name="closeButton" id="closeButton" value="Close" class="button" onclick="window.close();"/></td>
 		</tr>             
 		</table></div>      

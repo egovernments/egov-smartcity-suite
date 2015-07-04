@@ -255,7 +255,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	@SuppressWarnings("unchecked")
         @Action(value = "/ajaxCommon-populateDesignationsByDeptForRevisionPetition")
         public String populateDesignationsByDeptForRevisionPetition() {
-                LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId +currentStatusCode);
+                LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId +currentStatusCode); 
                 if (departmentId != null) {
                         //designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
                         Designation designation = assignmentService.getPrimaryAssignmentForUser(
@@ -269,7 +269,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                         }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED))
                         {
                             designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
-                        }
+                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED))
+                        {
+                            designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED))
+                        {
+                            designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
+                        } 
                         else if (designation.getName().equals(ASSISTANT_DESGN)) {
                                 designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
                         } else if (designation.getName().equals(REVENUE_OFFICER_DESGN)){
