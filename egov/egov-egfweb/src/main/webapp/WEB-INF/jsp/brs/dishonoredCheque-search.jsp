@@ -143,9 +143,8 @@ function dishonorSelectedChq() {
    
   </script>
   </head>
-  <body onload="">
+  <body>
   	<s:form name="dishonorForm" action="search"  theme="css_xhtml" validate="true"> 
-	    <s:token />
         <div style="color: green">
         <s:actionmessage/>
         </div>
@@ -155,8 +154,11 @@ function dishonorSelectedChq() {
         <div style="color: red">
 		    <div class="errorstyle" style="display:none" id="errorDiv" ></div>       
 	    </div>
-	    <div class="formheading" />
-			<div class="subheadnew"><s:text name="dishonoredCheq.title"/></div>    
+	    <div class="formheading">
+			<div class="subheadnew">
+			<s:text name="dishonoredCheq.title"/>
+			</div>    
+		</div>
 		<br/>
 		<table  width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
@@ -223,12 +225,12 @@ function dishonorSelectedChq() {
     	  <div class="buttonbottom" >
     	  <table align="center">  
 	    	<tr class="buttonbottom" id="buttondiv" style="align:middle" >
-	          <td><input type="submit" class="button" value="VIEW" id="searchButton" name="button" onclick="return validateFormAndSubmit();" />&nbsp;</td>
+	          <td><input type="submit" class="buttonsubmit" value="VIEW" id="searchButton" onclick="return validateFormAndSubmit();" />&nbsp;</td>
 	          <td><input type="button" class="button" value="RESET" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;</td>
 	          <td><input type="button" class="button" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();" /></td>
         	</tr>
         	</table>
-        	</div>
+       	 </div>
         	
         	<s:if test="%{searchResult.fullListSize != 0}">
         	<table align="center">

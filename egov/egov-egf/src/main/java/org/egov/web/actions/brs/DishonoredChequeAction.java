@@ -103,7 +103,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
        
         Long bankId = null;
-        if (bankBranchId != "-1" && bankBranchId != null && bankBranchId!=""){
+        if (!bankBranchId.equals("-1") && bankBranchId != null && bankBranchId!=""){
             String id[] = bankBranchId.split("-");
             bankId = Long.parseLong(id[0]);
         }
