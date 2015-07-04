@@ -117,6 +117,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -2019,7 +2020,60 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 		LOGGER.debug("Exiting from initiateDataEntryWorkflow");
 
 	}
+	public PropertyImpl changePropertyDetail(PropertyImpl modProperty, PropertyDetail propDetail,
+                Integer numOfFloors) {
 
+        LOGGER.debug("Entered into changePropertyDetail, Property is Vacant Land");
+
+        PropertyDetail propertyDetail = modProperty.getPropertyDetail();
+
+        propDetail.setSitalArea(propertyDetail.getSitalArea());
+        propDetail.setTotalBuiltupArea(propertyDetail.getTotalBuiltupArea());
+        propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
+        propDetail.setPlinthArea(propertyDetail.getPlinthArea());
+        propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
+        propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
+        propDetail.setFieldVerified(propertyDetail.getFieldVerified());
+        propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
+        propDetail.setFloorDetails(propertyDetail.getFloorDetails());
+        propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
+        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
+        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setNo_of_floors(numOfFloors);
+        propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
+        propDetail.setCompletion_year(propertyDetail.getCompletion_year());
+        propDetail.setEffective_date(propertyDetail.getEffective_date());
+        propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
+        propDetail.setProperty(propertyDetail.getProperty());
+        propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
+        propDetail.setPropertyTypeMaster(propertyDetail.getPropertyTypeMaster());
+        propDetail.setPropertyType(propertyDetail.getPropertyType());
+        propDetail.setInstallment(propertyDetail.getInstallment());
+        propDetail.setPropertyOccupation(propertyDetail.getPropertyOccupation());
+        propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
+        propDetail.setComZone(propertyDetail.getComZone());
+        propDetail.setCornerPlot(propertyDetail.getCornerPlot());
+
+        if (numOfFloors == 0) {
+                propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
+        } else {
+                propDetail.setPropertyUsage(null);
+        }
+
+        propDetail.setExtra_field1(propertyDetail.getExtra_field1());
+        propDetail.setExtra_field2(propertyDetail.getExtra_field2());
+        propDetail.setExtra_field3(propertyDetail.getExtra_field3());
+        propDetail.setExtra_field4(propertyDetail.getExtra_field4());
+        propDetail.setExtra_field5(propertyDetail.getExtra_field5());
+        propDetail.setExtra_field6(propertyDetail.getExtra_field6());
+        propDetail.setManualAlv(propertyDetail.getManualAlv());
+        propDetail.setOccupierName(propertyDetail.getOccupierName());
+
+        modProperty.setPropertyDetail(propDetail);
+
+        LOGGER.debug("Exiting from changePropertyDetail");
+        return modProperty;
+}
 	public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
 		return excessCollAmtMap;
 	}

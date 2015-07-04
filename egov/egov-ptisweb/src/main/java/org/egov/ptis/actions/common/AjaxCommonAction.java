@@ -153,6 +153,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private List<String> partNumbers;
 	private HttpServletResponse response;
 	private List<Assignment> assignmentList;
+	private String currentStatusCode;
 	
 	@Autowired
 	private CategoryDao categoryDAO;
@@ -251,7 +252,36 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
 		return "designationList";
 	}
+	@SuppressWarnings("unchecked")
+        @Action(value = "/ajaxCommon-populateDesignationsByDeptForRevisionPetition")
+        public String populateDesignationsByDeptForRevisionPetition() {
+                LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId +currentStatusCode);
+                if (departmentId != null) {
+                        //designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
+                        Designation designation = assignmentService.getPrimaryAssignmentForUser(
+                                        securityUtils.getCurrentUser().getId()).getDesignation();
+                        if(currentStatusCode==null || "".equals(currentStatusCode))
+                        {
+                            designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_CREATED))
+                        {
+                            designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
+                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED))
+                        {
+                            designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
+                        }
+                        else if (designation.getName().equals(ASSISTANT_DESGN)) {
+                                designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
+                        } else if (designation.getName().equals(REVENUE_OFFICER_DESGN)){
+                                designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+                        }
+                }
+                
+                LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
+                                + ((designationMasterList != null) ? designationMasterList.size() : ZERO));
 
+                return "designationList";
+        }
 	@Action(value = "/ajaxCommon-populateUsersByDeptAndDesignation")
 	public String populateUsersByDeptAndDesignation() {
 		LOGGER.debug("Entered into populateUsersByDesignation : designationId : " + designationId);
@@ -592,5 +622,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public void setSecurityUtils(SecurityUtils securityUtils) {
 		this.securityUtils = securityUtils;
 	}
+
+    public String getCurrentStatusCode() {
+        return currentStatusCode;
+    }
+
+    public void setCurrentStatusCode(String currentStatusCode) {
+        this.currentStatusCode = currentStatusCode;
+    }
 	
 }

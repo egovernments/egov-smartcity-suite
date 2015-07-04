@@ -54,7 +54,7 @@
 	
 	</head>
 	<body class="yui-skin-sam">
-	<s:form action="objection" method="post" name="objectionViewForm" theme="simple">
+	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<s:token />
 	<div class="errorstyle" id="lblError" style="display:none;"></div>
@@ -92,7 +92,7 @@
           <tr>
             <td>
             <div id="approval_header" style="display:none;"> 
-         		<jsp:include page="../workflow/property-workflow.jsp"/>
+         		<jsp:include page="../workflow/revisionPetition-workflow.jsp"/>
          		<br/>
             </div>
             </td>
@@ -103,11 +103,13 @@
 	  	<table>
 		<tr>
 		    	<td><s:submit value="Forward" name="forward" id="forward"  method="create" cssClass="buttonsubmit" onClick="return validateRecordObjection(this);doLoadingMask();"/></td>
-		    	<td><s:submit value="Save" name="save" id="save"  method="create" cssClass="buttonsubmit"  onClick="return validateRecordObjection(this);doLoadingMask();"/></td>
+		    	<%-- <td><s:submit value="Save" name="save" id="save"  method="create" cssClass="buttonsubmit"  onClick="return validateRecordObjection(this);doLoadingMask();"/></td> --%>
 		    	<td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
 		</tr>             
 		</table></div>
-		<s:hidden name="model.id" id="model.id"/>      
+		<s:hidden name="model.id" id="model.id"/>    
+		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
+		
 		</s:push>
 	</s:form>
 </body>

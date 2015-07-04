@@ -130,12 +130,19 @@ function validateHearingDate(obj){
 		
 		if(validateApproval(obj))
 		{	
-			onSubmit('objection-addHearingDate.action');  
+			onSubmit('revPetition-addHearingDate.action');  
 		}
 			else
 			return false;
 	}
 	
+}
+function validateIsHearningNoticeGenerated(obj)
+{  
+	if(validateApproval(obj))
+		onSubmit('revPetition-generateHearingNotice.action');  
+	else
+		return false;
 }
 
 function validateRecordHearing(obj){
@@ -158,7 +165,7 @@ function validateRecordHearing(obj){
 	else { 
 		if(validateApproval(obj))
 		{	
-			onSubmit('objection-recordHearingDetails.action');  
+			onSubmit('revPetition-recordHearingDetails.action');  
 		}
 			else 
 			return false;
@@ -179,7 +186,7 @@ function validateRecordInspection(obj){
 		
 		if(validateApproval(obj))
 		{	
-			onSubmit('objection-recordInspectionDetails.action');  
+			onSubmit('revPetition-recordInspectionDetails.action');  
 		}
 			else
 			return false;
@@ -209,7 +216,7 @@ function validateObjectionOutcome(obj){
 	else { 
 		if(validateApproval(obj))
 		{	
-			onSubmit('objection-recordObjectionOutcome.action');  
+			onSubmit('revPetition-recordObjectionOutcome.action');  
 		}
 			else
 			return false;  
