@@ -42,6 +42,7 @@ var tableContainer;
 jQuery(document).ready(function ($) {
     $(":input").inputmask();
 	
+ //   tableContainer1 = $("#complaintSearchResults"); 
     $(".datepicker").datepicker({
         format: "dd/mm/yyyy"
 	});
@@ -79,8 +80,7 @@ jQuery(document).ready(function ($) {
 				{title: 'Complaint Number', data: 'resource.searchable.crn'},
 				{title: 'Complaint Type', data: 'resource.searchable.complaintType.name'},
 				{title: 'Name', data: 'resource.common.citizen.name'},
-				//TODO: Fixme - Commented out for time being since index not working properly for location
-				//{title: 'Location', data: 'resource.searchable.boundary.name'},
+				{title: 'Location', data: 'resource.common.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
 				{title: 'Registration Date',
@@ -97,7 +97,18 @@ jQuery(document).ready(function ($) {
 		})
 	});
 	
-	
+   
+ /*   $('#complaintSearchResults').click(function () {
+    alert("show me....");
+   // $("#complaintSearchResults").val(dataTable.fnGetData(this,0));
+    alert(tableContainer1);
+    alert(tableContainer1.fnGetSelectedData(this,1))
+   // var crn=resource.searchable.crn;
+    
+    window.open("/pgr/complaint/update/030715-GT-00016");
+    
+    });*/
+    
     tableContainer = $("#csearch").dataTable({
 		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",

@@ -69,7 +69,7 @@
 						</div>
 
 						<div class="col-md-6 add-margin">
-							<input type="text" name="" class="form-control" id="ct-location"
+							<input type="text" name="location" class="form-control" id="ct-location"
 								placeholder="<spring:message code='lbl.location'/> " />
 						</div>
 

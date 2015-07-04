@@ -67,6 +67,8 @@ public class ComplaintSearchRequest {
     private String fromDate;
     private String toDate;
     private String complaintDepartment;
+    private String location;
+    
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -86,6 +88,10 @@ public class ComplaintSearchRequest {
 
     public void setComplainantName(final String complainantName) {
         this.complainantName = complainantName;
+    }
+    
+    public void setLocation(final String location) {
+        this.location = location;
     }
 
     public void setComplainantPhoneNumber(final String phoneNumber) {
@@ -176,6 +182,7 @@ public class ComplaintSearchRequest {
         andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
         andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
         andFilters.add(queryStringFilter("searchable.complaintType.department.name", complaintDepartment));
+        andFilters.add(queryStringFilter("common.boundary.name", location));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
