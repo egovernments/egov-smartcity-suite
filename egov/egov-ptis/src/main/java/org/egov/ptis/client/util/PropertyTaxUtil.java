@@ -1616,8 +1616,6 @@ public class PropertyTaxUtil {
 		if (egBill != null) {
 			egBill.setIs_History("Y");
 			egBill.setModifiedDate(new Date());
-			//FIXME UTTERWRONG
-			persistenceService.setType(EgBill.class);
 			persistenceService.update(egBill);
 		}
 	}

@@ -520,8 +520,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			// eisCommonsManager.getPositionByUserId(propertyTaxUtil.getLoggedInUser(getSession()).getId());
 			nextPosition = null;
 			if (WFLOW_ACTION_NAME_CREATE.equals(actionName)
-					|| WFLOW_ACTION_NAME_MODIFY.equals(actionName)
-					|| (fromDataEntry != null && fromDataEntry.equals("true"))) {
+					|| WFLOW_ACTION_NAME_MODIFY.equals(actionName)) {
 				if (property.getBasicProperty().getAllChangesCompleted()) {
 					nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 				} else {

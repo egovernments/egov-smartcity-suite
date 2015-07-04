@@ -72,14 +72,11 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -97,8 +94,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;
 	private static final String APPROVED = "Approved";
-        private static final String REJECTED = "Rejected";
-        
+    private static final String REJECTED = "Rejected";
 	protected PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	private SecurityUtils securityUtils;
@@ -110,12 +106,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	protected String indexNumber;
 	String actionName = "";
 	String wflowAction = "";
-
-	/**
-	 * <code>true</code> indicating that Data Entry is done
-	 */
-	protected boolean allChangesCompleted;
-	protected String fromDataEntry;
 	protected String userRole;
 	@Autowired
 	private AssignmentService assignmentService;
@@ -123,7 +113,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 	@Autowired
 	protected EisCommonService eisCommonService;
-
 	@Autowired
 	@Qualifier("fileStoreService")
 	protected FileStoreService fileStoreService;
@@ -171,11 +160,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		}
 	}
 
-	/**
-	 * This method starts the workflow. Property is transitioned to NEW state.
-	 * The workflow item is available in the creator's DRAFTS.
-	 */
-
 	private boolean validateApprover() {
 		if (workflowBean != null) {
 			LOGGER.debug("Entered into validateApprover, approverUserId: "
@@ -205,9 +189,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		LOGGER.debug("Exiting from validate");
 	}
 
-	@SuppressWarnings("unchecked")
 	protected List<StateHistory> setUpWorkFlowHistory(Long stateId) {
-
 		List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
 		workflowBean.setWorkFlowHistoryItems(workflowHisObj);
 		return workflowHisObj;
@@ -230,27 +212,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		workflowBean.setDepartmentList(departmentsForLoggedInUser);
 		workflowBean.setDesignationList(Collections.EMPTY_LIST);
 		workflowBean.setAppoverUserList(Collections.EMPTY_LIST);
-		/*
-		 * if (workflowBean.getDepartmentId() != null &&
-		 * workflowBean.getDepartmentId() != -1) {
-		 * ajaxCommonAction.setDepartmentId(workflowBean.getDepartmentId());
-		 * ajaxCommonAction.populateDesignationsByDept();
-		 * workflowBean.setDesignationList
-		 * (ajaxCommonAction.getDesignationMasterList()); } else {
-		 * workflowBean.setDesignationList(Collections.EMPTY_LIST); } if
-		 * (workflowBean.getDesignationId() != null &&
-		 * workflowBean.getDesignationId() != -1) {
-		 * ajaxCommonAction.setDesignationId(workflowBean.getDesignationId());
-		 * ajaxCommonAction.populateUsersByDeptAndDesignation();
-		 * workflowBean.setAppoverUserList(ajaxCommonAction.getUserList()); }
-		 * else { workflowBean.setAppoverUserList(Collections.EMPTY_LIST); } if
-		 * (workflowBean != null) {
-		 * LOGGER.debug("setupWorkflowDetails: No of Departments: " +
-		 * ((workflowBean.getDepartmentList() != null) ?
-		 * workflowBean.getDepartmentList().size() : ZERO) +
-		 * "\nNo of Designations: " + ((workflowBean.getDesignationList() !=
-		 * null) ? workflowBean.getDesignationList().size() : ZERO)); }
-		 */
 		LOGGER.debug("Exiting from setupWorkflowDetails | End");
 	}
 
@@ -307,12 +268,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			}
 		}
 
-		if (!isDataUpdate) {
-			String beanActionName[] = workflowBean.getActionName().split(":");
-			if (beanActionName.length > 1) {
-				actionName = beanActionName[0];
-				wflowAction = beanActionName[1];
-			}
+		String beanActionName[] = workflowBean.getActionName().split(":");
+		if (beanActionName.length > 1) {
+			actionName = beanActionName[0];
+			wflowAction = beanActionName[1];
 		}
 
 		LOGGER.debug("Exiting from validateProperty");
@@ -427,16 +386,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		LOGGER.debug("Exit from setUserInfo");
 	}
 
-	/**
-	 * This method ends the workflow Manually. The Property is transitioned to
-	 * END state.
-	 */
-	public void endWorkFlow(PropertyImpl property) {
-		Position position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
-		property.transition().end().withStateValue(State.DEFAULT_STATE_VALUE_CLOSED)
-				.withOwner(position).withComments("Property Workflow Ended");
-	}
-
 	public void transitionWorkFlow(PropertyImpl property) {
 		final DateTime currentDate = new DateTime();
 		User user = securityUtils.getCurrentUser();
@@ -545,22 +494,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 	public void setIndexNumber(String indexNumber) {
 		this.indexNumber = indexNumber;
-	}
-
-	public boolean isAllChangesCompleted() {
-		return allChangesCompleted;
-	}
-
-	public void setAllChangesCompleted(boolean allChangesCompleted) {
-		this.allChangesCompleted = allChangesCompleted;
-	}
-
-	public String getFromDataEntry() {
-		return fromDataEntry;
-	}
-
-	public void setFromDataEntry(String fromDataEntry) {
-		this.fromDataEntry = fromDataEntry;
 	}
 
 	public String getUserRole() {

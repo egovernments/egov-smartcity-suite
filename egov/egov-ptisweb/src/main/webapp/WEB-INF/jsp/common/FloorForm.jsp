@@ -248,7 +248,6 @@
 						</s:else>
 					</div>
 				</td>
-floor index<s:property value="%{#floorsstatus.index}"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:if test="%{#floorsstatus.index==0}">

@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
-
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
@@ -66,11 +65,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,7 +85,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Installment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -111,7 +106,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
-import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -153,7 +147,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private static final String RESULT_ACK = "ack";
 	private static final String RESULT_NEW = "new";
 	private static final String RESULT_VIEW = "view";
-	private static final String WORKFLOW_END = "END";
 	private static final String MSG_REJECT_SUCCESS = " Property Rejected Successfully ";
 	private static final String CREATE = "create";
 	
@@ -458,10 +451,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
 		property.setStatus(STATUS_ISACTIVE);
 		setWardId(basicProp.getPropertyID().getWard().getId());
-		if (allChangesCompleted) {
-			Map<Installment, Map<String, BigDecimal>> amounts = propService.populateTaxesForVoucherCreation(property);
-			financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_CREATE);
-		}
+		/*Map<Installment, Map<String, BigDecimal>> amounts = propService.populateTaxesForVoucherCreation(property);
+		financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_CREATE);*/
 		
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
 		transitionWorkFlow(property);
@@ -702,7 +693,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setStatus(propStatus);
 		basicProperty.setRegdDocDate(getRegdDocDate());
 		basicProperty.setRegdDocNo(getRegdDocNo());
-		basicProperty.setAllChangesCompleted(allChangesCompleted);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
@@ -767,7 +757,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProp.setAddress(createPropAddress());
 		basicProp.setPropertyID(createPropertyID(basicProp));
 		basicProp.getPropertyID();
-		basicProp.setAllChangesCompleted(allChangesCompleted);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProp.setPropertyMutationMaster(propertyMutationMaster);
@@ -1093,8 +1082,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		property.setExtra_field5("");
 		setPartNo(basicProp.getPartNo());
 		setParcelID(basicProp.getGisReferenceNo());
-		setAllChangesCompleted(basicProp.getAllChangesCompleted());
-		
 		if(property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			setDateOfCompletion(sdf.format(property.getPropertyDetail().getEffective_date()));
 			if(property.getPropertyDetail().getNonResPlotArea()!=null 
