@@ -49,7 +49,7 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
-		/*document.getElementById("saleDtls").className = "hiddentext";
+		document.getElementById("saleDtls").className = "hiddentext";
 		document.getElementById("crtOrderNum").className = "hiddentext";
 		document.getElementById("saleDtls").readOnly = true;
 		document.getElementById("crtOrderNum").readOnly = true;
@@ -62,7 +62,7 @@
 		}
 		if (deedDate == "" || deedDate == "DD/MM/YYYY" || deedDate == undefined) {
 			waterMarkInitialize('deedDate', 'DD/MM/YYYY');
-		}*/
+		}
 
 		try { 
 			jQuery(".datepicker").datepicker({
@@ -89,7 +89,7 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="property-save" name="transferform" theme="simple" enctype="multipart/form-data">
+			<s:form action="save" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
 				<s:token/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -104,41 +104,13 @@
 							<s:text name="prop.Id"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="indexNumber" /></span>
+							<span class="bold"><s:property value="propertyImpl.basicProperty.upicNo" default="N/A"/></span>
 						</td>
 						<td class="bluebox">
 							&nbsp;
 						</td>
 						<td style="width:25%;">&nbsp;</td>
 					</tr>
-
-					<tr>
-						<td colspan="5">
-							<table class="tablebottom" id="" width="100%" border="0"
-								cellpadding="0" cellspacing="0">
-								<tbody>
-									<tr>
-										<th class="bluebgheadtd">Aadhar No</th>
-										<th class="bluebgheadtd">Owner Name</th>
-										<th class="bluebgheadtd">Gender</th>
-										<th class="bluebgheadtd">Father/Husband Name</th>
-										<th class="bluebgheadtd">Mobile Number</th>
-										<th class="bluebgheadtd">Email Address</th>
-
-									</tr>
-									<tr>
-										<td class="blueborderfortd" align="center">-</td>
-										<td class="blueborderfortd" align="center"><span class="bold"><s:property value="oldOwnerName" /></span></td>
-										<td class="blueborderfortd" align="center">-</td>
-										<td class="blueborderfortd" align="center">-</td>
-										<td class="blueborderfortd" align="center">-</td>
-										<td class="blueborderfortd" align="center">-</td>
-									</tr>
-								</tbody>
-							  </table> 
-						</td>
-					</tr>
-
 					<tr>
 						<td class="bluebox2">
 							&nbsp;
@@ -147,13 +119,13 @@
 							<s:text name="PropertyAddress"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="propAddress" /></span>
+							<span class="bold"><s:property value="propertyImpl.basicProperty.address" /></span>
 						</td>
 						<td class="bluebox">
 							<s:text name="Zone"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="propAddress" /></span>
+							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.zone.name" /></span>
 						</td>
 					</tr>
 					
@@ -165,13 +137,13 @@
 							<s:text name="Ward" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"><s:property value="propAddress" /></span>
+							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.ward.name" /></span>
 						</td>
 						<td class="greybox">
 							<s:text name="block" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"><s:property value="propAddress" /></span>
+							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.area.name" /></span>
 						</td>
 					</tr>
 					
@@ -183,10 +155,35 @@
 							<s:text name="currentpropertytax" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"><s:property value="propAddress" /></span>
+							<span class="bold">Rs. <s:property value="currentPropertyTax" /> /-</span>
 						</td>
 					</tr>
-					
+					<tr>
+						<td colspan="5">
+							<table class="tablebottom" id="" width="100%" border="0"
+								cellpadding="0" cellspacing="0">
+								<tbody>
+									<tr>
+										<th class="bluebgheadtd">Aadhaar No</th>
+										<th class="bluebgheadtd">Owner Name</th>
+										<th class="bluebgheadtd">Gender</th>
+										<th class="bluebgheadtd">Mobile Number</th>
+										<th class="bluebgheadtd">Email Address</th>
+
+									</tr>
+									<s:iterator value="propertyImpl.basicProperty.propertyOwnerInfo" status="status">
+									<tr>
+										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
+									</tr>
+									</s:iterator>
+								</tbody>
+							  </table> 
+						</td>
+					</tr>
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
@@ -197,8 +194,42 @@
 
 					<tr>
 						<td colspan="5">
-							<div id="OwnerNameDiv">
-								<%@ include file="../common/OwnerNameForm.jsp"%>
+							<div>
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
+								    <tr>
+								    	<th class="bluebgheadtd">Aadhaar No</th>
+										<th class="bluebgheadtd">Owner Name</th>
+										<th class="bluebgheadtd">Gender</th>
+										<th class="bluebgheadtd">Mobile Number(without +91)</th>
+										<th class="bluebgheadtd">Email Address</th>
+										<th class="bluebgheadtd">Add/Delete</th>
+									</tr>
+								      <tr id="nameRow" >
+								        <td class="blueborderfortd" align="center">
+										   <s:textfield name="newOwnerInfos[0].owner.aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
+										</td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="newOwnerInfos[0].owner.name" maxlength="512" size="20" id="ownerName"  value="" 
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:select name="newOwnerInfos[0].owner.gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="newOwnerInfos[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
+								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="newOwnerInfos[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="" 
+								        		onblur="trim(this,this.value);validateEmail(this);"/>
+								        </td>
+								        
+								        <td class="blueborderfortd">
+								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
+								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								        </td>
+								     </tr>
+								</table>
 							</div>
 							<br/>
 						</td>
@@ -213,7 +244,7 @@
 							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:select name="propMutationMstr" id="transRsnId"
+							<s:select name="basicProperty.propMutationSet[0].propMutationMstr" id="transRsnId"
 								list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
@@ -225,7 +256,7 @@
 							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:textarea cols="30" rows="2" name="extraField3" id="saleDtls"
+							<s:textarea cols="30" rows="2" name="basicProperty.propMutationSet[0].extraField3" id="saleDtls"
 								onchange="return validateMaxLength(this);"
 								onblur="trim(this,this.value);" value="%{extraField3}"></s:textarea>
 						</td>
@@ -239,14 +270,14 @@
 							<s:text name="docNum" /> :
 						</td>
 						<td class="greybox">
-							<s:textfield name="deedNo" id="docNum" value="%{deedNo}" maxlength="64"/>
+							<s:textfield name="basicProperty.propMutationSet[0].deedNo" id="docNum" value="%{basicProperty.propMutationSet[0].deedNo}" maxlength="64"/>
 						</td>
 						<td class="greybox">
 							<s:text name="docDate" /> :
 						</td>
 						<td class="greybox">
-							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
-							<s:textfield name="deedDate" id="deedDate" maxlength="10"
+							<s:date name="basicProperty.propMutationSet[0].deedDate" var="docDate" format="dd/MM/yyyy" />
+							<s:textfield name="basicProperty.propMutationSet[0].deedDate" id="deedDate" maxlength="10"
 								value="%{docDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onfocus="waterMarkTextIn('deedDate','DD/MM/YYYY');"
@@ -280,10 +311,9 @@
 						</td>
 					</tr>
 
-                    <tr>
+                     <tr>
 						<td colspan="5">
-						<table class="tablebottom" id="nameTable" width="100%" border="0"
-							cellpadding="0" cellspacing="0">
+						<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tbody>
 								<tr>
 									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
@@ -292,7 +322,7 @@
 									<th class="bluebgheadtd"><s:text name="doctable.docdetails" /></th>
 								</tr>
 	
-								<tr>
+								<%-- <tr>
 									<td class="blueborderfortd" align="center">
 									  <s:checkbox name="docDetail[0].cbenclosed" id="docDetail[0].cbenclosed"/>
 									</td>
@@ -342,7 +372,7 @@
 										<textarea name="docDetail[2].tadocdetail" id="docDetail[2].tadocdetail" cols="40", rows="2"></textarea>
 									</td>
 	
-								</tr>
+								</tr>  --%>
 	
 	
 							</tbody>
@@ -350,9 +380,8 @@
 					</td>
 				 </tr>
 
-
 				</table>
-        		<%@ include file="../workflow/property-workflow.jsp" %>  
+        		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
        			 <div class="buttonbottom">
 					<s:submit value="Save & Submit" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
 					<input type="reset" value="Cancel" class="button" align="center" />
@@ -424,11 +453,6 @@
 					document.getElementById("crtOrderNum").value="";
 					document.getElementById("crtOrderNum").className="hiddentext";
 					document.getElementById("crtOrderNum").readOnly=true;
-				}
-				if(selectedValue=="OTHERS") { 
-					document.getElementById("mutationRsnRow").style.display="";
-				} else {
-					document.getElementById("mutationRsnRow").style.display="none";
 				}
 			}
 		}

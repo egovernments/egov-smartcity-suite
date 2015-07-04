@@ -45,6 +45,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +63,7 @@ import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -79,7 +82,7 @@ public class PropertyTransferAction extends BaseFormAction {
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
-    private PropertyImpl property;
+    private PropertyImpl propertyImpl;
     
     // Dependency Services
     @Autowired
@@ -94,15 +97,16 @@ public class PropertyTransferAction extends BaseFormAction {
     private String indexNumber;
     private String wfErrorMsg;
     private String currentPropertyTax;
+    private List<PropertyOwnerInfo> newOwnerInfos = new ArrayList<>();
     
     public PropertyTransferAction() {
-        addRelatedEntity("propertyMutation.propMutationMstr", PropertyMutationMaster.class);
+        addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
     
     @SkipValidation
     @Action(value = "/new")
     public String showTransferForm() {
-        final Map<String, String> currentWFStatus = property.getBasicProperty().getPropertyWfStatus();
+        final Map<String, String> currentWFStatus = propertyImpl.getBasicProperty().getPropertyWfStatus();
         if ("TRUE".equalsIgnoreCase(currentWFStatus.get(WFSTATUS))) {
             wfErrorMsg = (String.format("Could not do property transfer now, property is undergoing some workflow in %s's inbox.",
                     getSession().get(WFOWNER)));
@@ -125,8 +129,8 @@ public class PropertyTransferAction extends BaseFormAction {
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(indexNumber))
-            property = propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", indexNumber, STATUS_ISACTIVE);
-        this.currentPropertyTax = ptDemandDAO.getDemandCollMap(property).get(CURR_DMD_STR).toString();
+            propertyImpl = propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", indexNumber, STATUS_ISACTIVE);
+        this.currentPropertyTax = ptDemandDAO.getDemandCollMap(propertyImpl).get(CURR_DMD_STR).toString();
         addDropdownData("MutationReason", propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER));
     }
 
@@ -149,5 +153,17 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setIndexNumber(final String indexNumber) {
         this.indexNumber = indexNumber;
+    }
+
+    public PropertyImpl getPropertyImpl() {
+        return propertyImpl;
+    }
+
+    public List<PropertyOwnerInfo> getNewOwnerInfos() {
+        return newOwnerInfos;
+    }
+
+    public void setNewOwnerInfos(List<PropertyOwnerInfo> newOwnerInfos) {
+        this.newOwnerInfos = newOwnerInfos;
     }
 }
