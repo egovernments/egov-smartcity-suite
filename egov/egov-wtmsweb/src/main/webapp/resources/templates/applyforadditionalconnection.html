@@ -148,7 +148,7 @@
 											Connection Type 
 										</div>
 										<div class="col-xs-3 add-margin view-content">
-											Meter Connection
+											Metered Connection
 										</div>
 									
 										<div class="col-xs-3 add-margin">
@@ -208,13 +208,18 @@
 											</div>
 											<label class="col-sm-2 control-label text-right">Usage Type<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
-												<select class="form-control"><option value="">Select from below</option><option value="">Commercial</option><option value="">Domestic</option><option value="">Residential</option><option value="">Non-Residential</option></select>
+												<select id="usageType" name="usageType" class="form-control" data-first-option="false" required="required">
+													<option value="">
+														Select from below
+													</option>
+													<option value="1">Commercial</option><option value="2">Domestic</option><option value="4">Drinking</option><option value="5">Industrial</option><option value="6">Non-residential</option><option value="3">Residential</option>
+												</select>
 											</div>
 										</div>
 										<div class="form-group">
 											<label class="col-sm-3 control-label text-right">Category<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
-												<select class="form-control"><option value="">Select from below</option><option value="">BPL</option><option value="">Domestic</option><option value="">Commercial</option><option value="">General</option></select>
+												<select class="form-control"><option value="">Select from below</option><option value="">BPL</option><option value="">Domestic</option><option value="">Commercial</option><option value="">General</option><option value="">OYT</option></select>
 											</div>
 											<label class="col-sm-2 control-label text-right">Water Source Type<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
@@ -222,21 +227,27 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 control-label text-right">H.S.C Pipe Size (Inches)<span class="mandatory"></span></label>
+											<label class="col-sm-3 control-label text-right">Property Type<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<select id="propertyType" name="propertyType" class="form-control" data-first-option="false" required="required">
+													<option value="">
+														Select from below
+													</option>
+													<option value="1">Ground Floor</option><option value="2">One store building</option><option value="3">Two store building</option>
+												</select>		
+					
+											</div>
+											<label class="col-sm-2 control-label text-right">H.S.C Pipe Size (Inches)<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<select class="form-control"><option value="">Select from below</option><option value="">1 Inch</option><option value="">1/2 Inch</option><option value="">3/4 Inch</option><option value="">Zero Inch</option></select>
 											</div>
-											<label class="col-sm-2 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
-											<div class="col-sm-3 add-margin">
-												<input type="text" class="form-control">
-											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-sm-3 control-label text-right">Plot Area of Assessment<span class="mandatory"></span></label>
+											<label class="col-sm-3 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control">
 											</div>
-											<label class="col-sm-2 control-label text-right">No.of persons Living<span class="mandatory"></span></label>
+											<label class="col-sm-2 control-label text-right">Plot Area of Assessment<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control">
 											</div>
@@ -246,7 +257,13 @@
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control">
 											</div>
-											<label class="col-sm-2 control-label text-right">Connection Order<span class="mandatory"></span></label>
+											<label class="col-sm-2 control-label text-right">No.of persons Living<span class="mandatory"></span></label>
+											<div class="col-sm-3 add-margin">
+												<input type="text" class="form-control">
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Connection Order<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control">
 											</div>

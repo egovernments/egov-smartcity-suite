@@ -1921,6 +1921,7 @@ ul li a span{
 
 .view-content{
 	font-family:semibold;
+	word-wrap:break-word;
 }
 
 #sortby_drop
