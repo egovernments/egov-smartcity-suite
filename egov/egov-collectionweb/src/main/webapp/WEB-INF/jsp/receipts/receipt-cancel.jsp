@@ -154,7 +154,7 @@ function warningInfo()
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.accounthead.desc"/></th>
 							<th class="bluebgheadtd" width="25%"><s:text name="viewReceipt.accounthead.amt"/>&nbsp;(<s:text name="viewReceipt.amt.denom"/>)</th>
 						</tr>
-<! int rebateaccountavalailable=0;>
+<%! int rebateaccountavalailable=0;%>
 						<s:iterator value="%{receiptDetails}" >
 
 						<s:if test="cramount!=0">
@@ -174,7 +174,7 @@ function warningInfo()
 						</td>
 						</tr>
 						
-						<if(rebateaccountavalailable==1){ >
+						<%if(rebateaccountavalailable==1){ %>
 						<tr><td>
 						<div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Rebate"/></span></div>
 						</td></tr>
@@ -186,7 +186,7 @@ function warningInfo()
 							<th class="bluebgheadtd" width="30%"><s:text name="viewReceipt.accounthead.desc"/></th>
 							<th class="bluebgheadtd" width="25%"><s:text name="viewReceipt.accounthead.amt"/>&nbsp;(<s:text name="viewReceipt.amt.denom"/>)</th>
 						</tr>
-						<} >
+						<%} %>
 						<s:iterator value="%{receiptDetails}" >
 						<s:if test="dramount!=0 && !isRevenueAccountHead(accounthead)">
 						<tr>
@@ -204,10 +204,10 @@ function warningInfo()
 							<td class="blueborderfortd"><div align="right"><b>Total&nbsp;&nbsp;</b></div></td>							<fmt:formatNumber var="newtotalamount" value='${amount}' pattern='#0.00' />	
 							<td class="blueborderfortd"><div align="center"><b>${newtotalamount}</b></div></td>			
 						</tr>
-						<if(rebateaccountavalailable==1){ >
+						<%if(rebateaccountavalailable==1){ %>
 						</table>
 						</td></tr>
-						<} >
+						<%} %>
 							
 					</table>
 					
