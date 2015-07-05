@@ -45,7 +45,7 @@ import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRALGOVT_BUILDING_ALV_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTAVAIL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATEGOVT_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
@@ -184,12 +184,12 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		if (isNotNull(unitCalcDetail.getUnitArea()) && isNotZero(unitCalcDetail.getUnitArea())) {
 			govtPropTaxCalInfo.setPropertyArea(unitCalcDetail.getUnitArea().toString());
 		} else {
-			govtPropTaxCalInfo.setPropertyArea(NOTAVAIL);
+			govtPropTaxCalInfo.setPropertyArea(NOT_AVAILABLE);
 		}
 
 		if (calSheetInfo.getPropertyType().equalsIgnoreCase(PROPTYPE_STATEGOVT_STR)) {
 			govtPropTaxCalInfo.setAlvPercentage(STATEGOVT_BUILDING_ALV_PERCENTAGE);
-			govtPropTaxCalInfo.setAmenities(NOTAVAIL);
+			govtPropTaxCalInfo.setAmenities(NOT_AVAILABLE);
 		} else {
 			govtPropTaxCalInfo.setAlvPercentage(CENTRALGOVT_BUILDING_ALV_PERCENTAGE);
 		}

@@ -47,8 +47,8 @@
     <th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)<span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
-	<th class="bluebgheadtd"><s:text name="Gardian"/></th>
-	<th class="bluebgheadtd"><s:text name="GardianRelation"/></th>
+	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
     <s:if test="%{basicProperty.propertyOwnerInfo.isEmpty()}">
@@ -76,11 +76,11 @@
         		onblur="trim(this,this.value);validateEmail(this);" data-optional="0" data-errormsg="emailid is mandatory!"/>
         </td>
          <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardianRelation}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardianRelation}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
         </td>
         <td class="blueborderfortd">

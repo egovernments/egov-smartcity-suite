@@ -135,7 +135,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		return taxCalculationMap;
 	}
 
-	private APUnitTaxCalculationInfo prepareUnitCalcInfo(Floor floorIF, BoundaryCategory boundaryCategory) {
+	private APUnitTaxCalculationInfo prepareUnitCalcInfo(Floor floor, BoundaryCategory boundaryCategory) {
 		APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
 		BigDecimal builtUpArea = BigDecimal.ZERO;
 		BigDecimal floorMrv = BigDecimal.ZERO;
@@ -145,15 +145,15 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		BigDecimal floorDepreciation = BigDecimal.ZERO;
 		BigDecimal floorNetArv = BigDecimal.ZERO;
 
-		builtUpArea = BigDecimal.valueOf(floorIF.getBuiltUpArea().getArea());
+		builtUpArea = BigDecimal.valueOf(floor.getBuiltUpArea().getArea());
 		floorMrv = calculateFloorMrv(builtUpArea, boundaryCategory);
 		floorBuildingValue = calculateFloorBuildingValue(floorMrv);
 		floorSiteValue = calculateFloorSiteValue(floorMrv);
 		floorGrossArv = floorBuildingValue.multiply(new BigDecimal(12));
-		floorDepreciation = calculateFloorDepreciation(floorGrossArv, floorIF);
+		floorDepreciation = calculateFloorDepreciation(floorGrossArv, floor);
 		floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
 
-		unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floorIF.getFloorNo()));
+		unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
 		unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
 		unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
 		unitTaxCalculationInfo.setMrv(floorMrv);

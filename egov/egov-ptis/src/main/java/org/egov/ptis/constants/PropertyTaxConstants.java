@@ -1004,7 +1004,7 @@ public interface PropertyTaxConstants {
 	// Sequence for unit_identifier
 	public static final String UNIT_IDENTIFIER_SEQ_STR = "PT_UNIT_IDENTIFIER";
 
-	public static final String NOTAVAIL = "N/A";
+	public static final String NOT_AVAILABLE = "N/A";
 	public static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
 
 	public static final String PATTERN_BEGINS_WITH_1TO9 = "^[1-9][0-9]*";

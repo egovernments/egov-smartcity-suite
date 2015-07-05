@@ -76,7 +76,7 @@
 				list="dropdownData.MutationList" value="%{propertyDetail.propertyMutationMaster.id}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
-		<td class="greybox" width="25%"><s:text name="prntPropIndexNum" />
+		<td class="greybox" width="25%"><s:text name="prntPropAssessmentNum" />
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox"><s:textfield name="parentIndex"
 				id="parentIndex" size="12" maxlength="12"></s:textfield>
