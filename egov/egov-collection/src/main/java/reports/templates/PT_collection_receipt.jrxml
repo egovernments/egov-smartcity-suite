@@ -1,202 +1,380 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d31f0fd4-d49f-4b27-8a8e-9f8eedf12355">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom">	
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.erpcollection.web.constants.*"/>
+    <import value="org.joda.time.DateTime"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
-	<field name="receiptDate" class="java.lang.String"/>
-	<field name="receiptNum" class="java.lang.String"/>
-	<field name="payeeName" class="java.lang.String"/>
-	<field name="payeeAddress" class="java.lang.String"/>
-	<field name="glCode" class="java.lang.String"/>
-	<field name="crAmount" class="java.lang.String"/>
-	<field name="isRevenueAccount" class="java.lang.String"/>
-	<field name="field1" class="java.lang.String"/>
-	<field name="drAmount" class="java.lang.String"/>
-	<variable name="generalTaxArrear" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA["4311001".equals($F{glCode}) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+    <import value="org.joda.time.format.DateTimeFormatter"/>	
+    <import value="org.egov.collection.constants.CollectionConstants"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_CONNECTION" class="java.sql.Connection" isForPrompting="false">
+		<parameterDescription><![CDATA[SQL connection object]]></parameterDescription>
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CURR_DATE" class="java.util.Date">
+		<parameterDescription><![CDATA[Current Date]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<field name="payeeName" class="java.lang.String">
+		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
+	</field>
+	<field name="receiptStatus" class="org.egov.commons.EgwStatus"/>
+	<field name="receiptNum" class="java.lang.String">
+		<fieldDescription><![CDATA[Receipt Number]]></fieldDescription>
+	</field>
+	<field name="receiptDate" class="org.joda.time.DateTime"/>
+	<field name="payeeAddress" class="java.lang.String">
+		<fieldDescription><![CDATA[Payee Address]]></fieldDescription>
+	</field>
+	<field name="billReferenceNum" class="java.lang.String">
+		<fieldDescription><![CDATA[Bill Reference Number]]></fieldDescription>
+	</field>
+	<field name="serviceName" class="java.lang.String">
+		<fieldDescription><![CDATA[Service Name]]></fieldDescription>
+	</field>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[Description]]></fieldDescription>
+	</field>
+	<field name="paidBy" class="java.lang.String">
+		<fieldDescription><![CDATA[Paid By]]></fieldDescription>
+	</field>
+	<field name="accountDetails" class="java.util.Collection"/>
+	<field name="totalAmount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total Amount]]></fieldDescription>
+	</field>
+	<field name="instrumentDetails" class="java.util.Collection"/>
+	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
+	<field name="collectionType" class="java.lang.String"/>
+	<variable name="amountReceived" class="java.math.BigDecimal">
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
-	<variable name="totalAmountCollected" class="java.lang.String">
-		<variableExpression><![CDATA[(!$F{isRevenueAccount} && $F{crAmount}>BigDecimal.ZERO)? $F{crAmount} : ("4314209".equals($F{glCode}) ? -$F{drAmount} : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="total" class="java.lang.String"/>
-	<variable name="balance" class="java.lang.String">
-		<variableExpression><![CDATA[$V{total}.subtract($V{totalAmountCollected})]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
+	<group name="Receipt" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{receiptNum}]]></groupExpression>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="79" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="572" height="20" uuid="02fbb161-ec30-4242-a0f0-0fd337c59dbf"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[RECEIPT OF PROPERTY TAX]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="20" width="572" height="20" uuid="2bd435ef-27c1-4a29-804b-6cd4dec7a7f3"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[MUNICIPAL ADMINISTRATION DEPARTMENT]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="0" y="46" width="572" height="20" uuid="9eee127c-08d2-465f-89ad-8a8373b9e0df"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[ReportUtil.getCityName() + " MUNICIPALITY"]]></textFieldExpression>
-			</textField>
-		</band>
-	</title>
 	<detail>
-		<band height="408" splitType="Stretch">
+		<band height="105" splitType="Stretch">
 			<staticText>
-				<reportElement x="10" y="15" width="61" height="20" uuid="f568224b-41da-46b2-8030-60afd86614a9"/>
-				<text><![CDATA[Date:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="35" width="61" height="20" uuid="8f6ff306-9655-4b61-b68d-35c4a103ddd2"/>
-				<text><![CDATA[House No:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="107" y="15" width="121" height="20" uuid="5fb47edd-35b3-4c87-9101-60feb8aba803"/>
-				<textFieldExpression><![CDATA[$F{receiptDate}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="107" y="35" width="121" height="20" uuid="86c1b4a2-d4a5-4e62-9522-2118200e921d"/>
-				<textFieldExpression><![CDATA[$F{payeeAddress}.substring(0, $F{payeeAddress}.indexOf(','))]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="311" y="35" width="116" height="20" uuid="40c7f9dd-6d01-4f6d-ade4-bea233318fe4"/>
-				<text><![CDATA[Name of the Remitter:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="427" y="15" width="140" height="20" uuid="235428d9-90da-48fa-bdd6-9fb5fa03fcd1"/>
-				<textFieldExpression><![CDATA[$F{receiptNum}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="427" y="35" width="140" height="20" uuid="c38b4aae-c795-4c87-8ca7-de78c1b51d90"/>
-				<textFieldExpression><![CDATA[$F{payeeName}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="311" y="15" width="61" height="20" uuid="874d1620-dc71-423f-9270-4b35074a17ce"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="85" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
 				<text><![CDATA[Receipt No:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="107" y="55" width="121" height="20" uuid="33a0dcf1-7b31-4a03-9831-c85b74100f20"/>
-				<textFieldExpression><![CDATA[$F{receiptDate}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="107" y="75" width="121" height="20" uuid="2987a0c1-4380-4ae3-b53d-c7e06dfddb6b"/>
-			</textField>
-			<staticText>
-				<reportElement x="10" y="75" width="61" height="20" uuid="2481962c-f641-4aae-8aa6-93045e913891"/>
-				<text><![CDATA[Demand:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="55" width="91" height="20" uuid="b6544455-b0a9-4fb7-9854-afdc35f2978f"/>
-				<text><![CDATA[Name of Locality :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="106" width="218" height="20" uuid="0d19a3da-e289-40b8-b102-c23a23f876a3"/>
-				<textElement>
-					<font isBold="true"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="125" y="85" width="199" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Details of Tax Payment]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.getDepositedInBank() != null ? $F{receiptNum} : $F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="10" y="128" width="218" height="20" uuid="8abd9d51-be5f-47b5-9d06-9b8da1f1fc43"/>
-				<textElement>
-					<font isBold="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="324" y="85" width="99" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Property Tax]]></text>
+				<text><![CDATA[Receipt Date:]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="10" y="220" width="123" height="20" uuid="bf41dde9-0646-407f-aa1f-3d4d3d9cf2f5"/>
-				<text><![CDATA[Total:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="197" width="123" height="20" uuid="2c514b3d-9021-4fcb-a141-13d3ba06dadc"/>
-				<text><![CDATA[Penalty on PT:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="151" width="123" height="20" uuid="05706c58-63b6-4805-8bd7-0125f0a4f828"/>
-				<text><![CDATA[Arrears on PT:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="174" width="123" height="20" uuid="2c0a3e63-2448-49b8-8b26-b0ecdbe04dd6"/>
-				<text><![CDATA[Current WT:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="242" width="123" height="20" uuid="09d919c1-3f37-4cda-8735-98cdd4e306e8"/>
-				<text><![CDATA[Total Amount collected:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="288" width="123" height="20" uuid="ccbf7978-b187-48ff-83b1-9381b0710cec"/>
-				<text><![CDATA[Period:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="265" width="123" height="20" uuid="f1962c65-a0e6-40a9-acc2-e736eae03750"/>
-				<text><![CDATA[Balance:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="360" width="109" height="20" uuid="28c0197a-53bd-4734-a7a0-0078ffbe214f"/>
-				<textElement>
-					<font isBold="true"/>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy HH:mm:ss">
+				<reportElement stretchType="RelativeToTallestObject" x="423" y="85" width="132" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Commissioner]]></text>
+				<textFieldExpression class="java.util.Date"><![CDATA[DateTimeFormat.forPattern("dd/MM/yyyy").print($F{receiptDate})]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="10" y="10" width="60" height="60"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="132" y="10" width="291" height="43"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="196" y="53" width="163" height="20">
+					<printWhenExpression><![CDATA[!$F{description}.startsWith( "Service Charges" )]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[PROPERTY TAX RECEIPT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="337" width="218" height="20" uuid="8207aec6-f723-4aa6-846a-4448f8c2e2e6"/>
-				<textElement>
-					<font isBold="true"/>
+				<reportElement x="178" y="53" width="181" height="20">
+					<printWhenExpression><![CDATA[$F{description}.startsWith( "Service Charges" )]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Signature of the Bill Collector]]></text>
+				<text><![CDATA[SERVICE CHARGES RECEIPT]]></text>
 			</staticText>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{receiptMisc}.getDepositedInBank() == null ? new Boolean(false) : new Boolean(true)]]></printWhenExpression>
 			<staticText>
-				<reportElement x="400" y="337" width="157" height="20" uuid="3becefc2-e5ab-41da-aa3c-afa7e24be747"/>
-				<textElement>
-					<font isBold="true"/>
+				<reportElement x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Signature of the Remitter]]></text>
+				<text><![CDATA[Bank Transaction ID:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="133" y="151" width="121" height="20" uuid="260baa4b-6276-4fca-945d-ce6b9442a961"/>
-				<textFieldExpression><![CDATA[$V{generalTaxArrear}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="133" y="174" width="121" height="20" uuid="b71cce26-1ae0-4372-bce5-cfb46b702213"/>
-			</textField>
-			<textField>
-				<reportElement x="133" y="197" width="121" height="20" uuid="a0db1d00-87b5-4717-9514-886bafd22f78"/>
-			</textField>
-			<textField>
-				<reportElement x="133" y="220" width="121" height="20" uuid="d7034a08-2704-49e0-8e1a-69abcfdb221d"/>
-				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="133" y="242" width="121" height="20" uuid="a964bd15-8df2-46e7-b807-e069c87bb131"/>
-				<textFieldExpression><![CDATA[$V{totalAmountCollected}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="133" y="288" width="121" height="20" uuid="c951447c-0dbe-420f-8eee-25fb1a124979"/>
-			</textField>
-			<textField>
-				<reportElement x="133" y="265" width="121" height="20" uuid="df1cc490-c556-4f2d-b1a5-bd9896c389a4"/>
-				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
+				<reportElement x="125" y="0" width="430" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()]]></textFieldExpression>
 			</textField>
 		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{receiptStatus}.getDescription().toString()=="Cancelled" ? new Boolean(true) : new Boolean(false)]]></printWhenExpression>
+			<textField>
+				<reportElement x="125" y="0" width="430" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptStatus}.getDescription()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Receipt status:]]></text>
+			</staticText>
+		</band>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="125" y="0" width="430" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Name:]]></text>
+			</staticText>
+		</band>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="125" y="0" width="430" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeAddress}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Address:]]></text>
+			</staticText>
+		</band>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="228" y="0" width="327" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="125" y="0" width="103" height="20"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Description:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Payment]]></text>
+			</staticText>
+		</band>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="228" y="0" width="327" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{paidBy}==null?$F{payeeName}:$F{paidBy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="125" y="0" width="103" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Paid By:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="125" height="20"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Details:]]></text>
+			</staticText>
+		</band>
+		<band height="20">
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_accounts.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="61">
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="21" width="555" height="40" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )==CollectionConstants.COLLECTION_TYPE_COUNTER]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[This is computer generated receipt. Signature is not neccessary.Except Online payment the receipt is subject to realisation of cheque.]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="21"/>
+				<subreportParameter name="TOTAL_AMOUNT">
+					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_instruments.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
 	</detail>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

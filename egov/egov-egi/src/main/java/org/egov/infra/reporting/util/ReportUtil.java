@@ -129,7 +129,7 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream(final Connection connection) {
 		try {
-			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'"));
+			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'"));
 		} catch (final SQLException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
@@ -141,7 +141,7 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream() {
 		try {
-			return getImageAsStream((String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE URL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0));
+			return getImageAsStream((String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0));
 		} catch (final HibernateException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
