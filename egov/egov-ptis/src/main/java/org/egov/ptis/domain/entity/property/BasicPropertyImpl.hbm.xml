@@ -70,7 +70,7 @@
 
 		<property name="upicNo" column="PROPERTYID" />
 		<property name="active" column="ISACTIVE" type="boolean" />
-
+		<property name="underWorkflow" column="UNDERWORKFLOW" type="boolean" />
 		<many-to-one name="address" column="ADDRESSID"
 			class="org.egov.ptis.domain.entity.property.PropertyAddress" cascade="all"
 			unique="true" />

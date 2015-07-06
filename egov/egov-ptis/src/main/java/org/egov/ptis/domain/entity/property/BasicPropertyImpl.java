@@ -51,6 +51,7 @@ import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -95,6 +96,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private String vacantLandAssmtNo;
     private String source;
     private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
+    private boolean underWorkflow;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -681,6 +683,14 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.source = source;
     }
 
+    public boolean isUnderWorkflow() {
+        return underWorkflow;
+    }
+
+    public void setUnderWorkflow(boolean underWorkflow) {
+        this.underWorkflow = underWorkflow;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
