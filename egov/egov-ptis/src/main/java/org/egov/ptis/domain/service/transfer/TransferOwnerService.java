@@ -72,6 +72,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -119,15 +120,16 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     
     @Transactional
     public void initiatePropertyTransfer(PropertyMutation propertyMutation, String upicNo) {
-        processAndStoreDocument(propertyMutation.getDocuments());
         BasicProperty basicProperty = getBasicPropertyByUpicNo(upicNo);
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
         propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
+        basicProperty.setUnderWorkflow(true);
         //propertyMutation.transition().start();
         //basicProperty.getPropertyOwnerInfo().clear();
+        processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);
     }
     
@@ -136,8 +138,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", upicNo, STATUS_ISACTIVE);
     }
     
-    public BasicProperty getBasicPropertyByUpicNo(String upicNo) {
-        return basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
+    public BasicPropertyImpl getBasicPropertyByUpicNo(String upicNo) {
+        return (BasicPropertyImpl)basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
     }
     
     public String getCurrentPropertyTax(Property propertyImpl) {

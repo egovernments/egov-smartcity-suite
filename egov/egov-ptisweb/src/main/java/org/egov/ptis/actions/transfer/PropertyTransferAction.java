@@ -84,7 +84,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private String wfErrorMsg;
     private String currentPropertyTax;
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private BasicProperty basicProperty;
+    private BasicProperty basicproperty;
     
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -93,7 +93,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/new")
     public String showTransferForm() {
-        if (basicProperty.isUnderWorkflow()) {
+        if (basicproperty.isUnderWorkflow()) {
             wfErrorMsg = ("Could not do property transfer now, property is undergoing some workflow.");
             return "workFlowError";
         } else {
@@ -115,8 +115,14 @@ public class PropertyTransferAction extends BaseFormAction {
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(indexNumber))
-            basicProperty = transferOwnerService.getBasicPropertyByUpicNo(indexNumber);
-        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(basicProperty.getActiveProperty());
+            basicproperty = transferOwnerService.getBasicPropertyByUpicNo(indexNumber);
+        
+        if (propertyMutation.getId() != null) {
+            propertyMutation = transferOwnerService.findById(propertyMutation.getId(), false);
+            basicproperty = propertyMutation.getBasicProperty();
+        }
+        
+        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(basicproperty.getActiveProperty());
         this.documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
         addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
         super.prepare();
@@ -143,8 +149,8 @@ public class PropertyTransferAction extends BaseFormAction {
         this.indexNumber = indexNumber;
     }
 
-    public BasicProperty getBasicProperty() {
-        return basicProperty;
+    public BasicProperty getBasicproperty() {
+        return basicproperty;
     }
 
     public List<DocumentType> getDocumentTypes() {
