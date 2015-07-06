@@ -46,5 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationIndexRepository extends JpaRepository<ApplicationIndex, Long> {
 
+	ApplicationIndex findByApplicationNumberAndUlbName(String applicationNumber, String ulbName);
 	
 }

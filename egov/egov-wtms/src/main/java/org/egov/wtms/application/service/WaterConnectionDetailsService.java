@@ -187,36 +187,8 @@ public class WaterConnectionDetailsService {
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
-        createApplicationIndex(savedWaterConnectionDetails);
+        updateIndexes(savedWaterConnectionDetails);
         return savedWaterConnectionDetails;
-    }
-
-    private void createApplicationIndex(final WaterConnectionDetails waterConnectionDetails) {
-        final String strQuery = "select md from EgModules md where md.name=:name";
-        final Query hql = getCurrentSession().createQuery(strQuery);
-        hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
-        
-        AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
-        Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
-        StringBuilder consumerName =  new StringBuilder();
-		if(ownerNameItr.hasNext()) {
-			consumerName.append(ownerNameItr.next().getOwnerName());
-			while(ownerNameItr.hasNext()) {
-				consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
-			}
-		}
-		
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
-                consumerName.toString(), waterConnectionDetails.getConnectionStatus().toString(), "/wtms/view/"+waterConnectionDetails.getApplicationNumber());
-
-        if (waterConnectionDetails.getDisposalDate() != null)
-            applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-        if (waterConnectionDetails.getConnection().getMobileNumber() != null)
-            applicationIndexBuilder.mobileNumber(waterConnectionDetails.getConnection().getMobileNumber());
-        final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
-        applicationIndexService.createApplicationIndex(applicationIndex);
     }
 
     public List<ConnectionType> getAllConnectionTypes() {
@@ -332,11 +304,48 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setApprovalDate(new Date());
             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                 waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
-            	consumerIndexService.createConsumerIndex(waterConnectionDetails);
+            	updateIndexes(waterConnectionDetails);
+            	
         }
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
         return updatedWaterConnectionDetails;
+    }
+    
+    private void updateIndexes(WaterConnectionDetails waterConnectionDetails) {
+    	if(waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
+    		ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+    		applicationIndex.setStatus(waterConnectionDetails.getConnectionStatus().toString());
+    		applicationIndexService.updateApplicationIndex(applicationIndex);
+    		consumerIndexService.createConsumerIndex(waterConnectionDetails);
+    		
+    	} else {
+    		final String strQuery = "select md from EgModules md where md.name=:name";
+            final Query hql = getCurrentSession().createQuery(strQuery);
+            hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
+            
+            AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+            StringBuilder consumerName =  new StringBuilder();
+    		if(ownerNameItr.hasNext()) {
+    			consumerName.append(ownerNameItr.next().getOwnerName());
+    			while(ownerNameItr.hasNext()) {
+    				consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
+    			}
+    		}
+    		
+            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
+                    ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
+                    waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
+                    consumerName.toString(), waterConnectionDetails.getConnectionStatus().toString(), "/wtms/view/"+waterConnectionDetails.getApplicationNumber());
+
+            if (waterConnectionDetails.getDisposalDate() != null)
+                applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
+            if (waterConnectionDetails.getConnection().getMobileNumber() != null)
+                applicationIndexBuilder.mobileNumber(waterConnectionDetails.getConnection().getMobileNumber());
+            final ApplicationIndex applicationIndex = applicationIndexBuilder.build();
+            applicationIndexService.createApplicationIndex(applicationIndex);
+    	}
     }
 }
