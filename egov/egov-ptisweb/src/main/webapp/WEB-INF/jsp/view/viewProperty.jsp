@@ -207,7 +207,7 @@
 		<td class="bluebox">
 			<span class="bold">
 				<s:if test="%{propertyDetail.effective_date != null}">
-					<s:date name="%{propertyDetail.effective_date}" format="d/M/yy"/>
+					<s:date name="%{propertyDetail.effective_date}" format="dd/MM/yyyy"/>
 				</s:if>
 				<s:else>
 					N/A
