@@ -1,0 +1,16 @@
+CREATE SEQUENCE  sq_receiptheader_2010_11;
+CREATE SEQUENCE  sq_receiptheader_2011_12;
+CREATE SEQUENCE  sq_receiptheader_2012_13;
+CREATE SEQUENCE  sq_receiptheader_2013_14;
+CREATE SEQUENCE  sq_receiptheader_2014_15;
+CREATE SEQUENCE  sq_receiptheader_2015_16;
+CREATE SEQUENCE  sq_receiptheader_2016_17;
+CREATE SEQUENCE  sq_receiptheader_2017_18;
+CREATE SEQUENCE  sq_receiptheader_2018_19;
+CREATE SEQUENCE  sq_receiptheader_2019_20;
+CREATE SEQUENCE  sq_receiptheader_2020_21;
+CREATE SEQUENCE  sq_receiptheader_2021_22;
+CREATE SEQUENCE  sq_receiptheader_2022_23;
+CREATE SEQUENCE  sq_receiptheader_2023_24;
+CREATE SEQUENCE  sq_receiptheader_2024_25;
+CREATE SEQUENCE  sq_receiptheader_2025_26;

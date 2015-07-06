@@ -74,6 +74,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
@@ -91,20 +93,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long> {
 
 	private static final Logger LOGGER = Logger.getLogger(ReceiptHeaderService.class);
-	/*private final ReceiptHeaderRepository receiptHeaderRepository;
-
-	@Autowired
-	public ReceiptHeaderService(final ReceiptHeaderRepository receiptHeaderRepository) {
-		this.receiptHeaderRepository = receiptHeaderRepository;
-	}*/
-	
-/*	@PersistenceContext
-    private EntityManager entityManager;
-
-    public Session getSession() {
-        return entityManager.unwrap(Session.class);
-    }*/
-
 	private CollectionsUtil collectionsUtil;
 	private CollectionsNumberGenerator collectionsNumberGenerator;
 	private FinancialsUtil financialsUtil;
@@ -378,48 +366,26 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * @param receiptBulkUpload
 	 */
 	public void startWorkflow(ReceiptHeader receiptHeader, Boolean receiptBulkUpload) throws EGOVRuntimeException {
-		Boolean createVoucherForBillingService = Boolean.TRUE;
-		//for (ReceiptHeader receiptHeader : receiptHeaders) {
-			createVoucherForBillingService = null == receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
-			if (receiptHeader.getState() == null)
-	               
-			receiptHeader.transition(true).start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created - work flow starts")
-			 				.withStateValue(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
-		//}
-		/* TODO: fix me Phoenix comment getSession().flush();
-		transition(receiptHeader, CollectionConstants.WF_ACTION_CREATE_RECEIPT, "Receipt created");
-
+		//Boolean createVoucherForBillingService = Boolean.TRUE;
+		//createVoucherForBillingService = receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
+		if (receiptHeader.getState() == null)
+			receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created")
+			.withStateValue(CollectionConstants.WF_ACTION_CREATE_RECEIPT).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+		
 		LOGGER.debug("Workflow state transition complete");
 
-		if (createVoucherForBillingService) {
+		/*if (createVoucherForBillingService) {
 			//createVouchers(receiptHeader, receiptBulkUpload);
 			transition(receiptHeader, CollectionConstants.WF_ACTION_CREATE_VOUCHER, "Receipt voucher created");
-		}
-
-		if (receiptBulkUpload) {
-			//for (ReceiptHeader receiptHeader : receiptHeaders) {
-				// transition the receipt header workflow to Approved state
-				receiptHeader.transition(true).transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Approval of Data Migration Receipt Complete")
-				.withStateValue(CollectionConstants.WF_ACTION_APPROVE).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
-				// End the Receipt header workflow
-				receiptHeader.transition(true).end().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Data Migration Receipt Approved - Workflow ends")
-					.withStateValue(CollectionConstants.WF_STATE_END).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
-			//}
 		}*/
-	}
-
-	/**
-	 * Transitions the given set of receipt headers with given action
-	 * 
-	 * @param receiptHeaders
-	 *            Set of receipt headers to be transitioned
-	 * @param actionName
-	 *            Action name for the transition
-	 * @param comment
-	 *            Comment for the transition
-	 */
-	public void transition(ReceiptHeader receiptHeader, String actionName, String comment) {
-			receiptHeader.transition(true).transition().withComments(comment).withStateValue(actionName).withDateInfo(new Date());
+		if (receiptBulkUpload) {
+			// transition the receipt header workflow to Approved state
+			receiptHeader.transition(true).transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Approval of Data Migration Receipt Complete")
+			.withStateValue(CollectionConstants.WF_ACTION_APPROVE).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+			// End the Receipt header workflow
+			receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Data Migration Receipt Approved - Workflow ends")
+			.withStateValue(CollectionConstants.WF_STATE_END).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+		}
 	}
 
 	/**
@@ -1400,7 +1366,37 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		instrumentDepositeMap.put("payinid", voucherHeader.getId());
 		return instrumentDepositeMap;
 	}
-
+	
+	public void performWorkflow(String actionName, ReceiptHeader receiptHeader, String remarks) {
+		try {
+			Position operatorPosition =collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
+			if (actionName.equals(CollectionConstants.WF_ACTION_CREATE_RECEIPT)) 
+		        perform(receiptHeader,CollectionConstants.WF_STATE_RECEIPT_CREATED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_CREATE_VOUCHER, operatorPosition, remarks); 
+		        else if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT)) 
+		        perform(receiptHeader, CollectionConstants.WF_STATE_SUBMITTED, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, operatorPosition,remarks);  
+		        else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))  
+		        perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", operatorPosition,remarks); 
+		        else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) 
+		        perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, operatorPosition,remarks); 
+		}
+		catch(ValidationException e)  {
+			LOGGER.error("Receipt Service Exception while workflow transition!",e);
+		}
+	}
+	
+	public void perform(ReceiptHeader receiptHeader, String wfState, String newStatusCode,String  nextAction,Position ownerPosition, String remarks) {
+		receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
+		receiptHeader.transition(true).transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments(remarks)
+		.withStateValue(wfState).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date()).withNextAction(nextAction);
+	if (receiptHeader.getStatus().getCode().equals(
+			CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)) {
+		// Receipt approved. end workflow for this receipt.
+		receiptHeader.transition().end().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt Approved - Workflow ends")
+			.withStateValue(CollectionConstants.WF_STATE_END).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+	}
+	    persistenceService.persist(receiptHeader);  
+	}
+	
 	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
 		this.collectionsUtil = collectionsUtil;
 	}

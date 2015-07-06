@@ -36,7 +36,7 @@
  
    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 --> 
-<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <script>

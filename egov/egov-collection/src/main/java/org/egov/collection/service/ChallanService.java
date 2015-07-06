@@ -97,7 +97,7 @@ public class ChallanService extends PersistenceService<Challan, Long> {
 			String actionName, String remarks) throws EGOVRuntimeException {
 		// to initiate the workflow
 		if (challan.getState() == null) {
-			challan.transition(true)
+			challan.transition()
 					.start()
 					.withSenderName(challan.getCreatedBy().getName())
 					.withComments("Challan Workflow Started")

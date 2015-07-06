@@ -46,7 +46,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -54,16 +57,19 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.springframework.transaction.annotation.Transactional;
+import org.joda.time.DateTime;
 
 @ParentPackage("egov") 
-@Transactional(readOnly=true)
+@Results({
+    @Result(name="searchresult",location="searchReceipt.jsp"),
+    @Result(name=SearchReceiptAction.SUCCESS,location="searchReceipt.jsp")
+  })
 public class SearchReceiptAction extends SearchFormAction {
 
 	private static final long serialVersionUID = 1L;
 	private Integer serviceTypeId=-1;
 	private Integer counterId=-1;
-	private Integer userId=-1;
+	private Long userId=(long) -1;
 	private String instrumentType;
 	private String receiptNumber;
 	private Date fromDate;
@@ -130,7 +136,7 @@ public class SearchReceiptAction extends SearchFormAction {
 	
 	public SearchReceiptAction() {
 		super();
-		addRelatedEntity("serviceType", ServiceDetails.class,"serviceName");
+		addRelatedEntity("serviceType", ServiceDetails.class,"name");
 	}
 	
 	public String reset() {
@@ -146,12 +152,18 @@ public class SearchReceiptAction extends SearchFormAction {
 		return SUCCESS;
 	}
 	
-	public void prepare() {
+	public void prepare() 
+	{
 		super.prepare();
 		setupDropdownDataExcluding();
 		addDropdownData("counterList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_COUNTERS));
-		addDropdownData("instrumentTypeList",getPersistenceService().findAllBy("from InstrumentType i where i.isActive = 1 order by type"));
+		addDropdownData("instrumentTypeList",getPersistenceService().findAllBy("from InstrumentType i where i.isActive = '1' order by type"));
 		addDropdownData("userList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
+	}
+	
+	@Action(value="/receipts/searchReceipt") 
+	public String  execute() {
+		return SUCCESS;
 	}
 	
 	public List getReceiptStatuses () {
@@ -160,6 +172,7 @@ public class SearchReceiptAction extends SearchFormAction {
 				ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
 	}
 	
+	@Action(value="/receipts/searchReceipt-search") 
 	public String search() {
 		target="searchresult";
 		return super.search();
@@ -172,11 +185,11 @@ public class SearchReceiptAction extends SearchFormAction {
 		return target;
 	}
 
-	public Integer getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
@@ -185,7 +198,7 @@ public class SearchReceiptAction extends SearchFormAction {
 		StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
 		StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
 		StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
-		final String orderByString = " order by receipt.createdDate desc";		
+		final String orderByString = " group by receipt.createdDate,receipt.id  order by receipt.createdDate desc";		
 
 		// Get only those receipts whose status is NOT PENDING
 		StringBuilder criteriaString = new StringBuilder(" where receipt.status.code != ? ");
@@ -211,11 +224,11 @@ public class SearchReceiptAction extends SearchFormAction {
 		}
 		if (getFromDate() != null) {
 			criteriaString.append(" and receipt.createdDate >= ? ");
-			params.add(fromDate);
+			params.add(new DateTime(fromDate));
 		}
 		if (getToDate() != null) {
 			criteriaString.append(" and receipt.createdDate < ? ");
-			params.add(DateUtils.add(toDate, Calendar.DATE, 1));
+			params.add(new DateTime(DateUtils.add(toDate, Calendar.DATE, 1)));
 		}
 		if (getServiceTypeId() != -1) {
 			criteriaString.append(" and receipt.service.id = ? ");

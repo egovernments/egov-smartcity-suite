@@ -77,6 +77,7 @@
 	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/collections.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/js/calender.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="/egi/javascript/jquery/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />

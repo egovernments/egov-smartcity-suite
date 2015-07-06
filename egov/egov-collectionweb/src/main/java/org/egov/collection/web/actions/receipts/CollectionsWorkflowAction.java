@@ -54,7 +54,6 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.lib.security.terminal.model.Location;
 
 /**
@@ -119,7 +118,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	/**
 	 * Workflow service for changing the state of the receipt
 	 */
-	private WorkflowService<ReceiptHeader> workflowService;
 
 	/**
 	 * The collections utility object
@@ -188,15 +186,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 	 */
 	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
 		this.collectionsUtil = collectionsUtil;
-	}
-
-	/**
-	 * @param workflow
-	 *            the receipt workflow service
-	 */
-	public void setReceiptWorkflowService(
-			WorkflowService<ReceiptHeader> workflow) {
-		this.workflowService = workflow;
 	}
 
 	/**
@@ -395,20 +384,9 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 		for (Long receiptId : receiptIds) {
 			// Get the next receipt that is to be updated
 			ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
-
-			// Transition the workflow state with action "submit_for_approval"
-			ReceiptHeader changedReceipt = workflowService.transition(wfAction,
-					receiptHeader, remarks);
-			if (changedReceipt.getStatus().getCode().equals(
-					CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)) {
-				// Receipt approved. end workflow for this receipt.
-				changedReceipt.transition(true).start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt Approved - Workflow ends")
- 				.withStateValue(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
-			}
+			receiptHeaderService.performWorkflow(wfAction,receiptHeader, remarks);
 		}
-
-		// Add the selected receipt ids to session. This is used later by the
-		// cash/cheque submission reports
+		// Add the selected receipt ids to sereceiptHeader
 		// Need to find a better mechanism to achieve this.
 		getSession().put(CollectionConstants.SESSION_VAR_RECEIPT_IDS,
 				receiptIds);

@@ -137,7 +137,7 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
 		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
 		//
-		final ActionService rbacService = (ActionService) provider.getBean("actionDao");
+		final ActionService rbacService = (ActionService) provider.getBean("actionService");
 
 		if (this.actionName != null) {
 			action = rbacService.getActionByName(this.actionName);
