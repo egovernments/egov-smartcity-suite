@@ -260,5 +260,8 @@ public interface BasicProperty {
 	
 	void removePropertyOwners(PropertyOwnerInfo ownerInfo);
 	
+	boolean isUnderWorkflow();
+
+	void setUnderWorkflow(boolean underWorkflow);
 
 }

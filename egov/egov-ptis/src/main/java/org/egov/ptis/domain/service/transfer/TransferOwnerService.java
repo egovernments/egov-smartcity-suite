@@ -52,7 +52,6 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.dcb.bean.Payment;
@@ -70,6 +69,7 @@ import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -92,6 +92,9 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     @Qualifier("basicPropertyService")
     private PersistenceService<BasicProperty, Long> basicPropertyService;
+    
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
     
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -117,10 +120,9 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Transactional
     public void initiatePropertyTransfer(PropertyMutation propertyMutation, String upicNo) {
         processAndStoreDocument(propertyMutation.getDocuments());
-        PropertyImpl propertyImpl = getActiveProperty(upicNo);
-        BasicProperty basicProperty = propertyImpl.getBasicProperty();
+        BasicProperty basicProperty = getBasicPropertyByUpicNo(upicNo);
         propertyMutation.setBasicProperty(basicProperty);
-        propertyMutation.setProperty(propertyImpl);
+        propertyMutation.setProperty(basicProperty.getActiveProperty());
         propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
@@ -132,6 +134,10 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 
     public PropertyImpl getActiveProperty(String upicNo) {
         return propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", upicNo, STATUS_ISACTIVE);
+    }
+    
+    public BasicProperty getBasicPropertyByUpicNo(String upicNo) {
+        return basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
     }
     
     public String getCurrentPropertyTax(Property propertyImpl) {

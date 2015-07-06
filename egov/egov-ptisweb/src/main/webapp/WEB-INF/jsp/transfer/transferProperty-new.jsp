@@ -92,8 +92,8 @@
 							<s:text name="prop.Id"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="propertyImpl.basicProperty.upicNo" default="N/A"/></span>
-							<s:hidden name="indexNumber" value="%{propertyImpl.basicProperty.upicNo}"/>
+							<span class="bold"><s:property value="basicProperty.upicNo" default="N/A"/></span>
+							<s:hidden name="indexNumber" value="%{basicProperty.upicNo}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;
@@ -108,13 +108,13 @@
 							<s:text name="PropertyAddress"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="propertyImpl.basicProperty.address" /></span>
+							<span class="bold"><s:property value="basicProperty.address" /></span>
 						</td>
 						<td class="bluebox">
 							<s:text name="Zone"></s:text> :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.zone.name" /></span>
+							<span class="bold"><s:property value="basicProperty.propertyID.zone.name" /></span>
 						</td>
 					</tr>
 					
@@ -126,13 +126,13 @@
 							<s:text name="Ward" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.ward.name" /></span>
+							<span class="bold"><s:property value="basicProperty.propertyID.ward.name" /></span>
 						</td>
 						<td class="greybox">
 							<s:text name="block" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"><s:property value="propertyImpl.basicProperty.propertyID.area.name" /></span>
+							<span class="bold"><s:property value="basicProperty.propertyID.area.name" /></span>
 						</td>
 					</tr>
 					
@@ -160,7 +160,7 @@
 										<th class="bluebgheadtd">Email Address</th>
 
 									</tr>
-									<s:iterator value="propertyImpl.basicProperty.propertyOwnerInfo" status="status">
+									<s:iterator value="basicProperty.propertyOwnerInfo" status="status">
 									<tr>
 										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>

@@ -39,12 +39,8 @@
  */
 package org.egov.ptis.actions.transfer;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -54,8 +50,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.service.transfer.TransferOwnerService;
@@ -88,7 +84,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private String wfErrorMsg;
     private String currentPropertyTax;
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private PropertyImpl propertyImpl;
+    private BasicProperty basicProperty;
     
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -97,10 +93,8 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/new")
     public String showTransferForm() {
-        final Map<String, String> currentWorkflowInfo = propertyImpl.getBasicProperty().getPropertyWfStatus();
-        if ("TRUE".equalsIgnoreCase(currentWorkflowInfo.get(WFSTATUS))) {
-            wfErrorMsg = (String.format("Could not do property transfer now, property is undergoing some workflow in %s's inbox.",
-                    currentWorkflowInfo.get(WFOWNER)));
+        if (basicProperty.isUnderWorkflow()) {
+            wfErrorMsg = ("Could not do property transfer now, property is undergoing some workflow.");
             return "workFlowError";
         } else {
             final boolean anyTaxDues = false; // TODO add check Ptax and Wtax for dues
@@ -120,12 +114,12 @@ public class PropertyTransferAction extends BaseFormAction {
     
     @Override
     public void prepare() {
-        super.prepare();
         if (StringUtils.isNotBlank(indexNumber))
-            propertyImpl = transferOwnerService.getActiveProperty(indexNumber);
-        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(propertyImpl);
+            basicProperty = transferOwnerService.getBasicPropertyByUpicNo(indexNumber);
+        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(basicProperty.getActiveProperty());
         this.documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
         addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
+        super.prepare();
     }
 
     public String getCurrentPropertyTax() {
@@ -149,8 +143,8 @@ public class PropertyTransferAction extends BaseFormAction {
         this.indexNumber = indexNumber;
     }
 
-    public PropertyImpl getPropertyImpl() {
-        return propertyImpl;
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
     }
 
     public List<DocumentType> getDocumentTypes() {
