@@ -39,6 +39,22 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <%@ include file="/includes/taglibs.jsp"%>
+<script>
+function popualateArea() {
+	alert("area")
+	var width = jQuery("#width").val();
+	var length = jQuery("#length").val();
+	if(width != null && length != null) {
+		alert (width);
+		var area = width * length;
+		jQuery("#assessableArea").val(area);
+		}
+	else {
+		alert("Please select width and length for floor!")
+		}
+	
+}
+</script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0"
 	class="tablebottom" id="floorDetails">
 	<tr>
@@ -130,7 +146,7 @@
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield
+					<s:textfield autocomplete="off"
 						name="propertyDetail.floorDetails[0].occupancyDate" data-optional="0" data-errormsg="Ocuupancy date is required!"
 						id="propertyDetail.floorDetails[0].occupancyDate" value="%{propertyDetail.floorDetails[0].occupancyDate}" size="10"
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
@@ -139,7 +155,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetails[0].extraField5"
-						id="length" size="5" maxlength="7" data-optional="1"
+						id="length" size="5" maxlength="7" data-optional="0" data-errormsg="Length is required!"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');"
 						value="%{propertyDetail.floorDetails[0].extraField5}"
 						cssStyle="width:100%" />
@@ -149,8 +165,8 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
-						id="width" size="5" maxlength="7" data-optional="1" 
-						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');"
+						id="width" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');popualateArea();"
 						value="%{propertyDetail.floorDetails[0].extraField4}"
 						cssStyle="width:100%" />
 				</div>
@@ -160,9 +176,8 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield
-						name="propertyDetail.floorDetails[0].builtUpArea.area"
-						maxlength="15" size="10" id="assessableArea" data-optional="0" data-errormsg="built up area is required!"
-						value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
+						name="propertyDetail.floorDetails[0].builtUpArea.area" readOnly="true"
+						maxlength="15" size="10" id="assessableArea" value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
 				</div>
@@ -295,8 +310,8 @@
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-					<s:date name="%{propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
-						<s:textfield
+					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
+						<s:textfield autocomplete="off"
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
 							id="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
@@ -319,7 +334,7 @@
 						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" id="width"
 							size="5" maxlength="7"
-							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');"
+							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');popualateArea()"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField4}"
 							cssStyle="width:100%" />
 					</div>

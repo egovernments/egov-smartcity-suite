@@ -398,7 +398,7 @@ function finishAllChangesMsg(button) {
   <s:token />
   
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
-  <s:hidden name="mode" value="form" />
+ <%--  <s:hidden name="mode" value="form" /> --%>
   <div class="formmainbox">
 		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -433,6 +433,7 @@ function finishAllChangesMsg(button) {
 							onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 					<td><input type="button" name="button2" id="button2"
 							value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
+						mode:<s:property value="%{mode}"/>
 					<s:if test="mode=='create'">
 					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action',this);"/>&nbsp;			
 					<input type="button" class="button" onclick="window.close();" value="Close">

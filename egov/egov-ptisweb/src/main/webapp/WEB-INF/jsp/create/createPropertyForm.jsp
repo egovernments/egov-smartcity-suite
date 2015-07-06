@@ -1,13 +1,24 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="propTypeId"
+				id="propTypeId" listKey="id" listValue="type"
+				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
+				cssClass="selectnew" onchange="toggleFloorDetails();" />
+		</td>
+	</tr>
    <tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="20%"><s:text name="application.no"></s:text><span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
 		   <s:textfield name="applicationNo"
-				id="applicationNo" value="%{basicProperty.applicationNo}" size="12" maxlength="12"></s:textfield>
+				id="applicationNo" value="%{basicProperty.applicationNo}" autocomplete="off" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -22,19 +33,6 @@
 	    </s:else>
 		</td>
 	</tr>
-
-	<%-- <tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="gender"></s:text>:</td>
-		<td class="greybox" width=""><s:select name="gender" id="gender"
-				headerValue="Choose" headerKey="0"
-				list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
-			</s:select></td>
-		<td class="greybox" width="25%"><s:text name="fatherhusbandname"></s:text>
-			:</td>
-		<td class="greybox"><s:textfield name="guardname" id="guardname"
-				maxlength="30"></s:textfield></td>
-	</tr> --%>
 
 	<tr>
 	<td class="greybox" width="5%">&nbsp;</td>
@@ -117,7 +115,7 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" autocomplete="off" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -131,7 +129,7 @@
 		<td class="greybox" width="25%"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
 		<s:date name="regdDocDate" var="docDate" format="dd/MM/yyyy" />
-		  <s:textfield name="regdDocDate" id="regdDocDate" value="%{#docDate}" size="12" maxlength="12" cssClass="datepicker"></s:textfield>
+		  <s:textfield name="regdDocDate" id="regdDocDate" value="%{#docDate}" size="12" autocomplete="off" maxlength="12" cssClass="datepicker"></s:textfield>
 		</td>
 	</tr>
 	
@@ -212,7 +210,7 @@
 				headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name"
 				list="dropdownData.floorType" value="%{propertyDetail.floorType.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew" />
 		</td>
 		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
 			class="mandatory1">*</span> :</td>
@@ -220,7 +218,7 @@
 				headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name"
 				list="dropdownData.roofType" value="%{propertyDetail.roofType.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew"/>
 		</td>
 	</tr>
 	
@@ -232,7 +230,7 @@
 				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
 				list="dropdownData.wallType"  value="%{propertyDetail.wallType.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew"/>
 		</td>
 		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
 			class="mandatory1">*</span> :</td>
@@ -240,7 +238,7 @@
 				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
 				list="dropdownData.woodType" value="%{propertyDetail.woodType.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew"/>
 		</td>
 	</tr>
 	
@@ -253,20 +251,6 @@
 				<span class="bold"><s:text name="title.ownership"/></span>
 			</div>
 		</td>
-	</tr>
-	
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-		
 	</tr>
 	
 	<tr>
@@ -318,12 +302,12 @@
 		</td>
 	</tr>
 
-	<tr>
+	<tr id="completionDate">
 		<td class="bluebox" width="5%">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox" width="">
 		<s:date name="%{basicProperty.propOccupationDate}" var="occupationDate" format="dd/MM/yyyy" />
-		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
+		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
 	

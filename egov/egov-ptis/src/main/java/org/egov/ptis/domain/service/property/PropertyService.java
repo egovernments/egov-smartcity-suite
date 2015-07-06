@@ -279,15 +279,6 @@ public class PropertyService  {
 				for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 					if (floor != null) {
 						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
-						/*
-						if ("-1".equals(floor.getExtraField7())) {
-							floor.setExtraField7(null);
-						}
-
-						if ("-1".equalsIgnoreCase(floor.getTaxExemptedReason())) {
-							floor.setTaxExemptedReason(null);
-						}*/
-
 						PropertyTypeMaster unitType = null;
 						PropertyUsage usage = null;
 						PropertyOccupation occupancy = null;

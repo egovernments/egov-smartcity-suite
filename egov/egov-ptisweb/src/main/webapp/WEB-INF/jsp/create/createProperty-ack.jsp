@@ -59,13 +59,15 @@
 		<br/>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<s:if test="%{basicProperty.upicNo!=null && !basicProperty.upicNo.isEmpty()}">
+		  <s:if test="mode == 'create'">
+			<s:if test="%{basicProperty.applicationNo != null && !basicProperty.applicationNo.isEmpty()}">
 				<td colspan="5" style="font-size: 15px;" align="center">
 		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
-		        	<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.upicNo}"/>' >
-		        		<s:property value="%{basicProperty.upicNo}"/>
+		        	<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.applicationNo}"/>' >
+		        		<s:property value="%{basicProperty.applicationNo}"/>
 		        	</a>
 		        </td>		    
+		   	</s:if>
 		   	</s:if>
 	        <s:else>
 		       	<td colspan="5" style="font-size: 15px;" align="center">
@@ -73,22 +75,12 @@
 		        </td>
 	        </s:else>
 		</tr>
+		<tr>
+		 <td><input type="button" class="button" onclick="window.close();" value="Close"></td>
+		 </tr>
 		</table>
 		<br/>
 	</div>
-	<div class="buttonbottom" align="center">
-			<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
-				<td><s:submit value="Create" name="Create" id="Create"  method="newForm" cssClass="buttonsubmit" /></td>
-			</s:if>
-			<s:if test="%{basicProperty.upicNo!=null && !basicProperty.upicNo.isEmpty()}">
-				<td>
-					<input type="button" name="button2" id="button2"
-							value="GenerateCalSheet" class="button"
-							onclick="window.location='../notice/propertyIndividualCalSheet!generateCalSheet.action?indexNum=<s:property value="%{basicProperty.upicNo}"/>';" />
-				</td>
-			</s:if>
-			<td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
-		</div>
   </s:push>
   </s:form>
   </body>

@@ -102,6 +102,7 @@ import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
@@ -292,15 +293,13 @@ public class CreatePropertyAction extends WorkflowAction {
 		long startTimeMillis = System.currentTimeMillis();
 		BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE, isfloorDetailsRequired);
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
-		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
-		basicProperty.setUpicNo(indexNum);
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.persist(basicProperty);
 		setBasicProp(basicProperty);
-		setAckMessage("Property Created Successfully in System");
+		setAckMessage("Property Created Successfully in System with application number : " );
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 		LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
 		LOGGER.debug("create: Property creation ended");
@@ -350,6 +349,15 @@ public class CreatePropertyAction extends WorkflowAction {
 		long startTimeMillis = System.currentTimeMillis();
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
+		
+		if (property.getPropertyDetail().getApartment()!=null && property.getPropertyDetail().getApartment().getId() != null) {
+			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
+					property.getPropertyDetail().getApartment().getId());
+			property.getPropertyDetail().setApartment(apartment);;
+		} else {
+			property.getPropertyDetail().setApartment(null);
+		}
+		
 		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			User user = securityUtils.getCurrentUser();
 			if (floor.getId() == null) {
@@ -372,7 +380,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicPropertyService.persist(basicProp);
 		setDocNumber(getDocNumber());
 		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
-		setAckMessage("Property forwarded successfully to " + approverUser.getUsername());
+		setAckMessage("Property forwarded successfully to " + approverUser.getUsername() + " with application Number ");
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 		LOGGER.debug("forward: Property forwarded successfully to " + approverUser.getUsername()
 				+ "; Time taken(ms) = " + elapsedTimeMillis);
@@ -387,12 +395,14 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("approve: Property: " + property);
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
 		property.setStatus(STATUS_ISACTIVE);
+		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
+		basicProp.setUpicNo(indexNum);
 		setWardId(basicProp.getPropertyID().getWard().getId());
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.update(basicProp);
-		setAckMessage("Property Approved Successfully in System with Index Number : ");
+		setAckMessage("Property Approved Successfully by : " + userService.getUserById(securityUtils.getCurrentUser().getId()));
 		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("approve: Property approval ended");
 		return RESULT_ACK;
@@ -405,8 +415,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.persist(basicProp);
-		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : " + property.getCreatedBy().getUsername()
-				+ " with Index Number : ");
+		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : " + property.getCreatedBy().getUsername());
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("reject: Property rejection ended");
 
@@ -832,6 +841,9 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", ParcelID:" + parcelID
 				+ ", MutationId: " + mutationId + ", PartNo: " + partNo);
 
+		if(isBlank(getApplicationNo())) {
+			addActionError(getText("mandatory.applicationNo"));
+		}
 		if (isBlank(vacantLandNo)) {
 			addActionError(getText("mandatory.vacantLandNo"));
 		}
@@ -852,17 +864,25 @@ public class CreatePropertyAction extends WorkflowAction {
 				addActionError(getText("mandatory.ownerName"));
 			}
 		}
-		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
-			if (floor != null && floor.getBuiltUpArea() == null) {
-				addActionError(getText("mandatory.assbleArea"));
-			}
-			if (floor != null && floor.getPropertyOccupation() == null
-					|| (floor.getPropertyOccupation().getId().toString()).equals("-1")) {
-				addActionError(getText("mandatory.floor.occ"));
+		if (null != getPropTypeId()) {
+			PropertyTypeMaster propType = (PropertyTypeMaster) basicPropertyService
+					.find("from PropertyTypeMaster  where id = ?", Long.valueOf(getPropTypeId()));
+			if (!propType.getCode().equals(PROPTYPE_OPEN_PLOT)) {
+				for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+					if (floor != null && floor.getBuiltUpArea() == null) {
+						addActionError(getText("mandatory.assbleArea"));
+					}
+					if (floor != null && floor.getPropertyOccupation() != null
+							&& floor.getPropertyOccupation().getId() == null) {
+						addActionError(getText("mandatory.floor.occ"));
+					}
+				}
 			}
 
 		}
-
+		/*if(property.getPropertyDetail().getPropertyType().equals(APARTMENT_PROPERTY)){
+			addActionError(getText("mandatory.apartment.complex"));
+		}*/
 		// addActionError(getText("mandatory.assbleArea"));
 
 		if (getMutationId() == null || getMutationId() == -1) {

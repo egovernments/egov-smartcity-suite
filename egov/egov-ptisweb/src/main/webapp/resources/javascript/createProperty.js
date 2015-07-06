@@ -321,7 +321,7 @@ function appendAddRemoveBtn() {
 	
 	if (lasttd != undefined || lasttd != null || lasttd != "") {
 		jQuery(lasttd).show();
-	}	
+	}
 }
 
 function resetNonResidentialDetails(propType, floorRow) {
@@ -622,21 +622,21 @@ function enableAlvForNonGovtPropTypes() {
 }
 
 function toggleFloorDetails() {
-		var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
-		if (propType == "State Government" || propType == "Central Government") {
-			if (document.forms[0].isfloorDetailsRequired.checked == true) {
-				document.getElementById("floorHeaderRow").style.display = "none";
-				document.getElementById("floorDetails").style.display = "none";
-				document.getElementById("docRow").style.display = "";			
-				document.getElementById("dateOfCompletion").readOnly = false;
-				document.getElementById("dateOfCompletion").className = "";
-			} else {
-				document.getElementById("floorHeaderRow").style.display = "table-row";
-				document.getElementById("floorDetails").style.display = "table-row-group";
-				document.getElementById("docRow").style.display = "none";
-			}
-		}
+	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
+	if (propType == "Open Plot") {
+		document.getElementById("floorHeaderRow").style.display = "none";
+		document.getElementById("floorDetails").style.display = "none";
+		document.getElementById("completionDate").style.display = "none";
+	} else {
+		document.getElementById("floorHeaderRow").style.display = "table-row";
+		document.getElementById("floorDetails").style.display = "table-row-group";
+		document.getElementById("completionDate").style.display = "";
 	}
+	if (propType == "Apartments") {
+		alert("Please select Apartment/Complex Name");
+	}
+}
+
 
 function resetGovtFloorDtls() 
     {
