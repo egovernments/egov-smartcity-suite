@@ -103,7 +103,8 @@ $(document).ready(function()
 	
 	try { 
 		$(".datepicker").datepicker({
-			format: "dd/mm/yyyy"
+			format: "dd/mm/yyyy",
+			autoclose: true 
 		}); 
 
 		var d = new Date();
@@ -138,6 +139,27 @@ $(document).ready(function()
 	$(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
         $(".alert-success").alert('close');
     });
+
+	$('.upload-file').change(function(e){
+		var fileInput = $(this);
+   		var maxSize = 20971520; //file size  in bytes(20MB)
+		var inMB = maxSize/1024/1024;
+		if(fileInput.get(0).files.length){
+			var fileSize = this.files[0].size; // in bytes
+			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
+			if(charlen > 50){
+				alert('File length should not exceed 50 characters!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;			
+			}else if(fileSize > maxSize){
+				alert('File size should not exceed '+inMB+' MB!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;
+			    }
+		
+			
+		}
+	});
 	
 	/*$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
         $(".alert-danger").alert('close');
