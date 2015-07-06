@@ -240,7 +240,7 @@ Note: This system is supported only on Linux environment. Supported browser are-
 [Git]: http://help.github.com/set-up-git-redirect
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.0.CR1.zip
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
