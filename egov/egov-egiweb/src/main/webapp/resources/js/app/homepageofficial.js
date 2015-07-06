@@ -86,7 +86,7 @@ $(document).ready(function()
 	        });
 	        
 	});
-	var tableContainer1 = $("#official_inbox"); 
+	
 	worklist();
 	
 	$("#official_inbox").on('click','tbody tr td i',function(e) {
@@ -172,64 +172,64 @@ $(document).ready(function()
 				$('#retype-pass').addClass('error');
 			}
 		}
-	});
+	});	
 	
-	//common ajax functions for worklist, drafts and notifications 
-	function worklist(){
-		tableContainer1 = $("#official_inbox"); 
-		tableContainer1.dataTable({
-			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"bDestroy": true,
-			"autoWidth": false,
-			"ajax": "inbox",
-				"columns": [
-				{ "data": "date","width": "20%" },
-				{ "data": "sender","width": "15%" },
-				{ "data": "task","width": "20%" },
-				{ "data": "status","width": "20%" },
-				{ "data": "details","width": "20%" },
-				{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
-				{ "data": "id","visible": false, "searchable": false },
-				{ "data": "link","visible": false, "searchable": false }
-			] 
-		});
-	}
+});
 
-	function drafts(){
-		tableContainer1 = $("#official_drafts"); 
-		tableContainer1.dataTable({
-			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"bDestroy": true,
-			"autoWidth": false,
-			"ajax": "inbox/draft",
+//common ajax functions for worklist, drafts and notifications 
+function worklist(){
+	tableContainer1 = $("#official_inbox"); 
+	tableContainer1.dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"bDestroy": true,
+		"autoWidth": false,
+		"ajax": "inbox",
 			"columns": [
 			{ "data": "date","width": "20%" },
 			{ "data": "sender","width": "15%" },
 			{ "data": "task","width": "20%" },
 			{ "data": "status","width": "20%" },
 			{ "data": "details","width": "20%" },
+			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
 			{ "data": "id","visible": false, "searchable": false },
 			{ "data": "link","visible": false, "searchable": false }
 		] 
 	});
-	}
+}
 
-	function notifications(){
-		tableContainer1 = $("#official_notify");
-		tableContainer1.dataTable({
-			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"bDestroy": true,
-			"autoWidth": false
-		});
-	}
-	
+function drafts(){
+	tableContainer1 = $("#official_drafts"); 
+	tableContainer1.dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"bDestroy": true,
+		"autoWidth": false,
+		"ajax": "inbox/draft",
+		"columns": [
+		{ "data": "date","width": "20%" },
+		{ "data": "sender","width": "15%" },
+		{ "data": "task","width": "20%" },
+		{ "data": "status","width": "20%" },
+		{ "data": "details","width": "20%" },
+		{ "data": "id","visible": false, "searchable": false },
+		{ "data": "link","visible": false, "searchable": false }
+	] 
 });
+}
+
+function notifications(){
+	tableContainer1 = $("#official_notify");
+	tableContainer1.dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"bDestroy": true,
+		"autoWidth": false
+	});
+}
 
 function inboxloadmethod(){
 	//alert('came to my parent'+focussedmenu);
