@@ -141,10 +141,14 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream() {
 		try {
-			return getImageAsStream((String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0));
+			return getImageAsStream(fetchLogo());
 		} catch (final HibernateException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
+	}
+
+	public static String fetchLogo() {
+		return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
 	}
 	
 	public static String getCityName() {

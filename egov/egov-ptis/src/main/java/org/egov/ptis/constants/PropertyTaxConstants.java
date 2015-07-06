@@ -1048,4 +1048,8 @@ public interface PropertyTaxConstants {
 	public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
 	public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
 	public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
+	
+	public static final String NOTICE6 = "Notice6";
+	public static final String REPORT_TEMPLATENAME_NOTICE6 = "specialNotice";
+	public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
 }

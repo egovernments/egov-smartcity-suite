@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -129,6 +130,18 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.struts2.ServletActionContext;
+import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.ptis.utils.PTISCacheManager;
+import org.egov.ptis.utils.PTISCacheManagerInteface;
+import org.egov.ptis.bean.PropertyAckNoticeInfo;
 
 /**
  * @author parvati
@@ -140,7 +153,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
 		@Result(name = "ack", location = "create/createProperty-ack.jsp"),
-		@Result(name = "view", location = "create/createProperty-view.jsp") })
+		@Result(name = "view", location = "create/createProperty-view.jsp"),
+		@Result(name = "printAck", location = "create/createProperty-printAck.jsp")})
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
@@ -243,7 +257,10 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String regdDocNo;
 	private Date regdDocDate;
 	private String mode = CREATE;
-
+	public static final String PRINTACK = "printAck";
+	private ReportService reportService;
+	private Integer reportId = -1;
+	
 	@Autowired
 	private UserService userService;
 
@@ -1081,6 +1098,31 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from prepareUsageList");
 	}
 
+	@SkipValidation
+	@Action(value="/createProperty-printAck")
+	public String printAck(){
+		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String url = request.getScheme().concat("://").concat(request.getServerName()).concat(":").concat(String.valueOf(request.getServerPort()));
+		String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
+		Map<String, Object> reportParams = new HashMap<String, Object>();
+		ackBean.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp));
+		ackBean.setOwnerAddress(ptisCacheMgr.buildAddressFromAddress(basicProp.getAddress()));
+		ackBean.setApplicationDate(basicProp.getCreatedDate());
+		ackBean.setApplicationNo(basicProp.getApplicationNo());
+		ackBean.setApprovedDate(property.getState().getCreatedDate().toDate());
+		Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate().toDate(), Calendar.DAY_OF_MONTH, 15);
+		ackBean.setNoticeDueDate(tempNoticeDate);
+		reportParams.put("logoPath", imagePath);
+		reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
+		ReportRequest reportInput = new ReportRequest("createProperty_ack",ackBean, reportParams);
+		reportInput.setReportFormat(FileFormat.PDF);
+		ReportOutput reportOutput = reportService.createReport(reportInput);  
+		reportId = ReportViewerUtil.addReportToSession(reportOutput,getSession());
+		return PRINTACK;
+	}
+	
 	@Override
 	public PropertyImpl getProperty() {
 		return property;
@@ -1772,4 +1814,15 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.propWF = propWF;
 	}
 
+	public void setReportService(ReportService reportService) {
+		this.reportService = reportService;
+	}
+
+	public Integer getReportId() {
+		return reportId;
+	}
+
+	public void setReportId(Integer reportId) {
+		this.reportId = reportId;
+	}
 }
