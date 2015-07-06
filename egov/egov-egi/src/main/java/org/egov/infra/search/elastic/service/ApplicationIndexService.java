@@ -85,19 +85,18 @@ public class ApplicationIndexService {
 		return applicationIndex;
 	}
 	
-	public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
-		
-		CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
-		return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getCityName());
-    }
-	
 	@Transactional
 	@Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
 	public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
 		
 		applicationIndexRepository.save(applicationIndex);
-		
 		return applicationIndex;
 	}
+	
+	public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
+		
+		CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
+		return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getCityName());
+    }
 
 }
