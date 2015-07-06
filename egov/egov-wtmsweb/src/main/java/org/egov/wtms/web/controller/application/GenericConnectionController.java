@@ -152,5 +152,12 @@ public abstract class GenericConnectionController {
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
+    
+    protected boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
+        if (!applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
+                && applicationDocument.getDocumentDate() == null)
+            return false;
+        return true;
+    }
 
 }

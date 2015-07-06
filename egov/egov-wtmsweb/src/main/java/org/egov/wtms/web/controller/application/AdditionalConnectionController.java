@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -60,52 +60,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class NewConnectionController extends GenericConnectionController {
-
-    private final WaterConnectionDetailsService waterConnectionDetailsService;
-    private final ApplicationTypeService applicationTypeService;
-    private final ConnectionDemandService connectionDemandService;
+public class AdditionalConnectionController extends GenericConnectionController{
 
     @Autowired
-    public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
-            final SmartValidator validator) {
-        this.waterConnectionDetailsService = waterConnectionDetailsService;
-        this.applicationTypeService = applicationTypeService;
-        this.connectionDemandService = connectionDemandService;
-    }
-
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
+    
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
-            @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
-        return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+            @ModelAttribute final WaterConnectionDetails addConnection) {
+        addConnection.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
+        return waterConnectionDetailsService.getAllActiveDocumentNames(addConnection.getApplicationType());
     }
-
-    @RequestMapping(value = "/newConnection-newform", method = GET)
-    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        return "newconnection-form";
+    
+    @RequestMapping(value = "/addconnection/{applicationNumber}", method = GET)
+    public String showAdditionalApplicationForm(final Model model,@PathVariable final String applicationNumber) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCode(applicationNumber);
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("addConnection",new WaterConnectionDetails());
+        model.addAttribute("mode", "addconnection");
+        return "addconnection-form";
     }
-
-    @RequestMapping(value = "/newConnection-create", method = POST)
-    public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    
+    @RequestMapping(value = "/addConnection-create", method = POST)
+    public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request) {
 
-        validatePropertyID(waterConnectionDetails, resultBinder);
-
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
-        if (!waterConnectionDetails.getApplicationDocs().isEmpty())
-            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
+        if (!addConnection.getApplicationDocs().isEmpty())
+            for (final ApplicationDocuments applicationDocument : addConnection.getApplicationDocs()) {
                 if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
                     final String fieldError = "applicationDocs[" + i + "].documentNumber";
                     resultBinder.rejectValue(fieldError, "documentNumber.required");
@@ -119,12 +118,12 @@ public class NewConnectionController extends GenericConnectionController {
             }
 
         if (resultBinder.hasErrors())
-            return "newconnection-form";
+            return "addconnection-form";
 
-        waterConnectionDetails.getApplicationDocs().clear();
-        waterConnectionDetails.setApplicationDocs(applicationDocs);
+        addConnection.getApplicationDocs().clear();
+        addConnection.setApplicationDocs(applicationDocs);
 
-        processAndStoreApplicationDocuments(waterConnectionDetails);
+        processAndStoreApplicationDocuments(addConnection);
 
         Long approvalPosition = 0l;
         String approvalComent = "";
@@ -135,14 +134,12 @@ public class NewConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition,
                 approvalComent);
-        
-        return "redirect:/application/application-success?applicationNumber="
-                + waterConnectionDetails.getApplicationNumber();
+        return "";
     }
-
-    @RequestMapping(value = "/application-success", method = GET)
+    
+    @RequestMapping(value = "/addConnection-success", method = GET)
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
         if (request.getParameter("applicationNumber") != null)
@@ -156,14 +153,5 @@ public class NewConnectionController extends GenericConnectionController {
 
     }
 
-    private void validatePropertyID(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
-        if (waterConnectionDetails.getConnection() != null
-                && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
-                && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            final String errorMessage = waterConnectionDetailsService
-                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (errorMessage != null && !errorMessage.equals(""))
-                errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
-        }
-    }
+
 }

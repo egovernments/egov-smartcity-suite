@@ -54,4 +54,5 @@ public class WaterTaxConstants {
     public static final String WATERTAX_SECURITY_CHARGE="WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE="WTAXDONATION";
     public static final String CONNECTION_FEE="Connection fee";
+    public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
 }
