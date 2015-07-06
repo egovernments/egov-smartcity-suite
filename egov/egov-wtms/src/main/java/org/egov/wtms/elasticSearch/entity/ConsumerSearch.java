@@ -80,4 +80,76 @@ public class ConsumerSearch implements Indexable {
 		this.totalDue = totalDue;
 	}
 
+
+	/**
+	 * @return the zone
+	 */
+	public String getZone() {
+		return zone;
+	}
+
+
+	/**
+	 * @return the ward
+	 */
+	public String getWard() {
+		return ward;
+	}
+
+
+	/**
+	 * @return the consumerCode
+	 */
+	public String getConsumerCode() {
+		return consumerCode;
+	}
+
+
+	/**
+	 * @return the propertyId
+	 */
+	public String getPropertyId() {
+		return propertyId;
+	}
+
+
+	/**
+	 * @return the bpaId
+	 */
+	public String getBpaId() {
+		return bpaId;
+	}
+
+
+	/**
+	 * @return the mobileNumber
+	 */
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+
+	/**
+	 * @return the locality
+	 */
+	public String getLocality() {
+		return locality;
+	}
+
+
+	/**
+	 * @return the usageType
+	 */
+	public String getUsageType() {
+		return usageType;
+	}
+
+
+	/**
+	 * @return the totalDue
+	 */
+	public BigDecimal getTotalDue() {
+		return totalDue;
+	}
+
 }

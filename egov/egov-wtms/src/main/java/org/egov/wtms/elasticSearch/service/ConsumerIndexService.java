@@ -39,10 +39,13 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
+import java.util.Iterator;
+
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.elasticSearch.entity.ConsumerSearch;
@@ -59,7 +62,7 @@ public class ConsumerIndexService {
     private PropertyExternalService propertyExternalService;
 	
 	@Indexing(name = Index.WATERTAX, type = IndexType.CONNECTIONSEARCH)
-	public void createConsumerIndex(WaterConnectionDetails waterConnectionDetails) {
+	public ConsumerSearch createConsumerIndex(WaterConnectionDetails waterConnectionDetails) {
 		ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection().getConsumerCode(), 
 				waterConnectionDetails.getConnection().getMobileNumber(),waterConnectionDetails.getUsageType().getName());
 		
@@ -69,8 +72,14 @@ public class ConsumerIndexService {
 		consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
 		consumerSearch.setLocality(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
 		consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
-		consumerSearch.setConsumerName(assessmentDetails.getOwnerNames().iterator().next().getOwnerName());
-		assessmentDetails.getOwnerNames().forEach(owner -> consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(",".concat(owner.getOwnerName()))));
-		
+		Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+		if(ownerNameItr.hasNext()) {
+			consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());
+			while(ownerNameItr.hasNext()) {
+				consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(",".concat(ownerNameItr.next().getOwnerName())));
+			}
+			
+		}
+		return consumerSearch;
 	}
 }

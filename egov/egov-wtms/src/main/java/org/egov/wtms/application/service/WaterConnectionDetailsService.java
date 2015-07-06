@@ -70,6 +70,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -129,6 +130,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private ConsumerNumberGenerator consumerNumberGenerator;
+    
+    @Autowired
+    private ConsumerIndexService consumerIndexService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -315,6 +319,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setApprovalDate(new Date());
             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                 waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
+            	consumerIndexService.createConsumerIndex(waterConnectionDetails);
         }
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
