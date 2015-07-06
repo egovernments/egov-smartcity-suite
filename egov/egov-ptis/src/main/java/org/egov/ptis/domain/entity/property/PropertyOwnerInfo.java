@@ -40,6 +40,7 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.enums.UserType;
 
 public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
@@ -49,9 +50,11 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
     private PropertySource source;
     private Integer orderNo;
     private User owner;
+    //TODO LATER now setting citizen as owner type in future this should be captured on owner transfer form
+    private UserType ownerType = UserType.CITIZEN;
 
     public PropertyOwnerInfo() {
-    	owner = new User();
+        owner = new User();
     }
 
     public PropertyOwnerInfo(final BasicProperty basicProperty, final PropertySource propSource, final User owner,
@@ -103,6 +106,14 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
     public void setOwner(final User owner) {
         this.owner = owner;
+    }
+
+    public UserType getOwnerType() {
+        return ownerType;
+    }
+
+    public void setOwnerType(final UserType ownerType) {
+        this.ownerType = ownerType;
     }
 
     @Override

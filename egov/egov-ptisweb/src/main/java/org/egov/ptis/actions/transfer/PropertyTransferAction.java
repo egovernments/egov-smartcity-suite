@@ -58,7 +58,6 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.transfer.TransferOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,7 +87,6 @@ public class PropertyTransferAction extends BaseFormAction {
     private String indexNumber;
     private String wfErrorMsg;
     private String currentPropertyTax;
-    private List<PropertyOwnerInfo> newOwnerInfos = new ArrayList<>();
     private List<DocumentType> documentTypes = new ArrayList<>();
     private PropertyImpl propertyImpl;
     
@@ -99,10 +97,10 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/new")
     public String showTransferForm() {
-        final Map<String, String> currentWFStatus = propertyImpl.getBasicProperty().getPropertyWfStatus();
-        if ("TRUE".equalsIgnoreCase(currentWFStatus.get(WFSTATUS))) {
+        final Map<String, String> currentWorkflowInfo = propertyImpl.getBasicProperty().getPropertyWfStatus();
+        if ("TRUE".equalsIgnoreCase(currentWorkflowInfo.get(WFSTATUS))) {
             wfErrorMsg = (String.format("Could not do property transfer now, property is undergoing some workflow in %s's inbox.",
-                    getSession().get(WFOWNER)));
+                    currentWorkflowInfo.get(WFOWNER)));
             return "workFlowError";
         } else {
             final boolean anyTaxDues = false; // TODO add check Ptax and Wtax for dues
@@ -116,7 +114,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
-        transferOwnerService.doPropertyTransfer(propertyMutation, indexNumber, newOwnerInfos);
+        transferOwnerService.initiatePropertyTransfer(propertyMutation, indexNumber);
         return ACK;
     }
     
@@ -153,14 +151,6 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public PropertyImpl getPropertyImpl() {
         return propertyImpl;
-    }
-
-    public List<PropertyOwnerInfo> getNewOwnerInfos() {
-        return newOwnerInfos;
-    }
-
-    public void setNewOwnerInfos(List<PropertyOwnerInfo> newOwnerInfos) {
-        this.newOwnerInfos = newOwnerInfos;
     }
 
     public List<DocumentType> getDocumentTypes() {

@@ -61,6 +61,7 @@ public class PropertyMutation extends StateAware {
     private BasicProperty basicProperty;
     private Property property;
     private List<PropertyOwnerInfo> transferorInfos = new ArrayList<>();
+    private List<PropertyOwnerInfo> transfereeInfos = new ArrayList<>();
     private boolean feePayable;
     private String deedNo;
     private Date deedDate;
@@ -177,6 +178,14 @@ public class PropertyMutation extends StateAware {
 
     public void setTransferorInfos(final List<PropertyOwnerInfo> transferorInfos) {
         this.transferorInfos = transferorInfos;
+    }
+
+    public List<PropertyOwnerInfo> getTransfereeInfos() {
+        return transfereeInfos;
+    }
+
+    public void setTransfereeInfos(List<PropertyOwnerInfo> transfereeInfos) {
+        this.transfereeInfos = transfereeInfos;
     }
 
     public boolean isFeePayable() {

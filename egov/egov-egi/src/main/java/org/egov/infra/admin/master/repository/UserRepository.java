@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -64,6 +63,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmailId(String emailId);
 
     User findByAadhaarNumber(String aadhaarNumber);
+    
+    User findByAadhaarNumberAndType(String aadhaarNumber, UserType type);
 
     User findByMobileNumber(String mobileNumber);
 

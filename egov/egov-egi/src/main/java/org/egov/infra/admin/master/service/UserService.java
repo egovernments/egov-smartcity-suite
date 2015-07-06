@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -99,6 +98,10 @@ public class UserService {
         return userRepository.findByAadhaarNumber(aadhaarNumber);
     }
 
+    public User getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
+        return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
+    }
+    
     public User getUserByMobileNumber(final String mobileNumber) {
         return userRepository.findByMobileNumber(mobileNumber);
     }

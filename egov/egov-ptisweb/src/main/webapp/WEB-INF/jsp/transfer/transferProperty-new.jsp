@@ -93,6 +93,7 @@
 						</td>
 						<td class="bluebox">
 							<span class="bold"><s:property value="propertyImpl.basicProperty.upicNo" default="N/A"/></span>
+							<s:hidden name="indexNumber" value="%{propertyImpl.basicProperty.upicNo}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;
@@ -194,21 +195,21 @@
 									</tr>
 								      <tr id="nameRow" >
 								        <td class="blueborderfortd" align="center">
-										   <s:textfield name="newOwnerInfos[0].owner.aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
+										   <s:textfield name="transfereeInfos[0].owner.aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
 										</td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="newOwnerInfos[0].owner.name" maxlength="512" size="20" id="ownerName"  value="" 
+								        	<s:textfield name="transfereeInfos[0].owner.name" maxlength="512" size="20" id="ownerName"  value="" 
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select name="newOwnerInfos[0].owner.gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:select name="transfereeInfos[0].owner.gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="newOwnerInfos[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
+								        	<s:textfield name="transfereeInfos[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
 								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="newOwnerInfos[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="" 
+								        	<s:textfield name="transfereeInfos[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="" 
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        </td>
 								        

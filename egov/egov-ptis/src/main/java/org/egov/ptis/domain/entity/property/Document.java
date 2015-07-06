@@ -41,7 +41,8 @@ package org.egov.ptis.domain.entity.property;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +58,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -78,18 +81,19 @@ public class Document extends AbstractAuditable {
     @JoinColumn(name="type")
     private DocumentType type;
     private String description;
-    private String docDate;
+    @Temporal(TemporalType.DATE)
+    private Date docDate;
     private boolean enclosed;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egpt_document_files", joinColumns = @JoinColumn(name = "document") , inverseJoinColumns = @JoinColumn(name = "filestore") )
-    private Set<FileStoreMapper> files = Collections.emptySet();
+    private Set<FileStoreMapper> files = new HashSet<>();
     
     @Transient
     private List<File> uploads = new ArrayList<>();
     @Transient
-    private List<String> uploadFileNames = new ArrayList<>();
+    private List<String> uploadsFileName = new ArrayList<>();
     @Transient
-    private List<String> uploadFileMimeTypes = new ArrayList<>();
+    private List<String> uploadsContentType = new ArrayList<>();
     
     @Override
     protected void setId(final Long id) {
@@ -117,11 +121,11 @@ public class Document extends AbstractAuditable {
         this.description = description;
     }
 
-    public String getDocDate() {
+    public Date getDocDate() {
         return docDate;
     }
 
-    public void setDocDate(final String docDate) {
+    public void setDocDate(final Date docDate) {
         this.docDate = docDate;
     }
 
@@ -149,19 +153,19 @@ public class Document extends AbstractAuditable {
         this.uploads = uploads;
     }
 
-    public List<String> getUploadFileNames() {
-        return uploadFileNames;
+    public List<String> getUploadsFileName() {
+        return uploadsFileName;
     }
 
-    public void setUploadFileNames(List<String> uploadFileNames) {
-        this.uploadFileNames = uploadFileNames;
+    public void setUploadsFileName(List<String> uploadsFileName) {
+        this.uploadsFileName = uploadsFileName;
     }
 
-    public List<String> getUploadFileMimeTypes() {
-        return uploadFileMimeTypes;
+    public List<String> getUploadsContentType() {
+        return uploadsContentType;
     }
 
-    public void setUploadFileMimeTypes(List<String> uploadFileMimeTypes) {
-        this.uploadFileMimeTypes = uploadFileMimeTypes;
+    public void setUploadsContentType(List<String> uploadsContentType) {
+        this.uploadsContentType = uploadsContentType;
     }
 }

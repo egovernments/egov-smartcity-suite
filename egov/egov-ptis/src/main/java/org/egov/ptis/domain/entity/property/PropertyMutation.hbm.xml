@@ -69,13 +69,18 @@
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
 		<many-to-one name="mutationReason" column="MUTATIONREASON" class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />
-		<many-to-one name="property" column="PROPERTY" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false"/>
-		<many-to-one name="basicProperty" column="BASICPROPERTY" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false" update="false" />
-		<bag name="transferorInfos" table="EGPT_MUTATION_OWNER">
+		<many-to-one name="property" column="PROPERTY" class="org.egov.ptis.domain.entity.property.PropertyImpl"/>
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" column="STATE"/>
+		<many-to-one name="basicProperty" column="BASICPROPERTY" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false" update="false"/>
+		<bag name="transferorInfos" table="EGPT_MUTATION_TRANSFEROR">
 			<key column="MUTATION" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo" column="TRANSFEROR"/>
 		</bag>
-		<bag name="documents" table="EGPT_MUTATION_DOCS">
+		<bag name="transfereeInfos" table="EGPT_MUTATION_TRANSFEREE" cascade="all">
+			<key column="MUTATION" not-null="true" />
+			<many-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo" column="TRANSFEREE"/>
+		</bag>
+		<bag name="documents" table="EGPT_MUTATION_DOCS" cascade="all">
 			<key column="MUTATION" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>

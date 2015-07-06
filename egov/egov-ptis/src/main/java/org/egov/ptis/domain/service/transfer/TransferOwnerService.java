@@ -46,37 +46,35 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import javax.transaction.Transactional;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
-import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
-import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -113,16 +111,21 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Qualifier("documentTypePersistenceService")
     private PersistenceService<DocumentType, Long> documentTypePersistenceService;
     
-    public void doPropertyTransfer(PropertyMutation propertyMutation, String upicNo, List<PropertyOwnerInfo> newOwnerInfos) {
+    @Autowired
+    private UserService userService;
+    
+    @Transactional
+    public void initiatePropertyTransfer(PropertyMutation propertyMutation, String upicNo) {
         processAndStoreDocument(propertyMutation.getDocuments());
         PropertyImpl propertyImpl = getActiveProperty(upicNo);
         BasicProperty basicProperty = propertyImpl.getBasicProperty();
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(propertyImpl);
         propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
-        basicProperty.getPropertyOwnerInfo().clear();
-        basicProperty.getPropertyOwnerInfo().addAll(newOwnerInfos);
+        createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
+        //propertyMutation.transition().start();
+        //basicProperty.getPropertyOwnerInfo().clear();
         basicPropertyService.persist(basicProperty);
     }
     
@@ -143,94 +146,41 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
     
+    private void createUserIfNotExist(List<PropertyOwnerInfo> transferees) {
+        transferees.forEach(transferee -> {
+            User user = userService.getUserByAadhaarNumberAndType(transferee.getOwner().getAadhaarNumber(), transferee.getOwnerType());
+            if (user == null) {
+                User tmpUser = transferee.getOwner();
+                if (UserType.CITIZEN.equals(transferee.getOwnerType())) {
+                    user = new Citizen();
+                    user.setAadhaarNumber(tmpUser.getAadhaarNumber());
+                    user.setEmailId(tmpUser.getEmailId());
+                    user.setMobileNumber(tmpUser.getMobileNumber());
+                    user.setGender(tmpUser.getGender());
+                    user.setName(tmpUser.getName());
+                    user.setPassword("NOTSET");
+                    user.setUsername(user.getMobileNumber());
+                }
+            } 
+            transferee.setOwner(user);
+        });
+    }
+    
     private void processAndStoreDocument(List<Document> documents) {
         documents.forEach(document -> {
             if (!document.getUploads().isEmpty()) {
                 int fileCount = 0;
                 for (File file : document.getUploads()) {
                         FileStoreMapper fileStore = fileStoreService
-                                        .store(file, document.getUploadFileNames().get(fileCount),
-                                                document.getUploadFileMimeTypes().get(fileCount++), "PTIS");
+                                        .store(file, document.getUploadsFileName().get(fileCount),
+                                                document.getUploadsContentType().get(fileCount++), "PTIS");
                         document.getFiles().add(fileStore);
                 }
             }
+            document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
         });
     }
     
-    private Map<Installment, PTDemandCalculations> getDemandCalMap(Property oldProperty) {
-        Map<Installment, PTDemandCalculations> dmdCalMap = new HashMap<Installment, PTDemandCalculations>();
-        for (Ptdemand dmd : oldProperty.getPtDemandSet()) {
-            dmdCalMap.put(dmd.getEgInstallmentMaster(), dmd.getDmdCalculations());
-        }
-        return dmdCalMap;
-
-    }
-
-    private Set<Ptdemand> cloneDemandSet(Property clonedProperty, Property oldProperty) {
-        Map<Installment, PTDemandCalculations> dmdCalMap = getDemandCalMap(oldProperty);
-        Set<Ptdemand> demandSet = new HashSet<Ptdemand>();
-        PTDemandCalculations ptDmdCal;
-        for (Ptdemand ptDmd : clonedProperty.getPtDemandSet()) {
-            PTDemandCalculations OldPTDmdCal = dmdCalMap.get(ptDmd.getEgInstallmentMaster());
-            ptDmdCal = new PTDemandCalculations(ptDmd, OldPTDmdCal.getPropertyTax(), OldPTDmdCal.getRateOfTax(), null, null,
-                    cloneFlrWiseDmdCal(OldPTDmdCal.getFlrwiseDmdCalculations()), OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
-            ptDmd.setDmdCalculations(ptDmdCal);
-            demandSet.add(ptDmd);
-        }
-        return demandSet;
-    }
-
-    private Set<FloorwiseDemandCalculations> cloneFlrWiseDmdCal(Set<FloorwiseDemandCalculations> flrDmdCal) {
-        FloorwiseDemandCalculations flrWiseDmdCal;
-        Set<FloorwiseDemandCalculations> floorDmdCalSet = new HashSet<FloorwiseDemandCalculations>();
-        for (FloorwiseDemandCalculations flrCal : flrDmdCal) {
-            flrWiseDmdCal = new FloorwiseDemandCalculations(null, flrCal.getFloor(), flrCal.getPTDemandCalculations(), new Date(),
-                    new Date(), flrCal.getCategoryAmt(), flrCal.getOccupancyRebate(), flrCal.getConstructionRebate(),
-                    flrCal.getDepreciation(), flrCal.getUsageRebate());
-            floorDmdCalSet.add(flrWiseDmdCal);
-        }
-        return floorDmdCalSet;
-    }
-
-
-    /*
-     * This method returns changed owner corr address as a Set
-     */
-    public List<PropertyOwnerInfo> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
-            String corrAddress2, String corrPinCode, List<PropertyOwnerInfo> propertyOwnerProxy) {
-        int orderNo = 1;
-        for (PropertyOwnerInfo newOwner : propertyOwnerProxy) {
-            if (newOwner.isNew()) {
-                newOwner.setOrderNo(orderNo);
-                newOwner.getOwner().setUsername(newOwner.getOwner().getMobileNumber());
-                newOwner.getOwner().setPassword("NOT SET");
-                orderNo++;
-            }
-        }
-        return propertyOwnerProxy;
-    }
-
-    /*
-     * This method returns modified Owner Details for email and contact number
-     */
-    private PropertyAddress getChangedOwnerContact(BasicProperty bp, String email, String mobileNo) {
-        PropertyAddress propAddr = bp.getAddress();
-        if (email != null && email != "") {
-            propAddr.getUser().setEmailId(email);
-        }
-        if (mobileNo != null && mobileNo != "") {
-            propAddr.getUser().setMobileNumber(mobileNo);
-        }
-        return propAddr;
-    }
-
-    /**
-     * Generates Miscellaneous receipt
-     * 
-     * @param basicProperty
-     * @param amount
-     * @return BillReceiptInfo
-     */
     public BillReceiptInfo generateMiscReceipt(BasicProperty basicProperty, BigDecimal amount) {
         LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
         org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
@@ -250,12 +200,6 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return collHelper.generateMiscReceipt(payment);
     }
 
-    /**
-     * Prepares payment information
-     * 
-     * @param amount
-     * @return
-     */
     private Payment preparePayment(BigDecimal amount) {
         LOGGER.debug("Inside preparePayment method, Mutation Amount: " + amount);
         Map<String, String> payDetailMap = new HashMap<String, String>();
