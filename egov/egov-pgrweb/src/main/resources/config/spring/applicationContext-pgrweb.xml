@@ -48,13 +48,14 @@
     <import resource="classpath*:config/spring/applicationContext-search-all.xml" />
     <import resource="applicationQuartzContext-pgr.xml"/>
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
-    
 	<import resource="applicationSecurityContext-pgr.xml"/>
-	
+	<context:property-placeholder />
     <context:component-scan base-package="org.egov.pgr.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 	
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-    
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="${max.file.upload.size}"/>
+		<property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
+    </bean>
 </beans>
