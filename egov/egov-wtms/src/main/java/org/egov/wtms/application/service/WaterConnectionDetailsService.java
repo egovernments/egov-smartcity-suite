@@ -45,6 +45,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -193,10 +195,21 @@ public class WaterConnectionDetailsService {
         final String strQuery = "select md from EgModules md where md.name=:name";
         final Query hql = getCurrentSession().createQuery(strQuery);
         hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
+        
+        AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+        Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        StringBuilder consumerName =  new StringBuilder();
+		if(ownerNameItr.hasNext()) {
+			consumerName.append(ownerNameItr.next().getOwnerName());
+			while(ownerNameItr.hasNext()) {
+				consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
+			}
+		}
+		
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                 ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                 waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
-                "Mr. Bean", waterConnectionDetails.getConnectionStatus().toString(), "/wtms/test.action");
+                consumerName.toString(), waterConnectionDetails.getConnectionStatus().toString(), "/wtms/view/"+waterConnectionDetails.getApplicationNumber());
 
         if (waterConnectionDetails.getDisposalDate() != null)
             applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
