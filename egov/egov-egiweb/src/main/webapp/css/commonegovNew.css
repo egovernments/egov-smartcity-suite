@@ -300,11 +300,10 @@ td.greybox  input.hiddentext {
 	padding-bottom: 2px;
 	padding-left: 4px;
 	cursor: not-allowed;
-	}
-
+}
 
 input.buttonsubmit, input.button {
-	width: 133px;
+	min-width: 133px;
 	font-family: semibold;
 	text-align: center;
 	border-style: none;
@@ -316,7 +315,6 @@ input.buttonsubmit, input.button {
 	height: 30px;
 	border-radius: 3px;
 	border:1px solid rgb(107, 79, 44);
-	
 }
 
 

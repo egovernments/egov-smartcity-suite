@@ -580,33 +580,28 @@ div.billscroller {
 	padding-left: 0px;
 
 }
-div.billdetailaction {
-	cursor:pointer;
-	width:85px;
-	background-color:#CCC;
-	font-weight:bold;
-	padding-top: 2px;
-	padding-right: 10px;
-	padding-bottom: 2px;
-	padding-left: 10px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-left-style: solid;
-	border-top-color: #EAEAEA;
-	border-right-color: #999;
-	border-bottom-color: #999;
-	border-left-color: #EAEAEA;
-	background-image: url(/egi/resources/erp2/images/table.png);
-	background-repeat: no-repeat;
-	background-position: right;
-	float:left;
-	margin-top:5px;
 
+div.billdetailaction {
+  min-width: 133px;
+  font-family: semibold;
+  text-align: center;
+  border-style: none;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 6px 12px;
+  background: rgb(107, 79, 44) none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  height: 30px;
+  border-radius: 3px;
+  border: 1px solid rgb(107, 79, 44);
+  cursor:pointer;
+}
+
+div.billdetailaction:hover
+{
+color: #FFF;
+background-color: #F5861F;
+border-color: #F5861F;
 }
 
 div.billdetailaction2 {
@@ -712,6 +707,7 @@ td.greyboxwithlink {
 	span.boldblue { 
 	font-weight:bold; 
 	color:#036;
+	font-family:semibold;
 	}
 	div.textholder {
 	width:16%;

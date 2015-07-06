@@ -283,6 +283,7 @@ function checkviewforselectedrecord()
 
 </script> 
 </head>
+<body>
 <span align="center" style="display:none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
@@ -322,7 +323,7 @@ function checkviewforselectedrecord()
 	</b></font>
   </li>
 </span>
-<body>
+
 <s:form theme="simple" name="searchReceiptForm" action="searchReceipt-search.action">
 <div class="formmainbox"><div class="subheadnew"><s:text name="searchreceipts.title"/>
 </div>
@@ -330,11 +331,11 @@ function checkviewforselectedrecord()
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 	    <tr>
-	      <td width="4%" class="bluebox2">&nbsp;</td>
-	      <td width="21%" class="bluebox2"><s:text name="searchreceipts.criteria.servicetype"/></td>
-	      <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
-	      <td width="21%" class="bluebox2"><s:text name="searchreceipts.criteria.counter"/></td>
-	      <td width="30%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
+	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/></td>
+	      <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
 	    </tr>
 	     <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
@@ -346,11 +347,11 @@ function checkviewforselectedrecord()
 		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
-	      <td width="4%" class="bluebox2">&nbsp;</td>
-	      <td width="21%" class="bluebox2"><s:text name="searchreceipts.criteria.receiptno"/></td>
-	      <td width="24%" class="bluebox2"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="/egi/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
-	      <td width="21%" class="bluebox2"><s:text name="searchreceipts.criteria.user"/></td>
-	      <td width="30%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
+	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
+	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="receiptNumberSearch_autocomplete"><div><s:textfield id="receiptNumberSearch" type="text" name="receiptNumber"/></div><span id="receiptNumberSearchResults"></span></div></div><egov:autocomplete name="receiptNumberSearch" width="15" field="receiptNumberSearch" url="/egi/receipts/receiptNumberSearch-searchAjax.action" queryQuestionMark="true" results="receiptNumberSearchResults" handler="receiptNumberSearchSelectionHandler" forceSelectionHandler="receiptNumberSelectionEnforceHandler"/><span class='warning' id="improperreceiptNumberSelectionWarning"></span></td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	   
 	    </tr>	    
 	    <tr>
@@ -361,11 +362,11 @@ function checkviewforselectedrecord()
 	      <td width="30%" class="bluebox"><s:select headerKey="" headerValue="%{getText('searchreceipts.paymenttype.select')}" name="instrumentType" id="instrumentType" cssClass="selectwk" list="dropdownData.instrumentTypeList" listKey="type" listValue="type" value="%{instrumentType}" /> </td>	
 	    </tr>
 	    <tr>
-	      <td width="4%" class="bluebox2">&nbsp;</td>
-	      <td width="21%" class="bluebox2"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
-	      <td width="24%" class="bluebox2"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch!searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
-	      <td width="21%" class="bluebox2">&nbsp;</td>
-	      <td width="30%" class="bluebox2"> &nbsp; </td>   
+	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
+	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch!searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
+	      <td width="21%" class="bluebox">&nbsp;</td>
+	      <td width="30%" class="bluebox"> &nbsp; </td>   
 	   
 	    </tr>
 	    </table>
@@ -383,7 +384,6 @@ function checkviewforselectedrecord()
 
 <logic:notEmpty name="searchResult">
 
-<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 <div align="center">		
 <display:table name="searchResult" uid="currentRow" pagesize = "20" style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 <display:caption media="pdf">&nbsp;</display:caption>
@@ -424,19 +424,19 @@ function checkviewforselectedrecord()
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
-</table>
+
 	
 				
 </logic:notEmpty>
 <logic:empty name="searchResult">
 	<s:if test="target=='searchresult'">
 	
-		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+		<!-- table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr> 
 			<div>&nbsp;</div>
 			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
 		</tr>
-		</table>
+		</table-->
 	
 	</s:if>
 </logic:empty>
