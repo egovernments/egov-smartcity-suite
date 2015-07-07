@@ -61,10 +61,10 @@
 				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
         </td>
 		<td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.name" maxlength="512" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfo[0].owner.name}" 
+        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.name" maxlength="64" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfo[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
-        <td><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
+        <td class="blueborderfortd" align="center"><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
 				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
@@ -101,10 +101,10 @@
 				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
             </td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="512" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" 
+        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.name" maxlength="64" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" 
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
         		</td>
-        		<td><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}"
+        		<td class="blueborderfortd" align="center"><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}"
 				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">

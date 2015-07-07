@@ -126,11 +126,9 @@ function popualateArea() {
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					
 					<s:textfield name="propertyDetail.floorDetails[0].occupantName"
-						id="occupantName" size="20" value="%{propertyDetail.floorDetails[0].occupantName}" maxlength="20"
+						id="occupantName" size="20" value="%{propertyDetail.floorDetails[0].occupantName}" maxlength="64"
 						cssStyle="width:100%" data-optional="0" data-errormsg="Ocuupancy Name is required!"/>
-					
 				</div>
 			</td>
 
@@ -188,7 +186,7 @@ function popualateArea() {
 				<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetails[0].capitalValue" data-optional="1"
-							maxlength="100" size="10" id="propertyDetail.floorDetails[0].capitalValue" value="%{propertyDetail.floorDetails[0].captialValue}"
+							maxlength="10" size="10" id="propertyDetail.floorDetails[0].capitalValue" value="%{propertyDetail.floorDetails[0].captialValue}"
 							cssStyle="width:100%" />
 				</div>
 			</td>
@@ -291,7 +289,7 @@ function popualateArea() {
 					<div align="center">
 						
 						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="25" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
+							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
 						
 					</div>
@@ -354,7 +352,7 @@ function popualateArea() {
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].capitalValue"
-							maxlength="100" size="10" id="propertyDetail.floorDetails[#floorsstatus.index].capitalValue" value="%{propertyDetail.floorDetails[#floorsstatus.index].capitalValue}"
+							maxlength="64" size="10" id="propertyDetail.floorDetails[#floorsstatus.index].capitalValue" value="%{propertyDetail.floorDetails[#floorsstatus.index].capitalValue}"
 							cssStyle="width:100%" />
 					</div>
 				</td>

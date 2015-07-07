@@ -58,29 +58,6 @@ import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/*
- * @Results( {
- * 
- * @Result(name = "createView", type = "Stream", location = "createProperty",
- * params = { "namespace", "/create", "method", "view", "modelId",
- * "${workFlowPropId}" }),
- * 
- * @Result(name = "modifyView", type = "Stream", location = "modifyProperty",
- * params = { "namespace", "/modify", "method", "view", "modelId",
- * "${workFlowPropId}" }),
- * 
- * @Result(name = "deactivateView", type = "Stream", location =
- * "deactivateProperty", params = { "namespace", "/deactivate", "method",
- * "viewForm", "modelId", "${workFlowPropId}" }),
- * 
- * @Result(name = "transferView", type = "Stream", location =
- * "transferProperty", params = { "namespace", "/transfer", "method", "view",
- * "modelId", "${workFlowPropId}" }),
- * 
- * @Result(name = "changePropAddressView", type = "Stream", location =
- * "changePropertyAddress", params = { "namespace", "/modify", "method", "view",
- * "modelId", "${workFlowPropId}" }) })
- */
 @Namespace("/workflow")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "modifyView", location = "workflow/workflow-modifyForm.jsp"),

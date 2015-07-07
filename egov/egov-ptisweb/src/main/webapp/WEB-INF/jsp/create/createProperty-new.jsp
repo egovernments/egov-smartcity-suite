@@ -78,8 +78,8 @@ jQuery(function ($) {
 });
 function loadOnStartUp() {
 	enableCorresAddr();
-	/* document.getElementById("plotArea").style.display = "";
-	document.getElementById("undivArea").style.display = "none";		
+	document.getElementById("plotArea").style.display = "";
+	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
 	document.getElementById("parentIndex").className="hiddentext";
@@ -433,7 +433,6 @@ function finishAllChangesMsg(button) {
 							onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
 					<td><input type="button" name="button2" id="button2"
 							value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
-						mode:<s:property value="%{mode}"/>
 					<s:if test="mode=='create'">
 					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action',this);"/>&nbsp;			
 					<input type="button" class="button" onclick="window.close();" value="Close">
@@ -443,7 +442,9 @@ function finishAllChangesMsg(button) {
 					<s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE}">
 								<s:submit value="Approve" name="Approve" id='Create:Approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-approve.action',this);"/>&nbsp;	
 					</s:if>	
-					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;		
+					<s:if test="%{!userRole==@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_ROLE}">
+					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;
+					</s:if>		
 					<input type="button" class="button" onclick="window.close();" value="Close">
 					</s:if>
 				</div>

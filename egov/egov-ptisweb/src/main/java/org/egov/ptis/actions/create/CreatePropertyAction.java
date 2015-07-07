@@ -66,7 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATE
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -329,7 +329,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
 		String nextAction = property.getState().getNextAction();
-		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)
+		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED) && !nextAction.equals(WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED)
 				&& (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))) {
 			mode = EDIT;
 			return RESULT_NEW;
@@ -367,10 +367,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		
-		if (property.getPropertyDetail().getApartment()!=null && property.getPropertyDetail().getApartment().getId() != null) {
+		if (property.getPropertyDetail().getApartment() != null	&& property.getPropertyDetail().getApartment().getId() != null) {
 			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
 					property.getPropertyDetail().getApartment().getId());
-			property.getPropertyDetail().setApartment(apartment);;
+			property.getPropertyDetail().setApartment(apartment);
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}
@@ -385,6 +385,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				floor.setModifiedBy(user);
 			}
 		}
+		
 		int ownersCount = property.getBasicProperty().getPropertyOwnerInfo().size();
 		for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (ownerInfo.getId() == null) {
@@ -414,6 +415,13 @@ public class CreatePropertyAction extends WorkflowAction {
 		property.setStatus(STATUS_ISACTIVE);
 		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
 		basicProp.setUpicNo(indexNum);
+		if (property.getPropertyDetail().getApartment() != null	&& property.getPropertyDetail().getApartment().getId() != null) {
+			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
+					property.getPropertyDetail().getApartment().getId());
+			property.getPropertyDetail().setApartment(apartment);
+		} else {
+			property.getPropertyDetail().setApartment(null);
+		}
 		setWardId(basicProp.getPropertyID().getWard().getId());
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
 		transitionWorkFlow(property);
@@ -431,6 +439,13 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("reject: Property rejection started");
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
+		if (property.getPropertyDetail().getApartment() != null	&& property.getPropertyDetail().getApartment().getId() != null) {
+			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
+					property.getPropertyDetail().getApartment().getId());
+			property.getPropertyDetail().setApartment(apartment);
+		} else {
+			property.getPropertyDetail().setApartment(null);
+		}
 		basicPropertyService.persist(basicProp);
 		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : " + property.getCreatedBy().getUsername());
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
@@ -479,7 +494,6 @@ public class CreatePropertyAction extends WorkflowAction {
 					setPinCode(basicProp.getAddress().getPinCode());
 				}
 			}
-
 			LOGGER.debug("prepare: Property by ModelId: " + property);
 			LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
 		}
@@ -858,6 +872,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", ParcelID:" + parcelID
 				+ ", MutationId: " + mutationId + ", PartNo: " + partNo);
 
+		super.validate();
 		if(isBlank(getApplicationNo())) {
 			addActionError(getText("mandatory.applicationNo"));
 		}
@@ -881,7 +896,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				addActionError(getText("mandatory.ownerName"));
 			}
 		}
-		if (null != getPropTypeId()) {
+		if (!getPropTypeId().equals("-1")) {
 			PropertyTypeMaster propType = (PropertyTypeMaster) basicPropertyService
 					.find("from PropertyTypeMaster  where id = ?", Long.valueOf(getPropTypeId()));
 			if (!propType.getCode().equals(PROPTYPE_OPEN_PLOT)) {
@@ -895,7 +910,8 @@ public class CreatePropertyAction extends WorkflowAction {
 					}
 				}
 			}
-
+		} else {
+			addActionError(getText("mandatory.propType"));
 		}
 		/*if(property.getPropertyDetail().getPropertyType().equals(APARTMENT_PROPERTY)){
 			addActionError(getText("mandatory.apartment.complex"));

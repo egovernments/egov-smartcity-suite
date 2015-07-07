@@ -180,12 +180,12 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			String beanActionName[] = workflowBean.getActionName().split(":");
 			if (beanActionName.length > 1) {
 				wflowAction = beanActionName[1];// save or forward or approve or
-												// reject
+				if (WFLOW_ACTION_STEP_FORWARD.equals(wflowAction)) {
+					validateApprover();
+				}			
 			}
 		}
-		if (WFLOW_ACTION_STEP_FORWARD.equals(wflowAction)) {
-			validateApprover();
-		}
+		
 		LOGGER.debug("Exiting from validate");
 	}
 
@@ -414,6 +414,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			}
 			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
 				nextAction = userAssignment.getDesignation().getName() + " " + REJECTED;
+				approverUserdId = property.getCreatedBy().getId();
+			}
+			if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
+				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
 				approverUserdId = property.getCreatedBy().getId();
 			}
 			if (property.hasState()) {

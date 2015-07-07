@@ -237,7 +237,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String populateDesignationsByDept() {
 		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
 		if (departmentId != null) {
-			//designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
 			Designation designation = assignmentService.getPrimaryAssignmentForUser(
 					securityUtils.getCurrentUser().getId()).getDesignation();
 			if (designation.getName().equals(ASSISTANT_DESGN)) {

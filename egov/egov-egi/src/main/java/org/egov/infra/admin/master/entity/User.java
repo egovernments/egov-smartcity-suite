@@ -115,9 +115,11 @@ public class User extends AbstractAuditable {
     private String salutation;
 
     @SafeHtml
+    @Length(min = 2, max = 64)
     private String guardian;
 
     @SafeHtml
+    @Length(min = 2, max = 64)
     private String guardianRelation;
 
     @NotNull

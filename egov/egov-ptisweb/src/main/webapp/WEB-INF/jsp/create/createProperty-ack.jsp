@@ -89,6 +89,8 @@
 				</s:if>
 			</td>
 			</s:if>
+		 </tr>
+		 <tr>
 		 <td><input type="button" class="button" onclick="window.close();" value="Close"></td>
 		 </tr>
 		</table>

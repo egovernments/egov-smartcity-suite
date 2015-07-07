@@ -37,7 +37,7 @@
 	<tr>
 	<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox" width=""><s:textfield
+		<td class="greybox" width=""><s:textfield maxlength="64"
 				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
 	<!-- Owner details section -->
@@ -87,12 +87,12 @@
 		<td class="greybox" width="25%"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="propertyDetail.extentSite" id="extentSite" size="12" maxlength="12"></s:textfield>
+		   <s:textfield name="propertyDetail.extentSite" id="extentSite" size="12" maxlength="15"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox">
-		  <s:textfield name="vacantLandNo" id="vacantLandNo" value="%{vacantLandNo}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		  <s:textfield name="vacantLandNo" id="vacantLandNo" value="%{vacantLandNo}" size="12" maxlength="15" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -260,10 +260,6 @@
 				<s:text name="PlotArea"/>
 				<span class="mandatory1">*</span> :
 			</div>
-			<div id="undivArea">
-				<s:text name="undivArea"/>
-				<span class="mandatory1">*</span> :
-			</div>
 		</td>
 		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot" maxlength="15" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
@@ -277,7 +273,7 @@
 	<td class="bluebox">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.apartment.id"
-				id="propertyDetail.apartment" listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
+				id="propertyDetail.apartment.id" listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>

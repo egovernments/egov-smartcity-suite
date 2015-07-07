@@ -1288,6 +1288,10 @@ function addFloor()
 			    }).end().appendTo("#floorDetails");
 							
 				jQuery("#floorDetails tr:last td img[alt='Add']").hide();
+				
+				//re-intialize datepicker fields
+				jQuery(".datepicker").datepicker();
+				
 
 		}
 	}
