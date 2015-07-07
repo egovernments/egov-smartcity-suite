@@ -66,6 +66,7 @@ import org.egov.commons.Relation;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
+import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
@@ -82,6 +83,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -102,6 +104,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
+import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -111,7 +114,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results( {
-        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" })})
+        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" }),
+        @Result(name = "view", location = "preApprovedVoucher-view.jsp")
+        }
+        )
 @Transactional(readOnly=true)
 @ParentPackage("egov")
 public class PreApprovedVoucherAction extends BaseFormAction
@@ -626,7 +632,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         public String getMasterName(final String name)
         {
                 String val="";
-                if(voucherHeader.getVoucherDetail().size()>0)
+                if(voucherHeader!=null)
                 {
                         if(name.equals("fund") && voucherHeader.getFundId()!=null)
                                 val = voucherHeader.getFundId().getName();
@@ -762,9 +768,9 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 List<Accountdetailtype> detailtypeIdList=new ArrayList<Accountdetailtype>();
                 PreApprovedVoucher subledger = null;
 
-                if(voucherHeader.getVoucherDetail().size()>0)
+                if(voucherHeader!=null)
                 {
-                        List<CGeneralLedger> gllist = getPersistenceService().findAllBy(" from CGeneralLedger where voucherHeaderId.id=? order by decode(debitAmount,null,0, debitAmount) desc ,decode(creditAmount,null,0, creditAmount) asc", Long.valueOf(voucherHeader.getId()+""));
+                        List<CGeneralLedger> gllist = (List<CGeneralLedger>)getPersistenceService().findAllBy(" from CGeneralLedger where voucherHeaderId.id=? order by id asc", Long.valueOf(voucherHeader.getId()+""));
 
                         for(CGeneralLedger gl:gllist)
                         {
@@ -897,10 +903,14 @@ public class PreApprovedVoucherAction extends BaseFormAction
 
         public void setupDropDownForSL(final List<Long> glcodeIdList)
         {
+        	List<CChartOfAccounts> glcodeList=null;
+   		 	Query glcodeListQuery =HibernateUtil.getCurrentSession().createQuery(" from CChartOfAccounts where id in (select glCodeId from CChartOfAccountDetail) and id in  ( :IDS )");
+   		 	glcodeListQuery.setParameterList("IDS", glcodeIdList);
+   		 	glcodeList = glcodeListQuery.list();
                 if(glcodeIdList.isEmpty())
                         dropdownData.put("glcodeList",Collections.EMPTY_LIST);
                 else
-                        dropdownData.put("glcodeList", getPersistenceService().findAllByNamedQuery("getSubLedgerCodes", glcodeIdList));
+                        dropdownData.put("glcodeList", glcodeList);
         }
 
         public void setupDropDownForSLDetailtype(final List<Accountdetailtype> detailtypeIdList)

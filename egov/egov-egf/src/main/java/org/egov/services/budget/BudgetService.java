@@ -65,6 +65,7 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Manikanta
@@ -75,6 +76,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	protected EisCommonService eisCommonService;
 	protected WorkflowService<Budget> budgetWorkflowService;
 	protected BudgetDetailService budgetDetailService;
+	@Autowired
 	protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
 	
 	public void setEisCommonService(EisCommonService eisCommonService) {

@@ -267,7 +267,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 
 	private void populateAccountCodePurpose() {
 		if(chartOfAccounts!= null && chartOfAccounts.getPurposeId()!=null)
-			accountcodePurpose = getPurposeCode(Integer.valueOf(chartOfAccounts.getPurposeId()));
+			accountcodePurpose = getPurposeCode(chartOfAccounts.getPurposeId().intValue());
 	}
 
 	public String update() throws Exception {
@@ -289,7 +289,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 
 	private void setPurposeOnCoa() {
 		if(accountcodePurpose!=null && accountcodePurpose.getId()!=null)
-			chartOfAccounts.setPurposeId(accountcodePurpose.getId().toString());
+			chartOfAccounts.setPurposeId(accountcodePurpose.getId().longValue());
 		if("0".equals(chartOfAccounts.getPurposeId()))
 			chartOfAccounts.setPurposeId(null);
 	}

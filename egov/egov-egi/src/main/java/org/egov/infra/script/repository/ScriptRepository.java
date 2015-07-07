@@ -39,9 +39,8 @@
  */
 package org.egov.infra.script.repository;
 
-import java.util.Date;
-
 import org.egov.infra.script.entity.Script;
+import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -51,5 +50,5 @@ public interface ScriptRepository extends JpaRepository<Script, Long> {
 
     Script findByName(@Param("name") String name);
 
-    Script findByNameAndPeriod(@Param("name") String name, @Param("date") Date period);
+    Script findByNameAndPeriod(@Param("name") String name, @Param("date") DateTime period);
 }

@@ -1276,7 +1276,7 @@ function check(){
 		accountCodes[i] = document.getElementById('billDetailslist['+i+'].glcodeDetail').value;
 	}
 	}
-	var url = path+'/voucher/common!getDetailCode.action?accountCodes='+accountCodes;
+	var url = path+'/voucher/common-getDetailCode.action?accountCodes='+accountCodes;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackJV, null);
 }
 var callbackJV = {

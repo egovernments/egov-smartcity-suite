@@ -92,15 +92,12 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 /**
  * @author msahoo
  *
  */
-@Transactional(readOnly=true)
 public class BaseVoucherAction extends BaseFormAction {                       
 	private static final long serialVersionUID = 1L;	
 	protected final String            INVALIDPAGE   = "invalidPage";
@@ -124,6 +121,7 @@ public class BaseVoucherAction extends BaseFormAction {
 	private FinancingSourceService financingSourceService ;
 	List<String> voucherTypes=VoucherHelper.VOUCHER_TYPES;
 	Map<String,List<String>> voucherNames=VoucherHelper.VOUCHER_TYPE_NAMES;
+	private CreateVoucher createVoucher;
 	public BaseVoucherAction()
 	{
 		voucherHeader.setVouchermis(new Vouchermis());
@@ -202,16 +200,16 @@ public class BaseVoucherAction extends BaseFormAction {
 	}
 	public boolean isOneFunctionCenter(){
 		setOneFunctionCenterValue();
-		return false;//voucherHeader.getIsRestrictedtoOneFunctionCenter();   
+		return voucherHeader.getIsRestrictedtoOneFunctionCenter();   
 	}
 
 	public void setOneFunctionCenterValue() {
-		AppConfigValues appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues where key in " +
-				"(select id from AppConfig where key_name='ifRestrictedToOneFunctionCenter' and module='EGF' )");
+		AppConfigValues appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues "
+				+ "where key.keyName='ifRestrictedToOneFunctionCenter' and key.module.name='EGF' ");
 		if(appConfigValues==null)
 			throw new ValidationException("Error","ifRestrictedToOneFunctionCenter is not defined");
 		else{   
-			//voucherHeader.setIsRestrictedtoOneFunctionCenter(appConfigValues.getValue().equalsIgnoreCase("yes")?true:false);   
+			voucherHeader.setIsRestrictedtoOneFunctionCenter(appConfigValues.getValue().equalsIgnoreCase("yes")?true:false);   
 		}
 	}
 	public boolean isBankBalanceMandatory()
@@ -358,9 +356,8 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 				subledgerDetails.add(subledgertDetailMap);
 			}
 			
-			// create voucehr API
-			final CreateVoucher cv = new CreateVoucher();
-			voucherHeader = cv.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
+			
+			voucherHeader = createVoucher.createPreApprovedVoucher(headerDetails, accountdetails, subledgerDetails);
 			
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage(),e);
@@ -381,6 +378,12 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		
 	}
 	
+	public CreateVoucher getCreateVoucher() {
+		return createVoucher;
+	}
+	public void setCreateVoucher(CreateVoucher createVoucher) {
+		this.createVoucher = createVoucher;
+	}
 	protected boolean  validateData(final List<VoucherDetails> billDetailslist, final List<VoucherDetails> subLedgerList){
 		BigDecimal totalDrAmt = BigDecimal.ZERO;
 		BigDecimal totalCrAmt = BigDecimal.ZERO;

@@ -65,6 +65,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
@@ -81,18 +82,22 @@ import org.egov.commons.VoucherDetail;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
-import org.egov.commons.dao.ChartOfAccountsDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeDAO;
+import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeDAO;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
+import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -103,6 +108,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -121,6 +127,8 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
+import org.egov.model.budget.Budget;
+import org.egov.model.budget.BudgetDetail;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.pims.commons.Designation;
@@ -128,6 +136,8 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.bills.BillsService;
+import org.egov.services.budget.BudgetService;
+import org.egov.services.voucher.EgfRecordStatusService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
@@ -138,7 +148,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -156,13 +167,12 @@ import com.exilant.exility.common.TaskFailedException;
  * created on 15-sep-2008
  *
  */
-@Transactional(readOnly=true)
+@Service	
 public class CreateVoucher {
         private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
         private static final String DD_MM_YYYY = "dd/MM/yyyy";
         private static final String REVERSAL_VOUCHER_DATE = "Reversal voucher date";
         private static final String VOUCHER_HEADER_ID = "Original voucher header id";
-        @Autowired
         private AppConfigValuesDAO    appConfigValuesDAO;
         final private static Logger LOGGER=Logger.getLogger(CreateVoucher.class);
         //Expenditure Types
@@ -179,8 +189,10 @@ public class CreateVoucher {
         private String vStatus=null;
         private final String ISREQUIRED =".required";
         private final String SELECT ="  Please Select  ";
-
-
+       @Autowired
+        private AppConfigService appConfigService;
+       @Autowired
+        private PersistenceService persistenceService; 
         //add here for other bills
 
         //bill related common variables for back end updation
@@ -192,34 +204,46 @@ public class CreateVoucher {
 
         //transaction related common variables
         private int  usrId;
-        private static  BillsService billsMngr=null;
-        @Autowired
+       
+        private BillsService billsMngr;
+       @Autowired
         private FundHibernateDAO fundDAO;
-        @Autowired
+       
+       	@Autowired
+       	private ChartOfAccounts chartOfAccounts;
+       	
+    	private ChartOfAccounts engine;
+    	@Autowired
         private FunctionaryHibernateDAO functionaryDAO;
-        @Autowired
+    	@Autowired
         private FinancialYearDAO financialYearDAO;
-        @Autowired
+       
         private EgwStatusHibernateDAO egwStatusDAO;
         @Autowired
-        private SchemeDAO schemeDAO;
+        private SchemeHibernateDAO schemeDAO;
         @Autowired
-        private SubSchemeDAO subSchemeDAO;
+        private SubSchemeHibernateDAO subSchemeDAO;
         @Autowired
         private FundSourceHibernateDAO fundSourceDAO;
         @Autowired
         private FunctionDAO functionDAO;
         @Autowired
-        private ChartOfAccountsDAO chartOfAccountsDAO;
-        @Autowired
+        private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+       
         private VoucherHeaderDAO voucherHeaderDAO;
-        @Autowired
+       
         private BankaccountHibernateDAO bankAccountDAO;
-        @Autowired
+       
         private BankHibernateDAO bankDAO;
-        
         @Autowired
         private VoucherHelper voucherHelper;
+        
+        @Autowired
+        private VoucherService voucherService;
+        @Autowired
+        private EgfRecordStatusService egfRecordStatusService;
+        @Autowired
+        private PersistenceService<VoucherDetail, Integer> vdPersitSer;
         
         private static final String ERR="Exception in CreateVoucher";
         private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -230,20 +254,19 @@ public class CreateVoucher {
         private static final String REVERSAL_VOUCHER_NUMBER = "Reversal voucher number";
         protected List<String> headerFields = new ArrayList<String>();
         protected List<String> mandatoryFields = new ArrayList<String>();
-        @Autowired
         private WorksBillService wm;
-        @Autowired
         private CbillService cBillmgr;
         @Autowired
         private  DepartmentService deptM;
         @Autowired
         private  BoundaryService boundary;
-        @Autowired
+       
         private  SalaryBillService salBillMgr;
         @Autowired
         private UserService userMngr;
         @Autowired
         private  EisCommonService eisCommonService;
+       
         private MastersService masters;
         CommonMethodsI cmImpl=new CommonMethodsImpl();
         PersistenceService<Chequedetail, Integer> chequeDetailSer;
@@ -277,6 +300,7 @@ public class CreateVoucher {
                         generalLedgerDetailService=new PersistenceService<CGeneralLedgerDetail, Long>();
                         generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
                         //generalLedgerDetailService.setSessionFactory(new SessionFactory());
+                       
 
                 }
                 catch(Exception e)
@@ -286,6 +310,12 @@ public class CreateVoucher {
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Initialization completed");
         }
+        public void setChartOfAccounts() {
+        	engine.setVoucherHeaderPersitService(chartOfAccounts.getVoucherHeaderPersitService());
+        	engine.setChartOfAccountDetailService(chartOfAccounts.getChartOfAccountDetailService());
+        	engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
+
+    	}
         /**
          * creates voucher From billId
          * @param billId
@@ -295,7 +325,7 @@ public class CreateVoucher {
          * @throws SQLException
          * @throws Exception
          */
-        @Transactional
+        
         public long createVoucherFromBill(int billId,String voucherStatus, String voucherNumber, Date voucherDate) throws EGOVRuntimeException, SQLException ,TaskFailedException{
                 CVoucherHeader vh=null;
                 try{
@@ -565,7 +595,7 @@ public class CreateVoucher {
          * @throws SQLException
          * @throws Exception
          */
-        @Transactional
+        
         public long createVoucherFromBillForPJV(int billId,String voucherStatus,List<PreApprovedVoucher> voucherdetailList,List<PreApprovedVoucher> subLedgerList) throws EGOVRuntimeException, SQLException ,TaskFailedException{
                 CVoucherHeader vh=null;
                 try
@@ -685,7 +715,7 @@ public class CreateVoucher {
           * @param status - status of the vouchers.
           * @return void - This method does not return anything as its only create the vouchers for the preapproved vouchers.s
           */
-        @Transactional
+        
          public void  createVoucherFromPreApprovedVoucher(long vouhcerheaderid,String status)throws EGOVRuntimeException {
                  try{
                          VoucherHeader vh=new VoucherHeader();
@@ -748,13 +778,8 @@ public class CreateVoucher {
           * @return voucherheader object in case of success and null in case of fail.
           * @throws EGOVRuntimeException
           */
-        @Transactional
-         public CVoucherHeader createPreApprovedVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException,ValidationException {
-                 PersistenceService<AppConfig, Integer> appConfigSer;
-                 appConfigSer = new PersistenceService<AppConfig, Integer>();
-                 //appConfigSer.setSessionFactory(new SessionFactory());
-                 appConfigSer.setType(AppConfig.class);
-                 AppConfig appConfig= (AppConfig) appConfigSer.find("from AppConfig where key_name =?", "PREAPPROVEDVOUCHERSTATUS");
+        public CVoucherHeader createPreApprovedVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException,ValidationException {
+                 AppConfig appConfig=appConfigService.findBykeyName("PREAPPROVEDVOUCHERSTATUS");
                  if(null != appConfig && null!= appConfig.getAppDataValues() ){
                          for (AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
                                   headerdetails.put(VoucherConstant.STATUS,(Integer.valueOf(appConfigVal.getValue())));
@@ -785,7 +810,7 @@ public class CreateVoucher {
          * @param voucherheader
          * @throws ValidationException
          */
-        @Transactional
+        
          public void startWorkflow(CVoucherHeader voucherheader) throws ValidationException
          {
                  try
@@ -953,7 +978,7 @@ public class CreateVoucher {
          * @throws ValidationException
          *  Uses VoucherWorkflow since contra and brv workflows are same
          */
-         @Transactional
+         
         public void startWorkflowForCashUpdate(CVoucherHeader voucherHeader) throws ValidationException
          {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting  Journal Voucher Workflow.  for contra......");
@@ -1036,7 +1061,7 @@ public class CreateVoucher {
           * @return voucherheader object in case of success and null in case of fail.
           * @throws EGOVRuntimeException
           */
-         @Transactional
+      //   @Transactional(propagation=Propagation.REQUIRED)
          public CVoucherHeader createVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException {
                  CVoucherHeader vh;
                  Vouchermis mis;
@@ -1054,8 +1079,9 @@ public class CreateVoucher {
                          insertIntoVoucherHeader(vh);
                          insertIntoRecordStatus(vh);
                          List<Transaxtion> transactions = createTransaction(headerdetails,accountcodedetails,subledgerdetails,vh);
-                        HibernateUtil.getCurrentSession().flush();
-                         ChartOfAccounts engine=ChartOfAccounts.getInstance();
+                         HibernateUtil.getCurrentSession().flush();
+                         engine=chartOfAccounts.getInstance();
+                         setChartOfAccounts();
                          Transaxtion txnList[]=new Transaxtion[transactions.size()];
                          txnList=(Transaxtion[])transactions.toArray(txnList);
                          SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -1086,11 +1112,9 @@ public class CreateVoucher {
           * 
           */
          private void validateFunction(HashMap<String, Object> headerdetails,List<HashMap<String, Object>> accountcodedetails) {
-                 PersistenceService persistenceService=new PersistenceService();
-                // persistenceService.setSessionFactory(new SessionFactory());
 
                  AppConfigValues appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues where key in " +
-                                 "(select id from AppConfig where key_name='ifRestrictedToOneFunctionCenter' and module='EGF' )");
+                                 "(select id from AppConfig where key_name='ifRestrictedToOneFunctionCenter' and module.name='EGF' )");
                  if(appConfigValues==null)
                  {
                          if(LOGGER.isDebugEnabled())     LOGGER.debug("app config ifRestrictedToOneFunctionCenter is not defined");
@@ -1221,14 +1245,10 @@ public class CreateVoucher {
 
         }
         //used for reversal
-        @Transactional
+        
         protected void insertIntoVoucherHeader(CVoucherHeader vh) throws EGOVRuntimeException{
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("start | insertIntoVoucherHeader");
                  Connection conn = null;
-                 PersistenceService<CVoucherHeader, Long> cVoucherHeaderSer;
-                 cVoucherHeaderSer = new PersistenceService<CVoucherHeader, Long>();
-                 //cVoucherHeaderSer.setSessionFactory(new SessionFactory());
-                 cVoucherHeaderSer.setType(CVoucherHeader.class);
 
                          String vdt = formatter.format(vh.getVoucherDate());
                          String fiscalPeriod=null;
@@ -1250,7 +1270,7 @@ public class CreateVoucher {
                          if(LOGGER.isDebugEnabled())     LOGGER.debug("vType"+vType);
                          String eg_voucher=null;
                         try {
-                                eg_voucher = cm.getEg_Voucher(vType,fiscalPeriod);
+                                eg_voucher = voucherHelper.getEg_Voucher(vType,fiscalPeriod);
                         } catch (TaskFailedException e) {
                                 LOGGER.error(ERR,e);
                                 throw new EGOVRuntimeException(e.getMessage());
@@ -1278,7 +1298,7 @@ public class CreateVoucher {
                         } 
                          vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals.getUserId())));
                          if(LOGGER.isInfoEnabled())     LOGGER.info("++++++++++++++++++"+vh.toString());
-                         cVoucherHeaderSer.persist(vh);
+                         voucherService.persist(vh);
                          if(null != vh.getVouchermis().getSourcePath() && null ==vh.getModuleId() && 
                                          (vh.getVouchermis().getSourcePath().length() == vh.getVouchermis().getSourcePath().indexOf("=")+1)){
                                  StringBuffer sourcePath = new StringBuffer();
@@ -1286,7 +1306,7 @@ public class CreateVoucher {
                                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Header Id  : " + vh.getId());
                                  sourcePath.append(vh.getVouchermis().getSourcePath()).append(vh.getId().toString());
                                  vh.getVouchermis().setSourcePath(sourcePath.toString());
-                                 cVoucherHeaderSer.update(vh);
+                                 voucherService.update(vh);
                          }
 
 
@@ -1315,14 +1335,10 @@ public class CreateVoucher {
                  }
                  return cgnType;
          }
-         @Transactional
+         
          protected void insertIntoRecordStatus(final CVoucherHeader voucherHeader){
 
                  EgfRecordStatus recordStatus = new EgfRecordStatus();
-                 PersistenceService<EgfRecordStatus, Long> recordStatusSer;
-                 recordStatusSer = new PersistenceService<EgfRecordStatus, Long>();
-                // recordStatusSer.setSessionFactory(new SessionFactory());
-                 recordStatusSer.setType(EgfRecordStatus.class);
                  String code=EGovConfig.getProperty("egf_config.xml","confirmoncreate","",voucherHeader.getType());
                  if("N".equalsIgnoreCase(code)){
                          recordStatus.setStatus(Integer.valueOf(1));
@@ -1333,7 +1349,7 @@ public class CreateVoucher {
                  recordStatus.setVoucherheader(voucherHeader);
                  recordStatus.setRecordType(voucherHeader.getType());
                  recordStatus.setUserid(EgovThreadLocals.getUserId().intValue());
-                 recordStatusSer.persist(recordStatus);
+                 egfRecordStatusService.persist(recordStatus);
          }
          /**
           * This method will validate all the master data that are passed.
@@ -1437,7 +1453,7 @@ public class CreateVoucher {
                  }
                  if(!typeFound)throw new EGOVRuntimeException("Voucher type is not valid");
          }
-         @Transactional
+
          @SuppressWarnings("deprecation")
          public  CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException,Exception{
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("START | createVoucherHeader");
@@ -1682,7 +1698,7 @@ public class CreateVoucher {
                  return voucherNumberPrefix;
 
          }
-         @Transactional
+         
         public  Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException{
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("START | createVouchermis");
                  Vouchermis vouchermis= new Vouchermis();
@@ -1908,7 +1924,7 @@ public class CreateVoucher {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("END | validateTransaction");
 
          }
-         @Transactional
+         
          public List<Transaxtion> createTransaction(HashMap<String, Object> headerdetails, List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails,CVoucherHeader vh)throws EGOVRuntimeException{
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Start | createTransaction ");
                  List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
@@ -1942,7 +1958,7 @@ public class CreateVoucher {
                                  voucherDetail.setNarration(narration);
 
                                  // insert into voucher detail.
-                                 insertIntoVoucherDetail(voucherDetail);
+                               //  insertIntoVoucherDetail(voucherDetail);
                                  vh.addVoucherDetail(voucherDetail);
 
                                  Transaxtion transaction = new Transaxtion();
@@ -2011,14 +2027,11 @@ public class CreateVoucher {
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("END | createTransaction ");
                  return transaxtionList;
          }
-         @Transactional
+         
          private void insertIntoVoucherDetail(final VoucherDetail vd){
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Start | insertIntoVoucherDetail");
-                 PersistenceService<VoucherDetail, Long> voucherDetailSer;
-                 voucherDetailSer = new PersistenceService<VoucherDetail, Long>();
                 // voucherDetailSer.setSessionFactory(new SessionFactory());
-                 voucherDetailSer.setType(VoucherDetail.class);
-                 voucherDetailSer.persist(vd);
+                 vdPersitSer.persist(vd);
 
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("END | insertIntoVoucherDetail");
          }
@@ -2184,7 +2197,7 @@ public class CreateVoucher {
 
                  return collectionMode;
          }
-         @Transactional
+         
          public EgBillregister createBill(HashMap<String, Object> supplierBillDetails, List<HashMap<String,Object>> ledgerlist) throws EGOVRuntimeException,Exception{
                  EgBillregister billregister = new EgBillregister();
 
@@ -2196,7 +2209,7 @@ public class CreateVoucher {
                  return billregister;
 
          }
-         @Transactional
+         
          public void postInBillRegister(HashMap<String, Object> supplierBillDetails,EgBillregister billregister) throws EGOVRuntimeException,Exception{
 
                  billregister.setWorksdetailId(supplierBillDetails.get("worksdetailid").toString());
@@ -2223,7 +2236,7 @@ public class CreateVoucher {
                  String date = df.format((Date)supplierBillDetails.get("billdate"));
                  billregister.setBillnumber(cmImpl.getTxnNumber("WBILL",date ));
          }
-         @Transactional
+         
          public void postInEgbillMis(EgBillregister billregister,HashMap<String, Object> supplierBillDetails ) throws Exception{
 
                  EgBillregistermis billMis = new EgBillregistermis();
@@ -2243,7 +2256,7 @@ public class CreateVoucher {
                  billMis.setLastupdatedtime(new Date());
                  billregister.setEgBillregistermis(billMis);
          }
-         @Transactional
+         
          public void  postinbilldetail(EgBillregister billregister,List<HashMap<String,Object>> ledgerlist){
 
                  Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
@@ -2265,7 +2278,7 @@ public class CreateVoucher {
                  billregister.setEgBilldetailes(egBilldetailes);
 
          }
-         @Transactional
+         
          public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList,List<PreApprovedVoucher> subledgerlist)  throws EGOVRuntimeException
          {
                  try
@@ -2323,7 +2336,7 @@ public class CreateVoucher {
                          throw new EGOVRuntimeException(e.getMessage());
                  }
          }
-         @Transactional
+         
          public void deleteVoucherdetailAndGL(CVoucherHeader vh) throws SQLException,EGOVRuntimeException
          {
                  try
@@ -2388,7 +2401,7 @@ public class CreateVoucher {
           * @param paramList
           * @return
           */
-         @Transactional
+         
          public CVoucherHeader reverseVoucher(List<HashMap<String,Object>> paramList) throws EGOVRuntimeException,ParseException
          {
                  // -- Reversal Voucher date check ----
@@ -2433,7 +2446,7 @@ public class CreateVoucher {
                  reversalVoucher=reverseVoucherAndLedger(reversalVoucher);
                  return reversalVoucher;
          }
-         @Transactional
+         
          private CVoucherHeader reverseVoucherAndLedger(CVoucherHeader reversalVoucher) {
                  CVoucherHeader originalVocher;
                  SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -2504,7 +2517,7 @@ public class CreateVoucher {
 
                  return reversalVoucher;
          }
-         @Transactional
+         
          private CVoucherHeader createReversalVoucher(List<HashMap<String, Object>> paramList) throws ParseException
          {
                  CVoucherHeader reversalVoucher;
@@ -2688,8 +2701,6 @@ public class CreateVoucher {
 
                 @SuppressWarnings("unchecked")
                 protected void getHeaderMandateFields() {
-                        PersistenceService persistenceService=new PersistenceService();
-                        //persistenceService.setSessionFactory(new SessionFactory());
                         List<AppConfig> appConfigList = (List<AppConfig>) persistenceService.findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
                         for (AppConfig appConfig : appConfigList) {
                                 for (AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
@@ -2705,5 +2716,29 @@ public class CreateVoucher {
 
 
                 }
+				public AppConfigService getAppConfigService() {
+					return appConfigService;
+				}
+				public void setAppConfigService(AppConfigService appConfigService) {
+					this.appConfigService = appConfigService;
+				}
+				public PersistenceService getPersistenceService() {
+					return persistenceService;
+				}
+				public void setPersistenceService(PersistenceService persistenceService) {
+					this.persistenceService = persistenceService;
+				}
+				public AppConfigValuesDAO getAppConfigValuesDAO() {
+					return appConfigValuesDAO;
+				}
+				public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
+					this.appConfigValuesDAO = appConfigValuesDAO;
+				}
+				public FinancialYearDAO getFinancialYearDAO() {
+					return financialYearDAO;
+				}
+				public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+					this.financialYearDAO = financialYearDAO;
+				}
                 
 }

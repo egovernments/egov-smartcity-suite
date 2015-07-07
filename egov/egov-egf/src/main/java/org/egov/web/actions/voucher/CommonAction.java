@@ -130,7 +130,9 @@ import com.exilant.eGov.src.domain.Bank;
 @Results({ 
 	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"}),
 	@Result(name = "schemes", location = "common-schemes.jsp"),
-	@Result(name = Constants.SUBSCHEMES, location = "common-subSchemes.jsp")
+	@Result(name = Constants.SUBSCHEMES, location = "common-subSchemes.jsp"),
+	@Result(name = Constants.FUNDSOURCE, location = "common-fundsource.jsp"),
+	@Result(name = "result", location = "common-result.jsp")
 })
 @Transactional(readOnly=true)
 public class CommonAction extends BaseFormAction{
@@ -257,7 +259,7 @@ public class CommonAction extends BaseFormAction{
 			schemeList = getPersistenceService().findAllBy(
 					" from Scheme where fund.id=? and isActive=true order by name", -1);
 		} else {
-			schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=true order by name",fundId);
+			schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isactive=true order by name",fundId);
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme List size : " + schemeList.size());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadSchemes.");

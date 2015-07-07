@@ -48,7 +48,7 @@
          <zerofill>00</zerofill>
          
          <!-- Mention the number of digits in the sub-minorcode ( 4721 --> 4)    -->
-         <subminorvalue>7</subminorvalue>
+         <subminorvalue>5</subminorvalue>
          
          <!-- Mention the classification value of the parent of detail code  -->
          <parentfordetailcode>3</parentfordetailcode>

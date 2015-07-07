@@ -143,21 +143,18 @@ public class ClosedPeriods
 			//dateTyp = (Date)formatter.parse(date);
 				
 			chkqry="SELECT id FROM financialYear " +
-			"WHERE startingDate<=?  AND endingDate>=? AND isActiveForPosting=1";
+			"WHERE startingDate<='"+date+"'  AND endingDate>='"+date+"' AND isActiveForPosting=1";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Before excuting "+chkqry);
 			psmt =HibernateUtil.getCurrentSession().createSQLQuery(chkqry);
-			psmt.setString(1,date);
-			List<Object[]> rs =	psmt.setString(2,date).list();
+			List<Object[]> rs =	psmt.list();
 			
 			if(rs!=null && rs.size()>0) isClosed = false;
 			
 			if(!isClosed){
 				rs=null;
-				String qry="SELECT id FROM closedPeriods WHERE to_char(startingDate, 'DD-MON-YYYY')<=? AND endingDate>=?";
+				String qry="SELECT id FROM closedPeriods WHERE to_char(startingDate, 'DD-MON-YYYY')<='"+date+"' AND endingDate>='"+date+"'";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(qry);
 				psmt1 =HibernateUtil.getCurrentSession().createSQLQuery(qry);
-				psmt1.setString(1,date);
-				psmt1.setString(2,date);
 				rs = psmt1.list();
 				
 				if(!(rs!=null && rs.size()>0))

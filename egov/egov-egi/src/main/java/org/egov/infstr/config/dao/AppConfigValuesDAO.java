@@ -71,7 +71,10 @@ public class AppConfigValuesDAO  {
 	/**
 	 * {@inheritDoc}
 	 */
-	
+	public AppConfigValuesDAO()
+	{
+		
+	}
 	public void createAppConfigValues(final AppConfigValues appValues) {
 		entityManager.persist(appValues);
 	}

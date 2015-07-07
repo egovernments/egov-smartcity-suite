@@ -65,7 +65,7 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.ChartOfAccountsDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.commons.utils.EntityType;
@@ -75,13 +75,13 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillSubType;
@@ -149,7 +149,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
         private VoucherService voucherService;
         private ObjectTypeService objectTypeService;
         @Autowired
-        private ChartOfAccountsDAO coaDAO;
+        private ChartOfAccountsHibernateDAO coaDAO;
         @Autowired
         private EgwStatusHibernateDAO egwStatusDAO;
         

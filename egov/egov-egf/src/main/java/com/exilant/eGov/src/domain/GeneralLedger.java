@@ -45,6 +45,7 @@
 package com.exilant.eGov.src.domain;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -100,6 +101,7 @@ public class GeneralLedger {
 	public int getId() {
 		return Integer.valueOf(id).intValue();
 	}
+	@SuppressWarnings("deprecation")
 	@Transactional
 	public void insert() throws SQLException,
 			TaskFailedException {
@@ -127,16 +129,16 @@ public class GeneralLedger {
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
-			pst.setString(1, id);
-			pst.setString(2, voucherLineId);
-			pst.setString(3, effectiveDate);
-			pst.setString(4, glCodeId);
-			pst.setString(5, glCode);
-			pst.setString(6, debitAmount);
-			pst.setString(7, creditAmount);
-			pst.setString(8, description);
-			pst.setString(9, voucherHeaderId);
-			pst.setString(10, functionId);
+			pst.setBigInteger(0, BigInteger.valueOf(Long.valueOf(id)));
+			pst.setBigInteger(1,voucherLineId.equalsIgnoreCase("null")?BigInteger.ZERO:BigInteger.valueOf(Long.valueOf(voucherLineId)));
+			pst.setTimestamp(2, dt);
+			pst.setBigInteger(3, glCodeId.equalsIgnoreCase("null")?null:BigInteger.valueOf(Long.valueOf(glCodeId)));
+			pst.setString(4, glCode);
+			pst.setDouble(5, debitAmount.equalsIgnoreCase("null")?null:Double.parseDouble(debitAmount));
+			pst.setDouble(6, creditAmount.equalsIgnoreCase("null")?null:Double.parseDouble(creditAmount));
+			pst.setString(7, description);
+			pst.setBigInteger(8, voucherHeaderId.equalsIgnoreCase("null")?null:BigInteger.valueOf(Long.valueOf(voucherHeaderId)));
+			pst.setBigInteger(9, functionId==null?null:BigInteger.valueOf(Long.valueOf(functionId)));
 			pst.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

@@ -66,7 +66,7 @@ public class GLAccount implements Serializable
     */
 	private String name;
    
-	private int isActiveForPosting;
+	private boolean isActiveForPosting;
    
     private ArrayList glParameters = new ArrayList();
   
@@ -94,7 +94,7 @@ public class GLAccount implements Serializable
     * 
     * @param aId the new value of the id property
     */
-   public void setId(int aId) 
+   public void setID(int aId) 
    {
       ID = aId;
    }
@@ -139,7 +139,7 @@ public class GLAccount implements Serializable
       name = aName;
    }
    
-   public int isActiveForPosting() 
+   public boolean isActiveForPosting() 
    {
       return isActiveForPosting;
    }
@@ -149,7 +149,7 @@ public class GLAccount implements Serializable
     * 
     * @param aId the new value of the id property
     */
-   public void setIsActiveForPosting(int active) 
+   public void setIsActiveForPosting(boolean active) 
    {
    		isActiveForPosting = active;
    }
@@ -162,4 +162,9 @@ public class GLAccount implements Serializable
    {
       return glParameters;
    }
+
+	public boolean getIsActiveForPosting() {
+		return isActiveForPosting;
+	}
+   
 }

@@ -1517,7 +1517,7 @@ public class CollectionObjectFactory {
 		coa.setModifiedBy(user);
 		coa.setCreatedDate(date);
 		coa.setModifiedDate(date);
-		coa.setPurposeId("4");
+		coa.setPurposeId((long) 4);
 		coa.setType('I');
 		session.saveOrUpdate(coa);
 		return coa;

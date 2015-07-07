@@ -37,15 +37,10 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <html>
 
 <head>
@@ -95,7 +90,7 @@ display: none;
 			<jsp:include page="../budget/budgetHeader.jsp">
         		<jsp:param name="heading" value="Voucher-View" />
 			</jsp:include>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
@@ -103,9 +98,9 @@ display: none;
 		<div class="formmainbox"><div class="subheadnew">Voucher View</div>
 		<table border="0" width="100%" cellspacing="0">
 		<tr>
-			<td width="25%" class="greybox">Voucher Number:</td>
+			<td width="25%" class="greybox"><b>Voucher Number:</b></td>
 			<td width="25%" class="greybox"><s:property value="%{voucherHeader.voucherNumber}"/></td>
-			<td width="25%" class="greybox">Date:</td>
+			<td width="25%" class="greybox"><b>Date:</b></td>
 			<td width="25%" class="greybox"><s:date name="voucherHeader.voucherDate" format="dd/MM/yyyy"/></td>
 		</tr>
 		</table>
@@ -142,7 +137,7 @@ display: none;
 					</tr>
 			</s:iterator>
 			<tr>
-				<td class="greybox" style="text-align:right" colspan="3"/>Total</td>
+				<td class="greybox" style="text-align:right" colspan="3"/><b>Total</b></td>
 				<td class="greybox" style="text-align:right"><fmt:formatNumber value="${db}" pattern="#0.00" /></td>
 				<td class="greybox" style="text-align:right"><fmt:formatNumber value="${cr}" pattern="#0.00" /></td>
 			</tr>
@@ -226,8 +221,7 @@ display: none;
 <s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}"/>
 <s:hidden id="id" name="id" value="%{voucherHeader.id}"/><s:hidden id="contraId" name="contraId" value="%{contraVoucher.id}"/>
 </div>
-</div>
-<script>
+<script type="text/javascript">
 	function openSource()
 	{
 		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')

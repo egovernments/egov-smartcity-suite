@@ -40,7 +40,10 @@
 package org.egov.commons.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import org.apache.log4j.Logger;
+import org.egov.commons.CFiscalPeriod;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -48,31 +51,47 @@ import org.hibernate.Session;
 
 public class FiscalPeriodHibernateDAO extends GenericHibernateDAO implements FiscalPeriodDAO {
 	
-	public FiscalPeriodHibernateDAO(final Class persistentClass, final Session session) {
+	private final Logger logger = Logger.getLogger(getClass().getName());
+	public FiscalPeriodHibernateDAO(Class persistentClass, Session session)
+	{
 		super(persistentClass, session);
 
 	}
-
-	@Override
-	public String getFiscalPeriodIds(final String financialYearId) {
-		final StringBuffer result = new StringBuffer();
-		final Query query = HibernateUtil.getCurrentSession().createQuery("select cfiscalperiod.id from CFiscalPeriod cfiscalperiod where cfiscalperiod.financialYearId = '" + financialYearId + "'  ");
-		final ArrayList list = (ArrayList) query.list();
-		if (list.size() > 0) {
-			if (list.get(0) == null) {
-				return 0.0 + "";
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					result.append(list.get(i).toString());
-					if (list.size() - i != 1) {
-						result.append(",");
-					}
-				}
-			}
-		} else {
-			return 0.0 + "";
-		}
-		return result.toString();
+	
+	public FiscalPeriodHibernateDAO(){
+		super(CFiscalPeriod.class,null);
+	}
+	
+	public String getFiscalPeriodIds(String financialYearId)
+	{
+	    logger.info("Obtained session");
+        StringBuffer result=new StringBuffer();
+        Query query=HibernateUtil.getCurrentSession().createQuery("select cfiscalperiod.id from CFiscalPeriod cfiscalperiod where cfiscalperiod.financialYearId = '"+financialYearId+"'  ");
+        ArrayList list= (ArrayList)query.list();
+    	if(list.size()> 0){
+        	if(list.get(0) == null)
+        		return 0.0+"";
+        	else	{
+        		for(int i = 0; i < list.size(); i++){
+        			result.append(list.get(i).toString());
+        			if( list.size()- i !=  1)
+        				result.append(",");
+        		}
+        	}
+            }
+        else
+            return 0.0+"";	
+        return result.toString();
+	}
+	/**
+	 * 
+	 */
+	public CFiscalPeriod getFiscalPeriodByDate(Date voucherDate)
+	{
+		Query query=HibernateUtil.getCurrentSession().createQuery("from CFiscalPeriod fp where  :voucherDate between fp.startingDate and fp.endingDate");
+        query.setDate("voucherDate",voucherDate);
+        query.setCacheable(true);
+        return (CFiscalPeriod)query.uniqueResult();
 	}
 
 }

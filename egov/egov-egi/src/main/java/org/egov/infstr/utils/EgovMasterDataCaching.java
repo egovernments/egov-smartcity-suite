@@ -211,6 +211,14 @@ public class EgovMasterDataCaching {
 		return dataMap;
 	}
 
+	public static EmbeddedCacheManager getCACHE_MANAGER() {
+		return CACHE_MANAGER;
+	}
+
+	public static void setCACHE_MANAGER(EmbeddedCacheManager cACHE_MANAGER) {
+		CACHE_MANAGER = cACHE_MANAGER;
+	}
+
 	/**
 	 * This method removes the data from cache for given sqlTagName.
 	 * @param sqlTagName the sql tag name

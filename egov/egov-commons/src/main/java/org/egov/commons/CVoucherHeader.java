@@ -46,15 +46,18 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
@@ -85,23 +88,29 @@ public class CVoucherHeader extends StateAware {
     private Date voucherDate;
     private Integer departmentId;
     @ManyToOne
+    @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
     private Integer status;
     private Long originalvcId;
     @ManyToOne
+    @JoinColumn(name = "fundsourceId")
     private Fundsource fundsourceId;
     private Integer isConfirmed;
     private Integer functionId;
     private String refcgNo;
     private String cgvn;
     private Integer moduleId;
+    @Transient
     private String voucherSubType;
+    @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Transient
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinTable(name = "voucherdetail", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
     private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "voucherheaderid")
+    @JoinColumn(name = "id",referencedColumnName = "voucherheaderid")
     private Vouchermis vouchermis;
 
     public Long getId() {

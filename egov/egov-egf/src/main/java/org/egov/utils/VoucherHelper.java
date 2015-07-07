@@ -44,6 +44,7 @@ package org.egov.utils;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,9 +57,9 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.commons.dao.FiscalPeriodDAO;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -66,16 +67,21 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
+import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
 /**
  * @author msahoo
  *
@@ -86,9 +92,16 @@ public class VoucherHelper {
 	private PersistenceService persistenceService;
 	private EisCommonService eisCommonService;
 	private EisUtilService eisUtilService;
-	
+	@Autowired
+    private FundHibernateDAO fundDAO;
 	@Autowired
 	private ScriptService scriptService;
+	@Autowired
+	private EGovernCommon eGovernCommon;
+	@Autowired
+	private FiscalPeriodHibernateDAO fiscalDAO;
+	@Autowired
+	private CommonsServiceImpl commonsService;
 	
 	@SuppressWarnings("unchecked")
 	public PersistenceService getPersistenceService() {
@@ -246,24 +259,39 @@ public class VoucherHelper {
 		}
 		return numDateQuery.toString();
   	}
-  
+  public String getEg_Voucher(String vouType,String fiscalPeriodIdStr) throws TaskFailedException,Exception
+	{
+		if(LOGGER.isDebugEnabled())     LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
+		Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from fiscalperiod where id="+Integer.parseInt(fiscalPeriodIdStr)+"");
+		List<String> fc  = query.list();
+		Long cgvn=null ;
+		//Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
+		try{
+			String sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
+			cgvn = DatabaseSequence.named(sequenceName, HibernateUtil.getCurrentSession()).createIfNecessary().nextVal();
+			if(LOGGER.isDebugEnabled())     LOGGER.debug("----- CGVN : "+cgvn);
+			
+		}
+		catch (DatabaseSequenceFirstTimeException e)
+		{
+			LOGGER.error("Error in generating CGVN"+e);
+			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),e.getMessage())));
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Error in generating CGVN"+e);
+			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),e.getMessage())));
+		}
+		return cgvn.toString();
+		
+}
 	public  String getGeneratedVoucherNumber(Integer fundId, String voucherType, Date voucherDate, String vNumGenMode, String voucherNumber)  throws Exception {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("fundId | in getGeneratedVoucherNumber      :"+fundId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherType | in getGeneratedVoucherNumber :"+voucherType);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherDate | in getGeneratedVoucherNumber :"+voucherDate);
-		PersistenceService persistenceService = new PersistenceService();
-		//persistenceService.setSessionFactory(sessionFactory);
-		EGovernCommon cm = new EGovernCommon();
-		//initializing now later needs to be injected
-		FiscalPeriodDAO fiscalDAO=null;
-		fiscalDAO=new FiscalPeriodHibernateDAO(CFiscalPeriod.class,HibernateUtil.getCurrentSession());
-		//initializing now later needs to be injected
-		FundHibernateDAO fundDAO=null;
-		fundDAO=new FundHibernateDAO(Fund.class,HibernateUtil.getCurrentSession());
-
 		String vDate = Constants.DDMMYYYYFORMAT2.format(voucherDate);
 		String vDateTemp = Constants.DDMMYYYYFORMAT1.format(voucherDate);
-		CFiscalPeriod	fiscalPeriod=null;//This fix is for Phoenix Migration.fiscalDAO.getFiscalPeriodByDate(voucherDate);
+		CFiscalPeriod	fiscalPeriod=fiscalDAO.getFiscalPeriodByDate(voucherDate);
 		Fund vFund=fundDAO.fundById(fundId);
 		String fundIdentifier =vFund.getIdentifier().toString();
 		String sequenceName= sequenceNameFor(fundIdentifier+"/"+voucherType,fiscalPeriod.getName());
@@ -284,9 +312,8 @@ public class VoucherHelper {
 		
 		String scriptName = "voucherheader.vouchernumber";
 		Script voucherNumberScript=scriptService.getByName( scriptName);
-		
 		ScriptContext scriptContext = ScriptService.createContext("fundIdentity", fundIdentifier, "voucherType", voucherType, "transNumber", 
-				transNumber, "vNumGenMode", vNumGenMode,  "date", voucherDate, "month", month, "voucherNumber", voucherNumber,"sequenceName",sequenceName );
+				transNumber, "vNumGenMode", vNumGenMode,  "date", voucherDate, "month", month,"commonsService",commonsService, "voucherNumber", voucherNumber,"sequenceName",sequenceName );
 		fVoucherNumber = (String)scriptService.executeScript(scriptName, scriptContext);
 	
 		}
@@ -303,7 +330,7 @@ public class VoucherHelper {
 		
 		
 		
-		if(!cm.isUniqueVN(fVoucherNumber,vDateTemp, null))
+		if(!eGovernCommon.isUniqueVN(fVoucherNumber,vDateTemp, null))
 		{
 			throw new EGOVRuntimeException("Trying to create Duplicate Voucher Number");
 		}
@@ -335,7 +362,7 @@ public class VoucherHelper {
 		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
 		HashMap<String,String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", employee.getCode());
-		List<EmployeeView> listEmployeeView = eisUtilService.getEmployeeInfoList(paramMap);
+		List<EmployeeView> listEmployeeView =null;//Phoenix eisUtilService.getEmployeeInfoList(paramMap);
 		List<Department> departmentList = new ArrayList<Department> ();
 		for (EmployeeView employeeView : listEmployeeView) {
 			employeeView.getDepartment().getName();
@@ -427,6 +454,14 @@ public class VoucherHelper {
 
 	public void setEisUtilService(EisUtilService eisUtilService) {
 		this.eisUtilService = eisUtilService;
+	}
+
+	public EGovernCommon geteGovernCommon() {
+		return eGovernCommon;
+	}
+
+	public void seteGovernCommon(EGovernCommon eGovernCommon) {
+		this.eGovernCommon = eGovernCommon;
 	}
 	
 }

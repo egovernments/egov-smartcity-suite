@@ -286,7 +286,7 @@ public class FinancialsUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isRevenueAccountHead(CChartOfAccounts coa, List<CChartOfAccounts> bankCOAList) {
-		String purposeId = coa.getPurposeId();
+		Long purposeId = coa.getPurposeId();
 		
 		// In case of bank payment, to check if the chartofaccounts exist in the
 		// list of chartofacccounts mapped to bankaccounts.

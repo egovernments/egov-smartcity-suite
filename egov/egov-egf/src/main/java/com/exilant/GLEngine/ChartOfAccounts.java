@@ -54,12 +54,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.jackrabbit.core.SessionFactory;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.VoucherDetail;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.exceptions.EGOVException;
@@ -69,17 +69,23 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.IntegerType;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.ClosedPeriods;
 import com.exilant.eGov.src.domain.EgRemittanceGldtl;
@@ -105,11 +111,13 @@ public class ChartOfAccounts {
 	private static final String ACCOUNTDETAILTYPENODE ="AccountDetailType";
 	private static final String EXP="Exp=";
 	private static final String EXILRPERROR = "exilRPError";
-
+	private static PersistenceService<CChartOfAccountDetail, Integer> chartOfAccountDetailService;
+	private PersistenceService<CVoucherHeader, Long> voucherHeaderPersitService;
 	private List<Object[]> resultset;
 
 	private static Cache<Object, Object> cache;
-	BudgetDetailsHibernateDAO budgetDetailsDAO = null;
+	@Autowired
+	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 	static
 	{
 		singletonInstance = new ChartOfAccounts();
@@ -117,9 +125,16 @@ public class ChartOfAccounts {
 		{
 			 //TODO   Commenting reading cache from infinispan temporarily and building cachemanager through code 
 			//cache=(TreeCacheMBean)MBeanProxyExt.create(TreeCacheMBean.class, "jboss.cache:service=TreeCache", server);
-				EmbeddedCacheManager manager = new DefaultCacheManager();
+				
+			EgovMasterDataCaching instance = EgovMasterDataCaching.getInstance();
+			EmbeddedCacheManager manager = EgovMasterDataCaching.getCACHE_MANAGER();
 				manager.defineConfiguration("chartofaccounts-cache", new ConfigurationBuilder().build());
-				cache = manager.getCache("chartofaccounts-cache");
+			
+				cache =manager.getCache("chartofaccounts-cache"); 
+				if (cache==null)
+				{
+					loadAccountData();
+				}
 		} catch (Exception e)
 		{
 			LOGGER.error(EXP+e.getMessage(),e);
@@ -127,7 +142,7 @@ public class ChartOfAccounts {
 		}
 	}
 
-   private ChartOfAccounts(){
+   public ChartOfAccounts(){
 
    }
    public static  ChartOfAccounts getInstance()throws TaskFailedException{
@@ -152,14 +167,45 @@ public class ChartOfAccounts {
    		HashMap glAccountIds = new HashMap();
    		HashMap accountDetailType= new HashMap();
    		DataExtractor de=DataExtractor.getExtractor();
-		String sql="select ID as \"ID\",name as  \"name\",tableName as \"tableName\","+
-		"description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\""+
-		",nbrOfLevels as  \"nbrOfLevels\" from accountDetailType";
-		accountDetailType =  de.extractIntoMap(sql,"attributeName",AccountDetailType.class);
+   		String sql="select ID as \"ID\",name as  \"name\",tableName as \"tableName\","+
+   				"description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\""+
+   				",nbrOfLevels as  \"nbrOfLevels\" from accountDetailType";
+   		Session currentSession = HibernateUtil.getCurrentSession();
+		SQLQuery createSQLQuery = currentSession.createSQLQuery(sql);
+		createSQLQuery
+		.addScalar("ID",IntegerType.INSTANCE)
+		.addScalar("name")
+		.addScalar("tableName")
+		.addScalar("description")
+		.addScalar("columnName")
+		.addScalar("attributeName")
+		.setResultTransformer(Transformers.aliasToBean(AccountDetailType.class));
+		List<AccountDetailType> accountDetailTypeList = new ArrayList<AccountDetailType>();
+		List<GLAccount> glAccountCodesList = new ArrayList<GLAccount>();
+		List<GLAccount> glAccountIdsList = new ArrayList<GLAccount>();
+		
+		accountDetailTypeList = createSQLQuery.list();
+		for(AccountDetailType type:accountDetailTypeList){
+			accountDetailType.put(type.getAttributeName(), type);
+		}
 		sql="select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ," +
-				" isactiveforposting as \"isActiveForPosting\"  from chartofaccounts ";
-		glAccountCodes = de.extractIntoMap(sql,"glCode",GLAccount.class);
-		glAccountIds = de.extractIntoMap(sql,"ID",GLAccount.class);
+				"isActiveForPosting as \"isActiveForPosting\"  from chartofaccounts ";
+		createSQLQuery =  currentSession.createSQLQuery(sql);
+		createSQLQuery
+		.addScalar("ID",IntegerType.INSTANCE)
+		.addScalar("glCode")
+		.addScalar("name")
+		.addScalar("isActiveForPosting",BooleanType.INSTANCE)
+		.setResultTransformer(Transformers.aliasToBean(GLAccount.class));
+		
+		glAccountCodesList = createSQLQuery.list();
+		for(GLAccount type:glAccountCodesList){
+			glAccountCodes.put(type.getCode(), type);
+		}
+		for(GLAccount type:glAccountCodesList){
+			glAccountIds.put(type.getId(), type);
+		}
+		
 		loadParameters(glAccountCodes,glAccountIds);
 		try
 		{
@@ -171,7 +217,7 @@ public class ChartOfAccounts {
 			//cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
 			//cache.put(ROOTNODE+"/"+FilterName.get(),gLAccCodeNode,glAccountCodes);
 			//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-			//cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName() ,hm);
+			cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName() ,hm);
 		} catch (Exception e)
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(EXP+e.getMessage(),e);
@@ -191,6 +237,7 @@ public class ChartOfAccounts {
 	   		HashMap glAccountCodes = new HashMap();
 	   		HashMap glAccountIds = new HashMap();
 	   		HashMap accountDetailType= new HashMap();
+	   		
 
 
 			DataExtractor de=DataExtractor.getExtractor();
@@ -198,11 +245,43 @@ public class ChartOfAccounts {
 			String sql="select ID as \"ID\",name as  \"name\",tableName as \"tableName\","+
 			"description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\""+
 			",nbrOfLevels as  \"nbrOfLevels\" from AccountDetailType";
-			accountDetailType = de.extractIntoMap(sql,"attributeName",AccountDetailType.class);
+			
+			
+			Session currentSession = HibernateUtil.getCurrentSession();
+			SQLQuery createSQLQuery = currentSession.createSQLQuery(sql);
+			createSQLQuery
+			.addScalar("ID",IntegerType.INSTANCE)
+			.addScalar("name")
+			.addScalar("tableName")
+			.addScalar("description")
+			.addScalar("columnName")
+			.addScalar("attributeName")
+			.setResultTransformer(Transformers.aliasToBean(AccountDetailType.class));
+			List<AccountDetailType> accountDetailTypeList = new ArrayList<AccountDetailType>();
+			List<GLAccount> glAccountCodesList = new ArrayList<GLAccount>();
+			List<GLAccount> glAccountIdsList = new ArrayList<GLAccount>();
+			
+			accountDetailTypeList = createSQLQuery.list();
+			for(AccountDetailType type:accountDetailTypeList){
+				accountDetailType.put(type.getAttributeName(), type);
+			}
 			sql="select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ," +
-					"isactiveforposting as \"isActiveForPosting\"  from chartofaccounts ";
-			glAccountCodes =  de.extractIntoMap(sql,"glCode",GLAccount.class);
-			glAccountIds = de.extractIntoMap(sql,"ID",GLAccount.class);
+					"isActiveForPosting as \"isActiveForPosting\"  from chartofaccounts ";
+			createSQLQuery =  currentSession.createSQLQuery(sql);
+			createSQLQuery
+			.addScalar("ID",IntegerType.INSTANCE)
+			.addScalar("glCode")
+			.addScalar("name")
+			.addScalar("isActiveForPosting",BooleanType.INSTANCE)
+			.setResultTransformer(Transformers.aliasToBean(GLAccount.class));
+			
+			glAccountCodesList = createSQLQuery.list();
+			for(GLAccount type:glAccountCodesList){
+				glAccountCodes.put(type.getCode(), type);
+			}
+			for(GLAccount type:glAccountCodesList){
+				glAccountIds.put(type.getId(), type);
+			}
 			loadParameters(glAccountCodes,glAccountIds);
 			try
 			{
@@ -214,7 +293,7 @@ public class ChartOfAccounts {
 				//cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
 				//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCCODENODE,glAccountCodes);
 				//cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-				//cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),hm);
+				cache.put(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),hm);
 			} catch (Exception e)
 			{
 				LOGGER.error(EXP+e.getMessage(),e);
@@ -222,7 +301,6 @@ public class ChartOfAccounts {
 
 			}
    }
- 
 //   private static synchronized void loadParameters(HashMap glAccountCodes, HashMap glAccountIds)throws TaskFailedException{
 //	if(LOGGER.isInfoEnabled())     LOGGER.info("loadParameters called");
 //	Iterator it=glAccountCodes.keySet().iterator();
@@ -246,10 +324,7 @@ public class ChartOfAccounts {
 //}
    
    private static synchronized void loadParameters(HashMap glAccountCodes, HashMap glAccountIds)throws TaskFailedException{
-		PersistenceService persistenceService = new PersistenceService();
-		//persistenceService.setSessionFactory(new SessionFactory());
-		persistenceService.setType(CChartOfAccountDetail.class);
-		List<CChartOfAccountDetail> chList = persistenceService.findAllBy("from CChartOfAccountDetail");
+		List<CChartOfAccountDetail> chList = chartOfAccountDetailService.findAllBy("from CChartOfAccountDetail");
 		for (CChartOfAccountDetail chartOfAccountDetail : chList) {
 			GLParameter parameter = new GLParameter();
 			parameter.setDetailId(chartOfAccountDetail.getDetailTypeId().getId());
@@ -262,7 +337,13 @@ public class ChartOfAccounts {
 				glAccId.getGLParameters().add(parameter);
 		}
 	}
-
+	  
+   private static Integer getIntegerValue(Object[] element){
+	   return element!=null?Integer.parseInt(element[0].toString()):null;
+   }
+   private static Long getLongValue(Object[] element){
+	   return element!=null?Long.valueOf(element[0].toString()):null;
+   }
 	private static GLAccount getGlAccCode(CChartOfAccounts glCodeId,Map glAccountCodes) {
 		for (Object key : glAccountCodes.keySet()) {
 			if(((String)key).equalsIgnoreCase(glCodeId.getGlcode()))
@@ -310,7 +391,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
    		}
    		txn.setGlName(glAcc.getName());
    		if(LOGGER.isInfoEnabled())     LOGGER.info(txn.getGlCode()+" is activefor posting :"+glAcc.isActiveForPosting());
-   		if(glAcc.isActiveForPosting()==0){
+   		if(!glAcc.isActiveForPosting()){
    			dc.addMessage("exilInActiveAccount",txn.getGlCode()+" For "+txn.glName);
    			return false;
    		}
@@ -344,7 +425,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		}
 		txn.setGlName(glAcc.getName());
 		if(LOGGER.isInfoEnabled())     LOGGER.info(txn.getGlCode()+" is activefor posting :"+glAcc.isActiveForPosting());
-		if(glAcc.isActiveForPosting()==0){
+		if(!glAcc.isActiveForPosting()){
 			return false;
 		}
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Classification....:"+getClassificationForCode(txn.getGlCode()));
@@ -372,24 +453,21 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
     */
    private int getClassificationForCode(String glcode) throws TaskFailedException
    {
-   	int retVal=0;
-   	List<Object[]> rs=null;
+	   Short retVal=0;
+   	List<Short> rs=null;
    	 Query pstmt=null;
    	try{
-   		String query = "select classification from chartofaccounts where glcode= ?";
+   		String query = "select classification from chartofaccounts where glcode= '"+glcode+"'";
    		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
-   		pstmt.setString(1, glcode);
    	   	rs=pstmt.list();
    	   	if(rs!=null && rs.size()>0)
-   	   	for(Object[] element : rs){
-   	   		retVal=Integer.valueOf(element[0].toString());
-   	   	}
+   	   	retVal = rs!=null?rs.get(0):0;
    	}catch (Exception e)
 	{
 		LOGGER.error(EXP+e.getMessage(),e);
 		throw new TaskFailedException();
 	}
-   	return retVal;
+   	return retVal.intValue();
    }
    private boolean isRequiredPresent(Transaxtion txn,GLAccount glAcc,DataCollection dc)throws TaskFailedException{
    	int requiredCount=0;
@@ -565,6 +643,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		BudgetService budgetService = new BudgetService();
 		budgetService.setType(Budget.class);
 		budgetDetailsDAO.setBudgetService(budgetService);
+		budgetDetailsDAO.setAppConfigValuesDAO(new AppConfigValuesDAO());
 		budgetDetailsDAO.setFinancialYearDAO(new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession()));
 
 	}
@@ -582,18 +661,13 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
    {
 	   Map<String,Object> paramMap = null;
 	   Transaxtion txnObj=null;
-	   PersistenceService<CVoucherHeader,Long> persistenceService = new PersistenceService<CVoucherHeader,Long>();
-	   //persistenceService.setSessionFactory(new SessionFactory());
-	   persistenceService.setType(CVoucherHeader.class);
 	  
 	   CVoucherHeader voucherHeader=null;
-	   setBudgetDetailsDAO();
-	   setScriptService();
 	   for(int i=0;i<txnList.length;i++)
 		   
 	   {
 		   txnObj=txnList[i];
-		   voucherHeader = persistenceService.findById(Long.valueOf(txnObj.voucherHeaderId), false);
+		   voucherHeader = (CVoucherHeader) voucherHeaderPersitService.find("from CVoucherHeader where id = ?",Long.valueOf(txnObj.voucherHeaderId));
 		   paramMap = new HashMap<String,Object>();
 		   if(txnObj.getDrAmount()==null || txnObj.getDrAmount().equals(""))
 			   paramMap.put("debitAmt", null);
@@ -628,6 +702,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 	   }
 	   return true;
    }
+   @Transactional
     public boolean postTransaxtions(Transaxtion txnList[],String vDate)throws Exception,ValidationException
    	{
    		if(!checkBudget(txnList))
@@ -677,7 +752,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
  }
    private boolean checkfuctreqd(String glcode){
 	   Session session =HibernateUtil.getCurrentSession();
-	  List<CChartOfAccounts> list =(List<CChartOfAccounts>) session.createQuery("from CChartOfAccounts where functionReqd=1 and glcode='"+glcode+"'").list();
+	  List<CChartOfAccounts> list =(List<CChartOfAccounts>) session.createQuery("from CChartOfAccounts where functionReqd=true and glcode='"+glcode+"'").list();
 	  return list.size() == 1 ? true:false;
 	 }
    private boolean postInGL(Transaxtion txnList[],DataCollection dc)throws ParseException{
@@ -1292,4 +1367,25 @@ public static HashMap getAccountDetailType()
 	 public void setCacheInstance(Cache<Object, Object> cacheInstance) {
 			cache = cacheInstance; 
 		}
+	public PersistenceService<CVoucherHeader, Long> getVoucherHeaderPersitService() {
+		return voucherHeaderPersitService;
+	}
+	public void setVoucherHeaderPersitService(
+			PersistenceService<CVoucherHeader, Long> voucherHeaderPersitService) {
+		this.voucherHeaderPersitService = voucherHeaderPersitService;
+	}
+	public static PersistenceService<CChartOfAccountDetail, Integer> getChartOfAccountDetailService() {
+		return chartOfAccountDetailService;
+	}
+	public static void setChartOfAccountDetailService(
+			PersistenceService<CChartOfAccountDetail, Integer> chartOfAccountDetailService) {
+		ChartOfAccounts.chartOfAccountDetailService = chartOfAccountDetailService;
+	}
+	public BudgetDetailsHibernateDAO getBudgetDetailsDAO() {
+		return budgetDetailsDAO;
+	}
+	public void setBudgetDetailsDAO(BudgetDetailsHibernateDAO budgetDetailsDAO) {
+		this.budgetDetailsDAO = budgetDetailsDAO;
+	}
+	 
 }

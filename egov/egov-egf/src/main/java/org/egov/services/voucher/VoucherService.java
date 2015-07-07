@@ -79,6 +79,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -139,7 +140,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         @Autowired
         private VoucherHeaderDAO voucherHeaderDAO;
         
-        @Autowired
         private VoucherHelper voucherHelper;
         
         private  UserService userMngr;
@@ -153,7 +153,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         }
         private EISServeable eisService;
         private EmployeeServiceOld employeeService;
-        private ScriptService scriptExecutionService;
+        @Autowired
+        private ScriptService scriptService;
         private PersistenceService<EgBillregister, Long> billRegisterSer;
         public Boundary getBoundaryForUser(CVoucherHeader rv)
         {
@@ -819,12 +820,12 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
                  Map<String , Object> map = new HashMap<String, Object>();
                  Designation designation=null;
-                        Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
-                        List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type));*/
+                       // Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
+                       // ScriptContext scriptContext = ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EgovThreadLocals.getUserId(),"DATE",new Date(),"type",type);
+                    //    List<String> list = (List<String>) scriptService.executeScript(validScript.getName(), scriptContext);
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
-                        for (String desgFuncryName : list) {
+                       /* for (String desgFuncryName : list) {
                                 if(desgFuncryName.trim().length()!=0 && !desgFuncryName.equalsIgnoreCase("END")){
                                         desgFuncryMap = new HashMap<String, Object>();
                                         if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
@@ -841,7 +842,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                 }
                                 
                                 
-                        }
+                        }*/
+                        map.put("wfitemstate", "END");
                         map.put("designationList", designationList);
                         return map;
                 }
@@ -1057,7 +1059,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                         egBillregister.setBillnumber(voucherTypeBean.getBillNum());
                 }else{
                         ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator",sequenceGenerator,"bill",egBillregister);
-                        String billNumber =(String)scriptExecutionService.executeScript("autobillnumber", scriptContext);
+                        String billNumber =(String)scriptService.executeScript("autobillnumber", scriptContext);
                         egBillregister.setBillnumber(billNumber);
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherService | createBillForVoucherSubType | Bill number generated :=" + billNumber);
                 }
@@ -1256,8 +1258,8 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
                 this.sequenceGenerator = sequenceGenerator;
         }
-        public void setScriptExecutionService(ScriptService scriptExecutionService) {
-                this.scriptExecutionService = scriptExecutionService;
+        public void setScriptService(ScriptService scriptService) {
+                this.scriptService = scriptService;
         }
         public void setBillRegisterSer(
                         PersistenceService<EgBillregister, Long> billRegisterSer) {
@@ -1287,5 +1289,11 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public void setEisService(EISServeable eisService) {
             this.eisService = eisService;
         }
+		public VoucherHelper getVoucherHelper() {
+			return voucherHelper;
+		}
+		public void setVoucherHelper(VoucherHelper voucherHelper) {
+			this.voucherHelper = voucherHelper;
+		}
         
 }

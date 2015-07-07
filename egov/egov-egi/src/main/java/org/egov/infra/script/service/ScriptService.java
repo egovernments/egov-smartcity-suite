@@ -62,6 +62,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.cache.LRUCache;
 import org.egov.infstr.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class ScriptService  {
         return scriptRepository.findByName(name);
     }
 
-    public Script findByNameAndPeriod( String name, Date period) {
+    public Script findByNameAndPeriod( String name, DateTime period) {
         return scriptRepository.findByNameAndPeriod(name, period);
     }
     
@@ -216,6 +217,10 @@ public class ScriptService  {
             LOG.error("script error for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);
             throw new EGOVRuntimeException("script.error", e);
         }
+        catch (final  Exception e) {
+            LOG.error("Exception  for " + script.getType() + ":" + script.getName() + ":" + script.getScript(), e);
+            throw new EGOVRuntimeException("script.error", e);
+        }
     }
 
     /**
@@ -309,8 +314,9 @@ public class ScriptService  {
      *             if the script is not configured in the system
      */
     private Script getScript(final String scriptName, Date asOnDate) {
-        if (asOnDate == null)
-            asOnDate = DateUtils.today();
+    	  DateTime currentDate = new DateTime();
+    	if (asOnDate != null)
+    		currentDate =  new DateTime(asOnDate);
 
         Script script = scriptCache.get(scriptName);
         if (script != null && script.getPeriod().getEndDate().isAfter(asOnDate.getTime()))
@@ -318,7 +324,8 @@ public class ScriptService  {
             return script;
 
         // Script not available in cache. Try to fetch from database.
-        script = scriptRepository.findByNameAndPeriod(scriptName, asOnDate);
+        
+        script = scriptRepository.findByNameAndPeriod(scriptName, currentDate);
         if (script == null)
             throw new EGOVRuntimeException("Script [" + scriptName + "] not found!");
 

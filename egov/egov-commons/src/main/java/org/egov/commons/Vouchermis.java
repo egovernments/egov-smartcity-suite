@@ -48,7 +48,7 @@ public class Vouchermis implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer id;
+	private Long id;
 
 	private Fundsource fundsource;
 
@@ -157,7 +157,7 @@ public class Vouchermis implements java.io.Serializable {
 	public Vouchermis() {
 	}
 
-	public Vouchermis(Integer id) {
+	public Vouchermis(Long id) {
 		this.id = id;
 	}
 
@@ -172,11 +172,11 @@ public class Vouchermis implements java.io.Serializable {
 	 * this.createtimestamp = createtimestamp; this.iutStatus = iutStatus; this.iutNumber = iutNumber; this.schemeid = schemeid; this.subschemeid = subschemeid; this.functionary=functionary; }
 	 */
 
-	public Integer getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

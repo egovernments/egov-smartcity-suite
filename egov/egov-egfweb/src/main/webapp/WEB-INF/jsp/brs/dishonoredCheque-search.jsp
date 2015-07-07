@@ -185,7 +185,7 @@ function dishonorSelectedChq() {
 				
 				<tr>
 					<td class="bluebox"></td>
-					<td class="bluebox"><s:text	name="dishnrChq.instrmntMode.title" />:<span class="mandatory">*</span></td>
+					<td class="bluebox"><s:text	name="dishnrChq.instrmntMode.title" />:<span class="mandatory1">*</span></td>
 					<td class="bluebox">
 						<SELECT id="instrumentMode" name="instrumentMode" >
 							<option value="0" selected >---Choose---</option>
@@ -197,11 +197,11 @@ function dishonorSelectedChq() {
 				
 				<tr>
 						<td class="greybox"></td>
-						<td class="greybox"><s:text	name="dishnrChq.chqDDNo.title" />:<span class="mandatory">*</span></td>
+						<td class="greybox"><s:text	name="dishnrChq.chqDDNo.title" />:<span class="mandatory1">*</span></td>
 						<td class="greybox"><s:textfield name="chequeNo" style="width: 200px;"
 							id="chequeNo" value="%{chequeNo}" /></td>
 							
-						<td class="greybox"><s:text	name="dishnrChq.chqDDDate.title" />:<span class="mandatory">*</span></td>
+						<td class="greybox"><s:text	name="dishnrChq.chqDDDate.title" />:<span class="mandatory1">*</span></td>
 						<td class="greybox">
 						<s:date
 							name="chqDDDate" id="chqDDDate" format="dd/MM/yyyy" />
@@ -215,7 +215,7 @@ function dishonorSelectedChq() {
 					</tr>
 					<tr>
 						<td colspan="5">
-							<div align="right" class="mandatory" style="font-size: 11px; padding-right: 20px;">	*
+							<div align="right" class="mandatory1" style="font-size: 11px; padding-right: 20px;">	*
 								<s:text name="default.message.mandatory" />
 							</div>
 						</td>

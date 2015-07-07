@@ -37,18 +37,13 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
 <script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
@@ -69,13 +64,15 @@
         		<jsp:param name="heading" value="Journal voucher Create" />
 			</jsp:include>
 			
-			<span class="mandatory">
+			<span class="mandatory1">
 			<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Journal Voucher</div>
+<div class="formmainbox">
+	<div class="subheadnew">Journal Voucher
+	</div>
 		<div id="listid" style="display:block">
 		<br/>
 <div align="center">
@@ -85,10 +82,10 @@
 	<table border="0" width="100%">
 	<tr>
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1">*</span></td>
 			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="30" /></td>
 		</s:if>
-			<td class="greybox"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
+			<td class="greybox"><s:text name="voucher.date"/><span class="mandatory1">*</span></td>
 			<td class="greybox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 			<s:textfield name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 			<a href="javascript:show_calendar('jvcreateform.voucherDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
@@ -140,7 +137,7 @@
 		</script>
 		<br/>
 		<div class="subheadsmallnew"/></div>
-		<div class="mandatory" align="left">* Mandatory Fields</div>
+		<div class="mandatory1" align="left">* Mandatory Fields</div>
 		<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 			<%@include file="voucherWorkflow.jsp"%>         
 		</s:if>	
@@ -160,6 +157,7 @@
 					<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="create" onclick="return validateJV('save','%{name}','%{description}')"/>
 				</s:if>
 			</s:iterator>	
+			<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateJV('save','%{aa_approve}','%{Send for Approval}');" />
 			<input type="reset" id="Reset" value="Cancel" class="buttonsubmit"/>
 			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />        
 		</div>
@@ -171,7 +169,6 @@
 	</div>  -->
 	<br/>
 	</div>
-</div>
 </div>
 
 <div id="codescontainer"></div>
@@ -189,7 +186,7 @@
 <s:hidden name="targetvalue" value="%{target}" id="targetvalue"/>
 <s:hidden name="functionValue"  id="functionValue"/>
 <s:hidden name="functionId"  id="functionId"/>
-		<script>
+<script type="text/javascript">
 		
 			if(dom.get('targetvalue').value=='success')
 			{
@@ -272,7 +269,10 @@
 				alert(" Cannot Create Works JV for Date to greater than "+restrictionDate[1]);
 				return false;
 			}
-		}
+		}else{
+			document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
+    		document.forms[0].submit();
+			}
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
@@ -344,8 +344,9 @@
 					return false;
 				 }
 			</s:if>
-			result =validateApproverUser(name,value);
-	return result;
+			//result =validateApproverUser(name,value);
+			
+	return true;
 }function loadBank(fund){
 	}
 function onloadtask(){
@@ -394,7 +395,7 @@ function showMessage(message){
 	} 
 	alert(message);
 	var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
-	document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher!loadvoucherview.action?vhid="+voucherHeaderId;
+	document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+voucherHeaderId;
 	document.forms[0].submit();      
 	
 }
@@ -402,7 +403,7 @@ function showMessage(message){
 function printJV()
 {		
 		var voucherHeaderId = '<s:property value="voucherHeader.id"/>';
-		window.location="${pageContext.request.contextPath}/voucher/journalVoucherPrint!print.action?id="+voucherHeaderId;		
+		window.location="${pageContext.request.contextPath}/voucher/journalVoucherPrint-print.action?id="+voucherHeaderId;		
 		//document.forms[0].submit();
 }
 

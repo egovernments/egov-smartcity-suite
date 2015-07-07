@@ -49,19 +49,21 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.script.entity.Script;
-import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
@@ -72,9 +74,9 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
-@Transactional(readOnly=true)
+@Results({@Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp")})
 public class JournalVoucherAction extends BaseVoucherAction
 {
 	private static final Logger	LOGGER	= Logger.getLogger(JournalVoucherAction.class);
@@ -98,14 +100,13 @@ public class JournalVoucherAction extends BaseVoucherAction
 	protected EisCommonService eisCommonService;
 	private CommonsService commonsService;
 	private String worksVoucherRestrictedDate;
+	@Autowired
 	private ScriptService scriptService;
 	
 	
 	@SuppressWarnings("unchecked")
 	@Override       
 	public void prepare() {
-	HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-	HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
 		super.prepare();
 		addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
 		addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -113,7 +114,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 		//worksVoucherRestrictedDate=
 		AppConfigValues appConfigValues =null;
 		 appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues where key in " +
-				"(select id from AppConfig where key_name='WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN' and module='EGF' )");
+				"(select id from AppConfig where key_name='WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN' and module.name='EGF' )");
 		if(appConfigValues==null)
 			throw new ValidationException("Error","WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN is not defined");
 		else
@@ -122,8 +123,8 @@ public class JournalVoucherAction extends BaseVoucherAction
 		                
 	}
 	@SkipValidation
-	@Action(value="/voucher/journalVoucher-newform")
-	public String newform()
+	@Action(value="/voucher/journalVoucher-newForm")
+	public String newForm()
 	{
 		billDetailslist = new ArrayList<VoucherDetails>();
 		subLedgerlist = new ArrayList<VoucherDetails>();
@@ -158,6 +159,8 @@ public class JournalVoucherAction extends BaseVoucherAction
 	 * @return
 	 * @throws Exception
 	 */
+	@SkipValidation
+	@Action(value="/voucher/journalVoucher-create")
 	public String create() throws Exception{
 	HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
 	HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
@@ -198,7 +201,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 						 voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,new BigDecimal(totalamount));
 					 }				 
 						voucherHeader.start().withOwner(getPosition()).withComments(voucherHeader.getDescription());
-						 sendForApproval();           
+						 //sendForApproval(); //Phoenix  
 						// addActionMessage( voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
 						// addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 						 message="Voucher  "+voucherHeader.getVoucherNumber()+" Created Sucessfully" +"\\n"+ getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}); 

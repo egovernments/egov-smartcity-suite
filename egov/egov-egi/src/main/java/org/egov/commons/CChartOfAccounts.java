@@ -50,7 +50,7 @@ public class CChartOfAccounts extends BaseModel {
 	//private Long id = null;
 	private String glcode;
 	private String name;
-	private String purposeId;
+	private Long purposeId;
 	private String desc;
 	private Boolean isActiveForPosting;
 	private Long parentId;
@@ -139,14 +139,14 @@ public class CChartOfAccounts extends BaseModel {
 	/**
 	 * @return Returns the purposeId.
 	 */
-	public String getPurposeId() {
+	public Long getPurposeId() {
 		return purposeId;
 	}
 
 	/**
 	 * @param purposeId The purposeId to set.
 	 */
-	public void setPurposeId(String purposeId) {
+	public void setPurposeId(Long purposeId) {
 		this.purposeId = purposeId;
 	}
 

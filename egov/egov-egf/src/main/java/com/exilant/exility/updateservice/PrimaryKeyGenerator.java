@@ -39,6 +39,7 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -71,14 +72,12 @@ public class PrimaryKeyGenerator
 	public static long getNextKey(String tableName)
 	{
 		long key = 0;
-		String sql = "select SEQ_"+tableName+".nextval from dual";
+		String sql = "select nextval('seq_" + tableName + "')";
 		try
 		{
 			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-			List<Object[]> rs = pst.list();
-			for(Object[] element : rs){
-			key =Long.parseLong(element[0].toString());
-			}
+			List<BigInteger> rs = pst.list();
+			key =rs!=null?rs.get(0).longValue():0l;
 			if(rs == null || rs.size() == 0) 
 			throw new Exception();
 		}

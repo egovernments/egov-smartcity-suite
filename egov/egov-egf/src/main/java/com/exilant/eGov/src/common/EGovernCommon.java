@@ -43,6 +43,7 @@
  */
 package com.exilant.eGov.src.common;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.core.SessionFactory;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.exceptions.EGOVException;
@@ -69,6 +69,7 @@ import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.VoucherHeader;
@@ -98,7 +99,7 @@ public class EGovernCommon extends AbstractTask{
 	private static TaskFailedException taskExc;
 	private static final String FUNDIDNSQL="SELECT identifier as \"fund_identi\" from fund where id=?";
 	private static final String  EXILRPERROR = "exilRPError";
-	
+	private PersistenceService persistenceService;
 
 	public void execute (String taskName,
 			String gridName,
@@ -117,7 +118,7 @@ public class EGovernCommon extends AbstractTask{
 
 	public long getCGNumber()
 	{
-		return PrimaryKeyGenerator.getNextKey("VoucherHeader");
+		return PrimaryKeyGenerator.getNextKey("voucherheader");
 	}
 
 	/**
@@ -673,20 +674,15 @@ public class EGovernCommon extends AbstractTask{
 		List<Object[]> rs=null;
 		String fyStartDate = "", fyEndDate = "";
 		try{
-			String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
+			String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"+vcDate+"' AND endingDate >= '"+vcDate+"'";
 			pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
-			pst.setString(1, vcDate);
-			pst.setString(2, vcDate);
 			rs = pst.list();
 			for(Object[] element : rs){
 				fyStartDate = element[0].toString();
 				fyEndDate = element[1].toString();
 			}
-			String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = ? AND voucherDate>=? AND voucherDate<=? and status!=4";
+			String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '"+vcNum+"' AND voucherDate>='"+vcDate+"' AND voucherDate<='"+fyEndDate+"' and status!=4";
 			pst = HibernateUtil.getCurrentSession().createSQLQuery(query2);
-			pst.setString(1, vcNum);
-			pst.setString(2, fyStartDate);
-			pst.setString(3, fyEndDate);
 			rs = pst.list();
 			for(Object[] element : rs){
 				datacol.addMessage(EXILRPERROR, "duplicate voucher number");
@@ -716,10 +712,8 @@ public class EGovernCommon extends AbstractTask{
 		Query pst = null;
 		List<Object[]>  rs =null;
 		try{
-			String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
+			String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"+vcDate+"' AND endingDate >= '"+vcDate+"'";
 			pst =HibernateUtil.getCurrentSession().createSQLQuery(query1);
-			pst.setString(1, vcDate);
-			pst.setString(2, vcDate);
 			rs = pst.list();
 			if(rs!=null && rs.size()>0) {
 				for(Object[] element : rs){
@@ -728,11 +722,8 @@ public class EGovernCommon extends AbstractTask{
 				}
 				
 			}
-			String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = ? AND voucherDate>=? AND voucherDate<=? and status!=4";
+			String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '"+vcNum+"' AND voucherDate>='"+fyStartDate+"' AND voucherDate<='"+fyEndDate+"' and status!=4";
 			pst =HibernateUtil.getCurrentSession().createSQLQuery(query2);
-			pst.setString(1, vcNum);
-			pst.setString(2, fyStartDate);
-			pst.setString(3, fyEndDate);
 			rs = pst.list();
 			if (rs!=null && rs.size()>0) {
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Duplicate Voucher Number");
@@ -981,14 +972,12 @@ public class EGovernCommon extends AbstractTask{
 	public String getEg_Voucher(String vouType,String fiscalPeriodIdStr) throws TaskFailedException,Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
-		PersistenceService persistenceService = new PersistenceService();
-		persistenceService.setType(CFiscalPeriod.class);
 		CFiscalPeriod fiscalPeriod=(CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",Long.parseLong(fiscalPeriodIdStr));
 		Long cgvn=null ;
 		//Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
 		try{
 			String sequenceName = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
-			cgvn = DatabaseSequence.named(sequenceName, null).createIfNecessary().nextVal();
+			cgvn = DatabaseSequence.named(sequenceName, HibernateUtil.getCurrentSession()).createIfNecessary().nextVal();
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("----- CGVN : "+cgvn);
 			
 		}
@@ -1732,19 +1721,17 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 	  	 * @throws TaskFailedException
 	  	 */
 	  	public String getFiscalPeriod(String vDate)throws TaskFailedException{
-	  		String fiscalPeriodID=null;
-	  		String sql="select id from fiscalperiod  where ? between startingdate and endingdate";
+	  		BigInteger fiscalPeriod = null;
+	  		String sql="select id from fiscalperiod  where '"+vDate+"' between startingdate and endingdate";
 	  		try{
 	  			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
-	  			pst.setString(1, vDate);
-	  			List<Object[]>  rset=pst.list();
-	  			for(Object[] element : rset){
-	  				fiscalPeriodID=element[0].toString();}
+	  			List<BigInteger>  rset=pst.list();
+	  			fiscalPeriod = rset!=null?rset.get(0):BigInteger.ZERO;
 	  		}catch(Exception e){
 	  			LOGGER.error("Exception..."+e.getMessage());
 	  			throw new TaskFailedException(e.getMessage());
 	  		}
-	  		return fiscalPeriodID;
+	  		return fiscalPeriod.toString();
 	  	}
 	  	
 	  	/**
@@ -2288,5 +2275,14 @@ public BigDecimal getAccountBalance(String recDate,String bankAccountId) throws 
 				throw taskExc;
 			}
 		}
+
+		public PersistenceService getPersistenceService() {
+			return persistenceService;
+		}
+
+		public void setPersistenceService(PersistenceService persistenceService) {
+			this.persistenceService = persistenceService;
+		}
+		
 }
 

@@ -111,8 +111,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	private static final String EMPTY_STRING="";
 	private PersistenceService persistenceService;
 	private PersistenceService service;
-	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;	
+    private AppConfigValuesDAO appConfigValuesDAO;	
 	private String budgetFinalStatus=null;
 	protected ScriptService scriptExecutionService;
 	protected SequenceGenerator sequenceGenerator;	
@@ -2584,6 +2583,12 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	
 	public void setBudgetService(BudgetService budgetService) {
 		this.budgetService = budgetService;
+	}
+	public AppConfigValuesDAO getAppConfigValuesDAO() {
+		return appConfigValuesDAO;
+	}
+	public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
+		this.appConfigValuesDAO = appConfigValuesDAO;
 	}
 		
 	

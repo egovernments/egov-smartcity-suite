@@ -4,7 +4,7 @@
 
 <hibernate-mapping>
     <class name="org.egov.commons.Vouchermis" table="VOUCHERMIS">
-        <id name="id" type="integer">
+        <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
             <generator class="sequence">
             <param name="sequence">SEQ_VOUCHERMIS</param>
@@ -125,7 +125,7 @@
         <many-to-one name="functionary" class="org.egov.commons.Functionary" fetch="select">
             <column name="functionaryid" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="voucherheaderid" class="org.egov.commons.CVoucherHeader" fetch="select">
+        <many-to-one name="voucherheaderid" class="org.egov.commons.CVoucherHeader" >
             <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         <property name="sourcePath" type="string">

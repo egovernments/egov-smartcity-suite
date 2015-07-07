@@ -54,10 +54,10 @@
 				</select>
 			</td>
 			<td class="bluebox"><s:text name="jv.partyBillNum" /> </td>
-			<td class="bluebox"><s:textfield name="voucherTypeBean.partyBillNum" id="voucherTypeBean.partyBillNum" value="%{voucherTypeBean.partyBillNum}"/> 				<td>
+			<td class="bluebox"><s:textfield name="voucherTypeBean.partyBillNum" id="voucherTypeBean.partyBillNum" value="%{voucherTypeBean.partyBillNum}"/> 				</td>
 		</tr>
 	<tr>
-		 <td class="greybox"><s:text name="jv.partyName" /><div id="partyNameDivId" style="display:none"><span class="mandatory">*</span></div></td>	
+		 <td class="greybox"><s:text name="jv.partyName" /><div id="partyNameDivId" style="display:none"><span class="mandatory1">*</span></div></td>	
 		 <td class="greybox"><s:textfield name="voucherTypeBean.partyName" id="voucherTypeBean.partyName" onblur="isSpecialChar(this)" value="%{voucherTypeBean.partyName}"/></td>
 		 <td class="greybox"><s:text name="jv.partyBillDate" /></td>	
 		 <td class="greybox"><s:date name="voucherTypeBean.partyBillDate" id="partyBillDateId" format="dd/MM/yyyy"/>
