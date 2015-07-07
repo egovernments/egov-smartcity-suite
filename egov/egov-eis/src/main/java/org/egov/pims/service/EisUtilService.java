@@ -381,8 +381,8 @@ public class EisUtilService implements EISServeable {
     }
 
     public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException {
-        List listOfUserByBoundary = personalInformationDAO.getListOfUsersByBoundaryId(boundaryId);
-        return listOfUserByBoundary;
+        //List listOfUserByBoundary = personalInformationDAO.getListOfUsersByBoundaryId(boundaryId);
+        return null;
     }
 
     public List getListOfUsersForGivenBoundaryId(Long boundaryId) throws NoSuchObjectException {

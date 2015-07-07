@@ -96,7 +96,8 @@ public class EmployeeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list();
+        return getCurrentSession()
+                .createQuery("from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -169,9 +170,10 @@ public class EmployeeService {
         // recommended though
         final QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Employee.class)
                 .get();
-        final TermMatchingContext onFields = qb.keyword().onFields("code","name","mobileNumber", "aadhaarNumber", "emailId","employeeType.name",
-                "pan", "assignments.department.name", "assignments.designation.name", "assignments.position.name",
-                "assignments.fund.name", "assignments.function.name", "assignments.functionary.name");
+        final TermMatchingContext onFields = qb.keyword().onFields("code", "name", "mobileNumber", "aadhaarNumber",
+                "emailId", "employeeType.name", "pan", "assignments.department.name", "assignments.designation.name",
+                "assignments.position.name", "assignments.fund.name", "assignments.function.name",
+                "assignments.functionary.name");
 
         org.apache.lucene.search.Query luceneQuery = null;
 
@@ -181,7 +183,7 @@ public class EmployeeService {
             final BooleanJunction<BooleanJunction> bool = qb.bool();
             for (final String element : searchText) {
                 final String currentTerm = element;
-                if (!currentTerm.isEmpty()&& !"".equals(currentTerm))
+                if (!currentTerm.isEmpty() && !"".equals(currentTerm))
                     bool.must(onFields.matching(currentTerm).createQuery());
             }
             luceneQuery = bool.createQuery();
@@ -247,6 +249,19 @@ public class EmployeeService {
      */
     public Employee getEmployeeByUserName(final String userName) {
         return employeeRepository.findByUsername(userName);
+    }
+
+    /**
+     * Get List of employee objects by department ,designation and boundary ids
+     *
+     * @param deptId
+     * @param desigId
+     * @param boundaryId
+     * @return List of employee objects
+     */
+    public List<Employee> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
+            final Long boundaryId) {
+        return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, boundaryId);
     }
 
 }

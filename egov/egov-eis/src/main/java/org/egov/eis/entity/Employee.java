@@ -41,7 +41,9 @@ package org.egov.eis.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -64,22 +66,19 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 @Indexed
 @Entity
 @Table(name = "egeis_employee")
-@Unique(id = "id", tableName = "egeis_employee",columnName = { "code"},fields = {"code" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "egeis_employee", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
 public class Employee extends User {
 
     private static final long serialVersionUID = -1105585841211211215L;
@@ -88,9 +87,9 @@ public class Employee extends User {
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
-    @Field(index=Index.YES, analyze=Analyze.YES, store=Store.NO)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String code;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date dateOfAppointment;
 
@@ -107,11 +106,15 @@ public class Employee extends User {
     @IndexedEmbedded
     private EmployeeType employeeType;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @IndexedEmbedded
     @OrderBy(" primary,id DESC ")
-    private List<Assignment> assignments = new ArrayList<Assignment>(0);
-    
+    private final List<Assignment> assignments = new ArrayList<Assignment>(0);
+
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC ")
+    private final Set<Jurisdiction> jurisdictions = new HashSet<Jurisdiction>(0);
+
     public Employee() {
         setType(UserType.EMPLOYEE);
     }
@@ -160,12 +163,10 @@ public class Employee extends User {
         return assignments;
     }
 
-    public void setAssignments(List<Assignment> assignments) {
+    public void setAssignments(final List<Assignment> assignments) {
         this.assignments.clear();
-        if(assignments !=null ){
+        if (assignments != null)
             this.assignments.addAll(assignments);
-        }
     }
-
 
 }

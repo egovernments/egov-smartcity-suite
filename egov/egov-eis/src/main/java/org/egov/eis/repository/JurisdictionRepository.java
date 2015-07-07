@@ -39,30 +39,11 @@
  */
 package org.egov.eis.repository;
 
-import java.util.List;
-
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.enums.EmployeeStatus;
+import org.egov.eis.entity.Jurisdiction;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-
-    Employee findByCode(String code);
-
-    List<Employee> findByEmployeeStatus(EmployeeStatus status);
-
-    List<Employee> findByEmployeeType_Id(Long id);
-
-    Employee findByUsername(String userName);
-
-    @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN inner join JRDN.jurisdictionDetails as JRDNDETAILS"
-            + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDNDETAILS.boundary.id=:boundaryId")
-    public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
-            @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
+public interface JurisdictionRepository extends JpaRepository<Jurisdiction, Long> {
 
 }

@@ -92,7 +92,7 @@ public class SearchPositionService {
 		{
 
 			PersonalInformationDAO personalDAO = new PersonalInformationHibernateDAO();
-			userListInJur = personalDAO.getListOfUsersByBoundaryId(jurdId);
+			//userListInJur = personalDAO.getListOfUsersByBoundaryId(jurdId);
 
 		}
 		try

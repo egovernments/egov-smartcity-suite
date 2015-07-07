@@ -37,32 +37,43 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.repository;
+package org.egov.eis.service;
 
 import java.util.List;
 
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.enums.EmployeeStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.eis.entity.JurisdictionDetails;
+import org.egov.eis.repository.JurisdictionDetailsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+@Service
+@Transactional(readOnly = true)
+public class JurisdictionDetailsService {
 
-    Employee findByCode(String code);
+    private final JurisdictionDetailsRepository jurisdictionDetailsRepository;
 
-    List<Employee> findByEmployeeStatus(EmployeeStatus status);
+    @Autowired
+    public JurisdictionDetailsService(final JurisdictionDetailsRepository jurisdictionDetailsRepository) {
+        this.jurisdictionDetailsRepository = jurisdictionDetailsRepository;
+    }
 
-    List<Employee> findByEmployeeType_Id(Long id);
+    @Transactional
+    public void save(final JurisdictionDetails details) {
+        jurisdictionDetailsRepository.save(details);
+    }
 
-    Employee findByUsername(String userName);
+    @Transactional
+    public void update(final JurisdictionDetails details) {
+        jurisdictionDetailsRepository.saveAndFlush(details);
+    }
 
-    @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN inner join JRDN.jurisdictionDetails as JRDNDETAILS"
-            + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDNDETAILS.boundary.id=:boundaryId")
-    public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
-            @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
+    @Transactional
+    public void delete(final JurisdictionDetails details) {
+        jurisdictionDetailsRepository.delete(details);
+    }
 
+    public List<JurisdictionDetails> findByEmployee(final Long employeeId) {
+        return jurisdictionDetailsRepository.findByJurisdiction_Employee_Id(employeeId);
+    }
 }

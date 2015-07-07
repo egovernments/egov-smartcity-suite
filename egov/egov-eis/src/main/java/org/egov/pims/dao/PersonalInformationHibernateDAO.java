@@ -51,6 +51,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Jurisdiction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
@@ -59,7 +60,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
-import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
@@ -200,7 +200,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 			for (Iterator iter = qry.iterate(); iter.hasNext();)
 			{
 				Jurisdiction jurObj = (Jurisdiction)iter.next();
-				userObjList.add(jurObj.getUser());
+				//userObjList.add(jurObj.getUser());
 			}
 		}
 		return userObjList;
@@ -239,7 +239,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 			for (Iterator iter = qry.iterate(); iter.hasNext();)
 			{
 				Jurisdiction jurObj = (Jurisdiction)iter.next();
-				userObjList.add(jurObj.getUser());
+				//userObjList.add(jurObj.getUser());
 			}
 		}
 		return userObjList;

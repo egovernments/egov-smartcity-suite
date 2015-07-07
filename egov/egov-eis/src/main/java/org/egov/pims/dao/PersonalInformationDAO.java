@@ -59,6 +59,7 @@ import org.egov.pims.model.PersonalInformation;
  * @author deepak
  * @version 2.00
  */
+@Deprecated
 public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
 {
 	public PersonalInformation getPersonalInformationByID(Integer ID) ;
@@ -68,7 +69,6 @@ public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
 	public List getListOfPersonalInformationByEmpIdsList(List empIdsList);
 	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long Boundaryid)throws TooManyValuesException, NoSuchObjectException;
 	public PersonalInformation getEmployeeByFunctionary(Long deptId, Long designationId, Long Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException;
-	public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException;
 	public List getListOfUsersForGivenBoundaryId(Long boundaryId) throws NoSuchObjectException;
 	/**
 	  * Returning temporary  assigned employee object by pepartment,designation,functionary,date 
