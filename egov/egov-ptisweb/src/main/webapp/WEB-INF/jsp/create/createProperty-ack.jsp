@@ -70,7 +70,7 @@
 				<td colspan="5" style="font-size: 15px;" align="center">
 		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
 		        	<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.applicationNo}"/>' >
-		        		<s:property value="%{basicProperty.applicationNo}"/>
+		        		<span style="font-size: 15px;" > : <s:property value="%{basicProperty.applicationNo}"/></span>
 		        	</a>
 		        </td>		    
 		   	</s:if>
@@ -81,17 +81,16 @@
 		        </td>
 	        </s:else>
 		</tr>
-		<tr>
+		<tr><td>
+		<div class="buttonbottom" align="center">
 			<s:if test="mode == 'create'">
-			<td align="center">
 				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" align="center"	onclick="return onSubmit('createProperty-printAck.action');" />
 				</s:if>
-			</td>
 			</s:if>
-		 </tr>
-		 <tr>
-		 <td><input type="button" class="button" onclick="window.close();" value="Close"></td>
+		   <input type="button" class="button" onclick="window.close();" value="Close">
+		   </div>
+		   </td>
 		 </tr>
 		</table>
 		<br/>

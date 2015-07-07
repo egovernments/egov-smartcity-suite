@@ -9,7 +9,7 @@
 				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type"
 				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
-				cssClass="selectnew" onchange="toggleFloorDetails();" />
+				cssClass="selectnew" onchange="toggleFloorDetails();enableFieldsForPropType();" />
 		</td>
 	</tr>
    <tr>
@@ -115,7 +115,8 @@
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" autocomplete="off" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		<s:date name="buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" />
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>

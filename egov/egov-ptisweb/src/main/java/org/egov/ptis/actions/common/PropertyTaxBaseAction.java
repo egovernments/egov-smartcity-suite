@@ -51,7 +51,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.APARTMENT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -83,6 +84,7 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.hibernate.Query;
@@ -262,6 +264,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					if (areaOfPlot == null || areaOfPlot.equals("")) {
 						addActionError(getText("mandatory.areaOfPlot"));
 					}
+					if (propTypeMstr.getType().equals(APARTMENT_PROPERTY)
+							&& property.getPropertyDetail().getApartment().getId() == null) {
+						addActionError(getText("mandatory.apartment"));
+					}
 				}
 				validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetails(),
 						isfloorDetailsRequired, property);
@@ -297,21 +303,27 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							msgParams.add(floor.getFloorNo() != null ? CommonServices
 									.getFloorStr(floor.getFloorNo()) : "N/A");
 
-							if (floor.getStructureClassification() == null
+							if (floor.getStructureClassification() == null || floor.getStructureClassification().getId() == null
 									|| (floor.getStructureClassification().getId().toString())
 											.equals("-1")) {
 								addActionError(getText("mandatory.constType", msgParams));
 							}
 
-							if (floor.getPropertyUsage() == null
+							if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
 									|| (floor.getPropertyUsage().getId().toString()).equals("-1")) {
 								addActionError(getText("mandatory.floor.usage", msgParams));
 							} 
 							
-							if (floor.getPropertyOccupation() == null
-									|| (floor.getPropertyOccupation().getId().toString())
-											.equals("-1")) {
+							if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
+									|| (floor.getPropertyOccupation().getId().toString()).equals("-1")) {
 								addActionError(getText("mandatory.floor.occ"));
+							} else {
+								PropertyOccupation occupancy = (PropertyOccupation) getPersistenceService()
+										.find("from PropertyOccupation po where po.id = ?",
+												floor.getPropertyOccupation().getId());
+								if (occupancy.getOccupation().equalsIgnoreCase(TENANT) && floor.getOccupantName().equals("")) {
+									addActionError(getText("mandatory.floor.occupantName"));
+								}
 							}
 
 							if (floor.getDepreciationMaster() == null
@@ -345,10 +357,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	}
 
 	protected void validateHouseNumber(Long wardId, String houseNo, BasicProperty basicProperty) {
-		Query qry = getPersistenceService()
-				.getSession()
-				.createQuery(
-						"from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
+		Query qry = getPersistenceService().getSession()
+				.createQuery("from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
 		qry.setParameter("houseNo", houseNo);
 		qry.setParameter("wardId", wardId);
 		// this condition is reqd bcoz, after rejection the validation shouldn't
@@ -382,13 +392,14 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		final DateTime currentDate = new DateTime();
 		User user = securityUtils.getCurrentUser();
 		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+		String designationName = userAssignment.getDesignation().getName();
 		String beanActionName[] = workflowBean.getActionName().split(":");
 		String nextAction = null;
 		Long approverUserdId = null;
 
-		if (ASSISTANT_DESGN.equals(userAssignment.getDesignation().getName())) {
+		if (ASSISTANT_DESGN.equals(designationName)) {
 			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+				nextAction = designationName + " " + APPROVED;
 				Assignment nextOwner = assignmentService.getPrimaryAssignmentForUser(workflowBean
 						.getApproverUserId());
 				if (property.hasState()) {
@@ -407,17 +418,17 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 				property.transition().end();
 			}
 
-		} else if (REVENUE_OFFICER_DESGN.equals(userAssignment.getDesignation().getName())) {
+		} else if (REVENUE_OFFICER_DESGN.equals(designationName)) {
 			if (WFLOW_ACTION_STEP_FORWARD.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+				nextAction = designationName + " " + APPROVED;
 				approverUserdId = workflowBean.getApproverUserId();
 			}
-			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + REJECTED;
+			else if(WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+				nextAction = designationName + " " + REJECTED;
 				approverUserdId = property.getCreatedBy().getId();
 			}
-			if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
-				nextAction = userAssignment.getDesignation().getName() + " " + APPROVED;
+			else if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
+				nextAction = designationName + " " + APPROVED;
 				approverUserdId = property.getCreatedBy().getId();
 			}
 			if (property.hasState()) {
@@ -431,13 +442,13 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 						.withOwner(nextOwner.getPosition()).withNextAction(nextAction);
 			}
 
-		} else if (COMMISSIONER_DESGN.equals(userAssignment.getDesignation().getName())) {
-			nextAction = userAssignment.getDesignation().getName();
+		} else if (COMMISSIONER_DESGN.equals(designationName)) {
+			nextAction = designationName;
 			approverUserdId = property.getCreatedBy().getId();
 			if (WFLOW_ACTION_STEP_APPROVE.equals(beanActionName[1])) {
 				nextAction = nextAction + " " + APPROVED;
 			}
-			if (WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
+			else if(WFLOW_ACTION_STEP_REJECT.equals(beanActionName[1])) {
 				nextAction = nextAction + " " + REJECTED;
 			}
 			transition(property, beanActionName, nextAction, approverUserdId);

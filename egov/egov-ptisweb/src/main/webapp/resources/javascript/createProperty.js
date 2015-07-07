@@ -4,14 +4,29 @@
  */
 
 function enableFieldsForPropType() {
-	var propType = document.forms[0].propTypeMaster.options[document.forms[0].propTypeMaster.selectedIndex].text;
+	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType != "--select--") {
 		
 		onChangeOfPropertyTypeFromMixedToOthers(propType);
 		var tableRowTaxExempt = document.getElementById("taxExemptRow");
 		
 		if (propType == "Open Plot") {
-			document.getElementById("plotArea").cssStyle.display = "";
+			document.getElementById("ownerShipRow").style.display = "";
+			document.getElementById("vacantAreaRow").style.display = "";
+			document.getElementById("floorDetails").style.display = "none";
+			document.getElementById("floorHeaderRow").style.display = "none";
+		} 
+		else if (propType == "Apartment") {
+			document.getElementById("appartmentRow").style.display = "";
+		}
+		else {
+			document.getElementById("appartmentRow").style.display = "none";
+			document.getElementById("ownerShipRow").style.display = "none";
+			document.getElementById("vacantAreaRow").style.display = "none";
+			document.getElementById("floorDetails").style.display = "";
+			document.getElementById("floorHeaderRow").style.display = "";
+		}
+			/*document.getElementById("plotArea").cssStyle.display = "";
 			document.getElementById("undivArea").cssStyle.display = "none";
 			document.getElementById("rentRow").cssStyle.display = "";
 			document.getElementById("buildingcostRow").cssStyle.display = "none";
@@ -228,7 +243,8 @@ function enableFieldsForPropType() {
 		}		
 	}
 	
-	toggleUnitTypeAndCategory();
+	toggleUnitTypeAndCategory();*/
+}
 }
 var lasthd;
 var lasttd;
@@ -626,11 +642,11 @@ function toggleFloorDetails() {
 	if (propType == "Open Plot") {
 		document.getElementById("floorHeaderRow").style.display = "none";
 		document.getElementById("floorDetails").style.display = "none";
-		document.getElementById("completionDate").style.display = "none";
+		//document.getElementById("completionDate").style.display = "none";
 	} else {
 		document.getElementById("floorHeaderRow").style.display = "table-row";
 		document.getElementById("floorDetails").style.display = "table-row-group";
-		document.getElementById("completionDate").style.display = "";
+		//document.getElementById("completionDate").style.display = "";
 	}
 	if (propType == "Apartments") {
 		alert("Please select Apartment/Complex Name");

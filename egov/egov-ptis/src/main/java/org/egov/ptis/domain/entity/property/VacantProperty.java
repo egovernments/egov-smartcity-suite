@@ -113,7 +113,7 @@ public class VacantProperty extends AbstractProperty {
 	private RoofType roofType;
 	private WallType wallType;
 	private WoodType woodType;
-	private Apartment apartment;
+	private Apartment apartment = null;
 
 	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
 			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,

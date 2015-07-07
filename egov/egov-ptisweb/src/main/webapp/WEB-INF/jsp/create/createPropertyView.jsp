@@ -143,7 +143,8 @@
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{buildingPermissionDate}" default="N/A"/></span>
+		    <s:date name="%{buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
+			<span class="bold"><s:property value="%{#buildingPermNo}" default="N/A"/></span>
 		</td>
 
 	</tr>

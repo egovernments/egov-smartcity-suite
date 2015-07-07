@@ -41,24 +41,40 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
   <tr>
 	<th class="bluebgheadtd"><s:text name="adharno"/></th>
+	 <th class="bluebgheadtd"><s:text name="salutation"/></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
+    <th class="bluebgheadtd"><s:text name="gender"/></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
 	</tr>
    
-    <s:iterator value="propertyOwnerInfo" status="ownerStatus">
+    <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
         		<td class="blueborderfortd" align="center">
-        			<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" /></span>
+        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.name}" /></span>
+        			<span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.salutation}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
+        		    <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.name}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
-        		<span class="bold"><s:property value="%{propertyOwnerInfo[#ownerStatus.index].owner.emailId}" /></span>
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.emailId}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardian}" /></span>
+        		</td>
+        		<td class="blueborderfortd" align="center">
+        		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardianRelation}" /></span>
         		</td>
         	</tr>
      </s:iterator>

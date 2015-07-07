@@ -79,6 +79,9 @@ jQuery(function ($) {
 function loadOnStartUp() {
 	enableCorresAddr();
 	document.getElementById("plotArea").style.display = "";
+	document.getElementById("appartmentRow").style.display = "none";
+	document.getElementById("ownerShipRow").style.display = "none";
+	document.getElementById("vacantAreaRow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
@@ -96,7 +99,7 @@ function loadOnStartUp() {
 	document.getElementById("floorDetailsConfirm").style.display = "none";
 	document.getElementById("waterRate").style.display = "none"; */
 	
-	//enableFieldsForPropType();
+	enableFieldsForPropType();
 	//hideAddRmvBtnForResidFlats();
 	//enableCorresAddr();
 	//enableTaxExemptReason();
@@ -116,7 +119,7 @@ function loadOnStartUp() {
 	//populateLocationFactors();	
 	//populateFloorConstTypeDropDowns();
 	//toggleForResNonRes();	
-	//toggleFloorDetails();
+	 toggleFloorDetails();
 	//toggleUnitTypeAndCategory();
 	//prepareUnitTypeCategories();
 	//prepareUsagesForUnitTypes();
@@ -421,31 +424,17 @@ function finishAllChangesMsg(button) {
 		<tr>
 		    <td>
 			    <div class="buttonbottom" align="center">		   
-			    	<%-- <td><s:submit value="Approve" name="Approve"
-							id='Create:Save' cssClass="buttonsubmit" method="create"
-							/></td>				
-					<td><s:submit value="Data Entry" name="Save"
-							id="Create:Save" method="create" cssClass="buttonsubmit"
-							onclick="setWorkFlowInfo(this);return submitMsg(this);doLoadingMask();" /></td>
-					<td><s:submit value="Forward" name="Forward"
-							id="Create:Forward" method="forward" cssClass="buttonsubmit"
-							onclick="setWorkFlowInfo(this); return finishAllChangesMsg(this);doLoadingMask();" /></td>
-					<td><input type="button" name="button2" id="button2"
-							value="Close" class="buttonsubmit normal" onclick="return confirmClose();"></td> --%>	
 					<s:if test="mode=='create'">
 					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action',this);"/>&nbsp;			
-					<input type="button" class="button" onclick="window.close();" value="Close">
 					</s:if>
 					<s:if test="mode=='edit'">
 					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-forward.action',this);"/>&nbsp;
 					<s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE}">
 								<s:submit value="Approve" name="Approve" id='Create:Approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-approve.action',this);"/>&nbsp;	
 					</s:if>	
-					<s:if test="%{!userRole==@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_ROLE}">
 					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;
-					</s:if>		
-					<input type="button" class="button" onclick="window.close();" value="Close">
 					</s:if>
+					<input type="button" class="button" onclick="window.close();" value="Close">
 				</div>
 			</td>
 		</tr> 

@@ -819,7 +819,7 @@ function deleteOwner(obj)
 		
 		//regenerate index existing inputs in table row
 		jQuery("#nameTable tr:not(:first)").each(function() {
-			jQuery(this).find("input").each(function() {
+			jQuery(this).find("input, select").each(function() {
 			   jQuery(this).attr({
 			      'id': function(_, id) {  
 			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
@@ -829,6 +829,8 @@ function deleteOwner(obj)
 			      },
 			   });
 		    });
+			
+			
 			
 			//hide add option except first row
 			if(idx === 0)
@@ -1270,15 +1272,26 @@ function addFloor()
 	    		
 	    		// Generate all textboxes Id and name with new index
 				jQuery("#Floorinfo").clone().find("input, select").each(function() {
+					     
 						 jQuery(this).attr({
 					      'id': function(_, id) { 
 					    	  return id.replace('[0]', '['+ nextIdx +']'); 
 					       },
 					      'name': function(_, name) { 
 					    	  return name.replace('[0]', '['+ nextIdx +']'); 
-					      },
+					      }
 					    }).val('');
-						
+						 
+						 if(jQuery(this).data('calculate'))
+					     {
+							 jQuery(this).attr('data-calculate', jQuery(this).data('calculate').replace('[0]', '['+ nextIdx +']'));
+						 }
+						 
+						 if(jQuery(this).data('result'))
+					     {
+							 jQuery(this).attr('data-result', jQuery(this).data('result').replace('[0]', '['+ nextIdx +']'));
+						 }
+						 
 						 //set default selection for dropdown
 						if(jQuery(this).is( "select" ))
 						{
@@ -1309,24 +1322,72 @@ function delFloor(obj)
 	}
 	else
 	{	
-		var floorOccupation = document.forms[0].floorOccupation[rIndex-1];
-		if (floorOccupation.options[floorOccupation.selectedIndex].text == "Tenanted" ) {
-			rentalUnits -= 1;
-		}
+		
 
 		tbl.deleteRow(rIndex);	
-			
-		if (propType != "Open Plot") {
-			rearrangeFloorIndex(rIndex);
-		}
 		
-		//hiding rent agreement icon if the last floor remaining is not a tenanted floor
-		if (rentalUnits == 0) {
-			jQuery(tbl.rows[0].lastElementChild).hide();
-		}
+		jQuery("#floorDetails tr:eq(1) td img[alt='Add']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#floorDetails tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+		    });
+			
+			 if(jQuery(this).data('calculate'))
+		     {
+				 jQuery(this).attr('data-calculate', jQuery(obj)[0].attributes['data-calculate'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
+			 }
+			 
+			 if(jQuery(this).data('result'))
+		     {
+				 jQuery(this).attr('data-result', jQuery(obj)[0].attributes['data-result'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
+			 }
+			 
+			
+			//hide add option except first row
+			if(idx === 0)
+			{
+				jQuery(this).find('img [name="addF"]').show();
+			}
+			else
+			{
+				jQuery(this).find('img [name="addF"]').hide();
+			}
+			
+			idx++;
+		});
+		
 		return true;
 	}	
 }
+
+
+//calculate area in floor details table
+function calculateArea(obj) {
+	console.log(jQuery(obj)[0].attributes['data-result'].nodeValue);
+	//
+	var field1 = jQuery(obj).val();
+	var field2 = jQuery('input[name="'+ jQuery(obj)[0].attributes['data-calculate'].nodeValue +'"]').val();
+	jQuery('input[name="'+ jQuery(obj)[0].attributes['data-result'].nodeValue +'"]').val((field1*field2));
+	/*if (width != null && length != null) {
+		alert(width);
+		var area = width * length;
+		jQuery("#assessableArea").val(area);
+	} else {
+		alert("Please select width and length for floor!")
+	}*/
+}
+
 
 function resetCreateFloorDetails(floorRow)
 {
