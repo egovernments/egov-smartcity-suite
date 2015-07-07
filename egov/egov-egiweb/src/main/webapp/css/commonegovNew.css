@@ -479,7 +479,7 @@ td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[t
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(253, 154, 10, 0.6);
 }	
 
-td.greybox input[type="text"]:read-only, td.greybox select:disabled, td.bluebox input[type="text"]:read-only, td.bluebox select:disabled, textarea:read-only
+input[type="text"]:read-only, select:disabled, textarea:read-only, textarea:disabled, input[type="text"]:disabled
 {
     background-color: #eceded;
     cursor: not-allowed;

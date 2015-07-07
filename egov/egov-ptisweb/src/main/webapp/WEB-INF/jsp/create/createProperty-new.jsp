@@ -401,14 +401,13 @@ function finishAllChangesMsg(button) {
  <%--  <s:hidden name="mode" value="form" /> --%>
   <div class="formmainbox">
 		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-        	<%@ include file="createPropertyForm.jsp"%>  
-        </tr>
-         <tr>
-        	<%@ include file="../workflow/property-workflow.jsp" %>
-        </tr>
-        <s:hidden name="modelId" id="modelId" value="%{modelId}" />
+		
+       	<%@ include file="createPropertyForm.jsp"%>  
+       
+    	<%@ include file="../workflow/property-workflow.jsp" %>
+      
+      <s:hidden name="modelId" id="modelId" value="%{modelId}" />
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         	<!-- <div id="loadingMask" style="display:none" align="center">
         	<p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> 

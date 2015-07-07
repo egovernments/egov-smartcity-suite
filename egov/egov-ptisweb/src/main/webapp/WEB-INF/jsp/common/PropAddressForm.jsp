@@ -82,38 +82,38 @@
   </tr>
 	
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
+		<td class="bluebox2">&nbsp;</td>
+	    <td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{basicProperty.propertyID.zone.name}" maxlength="20" readOnly="true"/></td>
 	    <s:hidden id="zoneId" name="zoneId" value="%{basicProperty.propertyID.zone.id}"></s:hidden>
-	    <td class="bluebox" width="10%"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
+	    <td class="bluebox"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
 	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{basicProperty.propertyID.ward.name}" maxlength="20" /></td>
 	    <s:hidden id="wardId" name="wardId" value="%{basicProperty.propertyID.ward.id}"></s:hidden>
 	</tr>
 	
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="8%"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
+		<td class="bluebox2">&nbsp;</td>
+	    <td class="bluebox"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
 	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{basicProperty.propertyID.area.name}"  maxlength="20" /></td>
 	    <s:hidden id="blockId" name="blockId" value="%{basicProperty.propertyID.area.id}"  ></s:hidden>
-	    <td class="bluebox" width="8%"><s:text name="Street"></s:text> : </td>
+	    <td class="bluebox"><s:text name="Street"></s:text> : </td>
 	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>
 	</tr>
 	
 	<tr>
-		<td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="bluebox" width="10%"><s:text name="elec.wardno"></s:text> : </td>
+		<td class="bluebox2">&nbsp;</td>
+	    <td class="bluebox"><s:text name="elec.wardno"></s:text> : </td>
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
 	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{basicProperty.propertyID.electionBoundary.id}"/></td>
-	    <td class="bluebox" width="8%"><s:text name="doorno"></s:text> <span class="mandatory1">*</span> : </td>
+	    <td class="bluebox"><s:text name="doorno"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="50" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>
  
 	<tr>
-	    <td class="bluebox2" width="8%">&nbsp;</td>
-	    <td class="greybox" width="8%"><s:text name="Address"/> : </td>
+	    <td class="bluebox2">&nbsp;</td>
+	    <td class="greybox"><s:text name="Address"/> : </td>
 	    <td class="greybox"><s:textfield name="addressStr" value="%{addressStr}" maxlength="512" onblur="validateAddress(this);"/></td>
-	    <td class="greybox" width="10%"><s:text name="PinCode"/> : </td>
+	    <td class="greybox"><s:text name="PinCode"/> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>
 	</tr>
 	
