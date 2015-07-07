@@ -195,6 +195,7 @@ public class ConnectionDemandService {
             consumerCodes.add(waterConnectionDetails.getConnection().getConsumerCode());
             waterTaxDue.setConsumerCode(consumerCodes);
             waterTaxDue.setPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            waterTaxDue.setConnectionCount(consumerCodes.size());
         } else {
             errorDetails.setErrorCode(WaterTaxConstants.CONSUMERCODE_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
