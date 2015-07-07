@@ -1,4 +1,4 @@
-package org.egov.ptis.bean;
+package org.egov.ptis.report.bean;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -32,6 +32,7 @@ public class PropertyAckNoticeInfo {
 	private BigDecimal taxPayableForCurrYear= BigDecimal.ZERO;
 	private BigDecimal taxPayableForNewRates= BigDecimal.ZERO;
 	private BigDecimal totalTax = BigDecimal.ZERO;
+	private String assessmentNo;
 	
 	public String getCreationReason() {
 		return creationReason;
@@ -201,5 +202,10 @@ public class PropertyAckNoticeInfo {
 	public void setTotalTax(BigDecimal totalTax) {
 		this.totalTax = totalTax;
 	}
-	
+	public String getAssessmentNo() {
+		return assessmentNo;
+	}
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
+	}
 }

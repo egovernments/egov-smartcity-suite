@@ -51,6 +51,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
 	private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
+	private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
+
 	@Autowired
 	private SequenceNumberGenerator sequenceNumberGenerator;
 	@Autowired
@@ -73,34 +76,18 @@ public class PropertyTaxNumberGenerator {
 
 	public String generateNoticeNumber(String noticeType) {
 		StringBuffer noticeNo = new StringBuffer();
-		String objString = "";
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		if (PropertyTaxConstants.NOTICE127.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE127_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE127_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.NOTICE134.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE134_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE134_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.NOTICE125.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE125_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE125_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.NOTICE_PRATIVRUTTA
-				.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.PRATIVRUTTA_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.PRATIVRUTTA_NOTICENO_PREFIX);
+		try {
+			if(StringUtils.isNotBlank(noticeType)){
+				if(noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE6)){
+					String cityCode = EgovThreadLocals.getCityCode();
+					noticeNo.append(cityCode);
+					String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
+					noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
+				}
+			}
+		} catch (Exception e) {
+			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
 		}
-		//FIX ME
-		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
-				objString.toUpperCase(), 8, '0', Long.valueOf(1))
-				.getFormattedNumber();
-		noticeNo.append(index);*/
-		noticeNo.append("/");
-
-		// might be required for 127,134 as well
-		if (PropertyTaxConstants.NOTICE_PRATIVRUTTA.equalsIgnoreCase(noticeType)) {
-			noticeNo.append(year);
-		}
-
 		return noticeNo.toString();
 	}
 

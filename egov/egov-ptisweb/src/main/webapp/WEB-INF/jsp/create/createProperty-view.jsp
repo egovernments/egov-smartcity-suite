@@ -96,7 +96,10 @@
 	  document.getElementById("GeneratePrativrutta").disabled = true;
 	  undoLoadingMask();
 	}
-
+  	function generateNotice6(){
+		   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6";
+			document.CreatePropertyForm.submit();
+	}
 </script>
 	</head>
 
@@ -123,9 +126,7 @@
 			<s:hidden name="mode" value="view" />
 			<s:push value="model">
 
-				<s:hidden label="noticeType" id="noticeType" name="noticeType"
-					value="%{extra_field2}" />
-				
+						
 					<div class="headingbg">
 						<s:text name="CreatePropertyHeader" />
 					</div>
@@ -204,10 +205,10 @@
 											class="button" onclick="return previewPrativrutta();" />
 									</td> -->
 							</s:else> --%>
-							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
-							@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
-								<td><s:submit value="Generate Notice" name="Generate Notice" cssClass="buttonsubmit" method="approve" onclick="" />
-							</td>
+							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
+								<td><input type="button" name="GenerateNotice6" id="GenerateNotice6"
+											value="Generate Notice" class="button" onclick="return generateNotice6();" />
+								</td>
 							</s:if>
 							<s:else>
 							<td><s:submit value="Approve" name="Approve"
@@ -219,7 +220,7 @@
 											cssClass="buttonsubmit" method="reject"
 											 onclick="return onSubmit('createProperty-reject.action',this);"/>
 									</td>
-									</s:else>
+							</s:else>
 							<td><input type="button" name="button2" id="button2"
 								value="Close" class="button" onclick="window.close();" /></td>
 						</tr>
