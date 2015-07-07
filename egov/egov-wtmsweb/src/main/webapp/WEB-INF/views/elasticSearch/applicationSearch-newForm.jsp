@@ -62,79 +62,90 @@
 					id="applicationSearchRequestForm" modelAttribute="applicationSearchRequest" action="">
 
 					<div class="form-group">
-
-						<div class="col-md-4 add-margin">
+					<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.Service" /></label>
+						<div class="col-sm-3 add-margin">
 						<form:select name="moduleName" path="" data-first-option="false" 
 							cssClass="form-control" >
 							<form:option value="">
-								<spring:message code="lbl.Service" /> 
+								Select from below
 							</form:option>
 							<form:options items="${modulesList}"  />  
 						</form:select>
 						</div>
-
-						<div class="col-md-4 add-margin">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message
+										code="lbl.appType" /></label>
+						<div class="col-sm-3 add-margin">
 						<form:select name="applicationType" path="" data-first-option="false" 
 							cssClass="form-control" >
 							<form:option value="">
-								<spring:message code="lbl.appType" /> 
+								Select from below
 							</form:option>
 							<form:options items="${applicationTypeList}"  />  
 						</form:select>
 						</div>
 						</div>
+						
 						<div class="form-group">
-					
-						<div class="col-md-4 add-margin">
+						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.name" /></label>
+						<div class="col-sm-3 add-margin">
 							<input type="text" name="applicationName" class="form-control" id="app-mobno"
 								placeholder="<spring:message code='lbl.name'/>" />
 						</div>
-						
-						<div class="col-md-4 add-margin">
-							<input type="text" name="applicationNumber" class="form-control" id="app-mobno"
+							<label for="field-1" class="col-sm-3 control-label"><spring:message
+										code="lbl.application.no" />
+								</label>
+						<div class="col-sm-3 add-margin">
+						<input type="text" name="applicationNumber" class="form-control" id="app-mobno"
 								placeholder="<spring:message code='lbl.application.no'/>" />
 						</div>
 						</div>
 						<div class="form-group">
-						<div class="col-md-4 add-margin">
+							<label for="field-1" class="col-sm-3 control-label"><spring:message
+										code="llbl.application.code" />
+								</label>
+						<div class="col-sm-3 add-margin">
 							<input type="text" name="applicationCode" class="form-control" id="app-appcodo"
 								placeholder="<spring:message code='lbl.application.code'/>" />
 						</div>
-							<div class="col-md-4 add-margin">
+								<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.application.mobileNo" />
+								</label>
+							<div class="col-sm-3 add-margin">
+						
 							<input type="text" name="appMobileNo" class="form-control" id="app-mobno"
 								placeholder="<spring:message code='lbl.application.mobileNo'/>" />
 						</div>
 						</div>
 						
 						<div class="form-group">
-						<div class="col-md-4 add-margin">
-							<input type="text" name="fromDate" class="form-control datepicker checkdate"
+							<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.fromDate" />
+								</label>
+						<div class="col-sm-3 add-margin">
+						<input type="text" name="fromDate" class="form-control datepicker checkdate"
 								id="start_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.fromDate'/>" />
 						</div>
-						<div class="col-md-4 add-margin">
-							<input type="text" name="toDate" class="form-control datepicker checkdate"
+						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.toDate" />
+								</label>
+						<div class="col-sm-3 add-margin">
+						<input type="text" name="toDate" class="form-control datepicker checkdate"
 								id="end_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.toDate'/>" />
 						</div>
 
 						</div>
 						
-						<div class="form-group show-searchcomp-more display-hide">
-
-						
-
-
-						
-
-					</div>
+					
 					<div class="form-group">
 						<div class="text-center">
 							<a href="javascript:void(0);" id="searchapplication"
 								class="btn btn-primary"><spring:message code='lbl.search' /></a>
-							<button type="reset" class="btn btn-default">
-				<spring:message code="lbl.reset" />
-			</button>
+								
+							<button class="btn btn-danger" type="reset">Reset</button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
@@ -153,8 +164,14 @@
 </div>
 
 
-<div>
-	<strong class="head-font">The search result is</strong>
+
+	<div class="row">
+					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
+					<div class="col-md-6 col-xs-6 add-margin text-right">
+						<span class="inline-elem">Search</span>
+						<span class="inline-elem"><input type="text" id="searchemployee" class="form-control input-sm"></span>
+					</div>
+					
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
 

@@ -61,9 +61,7 @@ jQuery(document).ready(function ($) {
 					data: searchResult,
 					columns: [
 					{title: 'Application Type', data: 'resource.clauses.applicationtype'},
-					{title: 'Applicant NUmber', data: 'resource.searchable.applicationnumber'},
-					{title: 'Application Name', data: 'resource.searchable.applicantname'},
-					{title: 'Application Address', data: 'resource.common.applicantAddress'},
+					{title: 'Applicant No.', data: 'resource.searchable.applicationnumber'},
 					{title: 'Application Date',
 						render: function (data, type, full) {
 							if(full.resource.searchable.applicationdate != undefined) {
@@ -73,6 +71,9 @@ jQuery(document).ready(function ($) {
 							else return "";
 				    	}
 					},
+					{title: 'Application Name', data: 'resource.searchable.applicantname'},
+					{title: 'Application Address', data: 'resource.common.applicantAddress'},
+					
 					{title: 'Status', data: 'resource.clauses.status'}
 					
 					
@@ -162,6 +163,10 @@ jQuery(document).ready(function ($) {
 		});
 	tableContainer.columnFilter({
 		"sPlaceHolder": "head:after"
+	});
+	
+	$('#searchemployee').keyup(function(){
+		tableContainer1.fnFilter(this.value);
 	});
 		
 });
