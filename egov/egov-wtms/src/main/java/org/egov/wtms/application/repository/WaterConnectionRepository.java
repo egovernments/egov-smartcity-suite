@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.application.repository;
 
+import java.util.List;
+
 import org.egov.wtms.application.entity.WaterConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -47,4 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface WaterConnectionRepository extends JpaRepository<WaterConnection, Long> {
 
     WaterConnection findByConsumerCode(String consumerCode);
+
+    List<WaterConnection> findByPropertyIdentifier(String propertyIdentifier);
+
 }

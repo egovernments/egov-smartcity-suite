@@ -37,39 +37,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.application.repository;
+package org.egov.wtms.application.rest;
 
-import java.util.Date;
-import java.util.List;
+import java.io.Serializable;
 
-import org.egov.wtms.application.entity.WaterConnection;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+@SuppressWarnings("serial")
+public class WaterTaxErrorDetails implements Serializable {
 
-@Repository
-public interface WaterConnectionDetailsRepository extends JpaRepository<WaterConnectionDetails, Long> {
+    private static final long serialVersionUID = -8838306922096320028L;
+    private String errorCode;
+    private String errorMessage;
 
-    WaterConnectionDetails findByApplicationNumber(String applicationNumber);
+    public String getErrorCode() {
+        return errorCode;
+    }
 
-    WaterConnectionDetails findByApplicationNumberAndConnectionStatus(String applicationNumber,
-            ConnectionStatus connectionStatus);
+    public void setErrorCode(final String errorCode) {
+        this.errorCode = errorCode;
+    }
 
-    List<WaterConnectionDetails> findAllByApplicationDateOrderByApplicationNumberAsc(Date applicationDate);
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-    List<WaterConnectionDetails> findAllByApplicationDateAndConnectionStatusOrderByApplicationNumberAsc(
-            Date applicationDate, ConnectionStatus connectionStatus);
+    public void setErrorMessage(final String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-    List<WaterConnectionDetails> findAllByApplicationTypeOrderByApplicationNumberAsc(ApplicationType applicationType);
-
-    List<WaterConnectionDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
-            ApplicationType applicationType, ConnectionStatus connectionStatus);
-
-    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCode(String applicationNumber,
-            String consumerCode);
-
-    WaterConnectionDetails findByConnection(WaterConnection waterConnection);
+    @Override
+    public String toString() {
+        return "WaterTaxErrorCodes [errorCode=" + errorCode + ", errorMessage=" + errorMessage + "]";
+    }
 
 }

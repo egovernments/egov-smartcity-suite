@@ -68,8 +68,8 @@ public class WaterConnectionService {
         this.waterConnectionRepository = waterConnectionRepository;
     }
 
-    public WaterConnection findBy(final Long complaintTypeId) {
-        return waterConnectionRepository.findOne(complaintTypeId);
+    public WaterConnection findBy(final Long waterConnectionId) {
+        return waterConnectionRepository.findOne(waterConnectionId);
     }
 
     public List<WaterConnection> findAll() {
@@ -89,4 +89,7 @@ public class WaterConnectionService {
         return waterConnectionRepository.findAll(pageable);
     }
 
+    public List<WaterConnection> findByPropertyIdentifier(final String propertyIdentifier) {
+        return waterConnectionRepository.findByPropertyIdentifier(propertyIdentifier);
+    }
 }

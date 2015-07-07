@@ -50,9 +50,22 @@ public class WaterTaxConstants {
     public static final String NON_METERED = "Non-metered";
     public static final String EGMODULES_NAME = "Water Tax";
     public static final String EGMODULE_NAME = "Water Tax Management";
-    public static final String WATERTAX_CONNECTION_CHARGE ="WTAXCONCHARGE";
-    public static final String WATERTAX_SECURITY_CHARGE="WTAXSECURITY";
-    public static final String WATERTAX_DONATION_CHARGE="WTAXDONATION";
-    public static final String CONNECTION_FEE="Connection fee";
+    public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
+    public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
+    public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
+    public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
+
+    // Rest API constants
+    public static final String CURR_DMD_STR = "CURR_DMD";
+    public static final String ARR_DMD_STR = "ARR_DMD";
+    public static final String CURR_COLL_STR = "CURR_COLL";
+    public static final String ARR_COLL_STR = "ARR_COLL";
+
+    public static final String CONSUMERCODE_NOT_EXIST_ERR_CODE = "WTAX100";
+    public static final String WTAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Assessment Number ";
+    public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "WTAX101";
+    public static final String WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Consumer code ";
+    public static final String WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
+
 }
