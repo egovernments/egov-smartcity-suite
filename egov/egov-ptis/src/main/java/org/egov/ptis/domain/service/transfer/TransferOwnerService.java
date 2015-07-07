@@ -62,6 +62,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
@@ -119,6 +120,9 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     private UserService userService;
     
+    @Autowired
+    private SimpleRestClient simpleRestClient;
+    
     @Transactional
     public void initiatePropertyTransfer(BasicProperty basicProperty, PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -134,6 +138,11 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     }
     
 
+    public boolean checkForTaxDues(String wtmsTaxDueRESTurl, String upicNo) {
+        HashMap<String, Object> wtmsTaxDueData = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueRESTurl);
+        return Double.valueOf(wtmsTaxDueData.get("totalTaxDue").toString()) > 0;
+    }
+    
     public PropertyImpl getActiveProperty(String upicNo) {
         return propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", upicNo, STATUS_ISACTIVE);
     }

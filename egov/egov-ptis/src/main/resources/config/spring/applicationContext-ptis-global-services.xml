@@ -54,12 +54,20 @@
          <constructor-arg index="0" ref="propertyImplPersistenceService"/>
     </bean>
     
-        <bean id="objectionPersistenceService" parent="persistenceService">
+    <bean id="objectionPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
     </bean>
     
     <bean id="ObjectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="objectionPersistenceService"/>
+    </bean>
+    
+    <bean id="propertyMutationPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+    </bean>
+    
+    <bean id="PropertyMutationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="propertyMutationPersistenceService"/>
     </bean>
     
     <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>

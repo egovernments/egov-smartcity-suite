@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -43,6 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
 
+    /**
+     * This will return only domain name from http request <br/>
+     * eg: http://www.domain.com/cxt/xyz will return www.domain.com
+     * http://somehost:8090/cxt/xyz will return somehost
+     **/
     public static String extractRequestedDomainName(final HttpServletRequest httpRequest) {
         final String requestURL = httpRequest.getRequestURL().toString();
         final int domainNameStartIndex = requestURL.indexOf("://") + 3;
@@ -50,6 +54,25 @@ public class WebUtils {
         if (domainName.contains(":"))
             domainName = domainName.split(":")[0];
         return domainName;
+    }
+
+    /**
+     * This will return full domain name including http scheme and optionally
+     * with contextroot depends on 'withContext' value eg:
+     * http://www.domain.com/cxt/xyz withContext value as true will return
+     * http://www.domain.com/cxt/ <br/>
+     * http://www.domain.com/cxt/xyz withContext
+     * value as false will return http://www.domain.com
+     **/
+    public static String extractRequestDomainURL(final HttpServletRequest httpRequest, final boolean withContext) {
+        final StringBuffer url = httpRequest.getRequestURL();
+        final String uri = httpRequest.getRequestURI();
+        String requestDomainURL = "";
+        if (withContext)
+            requestDomainURL = url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/";
+        else
+            requestDomainURL = url.substring(0, url.length() - uri.length());
+        return requestDomainURL;
     }
 
     public static String extractQueryParamsFromUrl(final String url) {

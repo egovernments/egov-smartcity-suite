@@ -385,7 +385,7 @@
 	   		var obj=document.getElementById("transRsnId");
 	 		if(obj!=null || obj!="undefined"){
 	  			var selectedValue = obj.options[obj.selectedIndex].text;
-	 			if(selectedValue=="SALE DEED") { 
+	 			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') { 
 					document.getElementById("saleDetail").readOnly=false;
 					document.getElementById("saleDetail").className="";
 				} else {

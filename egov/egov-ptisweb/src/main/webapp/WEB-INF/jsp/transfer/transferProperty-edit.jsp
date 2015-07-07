@@ -43,36 +43,28 @@
 <html>
 	<head>
 		<title><s:text name='transferProperty' /></title>
+		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+        <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script type="text/javascript">
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
-		document.getElementById("corrAddress1").className = "hiddentext";
-		document.getElementById("corrAddress2").className = "hiddentext";
-		document.getElementById("corrPinCode").className = "hiddentext";
-		document.getElementById("saleDtls").className = "hiddentext";
-		document.getElementById("crtOrderNum").className = "hiddentext";
-		document.getElementById("corrAddress1").readOnly = true;
-		document.getElementById("corrAddress2").readOnly = true;
-		document.getElementById("corrPinCode").readOnly = true;
-		document.getElementById("saleDtls").readOnly = true;
-		document.getElementById("crtOrderNum").readOnly = true;
-		enableCorresAddr();
+		document.getElementById("saleDetail").className = "hiddentext";
+		document.getElementById("saleDetail").readOnly = true;
 		enableBlock();
-		var applDate = document.getElementById("noticeDate").value;
-		var deedDate = document.getElementById("deedDate").value;
-		var mutDate = document.getElementById("mutationDate").value;
-
-		if (applDate == "" || applDate == "DD/MM/YYYY" || applDate == undefined) {
-			waterMarkInitialize('noticeDate', 'DD/MM/YYYY');
-		}
-		if (deedDate == "" || deedDate == "DD/MM/YYYY" || deedDate == undefined) {
-			waterMarkInitialize('deedDate', 'DD/MM/YYYY');
-		}
-		if (mutDate == "" || mutDate == "DD/MM/YYYY" || mutDate == undefined) {
-			waterMarkInitialize('mutationDate', 'DD/MM/YYYY');
+		try { 
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy"
+			}); 
+		}catch(e){
+			console.warn("No Date Picker "+ e);
 		}
 
+		jQuery('.datepicker').on('changeDate', function(ev){
+			jQuery(this).datepicker('hide');
+		});
+		
+		
 	}
 </script>
 	</head>
@@ -85,149 +77,182 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form  id="transferform" name="transferform" theme="simple" enctype="multipart/form-data">
+			<s:form action="save" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
-				<s:hidden name="model.id"/>
-				<s:hidden name="modelId" id="modelId" value="%{modelId}" />
-				<s:hidden id="indexNumber" name="indexNumber" value="%{indexNumber}"></s:hidden>
-				<s:hidden id="oldOwnerName" name="oldOwnerName" value="%{oldOwnerName}"></s:hidden>
-				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}"></s:hidden>
 				<s:token/>
-				<div class="headingbg">
-					<s:text name="transferProperty" />
-				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<div class="headingbg">
+						<s:text name="transferortitle" />
+					</div>
 					<tr>
-						<td class="bluebox2" style="width:10%">
+						<td class="bluebox2" style="width:5%;">
+							&nbsp;
+						</td>
+						<td class="bluebox" style="width:20%">
+							<s:text name="prop.Id"></s:text> :
+						</td>
+						<td class="bluebox">
+							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
+							<s:hidden name="indexNumber" value="%{basicproperty.upicNo}"/>
+						</td>
+						<td class="bluebox">
+							&nbsp;
+						</td>
+						<td style="width:25%;">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="bluebox2">
 							&nbsp;
 						</td>
 						<td class="bluebox">
-							<s:text name="prop.Id"></s:text>
+							<s:text name="PropertyAddress"></s:text> :
 						</td>
 						<td class="bluebox">
-							<s:property value="indexNumber" />
+							<span class="bold"><s:property value="basicproperty.address" /></span>
 						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td class="bluebox">
+							<s:text name="Zone"></s:text> :
+						</td>
+						<td class="bluebox">
+							<span class="bold"><s:property value="basicproperty.propertyID.zone.name" /></span>
 						</td>
 					</tr>
+					
 					<tr>
 						<td class="greybox2">
 							&nbsp;
 						</td>
 						<td class="greybox">
-							<s:text name="assesseeName"></s:text>
+							<s:text name="Ward" /> :
 						</td>
 						<td class="greybox">
-							<s:property value="oldOwnerName" />
+							<span class="bold"><s:property value="basicproperty.propertyID.ward.name" /></span>
 						</td>
-						<td class="greybox" colspan="2">
+						<td class="greybox">
+							<s:text name="block" /> :
+						</td>
+						<td class="greybox">
+							<span class="bold"><s:property value="basicproperty.propertyID.area.name" /></span>
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="greybox2">
 							&nbsp;
+						</td>
+						<td class="greybox">
+							<s:text name="currentpropertytax" /> :
+						</td>
+						<td class="greybox">
+							<span class="bold">Rs. <s:property value="currentPropertyTax" /> /-</span>
 						</td>
 					</tr>
 					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="PropertyAddress"></s:text>
-						</td>
-						<td class="bluebox">
-							<s:property value="propAddress" />
-						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td colspan="5">
+							<table class="tablebottom" id="" width="100%" border="0"
+								cellpadding="0" cellspacing="0">
+								<tbody>
+									<tr>
+										<th class="bluebgheadtd">Aadhaar No</th>
+										<th class="bluebgheadtd">Owner Name</th>
+										<th class="bluebgheadtd">Gender</th>
+										<th class="bluebgheadtd">Mobile Number</th>
+										<th class="bluebgheadtd">Email Address</th>
+
+									</tr>
+									<s:iterator value="basicproperty.propertyOwnerInfo" status="status">
+									<tr>
+										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
+									</tr>
+									</s:iterator>
+								</tbody>
+							  </table> 
 						</td>
 					</tr>
 					<tr>
-						<td colspan="6">
+						<td colspan="5">
 							<div class="headingsmallbg">
 								<s:text name="transferDtls" />
 							</div>
 						</td>
 					</tr>
+
 					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="application.date"></s:text>
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:date name="noticeDate" var="applDate" format="dd/MM/yyyy" />
-							<s:textfield name="noticeDate" id="noticeDate" maxlength="10"
-								value="%{applDate}"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onfocus="waterMarkTextIn('noticeDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('noticeDate','DD/MM/YYYY');" readonly="true" />
-						</td>
-						<td class="bluebox">
-							<s:text name="applicant.name"/>
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="applicantName" value="%{applicantName}" id="applicantName" readonly="true"/>
+						<td colspan="5">
+							<div>
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
+								    <tr>
+								    	<th class="bluebgheadtd">Aadhaar No<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Owner Name<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Gender<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Mobile Number(without +91)<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Email Address<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Add/Delete</th>
+									</tr>
+									 <s:iterator value="transfereeInfos" status="status" >
+								      <tr id="nameRow" >
+								        <td class="blueborderfortd" align="center">
+										   <s:textfield name="transfereeInfos[%{#status.index}].owner.aadhaarNumber" size="12" maxlength="12"></s:textfield>
+										</td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].owner.name" maxlength="512" size="20" id="ownerName"
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:select name="transfereeInfos[%{#status.index}].owner.gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" 
+								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].owner.emailId" maxlength="64" size="20" id="emailId"  
+								        		onblur="trim(this,this.value);validateEmail(this);"/>
+								        </td>
+								        
+								        <td class="blueborderfortd">
+								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
+								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								        </td>
+								     </tr>
+								     </s:iterator>
+								</table>
+							</div>
+							<br/>
 						</td>
 					</tr>
+
 					<tr>
 						<td class="greybox2">
 							&nbsp;
 						</td>
 						<td class="greybox">
 							<s:text name="transferreason"></s:text>
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:select name="propMutationMstr" id="transRsnId"
+							<s:select name="mutationReason" id="transRsnId"
 								list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{propMutationMstr.id}"
+								value="%{mutationReason.id}"
 								onchange="enableSaleDtls(this);" />
 						</td>
 						<td class="greybox">
 							<s:text name="saleDetls" />
-							<span class="mandatory">*</span> :
+							<span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
-							<s:textarea cols="50" rows="2" name="extraField3" id="saleDtls"
+							<s:textarea cols="30" rows="2" name="saleDetail" id="saleDetail"
 								onchange="return validateMaxLength(this);"
-								onblur="trim(this,this.value);" value="%{extraField3}"></s:textarea>
+								onblur="trim(this,this.value);"></s:textarea>
 						</td>
 					</tr>
-					<tr id="mutationRsnRow">
-						<td class="bluebox2" colspan="1">&nbsp;</td>
-						<td class="bluebox" colspan="1">
-							<s:text name="othertransreason"></s:text>
-							<span class="mandatory">*</span>
-						</td>
-						<td class="bluebox">
-							<s:textfield id="mutationRsn" name="extraField4" value="%{extraField4}" size="40" maxlength="128"></s:textfield>
-						</td>
-						<td class="bluebox" colspan="2">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="subregoffName" />
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="extraField2" id="subRegName"
-								value="%{extraField2}" maxlength="256"/>
-						</td>
-						<td class="bluebox">
-							<s:text name="crtOrderNum" />
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="mutationNo" id="crtOrderNum"
-								value="%{mutationNo}" maxlength="60"/>
-						</td>
-					</tr>
+					
 					<tr>
 						<td class="greybox2">
 							&nbsp;
@@ -236,7 +261,7 @@
 							<s:text name="docNum" /> :
 						</td>
 						<td class="greybox">
-							<s:textfield name="deedNo" id="docNum" value="%{deedNo}" maxlength="64"/>
+							<s:textfield name="deedNo" id="docNum"  maxlength="64"/>
 						</td>
 						<td class="greybox">
 							<s:text name="docDate" /> :
@@ -244,10 +269,10 @@
 						<td class="greybox">
 							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
 							<s:textfield name="deedDate" id="deedDate" maxlength="10"
-								value="%{docDate}" cssClass="datepicker"
+								value="%{docDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onfocus="waterMarkTextIn('deedDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('deedDate','DD/MM/YYYY');" />
+								onblur="validateDateFormat(this);"
+								cssClass="datepicker" />
 						</td>
 					</tr>
 					<tr>
@@ -255,121 +280,98 @@
 							&nbsp;
 						</td>
 						<td class="bluebox">
-							Upload Document
-							
+							<s:text name="docValue" /> :
 						</td>
 						<td class="bluebox">
-							<ul>
-							<c:forEach items="${property.basicProperty.propertyDocsSet}" var="propDocs">
-								<li><a target="_blank" href="/egi/downloadfile?fileStoreId=${propDocs.supportDoc.fileStoreId}&moduleName=PTIS">${propDocs.supportDoc.fileName}</a></li>
-							</c:forEach>
-							</ul>
-							<input type="file" name="upload" class="button" width="500px" value="Upload Document"/>
+							<s:textfield name="marketValue" id="marketValue" maxlength="64"/>
 						</td>
-						<td class="bluebox" colspan="2">
-							&nbsp;
+						<td class="bluebox">
+							<s:text name="payablefee" /><span class="mandatory1">*</span> :
+						</td>
+						<td class="bluebox">
+							<s:textfield name="mutationFee" id="mutationFee" />
 						</td>
 					</tr>
+					
 					<tr>
-						<td colspan="6">
+						<td colspan="5">
 							<div class="headingsmallbg">
-								<s:text name="feeDtls" />
+								<s:text name="docsectiontitle" /> 
 							</div>
 						</td>
 					</tr>
-					<tr>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="mutationFee"></s:text>
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="mutationFee" id="mutationFee" value="%{mutationFee}" maxlength="12" readonly="true"></s:textfield>
-						</td>
-						<td class="bluebox">
-							<s:text name="otherFee"/> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="otherFee" id="otherFee" value="%{otherFee}" maxlength="12" readonly="true"></s:textfield>
-						</td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="bluebox">
-							<s:text name="marketValue"></s:text>
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="marketValue" id="marketValue" value="%{marketValue}" maxlength="12" readonly="true"></s:textfield>
-						</td>
-						<td class="greybox">
-							<s:text name="mutationDate"></s:text>
-							<span class="mandatory">*</span> :
-						</td>
-						<td class="greybox">
-							<s:date name="mutationDate" var="mutDate" format="dd/MM/yyyy" />
-							<s:textfield name="mutationDate" id="mutationDate" value="%{mutDate}" maxlength="10"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onfocus="waterMarkTextIn('mutationDate','DD/MM/YYYY');"
-								onblur="validateDateFormat(this);waterMarkTextOut('mutationDate','DD/MM/YYYY');" cssClass="datepicker"/>
-						</td>
-						<td class="greybox" colspan="2">&nbsp;</td>
-					</tr>
-					<tr>
-						<td colspan="6">
-							<div class="headingsmallbg">
-								<s:text name="ownerDtls" />
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td class="bluebox" colspan="6">
-							<div id="OwnerNameDiv">
-								<%@ include file="../common/OwnerNameForm.jsp"%>
-							</div>
-						</td>
-					</tr>
+
+                     <tr>
+						<td colspan="5">
+						<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.docdate" /></th>
+									<th class="bluebgheadtd"><s:text name="doctable.docdetails" /></th>
+									<th class="bluebgheadtd">Files Attached</th>
+									<th class="bluebgheadtd">Upload File</th>
+								</tr>
+								<s:iterator value="documents" status="docstatus" var="document">
+								<tr>
+									<td class="blueborderfortd" align="center">
+									  <s:checkbox name="documents[%{#docstatus.index}].enclosed"/>
+									</td>
+									<td class="blueborderfortd" style="text-align:left">
+									  <s:property value="type.name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
+									  <s:hidden name="documents[%{#docstatus.index}].type.id" value="%{type.id}"></s:hidden>
+									</td>
+									<td class="blueborderfortd" align="center">
+									  <s:date name="docDate" var="documentDate" format="dd/MM/yyyy" />
+									  <s:textfield name="documents[%{#docstatus.index}].docDate" value="%{documentDate}" cssClass='datepicker' maxlength="10"/>
+									</td>
+									<td class="blueborderfortd" align="center">
+										<s:textarea name="documents[%{#docstatus.index}].description" cols="40" rows="2"></s:textarea>
+									</td>
+									<td class="blueborderfortd" style="text-align:left">
+									<c:forEach items="${document.files}" var="file">
+										<li><a target="_blank" href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PTIS">${file.fileName}</a></li>
+									</c:forEach>
+									</td>
+									<td class="blueborderfortd" align="center">
+										<s:file name="documents[%{#docstatus.index}].uploads" cssClass="button"/> 
+									</td>
+								</tr>
+								</s:iterator>
+							</tbody>
+						</table>
+					</td>
+				 </tr>
+
 				</table>
-				 <%@ include file="../common/CorrAddressForm.jsp"%>
-       			 <%@ include file="../workflow/property-workflow.jsp" %>  
-					<div class="buttonbottom">
-						<input type="button" value="Forward" id="Mutation:Forward" name="forward" class="buttonsubmit submitbtn"/>
-						<input type="button" value="Approve" id="Mutation:Approve" name="approve" class="buttonsubmit submitbtn"/>
-						<input type="button" value="Reject" id="Mutation:Reject" name="reject" class="buttonsubmit submitbtn"/>
-						<input type="button" value="Close" class="button"  onclick="return confirmClose();" />
-					</div>
+        		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
+       			 <div class="buttonbottom">
+					<s:submit value="Save & Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+					<input type="reset" value="Cancel" class="button" align="center" />
+					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
+				</div>
 				</s:push>
 			</s:form>
-			<div align="left" class="mandatory" style="font-size: 11px">
+			<div align="left" class="mandatory1" style="font-size: 11px">
 				* Mandatory Fields
 			</div>
 		</div>
 		<script type="text/javascript">
+		jQuery("#marketValue").blur(function(){
+			var marketVal = parseInt(jQuery("#marketValue").val());
+			jQuery("#mutationFee").val((1/100)*marketVal);
+		});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
-				document.getElementById("saleDtls").readOnly=false;
-				document.getElementById("saleDtls").className="";
+				document.getElementById("saleDetail").readOnly=false;
+				document.getElementById("saleDetail").className="";
 			}
 			else {
-				document.getElementById("saleDtls").value="";
-				document.getElementById("saleDtls").className="hiddentext";
-				document.getElementById("saleDtls").readOnly=true;
-			}
-			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_COURT_ORDER}" />') {
-				document.getElementById("crtOrderNum").readOnly=false;
-				document.getElementById("crtOrderNum").className="";
-			}
-			else {
-				document.getElementById("crtOrderNum").value="";
-				document.getElementById("crtOrderNum").className="hiddentext";
-				document.getElementById("crtOrderNum").readOnly=true;
-			}
-			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_OTHERS}" />') { 
-				document.getElementById("mutationRsnRow").style.display="";
-			}
-			else {
-				document.getElementById("mutationRsnRow").style.display="none";
+				document.getElementById("saleDetail").value="";
+				document.getElementById("saleDetail").className="hiddentext";
+				document.getElementById("saleDetail").readOnly=true;
 			}
 		}
 		function confirmClose(){
@@ -385,88 +387,19 @@
 	   		var obj=document.getElementById("transRsnId");
 	 		if(obj!=null || obj!="undefined"){
 	  			var selectedValue = obj.options[obj.selectedIndex].text;
-	 			if(selectedValue=="SALE DEED") { 
-					document.getElementById("saleDtls").readOnly=false;
-					document.getElementById("saleDtls").className="";
+	 			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') { 
+					document.getElementById("saleDetail").readOnly=false;
+					document.getElementById("saleDetail").className="";
 				} else {
-					document.getElementById("saleDtls").value="";
-					document.getElementById("saleDtls").className="hiddentext";
-					document.getElementById("saleDtls").readOnly=true;
-				}
-				if(selectedValue=="COURT ORDER") {
-					document.getElementById("crtOrderNum").readOnly=false;
-					document.getElementById("crtOrderNum").className="";
-				} else {
-					document.getElementById("crtOrderNum").value="";
-					document.getElementById("crtOrderNum").className="hiddentext";
-					document.getElementById("crtOrderNum").readOnly=true;
-				}
-				if(selectedValue=="OTHERS") { 
-					document.getElementById("mutationRsnRow").style.display="";
-				} else {
-					document.getElementById("mutationRsnRow").style.display="none";
+					document.getElementById("saleDetail").value="";
+					document.getElementById("saleDetail").className="hiddentext";
+					document.getElementById("saleDetail").readOnly=true;
 				}
 			}
 		}
-		function showDocumentManager(){
-			var docNum= document.getElementById("docNumber").value;
-  			var url;
-  			if(docNum==null||docNum==''||docNum=='To be assigned'){
-       			 url="/egi/docmgmt/basicDocumentManager.action?moduleName=ptis";
-  			} else {
-       			 url = "/egi/docmgmt/basicDocumentManager!editDocument.action?docNumber="+docNum+"&moduleName=ptis";
- 		 	}
-     		window.open(url,'docupload','width=1000,height=400');
-		}
-
-		/**
-		 * this resetting of date fields is performed because, the watermark(String) 
-		 * is used in jsp and data type of the property is Date. So the default error messages are 
-		 * displayed along with  
-		 */
-		function resetDateFields() {
-			var applDate = document.getElementById("noticeDate").value;
-			var deedDate = document.getElementById("deedDate").value;
-			var mutDate = document.getElementById("mutationDate").value;
-			if (applDate == "DD/MM/YYYY") {
-				document.getElementById("noticeDate").value = "";
-			}
-			if (deedDate == "DD/MM/YYYY") {
-				document.getElementById("deedDate").value = "";
-			}
-			if (mutDate == "DD/MM/YYYY") {
-				document.getElementById("mutationDate").value = "";
-			}
-		}
-		try { 
-			jQuery(".datepicker").datepicker({
-				format: "dd/mm/yyyy"
-			}); 
-		}catch(e){
-			console.warn("No Date Picker "+ e);
-		}
-
-		jQuery('.datepicker').on('changeDate', function(ev){
-			jQuery(this).datepicker('hide');
-		});
-
-		jQuery(".submitbtn").click(function(){
-			setWorkFlowInfo(this);
-			resetDateFields();
-			//doLoadingMask();
-			if(jQuery(this).attr("name") == 'approve') {
-				jQuery("#transferform").attr("action","property-approve.action");
-			} else if (jQuery(this).attr("name") == 'forward') {
-				jQuery("#transferform").attr("action","property-forward.action");
-			} else if (jQuery(this).attr("name") == 'reject') {
-				jQuery("#transferform").attr("action","property-reject.action");
-			}
-			jQuery("#transferform").submit();
-			
-		});
+		jQuery('#nameTable tr:not(:eq(1)) td img[alt="Add"]').hide();
+		jQuery('#nameTable tr:eq(1) td img[alt="Remove"]').hide();
 </script>
-<div id="loadingMask" style="display:none">
-<p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p>
-</div>
+<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>
 </html>
