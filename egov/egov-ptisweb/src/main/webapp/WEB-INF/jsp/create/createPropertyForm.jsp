@@ -18,7 +18,7 @@
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
 		   <s:textfield name="applicationNo"
-				id="applicationNo" value="%{basicProperty.applicationNo}" autocomplete="off" size="12" maxlength="12"></s:textfield>
+				id="applicationNo" value="%{applicationNo}" autocomplete="off" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -87,12 +87,12 @@
 		<td class="greybox"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="propertyDetail.extentSite" id="extentSite" size="12" maxlength="15" value=""></s:textfield>
+		   <s:textfield name="propertyDetail.extentSite" id="extentSite" size="12" maxlength="15" value="%{propertyDetail.extentSite}"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="vacantland.assmtno"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<td class="greybox">
-		  <s:textfield name="vacantLandNo" id="vacantLandNo" value="%{vacantLandNo}" size="12" maxlength="15" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);" value=""></s:textfield>
+		  <s:textfield name="vacantLandNo" id="vacantLandNo" value="%{vacantLandNo}" size="12" maxlength="15" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -102,7 +102,7 @@
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox">
-		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		   <s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 
 	</tr>
@@ -244,7 +244,7 @@
 	
 	<!-- Ownership section -->
 	
-	<tr>
+	<tr id="ownerShipRow">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.ownership"/></span>
@@ -252,7 +252,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr id="vacantAreaRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox">
 			<div id="plotArea">
@@ -267,7 +267,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr id="appartmentRow">
 	    <td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox"><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.apartment.id"
