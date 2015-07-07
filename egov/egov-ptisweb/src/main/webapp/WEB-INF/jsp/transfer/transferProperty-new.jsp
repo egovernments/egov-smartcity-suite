@@ -327,7 +327,7 @@
 									</td>
 									<td class="blueborderfortd" align="center">
 										<s:file name="documents[%{#status.index}].uploads" cssClass="button"/> 
-									</td class="blueborderfortd" align="center">
+									</td>
 								</tr>
 								</s:iterator>
 							</tbody>
