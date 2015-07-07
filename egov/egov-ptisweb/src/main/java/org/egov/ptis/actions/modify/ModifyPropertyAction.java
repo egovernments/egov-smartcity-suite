@@ -126,6 +126,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -256,6 +257,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private SecurityUtils securityUtils;
 	@Autowired
 	private AssignmentService assignmentService;
+	private List<DocumentType> documentTypes = new ArrayList<>();
 
 	public ModifyPropertyAction() {
 		super();
@@ -627,6 +629,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(
 					QUERY_BASICPROPERTY_BY_UPICNO, indexNumber));
 		}
+		this.documentTypes = propService.getPropertyModificationDocumentTypes();
 		List<FloorType> floorTypes = getPersistenceService()
 				.findAllBy("from FloorType order by name");
 		List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
@@ -826,8 +829,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propService.adjustExcessCollectionAmount(installments, demandDetailsSetByInstallment,
 				currentDemand);
 
-		if (modProperty != null) {
-			modProperty.setDocNumber(docNumber);
+		if (modProperty != null && !modProperty.getDocuments().isEmpty()) {
+			propService.processAndStoreDocument(modProperty.getDocuments());
 		}
 
 		if (modProperty == null) {
@@ -2031,6 +2034,14 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setApartmentId(Long apartmentId) {
 		this.apartmentId = apartmentId;
+	}
+
+	public List<DocumentType> getDocumentTypes() {
+		return documentTypes;
+	}
+
+	public void setDocumentTypes(List<DocumentType> documentTypes) {
+		this.documentTypes = documentTypes;
 	}
 
 }

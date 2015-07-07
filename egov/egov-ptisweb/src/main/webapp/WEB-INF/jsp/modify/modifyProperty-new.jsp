@@ -84,7 +84,7 @@
 	</div>
 	<!-- Area for error display -->
 	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
-	<s:form name="ModifyPropertyForm" action="modifyProperty"
+	<s:form name="ModifyPropertyForm" action="modifyProperty" enctype="multipart/form-data" method="post"
 		theme="simple" validate="true">
 		<s:push value="model">
 			<s:token />

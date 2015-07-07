@@ -600,6 +600,7 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
 	public static final String WFLOW_ACTION_STEP_NOTICE_GENERATED = "Notice Generated";
 	public static final String WFLOW_ACTION_STEP_COMMISSIONER_APPROVED = "Commissioner Approved";
+	public static final String WFLOW_ACTION_STEP_COMMISSIONER_REJECTED = "Commissioner Rejected";
 	public static final String WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
 	public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
 

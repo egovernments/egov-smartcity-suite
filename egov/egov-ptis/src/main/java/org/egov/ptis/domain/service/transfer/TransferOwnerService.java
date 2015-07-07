@@ -71,6 +71,7 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
@@ -146,7 +147,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     }
     
     public List<DocumentType> getPropertyTransferDocumentTypes() {
-        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_MODULE_AND_SUBMODULE, "PTIS", TRANSFER);
+		return documentTypePersistenceService.findAllByNamedQuery(
+				DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, TransactionType.TRANSFER);
     }
     
     public List<PropertyMutationMaster> getPropertyTransferReasons() {

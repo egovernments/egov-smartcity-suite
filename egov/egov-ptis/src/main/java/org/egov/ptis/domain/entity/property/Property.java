@@ -108,10 +108,11 @@ public interface Property extends Auditable {
 
 	public boolean validateProperty() throws InvalidPropertyException;
 
-	/*public void addPropertyTenants(Citizen citzen);
-
-	public void removePropertyTenants(Citizen citzen);
-*/
+	/*
+	 * public void addPropertyTenants(Citizen citzen);
+	 * 
+	 * public void removePropertyTenants(Citizen citzen);
+	 */
 	public Character getIsDefaultProperty();
 
 	/**
@@ -155,11 +156,13 @@ public interface Property extends Auditable {
 
 	public void setPropertyModifyReason(PropertyModifyReason propertyModifyReason);
 
-	/*public Set<PtDemandARV> getPtDemandARVSet();
-
-	public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet);
-
-	public void addPtDemandARV(PtDemandARV ptDemandARV);*/
+	/*
+	 * public Set<PtDemandARV> getPtDemandARVSet();
+	 * 
+	 * public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet);
+	 * 
+	 * public void addPtDemandARV(PtDemandARV ptDemandARV);
+	 */
 
 	public void setExtra_field4(String extra_field4);
 
@@ -181,7 +184,7 @@ public interface Property extends Auditable {
 
 	public Boolean getIsExemptedFromTax();
 
-	public void setIsExemptedFromTax(Boolean isExemptedFromTax) ;
+	public void setIsExemptedFromTax(Boolean isExemptedFromTax);
 
 	public String getTaxExemptReason();
 
@@ -214,5 +217,9 @@ public interface Property extends Auditable {
 	public void addUnitCalculationDetails(UnitCalculationDetail unitCalculationDetail);
 
 	public void addAllUnitCalculationDetails(Set<UnitCalculationDetail> unitCalculationDetails);
+
+	public List<Document> getDocuments();
+
+	public void setDocuments(List<Document> documents);
 
 }

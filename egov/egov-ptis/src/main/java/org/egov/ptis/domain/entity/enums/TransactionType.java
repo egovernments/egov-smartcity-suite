@@ -35,14 +35,11 @@
  * 	   with regards to rights under trademark law for use of the trade names 
  * 	   or trademarks of eGovernments Foundation.
  * 
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.ptis.domain.service.modify;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
+package org.egov.ptis.domain.entity.enums;
 
-public class ModifyPropertyService extends PersistenceService<PropertyImpl, Long>{
-
-		
+public enum TransactionType {
+	CREATE, MODIFY, TRANSFER
 }

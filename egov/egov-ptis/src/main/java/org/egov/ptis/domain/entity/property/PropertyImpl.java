@@ -76,7 +76,7 @@ public class PropertyImpl extends StateAware implements Property {
 	
 	private Long id;
 	
-	private Set<Citizen> propertyTenantSet = new HashSet<Citizen>();
+	//private Set<Citizen> propertyTenantSet = new HashSet<Citizen>();
 
 	private Citizen citizen;
 
@@ -134,6 +134,7 @@ public class PropertyImpl extends StateAware implements Property {
 	private String docNumber;
 	private Boundary areaBndry;
 	private BigDecimal alv;
+	private List<Document> documents = new ArrayList<>();
 
 	/**
 	 * @Size(min=1) is not working when we modify a migrated property, Reason is because
@@ -806,6 +807,14 @@ public class PropertyImpl extends StateAware implements Property {
 				url = "/ptis/create/createProperty-view.action" + "?modelId=" + getId();
 		}
 		return url;
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
 	}
 
 }

@@ -73,6 +73,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,6 +102,8 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -113,8 +116,11 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -137,22 +143,21 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 public class PropertyService  {
 
 	private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
-
 	private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
-    
 	private PersistenceService propPerServ;
 	private Installment currentInstall;
 	@Autowired
 	private APTaxCalculator taxCalculator;
 	private HashMap<Installment, TaxCalculationInfo> instTaxMap;
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
+    private PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	protected EisCommonsService eisCommonsService;
 	@Autowired
@@ -166,6 +171,13 @@ public class PropertyService  {
 	private Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
 	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
 	private PropertyTaxNumberGenerator ptNumberGenerator;
+	@Autowired
+    @Qualifier("documentTypePersistenceService")
+    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
+	@Autowired
+    @Qualifier("fileStoreService")
+    private FileStoreService fileStoreService;
+	
 
 	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
 			String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
@@ -2079,17 +2091,39 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 
         LOGGER.debug("Exiting from changePropertyDetail");
         return modProperty;
-}
+	}
+	
+	public void setPtNumberGenerator(PropertyTaxNumberGenerator ptNumberGenerator) {
+		this.ptNumberGenerator = ptNumberGenerator;
+	}
+	
+	public List<DocumentType> getPropertyModificationDocumentTypes() {
+		return documentTypePersistenceService.findAllByNamedQuery(
+				DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, TransactionType.MODIFY);
+	}
+	
+	public void processAndStoreDocument(List<Document> documents) {
+		documents.forEach(document -> {
+			if (!document.getUploads().isEmpty()) {
+				int fileCount = 0;
+				for (File file : document.getUploads()) {
+					FileStoreMapper fileStore = fileStoreService.store(file, document
+							.getUploadsFileName().get(fileCount), document.getUploadsContentType()
+							.get(fileCount++), "PTIS");
+					document.getFiles().add(fileStore);
+				}
+			}
+			document.setType(documentTypePersistenceService.load(document.getType().getId(),
+					DocumentType.class));
+		});
+	}
+	
 	public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
 		return excessCollAmtMap;
 	}
 
 	public void setExcessCollAmtMap(Map<Installment, Map<String, BigDecimal>> excessCollAmtMap) {
 		this.excessCollAmtMap = excessCollAmtMap;
-	}
-
-	public void setPtNumberGenerator(PropertyTaxNumberGenerator ptNumberGenerator) {
-		this.ptNumberGenerator = ptNumberGenerator;
 	}
 
 	public EisCommonsService getEisCommonsService() {
