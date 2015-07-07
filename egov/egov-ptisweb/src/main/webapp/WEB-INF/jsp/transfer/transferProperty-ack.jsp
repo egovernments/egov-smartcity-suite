@@ -46,7 +46,7 @@
 		</title>
 		<script type="text/javascript">
   function viewProperty(){
-  	window.location="../view/viewProperty!viewForm.action?propertyId=<s:property value='%{indexNumber}'/>";
+  	window.location="../../view/viewProperty-viewForm.action?propertyId=<s:property value='%{indexNumber}'/>";
   }
   </script>
 	</head>

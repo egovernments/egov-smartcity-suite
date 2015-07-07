@@ -51,7 +51,7 @@
 			</generator>
 		</id>
 		<property name="applicationNo" type="java.lang.String">
-			<column name="applicationno" not-null="true" />
+			<column name="applicationno"/>
 		</property>
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />

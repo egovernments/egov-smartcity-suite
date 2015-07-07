@@ -119,15 +119,14 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     private UserService userService;
     
     @Transactional
-    public void initiatePropertyTransfer(PropertyMutation propertyMutation, String upicNo) {
-        BasicProperty basicProperty = getBasicPropertyByUpicNo(upicNo);
+    public void initiatePropertyTransfer(BasicProperty basicProperty, PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
         propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
-        //propertyMutation.transition().start();
+        propertyMutation.transition().start();
         //basicProperty.getPropertyOwnerInfo().clear();
         processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);

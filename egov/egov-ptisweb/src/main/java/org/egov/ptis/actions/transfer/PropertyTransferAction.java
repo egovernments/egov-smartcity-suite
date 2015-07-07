@@ -108,8 +108,14 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
-        transferOwnerService.initiatePropertyTransfer(propertyMutation, indexNumber);
+        transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         return ACK;
+    }
+    
+    @SkipValidation
+    @Action(value = "/view")
+    public String view() {
+        return EDIT;
     }
     
     @Override
