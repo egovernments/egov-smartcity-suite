@@ -382,7 +382,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}
-		
+		updateBasicProperty(basicProp);
 		if (!property.getPropertyDetail().getPropertyType().equals(VACANT_PROPERTY)) {
 			for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 				User user = securityUtils.getCurrentUser();
@@ -417,19 +417,30 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("forward: Property forward ended");
 		return RESULT_ACK;
 	}
-
+    
+	private void updateBasicProperty(BasicProperty basicProperty) {
+		basicProperty.setRegdDocNo(getRegdDocNo());
+		basicProperty.setRegdDocDate(getRegdDocDate());
+		basicProperty.setVacantLandAssmtNo(getVacantLandNo());
+		PropertyID propertyId = basicProperty.getPropertyID();
+		//propertyId.setZone(zone);
+		//basicProperty.setPropertyID(createPropertyID(basicProperty));
+		//basicProperty.setAddress(createPropAddress());
+	}  
+	
 	@SkipValidation
 	@Action(value = "/createProperty-approve")
 	public String approve() {
 		LOGGER.debug("approve: Property approval started");
 		LOGGER.debug("approve: Property: " + property);
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
-		if(REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
+		if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
 			this.validate();
-			if(hasErrors()){
+			if (hasErrors()) {
 				mode = EDIT;
 				return RESULT_NEW;
 			}
+			updateBasicProperty(basicProp);
 		}
 		property.setStatus(STATUS_ISACTIVE);
 		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
@@ -446,7 +457,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.update(basicProp);
-		setAckMessage("Property Approved Successfully by : " + userService.getUserById(securityUtils.getCurrentUser().getId()));
+		setAckMessage("Property Approved Successfully by : " + userService.getUserById(securityUtils.getCurrentUser().getId()).getName());
 		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("approve: Property approval ended");
 		return RESULT_ACK;
@@ -458,7 +469,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("reject: Property rejection started");
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
-		if (property.getPropertyDetail().getApartment() != null	&& property.getPropertyDetail().getApartment().getId() != null) {
+		if (property.getPropertyDetail().getApartment() != null
+				&& property.getPropertyDetail().getApartment().getId() != null) {
 			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
 					property.getPropertyDetail().getApartment().getId());
 			property.getPropertyDetail().setApartment(apartment);
@@ -901,16 +913,15 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	private PropertyID createPropertyID(BasicProperty basicProperty) {
-
 		PropertyID propertyId = new PropertyID();
 		propertyId.setZone(boundaryService.getBoundaryById(getZoneId()));
 		propertyId.setWard(boundaryService.getBoundaryById(getWardId()));
 		propertyId.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
 		propertyId.setCreatedDate(new Date());
 		propertyId.setModifiedDate(new Date());
+		propertyId.setModifiedDate(new Date());
 		propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
 		propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
-
 		propertyId.setBasicProperty(basicProperty);
 		LOGGER.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
 		return propertyId;

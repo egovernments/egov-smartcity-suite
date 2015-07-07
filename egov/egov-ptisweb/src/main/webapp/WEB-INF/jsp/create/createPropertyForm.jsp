@@ -301,7 +301,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox">
-		<s:date name="%{basicProperty.propOccupationDate}" var="occupationDate" format="dd/MM/yyyy" />
+		<s:date name="%{dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
 		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
 		</td>
 	</tr>
