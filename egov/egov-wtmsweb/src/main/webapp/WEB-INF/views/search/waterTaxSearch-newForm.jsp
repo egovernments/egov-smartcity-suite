@@ -50,89 +50,52 @@
 
 			<div class="panel-heading">
 				<div class="panel-title">
-					<strong><spring:message code='title.AppliactionSearch' />
+					<strong><spring:message code='title.watertaxSearch' />
 					</strong>
 				</div>
 
 			</div>
 
-			<div class="panel-body">
+			<div class="panel-body custom-form">
 
 				<form:form  class="form-horizontal form-groups-bordered"
-					id="applicationSearchRequestForm" modelAttribute="applicationSearchRequest" action="">
+					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" action="">
 
 					<div class="form-group">
-					<label for="field-1" class="col-sm-3 control-label"> <spring:message
-										code="lbl.Service" /></label>
-						<div class="col-sm-3 add-margin">
-						<form:select name="moduleName" path="" data-first-option="false" 
-							cssClass="form-control" >
-							<form:option value="">
-								Select from below
-							</form:option>
-							<form:options items="${modulesList}"  />  
-						</form:select>
-						</div>
-						<label for="field-1" class="col-sm-2 control-label"><spring:message
-										code="lbl.appType" /></label>
-						<div class="col-sm-3 add-margin">
-						<form:select name="applicationType" path="" data-first-option="false" 
-							cssClass="form-control" >
-							<form:option value="">
-								Select from below
-							</form:option>
-							<form:options items="${applicationTypeList}"  />  
-						</form:select>
+				<label for="field-1" class="col-sm-4 control-label"> <spring:message
+										code="lbl.mobilenumber" /></label>
+				
+						<div class="col-md-4 add-margin">
+							<input type="text" name="mobileNumber" class="form-control" id="app-appcodo"
+								 />
+						</div></div>
+						<div class="form-group">
+				<label for="field-1" class="col-sm-4 control-label"> Consumer Code</label>
+										<div class="col-md-4 add-margin">
+							<input type="text" name="consumerCode" class="form-control" id="app-appcodo"/>
 						</div>
 						</div>
 						
+						
 						<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+					<label for="field-1" class="col-sm-4 control-label"> <spring:message
 										code="lbl.name" /></label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-md-4 add-margin">
 							<input type="text" name="applicationName" class="form-control" id="app-mobno"
-								 />
-						</div>
-							<label for="field-1" class="col-sm-2 control-label"><spring:message
-										code="lbl.application.no" />
-								</label>
-						<div class="col-sm-3 add-margin">
-						<input type="text" name="applicationNumber" class="form-control" id="app-mobno"
-								 />
-						</div>
-						</div>
-						<div class="form-group">
-							<label for="field-1" class="col-sm-3 control-label"><spring:message
-										code="lbl.application.code" />
-								</label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicationCode" class="form-control" id="app-appcodo"
-								 />
-						</div>
-								<label for="field-1" class="col-sm-2 control-label"> <spring:message
-										code="lbl.application.mobileNo" />
-								</label>
-							<div class="col-sm-3 add-margin">
-						<input type="text" name="appMobileNo" class="form-control" id="app-mobno" />
-						</div>
-						</div>
-						
-						<div class="form-group">
-							<label for="field-1" class="col-sm-3 control-label"> <spring:message
-										code="lbl.fromDate" />
-								</label>
-						<div class="col-sm-3 add-margin">
-						<input type="text" name="fromDate" class="form-control datepicker" data-date-end-date="0d" 
-								id="start_date" data-inputmask="'mask': 'd/m/y'"
 								/>
 						</div>
-						<label for="field-1" class="col-sm-2 control-label"> <spring:message code="lbl.toDate" /></label>
-						<div class="col-sm-3 add-margin">
-						<input type="text" name="toDate" class="form-control datepicker today" data-date-end-date="0d" 
-								id="end_date" data-inputmask="'mask': 'd/m/y'" />
 						</div>
-
+						<div class="form-group">
+					<label for="field-1" class="col-sm-4 control-label">Locality</label>
+						<div class="col-md-4 add-margin">
+							<input type="text" name="locality" class="form-control" id="app-mobno"
+								/>
 						</div>
+						</div>
+					
+						
+						
+						
 						
 					
 					<div class="form-group">
@@ -159,14 +122,12 @@
 </div>
 
 
-
-	<div class="row">
+<div class="row">
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
 						<span class="inline-elem"><input type="text" id="searchemployee" class="form-control input-sm"></span>
 					</div>
-					
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
 
@@ -196,5 +157,20 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 
-<script src="<c:url value='/resources/js/app/applicationsearch.js'/>"
+<script src="<c:url value='/resources/js/app/connectionsearch.js'/>"
 	type="text/javascript"></script>
+	<script>
+		$('.dropchange').change(function(){
+			 if( this.value == 0){
+				window.location.href="applyforadditionalconnection.html"
+			}else if( this.value == 2){
+				window.location.href="closingwatertap.html"
+			}else if( this.value == 6){
+				window.location.href="disconnectionotice.html"
+			}else if( this.value == 1){
+				window.location.href="changeofuse.html"
+			}else if( this.value == 3){
+				window.location.href="reconnection.html"
+			}
+		});
+	</script>

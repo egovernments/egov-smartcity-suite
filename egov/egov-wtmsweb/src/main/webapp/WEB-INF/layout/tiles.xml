@@ -68,6 +68,10 @@
         <put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/elasticSearch/applicationSearch-newForm.jsp"/>
     </definition>
+      <definition name="waterTaxSearch-newForm" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.watertaxSearch" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/search/waterTaxSearch-newForm.jsp"/>
+    </definition>
 	 
      <definition name="application-view" extends="base_layout">	 
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
