@@ -35,60 +35,41 @@
  * 	   with regards to rights under trademark law for use of the trade names 
  * 	   or trademarks of eGovernments Foundation.
  * 
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-package org.egov.demand.dao;
+/**
+ * Class to populate installment wise tax and penalty
+ */
+package org.egov.ptis.client.model;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.egov.commons.Installment;
 
-import org.egov.demand.model.EgDemandDetails;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-@Repository(value = "egDemandDetailsDAO")
-@Transactional(readOnly = true)
-public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
-
-	@PersistenceContext
-	private EntityManager entityManager;
-
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-
-	@Override
-	public EgDemandDetails findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<EgDemandDetails> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EgDemandDetails create(EgDemandDetails egDemandDetails) {
-	    getCurrentSession().saveOrUpdate(egDemandDetails);
-	    getCurrentSession().flush();
-	    return egDemandDetails;
-	}
-
-	@Override
-	public void delete(EgDemandDetails egDemandDetails) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public EgDemandDetails update(EgDemandDetails egDemandDetails) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+/**
+ * Bean to hold penalty and rebate amounts for a installment
+ * 
+ * @author nayeem
+ *
+ */
+public class PenaltyAndRebate {
+    
+    private BigDecimal penalty = BigDecimal.ZERO;
+    private BigDecimal rebate = BigDecimal.ZERO;
+    
+    public BigDecimal getPenalty() {
+        return penalty;
+    }
+    
+    public void setPenalty(BigDecimal penalty) {
+        this.penalty = penalty;
+    }
+    
+    public BigDecimal getRebate() {
+        return rebate;
+    }
+    
+    public void setRebate(BigDecimal rebate) {
+        this.rebate = rebate;
+    }
 }

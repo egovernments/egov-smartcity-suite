@@ -312,7 +312,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 		if (demandReasonMaster != null && installment != null && module != null) {
 			qry = getCurrentSession()
 					.createQuery(
-							" select DmdReason from EgDemandReason DmdReason , EgDemandReasonMaster master  where DmdReason.egDemandReasonMaster =:demandReasonMaster and master.egModule =:module and DmdReason.egInstallmentMaster =:installment   ");
+							" select DmdReason from EgDemandReason DmdReason left join fetch DmdReason.egDemandReasonMaster reasonMaster where reasonMaster = :demandReasonMaster and reasonMaster.egModule =:module and DmdReason.egInstallmentMaster =:installment   ");
 			qry.setEntity("demandReasonMaster", demandReasonMaster);
 			qry.setEntity("module", module);
 			qry.setEntity("installment", installment);
@@ -546,8 +546,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 			Module module, EgDemandReasonMaster dmdResMster) {
 		List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>();
 		if (egDemand != null && installment != null && module != null && dmdResMster != null) {
-			DemandGenericDao dmdDao = new DemandGenericHibDao();
-			EgDemandReason dmdRes = dmdDao.getDmdReasonByDmdReasonMsterInstallAndMod(dmdResMster,
+			EgDemandReason dmdRes = this.getDmdReasonByDmdReasonMsterInstallAndMod(dmdResMster,
 					installment, module);
 			if (dmdRes == null) {
 				throw new EGOVRuntimeException("----EgDemand Reason  is null  For EgDemandID--"
@@ -555,7 +554,7 @@ public class DemandGenericHibDao implements DemandGenericDao {
 			}
 			List<EgDemandReason> demandReasonList = new ArrayList<EgDemandReason>();
 			demandReasonList.add(dmdRes);
-			demandDetList = dmdDao.getDemandDetailsForDemandAndReasons(egDemand, demandReasonList);
+			demandDetList = this.getDemandDetailsForDemandAndReasons(egDemand, demandReasonList);
 		}
 		return demandDetList;
 

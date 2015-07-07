@@ -48,6 +48,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RebatePeriodRepository extends JpaRepository<RebatePeriod, Long> {
 
-	@Query("select rp from RebatePeriod rp where rp.installment.id=:installmentId")
+    @Query("select rp from RebatePeriod rp where rp.installment.id = :installmentId")
     public RebatePeriod findByCurrentInstallmentId(@Param("installmentId") Integer installmentId);
 }

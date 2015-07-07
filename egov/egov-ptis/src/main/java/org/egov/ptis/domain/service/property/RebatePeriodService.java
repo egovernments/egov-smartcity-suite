@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RebatePeriodService {
 
-	private final RebatePeriodRepository rebatePeriodRepository;
+    private final RebatePeriodRepository rebatePeriodRepository;
 
     @Autowired
     public RebatePeriodService(final RebatePeriodRepository rebatePeriodRepository) {

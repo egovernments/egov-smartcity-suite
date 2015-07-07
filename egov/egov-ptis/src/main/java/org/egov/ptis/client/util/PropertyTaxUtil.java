@@ -40,7 +40,7 @@
 package org.egov.ptis.client.util;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_PERCENTAGE_FULL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_PERCENTAGE_NIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_PERCENTAGE_PARTIAL;
@@ -65,8 +65,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCAT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_PERIOD1;
 import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_PERIOD2;
@@ -160,8 +160,8 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.ApplicableFactor;
+import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.model.PropertyArrearBean;
-import org.egov.ptis.client.model.PropertyInstTaxBean;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
@@ -187,7 +187,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -200,9 +199,9 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PropertyTaxUtil {
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
@@ -1091,8 +1090,8 @@ public class PropertyTaxUtil {
 				if (reasonMasterCode.equals(DEMANDRSN_CODE_GENERAL_TAX)) {
 
 					key = String
-							.valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_REBATE)));
-					instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + DEMANDRSN_REBATE);
+							.valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE)));
+					instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + DEMANDRSN_CODE_REBATE);
 
 					key = String.valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(reasonMasterCode)
 							.intValue()));
@@ -1107,45 +1106,22 @@ public class PropertyTaxUtil {
 			}
 		}
 
-		List<String> advanceYears = getAdvanceYearsFromCurrentInstallment();
-		Integer year = null;
-
-		for (String description : advanceYears) {
-
-			year = Integer.valueOf(description.substring(0, 4));
-
-			/*
-			 * key = String.valueOf(getOrder(year,
-			 * DEMAND_REASON_ORDER_MAP.get(PropertyTaxConstants
-			 * .DEMANDRSN_CODE_ADVANCE_REBATE)));
-			 * 
-			 * instReasonMap.put(new Integer(key), year + "-" +
-			 * PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE_REBATE);
-			 */
-
-			key = String.valueOf(getOrder(year,
-					DEMAND_REASON_ORDER_MAP.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)));
-
-			instReasonMap.put(new Integer(key), year + "-" + PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
-		}
-
-		Calendar cal = Calendar.getInstance();
-
+		DateTime dateTime = null;
 		BigDecimal penaltyAmount = BigDecimal.ZERO;
 
-		for (Map.Entry<Installment, PropertyInstTaxBean> mapEntry : nmcBillable.getInstTaxBean().entrySet()) {
+		for (Map.Entry<Installment, PenaltyAndRebate> mapEntry : nmcBillable.getInstTaxBean().entrySet()) {
 
-			penaltyAmount = mapEntry.getValue().getInstPenaltyAmt();
+			penaltyAmount = mapEntry.getValue().getPenalty();
 			boolean thereIsPenalty = (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0);
 
 			if (thereIsPenalty) {
 
-				cal.setTime(mapEntry.getKey().getInstallmentYear());
+			    dateTime = new DateTime(mapEntry.getKey().getInstallmentYear());
 
 				key = Integer.valueOf(
-						getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_PENALTY_FINES)))
+						getOrder(dateTime.getYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_PENALTY_FINES)))
 						.toString();
-				instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + DEMANDRSN_CODE_PENALTY_FINES);
+				instReasonMap.put(new Integer(key), dateTime.getYear() + "-" + DEMANDRSN_CODE_PENALTY_FINES);
 			}
 		}
 

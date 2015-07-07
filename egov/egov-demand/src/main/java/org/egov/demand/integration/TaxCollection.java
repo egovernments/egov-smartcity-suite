@@ -94,6 +94,10 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	private EgBillReceiptDao egBillReceiptDAO;
 	@Autowired
 	private EgdmCollectedReceiptDao egdmCollectedReceiptDAO;
+	@Autowired
+	private DemandGenericDao demandGenericDAO;
+	
+	
 	private CommonsDAOFactory commonsDAOFactory;
 
 	public TaxCollection() {
@@ -596,8 +600,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @return
 	 */
 	protected EgDemandReasonMaster getDemandReasonMaster(String code) {
-		DemandGenericDao dmdGenericDao = new DemandGenericHibDao();
-		return dmdGenericDao.getDemandReasonMasterByCode(code, module());
+		return demandGenericDAO.getDemandReasonMasterByCode(code, module());
 	}
 
 	/**
@@ -609,9 +612,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @return
 	 */
 	public EgDemandDetails getDemandDetail(EgDemand egDemand, Installment instl, String code) {
-		DemandGenericDao dmdGenericDao = new DemandGenericHibDao();
 		EgDemandDetails dmdDet = null;
-		List<EgDemandDetails> dmdDetList = dmdGenericDao.getDmdDetailList(egDemand, instl,
+		List<EgDemandDetails> dmdDetList = demandGenericDAO.getDmdDetailList(egDemand, instl,
 				module(), getDemandReasonMaster(code));
 		if (!dmdDetList.isEmpty()) {
 			dmdDet = dmdDetList.get(0);
@@ -627,8 +629,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @return
 	 */
 	protected EgDemandReason getCurrentReason(String categoryCode, String reasonMasterCode) {
-		DemandGenericDao dmdGenDao = new DemandGenericHibDao();
-		EgDemandReason reason = dmdGenDao.getEgDemandReasonByCodeInstallmentModule(
+		EgDemandReason reason = demandGenericDAO.getEgDemandReasonByCodeInstallmentModule(
 				reasonMasterCode, getCurrentInstallment(), module(), categoryCode);
 		return reason;
 	}
@@ -662,8 +663,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @param egDmCollectedReceipt
 	 */
 	protected void updateReceiptStatusWhenCancelled(String receiptNumber) {
-		DemandGenericDao dmdGenDao = new DemandGenericHibDao();
-		List<EgdmCollectedReceipt> egdmCollectedReceipts = dmdGenDao
+		List<EgdmCollectedReceipt> egdmCollectedReceipts = demandGenericDAO
 				.getAllEgdmCollectedReceipts(receiptNumber);
 		if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty()) {
 			for (EgdmCollectedReceipt egDmCollectedReceipt : egdmCollectedReceipts) {

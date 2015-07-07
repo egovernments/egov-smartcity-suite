@@ -39,13 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.client.bill;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_REBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE_REBATE;
 
 import java.math.BigDecimal;
 
 import org.egov.commons.Installment;
+import org.egov.ptis.constants.PropertyTaxConstants;
 
 public class BillDetailBean {
 
@@ -81,7 +82,7 @@ public class BillDetailBean {
 
 	public boolean isRebate() {
 		return reasonMaster.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE_REBATE)
-				|| reasonMaster.equalsIgnoreCase(DEMANDRSN_REBATE) ? true : false;
+				|| reasonMaster.equalsIgnoreCase(DEMANDRSN_CODE_REBATE) ? true : false;
 	}
 
 	public boolean invalidData() {
@@ -91,10 +92,10 @@ public class BillDetailBean {
 	@Override
 	public String toString() {
 		return new StringBuilder(200).append("BillDetailBean [").append("installment=")
-				.append(installment).append("reasonMaster=").append(reasonMaster)
-				.append("description=").append(description).append("glCode=").append(glCode)
-				.append("orderNo=").append(orderNo).append("key=").append(key)
-				.append("isActualDemand=").append(isActualDemand).append("]").toString();
+				.append(installment).append(", reasonMaster=").append(reasonMaster)
+				.append(", description=").append(description).append("glCode=").append(glCode)
+				.append(", orderNo=").append(orderNo).append("key=").append(key)
+				.append(", isActualDemand=").append(isActualDemand).append("]").toString();
 	}
 
 	public Installment getInstallment() {

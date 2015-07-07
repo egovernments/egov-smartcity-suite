@@ -61,38 +61,44 @@ import org.egov.search.domain.Searchable;
 @SequenceGenerator(name = RebatePeriod.SEQ_REBATE_PERIOD, sequenceName = RebatePeriod.SEQ_REBATE_PERIOD, allocationSize = 1)
 public class RebatePeriod extends AbstractAuditable {
 
-	private static final long serialVersionUID = 859229842367886338L;
-	public static final String SEQ_REBATE_PERIOD = "SEQ_EGPT_REBATE_PERIOD";
-	
-	@Id
-	@GeneratedValue(generator = SEQ_REBATE_PERIOD, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	@ManyToOne
+    private static final long serialVersionUID = 859229842367886338L;
+    public static final String SEQ_REBATE_PERIOD = "SEQ_EGPT_REBATE_PERIOD";
+
+    @Id
+    @GeneratedValue(generator = SEQ_REBATE_PERIOD, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne
     @JoinColumn(name = "installment")
-	private Installment installment;
-	
-	@NotNull
-	private Date rebateDate;
-	
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Installment getInstallment() {
-		return installment;
-	}
-	public void setInstallment(Installment installment) {
-		this.installment = installment;
-	}
-	public Date getRebateDate() {
-		return rebateDate;
-	}
-	public void setRebateDate(Date rebateDate) {
-		this.rebateDate = rebateDate;
-	}
-	
+    private Installment installment;
+
+    @NotNull
+    private Date rebateDate;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public Installment getInstallment() {
+        return installment;
+    }
+
+    public void setInstallment(final Installment installment) {
+        this.installment = installment;
+    }
+
+    public Date getRebateDate() {
+        return rebateDate;
+    }
+
+    public void setRebateDate(final Date rebateDate) {
+        this.rebateDate = rebateDate;
+    }
+
 }

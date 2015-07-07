@@ -72,7 +72,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.PropertyInstTaxBean;
+import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -105,7 +105,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private String collectXML = "";
 	private Boolean levyPenalty = false;
 	private Boolean isPenaltyConfirmed = false;
-	private List<PropertyInstTaxBean> instTaxBeanList = new ArrayList<PropertyInstTaxBean>();
+	private List<PenaltyAndRebate> instTaxBeanList = new ArrayList<PenaltyAndRebate>();
 	private Map<Integer, Installment> installmentAndId = new HashMap<Integer, Installment>();
 	private Map<Installment, EgDemandDetails> installmentAndDemandDetails = new HashMap<Installment, EgDemandDetails>();
 	
@@ -135,7 +135,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 
-		nmcPTBill.setLevyPenalty(levyPenalty);
+		nmcPTBill.setLevyPenalty(true);
 		nmcPTBill.setBasicProperty(basicProperty);
 		nmcPTBill.setUserId(Long.valueOf(getSession().get("userid").toString()));
 		nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
@@ -201,11 +201,11 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		this.propertyTaxCollection = propertyTaxCollection;
 	}
 
-	public List<PropertyInstTaxBean> getInstTaxBeanList() {
+	public List<PenaltyAndRebate> getInstTaxBeanList() {
 		return instTaxBeanList;
 	}
 
-	public void setInstTaxBeanList(List<PropertyInstTaxBean> instTaxBeanList) {
+	public void setInstTaxBeanList(List<PenaltyAndRebate> instTaxBeanList) {
 		this.instTaxBeanList = instTaxBeanList;
 	}
 

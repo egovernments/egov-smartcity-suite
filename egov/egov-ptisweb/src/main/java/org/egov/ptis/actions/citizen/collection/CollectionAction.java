@@ -66,7 +66,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.PropertyInstTaxBean;
+import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
