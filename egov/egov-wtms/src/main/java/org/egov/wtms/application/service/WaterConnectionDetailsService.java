@@ -355,7 +355,7 @@ public class WaterConnectionDetailsService {
                     ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
                     waterConnectionDetails.getApplicationDate(), waterConnectionDetails.getApplicationType().getName(),
                     consumerName.toString(), waterConnectionDetails.getConnectionStatus().toString(),
-                    "/wtms/view/" + waterConnectionDetails.getApplicationNumber());
+                    "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber());
 
             if (waterConnectionDetails.getDisposalDate() != null)
                 applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());

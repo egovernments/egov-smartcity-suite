@@ -99,6 +99,7 @@ public class ApplicationIndex extends AbstractAuditable {
 	private String applicantName;
 
 	@Length(max = 250)
+	@Searchable
 	private String applicantAddress;
 
 	private Date disposalDate;
@@ -119,6 +120,7 @@ public class ApplicationIndex extends AbstractAuditable {
 
 	@NotNull
 	@Length(max = 250)
+	@Searchable
 	private String url;
 	
 	@Length(max = 50)
