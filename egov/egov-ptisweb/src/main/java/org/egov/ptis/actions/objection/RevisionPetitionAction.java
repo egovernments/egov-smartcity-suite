@@ -230,10 +230,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         @Action(value = "/revPetition/revPetition-newForm")
 	public String newForm() {
 		LOGGER.debug("Entered into newForm");
-		getPropertyView(propertyId);
-		
-		Map<String, String> wfMap = objection.getBasicProperty().getPropertyWfStatus();
-		if (wfMap.get("WFSTATUS").equalsIgnoreCase("TRUE")) {
+		getPropertyView(propertyId); 
+	 //	Map<String, String> wfMap = objection.getBasicProperty().getPropertyWfStatus();
+		if (objection!=null && objection.getBasicProperty()!=null && objection.getBasicProperty().isUnderWorkflow()) {
 			addActionMessage(getText("property.state.objected", new String[] { objection
 					.getBasicProperty().getUpicNo() }));
 			return STRUTS_RESULT_MESSAGE;
@@ -317,6 +316,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                          PROPERTY_MODIFY_REASON_OBJ);
                  
                  //propertyImplService.persist(refNewProperty);
+                 objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
                  propertyImplService.getSession().flush();
                  objection.setReferenceProperty(refNewProperty);
                  objectionService.update(objection);
@@ -481,6 +481,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
              * Change workflow object as Active property and Active one to history.
              */      
             objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
+            objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             objection.getReferenceProperty().setStatus(STATUS_ISACTIVE);
             objectionService.update(objection);
             addActionMessage(getText("objection.endoresementNotice.success"));

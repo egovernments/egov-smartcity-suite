@@ -133,12 +133,12 @@
 			
 			<c:if test="${fn:contains(roleName,'ASSISTANT') && markedForDeactive == 'N'}">
 					<input type="button" class="buttonsubmit" name="objection" id="objection"
-						value="Objection"
-						onclick="window.location='../objection/objection!newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+						value="Create Revision Petition"
+						onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
 			</c:if>
 			
 			<s:if test="isDemandActive == false">
-				<input type="button" class="buttonsubmit" name="btnCancelBill"
+						<input type="button" class="buttonsubmit" name="btnCancelBill"
 					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 			</s:if>
 			<c:if test="${fn:contains(roleName,'PTADMINISTRATOR') && basicProperty.isDemandActive == true}">
