@@ -93,6 +93,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -406,7 +407,7 @@ public class CollectionCommon {
     public Integer generateReport(ReceiptHeader[] receipts, Map<String, Object> session, boolean flag) {
         String serviceCode = receipts[0].getService().getCode();
         char receiptType = receipts[0].getReceipttype();
-        List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>();
+        List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
 
         String templateName = getReceiptTemplateName(receiptType, serviceCode);
         System.out.print(" template name : " + templateName);
@@ -426,12 +427,12 @@ public class CollectionCommon {
             }
         }
 
-        ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
+        ReportRequest reportInput = new ReportRequest(templateName, new BillReceiptInfoImpl(receipts[0]), reportParams);
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-
+        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
     }
 

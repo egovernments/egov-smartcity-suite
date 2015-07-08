@@ -1371,13 +1371,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		try {
 			Position operatorPosition =collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
 			if (actionName.equals(CollectionConstants.WF_ACTION_CREATE_RECEIPT)) 
-		        perform(receiptHeader,CollectionConstants.WF_STATE_RECEIPT_CREATED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_CREATE_VOUCHER, operatorPosition, remarks); 
-		        else if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT)) 
-		        perform(receiptHeader, CollectionConstants.WF_STATE_SUBMITTED, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, operatorPosition,remarks);  
-		        else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))  
-		        perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", operatorPosition,remarks); 
-		        else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) 
-		        perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, operatorPosition,remarks); 
+				perform(receiptHeader,CollectionConstants.WF_STATE_RECEIPT_CREATED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_CREATE_VOUCHER, operatorPosition, remarks); 
+			else if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT)) 
+				perform(receiptHeader, CollectionConstants.WF_STATE_SUBMITTED, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, operatorPosition,remarks);  
+			else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))  
+				perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", operatorPosition,remarks); 
+			else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) 
+				perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, operatorPosition,remarks); 
 		}
 		catch(ValidationException e)  {
 			LOGGER.error("Receipt Service Exception while workflow transition!",e);

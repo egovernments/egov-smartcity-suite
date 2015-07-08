@@ -39,6 +39,7 @@
 -->
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -90,19 +91,21 @@ function warningInfo()
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<s:hidden label="oldReceiptId" id="oldReceiptId" name="oldReceiptId" value="%{id}"/>
 			<s:hidden label="cancelreceiptno" id="cancelreceiptno" name="cancelreceiptno" value="%{receiptnumber}"/>
-			<s:hidden label="payeeDetailsId" id="payeeDetailsId" name="payeeDetailsId" value="%{receiptPayeeDetails.id}"/>
+			<%-- <s:hidden label="payeeDetailsId" id="payeeDetailsId" name="payeeDetailsId" value="%{receiptPayeeDetails.id}"/> --%>
 			
 			<tr>
 				<td width="4%" class="bluebox2">&nbsp;</td>
 				<td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptno"/></td>
 				<td width="24%" class="bluebox2"><b><s:property value="receiptnumber" /></b></td>
 				<td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptdate"/></td>
-				<td width="30%" class="bluebox2"><b><s:date name="receiptDate" format="dd/MM/yyyy"/></b></td>
+				<td width="30%" class="bluebox2"><b> <joda:format value="${receiptDate}" var="receiptDate"
+							pattern="dd-MM-yyyy" />
+						<c:out value="${receiptDate}"></c:out></b></td>
 			</tr>
 			<tr>
 				<td width="4%" class="bluebox">&nbsp;</td>
 				<td width="21%" class="bluebox"><s:text name="viewReceipt.nameaddress"/></td>
-				<td width="75%" class="bluebox" colspan="3"><s:property value="receiptPayeeDetails.payeename" /><br/><s:property value="receiptPayeeDetails.payeeAddress" /></td>
+				<td width="75%" class="bluebox" colspan="3"><s:property value="payeeName" /><br/><s:property value="payeeName" /></td>
 			</tr>
 			<tr>
 				<td width="4%" class="bluebox2">&nbsp;</td>
@@ -116,7 +119,7 @@ function warningInfo()
 						<tr><td><s:text name="viewReceipt.fund"/>&nbsp;<s:property value="receiptMisc.fund.name" /></td></tr>
 					</s:if>
 					<s:if test="receiptMisc.department!=null">
-						<tr><td><s:text name="viewReceipt.department"/>&nbsp;<s:property value="receiptMisc.department.deptName" /></td></tr>
+						<tr><td><s:text name="viewReceipt.department"/>&nbsp;<s:property value="receiptMisc.department.name" /></td></tr>
 					</s:if>
 					<s:if test="receiptMisc.fundsource!=null">
 						<tr><td><s:text name="viewReceipt.fundsource"/>&nbsp;<s:property value="receiptMisc.fundsource.name" /></td></tr>
@@ -130,7 +133,7 @@ function warningInfo()
 					<s:if test="receiptMisc.subscheme!=null">
 						<tr><td><s:text name="viewReceipt.subscheme"/>&nbsp;<s:property value="receiptMisc.subscheme.name" /></td></tr>
 					</s:if>
-						<tr><td><s:text name="viewReceipt.servicename"/>&nbsp;<s:property value="service.serviceName" /></td></tr>
+						<tr><td><s:text name="viewReceipt.servicename"/>&nbsp;<s:property value="service.name" /></td></tr>
 					<s:if test="referenceDesc!=null">
 						<tr><td><s:text name="viewReceipt.description"/>&nbsp;<s:property value="referenceDesc" /></td></tr>
 					</s:if>
@@ -223,7 +226,7 @@ function warningInfo()
 						<tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td width="21%" class="bluebox"><s:text name="viewReceipt.payee.name"/></td>
-							<td width="75%" class="bluebox" colspan="7"><s:property value="receiptPayeeDetails.payeename" /></td>
+							<td width="75%" class="bluebox" colspan="7"><s:property value="payeeName" /></td>
 						</tr>
 
 						<s:iterator value='%{getInstruments("cash")}' >

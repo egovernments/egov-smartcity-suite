@@ -166,11 +166,11 @@ function checkcancelforselectedrecord()
 			{
 				if(receipttype[m].value=="A" || receipttype[m].value=="B")
 				{
-					document.searchReceiptForm.action="receipt!cancel.action";
+					document.searchReceiptForm.action="receipt-cancel.action";
 				}
 				if(receipttype[m].value=='C')
 				{
-					document.searchReceiptForm.action="challan!cancelReceipt.action";
+					document.searchReceiptForm.action="challan-cancelReceipt.action";
 				}
 				
 			}
@@ -204,7 +204,7 @@ function checkprintforselectedrecord()
 	else
 	{
 		dom.get("selectprinterror").style.display="none";
-		document.searchReceiptForm.action="receipt!printReceipts.action";
+		document.searchReceiptForm.action="receipt-printReceipts.action";
 		document.searchReceiptForm.submit();
 	}
 }
@@ -275,7 +275,7 @@ function checkviewforselectedrecord()
 	else
 	{	
 		doLoadingMask('#loadingMask');
-		document.searchReceiptForm.action="receipt!viewReceipts.action";
+		document.searchReceiptForm.action="receipt-viewReceipts.action";
 		document.searchReceiptForm.submit();
 	}	
 
@@ -364,7 +364,7 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.manual.receiptno"/></td>
-	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch!searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
+	      <td width="24%" class="bluebox"><div class="yui-skin-sam"><div id="manualReceiptNumberSearch_autocomplete"><div><s:textfield id="manualReceiptNumberSearch" type="text" name="manualReceiptNumber"/></div><span id="manualReceiptNumberSearchResults"></span></div></div><egov:autocomplete name="manualReceiptNumberSearch" width="15" field="manualReceiptNumberSearch" url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchManualReceiptNumberAjax.action" queryQuestionMark="true"  queryLength="3" results="manualReceiptNumberSearchResults" handler="manualReceiptNumberSearchSelectionHandler" forceSelectionHandler="manualReceiptNumberSelectionEnforceHandler"/><span class='warning' id="impropermanualReceiptNumberSelectionWarning"></span></td>
 	      <td width="21%" class="bluebox">&nbsp;</td>
 	      <td width="30%" class="bluebox"> &nbsp; </td>   
 	   

@@ -1266,10 +1266,12 @@ public class ReceiptAction extends BaseFormAction {
 		return CollectionConstants.REPORT;
 	}
 
+	@Action(value="/receipts/receipt-viewReceipts")
 	public String viewReceipts() {
 		return viewReceipts(false);
 	}
 
+	@Action(value="/receipts/receipt-printReceipts")
 	public String printReceipts() {
 		return viewReceipts(true);
 	}
