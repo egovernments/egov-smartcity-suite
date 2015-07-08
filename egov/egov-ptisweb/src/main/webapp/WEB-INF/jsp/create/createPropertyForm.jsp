@@ -8,7 +8,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propertyDetail.propertyTypeMaster.id}"
+				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
 				cssClass="selectnew" onchange="toggleFloorDetails();enableFieldsForPropType();" />
 		</td>
 	</tr>
@@ -17,7 +17,7 @@
 		<td class="greybox" width="25%"><s:text name="application.no"></s:text><span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="applicationNo"
+		   <s:textfield name="applicationNo" readOnly="true"
 				id="applicationNo" value="%{applicationNo}" autocomplete="off" size="12" maxlength="12"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
@@ -71,7 +71,7 @@
 		<td class="greybox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="mutationId"
 				id="mutationId" listKey="id" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{propertyDetail.propertyMutationMaster.id}"
+				list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 		<td class="greybox"><s:text name="prntPropAssessmentNum" />
@@ -111,7 +111,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox">
-		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
@@ -125,7 +125,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="reg.docno"></s:text> :</td>
 		<td class="greybox">
-		   <s:textfield name="regdDocNo" id="regdDocNo" value="%{regdDocNo}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		   <s:textfield name="regdDocNo" id="regdDocNo" value="%{regdDocNo}" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="reg.docdate"></s:text> :</td>
 		<td class="greybox">
@@ -209,7 +209,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name"
-				list="dropdownData.floorType" value="%{propertyDetail.floorType.id}"
+				list="dropdownData.floorType" value="%{floorTypeId}"
 				cssClass="selectnew" />
 		</td>
 		<td class="greybox"><s:text name="rooftype"></s:text> <span
@@ -217,7 +217,7 @@
 		<td class="greybox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name"
-				list="dropdownData.roofType" value="%{propertyDetail.roofType.id}"
+				list="dropdownData.roofType" value="%{roofTypeId}"
 				cssClass="selectnew"/>
 		</td>
 	</tr>
@@ -229,7 +229,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="wallTypeId"
 				id="wallTypeId" listKey="id" listValue="name"
-				list="dropdownData.wallType"  value="%{propertyDetail.wallType.id}"
+				list="dropdownData.wallType"  value="%{wallTypeId}"
 				cssClass="selectnew"/>
 		</td>
 		<td class="greybox"><s:text name="woodtype"></s:text> <span
@@ -237,7 +237,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="woodTypeId"
 				id="woodTypeId" listKey="id" listValue="name"
-				list="dropdownData.woodType" value="%{propertyDetail.woodType.id}"
+				list="dropdownData.woodType" value="%{woodTypeId}"
 				cssClass="selectnew"/>
 		</td>
 	</tr>

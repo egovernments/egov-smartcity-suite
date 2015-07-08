@@ -205,10 +205,13 @@
 											class="button" onclick="return previewPrativrutta();" />
 									</td> -->
 							</s:else> --%>
-							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
-								<td><input type="button" name="GenerateNotice6" id="GenerateNotice6"
-											value="Generate Notice" class="button" onclick="return generateNotice6();" />
+							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
+							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
+							 @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
+								<td><input type="button" name="GenerateNotice6" id="GenerateNotice6" 
+											value="Generate Notice" class="buttonsubmit" onclick="return generateNotice6();" />
 								</td>
+								</s:if>
 							</s:if>
 							<s:else>
 							<td><s:submit value="Approve" name="Approve"

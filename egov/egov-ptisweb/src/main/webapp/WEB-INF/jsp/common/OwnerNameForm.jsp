@@ -51,13 +51,13 @@
 	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
-    <s:if test="%{basicProperty.propertyOwnerInfo.isEmpty()}">
+    <s:if test="%{basicProperty.propertyOwnerInfo.size == 0}">
       <tr id="nameRow" >
         <td class="blueborderfortd" align="center">
-		   <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="0" data-errormsg="Aadhar no is mandatory!"></s:textfield>
+		   <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.aadhaarNumber" value="%{basicProperty.propertyOwnerInfo[0].owner.aadhaarNumber}" id="aadharNo" size="12" maxlength="12" data-optional="0" data-errormsg="Aadhar no is mandatory!"></s:textfield>
 		</td>
 		<td class="blueborderfortd" align="center">
-           <s:select name="basicProperty.propertyOwnerInfo[0].owner.salutation" id="propertyOwnerInfo[0].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{propertyOwnerInfo[0].owner.salutation}"
+           <s:select name="basicProperty.propertyOwnerInfo[0].owner.salutation" id="propertyOwnerInfo[0].owner.salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{basicProperty.propertyOwnerInfo[0].owner.salutation}"
 				cssClass="selectwk" data-optional="0" data-errormsg="Salutation is mandatory!"></s:select>
         </td>
 		<td class="blueborderfortd" align="center">
@@ -90,7 +90,7 @@
         </tr>
       </s:if>
       <s:else>
-        <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
+        <s:iterator value="(basicProperty.propertyOwnerInfo.size).{#this}" status="ownerStatus">
 			<tr id="nameRow">
 			  <td class="blueborderfortd" align="center">
 			  <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"

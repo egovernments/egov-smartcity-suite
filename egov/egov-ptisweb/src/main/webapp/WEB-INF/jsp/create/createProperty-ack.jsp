@@ -39,63 +39,69 @@
 -->
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>
-    <title><s:text name='CreateAck.title'/></title>
-  <script type="text/javascript">
-  function onSubmit(action) { 
+<head>
+<title><s:text name='CreateAck.title' /></title>
+<script type="text/javascript">
+	function onSubmit(action) {
 		document.forms[0].action = action;
 		document.forms[0].submit;
-	   	return true;
+		return true;
 	}
-  </script>
-  </head>
-  
-  <body onload=" refreshParentInbox();" >
-  <s:form name="CreatePropertyAckForm" theme="simple">
-  <s:push value="model">
-  <s:token />
-  <div class="formmainbox">
-		<div class="headingbg"><s:text name="CreatePropertyAckHeader"/></div>
-		<br/>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<s:hidden name="modelId" id="modelId" value="%{id}" />
-		<tr>
-		  <s:if test="mode == 'create'">
-			<s:if test="%{basicProperty.applicationNo != null && !basicProperty.applicationNo.isEmpty()}">
-				<td colspan="5" style="font-size: 15px;" align="center">
-		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
-		        	<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProperty.applicationNo}"/>' >
-		        		<span style="font-size: 15px;" > : <s:property value="%{basicProperty.applicationNo}"/></span>
-		        	</a>
-		        </td>		    
-		   	</s:if>
-		   	</s:if>
-	        <s:else>
-		       	<td colspan="5" style="font-size: 15px;" align="center">
-		        	<span class="bold"><s:property value="%{ackMessage}"/></span>
-		        </td>
-	        </s:else>
-		</tr>
-		<tr><td>
-		<div class="buttonbottom" align="center">
-			<s:if test="mode == 'create'">
-				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
-					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" align="center"	onclick="return onSubmit('createProperty-printAck.action');" />
-				</s:if>
-			</s:if>
-		   <input type="button" class="button" onclick="window.close();" value="Close">
-		   </div>
-		   </td>
-		 </tr>
-		</table>
-		<br/>
-	</div>
-  </s:push>
-  </s:form>
-  </body>
+</script>
+</head>
+
+<body onload=" refreshParentInbox();">
+	<s:form name="CreatePropertyAckForm" theme="simple">
+		<s:push value="model">
+			<s:token />
+			<div class="formmainbox">
+				<div class="headingbg">
+					<s:text name="CreatePropertyAckHeader" />
+				</div>
+				<br />
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<s:hidden name="modelId" id="modelId" value="%{id}" />
+					<tr>
+						<s:if test="mode == 'create' && @org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
+							<s:if test="%{basicProperty.applicationNo != null && !basicProperty.applicationNo.isEmpty()}">
+								<td colspan="5" style="font-size: 15px;" align="center"><span
+									class="bold"><s:property value="%{ackMessage}" /> <s:property
+											value="%{basicProperty.applicationNo}" /></span></td>
+							</s:if>
+						</s:if>
+						<s:elseif test="%{(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
+						       @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)) && approved == true}">
+							<span class="bold"><s:property value="%{ackMessage}" /> <s:property
+									value="%{basicProperty.upicNo}" /> </span>
+						</s:elseif>
+						<s:else>
+							<td colspan="5" style="font-size: 15px;" align="center">
+							<span class="bold"><s:property value="%{ackMessage}" /><s:property value="%{basicProperty.applicationNo}" /></span></td>
+						</s:else>
+					</tr>
+					<tr>
+						<td>
+							<div class="buttonbottom" align="center">
+								<s:if test="mode == 'create'">
+									<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
+										<s:submit value="Print" name="PrintAck" id="PrintAck"
+											method="printAck" cssClass="buttonsubmit" align="center"
+											onclick="return onSubmit('createProperty-printAck.action');" />
+									</s:if>
+								</s:if>
+								<input type="button" class="button" onclick="window.close();" value="Close">
+							</div>
+						</td>
+					</tr>
+				</table>
+				<br />
+			</div>
+		</s:push>
+	</s:form>
+</body>
 </html>

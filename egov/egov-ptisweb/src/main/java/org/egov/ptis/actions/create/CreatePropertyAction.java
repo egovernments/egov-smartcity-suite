@@ -96,6 +96,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
@@ -262,6 +263,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	public static final String PRINTACK = "printAck";
 	private ReportService reportService;
 	private Integer reportId = -1;
+	private boolean approved = false;
 	
 	@Autowired
 	private UserService userService;
@@ -276,6 +278,8 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@Autowired
 	private SecurityUtils securityUtils;
+	
+	private ApplicationNumberGenerator applicationNumberGenerator;
 
 	public CreatePropertyAction() {
 		super();
@@ -299,6 +303,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-newForm")
 	public String newForm() {
+		applicationNo = applicationNumberGenerator.generate();
 		return RESULT_NEW;
 	}
 
@@ -374,7 +379,20 @@ public class CreatePropertyAction extends WorkflowAction {
 		long startTimeMillis = System.currentTimeMillis();
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
-		
+		updatePropertyDetails();
+		basicProp.addProperty(property);
+		basicPropertyService.persist(basicProp);
+		setDocNumber(getDocNumber());
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
+		setAckMessage("Property forwarded successfully to " + approverUser.getUsername() + " with application Number : ");
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		LOGGER.debug("forward: Property forwarded successfully to " + approverUser.getUsername()
+				+ "; Time taken(ms) = " + elapsedTimeMillis);
+		LOGGER.debug("forward: Property forward ended");
+		return RESULT_ACK;
+	}
+	
+	private void updatePropertyDetails() {
 		if (property.getPropertyDetail().getApartment() != null	&& property.getPropertyDetail().getApartment().getId() != null) {
 			Apartment apartment = (Apartment) basicPropertyService.find("From Apartment where id = ?",
 					property.getPropertyDetail().getApartment().getId());
@@ -406,16 +424,6 @@ public class CreatePropertyAction extends WorkflowAction {
 				ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
 			}
 		}
-		basicProp.addProperty(property);
-		basicPropertyService.persist(basicProp);
-		setDocNumber(getDocNumber());
-		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
-		setAckMessage("Property forwarded successfully to " + approverUser.getUsername() + " with application Number ");
-		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-		LOGGER.debug("forward: Property forwarded successfully to " + approverUser.getUsername()
-				+ "; Time taken(ms) = " + elapsedTimeMillis);
-		LOGGER.debug("forward: Property forward ended");
-		return RESULT_ACK;
 	}
     
 	private void updateBasicProperty(BasicProperty basicProperty) {
@@ -440,7 +448,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				mode = EDIT;
 				return RESULT_NEW;
 			}
-			updateBasicProperty(basicProp);
+			updatePropertyDetails();
 		}
 		property.setStatus(STATUS_ISACTIVE);
 		String indexNum = propertyTaxNumberGenerator.generateIndexNumber();
@@ -452,12 +460,13 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}
+		approved = true;
 		setWardId(basicProp.getPropertyID().getWard().getId());
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.update(basicProp);
-		setAckMessage("Property Approved Successfully by : " + userService.getUserById(securityUtils.getCurrentUser().getId()).getName());
+		setAckMessage("Property Approved Successfully by : " + userService.getUserById(securityUtils.getCurrentUser().getId()).getName() + " with assessment number : ");
 		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("approve: Property approval ended");
 		return RESULT_ACK;
@@ -467,6 +476,14 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Action(value = "/createProperty-reject")
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
+		if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
+			this.validate();
+			if (hasErrors()) {
+				mode = EDIT;
+				return RESULT_NEW;
+			}
+			updatePropertyDetails();
+		}
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		if (property.getPropertyDetail().getApartment() != null
@@ -478,7 +495,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			property.getPropertyDetail().setApartment(null);
 		}
 		basicPropertyService.persist(basicProp);
-		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : " + property.getCreatedBy().getUsername());
+		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator " + property.getCreatedBy().getUsername() +" with application No :");
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("reject: Property rejection ended");
 
@@ -515,24 +532,36 @@ public class CreatePropertyAction extends WorkflowAction {
 			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
 					Long.valueOf(getModelId()));
 			basicProp = property.getBasicProperty();
+			PropertyDetail propertyDetail = property.getPropertyDetail();
+			if (propertyDetail != null) {
+				setFloorTypeId(propertyDetail.getFloorType().getId());
+				setWallTypeId(propertyDetail.getWallType().getId());
+				setRoofTypeId(propertyDetail.getRoofType().getId());
+				setWoodTypeId(propertyDetail.getWallType().getId());
+				setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
+			}
+
 			if (basicProp != null) {
 				setApplicationNo(basicProp.getApplicationNo());
 				setVacantLandNo(basicProp.getVacantLandAssmtNo());
 				setRegdDocDate(basicProp.getRegdDocDate());
 				setRegdDocNo(basicProp.getRegdDocNo());
+				setMutationId(basicProp.getPropertyMutationMaster().getId());
 				if (null != basicProp.getAddress()) {
 					setHouseNumber(basicProp.getAddress().getHouseNoBldgApt());
 					setAddressStr(basicProp.getAddress().getLandmark());
 					setPinCode(basicProp.getAddress().getPinCode());
 				}
-				
+
 				if (null != basicProp.getPropertyID()) {
 					PropertyID propBoundary = basicProp.getPropertyID();
 					if (null != propBoundary.getLocality().getId()) {
 						setLocality(boundaryService.getBoundaryById(propBoundary.getLocality().getId()).getId());
 					}
-					if (null != propBoundary.getElectionBoundary() && null != propBoundary.getElectionBoundary().getId()) {
-						setElectionWardId(boundaryService.getBoundaryById(propBoundary.getElectionBoundary().getId()).getId());
+					if (null != propBoundary.getElectionBoundary()
+							&& null != propBoundary.getElectionBoundary().getId()) {
+						setElectionWardId(
+								boundaryService.getBoundaryById(propBoundary.getElectionBoundary().getId()).getId());
 					}
 					if (null != propBoundary.getWard().getId()) {
 						Boundary zone = propBoundary.getWard();
@@ -550,8 +579,8 @@ public class CreatePropertyAction extends WorkflowAction {
 						setBlockName(area.getName());
 					}
 				}
-				
-				for(PropertyStatusValues statusValue : basicProp.getPropertyStatusValuesSet()){
+
+				for (PropertyStatusValues statusValue : basicProp.getPropertyStatusValuesSet()) {
 					setBuildingPermissionDate(statusValue.getBuildingPermissionDate());
 					setBuildingPermissionNo(statusValue.getBuildingPermissionNo());
 				}
@@ -1831,4 +1860,21 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void setReportId(Integer reportId) {
 		this.reportId = reportId;
 	}
+
+	public ApplicationNumberGenerator getApplicationNumberGenerator() {
+		return applicationNumberGenerator;
+	}
+
+	public void setApplicationNumberGenerator(ApplicationNumberGenerator applicationNumberGenerator) {
+		this.applicationNumberGenerator = applicationNumberGenerator;
+	}
+
+	public boolean isApproved() {
+		return approved;
+	}
+
+	public void setApproved(boolean approved) {
+		this.approved = approved;
+	}
+	
 }

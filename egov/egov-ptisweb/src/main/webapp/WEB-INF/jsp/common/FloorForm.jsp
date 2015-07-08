@@ -137,7 +137,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetails[0].extraField5"
-						id="length" size="5" maxlength="7" data-optional="0" data-errormsg="Length is required!"
+						id="propertyDetail.floorDetails[0].extraField5" size="5" maxlength="7" data-optional="0" data-errormsg="Length is required!"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');calculateArea(this);"
 						value="%{propertyDetail.floorDetails[0].extraField5}"
 						data-calculate="propertyDetail.floorDetails[0].extraField4"
@@ -149,7 +149,7 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
-						id="width" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
+						id="propertyDetail.floorDetails[0].extraField4" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
 						value="%{propertyDetail.floorDetails[0].extraField4}"
 						data-calculate="propertyDetail.floorDetails[0].extraField5"
@@ -333,7 +333,7 @@
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="assessableArea"
+							maxlength="15" size="10" id="assessableArea" readOnly="true"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />
