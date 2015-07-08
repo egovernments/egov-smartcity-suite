@@ -126,7 +126,7 @@
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
-						<span class="inline-elem"><input type="text" id="searchemployee" class="form-control input-sm"></span>
+						<span class="inline-elem"><input type="text" id="searchwatertax" class="form-control input-sm"></span>
 					</div>
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
@@ -159,18 +159,5 @@
 
 <script src="<c:url value='/resources/js/app/connectionsearch.js'/>"
 	type="text/javascript"></script>
-	<script>
-		$('.dropchange').change(function(){
-			 if( this.value == 0){
-				window.location.href="applyforadditionalconnection.html"
-			}else if( this.value == 2){
-				window.location.href="closingwatertap.html"
-			}else if( this.value == 6){
-				window.location.href="disconnectionotice.html"
-			}else if( this.value == 1){
-				window.location.href="changeofuse.html"
-			}else if( this.value == 3){
-				window.location.href="reconnection.html"
-			}
-		});
-	</script>
+	
+

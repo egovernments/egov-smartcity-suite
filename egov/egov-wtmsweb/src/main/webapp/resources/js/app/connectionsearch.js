@@ -40,7 +40,7 @@
 var tableContainer;
 jQuery(document).ready(function ($) {
 	    $(":input").inputmask();
-	    
+	    tableContainer = $("#aplicationSearchResults"); 
 	    
 	   	
 	    $('#searchapplication').click(function () {
@@ -48,7 +48,7 @@ jQuery(document).ready(function ($) {
 			.done(function (searchResult) {
 				console.log(JSON.stringify(searchResult));
 				//loadPropertyDetails();
-				$('#aplicationSearchResults').dataTable({
+				tableContainer.dataTable({
 					destroy:true,
 					"sPaginationType": "bootstrap",
 					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -63,7 +63,8 @@ jQuery(document).ready(function ($) {
 					{title: 'Address', data: 'resource.searchable.locality'},
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
 					{title: 'Total Due', data: 'resource.common.totalDue'},
-					{title: 'Actions',  data : null, "target":-1,"defaultContent": '<select class="dropchange"><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select>'}
+					{title: 'Actions',  data : null, "target":-1,"defaultContent": 
+						'<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select>'}
 					
 					
 					]
@@ -71,7 +72,27 @@ jQuery(document).ready(function ($) {
 			})
 		});
 		
-		
+	   
+	    $("#aplicationSearchResults").on('change','tbody tr td .dropchange',function() {
+	       var applicationNumber = tableContainer.fnGetData($(this).parent().parent(),0);
+	       if( this.value == 0){
+				 var url = '/wtms/application/addconnection/'+applicationNumber; 
+					$('#waterSearchRequestForm').attr('method', 'get');
+					$('#waterSearchRequestForm').attr('action', url);
+					window.location=url;
+				//window.location.href="applyforadditionalconnection.html"
+			}else if( this.value == 2){
+				window.location.href="closingwatertap.html"
+			}else if( this.value == 6){
+				window.location.href="disconnectionotice.html"
+			}else if( this.value == 1){
+				window.location.href="changeofuse.html"
+			}else if( this.value == 3){
+				window.location.href="reconnection.html"
+			}
+		}); 
+	    
+	    /*
 	    tableContainer = $("#csearch").dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -82,14 +103,14 @@ jQuery(document).ready(function ($) {
 				"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 				"aButtons": ["copy", "csv", "xls", "pdf", "print"]
 			}
-		});
-		
-	
-	    
+		});*/
+	   
+	   
+	   
 	   
 
-	tableContainer.columnFilter({
+	/*tableContainer.columnFilter({
 		"sPlaceHolder": "head:after"
-	});
+	});*/
 		
 });
