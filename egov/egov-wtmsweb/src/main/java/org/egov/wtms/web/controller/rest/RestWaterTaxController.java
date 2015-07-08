@@ -46,6 +46,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -63,9 +64,9 @@ public class RestWaterTaxController {
 
     // Returns Total tax due for the water connection for a given ConsumerCode
     @RequestMapping(value = "rest/watertax/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
+    public WaterTaxDue getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return getJSONResponse(connectionDemandService.getDueDetailsByConsumerCode(consumerCode));
+        return connectionDemandService.getDueDetailsByConsumerCode(consumerCode);
 
     }
 
@@ -73,16 +74,10 @@ public class RestWaterTaxController {
     // PropertyIdentifier
     @RequestMapping(value = {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
+    public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
-        return getJSONResponse(connectionDemandService.getDueDetailsByPropertyId(assessmentNumber));
+        return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);
 
     }
 
-    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        final String jsonResponse = objectMapper.writeValueAsString(obj);
-        return jsonResponse;
-    }
 }
