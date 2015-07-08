@@ -52,11 +52,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 
 @Entity
 @Table(name = "eg_position")
+@Searchable
 @SequenceGenerator(name = Position.SEQ_POSITION, sequenceName = Position.SEQ_POSITION, allocationSize = 1)
 public class Position extends AbstractAuditable {
     private static final long serialVersionUID = -7237503685614187960L;
@@ -66,10 +68,12 @@ public class Position extends AbstractAuditable {
     @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_POSITION, strategy = GenerationType.SEQUENCE)
+    @Searchable
     private Long id;
 
     @Column(name = "name", unique = true)
     @Field
+    @Searchable
     private String name;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "deptDesig")

@@ -105,6 +105,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee")
+    @Searchable(name = "owner")
     private Position assignee;
 
     @ManyToOne(optional = true)

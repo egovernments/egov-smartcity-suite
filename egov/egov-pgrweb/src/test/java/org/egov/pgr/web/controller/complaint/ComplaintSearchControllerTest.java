@@ -53,13 +53,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
+import org.egov.infra.security.utils.SecurityUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -96,12 +97,16 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     private ComplaintStatusService complaintStatusService;
     @Mock
     private ComplaintTypeService complaintTypeService;
-
+    @Mock
+    private AssignmentService assignmentService;
+    @Mock
+    private SecurityUtils securityUtils;
+    
     @Override
     protected ComplaintSearchController initController() {
         MockitoAnnotations.initMocks(this);
         return new ComplaintSearchController(searchService, complaintService, complaintStatusService,
-                complaintTypeService);
+                complaintTypeService,assignmentService,securityUtils);
     }
 
     @Before

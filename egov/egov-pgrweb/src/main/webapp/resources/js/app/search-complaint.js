@@ -43,7 +43,7 @@ jQuery(document).ready(function ($) {
     $(":input").inputmask();
 	
     tableContainer1 = $("#complaintSearchResults"); 
-    
+       
     $(".datepicker").datepicker({
         format: "dd/mm/yyyy"
 	});
@@ -60,8 +60,17 @@ jQuery(document).ready(function ($) {
 	});
 	
     $('#searchComplaints').click(function () {
-    	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
-		.done(function (searchResult) {
+    	//alert("Logged in as :"+$('#currentLoggedUser').val());
+/*    	if($('#currentLoggedUser').val()=='anonymous'){
+    		alert(" citizen");
+    		$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize());
+    	}
+    	else{
+    		$.post("/pgr/complaint/search", $('#searchComplaintForm').serialize());
+    	}
+    	
+*/		$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
+    	.done(function (searchResult) {
 			console.log(JSON.stringify(searchResult));
 			
 			tableContainer1 = $('#complaintSearchResults').dataTable({
@@ -92,7 +101,8 @@ jQuery(document).ready(function ($) {
 						}
 						else return "";
 			    	}
-				}
+				},
+				{data:'resource.searchable.owner.id',visible: false}
 				]
 			});
 		})
@@ -115,9 +125,16 @@ jQuery(document).ready(function ($) {
 	});*/
 	
 	$("#complaintSearchResults").on('click','tbody tr',function(event) {
+		
 		//alert(tableContainer1.fnGetData(this,0));
 		var crn=tableContainer1.fnGetData(this,0);
-		window.open("/pgr/complaint/update/"+crn);
+		var currentOwner=tableContainer1.fnGetData(this,7);
+		var CurrentPosition=$('#employeeposition').val();
+		//alert("Owner is "+currentOwner+"  Logged in user "+CurrentPosition);
+		if (currentOwner==CurrentPosition)
+			window.open("/pgr/complaint/update/"+crn);
+		else
+			window.open("/pgr/complaint/view/"+crn);
 	});
 	
     $("#when_date").change(function () {

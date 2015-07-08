@@ -46,6 +46,8 @@ import java.util.List;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -62,59 +64,127 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.egov.eis.service.AssignmentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping(value = "/complaint/citizen/anonymous/search")
+// @RequestMapping(value = "/complaint/citizen/anonymous/search")
+// @RequestMapping(value = "/complaint/search")
 public class ComplaintSearchController {
 
-    private final SearchService searchService;
+	private final SearchService searchService;
 
-    private final ComplaintService complaintService;
+	private final ComplaintService complaintService;
 
-    private final ComplaintStatusService complaintStatusService;
+	private final ComplaintStatusService complaintStatusService;
 
-    private final ComplaintTypeService complaintTypeService;
+	private final ComplaintTypeService complaintTypeService;
 
-    @Autowired
-    public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
-            final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService) {
-        this.searchService = searchService;
-        this.complaintService = complaintService;
-        this.complaintStatusService = complaintStatusService;
-        this.complaintTypeService = complaintTypeService;
-    }
+	private final AssignmentService assignmentService;
+	private SecurityUtils securityUtils;
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(ComplaintSearchController.class);
 
-    @ModelAttribute("complaintTypeDepartments")
-    public List<Department> complaintTypeDepartments() {
-        return complaintTypeService.getAllComplaintTypeDepartments();
-    }
+	@Autowired
+	public ComplaintSearchController(final SearchService searchService,
+			final ComplaintService complaintService,
+			final ComplaintStatusService complaintStatusService,
+			final ComplaintTypeService complaintTypeService,
+			final AssignmentService assignmentService,
+			final SecurityUtils securityUtils) {
+		this.searchService = searchService;
+		this.complaintService = complaintService;
+		this.complaintStatusService = complaintStatusService;
+		this.complaintTypeService = complaintTypeService;
+		this.assignmentService = assignmentService;
+		this.securityUtils=securityUtils;
+	}
 
-    @ModelAttribute("complaintStatuses")
-    public List<ComplaintStatus> complaintStatuses() {
-        return complaintStatusService.getAllComplaintStatus();
-    }
+	@ModelAttribute("complaintTypeDepartments")
+	public List<Department> complaintTypeDepartments() {
+		return complaintTypeService.getAllComplaintTypeDepartments();
+	}
 
-    @ModelAttribute("complaintReceivingModes")
-    public List complaintReceivingModes() {
-        return complaintService.getAllReceivingModes();
-    }
+	@ModelAttribute("complaintStatuses")
+	public List<ComplaintStatus> complaintStatuses() {
+		return complaintStatusService.getAllComplaintStatus();
+	}
 
-    @ModelAttribute
-    public ComplaintSearchRequest searchRequest() {
-        return new ComplaintSearchRequest();
-    }
+	@ModelAttribute("complaintReceivingModes")
+	public List complaintReceivingModes() {
+		return complaintService.getAllReceivingModes();
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String showSearchForm() {
-        return "complaint-search";
-    }
+	@ModelAttribute("currentLoggedUser")
+	public String currentLoggedUser() {
+		User user = securityUtils.getCurrentUser();
+		if (null != user)
+			return securityUtils.getCurrentUser().getUsername();
+		else
+			return "";
+	}
 
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
-    public List<Document> searchComplaints(@ModelAttribute final ComplaintSearchRequest searchRequest) {
-        final SearchResult searchResult = searchService.search(asList(Index.PGR.toString()),
-                asList(IndexType.COMPLAINT.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
-                Sort.NULL, Page.NULL);
-        return searchResult.getDocuments();
-    }
+	@ModelAttribute("employeeposition")
+	public Long employeePosition() {
+		logger.debug("User is :" + currentLoggedUser());
+		User user = securityUtils.getCurrentUser();
+		if (null != user) {
+			logger.debug("Assignment"
+					+ assignmentService.getAllActiveEmployeeAssignmentsByEmpId(
+							securityUtils.getCurrentUser().getId()).size());
+
+			if (assignmentService.getAllActiveEmployeeAssignmentsByEmpId(
+					user.getId()).size() < 1)
+				return 0l;
+			logger.debug("Position "
+					+ assignmentService
+							.getAllActiveEmployeeAssignmentsByEmpId(
+									user.getId()).get(0).getPosition().getId());
+			return assignmentService
+					.getAllActiveEmployeeAssignmentsByEmpId(user.getId())
+					.get(0).getPosition().getId();
+		} else
+			return 0l;
+	}
+
+	@ModelAttribute
+	public ComplaintSearchRequest searchRequest() {
+		return new ComplaintSearchRequest();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/complaint/search")
+	public String showSearchFormOffical() {
+		return "complaint-search";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/complaint/citizen/anonymous/search")
+	public String showSearchFormCitizen() {
+		return "complaint-search";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/complaint/search")
+	@ResponseBody
+	public List<Document> searchComplaintsOffical(
+			@ModelAttribute final ComplaintSearchRequest searchRequest) {
+		final SearchResult searchResult = searchService.search(
+				asList(Index.PGR.toString()),
+				asList(IndexType.COMPLAINT.toString()),
+				searchRequest.searchQuery(), searchRequest.searchFilters(),
+				Sort.NULL, Page.NULL);
+		return searchResult.getDocuments();
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/complaint/citizen/anonymous/search")
+	@ResponseBody
+	public List<Document> searchComplaintsCitizen(
+			@ModelAttribute final ComplaintSearchRequest searchRequest) {
+		final SearchResult searchResult = searchService.search(
+				asList(Index.PGR.toString()),
+				asList(IndexType.COMPLAINT.toString()),
+				searchRequest.searchQuery(), searchRequest.searchFilters(),
+				Sort.NULL, Page.NULL);
+		return searchResult.getDocuments();
+	}
 }

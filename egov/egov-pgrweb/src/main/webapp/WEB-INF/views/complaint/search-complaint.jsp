@@ -1,3 +1,4 @@
+
 <!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
@@ -71,6 +72,14 @@
 						<div class="col-md-6 add-margin">
 							<input type="text" name="location" class="form-control" id="ct-location"
 								placeholder="<spring:message code='lbl.location'/> " />
+						</div>
+						<div class="col-md-4 add-margin">
+							<input type="hidden" name="employeeposition" class="form-control" id="employeeposition"
+								value="${employeeposition}"/>
+						</div>
+						<div class="col-md-4 add-margin">
+							<input type="hidden" name="currentLoggedUser" class="form-control" id="currentLoggedUser"
+								 value="${currentLoggedUser}"/>
 						</div>
 
 					</div>
@@ -167,6 +176,7 @@
 								<form:options items="${complaintStatuses}" itemValue="name"
 									itemLabel="name" />  
 							</form:select>
+							
 						</div>
 						<div class="col-md-4 add-margin">
 						<form:select name="receivingCenter" path="" data-first-option="false" 
@@ -177,6 +187,8 @@
 							<form:options items="${complaintReceivingModes}"  />  
 						</form:select>
 						</div>
+						
+						
 					</div>
 
 					<div class="form-group show-searchcomp-more display-hide">
