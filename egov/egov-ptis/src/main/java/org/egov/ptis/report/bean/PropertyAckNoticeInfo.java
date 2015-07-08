@@ -33,6 +33,21 @@ public class PropertyAckNoticeInfo {
 	private BigDecimal taxPayableForNewRates= BigDecimal.ZERO;
 	private BigDecimal totalTax = BigDecimal.ZERO;
 	private String assessmentNo;
+	private String ulbName;
+	private String applicationName;
+	private String noOfDays;
+	private String municipalityName;
+	private String propertyTransfer;
+	private String receivedDate;
+	private String ulbLogo;
+	private String loggedInUsername;
+	private String oldOwnerName;
+	private String oldOwnerParentName;
+	private String newOwnerName;
+	private String newOwnerParentName;
+	private String regDocNo;
+	private String regDocDate;
+	private String currentInstallment;
 	
 	public String getCreationReason() {
 		return creationReason;
@@ -207,5 +222,95 @@ public class PropertyAckNoticeInfo {
 	}
 	public void setAssessmentNo(String assessmentNo) {
 		this.assessmentNo = assessmentNo;
+	}
+	public String getUlbName() {
+		return ulbName;
+	}
+	public void setUlbName(String ulbName) {
+		this.ulbName = ulbName;
+	}
+	public String getApplicationName() {
+		return applicationName;
+	}
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+	public String getNoOfDays() {
+		return noOfDays;
+	}
+	public void setNoOfDays(String noOfDays) {
+		this.noOfDays = noOfDays;
+	}
+	public String getMunicipalityName() {
+		return municipalityName;
+	}
+	public void setMunicipalityName(String municipalityName) {
+		this.municipalityName = municipalityName;
+	}
+	public String getPropertyTransfer() {
+		return propertyTransfer;
+	}
+	public void setPropertyTransfer(String propertyTransfer) {
+		this.propertyTransfer = propertyTransfer;
+	}
+	public String getReceivedDate() {
+		return receivedDate;
+	}
+	public void setReceivedDate(String receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+	public String getUlbLogo() {
+		return ulbLogo;
+	}
+	public void setUlbLogo(String ulbLogo) {
+		this.ulbLogo = ulbLogo;
+	}
+	public String getLoggedInUsername() {
+		return loggedInUsername;
+	}
+	public void setLoggedInUsername(String loggedInUsername) {
+		this.loggedInUsername = loggedInUsername;
+	}
+	public String getOldOwnerName() {
+		return oldOwnerName;
+	}
+	public void setOldOwnerName(String oldOwnerName) {
+		this.oldOwnerName = oldOwnerName;
+	}
+	public String getOldOwnerParentName() {
+		return oldOwnerParentName;
+	}
+	public void setOldOwnerParentName(String oldOwnerParentName) {
+		this.oldOwnerParentName = oldOwnerParentName;
+	}
+	public String getNewOwnerName() {
+		return newOwnerName;
+	}
+	public void setNewOwnerName(String newOwnerName) {
+		this.newOwnerName = newOwnerName;
+	}
+	public String getNewOwnerParentName() {
+		return newOwnerParentName;
+	}
+	public void setNewOwnerParentName(String newOwnerParentName) {
+		this.newOwnerParentName = newOwnerParentName;
+	}
+	public String getRegDocNo() {
+		return regDocNo;
+	}
+	public void setRegDocNo(String regDocNo) {
+		this.regDocNo = regDocNo;
+	}
+	public String getRegDocDate() {
+		return regDocDate;
+	}
+	public void setRegDocDate(String regDocDate) {
+		this.regDocDate = regDocDate;
+	}
+	public String getCurrentInstallment() {
+		return currentInstallment;
+	}
+	public void setCurrentInstallment(String currentInstallment) {
+		this.currentInstallment = currentInstallment;
 	}
 }
