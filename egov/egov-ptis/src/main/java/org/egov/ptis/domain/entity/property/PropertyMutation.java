@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class PropertyMutation extends StateAware {
@@ -60,8 +61,8 @@ public class PropertyMutation extends StateAware {
     private String applicantName;
     private BasicProperty basicProperty;
     private Property property;
-    private List<PropertyOwnerInfo> transferorInfos = new ArrayList<>();
-    private List<PropertyOwnerInfo> transfereeInfos = new ArrayList<>();
+    private List<User> transferorInfos = new ArrayList<>();
+    private List<User> transfereeInfos = new ArrayList<>();
     private boolean feePayable;
     private String deedNo;
     private Date deedDate;
@@ -172,19 +173,19 @@ public class PropertyMutation extends StateAware {
         this.property = property;
     }
 
-    public List<PropertyOwnerInfo> getTransferorInfos() {
+    public List<User> getTransferorInfos() {
         return transferorInfos;
     }
 
-    public void setTransferorInfos(final List<PropertyOwnerInfo> transferorInfos) {
+    public void setTransferorInfos(final List<User> transferorInfos) {
         this.transferorInfos = transferorInfos;
     }
 
-    public List<PropertyOwnerInfo> getTransfereeInfos() {
+    public List<User> getTransfereeInfos() {
         return transfereeInfos;
     }
 
-    public void setTransfereeInfos(List<PropertyOwnerInfo> transfereeInfos) {
+    public void setTransfereeInfos(List<User> transfereeInfos) {
         this.transfereeInfos = transfereeInfos;
     }
 

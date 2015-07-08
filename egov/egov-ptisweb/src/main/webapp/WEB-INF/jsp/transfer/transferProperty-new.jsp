@@ -155,6 +155,7 @@
 									<tr>
 										<th class="bluebgheadtd">Aadhaar No</th>
 										<th class="bluebgheadtd">Owner Name</th>
+										<th class="bluebgheadtd">Guardian Name</th>
 										<th class="bluebgheadtd">Gender</th>
 										<th class="bluebgheadtd">Mobile Number</th>
 										<th class="bluebgheadtd">Email</th>
@@ -164,6 +165,7 @@
 									<tr>
 										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
@@ -188,29 +190,70 @@
 								    <tr>
 								    	<th class="bluebgheadtd">Aadhaar No<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Owner Name<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Guardian Name</th>
 										<th class="bluebgheadtd">Gender<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Mobile Number(without +91)<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Email<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
+									<s:if test="%{transfereeInfos.size == 0}">
 								      <tr id="nameRow" >
 								        <td class="blueborderfortd" align="center">
-										   <s:textfield name="transfereeInfos[0].owner.aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
+										   <s:textfield name="transfereeInfos[0].aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
 										</td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].owner.name" maxlength="512" size="20" id="ownerName"  value="" 
+								        	<s:textfield name="transfereeInfos[0].name" maxlength="512" size="20" id="ownerName"  value="" 
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select name="transfereeInfos[0].owner.gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="512" size="20" id="guardianName"
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
+								        	<s:select name="transfereeInfos[0].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[0].mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="" 
 								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="" 
+								        	<s:textfield name="transfereeInfos[0].emailId" maxlength="64" size="20" id="emailId"  value="" 
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
+								        	<!-- This hidden field can become dropdown later when transferee become non citizen -->
+								        	<s:hidden name="transfereeInfos[0].type" value="CITIZEN"/>
+								        </td>
+								        <td class="blueborderfortd">
+								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
+								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								        </td>
+								     </tr>
+								     </s:if>
+								     <s:else>
+								     <s:iterator value="transfereeInfos" status="status" >
+								      <tr id="nameRow" >
+								        <td class="blueborderfortd" align="center">
+										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
+										</td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="512" size="20" id="ownerName"
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="512" size="20" id="guardianName"
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:select name="transfereeInfos[%{#status.index}].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" id="mobileNumber" 
+								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
+								        </td>
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="64" size="20" id="emailId"  
+								        		onblur="trim(this,this.value);validateEmail(this);"/>
+								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
+								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN"/>
 								        </td>
 								        
 								        <td class="blueborderfortd">
@@ -218,6 +261,8 @@
 								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
 								        </td>
 								     </tr>
+								     </s:iterator>
+								     </s:else>
 								</table>
 							</div>
 							<br/>
@@ -256,13 +301,13 @@
 							&nbsp;
 						</td>
 						<td class="greybox">
-							<s:text name="docNum" /> :
+							<s:text name="docNum" /><span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
 							<s:textfield name="deedNo" id="docNum"  maxlength="64"/>
 						</td>
 						<td class="greybox">
-							<s:text name="docDate" /> :
+							<s:text name="docDate" /><span class="mandatory1">*</span> :
 						</td>
 						<td class="greybox">
 							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
@@ -271,23 +316,6 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);"
 								cssClass="datepicker" />
-						</td>
-					</tr>
-					<tr>
-						<td class="bluebox2">
-							&nbsp;
-						</td>
-						<td class="bluebox">
-							<s:text name="docValue" /> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="marketValue" id="marketValue" maxlength="64"/>
-						</td>
-						<td class="bluebox">
-							<s:text name="payablefee" /><span class="mandatory1">*</span> :
-						</td>
-						<td class="bluebox">
-							<s:textfield name="mutationFee" id="mutationFee" />
 						</td>
 					</tr>
 					
@@ -313,7 +341,7 @@
 								<s:iterator value="documentTypes" status="status" var="documentType">
 								<tr>
 									<td class="blueborderfortd" align="center">
-									  <s:checkbox name="documents[%{#status.index}].enclosed" id="docDetail[%{#status.index}].enclosed"/>
+									  <s:checkbox name="documents[%{#status.index}].enclosed" id="docDetail[%{#status.index}].enclosed" onclick="return false"/>
 									</td>
 									<td class="blueborderfortd" style="text-align:left">
 									  <s:property value="name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
@@ -338,7 +366,7 @@
 				</table>
         		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
        			 <div class="buttonbottom">
-					<s:submit value="Save & Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
+					<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="doLoadingMask();"></s:submit>
 					<input type="reset" value="Cancel" class="button" align="center" />
 					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
 				</div>

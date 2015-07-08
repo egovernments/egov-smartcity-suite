@@ -74,11 +74,11 @@
 		<many-to-one name="basicProperty" column="BASICPROPERTY" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false" update="false"/>
 		<bag name="transferorInfos" table="EGPT_MUTATION_TRANSFEROR">
 			<key column="MUTATION" not-null="true" />
-			<many-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo" column="TRANSFEROR"/>
+			<many-to-many class="org.egov.infra.admin.master.entity.User" column="TRANSFEROR"/>
 		</bag>
 		<bag name="transfereeInfos" table="EGPT_MUTATION_TRANSFEREE" cascade="all">
 			<key column="MUTATION" not-null="true" />
-			<many-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo" column="TRANSFEREE"/>
+			<many-to-many class="org.egov.infra.admin.master.entity.User" column="TRANSFEREE"/>
 		</bag>
 		<bag name="documents" table="EGPT_MUTATION_DOCS" cascade="all">
 			<key column="MUTATION" not-null="true" />

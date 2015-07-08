@@ -44,6 +44,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
@@ -80,6 +83,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -121,11 +125,17 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     private SimpleRestClient simpleRestClient;
 
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
-        propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
+            propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
+        propertyMutation.setMutationDate(new Date());
+        propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
@@ -133,21 +143,25 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);
     }
-    
+
+    @Transactional
     public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
-        propertyMutation.getTransferorInfos().forEach(propertyOwnerInfo -> {
-            propertyOwnerInfo.setBasicProperty(null);
-        });
-        propertyMutation.getTransfereeInfos().forEach(propertyOwnerInfo -> {
-            propertyOwnerInfo.setBasicProperty(basicProperty);
-        });
+        final PropertySource propertySource = basicProperty.getPropertyOwnerInfo().get(0).getSource();
+        basicProperty.getPropertyOwnerInfo().clear();
+        int order = 0;
+        for (final User propertyOwner : propertyMutation.getTransfereeInfos()) {
+            final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource, propertyOwner,
+                    order++);
+            basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
+        }
         basicProperty.setUnderWorkflow(false);
+        basicPropertyService.persist(basicProperty);
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueRESTurl);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO
-                : new BigDecimal(Double.valueOf((String) waterTaxInfo.get("totalTaxDue")));
+                : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
 
     public PropertyImpl getActiveProperty(final String upicNo) {
@@ -171,25 +185,29 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
 
-    private void createUserIfNotExist(final List<PropertyOwnerInfo> transferees) {
+    private void createUserIfNotExist(final List<User> transferees) {
+        final List<User> newOwners = new ArrayList<>();
         transferees.forEach(transferee -> {
-            User user = userService.getUserByAadhaarNumberAndType(transferee.getOwner().getAadhaarNumber(),
-                    transferee.getOwnerType());
+            User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
             if (user == null) {
-                final User tmpUser = transferee.getOwner();
-                if (UserType.CITIZEN.equals(transferee.getOwnerType())) {
-                    user = new Citizen();
-                    user.setAadhaarNumber(tmpUser.getAadhaarNumber());
-                    user.setEmailId(tmpUser.getEmailId());
-                    user.setMobileNumber(tmpUser.getMobileNumber());
-                    user.setGender(tmpUser.getGender());
-                    user.setName(tmpUser.getName());
-                    user.setPassword("NOTSET");
-                    user.setUsername(user.getMobileNumber());
+                if (UserType.CITIZEN.equals(transferee.getType())) {
+                    Citizen newOwner = new Citizen();
+                    newOwner.setAadhaarNumber(transferee.getAadhaarNumber());
+                    newOwner.setEmailId(transferee.getEmailId());
+                    newOwner.setMobileNumber(transferee.getMobileNumber());
+                    newOwner.setGender(transferee.getGender());
+                    newOwner.setGuardian(transferee.getGuardian());
+                    newOwner.setName(transferee.getName());
+                    newOwner.setPassword("NOTSET");
+                    newOwner.setUsername(transferee.getMobileNumber());
+                    newOwners.add(newOwner);
                 }
+            } else {
+                newOwners.add(user);
             }
-            transferee.setOwner(user);
         });
+        transferees.clear();
+        transferees.addAll(newOwners);
     }
 
     private void processAndStoreDocument(final List<Document> documents) {

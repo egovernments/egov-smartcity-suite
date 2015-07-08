@@ -39,12 +39,13 @@
  */
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,11 +56,13 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -96,7 +99,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal currentPropertyTax;
     private BigDecimal currentPropertyTaxDue;
     private BigDecimal currentWaterTaxDue;
-
+    private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty;
 
@@ -114,9 +117,9 @@ public class PropertyTransferAction extends BaseFormAction {
             final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), indexNumber);
             currentWaterTaxDue = transferOwnerService.getWaterTaxDues(wtmsRestURL, indexNumber);
-            if (currentWaterTaxDue.add(currentPropertyTaxDue).longValue() > 0)
+           /* if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0)
                 return REJECT_ON_TAXDUE;
-            else
+            else*/
                 return NEW;
         }
     }
@@ -149,6 +152,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/approve")
     public String approve() {
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         return ACK;
     }
 
@@ -165,6 +169,7 @@ public class PropertyTransferAction extends BaseFormAction {
                 .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
         currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
         currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
+        arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
         documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
         addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
         super.prepare();
@@ -177,20 +182,34 @@ public class PropertyTransferAction extends BaseFormAction {
         else if (propertyMutation.getMutationReason().getMutationName().equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
                 && StringUtils.isBlank(propertyMutation.getSaleDetail()))
             addActionError(getText("mandatory.saleDtl"));
-        if (propertyMutation.getMutationFee() == null)
-            addActionError(getText("mandatory.mutationFee"));
-        else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
-            addActionError(getText("madatory.mutFeePos"));
+        if (propertyMutation.getDeedDate() == null)
+            addActionError("Registration Document Date should not be empty");
+        if (StringUtils.isBlank(propertyMutation.getDeedNo()))
+            addActionError("Registration Document Number should not be empty");
+        boolean anyDocIsMandatory = false;
+        for (final DocumentType docTypes : documentTypes)
+            if (docTypes.isMandatory()) {
+                anyDocIsMandatory = true;
+                break;
+            }
 
-        if (getMutationId() == null) {
-            if (propertyMutation.getMutationDate() == null)
-                addActionError(getText("mandatory.mutationDate"));
-            else if (propertyMutation.getMutationDate().after(new Date()))
-                addActionError(getText("mandatory.mutationDateBeforeCurr"));
-            propertyMutation.getTransfereeInfos().forEach(propOwnerInfo -> {
-                if (StringUtils.isBlank(propOwnerInfo.getOwner().getName()))
+        if (anyDocIsMandatory)
+            if (propertyMutation.getDocuments().isEmpty())
+                addActionError("Please attach the mandatory documents.");
+            else
+                for (final Document document : propertyMutation.getDocuments())
+                    if (document.getType().isMandatory() && document.getFiles().isEmpty())
+                        addActionError("Please upload documents for " + document.getType());
+
+        if (getMutationId() != null) {
+            if (propertyMutation.getMutationFee() == null)
+                addActionError(getText("mandatory.mutationFee"));
+            else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
+                addActionError(getText("madatory.mutFeePos"));
+
+            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos())
+                if (StringUtils.isBlank(propOwnerInfo.getName()))
                     addActionError(getText("mandatory.ownerName"));
-            });
         }
 
         super.validate();
@@ -239,5 +258,9 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setMutationId(final Long mutationId) {
         this.mutationId = mutationId;
+    }
+
+    public BigDecimal getArrearPropertyTaxDue() {
+        return arrearPropertyTaxDue;
     }
 }

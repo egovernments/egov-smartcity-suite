@@ -175,7 +175,7 @@
 		</set>
 
 		<bag name="propertyOwnerInfo" cascade="all-delete-orphan" >
-			<key column="BASICPROPERTY"/>
+			<key column="BASICPROPERTY" not-null="true" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyOwnerInfo"/>
 		</bag>
 		
