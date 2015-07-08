@@ -45,6 +45,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -70,6 +72,10 @@ public class DocumentType extends AbstractPersistable<Long> {
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 	private boolean mandatory;
+
+	@ManyToOne
+	@JoinColumn(name = "id_application_type", nullable = false, updatable = false)
+	private ApplicationType applicationType;
 
 	@Override
 	public Long getId() {
@@ -103,6 +109,14 @@ public class DocumentType extends AbstractPersistable<Long> {
 
 	public void setTransactionType(TransactionType transactionType) {
 		this.transactionType = transactionType;
+	}
+
+	public ApplicationType getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(ApplicationType applicationType) {
+		this.applicationType = applicationType;
 	}
 
 }
