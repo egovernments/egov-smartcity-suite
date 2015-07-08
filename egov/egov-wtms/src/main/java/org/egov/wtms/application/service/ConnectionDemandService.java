@@ -41,6 +41,7 @@ package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +61,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
-import org.egov.wtms.application.rest.WaterTaxErrorDetails;
 import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.SecurityDeposit;
@@ -187,7 +187,6 @@ public class ConnectionDemandService {
     public WaterTaxDue getDueDetailsByConsumerCode(final String consumerCode) {
         final WaterTaxDue waterTaxDue = new WaterTaxDue();
         final List<String> consumerCodes = new ArrayList<>();
-        final WaterTaxErrorDetails errorDetails = new WaterTaxErrorDetails();
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         if (null != waterConnectionDetails) {
@@ -196,12 +195,15 @@ public class ConnectionDemandService {
             waterTaxDue.setConsumerCode(consumerCodes);
             waterTaxDue.setPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
             waterTaxDue.setConnectionCount(consumerCodes.size());
+            waterTaxDue.setIsSuccess(true);
         } else {
-            errorDetails.setErrorCode(WaterTaxConstants.CONSUMERCODE_NOT_EXIST_ERR_CODE);
-            errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
+            waterTaxDue.setIsSuccess(false);
+            waterTaxDue.setConsumerCode(Collections.EMPTY_LIST);
+            waterTaxDue.setConnectionCount(0);
+            waterTaxDue.setErrorCode(WaterTaxConstants.CONSUMERCODE_NOT_EXIST_ERR_CODE);
+            waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
                     + consumerCode + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
         }
-        waterTaxDue.setWaterTaxErrorDetails(errorDetails);
         return waterTaxDue;
     }
 
@@ -212,14 +214,15 @@ public class ConnectionDemandService {
         BigDecimal currColl = new BigDecimal(0);
         BigDecimal totalDue = new BigDecimal(0);
         WaterTaxDue waterTaxDue = null;
-        final WaterTaxErrorDetails errorDetails = new WaterTaxErrorDetails();
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(propertyIdentifier);
         if (waterConnections.isEmpty()) {
             waterTaxDue = new WaterTaxDue();
+            waterTaxDue.setConsumerCode(Collections.EMPTY_LIST);
+            waterTaxDue.setConnectionCount(0);
             waterTaxDue.setIsSuccess(false);
-            errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
-            errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX
+            waterTaxDue.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
+            waterTaxDue.setErrorMessage(WaterTaxConstants.WTAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX
                     + propertyIdentifier + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
         } else {
             waterTaxDue = new WaterTaxDue();
@@ -248,7 +251,6 @@ public class ConnectionDemandService {
             waterTaxDue.setConnectionCount(waterConnections.size());
             waterTaxDue.setIsSuccess(true);
         }
-        waterTaxDue.setWaterTaxErrorDetails(errorDetails);
         return waterTaxDue;
     }
 

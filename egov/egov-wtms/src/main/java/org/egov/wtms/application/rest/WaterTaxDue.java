@@ -44,8 +44,6 @@ import java.util.List;
 
 public class WaterTaxDue {
     private String propertyID;
-    // private String consumerCode;
-    private WaterTaxErrorDetails waterTaxErrorDetails;
     private BigDecimal currentDemand;
     private BigDecimal currentCollection;
     private BigDecimal arrearDemand;
@@ -53,27 +51,20 @@ public class WaterTaxDue {
     private BigDecimal totalTaxDue;
     private List<String> consumerCode;
     private Integer connectionCount;
-
+    private String errorCode;
+    private String errorMessage;
     private Boolean isSuccess;
 
     public String getPropertyID() {
-        return propertyID;
+        return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");
     }
 
     public void setPropertyID(final String propertyID) {
         this.propertyID = propertyID;
     }
 
-    public WaterTaxErrorDetails getWaterTaxErrorDetails() {
-        return waterTaxErrorDetails;
-    }
-
-    public void setWaterTaxErrorDetails(final WaterTaxErrorDetails waterTaxErrorDetails) {
-        this.waterTaxErrorDetails = waterTaxErrorDetails;
-    }
-
     public BigDecimal getCurrentDemand() {
-        return currentDemand;
+        return currentDemand != null ? currentDemand : BigDecimal.ZERO;
     }
 
     public void setCurrentDemand(final BigDecimal currentDemand) {
@@ -81,7 +72,7 @@ public class WaterTaxDue {
     }
 
     public BigDecimal getCurrentCollection() {
-        return currentCollection;
+        return currentCollection != null ? currentCollection : BigDecimal.ZERO;
     }
 
     public void setCurrentCollection(final BigDecimal currentCollection) {
@@ -89,7 +80,7 @@ public class WaterTaxDue {
     }
 
     public BigDecimal getArrearDemand() {
-        return arrearDemand;
+        return arrearDemand != null ? arrearDemand : BigDecimal.ZERO;
     }
 
     public void setArrearDemand(final BigDecimal arrearDemand) {
@@ -97,7 +88,7 @@ public class WaterTaxDue {
     }
 
     public BigDecimal getArrearCollection() {
-        return arrearCollection;
+        return arrearCollection != null ? arrearCollection : BigDecimal.ZERO;
     }
 
     public void setArrearCollection(final BigDecimal arrearCollection) {
@@ -105,7 +96,7 @@ public class WaterTaxDue {
     }
 
     public BigDecimal getTotalTaxDue() {
-        return totalTaxDue;
+        return totalTaxDue != null ? totalTaxDue : BigDecimal.ZERO;
     }
 
     public void setTotalTaxDue(final BigDecimal totalTaxDue) {
@@ -134,6 +125,22 @@ public class WaterTaxDue {
 
     public void setConnectionCount(final Integer connectionCount) {
         this.connectionCount = connectionCount;
+    }
+
+    public String getErrorCode() {
+        return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorCode, "");
+    }
+
+    public void setErrorCode(final String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return org.apache.commons.lang.StringUtils.defaultIfEmpty(errorMessage, "");
+    }
+
+    public void setErrorMessage(final String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
 }
