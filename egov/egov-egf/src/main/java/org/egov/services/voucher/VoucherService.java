@@ -70,6 +70,7 @@ import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
+import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -118,6 +119,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
@@ -128,7 +130,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 {
         private static final Logger     LOGGER  = Logger.getLogger(VoucherService.class);
         protected PersistenceService persistenceService;
-        
         protected EisCommonService eisCommonService;
         private BudgetDetailsDAO budgetDetailsDAO;
         private @Autowired AppConfigValuesDAO appConfigValuesDAO;
@@ -139,13 +140,15 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         private FunctionDAO functionDAO;
         @Autowired
         private VoucherHeaderDAO voucherHeaderDAO;
-        
+        @Autowired
+    	private CommonsServiceImpl commonsService;
         private VoucherHelper voucherHelper;
         
         private  UserService userMngr;
         private MastersService masters;
         private SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
         public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
+        @Autowired
         private SequenceGenerator sequenceGenerator;
         private FinancialYearHibernateDAO financialYearDAO;
         public VoucherService(){
@@ -995,6 +998,7 @@ public List<EmployeeView>  getUserByDeptAndDesgName(String departmentId,String d
  * @return - returns the created egbillregister object.
  * @throws Exception
  */
+@Transactional
 public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetailslist,List<VoucherDetails> subLedgerlist,CVoucherHeader voucherHeader,
                 VoucherTypeBean voucherTypeBean,BigDecimal totalBillAmount) throws Exception{
         if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherService | createBillForVoucherSubType | Start");
@@ -1058,7 +1062,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 if(null != voucherTypeBean.getBillNum() && StringUtils.isNotEmpty(voucherTypeBean.getBillNum())){
                         egBillregister.setBillnumber(voucherTypeBean.getBillNum());
                 }else{
-                        ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator",sequenceGenerator,"bill",egBillregister);
+                        ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator",sequenceGenerator,"bill",egBillregister,"commonsService",commonsService);
                         String billNumber =(String)scriptService.executeScript("autobillnumber", scriptContext);
                         egBillregister.setBillnumber(billNumber);
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherService | createBillForVoucherSubType | Bill number generated :=" + billNumber);
@@ -1072,8 +1076,8 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
             egBilldetailes = prepareBillDetails(egBillregister, billDetailslist,subLedgerlist,voucherHeader,egBilldetailes);
                  egBillregister.setEgBilldetailes(egBilldetailes);
-                 
-                        billRegisterSer.persist(egBillregister);
+                 		billRegisterSer.applyAuditing(egBillregister);
+                        billRegisterSer.persist(egBillregister);	
                         
                         voucherHeader.getVouchermis().setSourcePath("/EGF/voucher/journalVoucherModify!beforeModify.action?voucherHeader.id="+voucherHeader.getId());
                         update(voucherHeader);

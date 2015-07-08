@@ -46,10 +46,28 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.annotation.Search;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -59,14 +77,23 @@ import org.hibernate.validator.constraints.Length;
  * @author EGOV
  *
  */
+@Entity
+@Table(name = "EG_BILLREGISTER")
+@SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 public class EgBillregister extends StateAware implements java.io.Serializable {
+	
+	private static final long serialVersionUID = -4312140421386028968L;
 
+	public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
+	@DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
+	@NotNull
 	private String billnumber;
-
+	@NotNull
 	private Date billdate;
-
+	@NotNull
 	private BigDecimal billamount;
 
 	private BigDecimal fieldid;
@@ -78,19 +105,11 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	private BigDecimal passedamount;
 
 	private String billtype;
-
+	@NotNull
 	private String expendituretype;
 
 	private BigDecimal advanceadjusted;
 
-	/*private BigDecimal createdby;
-
-	private Date createddate;
-
-	private BigDecimal lastmodifiedby;
-
-	private Date lastmodifieddate;
-*/
 	private String zone;
 
 	private String division;
@@ -105,14 +124,21 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
 	private Date workorderdate;
 	
+	@ManyToOne
+	@JoinColumn(name = "statusid", nullable = true)
 	private EgwStatus status;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id",referencedColumnName = "billid")
 	private EgBillregistermis egBillregistermis;	
 	
 	private String worksdetailId;
+	@Transient
 	private User approver;
+	@Transient
 	private Date approvedOn;
 	
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL,mappedBy = "egBillregister")
 	private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
 
 	/**
@@ -266,39 +292,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	public void setAdvanceadjusted(BigDecimal advanceadjusted) {
 		this.advanceadjusted = advanceadjusted;
 	}
-
-/*	public BigDecimal getCreatedby() {
-		return this.createdby;
-	}
-
-	public void setCreatedby(BigDecimal createdby) {
-		this.createdby = createdby;
-	}
-
-	public Date getCreateddate() {
-		return this.createddate;
-	}
-
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public BigDecimal getLastmodifiedby() {
-		return this.lastmodifiedby;
-	}
-
-	public void setLastmodifiedby(BigDecimal lastmodifiedby) {
-		this.lastmodifiedby = lastmodifiedby;
-	}
-
-	public Date getLastmodifieddate() {
-		return this.lastmodifieddate;
-	}
-
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
-*/
 	public String getZone() {
 		return this.zone;
 	}
