@@ -306,7 +306,6 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getState() != null
                 && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-            waterConnectionDetails.setApprovalDate(new Date());
             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                 waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
             updateIndexes(waterConnectionDetails);

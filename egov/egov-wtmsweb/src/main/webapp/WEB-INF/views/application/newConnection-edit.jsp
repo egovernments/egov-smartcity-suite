@@ -63,6 +63,12 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
+		
+		<!--TODO - Need handle proper use case when complete workflow is in place. The Sanction details needs to be captured only when object is in Final Approver inbox -->
+		<c:if test="${mode != null && mode=='inbox'}">
+			<jsp:include page="sanctiondetails.jsp"></jsp:include>	
+		</c:if>
+		
 		<jsp:include page="../common/workflow.jsp"></jsp:include>	
 </div>	
 <div class="row">

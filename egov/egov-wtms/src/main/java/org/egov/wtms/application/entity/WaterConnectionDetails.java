@@ -73,6 +73,8 @@ import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_connectiondetails")
@@ -102,6 +104,7 @@ public class WaterConnectionDetails extends StateAware {
     private WaterConnection connection;
 
     // @Column(name = "applicationNumber", unique = true)
+    @SafeHtml
     private String applicationNumber;
 
     @Temporal(value = TemporalType.DATE)
@@ -152,6 +155,8 @@ public class WaterConnectionDetails extends StateAware {
     @Enumerated(EnumType.STRING)
     private ConnectionStatus connectionStatus;
 
+    @SafeHtml
+    @Length(min = 3, max = 50)
     private String approvalNumber;
 
     @Temporal(value = TemporalType.DATE)

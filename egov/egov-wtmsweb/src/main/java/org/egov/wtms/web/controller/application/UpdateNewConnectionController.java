@@ -82,6 +82,11 @@ public class UpdateNewConnectionController {
     public String view(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationNumber);
+        return loadViewData(model, request, waterConnectionDetails);
+    }
+
+    private String loadViewData(final Model model, final HttpServletRequest request,
+            final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
@@ -97,7 +102,7 @@ public class UpdateNewConnectionController {
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request) {
+            final HttpServletRequest request, final Model model) {
 
         Long approvalPosition = 0l;
         String approvalComent = "";
@@ -107,12 +112,30 @@ public class UpdateNewConnectionController {
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        else
+            // TODO: Assuming that there is no approvalPosition in last approver
+            // inbox. Need to replace with proper condition once requirement is
+            // clear i.e., when to capture sanction details
+            validateSanctionDetails(waterConnectionDetails, resultBinder);
 
-        waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent);
+        if (!resultBinder.hasErrors()) {
+            waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
+                    approvalComent);
+            return "redirect:/application/application-success?applicationNumber="
+                    + waterConnectionDetails.getApplicationNumber();
+        } else
+            return loadViewData(model, request, waterConnectionDetails);
 
-        return "redirect:/application/application-success?applicationNumber="
-                + waterConnectionDetails.getApplicationNumber();
+    }
+
+    private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails,
+            final BindingResult errors) {
+
+        if (waterConnectionDetails.getApprovalNumber() == null)
+            errors.rejectValue("approvalNumber", "approvalNumber.required");
+
+        if (waterConnectionDetails.getApprovalDate() == null)
+            errors.rejectValue("approvalDate", "approvalDate.required");
     }
 
 }
