@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
+
 <div class="row">
 	<div class="col-md-12">
 
@@ -56,7 +56,7 @@
 
 			</div>
 
-			<div class="panel-body custom-form">
+			<div class="panel-body">
 
 				<form:form  class="form-horizontal form-groups-bordered"
 					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" action="">
@@ -100,7 +100,7 @@
 					
 					<div class="form-group">
 						<div class="text-center">
-							<a href="javascript:void(0);" id="searchapplication"
+							<a href="javascript:void(0);" id="searchapprvedapplication"
 								class="btn btn-primary"><spring:message code='lbl.search' /></a>
 								
 							<button class="btn btn-danger" type="reset">Reset</button>
@@ -153,9 +153,7 @@
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
 
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+
 
 <script src="<c:url value='/resources/js/app/connectionsearch.js'/>"
 	type="text/javascript"></script>

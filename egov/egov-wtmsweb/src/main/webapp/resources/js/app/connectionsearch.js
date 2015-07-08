@@ -39,15 +39,16 @@
 #-------------------------------------------------------------------------------*/
 var tableContainer;
 jQuery(document).ready(function ($) {
-	    $(":input").inputmask();
+	$(":input").inputmask();
+	
 	    tableContainer = $("#aplicationSearchResults"); 
 	    
 	   	
-	    $('#searchapplication').click(function () {
+	    $('#searchapprvedapplication').click(function () {
 	    	$.post("/wtms/search/waterSearch/", $('#waterSearchRequestForm').serialize())
 			.done(function (searchResult) {
 				console.log(JSON.stringify(searchResult));
-				//loadPropertyDetails();
+				
 				tableContainer.dataTable({
 					destroy:true,
 					"sPaginationType": "bootstrap",
@@ -57,12 +58,12 @@ jQuery(document).ready(function ($) {
 					"autoWidth": false,
 					searchable:true,
 					data: searchResult,
-					columns: [
+					columns:  [
 					{title: 'Consumer No.', data: 'resource.clauses.consumercode'},
 					{title: 'Application Name', data: 'resource.searchable.consumername'},
 					{title: 'Address', data: 'resource.searchable.locality'},
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
-					{title: 'Total Due', data: 'resource.common.totalDue'},
+					{title: 'Total Due', data: 'resource.clauses.totaldue'},
 					{title: 'Actions',  data : null, "target":-1,"defaultContent": 
 						'<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select>'}
 					
@@ -92,7 +93,7 @@ jQuery(document).ready(function ($) {
 			}
 		}); 
 	    
-	    /*
+	    
 	    tableContainer = $("#csearch").dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -103,14 +104,14 @@ jQuery(document).ready(function ($) {
 				"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 				"aButtons": ["copy", "csv", "xls", "pdf", "print"]
 			}
-		});*/
+		});
 	   
 	   
 	   
 	   
 
-	/*tableContainer.columnFilter({
-		"sPlaceHolder": "head:after"
-	});*/
+	    $('#searchwatertax').keyup(function(){
+			tableContainer.fnFilter(this.value);
+		});
 		
 });
