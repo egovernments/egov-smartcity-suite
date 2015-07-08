@@ -157,7 +157,7 @@
 					<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="create" onclick="return validateJV('save','%{name}','%{description}')"/>
 				</s:if>
 			</s:iterator>	
-			<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateJV('save','%{aa_approve}','%{Send for Approval}');" />
+			<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateAndSubmitJV('save','%{aa_approve}','%{Send for Approval}');" />
 			<input type="reset" id="Reset" value="Cancel" class="buttonsubmit"/>
 			<input type="button" value="Close" onclick="javascript:window.close()" class="button" />        
 		</div>
@@ -229,6 +229,16 @@
 				</s:if>
 				return true;
 			}
+	function validateAndSubmitJV(btnval,name,value)
+	{
+		if(validateJV(btnval,name,value)){
+				document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
+	    		document.forms[0].submit();
+				
+			}else{
+				return false;
+				}
+	}
 	function validateJV(btnval,name,value)
 	{
 	 // alert("inside validate jv");  
@@ -269,10 +279,7 @@
 				alert(" Cannot Create Works JV for Date to greater than "+restrictionDate[1]);
 				return false;
 			}
-		}else{
-			document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucher-create.action';
-    		document.forms[0].submit();
-			}
+		}
 		
 	// Javascript validation of the MIS Manadate attributes.
 		<s:if test="%{isFieldMandatory('vouchernumber')}"> 
