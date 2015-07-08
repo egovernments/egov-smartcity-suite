@@ -109,8 +109,7 @@ public class CVoucherHeader extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "voucherdetail", joinColumns = @JoinColumn(name = "id") , inverseJoinColumns = @JoinColumn(name = "voucherHeaderId") )
     private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id",referencedColumnName = "voucherheaderid")
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy="voucherheaderid")
     private Vouchermis vouchermis;
 
     public Long getId() {

@@ -41,19 +41,39 @@ package org.egov.commons;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-
+import org.hibernate.search.annotations.DocumentId;
+@Entity
+@Table(name = "VOUCHERMIS")
+@SequenceGenerator(name = Vouchermis.SEQ_VOUCHERMIS, sequenceName = Vouchermis.SEQ_VOUCHERMIS, allocationSize = 1)
 public class Vouchermis implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_VOUCHERMIS = "SEQ_VOUCHERMIS";
 
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_VOUCHERMIS, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
+    @ManyToOne
+	@JoinColumn(name = "fundsourceid")
 	private Fundsource fundsource;
 
 	private Integer billnumber;
-
+	@ManyToOne
+	@JoinColumn(name = "divisionid")
 	private Boundary divisionid;
 
 	private String schemename;
@@ -77,7 +97,8 @@ public class Vouchermis implements java.io.Serializable {
 	private String narration;
 
 	private String currentyear;
-
+	@ManyToOne
+	@JoinColumn(name = "departmentid")
 	private Department departmentid;
 
 	private String deptacchead;
@@ -85,7 +106,7 @@ public class Vouchermis implements java.io.Serializable {
 	private String subaccounthead;
 
 	private Integer projectcode;
-
+	@Column(name="concurrance_pn")
 	private String concurrancePn;
 
 	private Integer zonecode;
@@ -97,7 +118,7 @@ public class Vouchermis implements java.io.Serializable {
 	private Integer month;
 
 	private String grossded;
-
+	@Column(name="emd_security")
 	private String emdSecurity;
 
 	private String netdeduction;
@@ -109,32 +130,41 @@ public class Vouchermis implements java.io.Serializable {
 	// private Integer voucherheaderid;
 
 	private String billregisterid;
-
+	@Column(name="acount_department")
 	private Integer acountDepartment;
 
 	private Integer projectfund;
-
+	@Column(name="concurrance_sn")
 	private Short concurranceSn;
 
 	private Integer segmentid;
-
+	@Column(name="sub_segmentid")
 	private Integer subSegmentid;
 
 	private Date updatedtimestamp;
 
 	private Date createtimestamp;
-
+	@Column(name="iut_status")
 	private String iutStatus;
-
+	@Column(name="iut_number")
 	private String iutNumber;
-
+	@ManyToOne
+	@JoinColumn(name = "schemeid") 
 	private Scheme schemeid;
-
+	@ManyToOne
+	@JoinColumn(name = "subschemeid")
 	private SubScheme subschemeid;
+	@ManyToOne
+	@JoinColumn(name = "functionaryid")
 	private Functionary functionary;
+	@ManyToOne
+	@JoinColumn(name = "voucherheaderid",nullable = true)
 	private CVoucherHeader voucherheaderid;
+	@ManyToOne
+	@JoinColumn(name = "functionid")
 	private CFunction function;
 	private String sourcePath;
+	@Column(name="budgetary_appnumber")
 	private String budgetaryAppnumber;
 	private Boolean budgetCheckReq = true;
 
