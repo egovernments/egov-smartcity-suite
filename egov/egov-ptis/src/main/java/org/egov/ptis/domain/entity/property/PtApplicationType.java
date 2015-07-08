@@ -58,14 +58,14 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.SafeHtml;
 
 /**
- * The Class ApplicationType.
+ * The Class PtApplicationType.
  *
  * @author subhash
  */
 @Entity
 @Table(name = "EGPT_APPLICATION_TYPE")
-@SequenceGenerator(name = ApplicationType.SEQ_APPLICATION_TYPE, sequenceName = ApplicationType.SEQ_APPLICATION_TYPE, allocationSize = 1)
-public class ApplicationType extends AbstractAuditable {
+@SequenceGenerator(name = PtApplicationType.SEQ_APPLICATION_TYPE, sequenceName = PtApplicationType.SEQ_APPLICATION_TYPE, allocationSize = 1)
+public class PtApplicationType extends AbstractAuditable {
 
 	protected static final String SEQ_APPLICATION_TYPE = "SEQ_EGPT_APPLICATION_TYPE";
 	private static final long serialVersionUID = 1L;

@@ -75,7 +75,7 @@ public class DocumentType extends AbstractPersistable<Long> {
 
 	@ManyToOne
 	@JoinColumn(name = "id_application_type", nullable = false, updatable = false)
-	private ApplicationType applicationType;
+	private PtApplicationType applicationType;
 
 	@Override
 	public Long getId() {
@@ -111,11 +111,11 @@ public class DocumentType extends AbstractPersistable<Long> {
 		this.transactionType = transactionType;
 	}
 
-	public ApplicationType getApplicationType() {
+	public PtApplicationType getApplicationType() {
 		return applicationType;
 	}
 
-	public void setApplicationType(ApplicationType applicationType) {
+	public void setApplicationType(PtApplicationType applicationType) {
 		this.applicationType = applicationType;
 	}
 
