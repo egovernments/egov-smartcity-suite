@@ -39,8 +39,14 @@
  */
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -52,6 +58,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -61,17 +68,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Results({ @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
-    @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
-    @Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
-    @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp",type="redirect"),
-    @Result(name = "balance", location = "transfer/transferProperty-balance.jsp") })
+        @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
+        @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+        @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
+        @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp") })
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public static final String ACK = "ack";
-    
+    public static final String WORKFLOW_ERROR = "workFlowError";
+    public static final String REJECT_ON_TAXDUE = "balance";
+
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -79,31 +88,34 @@ public class PropertyTransferAction extends BaseFormAction {
     @Autowired
     @Qualifier("transferOwnerService")
     private TransferOwnerService transferOwnerService;
-    
-    
+
     // Model and View data
     private Long mutationId;
     private String indexNumber;
     private String wfErrorMsg;
-    private String currentPropertyTax;
+    private BigDecimal currentPropertyTax;
+    private BigDecimal currentPropertyTaxDue;
+    private BigDecimal currentWaterTaxDue;
+
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty;
-    
+
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
-    
+
     @SkipValidation
     @Action(value = "/new")
-    public String showTransferForm() {
+    public String showNewTransferForm() {
         if (basicproperty.isUnderWorkflow()) {
-            wfErrorMsg = ("Could not do property transfer now, property is undergoing some workflow.");
-            return "workFlowError";
+            wfErrorMsg = "Could not do property transfer now, property is undergoing some workflow.";
+            return WORKFLOW_ERROR;
         } else {
-            final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false) , indexNumber);
-            final boolean anyTaxDues = transferOwnerService.checkForTaxDues(wtmsRestURL,indexNumber);
-            if (anyTaxDues)
-                return "balance";
+            final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
+                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), indexNumber);
+            currentWaterTaxDue = transferOwnerService.getWaterTaxDues(wtmsRestURL, indexNumber);
+            if (currentWaterTaxDue.add(currentPropertyTaxDue).longValue() > 0)
+                return REJECT_ON_TAXDUE;
             else
                 return NEW;
         }
@@ -115,33 +127,87 @@ public class PropertyTransferAction extends BaseFormAction {
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         return ACK;
     }
-    
+
     @SkipValidation
     @Action(value = "/view")
     public String view() {
         return EDIT;
     }
-    
+
+    @ValidationErrorPage(value = EDIT)
+    @Action(value = "/forward")
+    public String forward() {
+        return ACK;
+    }
+
+    @SkipValidation
+    @Action(value = "/reject")
+    public String reject() {
+        return ACK;
+    }
+
+    @ValidationErrorPage(value = EDIT)
+    @Action(value = "/approve")
+    public String approve() {
+        return ACK;
+    }
+
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(indexNumber))
             basicproperty = transferOwnerService.getBasicPropertyByUpicNo(indexNumber);
-        
+
         if (mutationId != null) {
             propertyMutation = transferOwnerService.load(mutationId, PropertyMutation.class);
             basicproperty = propertyMutation.getBasicProperty();
         }
-        propertyMutation.getDocuments();
-        this.currentPropertyTax = transferOwnerService.getCurrentPropertyTax(basicproperty.getActiveProperty());
-        this.documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
+        final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
+                .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
+        currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
+        currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
+        documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
         addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
         super.prepare();
     }
 
-    public String getCurrentPropertyTax() {
-        return this.currentPropertyTax;
+    @Override
+    public void validate() {
+        if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
+            addActionError(getText("mandatory.trRsnId"));
+        else if (propertyMutation.getMutationReason().getMutationName().equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
+                && StringUtils.isBlank(propertyMutation.getSaleDetail()))
+            addActionError(getText("mandatory.saleDtl"));
+        if (propertyMutation.getMutationFee() == null)
+            addActionError(getText("mandatory.mutationFee"));
+        else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
+            addActionError(getText("madatory.mutFeePos"));
+
+        if (getMutationId() == null) {
+            if (propertyMutation.getMutationDate() == null)
+                addActionError(getText("mandatory.mutationDate"));
+            else if (propertyMutation.getMutationDate().after(new Date()))
+                addActionError(getText("mandatory.mutationDateBeforeCurr"));
+            propertyMutation.getTransfereeInfos().forEach(propOwnerInfo -> {
+                if (StringUtils.isBlank(propOwnerInfo.getOwner().getName()))
+                    addActionError(getText("mandatory.ownerName"));
+            });
+        }
+
+        super.validate();
     }
-    
+
+    public BigDecimal getCurrentPropertyTax() {
+        return currentPropertyTax;
+    }
+
+    public BigDecimal getCurrentPropertyTaxDue() {
+        return currentPropertyTaxDue;
+    }
+
+    public BigDecimal getCurrentWaterTaxDue() {
+        return currentWaterTaxDue;
+    }
+
     @Override
     public Object getModel() {
         return propertyMutation;
@@ -150,7 +216,7 @@ public class PropertyTransferAction extends BaseFormAction {
     public String getWfErrorMsg() {
         return wfErrorMsg;
     }
-    
+
     public String getIndexNumber() {
         return indexNumber;
     }
@@ -171,7 +237,7 @@ public class PropertyTransferAction extends BaseFormAction {
         return mutationId;
     }
 
-    public void setMutationId(Long mutationId) {
+    public void setMutationId(final Long mutationId) {
         this.mutationId = mutationId;
     }
 }

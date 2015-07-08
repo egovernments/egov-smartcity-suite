@@ -45,7 +45,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 
 public interface PropertyMutationMasterDAO {
 	
-	public List getAllPropertyMutationMastersByType(String type);
+	public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type);
 
 	public PropertyMutationMaster getPropertyMutationMasterByCode(String code);
 

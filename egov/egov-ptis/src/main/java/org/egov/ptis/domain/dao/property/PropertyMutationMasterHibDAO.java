@@ -65,7 +65,7 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 	// this method return list of ProperyMutationMaster objects based on type
 	// which is passed as parameter type
 	@Override
-	public List getAllPropertyMutationMastersByType(String type) {
+	public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type) {
 		Query qry = getCurrentSession().createQuery(
 				"from PropertyMutationMaster PM where upper(PM.type) = :type order by PM.orderId");
 		qry.setString("type", type.toUpperCase());

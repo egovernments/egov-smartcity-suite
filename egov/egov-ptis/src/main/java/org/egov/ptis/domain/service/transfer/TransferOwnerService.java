@@ -1,46 +1,44 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*    eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
+ *
+ * 	1) All versions of this program, verbatim or modified must carry this
  * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
+ *
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It
+ * 	   is required that all modified versions of this material be marked in
  * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
+ *
+ * 	3) This license does not grant any rights to any user of the program
+ * 	   with regards to rights under trademark law for use of the trade names
  * 	   or trademarks of eGovernments Foundation.
- * 
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.dcb.bean.Payment.AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
@@ -87,44 +85,44 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
     private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
-   
+
     @Autowired
     @Qualifier("propertyImplService")
     private PersistenceService<PropertyImpl, Long> propertyImplService;
-    
+
     @Autowired
     @Qualifier("basicPropertyService")
     private PersistenceService<BasicProperty, Long> basicPropertyService;
-    
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    
+
     @Autowired
     private PtDemandDao ptDemandDAO;
-    
+
     @Autowired
     private PropertyMutationMasterDAO propertyMutationMasterDAO;
-    
+
     @Autowired
     @Qualifier("fileStoreService")
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     @Qualifier("propertyTaxNumberGenerator")
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    
+
     @Autowired
     @Qualifier("documentTypePersistenceService")
     private PersistenceService<DocumentType, Long> documentTypePersistenceService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private SimpleRestClient simpleRestClient;
-    
+
     @Transactional
-    public void initiatePropertyTransfer(BasicProperty basicProperty, PropertyMutation propertyMutation) {
+    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
         propertyMutation.getTransferorInfos().addAll(basicProperty.getPropertyOwnerInfo());
@@ -132,43 +130,53 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         propertyMutation.transition().start();
-        //basicProperty.getPropertyOwnerInfo().clear();
         processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);
     }
     
-
-    public boolean checkForTaxDues(String wtmsTaxDueRESTurl, String upicNo) {
-        HashMap<String, Object> wtmsTaxDueData = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueRESTurl);
-        return Double.valueOf(wtmsTaxDueData.get("totalTaxDue").toString()) > 0;
+    public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        propertyMutation.getTransferorInfos().forEach(propertyOwnerInfo -> {
+            propertyOwnerInfo.setBasicProperty(null);
+        });
+        propertyMutation.getTransfereeInfos().forEach(propertyOwnerInfo -> {
+            propertyOwnerInfo.setBasicProperty(basicProperty);
+        });
+        basicProperty.setUnderWorkflow(false);
     }
-    
-    public PropertyImpl getActiveProperty(String upicNo) {
+
+    public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {
+        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueRESTurl);
+        return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO
+                : new BigDecimal(Double.valueOf((String) waterTaxInfo.get("totalTaxDue")));
+    }
+
+    public PropertyImpl getActiveProperty(final String upicNo) {
         return propertyImplService.findByNamedQuery("getPropertyByUpicNoAndStatus", upicNo, STATUS_ISACTIVE);
     }
-    
-    public BasicPropertyImpl getBasicPropertyByUpicNo(String upicNo) {
-        return (BasicPropertyImpl)basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
+
+    public BasicPropertyImpl getBasicPropertyByUpicNo(final String upicNo) {
+        return (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
     }
-    
-    public String getCurrentPropertyTax(Property propertyImpl) {
-        return ptDemandDAO.getDemandCollMap(propertyImpl).get(CURR_DMD_STR).toString();
+
+    public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
+        return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
-    
+
     public List<DocumentType> getPropertyTransferDocumentTypes() {
-		return documentTypePersistenceService.findAllByNamedQuery(
-				DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, TransactionType.TRANSFER);
+        return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
+                TransactionType.TRANSFER);
     }
-    
+
     public List<PropertyMutationMaster> getPropertyTransferReasons() {
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
-    
-    private void createUserIfNotExist(List<PropertyOwnerInfo> transferees) {
+
+    private void createUserIfNotExist(final List<PropertyOwnerInfo> transferees) {
         transferees.forEach(transferee -> {
-            User user = userService.getUserByAadhaarNumberAndType(transferee.getOwner().getAadhaarNumber(), transferee.getOwnerType());
+            User user = userService.getUserByAadhaarNumberAndType(transferee.getOwner().getAadhaarNumber(),
+                    transferee.getOwnerType());
             if (user == null) {
-                User tmpUser = transferee.getOwner();
+                final User tmpUser = transferee.getOwner();
                 if (UserType.CITIZEN.equals(transferee.getOwnerType())) {
                     user = new Citizen();
                     user.setAadhaarNumber(tmpUser.getAadhaarNumber());
@@ -179,30 +187,29 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
                     user.setPassword("NOTSET");
                     user.setUsername(user.getMobileNumber());
                 }
-            } 
+            }
             transferee.setOwner(user);
         });
     }
-    
-    private void processAndStoreDocument(List<Document> documents) {
+
+    private void processAndStoreDocument(final List<Document> documents) {
         documents.forEach(document -> {
             if (!document.getUploads().isEmpty()) {
                 int fileCount = 0;
-                for (File file : document.getUploads()) {
-                        FileStoreMapper fileStore = fileStoreService
-                                        .store(file, document.getUploadsFileName().get(fileCount),
-                                                document.getUploadsContentType().get(fileCount++), "PTIS");
-                        document.getFiles().add(fileStore);
+                for (final File file : document.getUploads()) {
+                    final FileStoreMapper fileStore = fileStoreService.store(file, document.getUploadsFileName().get(fileCount),
+                            document.getUploadsContentType().get(fileCount++), "PTIS");
+                    document.getFiles().add(fileStore);
                 }
             }
             document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
         });
     }
-    
-    public BillReceiptInfo generateMiscReceipt(BasicProperty basicProperty, BigDecimal amount) {
+
+    public BillReceiptInfo generateMiscReceipt(final BasicProperty basicProperty, final BigDecimal amount) {
         LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
-        org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
-        PropertyTaxBillable billable = new PropertyTaxBillable();
+        final org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
+        final PropertyTaxBillable billable = new PropertyTaxBillable();
         billable.setBasicProperty(basicProperty);
         billable.setIsMiscellaneous(Boolean.TRUE);
         billable.setMutationFee(amount);
@@ -212,17 +219,17 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         billable.setReferenceNumber(propertyTaxNumberGenerator
                 .generateBillNumber(basicProperty.getPropertyID().getWard().getBoundaryNum().toString()));
         property.setBillable(billable);
-        EgBill bill = property.createBill();
-        CollectionHelper collHelper = new CollectionHelper(bill);
-        Payment payment = preparePayment(amount);
+        final EgBill bill = property.createBill();
+        final CollectionHelper collHelper = new CollectionHelper(bill);
+        final Payment payment = preparePayment(amount);
         return collHelper.generateMiscReceipt(payment);
     }
 
-    private Payment preparePayment(BigDecimal amount) {
+    private Payment preparePayment(final BigDecimal amount) {
         LOGGER.debug("Inside preparePayment method, Mutation Amount: " + amount);
-        Map<String, String> payDetailMap = new HashMap<String, String>();
+        final Map<String, String> payDetailMap = new HashMap<String, String>();
         payDetailMap.put(AMOUNT, String.valueOf(amount));
-        Payment payment = Payment.create(Payment.CASH, payDetailMap);
+        final Payment payment = Payment.create(Payment.CASH, payDetailMap);
         LOGGER.debug("Exit from preparePayment method ");
         return payment;
     }

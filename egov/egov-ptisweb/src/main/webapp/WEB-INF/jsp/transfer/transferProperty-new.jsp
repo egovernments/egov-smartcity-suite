@@ -157,7 +157,7 @@
 										<th class="bluebgheadtd">Owner Name</th>
 										<th class="bluebgheadtd">Gender</th>
 										<th class="bluebgheadtd">Mobile Number</th>
-										<th class="bluebgheadtd">Email Address</th>
+										<th class="bluebgheadtd">Email</th>
 
 									</tr>
 									<s:iterator value="basicproperty.propertyOwnerInfo" status="status">
@@ -190,7 +190,7 @@
 										<th class="bluebgheadtd">Owner Name<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Gender<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Mobile Number(without +91)<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Email Address<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd">Email<span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
 								      <tr id="nameRow" >
