@@ -49,10 +49,25 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
+
+			function loadOnStartUp() {
+		   		//var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}" />';
+		   		var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
+		   		if(propType=="Open Plot") {
+					document.getElementById("floorDetails").style.display="none";
+					document.getElementById("floorHeader").style.display="none";
+				    var tbl = document.getElementById('floorDetails');	
+					if(tbl!=null) {
+						var rowo = tbl.rows;
+						resetCreateFloorDetails(rowo);
+					}		
+				}
+			}
+			  
 		</script>
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
-	<body class="yui-skin-sam">
+	<body   onload="loadOnStartUp();" class="yui-skin-sam">
 	<s:form action="objection" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<div class="errorstyle" id="lblError" style="display:none;"></div>

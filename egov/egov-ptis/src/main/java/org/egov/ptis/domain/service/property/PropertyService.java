@@ -357,7 +357,7 @@ public class PropertyService  {
 				if (property.getPropertyDetail().getFloorDetails().size() > 0
 						&& property.getPropertyDetail().getFloorDetails().size() > 0) {
 					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
-					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+					//property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 				}
 				PropertyOccupation occupancy = null;
 				PropertyUsage usage = null;
@@ -380,8 +380,13 @@ public class PropertyService  {
 		} else {
 			if (property.getPropertyDetail().getFloorDetails().size() > 0
 					&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
-				property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+				for(Floor floorObj:property.getPropertyDetail().getFloorDetails())
+				{
+				    property.getPropertyDetail().removeFloor(floorObj);
+				} 
+			    
+			    //property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+				//property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 			}
 			PropertyOccupation occupancy = null;
 			PropertyUsage usage = null;

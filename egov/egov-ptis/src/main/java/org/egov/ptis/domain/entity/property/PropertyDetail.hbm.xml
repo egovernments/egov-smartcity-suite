@@ -153,7 +153,7 @@
 				class="org.egov.ptis.domain.entity.property.Floor" />
 		</set>
  -->		
-        <bag name="floorDetails"  cascade="all" table="EGPT_FLOOR_DETAIL" inverse="true">
+        <bag name="floorDetails"  cascade="all-delete-orphan" table="EGPT_FLOOR_DETAIL" inverse="true">
             <key>
                 <column name="ID_PROPERTY_DETAIL" precision="22" scale="0" not-null="true"/>
             </key>

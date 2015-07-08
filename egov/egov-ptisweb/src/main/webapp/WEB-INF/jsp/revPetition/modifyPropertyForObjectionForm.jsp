@@ -125,6 +125,7 @@
 		<td class="greybox" width="25%"><s:text name="extent.appurtntland"/> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+			<s:hidden name="referenceProperty.propertyDetail.extentAppartenauntLand" value="%{referenceProperty.propertyDetail.extentAppartenauntLand}"/>
 		</td>
 	</tr>
 	
@@ -251,14 +252,20 @@
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.propertyTypeMaster"
+				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="referenceProperty.propertyDetail.propertyTypeMaster" listKey="id" listValue="type" 
 				list="dropdownData.PropTypeMaster" value="%{referenceProperty.propertyDetail.propertyTypeMaster.id}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew" onchange="toggleFloorDetails();enableFieldsForPropType();" />
 		</td>
 		
 	</tr>
-	
+	<%-- <tr id="floorDetailsConfirm">
+		<td class="bluebox2" width="8%">&nbsp;</td>
+      	<td class="bluebox" colspan="3"><span class="bold"><s:text name="floorDetailsConfirm"/></span>
+			<s:checkbox name="isfloorDetailsRequired" id="isfloorDetailsRequired" onclick="toggleFloorDetails();resetGovtFloorDtls();"/>
+		</td>
+      	<td class="bluebox" width="20%">&nbsp;</td>	
+	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox">
@@ -311,11 +318,13 @@
 			</div>
 		</td>
 	</tr>
-	<%-- <tr>
+	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
 		<td class="greybox" width="">
-		   <s:textfield name="referenceProperty.propertyDetail.dateOfCompletion" id="basicProperty.propOccupationDate" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
+			<s:date name="%{referenceProperty.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> 
+		   <s:textfield name="referenceProperty.propertyDetail.dateOfCompletion" id="referenceProperty.propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
+		
 		</td>
-	</tr> --%>
+	</tr>
 </table>
