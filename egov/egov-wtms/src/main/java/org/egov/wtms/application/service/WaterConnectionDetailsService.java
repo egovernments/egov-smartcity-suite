@@ -58,6 +58,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
@@ -138,6 +139,11 @@ public class WaterConnectionDetailsService {
     private ConsumerIndexService consumerIndexService;
 
     @Autowired
+    private SMSService smsService;
+
+    private String applicantName;
+
+    @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
     }
@@ -189,6 +195,7 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
         updateIndexes(savedWaterConnectionDetails);
+        sendSmsOnCreateNewConnection(waterConnectionDetails);
         return savedWaterConnectionDetails;
     }
 
@@ -314,31 +321,35 @@ public class WaterConnectionDetailsService {
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        sendSmsOnApprovalOfNewConnection(waterConnectionDetails);
         return updatedWaterConnectionDetails;
     }
 
     private void updateIndexes(final WaterConnectionDetails waterConnectionDetails) {
+
+        final AssessmentDetails assessmentDetails = propertyExternalService
+                .getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+
+        final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
+        final StringBuilder consumerName = new StringBuilder();
+        if (ownerNameItr.hasNext()) {
+            consumerName.append(ownerNameItr.next().getOwnerName());
+            while (ownerNameItr.hasNext())
+                consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
+        }
+        setApplicantName(consumerName.toString());
+
         if (waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
             final ApplicationIndex applicationIndex = applicationIndexService
                     .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
             applicationIndex.setStatus(waterConnectionDetails.getConnectionStatus().toString());
             applicationIndexService.updateApplicationIndex(applicationIndex);
-            consumerIndexService.createConsumerIndex(waterConnectionDetails);
+            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
 
         } else {
             final String strQuery = "select md from EgModules md where md.name=:name";
             final Query hql = getCurrentSession().createQuery(strQuery);
             hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
-
-            final AssessmentDetails assessmentDetails = propertyExternalService
-                    .getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
-            final StringBuilder consumerName = new StringBuilder();
-            if (ownerNameItr.hasNext()) {
-                consumerName.append(ownerNameItr.next().getOwnerName());
-                while (ownerNameItr.hasNext())
-                    consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
-            }
 
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                     ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
@@ -354,4 +365,41 @@ public class WaterConnectionDetailsService {
             applicationIndexService.createApplicationIndex(applicationIndex);
         }
     }
+
+    private void sendSmsOnCreateNewConnection(final WaterConnectionDetails waterConnectionDetails) {
+
+        if (waterConnectionDetails.getConnection().getMobileNumber() != null) {
+            final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                    .append(", Your new water tap connection application request accepted with Acknowledgement No.")
+                    .append(waterConnectionDetails.getApplicationNumber())
+                    .append(". Please use this number in all future communication.").append(" -- Thanks, ")
+                    .append(getCityName());
+
+            smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
+        }
+    }
+
+    private void sendSmsOnApprovalOfNewConnection(final WaterConnectionDetails waterConnectionDetails) {
+
+        if (waterConnectionDetails.getConnection().getMobileNumber() != null
+                && waterConnectionDetails.getConnection().getConsumerCode() != null) {
+            // TODO -- This is temporary sms message. This needs to be replaced
+            // with proper message once the requirements are clear
+            final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
+                    .append(", Your new water tap connection application processed with Consumer No.")
+                    .append(waterConnectionDetails.getConnection().getConsumerCode())
+                    // .append("and the connection charges/security
+                    // deposit/donation charges is fixed @ Rs.xxxxx/-. ")
+                    // .append(". You may collect the demand notice from the
+                    // office ")
+                    .append(" -- Thanks, ").append(getCityName());
+
+            smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
+        }
+    }
+
+    public void setApplicantName(final String applicantName) {
+        this.applicantName = applicantName;
+    }
+
 }
