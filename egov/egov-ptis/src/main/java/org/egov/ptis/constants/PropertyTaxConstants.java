@@ -950,16 +950,9 @@ public interface PropertyTaxConstants {
         public static final String APPCONFIG_KEY_BULKBILL_WARD = "WardNum";
         public static final Integer QUARTZ_BULKBILL_JOBS = 5;
 
-        public static final List<String> ORDERED_DEMAND_RSNS_LIST = new ArrayList<String>() {
-                {
-                        add(DEMANDRSN_CODE_GENERAL_TAX);
-                        add(DEMANDRSN_CODE_LIBRARY_CESS);
-                        add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
-                        add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
-                        add(DEMANDRSN_CODE_PENALTY_FINES);
-                        add(DEMANDRSN_CODE_ADVANCE);
-                }
-        };
+        public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+                DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
+                DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
         public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
         public static final String APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN = "WardNo";
