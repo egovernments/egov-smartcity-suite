@@ -41,6 +41,7 @@ package org.egov.wtms.web.contract;
 
 import static org.egov.search.domain.Filter.queryStringFilter;
 import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -150,17 +151,17 @@ public class ApplicationSearchRequest {
 	        this.searchText = searchText;
 	    }
 	   public Filters searchFilters() {
-	        final List<Filter> andFilters = new ArrayList<>();
+	        final List<Filter> andFilters = new ArrayList<>(0);
 	        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
-	        andFilters.add(queryStringFilter("clauses.modulename", moduleName));
-	        andFilters.add(queryStringFilter("clauses.applicationtype", applicationType));
+	        andFilters.add(termsStringFilter("clauses.modulename", moduleName));
+	        andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
 	        andFilters.add(queryStringFilter("searchable.applicantname", applicationName));
 	        andFilters.add(queryStringFilter("searchable.consumercode", applicationCode));
 	        andFilters.add(queryStringFilter("searchable.mobilenumber", appMobileNo));
 	        andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
 	        if (logger.isDebugEnabled())
 	            logger.debug("finished filters");
-	        System.out.println(andFilters);
+	        logger.info("$$$$$$$$$$$$$$$$ Filters : "+andFilters);
 	        return Filters.withAndFilters(andFilters);
 	    }
     public String searchQuery() {
