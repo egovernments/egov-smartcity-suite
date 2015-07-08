@@ -42,6 +42,7 @@
  */
 package org.egov.utils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,6 +81,7 @@ import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.hibernate.Query;
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -272,25 +274,16 @@ public class VoucherHelper {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
 		Query query = HibernateUtil.getCurrentSession().createSQLQuery("select name from fiscalperiod where id="+Integer.parseInt(fiscalPeriodIdStr)+"");
 		List<String> fc  = query.list();
-		Long cgvn=null ;
 		//Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
-		try{
-			String sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
-			cgvn = DatabaseSequence.named(sequenceName, HibernateUtil.getCurrentSession()).createIfNecessary().nextVal();
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("----- CGVN : "+cgvn);
-			
-		}
-		catch (DatabaseSequenceFirstTimeException e)
-		{
-			LOGGER.error("Error in generating CGVN"+e);
-			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),e.getMessage())));
-		}
-		catch (Exception e)
-		{
-			LOGGER.error("Error in generating CGVN"+e);
-			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),e.getMessage())));
-		}
-		return cgvn.toString();
+		 Serializable sequenceNumber;
+		 String sequenceName ;
+		 sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
+		try {
+            sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+        } catch (final SQLGrammarException e) {
+            sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+        }
+		return sequenceNumber.toString();
 		
 }
 	public  String getGeneratedVoucherNumber(Integer fundId, String voucherType, Date voucherDate, String vNumGenMode, String voucherNumber)  throws Exception {
