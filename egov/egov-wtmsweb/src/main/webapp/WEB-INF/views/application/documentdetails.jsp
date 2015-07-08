@@ -81,10 +81,10 @@
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<form:input class="form-control datepicker" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
+				<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" required="required"/>
 			</c:when>
 			<c:otherwise>
-				<form:input class="form-control datepicker" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" />
+				<form:input class="form-control datepicker" data-date-end-date="0d" id="applicationDocs${status.index}documentDate" path="applicationDocs[${status.index}].documentDate" />
 			</c:otherwise>		
 		</c:choose> 
 			<form:errors path="applicationDocs[${status.index}].documentDate" cssClass="add-margin error-msg" />
