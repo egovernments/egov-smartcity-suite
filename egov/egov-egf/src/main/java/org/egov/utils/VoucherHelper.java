@@ -64,6 +64,8 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -102,7 +104,13 @@ public class VoucherHelper {
 	private FiscalPeriodHibernateDAO fiscalDAO;
 	@Autowired
 	private CommonsServiceImpl commonsService;
-	
+
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
+
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
+    
 	@SuppressWarnings("unchecked")
 	public PersistenceService getPersistenceService() {
 		return persistenceService;
@@ -313,7 +321,7 @@ public class VoucherHelper {
 		String scriptName = "voucherheader.vouchernumber";
 		Script voucherNumberScript=scriptService.getByName( scriptName);
 		ScriptContext scriptContext = ScriptService.createContext("fundIdentity", fundIdentifier, "voucherType", voucherType, "transNumber", 
-				transNumber, "vNumGenMode", vNumGenMode,  "date", voucherDate, "month", month,"commonsService",commonsService, "voucherNumber", voucherNumber,"sequenceName",sequenceName );
+				transNumber, "vNumGenMode", vNumGenMode,  "date", voucherDate, "month", month,"commonsService",commonsService, "dbSequenceGenerator",dbSequenceGenerator,"sequenceNumberGenerator",sequenceNumberGenerator,"voucherNumber", voucherNumber,"sequenceName",sequenceName );
 		fVoucherNumber = (String)scriptService.executeScript(scriptName, scriptContext);
 	
 		}
