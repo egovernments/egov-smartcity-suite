@@ -17,9 +17,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
-		<band height="55" splitType="Stretch">
+		<band height="67" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="82" height="55" uuid="5c42e572-7359-411c-8670-041d56cd73c2"/>
+				<reportElement x="0" y="0" width="82" height="67" uuid="5c42e572-7359-411c-8670-041d56cd73c2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -33,7 +33,7 @@
 				<text><![CDATA[Building Classification]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="82" y="0" width="72" height="55" uuid="6caf335c-9fbe-482f-9d67-c7ac8b512c70"/>
+				<reportElement x="82" y="0" width="58" height="67" uuid="6caf335c-9fbe-482f-9d67-c7ac8b512c70"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -47,7 +47,7 @@
 				<text><![CDATA[Nature of Usage]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="154" y="0" width="70" height="55" uuid="f904d253-f265-44cf-b1bd-6ef1e2ab5716"/>
+				<reportElement x="140" y="0" width="62" height="67" uuid="f904d253-f265-44cf-b1bd-6ef1e2ab5716"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -61,7 +61,7 @@
 				<text><![CDATA[Plinth Area]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="224" y="0" width="59" height="55" uuid="5d049cb3-4357-4a53-8ace-648fe17255e7"/>
+				<reportElement x="202" y="0" width="49" height="67" uuid="5d049cb3-4357-4a53-8ace-648fe17255e7"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -75,7 +75,7 @@
 				<text><![CDATA[Building Age]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="283" y="0" width="68" height="55" uuid="8d00c5f3-ae8f-4bb9-96c8-f20a47941cab"/>
+				<reportElement x="251" y="0" width="60" height="67" uuid="8d00c5f3-ae8f-4bb9-96c8-f20a47941cab"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -90,7 +90,7 @@
 Rental Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="351" y="0" width="68" height="55" uuid="e83e5f0e-7138-49c6-b483-812caa5a66a6"/>
+				<reportElement x="311" y="0" width="60" height="67" uuid="e83e5f0e-7138-49c6-b483-812caa5a66a6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -105,7 +105,7 @@ Rental Value]]></text>
 Rental Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="419" y="0" width="68" height="55" uuid="138f2cf0-2af9-4662-9454-d60b18b975b4"/>
+				<reportElement x="371" y="0" width="64" height="67" uuid="138f2cf0-2af9-4662-9454-d60b18b975b4"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -123,7 +123,7 @@ Current
 Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="487" y="0" width="68" height="55" uuid="34dd558a-fa84-403f-a5e7-93efdbdee0f4"/>
+				<reportElement x="435" y="0" width="65" height="67" uuid="34dd558a-fa84-403f-a5e7-93efdbdee0f4"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -138,6 +138,10 @@ Year]]></text>
 Payable
 as Per
 NewRates]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="55" height="67" uuid="279356c0-c959-42ea-a0fc-90263f9f281e"/>
+				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -158,7 +162,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{buildingClassification}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="82" y="0" width="72" height="31" isPrintWhenDetailOverflows="true" uuid="696ba1c8-eaa1-420b-8b44-9d178879e66e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="82" y="0" width="58" height="31" isPrintWhenDetailOverflows="true" uuid="696ba1c8-eaa1-420b-8b44-9d178879e66e"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -172,7 +176,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{natureOfUsage}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="154" y="0" width="70" height="31" isPrintWhenDetailOverflows="true" uuid="e3f96c96-fe77-4bf1-bb63-7a7f80a39242"/>
+				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="62" height="31" isPrintWhenDetailOverflows="true" uuid="e3f96c96-fe77-4bf1-bb63-7a7f80a39242"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -186,7 +190,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="224" y="0" width="59" height="31" isPrintWhenDetailOverflows="true" uuid="8276a007-7408-4335-b7d7-d4178330a9c7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="202" y="0" width="49" height="31" isPrintWhenDetailOverflows="true" uuid="8276a007-7408-4335-b7d7-d4178330a9c7"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -200,7 +204,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{buildingAge}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="283" y="0" width="68" height="31" isPrintWhenDetailOverflows="true" uuid="11c7179b-959a-4b93-a5ab-07ae17e6dd0f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="251" y="0" width="60" height="31" isPrintWhenDetailOverflows="true" uuid="11c7179b-959a-4b93-a5ab-07ae17e6dd0f"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -214,7 +218,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{monthlyRentalValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="351" y="0" width="68" height="31" isPrintWhenDetailOverflows="true" uuid="bf514805-6e8a-400f-9959-8cb28d85fe09"/>
+				<reportElement stretchType="RelativeToTallestObject" x="311" y="0" width="60" height="31" isPrintWhenDetailOverflows="true" uuid="bf514805-6e8a-400f-9959-8cb28d85fe09"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -228,7 +232,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{yearlyRentalValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="419" y="0" width="68" height="31" isPrintWhenDetailOverflows="true" uuid="85f6675f-0b0e-45d1-8a57-508aa3687025"/>
+				<reportElement stretchType="RelativeToTallestObject" x="371" y="0" width="64" height="31" isPrintWhenDetailOverflows="true" uuid="85f6675f-0b0e-45d1-8a57-508aa3687025"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -242,7 +246,7 @@ NewRates]]></text>
 				<textFieldExpression><![CDATA[$F{taxPayableForCurrYear}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="487" y="0" width="68" height="31" isPrintWhenDetailOverflows="true" uuid="d8664c84-aaea-4448-8c83-85a8fcb122b8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="435" y="0" width="65" height="31" isPrintWhenDetailOverflows="true" uuid="d8664c84-aaea-4448-8c83-85a8fcb122b8"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -255,6 +259,10 @@ NewRates]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{taxPayableForNewRates}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="500" y="0" width="55" height="31" uuid="4365801d-df5f-4d06-89d7-42ad947b56a2"/>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

@@ -43,6 +43,7 @@ package org.egov.ptis.actions.notice;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +68,9 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
@@ -74,6 +78,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -104,13 +109,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private String noticeType;
 	private InputStream NoticePDF;
 	private Long basicPropId;
+	private String noticeMode;
+	private PersistenceService<BasicProperty, Long> basicPropertyService;
+
 	@Autowired
 	private PtDemandDao ptDemandDAO;
 	
-	public void setPtDemandDAO(PtDemandDao ptDemandDAO) {
-		this.ptDemandDAO = ptDemandDAO;
-	}
-
 	public PropertyTaxNoticeAction() {
 	}
 
@@ -137,9 +141,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
 		if (PropertyTaxConstants.NOTICE6.equals(noticeType)) {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			String url = request.getScheme().concat("://").concat(request.getServerName()).concat(":").concat(String.valueOf(request.getServerPort()));
+			String url= WebUtils.extractRequestDomainURL(request, false);
 			String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
 			reportParams.put("logoPath", imagePath);
+			if(noticeMode.equalsIgnoreCase("create")){
+				reportParams.put("mode", "create");
+			}else{
+				reportParams.put("mode", "modify");
+			}
 			setNoticeInfo(propertyNotice,basicProperty);
 			List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
 			propertyNotice.setFloorDetailsForNotice(floorDetails);
@@ -152,8 +161,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
 		}
-	//	noticeService.saveNotice(noticeNo, noticeType, basicProperty, NoticePDF);
-	//	endWorkFlow();
+		noticeService.saveNotice(noticeNo, noticeType, basicProperty, NoticePDF);
+		endWorkFlow(basicProperty);
+		basicPropertyService.update(basicProperty);
 		return NOTICE;
 	}
 	
@@ -161,7 +171,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		PropertyAckNoticeInfo ownerInfo = new PropertyAckNoticeInfo();
 		Address ownerAddress = basicProperty.getAddress();
-		ownerInfo.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProperty));
+
+		if(basicProperty.getPropertyOwnerInfo().size()>1){
+			ownerInfo.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProperty).concat(" and others"));
+		}else{
+			ownerInfo.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProperty));
+		}
+		
 		ownerInfo.setOwnerAddress(ptisCacheMgr.buildAddressFromAddress(basicProperty.getAddress()));
 		ownerInfo.setApplicationNo(basicProperty.getApplicationNo());
 		ownerInfo.setDoorNo(ownerAddress.getHouseNoBldgApt());
@@ -170,6 +186,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		}else{
 			ownerInfo.setStreetName("N/A");
 		}
+		SimpleDateFormat formatNowYear = new SimpleDateFormat("yyyy");
+		String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
+		ownerInfo.setInstallmentYear(occupancyYear);
 		ownerInfo.setAssessmentNo(basicProperty.getUpicNo());
 		Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 		BigDecimal totalTax = BigDecimal.ZERO;
@@ -222,13 +241,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	/**
 	 * This method ends the workflow. The Property is transitioned to END state.
 	 */
-	private void endWorkFlow() {
+	private void endWorkFlow(BasicPropertyImpl basicProperty) {
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
 		// FIX ME
 		// Position position =
 		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		//	Position position = null;
 		property.transition().end().withComments("Property Workflow End");
+		basicProperty.setUnderWorkflow(false);
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
 
@@ -279,6 +299,23 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
 	public void setBasicPropId(Long basicPropId) {
 		this.basicPropId = basicPropId;
+	}
+	
+	public String getNoticeMode() {
+		return noticeMode;
+	}
+
+	public void setNoticeMode(String noticeMode) {
+		this.noticeMode = noticeMode;
+	}
+	
+	public void setBasicPropertyService(
+			PersistenceService<BasicProperty, Long> basicPropertyService) {
+		this.basicPropertyService = basicPropertyService;
+	}
+	
+	public void setPtDemandDAO(PtDemandDao ptDemandDAO) {
+		this.ptDemandDAO = ptDemandDAO;
 	}
 
 }

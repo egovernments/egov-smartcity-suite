@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ed5507fc-764e-4240-83ab-9cb88ac17281">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="269"/>
+	<property name="ireport.y" value="444"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["/work/ptis/reports/templates/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="mode" class="java.lang.String"/>
 	<field name="noticeNo" class="java.lang.String"/>
 	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<field name="floorDetailsForNotice" class="java.util.List"/>
@@ -17,157 +18,181 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="558" splitType="Stretch">
+		<band height="526" splitType="Stretch">
 			<image>
-				<reportElement x="21" y="20" width="60" height="60" uuid="4c34cccc-b922-4122-845d-f74cbb2a53a8"/>
+				<reportElement x="37" y="20" width="60" height="60" uuid="4c34cccc-b922-4122-845d-f74cbb2a53a8"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="132" y="20" width="373" height="27" uuid="8ba3cf8d-b71b-4f33-8d4b-5bc2d2e0d858"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="123" y="53" width="373" height="17" uuid="8ba3cf8d-b71b-4f33-8d4b-5bc2d2e0d858">
+					<printWhenExpression><![CDATA[$P{mode}=="modify"]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Center" markup="none">
-					<font size="16" isBold="true"/>
+					<font size="13" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtil.getCityName()+"            District"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="123" y="20" width="373" height="25" uuid="4a0e5e2f-74af-40da-92a0-b87137ec3d8b">
+					<printWhenExpression><![CDATA[$P{mode}=="modify"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Property Tax Special Notice"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement isPrintRepeatedValues="false" x="173" y="73" width="257" height="20" uuid="dd8e175a-eecc-4525-8ff3-110161f24231"/>
-				<textElement textAlignment="Justified">
-					<font size="14" isBold="true" isItalic="false" isUnderline="false"/>
-				</textElement>
-				<text><![CDATA[Property Tax Special Notice]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="37" y="108" width="242" height="17" uuid="5c4898f2-bdae-4147-a490-a641cba377f5"/>
+				<reportElement x="37" y="112" width="242" height="17" uuid="5c4898f2-bdae-4147-a490-a641cba377f5"/>
 				<text><![CDATA[Rule (4) Of Schedule 11 to the]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="37" y="125" width="133" height="17" uuid="a95811ff-70be-4de8-9d01-51b369f9c106"/>
+				<reportElement x="37" y="129" width="133" height="17" uuid="a95811ff-70be-4de8-9d01-51b369f9c106"/>
 				<text><![CDATA[Rule (10) Andhra Pradesh]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="37" y="142" width="168" height="17" uuid="a21df604-a674-40d6-9c12-bc548c2e6d58"/>
+				<reportElement x="37" y="146" width="168" height="17" uuid="a21df604-a674-40d6-9c12-bc548c2e6d58"/>
 				<text><![CDATA[Rule (11) Municipalities Act,1965]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="37" y="159" width="168" height="17" uuid="d0547aba-cd4c-4d15-ae40-6f771308153a"/>
-				<textElement markup="none"/>
-				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{noticeNo}+"</style>"]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="37" y="184" width="44" height="17" uuid="22041c24-93f8-41d3-b277-a3c9deb8cff0"/>
+				<reportElement x="37" y="188" width="44" height="17" uuid="22041c24-93f8-41d3-b277-a3c9deb8cff0"/>
 				<text><![CDATA[To]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="201" width="468" height="17" uuid="7ab2b4be-396a-4401-96cd-91772fc1b8b3"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="205" width="468" height="17" uuid="7ab2b4be-396a-4401-96cd-91772fc1b8b3"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getOwnerName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="42" y="250" width="467" height="30" uuid="8bc2b7cf-7673-4ea6-a63e-dc98975e18a9"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="257" width="472" height="33" uuid="8bc2b7cf-7673-4ea6-a63e-dc98975e18a9"/>
 				<textElement markup="none"/>
 				<textFieldExpression><![CDATA["     Take notice that by virtue of the power vested with Municipal Commissioner as per direction given by the Council in resolution under No                    Dated           . "]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="42" y="281" width="467" height="122" uuid="f1139a17-9655-401b-8342-c12e7490667f"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="290" width="472" height="114" uuid="f1139a17-9655-401b-8342-c12e7490667f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled"/>
-				<textFieldExpression><![CDATA["       As per rule (4) of the schedule II to the Andhra Pradesh Municipalities Act, 1965/as per rule 10/11 of schedule II to the Act, the assessment in respect of your property (survey) Door No <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getDoorNo()+"</style> situated in <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getStreetName()+"</style> street in this Municipality has until further notice been fixed at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getTotalTax()+"</style> Increased for reasons specified below at Rs          with effect from the half year commencing 1st April,"+$F{ownerInfo}.getInstallmentYear()+"/ 1st October "+$F{ownerInfo}.getInstallmentYear()+" Incase you are dissatisfied with the assessment now fixed you can present a revision to the Municipal Commissioner within thirty/sixty days from the date of service of this notice. If no complaint against objections to the assessment is presented within the mentioned period of thirty/sixty days, the assessment will be final."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["       As per rule (4) of the schedule II to the Andhra Pradesh Municipalities Act, 1965/as per rule 10/11 of schedule II to the Act, the assessment in respect of your property (survey) Door No <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getDoorNo()+"</style> situated in <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getStreetName()+"</style> street in this Municipality has until further notice been fixed at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getTotalTax()+"</style> Increased for reasons specified below at Rs "+$F{ownerInfo}.getAmount()+" with effect from the half year commencing 1st April,"+$F{ownerInfo}.getInstallmentYear()+"/ 1st October "+$F{ownerInfo}.getInstallmentYear()+" Incase you are dissatisfied with the assessment now fixed you can present a revision to the Municipal Commissioner within thirty/sixty days from the date of service of this notice. If no complaint against objections to the assessment is presented within the mentioned period of thirty/sixty days, the assessment will be final."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="415" width="242" height="20" isPrintWhenDetailOverflows="true" uuid="7167799c-1cae-46f1-ab2f-4e79e25c6c03"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="404" width="242" height="20" isPrintWhenDetailOverflows="true" uuid="7167799c-1cae-46f1-ab2f-4e79e25c6c03"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Special Notice No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{noticeNo}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="338" y="415" width="171" height="20" isPrintWhenDetailOverflows="true" uuid="d8698324-8deb-4cc0-a594-8be5b63b4609"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="338" y="404" width="171" height="20" isPrintWhenDetailOverflows="true" uuid="d8698324-8deb-4cc0-a594-8be5b63b4609"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate($F{ownerInfo}.getNoticeDate())+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="435" width="242" height="20" isPrintWhenDetailOverflows="true" uuid="e7f3eb89-a471-41d1-8b39-83fdd08c3a7a"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="424" width="242" height="20" isPrintWhenDetailOverflows="true" uuid="e7f3eb89-a471-41d1-8b39-83fdd08c3a7a"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Name: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getOwnerName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="455" width="223" height="20" isPrintWhenDetailOverflows="true" uuid="7f96aebe-f51d-4a7a-beb1-e440b2ecd1fe"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="444" width="223" height="20" isPrintWhenDetailOverflows="true" uuid="7f96aebe-f51d-4a7a-beb1-e440b2ecd1fe"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["House No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getDoorNo()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="475" width="223" height="20" isPrintWhenDetailOverflows="true" uuid="e64fb46c-b8ac-4c46-b0e4-f3a6ad98413e"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="464" width="223" height="20" isPrintWhenDetailOverflows="true" uuid="e64fb46c-b8ac-4c46-b0e4-f3a6ad98413e"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Assessment No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getApplicationNo()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="435" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="e40cbbe7-d3c5-48ed-8910-e095965d960c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="424" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="e40cbbe7-d3c5-48ed-8910-e095965d960c"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Zone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="455" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="77a2d8df-435c-4e63-9192-00b94458a29d"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="444" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="77a2d8df-435c-4e63-9192-00b94458a29d"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Rev Ward No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getWardName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="475" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="920aa190-e583-4ec4-bedd-b01ffee70ffe"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="464" width="222" height="20" isPrintWhenDetailOverflows="true" uuid="920aa190-e583-4ec4-bedd-b01ffee70ffe"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Block No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getAreaName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="495" width="252" height="45" isPrintWhenDetailOverflows="true" uuid="d7e680ea-c740-4790-b636-2bab0b523240"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="484" width="250" height="29" isPrintWhenDetailOverflows="true" uuid="d7e680ea-c740-4790-b636-2bab0b523240"/>
 				<textElement markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Address : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getOwnerAddress()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="495" width="222" height="35" isPrintWhenDetailOverflows="true" uuid="a0919102-1b86-4d5e-89d5-004ae88dd3e7"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="287" y="484" width="222" height="29" isPrintWhenDetailOverflows="true" uuid="a0919102-1b86-4d5e-89d5-004ae88dd3e7"/>
 				<textElement textAlignment="Right" markup="styled">
 					<font isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Locality: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getLocalityName()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="218" width="468" height="28" uuid="231456ff-13b6-493b-9167-8d4b6a054fa1"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="222" width="468" height="28" uuid="231456ff-13b6-493b-9167-8d4b6a054fa1"/>
 				<textElement markup="styled"/>
 				<textFieldExpression><![CDATA["Address: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{ownerInfo}.getOwnerAddress()+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="361" y="159" width="148" height="17" uuid="b64620ee-e0a5-4057-9100-be8a6ff8c294"/>
+				<reportElement x="357" y="163" width="148" height="17" uuid="b64620ee-e0a5-4057-9100-be8a6ff8c294"/>
 				<textElement textAlignment="Right" markup="styled"/>
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="540" width="555" height="18" uuid="c708d2b8-0347-48c5-ba69-45835ce237da"/>
+				<reportElement x="0" y="513" width="555" height="13" uuid="c708d2b8-0347-48c5-ba69-45835ce237da"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="163" width="242" height="17" isPrintWhenDetailOverflows="true" uuid="0fb3aa43-162c-4da6-9fbe-8ae436a78673"/>
+				<textElement markup="styled">
+					<font isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{noticeNo}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="123" y="20" width="373" height="25" uuid="6f88c2de-5c1a-419e-b541-517959fb705a">
+					<printWhenExpression><![CDATA[$P{mode}=="create"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="123" y="53" width="373" height="17" uuid="8853a4b7-d648-4041-b34d-664d1c4d8f1f">
+					<printWhenExpression><![CDATA[$P{mode}=="create"]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none">
+					<font size="13" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Property Tax Special Notice"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
 		<band height="44" splitType="Stretch">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="14" y="0" width="497" height="44" uuid="35cae02b-0580-4a94-b2ce-b68ca88f5906"/>
+				<reportElement stretchType="RelativeToTallestObject" x="26" y="0" width="474" height="44" uuid="35cae02b-0580-4a94-b2ce-b68ca88f5906"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{floorDetailsForNotice}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("specialNotice_floorDetails.jasper")]]></subreportExpression>
 			</subreport>
@@ -176,28 +201,28 @@
 	<summary>
 		<band height="145" splitType="Stretch">
 			<staticText>
-				<reportElement x="21" y="101" width="90" height="28" uuid="a73ca8e1-3885-4e8c-aab8-2dca16a726aa"/>
+				<reportElement x="37" y="92" width="90" height="28" uuid="a73ca8e1-3885-4e8c-aab8-2dca16a726aa"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bill Collector Commissioner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="211" y="101" width="127" height="28" uuid="a4d295ec-9291-45f4-85d2-a8b1c75d7dc5"/>
+				<reportElement x="211" y="92" width="127" height="28" uuid="a4d295ec-9291-45f4-85d2-a8b1c75d7dc5"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of Receiver]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="429" y="101" width="76" height="28" uuid="d1e1df13-d87c-4104-ac29-977ab5ea30fb"/>
-				<textElement>
+				<reportElement x="413" y="92" width="92" height="28" uuid="d1e1df13-d87c-4104-ac29-977ab5ea30fb"/>
+				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Revenue Inspector]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="25" width="100" height="22" uuid="534e8c29-c27f-4a4a-92eb-fd5369f82796"/>
+				<reportElement x="37" y="25" width="100" height="22" uuid="534e8c29-c27f-4a4a-92eb-fd5369f82796"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -211,7 +236,7 @@
 				<text><![CDATA[Property Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="25" width="100" height="22" uuid="44c2e711-b673-4a24-9c8c-da156325c3db"/>
+				<reportElement x="137" y="25" width="100" height="22" uuid="44c2e711-b673-4a24-9c8c-da156325c3db"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -225,7 +250,7 @@
 				<text><![CDATA[Library Cess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="242" y="25" width="100" height="22" uuid="4487c703-b68f-4888-a993-37968163c19d"/>
+				<reportElement x="237" y="25" width="100" height="22" uuid="4487c703-b68f-4888-a993-37968163c19d"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -239,7 +264,7 @@
 				<text><![CDATA[Education Tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="342" y="25" width="100" height="22" uuid="2bc81ca7-9741-40f7-a4d3-214140995267"/>
+				<reportElement x="337" y="25" width="100" height="22" uuid="2bc81ca7-9741-40f7-a4d3-214140995267"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -253,7 +278,7 @@
 				<text><![CDATA[Total Tax]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="42" y="47" width="100" height="20" uuid="5022a95c-72c7-4703-9c2a-8abc3814c59d"/>
+				<reportElement x="37" y="47" width="100" height="20" uuid="5022a95c-72c7-4703-9c2a-8abc3814c59d"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -262,12 +287,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" markup="styled">
-					<font isPdfEmbedded="true"/>
+					<font isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getGeneralTax()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ownerInfo}.getGeneralTax()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="142" y="47" width="100" height="20" uuid="ddbbeae6-9dbc-429d-aab8-104ac8b4b1a1"/>
+				<reportElement x="137" y="47" width="100" height="20" uuid="ddbbeae6-9dbc-429d-aab8-104ac8b4b1a1"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -276,12 +301,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" markup="styled">
-					<font isPdfEmbedded="true"/>
+					<font isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getLibraryTax()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ownerInfo}.getLibraryTax()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="242" y="47" width="100" height="20" uuid="d46bf0e2-f62e-40cb-93b0-fa2b9563213c"/>
+				<reportElement x="237" y="47" width="100" height="20" uuid="d46bf0e2-f62e-40cb-93b0-fa2b9563213c"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -290,12 +315,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" markup="styled">
-					<font isPdfEmbedded="true"/>
+					<font isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getEducationTax()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ownerInfo}.getEducationTax()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="342" y="47" width="100" height="20" uuid="7ceea41e-0a1a-41b1-ae8b-38abf64527b3"/>
+				<reportElement x="337" y="47" width="100" height="20" uuid="7ceea41e-0a1a-41b1-ae8b-38abf64527b3"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -304,9 +329,9 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" markup="styled">
-					<font isPdfEmbedded="true"/>
+					<font isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerInfo}.getTotalTax()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ownerInfo}.getTotalTax()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="0" width="555" height="25" uuid="cf44af64-557c-494b-aa55-1391ef0cff0e"/>

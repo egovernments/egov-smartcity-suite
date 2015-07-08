@@ -76,29 +76,9 @@
 		document.forms[0].submit;
 	   return true;
 	}
- function generatenotice(){
-	doLoadingMask();
-   	document.CreatePropertyForm.action="../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&isPreviewPVR=false";
-	document.CreatePropertyForm.submit();
-	undoLoadingMask();
- }
-			  
-  function generatePrativrutta(){
-	    doLoadingMask();
-  		window.open("../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Prativrutta&isPreviewPVR=false","","resizable=yes,scrollbars=yes,top=40, width=900, height=650");
-  		document.getElementById("GeneratePrativrutta").disabled = true;
-  		undoLoadingMask();
-  }
-
-  function previewPrativrutta() {
-	  doLoadingMask();
-	  window.open("../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Prativrutta&isPreviewPVR=true","","resizable=yes,scrollbars=yes,top=40, width=900, height=650");
-	  document.getElementById("GeneratePrativrutta").disabled = true;
-	  undoLoadingMask();
-	}
-  	function generateNotice6(){
-		   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6";
-			document.CreatePropertyForm.submit();
+ 	function generateNotice6(){
+	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
+		document.CreatePropertyForm.submit();
 	}
 </script>
 	</head>

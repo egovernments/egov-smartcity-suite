@@ -48,6 +48,7 @@ public class PropertyAckNoticeInfo {
 	private String regDocNo;
 	private String regDocDate;
 	private String currentInstallment;
+	private BigDecimal amount = BigDecimal.ZERO;
 	
 	public String getCreationReason() {
 		return creationReason;
@@ -312,5 +313,11 @@ public class PropertyAckNoticeInfo {
 	}
 	public void setCurrentInstallment(String currentInstallment) {
 		this.currentInstallment = currentInstallment;
+	}
+	public BigDecimal getAmount() {
+		return amount;
+	}
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
 	}
 }

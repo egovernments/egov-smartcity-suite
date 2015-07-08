@@ -41,15 +41,14 @@ package org.egov.ptis.domain.service.notice;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.util.Date; 
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -57,6 +56,7 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class NoticeService {
 	private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
@@ -64,6 +64,9 @@ public class NoticeService {
 	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	@Autowired
 	private ModuleService moduleDao;
+	@Autowired
+	@Qualifier("fileStoreService")
+	protected FileStoreService fileStoreService;
 
 	/**
 	 * This method populates the <code>PtNotice</code> object along with notice
@@ -87,17 +90,14 @@ public class NoticeService {
 		ptNotice.setUserId(EgovThreadLocals.getUserId());
 		ptNotice.setBasicProperty(basicProperty);
 		ptNotice.setIsBlob('Y');
-		try {
-			ptNotice.setNoticeFile(IOUtils.toByteArray(fileStream));
-		} catch (IOException e) {
-			LOGGER.error("Exception while saving Bill notice.",e);
-			throw new EGOVRuntimeException("Exception while saving Bill notice.", e);
-		}
+		String fileName=ptNotice.getNoticeNo()+".pdf";
+		FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", "PTIS");
+		ptNotice.setFileStore(fileStore);
 		basicProperty.addNotice(ptNotice);
 		basicPropertyService.update(basicProperty);
 		return ptNotice;
 	}
-
+	
 	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
 		return basicPropertyService;
 	}

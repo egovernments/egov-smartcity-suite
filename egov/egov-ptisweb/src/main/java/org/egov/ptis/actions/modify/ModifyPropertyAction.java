@@ -80,6 +80,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,7 +91,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -106,10 +110,18 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
@@ -147,6 +159,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +170,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 	@Result(name = "edit", location = "modify/modifyProperty-new.jsp"),
 	@Result(name = "new", location = "modify/modifyProperty-new.jsp"),
 	@Result(name = "view", location = "modify/modifyProperty-view.jsp"),
-	@Result(name = "workFlowError", location = "workflow/workflow-error.jsp")})
+	@Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
+	@Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp")})
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
 	private static final long serialVersionUID = 1L;
@@ -258,6 +272,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 	@Autowired
 	private AssignmentService assignmentService;
 	private List<DocumentType> documentTypes = new ArrayList<>();
+	
+	public static final String PRINTACK = "printAck";
+	private ReportService reportService;
+	private Integer reportId = -1;
+	private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
 
 	public ModifyPropertyAction() {
 		super();
@@ -1457,6 +1476,31 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from updateAddress");
 	}
 
+	@SkipValidation
+	@Action(value="/modifyProperty-printAck")
+	public String printAck(){
+		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String url= WebUtils.extractRequestDomainURL(request, false);
+		String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
+		Map<String, Object> reportParams = new HashMap<String, Object>();
+		ackBean.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp));
+		ackBean.setOwnerAddress(ptisCacheMgr.buildAddressFromAddress(basicProp.getAddress()));
+		ackBean.setApplicationDate(basicProp.getCreatedDate());
+		ackBean.setApplicationNo(basicProp.getApplicationNo());
+		ackBean.setApprovedDate(propWF.getState().getCreatedDate().toDate());
+		Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate().toDate(), Calendar.DAY_OF_MONTH, 15);
+		ackBean.setNoticeDueDate(noticeDueDate);
+		reportParams.put("logoPath", imagePath);
+		reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
+		ReportRequest reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE,ackBean, reportParams);
+		reportInput.setReportFormat(FileFormat.PDF);
+		ReportOutput reportOutput = reportService.createReport(reportInput);  
+		reportId = ReportViewerUtil.addReportToSession(reportOutput,getSession());
+		return PRINTACK;
+	}
+	
 	public BasicProperty getBasicProp() {
 		return basicProp;
 	}
@@ -2044,4 +2088,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 		this.documentTypes = documentTypes;
 	}
 
+	public Integer getReportId() {
+		return reportId;
+	}
+
+	public void setReportId(Integer reportId) {
+		this.reportId = reportId;
+	}
+
+	public void setReportService(ReportService reportService) {
+		this.reportService = reportService;
+	}
 }

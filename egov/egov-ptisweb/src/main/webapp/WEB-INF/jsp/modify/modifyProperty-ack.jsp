@@ -46,6 +46,14 @@
 <head>
 <title><s:text name='ModProp.title' /></title>
 </head>
+<script type="text/javascript">
+  	function onSubmit() { 
+	  	var modelId = '<s:property value="%{id}"/>';
+		document.forms[0].action = 'modifyProperty-printAck.action?modelId='+modelId;
+		document.forms[0].submit;
+	   	return true;
+	}
+</script>
 
 <body onload=" refreshParentInbox();">
 	<s:form name="ModifyPropertyForm" theme="simple">
@@ -72,6 +80,9 @@
 					</table>
 			</div>
 			<div class="buttonbottom" align="center">
+				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
+					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />
+				</s:if>
 				<input type="button" name="button2" id="button2"
 					value="Close" class="button" onclick="window.close();" />
 			</div>

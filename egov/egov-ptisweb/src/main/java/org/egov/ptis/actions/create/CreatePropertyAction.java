@@ -58,7 +58,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
@@ -68,6 +67,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRAT
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,6 +98,7 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
@@ -134,7 +135,9 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -157,7 +160,7 @@ import org.egov.ptis.utils.PTISCacheManagerInteface;
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
 		@Result(name = "ack", location = "create/createProperty-ack.jsp"),
 		@Result(name = "view", location = "create/createProperty-view.jsp"),
-		@Result(name = "printAck", location = "create/createProperty-printAck.jsp")})
+		@Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp")})
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
@@ -280,6 +283,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private SecurityUtils securityUtils;
 	
 	private ApplicationNumberGenerator applicationNumberGenerator;
+	private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
 
 	public CreatePropertyAction() {
 		super();
@@ -1138,7 +1142,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	public String printAck(){
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		HttpServletRequest request = ServletActionContext.getRequest();
-		String url = request.getScheme().concat("://").concat(request.getServerName()).concat(":").concat(String.valueOf(request.getServerPort()));
+		String url= WebUtils.extractRequestDomainURL(request, false);
 		String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
 		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
 		Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -1151,7 +1155,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		ackBean.setNoticeDueDate(tempNoticeDate);
 		reportParams.put("logoPath", imagePath);
 		reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
-		ReportRequest reportInput = new ReportRequest("createProperty_ack",ackBean, reportParams);
+		ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE,ackBean, reportParams);
 		reportInput.setReportFormat(FileFormat.PDF);
 		ReportOutput reportOutput = reportService.createReport(reportInput);  
 		reportId = ReportViewerUtil.addReportToSession(reportOutput,getSession());

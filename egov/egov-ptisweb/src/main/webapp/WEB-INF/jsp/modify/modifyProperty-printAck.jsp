@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
+ <!-- eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
   
       Copyright (C) <2015>  eGovernments Foundation
@@ -36,35 +34,33 @@
   	   with regards to rights under trademark law for use of the trade names 
   	   or trademarks of eGovernments Foundation.
   
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
--->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ -->
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp" %>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<hibernate-mapping>
-    <class name="org.egov.ptis.notice.PtNotice" table="EGPT_NOTICE">
-    	<id
-			name="id" 
-			column="ID"
-			type="long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_NOTICE</param>
-			</generator>
-		</id>
-		<property name="moduleId" column="ID_MODULE" />
-		<property name="noticeType" type="string" column="NOTICETYPE" length="32" />
-		<property name="noticeNo" type="string" column="NOTICENO" length="64" />
-		<property name="noticeDate" type="java.util.Date" column="NOTICEDATE" length="7" />
-		<property name="userId" column="ID_USER" />
-		<many-to-one name="basicProperty"
-			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASICPROPERTY"
-			insert="false" update="false" />
-		<property name="noticeFile" column="NOTICE_FILE" type="binary"/>
-		<property name="isBlob" column="IS_BLOB" />
-		<many-to-one name="fileStore" class="org.egov.infra.filestore.entity.FileStoreMapper" cascade="all">
-                <column name="filestoreid" />
-        </many-to-one>
-	</class>
- <query name="getNoticeByNoticeNo"><![CDATA[from PtNotice where noticeNo=?]]></query>
-</hibernate-mapping>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ack</title>
+</head>
+<body>
+<s:form theme="simple" name="displayReportForm">
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle"><s:actionerror /> <s:fielderror /></div>
+	</s:if>
+	<s:if test="%{hasActionMessages()}">
+		<div class="messagestyle"><s:actionmessage theme="simple" /></div>
+	</s:if>
+	<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+		height="70%">
+	<p>Your browser does not support iframes.</p>
+	</iframe>
+	<br />
+	<div class="buttonbottom">
+		<input name="closeButton" type="button" class="button"
+			id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
+	</div>
+</s:form>
+</body>
+</html>

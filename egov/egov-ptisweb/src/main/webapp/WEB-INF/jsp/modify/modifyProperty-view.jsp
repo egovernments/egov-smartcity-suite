@@ -76,25 +76,11 @@
 				</s:if>
 			}
   
-			function generatenotice(){
-			    document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&isPreviewPVR=false";
+			function generateNotice6(){
+			   	document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify";
 				document.ModifyPropertyForm.submit();
 			}
 			  
-			function generatePrativrutta(){
-				doLoadingMask();
-			  	window.open("../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Prativrutta&isPreviewPVR=false","","resizable=yes,scrollbars=yes,top=40, width=900, height=650");
-			  	document.getElementById("GeneratePrativrutta").disabled = true;
-			  	undoLoadingMask();
-			}
-
-			function previewPrativrutta() {
-				doLoadingMask();
-				window.open("../notice/propertyTaxNotice!generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Prativrutta&isPreviewPVR=true","","resizable=yes,scrollbars=yes,top=40, width=900, height=650");
-				document.getElementById("GeneratePrativrutta").disabled = true;
-				undoLoadingMask();
-			}
-			
 			function generateBill(){
 				doLoadingMask();
 				document.ModifyPropertyForm.action="../bills/billGeneration!generateBill.action?indexNumber=<s:property value='%{basicProp.upicNo}'/>";
@@ -178,22 +164,10 @@
 						<div class="buttonbottom" align="center">
 							<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)}">
 								<s:if test="%{extra_field3!='Yes'}">
-									<input type="button" name="GenerateNotice" id="GenerateNotice"
-										value="Generate Notice" class="button"
-										onclick="return generatenotice();" />
+									<td><input type="button" name="GenerateNotice6" id="GenerateNotice6"
+											value="Generate Notice" class="button" onclick="return generateNotice6();" />
+									</td>
 								</s:if>
-
-								<%-- <s:if test="%{extra_field4!='Yes'}">
-									<input type="button" name="GeneratePrativrutta"
-										id="GeneratePrativrutta" value="Generate Prativrutta"
-										class="button" onclick="return generatePrativrutta();" />
-								</s:if>
-								<s:if
-									test="%{extra_field5!='Yes' && property.propertyDetail.propertyMutationMaster.code == 'OBJ'}">
-									<input type="button" name="GenerateBill" id="GenerateBill"
-										value="Generate Bill" class="button"
-										onclick="return generateBill();" />
-								</s:if> --%>
 							</s:if>
 							<%--<s:else>
 								 <s:if test="modifyRsn=='AMALG'">

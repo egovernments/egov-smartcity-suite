@@ -41,6 +41,7 @@ package org.egov.ptis.notice;
 
 import java.util.Date;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 
 public class PtNotice implements java.io.Serializable {
@@ -57,6 +58,15 @@ public class PtNotice implements java.io.Serializable {
 	// private File document;
 	private byte[] noticeFile;
 	private Character isBlob;
+	public FileStoreMapper getFileStore() {
+		return fileStore;
+	}
+
+	public void setFileStore(FileStoreMapper fileStore) {
+		this.fileStore = fileStore;
+	}
+
+	private FileStoreMapper fileStore;
 	
 	/**
 	 * @return the id
