@@ -931,7 +931,13 @@ function addOwner()
 					      'name': function(_, name) { 
 					    	  return name.replace('[0]', '['+ nextIdx +']'); 
 					      },
-					    }).val('');
+					    });
+						 
+						if(jQuery(this).is('input[type="text"]') || jQuery(this).is('select'))
+					    {
+							jQuery(this).val('');
+					    }
+						
 			    }).end().appendTo("#nameTable");
 				
 				jQuery("#nameTable tr:last td img[alt='Add']").hide();
