@@ -263,5 +263,7 @@ public interface BasicProperty {
 	boolean isUnderWorkflow();
 
 	void setUnderWorkflow(boolean underWorkflow);
+	
+	String getFullOwnerName();
 
 }

@@ -45,34 +45,24 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -80,9 +70,6 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.service.transfer.TransferOwnerService;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -95,7 +82,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp") })
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends BaseFormAction {
-	private final Logger LOGGER = Logger.getLogger(getClass());
+
     private static final long serialVersionUID = 1L;
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public static final String ACK = "ack";
@@ -103,6 +90,7 @@ public class PropertyTransferAction extends BaseFormAction {
     public static final String REJECT_ON_TAXDUE = "balance";
     public static final String PRINTACK = "printAck";
     public static final String PRINTNOTICE = "printNotice";
+
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -121,13 +109,8 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicProperty;
-
     private Integer reportId = -1;
-    private ReportService reportService;
-    
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
-    
+
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
     }
@@ -142,9 +125,9 @@ public class PropertyTransferAction extends BaseFormAction {
             final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), assessmentNo);
             currentWaterTaxDue = transferOwnerService.getWaterTaxDues(wtmsRestURL, assessmentNo);
-           /* if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0)
+            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0)
                 return REJECT_ON_TAXDUE;
-            else*/
+            else
                 return NEW;
         }
     }
@@ -180,61 +163,24 @@ public class PropertyTransferAction extends BaseFormAction {
         transferOwnerService.approvePropertyTransfer(basicProperty, propertyMutation);
         return ACK;
     }
-    
-    @Action(value="/printAck")
-	public String printAck(){
-    	LOGGER.info("Acknowledgement: Property transfer acknowledgement, assessmentNumber: " + assessmentNo);
-		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-		HttpServletRequest request = ServletActionContext.getRequest();
-		String url = request.getScheme().concat("://").concat(request.getServerName()).concat(":").concat(String.valueOf(request.getServerPort()));
-		String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
-		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
-		Map<String, Object> reportParams = new HashMap<String, Object>();
-		
-		//reportParams.put("logoPath", imagePath);
-		ackBean.setUlbLogo(imagePath);
-		ackBean.setMunicipalityName(ReportUtil.getCityName());
-		
-		ackBean.setReceivedDate(propertyMutation.getMutationDate() != null ? formatDate(propertyMutation.getMutationDate()) : "");
-		ackBean.setApplicationNo(basicProperty.getApplicationNo() != null ? basicProperty.getApplicationNo() : "");
-		ackBean.setApplicationDate(basicProperty.getCreatedDate());
-		ackBean.setApplicationName(propertyMutation.getApplicantName());
-		ackBean.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProperty));
-		ackBean.setOwnerAddress(ptisCacheMgr.buildAddressFromAddress(basicProperty.getAddress()));
-		ackBean.setNoOfDays(""); //TODO: Need to set the actual value when this value is clarified
-		ackBean.setLoggedInUsername(propertyTaxUtil.getLoggedInUser(getSession()).getName());
 
-		ReportRequest reportInput = new ReportRequest("transferProperty_ack",ackBean, reportParams);
-		reportInput.setReportFormat(FileFormat.PDF);
-		ReportOutput reportOutput = reportService.createReport(reportInput);  
-		reportId = ReportViewerUtil.addReportToSession(reportOutput,getSession());
-		return PRINTACK;
-	}
-    
-    @Action(value="/printNotice")
-	public String printNotice(){
-    	LOGGER.info("Notice: Property transfer notice, assessmentNumber: " + assessmentNo);
-		PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
-		Map<String, Object> reportParams = new HashMap<String, Object>();
-		if(propertyMutation != null && propertyMutation.getBasicProperty() != null) {
-			noticeBean.setOldOwnerName(propertyMutation.getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getName());
-			noticeBean.setOldOwnerParentName(propertyMutation.getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getGuardian());
-		}
-		if(basicProperty != null) {
-			noticeBean.setNewOwnerName(basicProperty.getPropertyOwnerInfo().get(0).getOwner().getName());
-			noticeBean.setNewOwnerParentName(basicProperty.getPropertyOwnerInfo().get(0).getOwner().getGuardian());
-			noticeBean.setRegDocNo(basicProperty.getRegdDocNo());
-			noticeBean.setRegDocDate(formatDate(basicProperty.getRegdDocDate()));
-		}
-		if(propertyTaxUtil != null) {
-			noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
-		}
-		ReportRequest reportInput = new ReportRequest("transferProperty_notice",noticeBean, reportParams);
-		reportInput.setReportFormat(FileFormat.PDF);
-		ReportOutput reportOutput = reportService.createReport(reportInput);  
-		reportId = ReportViewerUtil.addReportToSession(reportOutput,getSession());
-		return PRINTNOTICE;
-	}
+    @Action(value = "/printAck")
+    public String printAck() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String cityLogo = WebUtils.extractRequestDomainURL(request, false).concat(PropertyTaxConstants.IMAGES_BASE_PATH)
+                .concat(request.getSession().getAttribute("citylogo").toString());
+        final String cityName = request.getSession().getAttribute("cityname").toString();
+        reportId = ReportViewerUtil.addReportToSession(
+                transferOwnerService.generateAcknowledgement(basicProperty, propertyMutation, cityName, cityLogo), getSession());
+        return PRINTACK;
+    }
+
+    @Action(value = "/printNotice")
+    public String printNotice() {
+        reportId = ReportViewerUtil
+                .addReportToSession(transferOwnerService.generateTransferNotice(basicProperty, propertyMutation), getSession());
+        return PRINTNOTICE;
+    }
 
     @Override
     public void prepare() {
@@ -343,31 +289,12 @@ public class PropertyTransferAction extends BaseFormAction {
     public BigDecimal getArrearPropertyTaxDue() {
         return arrearPropertyTaxDue;
     }
-	public ReportService getReportService() {
-		return reportService;
-	}
 
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
-	}
+    public Integer getReportId() {
+        return reportId;
+    }
 
-	public PropertyTaxUtil getPropertyTaxUtil() {
-		return propertyTaxUtil;
-	}
-
-	public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
-		this.propertyTaxUtil = propertyTaxUtil;
-	}
-
-	public Integer getReportId() {
-		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
-	}
-	private String formatDate(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(date);
-	}
+    public void setReportId(final Integer reportId) {
+        this.reportId = reportId;
+    }
 }

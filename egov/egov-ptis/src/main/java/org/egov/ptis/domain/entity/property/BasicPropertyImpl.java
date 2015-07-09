@@ -691,6 +691,15 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.underWorkflow = underWorkflow;
     }
     
+    public String getFullOwnerName() {
+        final StringBuilder ownerName = new StringBuilder();
+        for (final PropertyOwnerInfo ownerInfo : this.getPropertyOwnerInfo()) {
+            ownerName.append(ownerInfo.getOwner().getName()).append(", ");
+        }
+        ownerName.deleteCharAt(ownerName.length()-2);
+        return ownerName.toString();
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

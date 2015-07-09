@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +63,10 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -69,6 +74,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -84,6 +90,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
+import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -127,6 +134,9 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
+
+    @Autowired
+    private ReportService reportService;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -185,13 +195,49 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
 
+    public ReportOutput generateAcknowledgement(final BasicProperty basicProperty, final PropertyMutation propertyMutation,
+            final String cityName, final String cityLogo) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
+        ackBean.setUlbLogo(cityLogo);
+        ackBean.setMunicipalityName(cityName);
+
+        ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+        ackBean.setApplicationNo(propertyMutation.getApplicationNo());
+        ackBean.setApplicationDate(propertyMutation.getMutationDate());
+        ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
+        ackBean.setOwnerName(basicProperty.getFullOwnerName());
+        ackBean.setOwnerAddress(basicProperty.getAddress().toString());
+        ackBean.setNoOfDays("");
+        ackBean.setLoggedInUsername(userService.getUserById(EgovThreadLocals.getUserId()).getName());
+
+        final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
+        reportInput.setReportFormat(FileFormat.PDF);
+        return reportService.createReport(reportInput);
+    }
+
+    public ReportOutput generateTransferNotice(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
+        noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
+        noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
+        noticeBean.setNewOwnerParentName(propertyMutation.getFullTransfereeGuardianName());
+        noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
+        noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+        noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
+        final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
+        reportInput.setReportFormat(FileFormat.PDF);
+        return reportService.createReport(reportInput);
+    }
+
     private void createUserIfNotExist(final List<User> transferees) {
         final List<User> newOwners = new ArrayList<>();
         transferees.forEach(transferee -> {
-            User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
+            final User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
             if (user == null) {
                 if (UserType.CITIZEN.equals(transferee.getType())) {
-                    Citizen newOwner = new Citizen();
+                    final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(transferee.getAadhaarNumber());
                     newOwner.setEmailId(transferee.getEmailId());
                     newOwner.setMobileNumber(transferee.getMobileNumber());
@@ -202,9 +248,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
                     newOwner.setUsername(transferee.getMobileNumber());
                     newOwners.add(newOwner);
                 }
-            } else {
+            } else
                 newOwners.add(user);
-            }
         });
         transferees.clear();
         transferees.addAll(newOwners);

@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 
@@ -235,5 +236,43 @@ public class PropertyMutation extends StateAware {
 
     public void setDocuments(List<Document> documents) {
         this.documents = documents;
+    }
+    
+    public String getFullTranfereeName() {
+        final StringBuilder ownerName = new StringBuilder();
+        for (final User owner : this.getTransfereeInfos()) {
+            ownerName.append(owner.getName()).append(", ");
+        }
+        ownerName.deleteCharAt(ownerName.length()-2);
+        return ownerName.toString();
+    }
+    
+    public String getFullTranferorName() {
+        final StringBuilder ownerName = new StringBuilder();
+        for (final User owner : this.getTransferorInfos()) {
+            ownerName.append(owner.getName()).append(", ");
+        }
+        ownerName.deleteCharAt(ownerName.length()-2);
+        return ownerName.toString();
+    }
+    
+    public String getFullTransferorGuardianName() {
+        final StringBuilder guardianName = new StringBuilder();
+        for (final User owner : this.getTransferorInfos()) {
+            if (StringUtils.isNotBlank(owner.getGuardian()))
+                guardianName.append(owner.getGuardian()).append(", ");
+        }
+        guardianName.deleteCharAt(guardianName.length()-2);
+        return guardianName.toString();
+    }
+    
+    public String getFullTransfereeGuardianName() {
+        final StringBuilder guardianName = new StringBuilder();
+        for (final User owner : this.getTransfereeInfos()) {
+            if (StringUtils.isNotBlank(owner.getGuardian()))
+                guardianName.append(owner.getGuardian()).append(", ");
+        }
+        guardianName.deleteCharAt(guardianName.length()-2);
+        return guardianName.toString();
     }
 }
