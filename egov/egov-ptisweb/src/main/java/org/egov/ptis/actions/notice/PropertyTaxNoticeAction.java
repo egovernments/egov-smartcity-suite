@@ -150,7 +150,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				reportParams.put("mode", "modify");
 			}
 			setNoticeInfo(propertyNotice,basicProperty);
-			List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
+			List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo().getTotalTax());
 			propertyNotice.setFloorDetailsForNotice(floorDetails);
 			reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_NOTICE6, propertyNotice,reportParams);
 		}
@@ -218,7 +218,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		propertyNotice.setOwnerInfo(ownerInfo);
 	}
 	
-	private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(){
+	private List<PropertyAckNoticeInfo> getFloorDetailsForNotice(BigDecimal totalTax){
 		List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
 		PropertyDetail detail = property.getPropertyDetail();
 		PropertyAckNoticeInfo floorInfo = null;
@@ -230,7 +230,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
 			floorInfo.setMonthlyRentalValue(BigDecimal.ZERO);
 			floorInfo.setYearlyRentalValue(BigDecimal.ZERO);
-			floorInfo.setTaxPayableForCurrYear(BigDecimal.ZERO);
+			floorInfo.setTaxPayableForCurrYear(totalTax);
 			floorInfo.setTaxPayableForNewRates(BigDecimal.ZERO);
 			
 			floorDetailsList.add(floorInfo);
@@ -247,7 +247,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		// Position position =
 		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EgovThreadLocals.getUserId()));
 		//	Position position = null;
-		property.transition().end().withComments("Property Workflow End");
+		property.transition().end();
 		basicProperty.setUnderWorkflow(false);
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
