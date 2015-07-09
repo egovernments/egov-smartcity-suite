@@ -933,7 +933,7 @@ function addOwner()
 					      },
 					    });
 						 
-						if(jQuery(this).is('input[type="text"]') || jQuery(this).is('select'))
+						if(!jQuery(this).data('static'))
 					    {
 							jQuery(this).val('');
 					    }
