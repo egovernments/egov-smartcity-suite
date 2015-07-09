@@ -84,7 +84,7 @@
 			<interceptor name="egov-validator" class="org.egov.infra.web.struts.interceptors.ValidationInterceptor" />
 			<interceptor name="egov-trim" class="org.egov.infra.web.struts.interceptors.TrimInterceptor" />
 			<interceptor name="egov-exception" class="org.egov.infra.web.struts.interceptors.ExceptionInterceptor" />
-
+			<interceptor name="egov-cahecontrol" class="org.egov.infra.web.struts.interceptors.CacheControlInterceptor"/>
 			<interceptor-stack name="egov-interceptors">
 				<!-- 
 				Commenting out for now since this interceptor creating problem
@@ -118,7 +118,7 @@
 					<param name="excludeMethods">input,back,cancel,browse</param>
 				</interceptor-ref>
 				<interceptor-ref name="egov-validator" />
-				
+				<interceptor-ref name="egov-cahecontrol"/>
 			</interceptor-stack>
 		</interceptors>
 		<default-interceptor-ref name="egov-interceptors" />
