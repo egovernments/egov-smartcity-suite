@@ -150,6 +150,10 @@ public class WaterConnectionDetails extends StateAware {
     private Long plinthArea;
 
     private Integer numberOfPerson;
+    
+    private String connectionReason;
+    
+    private String connectionOrder;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -327,6 +331,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setApprovalDate(final Date approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public String getConnectionReason() {
+        return connectionReason;
+    }
+
+    public void setConnectionReason(String connectionReason) {
+        this.connectionReason = connectionReason;
+    }
+
+    public String getConnectionOrder() {
+        return connectionOrder;
+    }
+
+    public void setConnectionOrder(String connectionOrder) {
+        this.connectionOrder = connectionOrder;
     }
 
     public EgDemand getDemand() {

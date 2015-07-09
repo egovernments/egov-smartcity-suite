@@ -51,11 +51,21 @@
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 				<c:choose>
-					<c:when test="${waterConnectionDetails.connectionStatus == 'ACTIVE' }">
-						<spring:message code="msg.newconnection.approved.success" />
+					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'INPROGRESS'}">
+						<spring:message code="msg.addconnection.ack.msg" />
+					</c:when>
+					<c:when test="${waterConnectionDetails.connection.parentConnection.id!=null && waterConnectionDetails.connectionStatus == 'ACTIVE'}">
+						<spring:message code="msg.addconnection.approved" />
 					</c:when>
 					<c:otherwise>
-						<spring:message code="msg.newconnection.ack.success" />
+						<c:choose>
+							<c:when test="${waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+								<spring:message code="msg.newconnection.approved.success" />
+							</c:when>
+							<c:otherwise>
+								<spring:message code="msg.newconnection.ack.success" />
+							</c:otherwise>
+						</c:choose>
 					</c:otherwise>
 				</c:choose>
 				</div>

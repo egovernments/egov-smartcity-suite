@@ -45,9 +45,6 @@ $(document).ready(function(){
 		}		
 	}
 	
-	var mode = $("#mode").val();
-	if(mode=='addconnection') {
-		$("#propertytaxdue").addClass("error-msg");
-	}
+	$("#propertytaxdue").addClass("error-msg");
 	
 });

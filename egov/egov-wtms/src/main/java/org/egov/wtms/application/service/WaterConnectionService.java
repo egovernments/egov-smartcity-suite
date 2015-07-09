@@ -92,4 +92,8 @@ public class WaterConnectionService {
     public List<WaterConnection> findByPropertyIdentifier(final String propertyIdentifier) {
         return waterConnectionRepository.findByPropertyIdentifier(propertyIdentifier);
     }
+    
+    public WaterConnection findParentWaterConnection(final String propertyIdentifer) {
+        return waterConnectionRepository.findParentWaterConnection(propertyIdentifer);
+    }
 }

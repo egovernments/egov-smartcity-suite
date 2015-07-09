@@ -42,6 +42,7 @@ package org.egov.wtms.web.controller.application;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,8 @@ public class ViewConnectionController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
 
     @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
@@ -67,6 +70,7 @@ public class ViewConnectionController {
         model.addAttribute("waterConnectionDetails", details);
         model.addAttribute("connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(details.getConnectionType().name()));
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
         model.addAttribute("mode", "search");
         return "application-view";
     }

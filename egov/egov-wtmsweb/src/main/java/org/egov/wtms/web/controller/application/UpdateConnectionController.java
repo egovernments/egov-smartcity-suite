@@ -59,14 +59,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class UpdateNewConnectionController {
+public class UpdateConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
 
     private final DepartmentService departmentService;
+    
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
 
     @Autowired
-    public UpdateNewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
+    public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final DepartmentService departmentService, final ConnectionDemandService connectionDemandService,
             final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
@@ -88,6 +91,7 @@ public class UpdateNewConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
 

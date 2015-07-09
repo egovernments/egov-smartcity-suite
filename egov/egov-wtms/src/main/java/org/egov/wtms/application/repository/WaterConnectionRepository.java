@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.wtms.application.entity.WaterConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,5 +53,8 @@ public interface WaterConnectionRepository extends JpaRepository<WaterConnection
     WaterConnection findByConsumerCode(String consumerCode);
 
     List<WaterConnection> findByPropertyIdentifier(String propertyIdentifier);
+    
+    @Query(" from WaterConnection WC where WC.propertyIdentifier=:propertyIdentifier and WC.parentConnection is null")
+    WaterConnection findParentWaterConnection(@Param("propertyIdentifier")final String propertyIdentifier);
 
 }

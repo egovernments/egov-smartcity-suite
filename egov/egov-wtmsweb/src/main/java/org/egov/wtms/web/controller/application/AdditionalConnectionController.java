@@ -39,10 +39,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +50,7 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -63,12 +62,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class AdditionalConnectionController extends GenericConnectionController{
+public class AdditionalConnectionController extends GenericConnectionController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -76,27 +75,33 @@ public class AdditionalConnectionController extends GenericConnectionController{
     private ApplicationTypeService applicationTypeService;
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
+    @Autowired
+    private WaterConnectionService waterConnectionService;
+
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
         addConnection.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
         return waterConnectionDetailsService.getAllActiveDocumentNames(addConnection.getApplicationType());
     }
-    
-    @RequestMapping(value = "/addconnection/{applicationNumber}", method = GET)
-    public String showAdditionalApplicationForm(final Model model,@PathVariable final String applicationNumber) {
+
+    @RequestMapping(value = "/addconnection/{applicationNumber}", method = RequestMethod.GET)
+    public String showAdditionalApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(applicationNumber);
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        model.addAttribute("parentConnection", waterConnectionService.findParentWaterConnection(waterConnectionDetails
+                .getConnection().getPropertyIdentifier()));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("addConnection",new WaterConnectionDetails());
+        model.addAttribute(
+                "connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(
+                        waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("addConnection", new WaterConnectionDetails());
         model.addAttribute("mode", "addconnection");
         return "addconnection-form";
     }
-    
-    @RequestMapping(value = "/addConnection-create", method = POST)
+
+    @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request) {
@@ -134,24 +139,8 @@ public class AdditionalConnectionController extends GenericConnectionController{
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition,
-                approvalComent);
-        return "";
+        addConnection.setApplicationDate(new Date());
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent);
+        return "redirect:/application/application-success?applicationNumber=" + addConnection.getApplicationNumber();
     }
-    
-    @RequestMapping(value = "/addConnection-success", method = GET)
-    public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final HttpServletRequest request, final Model model) {
-        if (request.getParameter("applicationNumber") != null)
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumber(request.getParameter("applicationNumber"));
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
-        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
-
-    }
-
-
 }

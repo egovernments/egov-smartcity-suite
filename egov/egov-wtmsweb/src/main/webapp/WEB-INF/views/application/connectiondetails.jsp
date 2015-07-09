@@ -39,6 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.connection.details" />
@@ -133,5 +134,48 @@
 		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="sumpCapacity" path="sumpCapacity" required="required" />
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 	</div>
+	<c:if test="${mode=='addconnection'}">
+		<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.plotarea.assessment" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="plotSize" path="plotSize" required="required" />
+			<form:errors path="plotSize" cssClass="add-margin error-msg" />		
+		</div>
+	</c:if>
 </div>
+<c:if test="${mode=='addconnection'}">
+	<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
+	<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
+	<form:hidden path="connection.mobileNumber" value="${waterConnectionDetails.connection.mobileNumber}"/>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.plintarea.assessment" /><span class="mandatory"></span></label> 
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="plinthArea" path="plinthArea" required="required" />
+			<form:errors path="plinthArea" cssClass="add-margin error-msg" />		
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.no.of.persons" /><span class="mandatory"></span></label> 
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="numberOfPerson" path="numberOfPerson" required="required" />
+			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.connection.order" /><span class="mandatory"></span></label> 
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="connectionOrder" path="connectionOrder" required="required" />
+			<form:errors path="connectionOrder" cssClass="add-margin error-msg" />		
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.addconnection.reason" /><span class="mandatory"></span></label> 
+		<div class="col-sm-8 add-margin">
+			<form:textarea class="form-control patternvalidation" data-pattern="string" maxlength="1024" id="connectionReason" path="connectionReason" required="required" />
+			<form:errors path="connectionReason" cssClass="add-margin error-msg" />		
+		</div>
+	</div>
+</c:if>
 					

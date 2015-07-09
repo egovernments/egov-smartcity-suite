@@ -61,7 +61,7 @@
     </definition>
     
 	 <definition name="application/application-success" extends="base_layout">	 
-        <put-attribute name="page-title" value="title.newconnection.ack" cascade="true"/>
+        <put-attribute name="page-title" value="title.ack" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/application-success.jsp"/>
     </definition>
      <definition name="applicationSearch-newForm" extends="base_layout">	 
@@ -87,4 +87,5 @@
         <put-attribute name="page-title" value="title.addconnection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/addconnection-form.jsp"/>
     </definition>
+    
 </tiles-definitions>

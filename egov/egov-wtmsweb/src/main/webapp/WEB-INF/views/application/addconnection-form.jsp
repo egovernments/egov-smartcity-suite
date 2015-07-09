@@ -44,7 +44,7 @@
 <div class="row">
 	<div class="col-md-12">
 	
-		<form:form role="form" action="addConnection-create"
+		<form:form action="addConnection-create"
 			modelAttribute="addConnection" id="addWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -70,8 +70,7 @@
 					<button type="reset" class="btn btn-primary" id="reset">
 						<spring:message code="lbl.clear" />
 					</button>
-					<a href="javascript:void(0);" id="closeComplaints"
-						class="btn btn-primary" onclick="self.close()"><spring:message
+					<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message
 							code='lbl.close' /></a>
 				</div>
 			</div>
