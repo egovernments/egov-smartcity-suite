@@ -134,10 +134,6 @@ document.viewform.submit();
 								<display:column	title="Assessment Number" property="assessmentNum" media="csv" />
 								<display:column	title="Assessment Number" property="assessmentNum" media="xml" />
 								<display:column	title="Assessment Number" property="assessmentNum" media="excel" />
-								<display:column property="parcelId"
-									title="Parcel Id"
-									headerClass="bluebgheadtd" class="blueborderfortd"
-									style="text-align:center" />
 								<display:column property="ownerName"
 									title="Owner Name"
 									headerClass="bluebgheadtd" class="blueborderfortd"

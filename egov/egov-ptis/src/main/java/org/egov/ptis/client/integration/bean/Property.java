@@ -59,8 +59,6 @@ import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class Property {
@@ -80,7 +78,6 @@ public abstract class Property {
 	private String doorNumber;
 	private String wardName;
 	private DCBReport dcbReport = new DCBReport();
-	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private BillReceiptInfo billreceiptInfo;
 	private String receiptNo;
 	private int infoFlag;
@@ -168,13 +165,11 @@ public abstract class Property {
 			return;
 		}
 		this.propertyID = basicProperty.getUpicNo();
-		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo());
-		if (basicProperty.getPropertyID() != null
-				&& basicProperty.getPropertyID().getWard() != null) {
+		this.citizenName = basicProperty.getFullOwnerName();
+		if (basicProperty.getPropertyID() != null && basicProperty.getPropertyID().getWard() != null) {
 			this.wardName = basicProperty.getPropertyID().getWard().getName();
 		}
-		if (basicProperty.getAddress() != null
-				&& basicProperty.getAddress().getHouseNoBldgApt() != null) {
+		if (basicProperty.getAddress() != null && basicProperty.getAddress().getHouseNoBldgApt() != null) {
 			this.doorNumber = basicProperty.getAddress().getHouseNoBldgApt();
 		}
 		LOGGER.info("Got basic info...");
@@ -247,8 +242,7 @@ public abstract class Property {
 	}
 
 	public String getFullAddress() {
-		String address = ptisCacheMgr.buildAddress(basicProperty);
-		return address;
+		return basicProperty.getAddress().toString();
 	}
 
 	public String getPropertyID() {

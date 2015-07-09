@@ -80,11 +80,8 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PtDemandARV;
 import org.egov.ptis.domain.entity.property.SearchResult;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
-import org.egov.ptis.utils.PTISCacheManager;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -94,7 +91,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,7 +107,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		return entityManager.unwrap(Session.class);
 	}
 
-	PTISCacheManager ptisManager = new PTISCacheManager();
 	@Autowired
 	private BoundaryService boundaryService;
 	@Autowired
@@ -140,23 +135,20 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		List<PropertyOwnerInfo> ownerSet = null;
 		try {
 			basicProperty = basicPropertyDAO.getBasicPropertyByRegNum(regNum);
 			if (basicProperty != null) {
 				property = basicProperty.getProperty();
 				if (property != null) {
-					ownerSet = basicProperty.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(regNum);
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());
-					retSearchResult.setAssesseeFullName(ptisManager.buildOwnerFullName(ownerSet));
-					retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+					retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+					retSearchResult.setAddress(basicProperty.getAddress().toString());
 					retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));
 				}
 			} else {
-				throw new PropertyNotFoundException(
-						"Search Failed No Such Property Existing : BasicProperty is Null");
+				throw new PropertyNotFoundException("Search Failed No Such Property Existing : BasicProperty is Null");
 			}
 		} catch (HibernateException e) {
 			PropertyNotFoundException pnf = new PropertyNotFoundException(
@@ -164,8 +156,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			pnf.initCause(e);
 			throw pnf;
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("PropertyNotFoundException in  getBasicPropertyByRegNum : "
-					+ e.getMessage());
+			LOGGER.error("PropertyNotFoundException in  getBasicPropertyByRegNum : " + e.getMessage());
 			throw new PropertyNotFoundException("Exception in  getBasicPropertyByRegNum");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getBasicPropertyByRegNum : " + e.getMessage());
@@ -183,7 +174,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		List<PropertyOwnerInfo> ownerSet = null;
 		BigDecimal currDemand = BigDecimal.ZERO;
 		BigDecimal currDemandDue = BigDecimal.ZERO;
 		BigDecimal currCollection = BigDecimal.ZERO;
@@ -197,7 +187,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.debug("getPropertyByPropertyId : property id : " + property.getId());
-					ownerSet = basicProperty.getPropertyOwnerInfo();
 					Map<String, BigDecimal> DmdCollMap = ptDemandDAO.getDemandCollMap(property);
 					currDemand = DmdCollMap.get(PropertyTaxConstants.CURR_DMD_STR);
 					arrDemand = DmdCollMap.get(PropertyTaxConstants.ARR_DMD_STR);
@@ -212,11 +201,10 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());
 					// building Owner name either from normal or local
-					retSearchResult.setAssesseeFullName(ptisManager.buildOwnerFullName(ownerSet));
+					retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
 					// building address according to the property id which gives
 					// basic property
-					retSearchResult.setAddress(ptisManager
-							.buildAddressByImplemetation(propertyAddress));
+					retSearchResult.setAddress(propertyAddress.toString());
 					if (currDemand != null) {
 						retSearchResult.setCurrDemand(currDemand);
 					}
@@ -249,11 +237,9 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 */
 
 	@Override
-	public List getPropertyByBoundry(Integer zoneID, Integer wardID, Integer colonyID)
-			throws PropertyNotFoundException {
+	public List getPropertyByBoundry(Integer zoneID, Integer wardID, Integer colonyID) throws PropertyNotFoundException {
 		if (zoneID == null || wardID == null || colonyID == null) {
-			throw new EGOVRuntimeException(
-					"Parameters not Set during PropertySearch based on Boundry!!");
+			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>colonyId" + colonyID);
 		BasicProperty basicProperty = null;
@@ -261,9 +247,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		PropertyID propertyID = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		Address address = null;
 		List retList = null;
-		List ownerSet = null;
 		try {
 			List propIdList = propertyIDDAO.getPropertyIDByBoundry(zoneID, wardID, colonyID);
 			if (propIdList != null && !propIdList.isEmpty()) {
@@ -276,18 +260,13 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 						property = (PropertyImpl) basicProperty.getProperty();
 						if (property != null) {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
-							address = basicProperty.getAddress();
-							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = basicProperty.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
-							retSearchResult.setAssesseeFullName(ptisManager
-									.buildOwnerFullName(ownerSet));
-							retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+							retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+							retSearchResult.setAddress(basicProperty.getAddress().toString());
 							// Get the Basic Property ID and set it
-							retSearchResult
-									.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
+							retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
 							// by
 							// Rajalskhmi
 							// D.N.
@@ -324,11 +303,10 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 * ---------
 	 */
 	@Override
-	public List getPropertyIDByBoundryForWardBlockStreet(Integer wardID, Integer blockID,
-			Integer streetID) throws PropertyNotFoundException {
+	public List getPropertyIDByBoundryForWardBlockStreet(Integer wardID, Integer blockID, Integer streetID)
+			throws PropertyNotFoundException {
 		if (wardID == null || blockID == null || streetID == null) {
-			throw new EGOVRuntimeException(
-					"Parameters not Set during PropertySearch based on Boundry!!");
+			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 		LOGGER.info(">>>>>>>>>>>>>streetID" + streetID);
 		LOGGER.info("inside ward block street ");
@@ -338,12 +316,9 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		PropertyID propertyID = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		Address address = null;
 		List retList = null;
-		List ownerSet = null;
 		try {
-			List propIdList = propertyIDDAO.getPropertyIDByBoundryForWardBlockStreet(wardID,
-					blockID, streetID);
+			List propIdList = propertyIDDAO.getPropertyIDByBoundryForWardBlockStreet(wardID, blockID, streetID);
 			if (propIdList != null && !propIdList.isEmpty()) {
 				retList = new ArrayList();
 				for (Iterator iter = propIdList.iterator(); iter.hasNext();) {
@@ -354,18 +329,13 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 						property = (PropertyImpl) basicProperty.getProperty();
 						if (property != null) {
 							LOGGER.info("::::::::::::::::::::property" + property.getId());
-							address = basicProperty.getAddress();
-							LOGGER.info(">>>>>>>>>>>>>5" + address);
-							ownerSet = basicProperty.getPropertyOwnerInfo();
 							retSearchResult = new SearchResult();
 							retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
-							retSearchResult.setAssesseeFullName(ptisManager
-									.buildOwnerFullName(ownerSet));
-							retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+							retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+							retSearchResult.setAddress(basicProperty.getAddress().toString());
 							// Get the Basic Property ID and set it
-							retSearchResult
-									.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
+							retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
 							// by
 							// Rajalskhmi
 							// D.N.
@@ -403,36 +373,31 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 */
 
 	@Override
-	public SearchResult getPropertyByBoundryAndMunNo(Integer zoneID, Integer wardID,
-			Integer colonyID, Integer munNo) throws PropertyNotFoundException {
+	public SearchResult getPropertyByBoundryAndMunNo(Integer zoneID, Integer wardID, Integer colonyID, Integer munNo)
+			throws PropertyNotFoundException {
 		if (zoneID == null || wardID == null || colonyID == null || munNo == null) {
-			throw new EGOVRuntimeException(
-					"Parameters not Set during PropertySearch based on Boundry!!");
+			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 
 		BasicProperty basicProperty = null;
 		PropertyID propertyID = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		List ownerSet = null;
 		try {
 
 			// These are IDs not Numbers but in database FK is number not id so
 			// search acc to boundry numbers
-			propertyID = propertyIDDAO
-					.getPropertyByBoundryAndMunNo(zoneID, wardID, colonyID, munNo);
+			propertyID = propertyIDDAO.getPropertyByBoundryAndMunNo(zoneID, wardID, colonyID, munNo);
 			if (propertyID != null) {
 				basicProperty = propertyID.getBasicProperty();
 				if (basicProperty != null) {
 					property = basicProperty.getProperty();
 					if (property != null) {
 						retSearchResult = new SearchResult();
-						ownerSet = basicProperty.getPropertyOwnerInfo();
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 						retSearchResult.setUpicNumber(basicProperty.getUpicNo());
-						retSearchResult.setAssesseeFullName(ptisManager
-								.buildOwnerFullName(ownerSet));
-						retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+						retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+						retSearchResult.setAddress(basicProperty.getAddress().toString());
 						// Get the Basic Property ID and set it
 						retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
 					}
@@ -471,11 +436,10 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 * ownerNames and property info .
 	 */
 	@Override
-	public List getPropertyByBoundryAndOwnerName(Integer boundryID, String ownerName,
-			String phNumber) throws PropertyNotFoundException {
+	public List getPropertyByBoundryAndOwnerName(Integer boundryID, String ownerName, String phNumber)
+			throws PropertyNotFoundException {
 		if (boundryID == null) {
-			throw new EGOVRuntimeException(
-					"Parameters not Set during PropertySearch based on Boundry!!");
+			throw new EGOVRuntimeException("Parameters not Set during PropertySearch based on Boundry!!");
 		}
 
 		Query qry;
@@ -511,8 +475,8 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				// pi.propertyOwnerSet.Owner.lastName
 				// like
 				// :lastName
-				LOGGER.info("Query String for ownername" + qryStr.toString() + " ........ "
-						+ ownerName + "///////" + ownerName);
+				LOGGER.info("Query String for ownername" + qryStr.toString() + " ........ " + ownerName + "///////"
+						+ ownerName);
 				qry = getCurrentSession().createQuery(qryStr.toString());
 
 				// phoneNumber is not null create query and set phone number to
@@ -550,8 +514,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			exception.initCause(e);
 			throw exception;
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("PropertyNotFoundException in  getPropertyByBoundryAndOwnerName : "
-					+ e.getMessage());
+			LOGGER.error("PropertyNotFoundException in  getPropertyByBoundryAndOwnerName : " + e.getMessage());
 			throw new PropertyNotFoundException("Exception in  getPropertyByBoundryAndOwnerName");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByBoundryAndOwnerName : " + e.getMessage());
@@ -579,7 +542,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		Property property = null;
 		SearchResult retSearchResult = null;
-		List ownerSet = null;
 		List retList = null;
 		try {
 			List basicPropertyList = basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldMuncipalNo);
@@ -589,14 +551,12 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					basicProperty = (BasicProperty) iter.next();
 					property = basicProperty.getProperty();
 					if (property != null) {
-						ownerSet = basicProperty.getPropertyOwnerInfo();
 						retSearchResult = new SearchResult();
 
 						retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 						retSearchResult.setUpicNumber(basicProperty.getUpicNo());
-						retSearchResult.setAssesseeFullName(ptisManager
-								.buildOwnerFullName(ownerSet));
-						retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+						retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+						retSearchResult.setAddress(basicProperty.getAddress().toString());
 						// Get the Basic Property ID and set it
 						retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
 						// by
@@ -617,8 +577,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			exception.initCause(e);
 			throw exception;
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("PropertyNotFoundException in  getPropertyByOldMuncipalNo : "
-					+ e.getMessage());
+			LOGGER.error("PropertyNotFoundException in  getPropertyByOldMuncipalNo : " + e.getMessage());
 			throw new PropertyNotFoundException("Exception in  getPropertyByOldMuncipalNo");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByOldMuncipalNo : " + e.getMessage());
@@ -737,8 +696,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 * and khata number
 	 */
 	@Override
-	public SearchResult getPropertyByKhataNumber(String khataNumber)
-			throws PropertyNotFoundException {
+	public SearchResult getPropertyByKhataNumber(String khataNumber) throws PropertyNotFoundException {
 		if (khataNumber == null || khataNumber.trim().equals("")) {
 			throw new EGOVRuntimeException("khataNumber  is not Set during PropertySearch !!");
 		}
@@ -746,7 +704,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BasicProperty basicProperty = null;
 		PropertyImpl property = null;
 		SearchResult retSearchResult = null;
-		List ownerSet = null;
 		try {
 			basicProperty = basicPropertyDAO.getBasicPropertyByRegNum(khataNumber);
 
@@ -754,13 +711,12 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				property = (PropertyImpl) basicProperty.getProperty();
 				if (property != null) {
 					LOGGER.info("property id" + property.getId());
-					ownerSet = basicProperty.getPropertyOwnerInfo();
 					retSearchResult = new SearchResult();
 					retSearchResult.setFolioNumber(basicProperty.getOldMuncipalNum());
 					retSearchResult.setUpicNumber(basicProperty.getUpicNo());
 					// building Owner name either from normal or local
-					retSearchResult.setAssesseeFullName(ptisManager.buildOwnerFullName(ownerSet));
-					retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+					retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
+					retSearchResult.setAddress(basicProperty.getAddress().toString());
 				}
 			}
 
@@ -774,8 +730,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			exception.initCause(e);
 			throw exception;
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("PropertyNotFoundException in  getPropertyByKhataNumber : "
-					+ e.getMessage());
+			LOGGER.error("PropertyNotFoundException in  getPropertyByKhataNumber : " + e.getMessage());
 			throw new PropertyNotFoundException("Exception in  getPropertyByKhataNumber");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getPropertyByKhataNumber : " + e.getMessage());
@@ -785,15 +740,14 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	}
 
 	@Override
-	public List getPropertyByRvAmout(Integer boundaryID, Character RvSel, String lowVal,
-			String HighVal) throws PropertyNotFoundException {
+	public List getPropertyByRvAmout(Integer boundaryID, Character RvSel, String lowVal, String HighVal)
+			throws PropertyNotFoundException {
 		LOGGER.info(">>>>>>>>>>inside getPropertyByRvAmout>>>>>>>>>>>>>>");
 		if (RvSel == null || RvSel.equals("")) {
-			throw new EGOVRuntimeException(
-					"RV amout selection was not Set during PropertySearch based on Boundry!!");
+			throw new EGOVRuntimeException("RV amout selection was not Set during PropertySearch based on Boundry!!");
 		}
-		LOGGER.info("after query execution--------------RvSel--" + RvSel.charValue()
-				+ "---------lowVal----------" + lowVal + "--------HighVal--------" + HighVal);
+		LOGGER.info("after query execution--------------RvSel--" + RvSel.charValue() + "---------lowVal----------"
+				+ lowVal + "--------HighVal--------" + HighVal);
 
 		Query qry;
 		try {
@@ -801,13 +755,11 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 
 			Boundary boundary = boundaryService.getBoundaryById(boundaryID.longValue());
 			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-			String finEndDate = sdf.format(org.egov.infstr.utils.DateUtils.getFinancialYear()
-					.getEndOnOnDate());
+			String finEndDate = sdf.format(org.egov.infstr.utils.DateUtils.getFinancialYear().getEndOnOnDate());
 			StringBuffer qryStr = new StringBuffer(2000);
 			qryStr.append("select distinct pi From PropertyImpl pi inner join pi.basicProperty bp inner join "
-					+ "pi.ptDemandARVSet rv where rv.toDate = to_date('"
-					+ finEndDate
-					+ "','dd/mm/yyyy') and " + "pi.status='A' and bp.active='Y' ");
+					+ "pi.ptDemandARVSet rv where rv.toDate = to_date('" + finEndDate + "','dd/mm/yyyy') and "
+					+ "pi.status='A' and bp.active='Y' ");
 			boolean rvLess = false;
 			boolean rvGreater = false;
 			boolean rvBetween = false;
@@ -816,8 +768,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			if (boundaryID != null && boundaryID.intValue() != 0) {
 				seatFound = true;
 				qryStr.append(" and bp.boundary = :boundary");
-				LOGGER.info(">>>>>>>>>>>>>>Search by seat no>>>>>>>>>>>>> " + qryStr.toString()
-						+ "....." + boundaryID);
+				LOGGER.info(">>>>>>>>>>>>>>Search by seat no>>>>>>>>>>>>> " + qryStr.toString() + "....." + boundaryID);
 			}
 			if (RvSel.charValue() == '1') {
 				rvLess = true;
@@ -861,9 +812,8 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			LOGGER.info("before query execution");
 			List propertyList = qry.list();
 			if (propertyList == null) {
-				throw new PropertyNotFoundException(
-						"No Properties Found with the matching Criteria: lowval:" + lowVal
-								+ ",highval:" + HighVal);
+				throw new PropertyNotFoundException("No Properties Found with the matching Criteria: lowval:" + lowVal
+						+ ",highval:" + HighVal);
 			} else {
 				if (propertyList.size() > 200) {
 					List errorList = new ArrayList();
@@ -879,8 +829,8 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	}
 
 	@Override
-	public List getPropertyByDmdAmout(Integer boundaryID, Character DmdSel, Character DmdChoice,
-			String lowVal, String HighVal) throws PropertyNotFoundException {
+	public List getPropertyByDmdAmout(Integer boundaryID, Character DmdSel, Character DmdChoice, String lowVal,
+			String HighVal) throws PropertyNotFoundException {
 
 		Map dmdMap = new HashMap();
 		LOGGER.info("inside getPropertyByDmdAmout");
@@ -888,8 +838,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		BigDecimal lowerLimit = BigDecimal.ZERO;
 		BigDecimal upperLimit = BigDecimal.ZERO;
 		LOGGER.info("lowerLimit -----------" + lowerLimit + "---upperLimit-----------" + upperLimit);
-		LOGGER.info("DmdSel------------" + DmdSel.charValue() + "------DmdChoice-----------"
-				+ DmdChoice.charValue());
+		LOGGER.info("DmdSel------------" + DmdSel.charValue() + "------DmdChoice-----------" + DmdChoice.charValue());
 		// --new DCB changes SearchPropertyByDemand searchPropertyByDemand = new
 		// SearchPropertyByDemand();
 		// --new DCB changes dmdMap =
@@ -906,17 +855,15 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				Iterator dmdItr = dmdMap.keySet().iterator();
 				while (dmdItr.hasNext()) {
 					String pid = (String) dmdItr.next();
-					BasicProperty basiProperty = basicPropertyDAO.findById(
-							Integer.valueOf(pid), false);
+					BasicProperty basiProperty = basicPropertyDAO.findById(Integer.valueOf(pid), false);
 					PropertyImpl property = (PropertyImpl) basiProperty.getProperty();
 					propList.add(property);
 				}
 			}
 			LOGGER.info("the size of the list-->" + propList.size());
 			if (propList == null) {
-				throw new PropertyNotFoundException(
-						"No Properties Found with the matching Criteria: lowerLimit:" + lowVal
-								+ ",upperLimit:" + HighVal);
+				throw new PropertyNotFoundException("No Properties Found with the matching Criteria: lowerLimit:"
+						+ lowVal + ",upperLimit:" + HighVal);
 			} else {
 				return getSearchResultList(propList);
 			}
@@ -958,37 +905,31 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							retSearchResult.setUpicNumber(basicProperty.getUpicNo());
 							address = basicProperty.getAddress();
 							if (address != null) {
-								retSearchResult.setAddress(ptisManager.buildAddress(basicProperty));
+								retSearchResult.setAddress(basicProperty.getAddress().toString());
 							}
-							retSearchResult.setAssesseeFullName(ptisManager
-									.buildOwnerFullName(basicProperty));
+							retSearchResult.setAssesseeFullName(basicProperty.getFullOwnerName());
 							// Get the Basic Property ID and set it
-							retSearchResult
-									.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
+							retSearchResult.setBasicPropertyId(String.valueOf(basicProperty.getId()));// Added
 							// by
 							// Rajalskhmi
 							// D.N.
-							//FIX ME
-							/*Set<PtDemandARV> ptDemandARVSet = basicProperty.getProperty()
-									.getPtDemandARVSet();
-							if (ptDemandARVSet != null && !ptDemandARVSet.isEmpty()) {
-								for (PtDemandARV ptDmdARV : ptDemandARVSet) {
-									if (ptDmdARV != null) {
-										if (ptDmdARV.getArv() != null
-												&& !ptDmdARV.getArv().equals("")) {
-											existARV = ptDmdARV.getArv();
-										}
-									}
-								}
-							}*/
+							// FIX ME
+							/*
+							 * Set<PtDemandARV> ptDemandARVSet =
+							 * basicProperty.getProperty() .getPtDemandARVSet();
+							 * if (ptDemandARVSet != null &&
+							 * !ptDemandARVSet.isEmpty()) { for (PtDemandARV
+							 * ptDmdARV : ptDemandARVSet) { if (ptDmdARV !=
+							 * null) { if (ptDmdARV.getArv() != null &&
+							 * !ptDmdARV.getArv().equals("")) { existARV =
+							 * ptDmdARV.getArv(); } } } }
+							 */
 							retSearchResult.setCurrYearArv(existARV.toString());
 
-							demand = (BigDecimal) propertyDAO.getPropertyDemand(
-									basicProperty.getUpicNo()).get(0);
-							rebate = (BigDecimal) propertyDAO.getPropertyRebate(
-									basicProperty.getUpicNo()).get(0);
-							collection = (BigDecimal) propertyDAO.getPropertyCollection(
-									basicProperty.getUpicNo()).get(0);
+							demand = (BigDecimal) propertyDAO.getPropertyDemand(basicProperty.getUpicNo()).get(0);
+							rebate = (BigDecimal) propertyDAO.getPropertyRebate(basicProperty.getUpicNo()).get(0);
+							collection = (BigDecimal) propertyDAO.getPropertyCollection(basicProperty.getUpicNo()).get(
+									0);
 
 							if (demand != null && !demand.equals(BigDecimal.ZERO)) {
 								currDemand = demand;
@@ -1069,8 +1010,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 			exception.initCause(e);
 			throw exception;
 		} catch (PropertyNotFoundException e) {
-			LOGGER.error("PropertyNotFoundException in  getInActivePropertyByBoundary : "
-					+ e.getMessage());
+			LOGGER.error("PropertyNotFoundException in  getInActivePropertyByBoundary : " + e.getMessage());
 			throw new PropertyNotFoundException("Exception in  getInActivePropertyByBoundary");
 		} catch (Exception e) {
 			LOGGER.error("Exception in  getInActivePropertyByBoundary : " + e.getMessage());
@@ -1099,8 +1039,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 		try {
 
 			Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-			Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module,
-					new Date());
+			Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
 			if (mobileNum != null && !mobileNum.equals("")) {
 				Query qry = null;
@@ -1139,8 +1078,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 				// Getting current installment property always
 
 				Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-				Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module,
-						new Date());
+				Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 				Query qry = null;
 				qryStr.append("From PropertyImpl pi left join fetch pi.basicProperty bp  where  bp.upicNo like :billNumber  and pi.isDefaultProperty='Y' and pi.status='A' and pi.installment = :Installment ");
 				qry = getCurrentSession().createQuery(qryStr.toString());
@@ -1180,8 +1118,8 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 */
 
 	@Override
-	public List getPropertyByBoundryAndOwnerNameAndHouseNo(Integer boundryID, String ownerName,
-			String newHouseNo, String oldHouseNo) throws PropertyNotFoundException {
+	public List getPropertyByBoundryAndOwnerNameAndHouseNo(Integer boundryID, String ownerName, String newHouseNo,
+			String oldHouseNo) throws PropertyNotFoundException {
 		Query qry;
 		List propertyList = new ArrayList();
 		try {
@@ -1191,8 +1129,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 
 				StringBuffer qryStr = new StringBuffer(2000);
 				qryStr.append("select distinct pi From PropertyImpl pi left join fetch pi.basicProperty bp left join fetch bp.propertyID ppid left join pi.propertyOwnerSet ownerSet where  pi.status='A' and pi.isDefaultProperty='Y' and bp.active='Y'  ");
-				LOGGER.info("searching for boundary " + qryStr.toString() + "boundaryId"
-						+ boundryID);
+				LOGGER.info("searching for boundary " + qryStr.toString() + "boundaryId" + boundryID);
 				boolean bndryFound = false;
 				boolean wardBndryFound = false;
 				boolean areaBndryFound = false;
@@ -1274,19 +1211,16 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 	 *             when mandatory fields not passed
 	 */
 	@Override
-	public List<Property> getPropertyByObjectionDetails(Long propertyTypeMasterId,
-			String objectionNumber, Date fromObjection, Date toObjection)
-			throws ValidationException {
+	public List<Property> getPropertyByObjectionDetails(Long propertyTypeMasterId, String objectionNumber,
+			Date fromObjection, Date toObjection) throws ValidationException {
 		if ((objectionNumber == null || objectionNumber.trim().isEmpty())
 				&& (fromObjection == null && toObjection == null))
 			throw new ValidationException("ObjectioNumber or ObjectionDate is mandatory",
 					"ObjectioNumber or ObjectionDate is mandatory");
-		Criteria propertyCriteria = getCurrentSession().createCriteria(PropertyImpl.class,
-				"propertyImpl")
-				.add(Restrictions.eq("status", PropertyTaxConstants.STATUS_ISACTIVE));
+		Criteria propertyCriteria = getCurrentSession().createCriteria(PropertyImpl.class, "propertyImpl").add(
+				Restrictions.eq("status", PropertyTaxConstants.STATUS_ISACTIVE));
 		DetachedCriteria detachCrtObjection = DetachedCriteria.forClass(Objection.class);
-		detachCrtObjection.setProjection(Projections.projectionList().add(
-				Projections.property("basicProperty")));
+		detachCrtObjection.setProjection(Projections.projectionList().add(Projections.property("basicProperty")));
 		if (propertyTypeMasterId != null && propertyTypeMasterId > 0) {
 			propertyCriteria.createAlias("propertyDetail", "propertyDetail");
 			propertyCriteria.createAlias("propertyDetail.propertyTypeMaster", "propertyTypeMaster");
@@ -1332,8 +1266,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					LOGGER.info("boundary.obj................" + boundary);
 					if (boundary != null) {
 						String boundryType = boundary.getBoundaryType().getName();
-						LOGGER.info("testQry executed.......boundryType................."
-								+ boundryType);
+						LOGGER.info("testQry executed.......boundryType................." + boundryType);
 						StringBuffer qryStr = new StringBuffer(2000);
 						qryStr.append(
 								"select EGPTP.ID_PROPERTY from egpt_property egptp left outer join egpt_basic_property egptb")
@@ -1348,8 +1281,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 								.append(" left outer join eg_citizen egciti on EGPTPROWN.OWNERID=EGCITI.CITIZENID")
 								.append(" where EGPTP.STATUS='A' and EGPTP.IS_DEFAULT_PROPERTY='Y' and EGPTB.IS_ACTIVE='Y'");
 
-						LOGGER.debug("searching for boundary " + qryStr.toString() + "boundaryId"
-								+ boundryID);
+						LOGGER.debug("searching for boundary " + qryStr.toString() + "boundaryId" + boundryID);
 						boolean zoneBndryFound = false;
 						boolean bndryFound = false;
 						boolean wardBndryFound = false;
@@ -1411,8 +1343,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 						}
 						if (queryParamMap.get(SRCH_DEFAULTER_FROM_AMOUNT) != null
 								|| queryParamMap.get(SRCH_DEFAULTER_TO_AMOUNT) != null) {
-							defaultFrmamt = (BigDecimal) queryParamMap
-									.get(SRCH_DEFAULTER_FROM_AMOUNT);
+							defaultFrmamt = (BigDecimal) queryParamMap.get(SRCH_DEFAULTER_FROM_AMOUNT);
 							defaultToAmt = (BigDecimal) queryParamMap.get(SRCH_DEFAULTER_TO_AMOUNT);
 							defaulterFound = true;
 							qryStr.append(" having sum(EGDET.AMOUNT)- sum(EGDET.AMT_COLLECTED) between :defaultFrmAmt and :defaultToAmt ");

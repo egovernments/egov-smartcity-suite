@@ -96,8 +96,6 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.notice.PtNotice;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -109,8 +107,8 @@ import com.lowagie.text.pdf.PdfWriter;
 
 @ParentPackage("egov")
 @Results({
-		@Result(name = "success", location = "fileStream", params = { "contentType",
-				"${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
+		@Result(name = "success", location = "fileStream", params = { "contentType", "${contentType}",
+				"contentDisposition", "attachment; filename=${fileName}" }),
 		@Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp") })
 @Namespace("/reports")
 public class SearchNoticesAction extends SearchFormAction {
@@ -127,8 +125,7 @@ public class SearchNoticesAction extends SearchFormAction {
 	private static final String BILL_ORDER_BY = " order by to_number(regexp_substr("
 			+ "nvl2(notice.basicProperty.address.subNumber, "
 			+ "concat(notice.basicProperty.address.houseNo, '/', notice.basicProperty.address.subNumber), "
-			+ "notice.basicProperty.address.houseNo), '"
-			+ PATTERN_BEGINS_WITH_1TO9
+			+ "notice.basicProperty.address.houseNo), '" + PATTERN_BEGINS_WITH_1TO9
 			+ "')), nvl2(notice.basicProperty.address.subNumber, "
 			+ "concat(notice.basicProperty.address.houseNo, '/', notice.basicProperty.address.subNumber), "
 			+ "notice.basicProperty.address.houseNo) asc";
@@ -155,8 +152,8 @@ public class SearchNoticesAction extends SearchFormAction {
 	@Autowired
 	private PropertyTypeMasterDAO propertyTypeMasterDAO;
 	@Autowired
-        @Qualifier("fileStoreService")
-        protected FileStoreService fileStoreService;
+	@Qualifier("fileStoreService")
+	protected FileStoreService fileStoreService;
 
 	public SearchNoticesAction() {
 		super();
@@ -174,11 +171,10 @@ public class SearchNoticesAction extends SearchFormAction {
 		LOGGER.debug("Entered into search method");
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Owner name : " + ownerName + ", " + "Notice Type : " + noticeType + ", "
-					+ "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId + ", "
-					+ "Property type :" + propertyType + ", " + "Notice Number : " + noticeNumber
-					+ ", " + "Notice FromDate : " + noticeFromDate + ", " + "noticeToDate : "
-					+ noticeToDate + ", " + "Property Id : " + indexNumber + ", "
+			LOGGER.debug("Owner name : " + ownerName + ", " + "Notice Type : " + noticeType + ", " + "Zone Id : "
+					+ zoneId + ", " + "Ward Id : " + wardId + ", " + "Property type :" + propertyType + ", "
+					+ "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
+					+ "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
 					+ "House Number : " + houseNumber);
 		}
 
@@ -186,12 +182,10 @@ public class SearchNoticesAction extends SearchFormAction {
 		super.search();
 		noticeList = searchResult.getList();
 		if (noticeList != null && !noticeList.isEmpty()) {
-			LOGGER.debug("Number of notices before owner name (if input given) filter : "
-					+ noticeList.size());
+			LOGGER.debug("Number of notices before owner name (if input given) filter : " + noticeList.size());
 			searchOwnerNamePropType();
 		}
-		LOGGER.debug("Number of notices after owner name (if input given) filter : "
-				+ noticeList.size());
+		LOGGER.debug("Number of notices after owner name (if input given) filter : " + noticeList.size());
 		LOGGER.debug("Exit from search method");
 
 		return EDIT;
@@ -212,12 +206,12 @@ public class SearchNoticesAction extends SearchFormAction {
 
 		for (PtNotice ptNotice : noticeList) {
 			try {
-			        if (ptNotice!=null && ptNotice.getFileStore()!=null) {
-                                    FileStoreMapper fsm=ptNotice.getFileStore();
-                                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
-                                    byte[] bFile =FileUtils.readFileToByteArray(file);
-                                    pdfs.add(new ByteArrayInputStream(bFile));
-                                } 
+				if (ptNotice != null && ptNotice.getFileStore() != null) {
+					FileStoreMapper fsm = ptNotice.getFileStore();
+					File file = fileStoreService.fetch(fsm, PTMODULENAME);
+					byte[] bFile = FileUtils.readFileToByteArray(file);
+					pdfs.add(new ByteArrayInputStream(bFile));
+				}
 			} catch (Exception e) {
 				LOGGER.error("mergeAndDownload : Getting notice failed for notice " + ptNotice, e);
 				continue;
@@ -228,21 +222,18 @@ public class SearchNoticesAction extends SearchFormAction {
 			HttpServletResponse response = ServletActionContext.getResponse();
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			byte[] data = concatPDFs(pdfs, output);
-			response.setHeader("Content-disposition", "attachment;filename=" + "notice_"
-					+ noticeType + ".pdf");
+			response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".pdf");
 			response.setContentType("application/pdf");
 			response.setContentLength(data.length);
 			response.getOutputStream().write(data);
 
 		} catch (IOException e) {
 			LOGGER.error("Exception in Merge and Download : ", e);
-			throw new ValidationException(
-					Arrays.asList(new ValidationError("error", e.getMessage())));
+			throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
 		}
 		long endTime = System.currentTimeMillis();
 		LOGGER.debug("mergeAndDownload : End Time : " + endTime);
-		LOGGER.info("SearchNoticesAction | mergeAndDownload | Time taken(ms) "
-				+ (endTime - startTime));
+		LOGGER.info("SearchNoticesAction | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
 		LOGGER.debug("Exit from mergeAndDownload method");
 		return null;
 	}
@@ -261,20 +252,19 @@ public class SearchNoticesAction extends SearchFormAction {
 				return ERROR;
 			} else {
 				zipOutputStream = new ZipOutputStream(response.getOutputStream());
-				response.setHeader("Content-disposition", "attachment;filename=" + "notice_"
-						+ noticeType + ".zip");
+				response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".zip");
 				response.setContentType("application/zip");
 			}
 
 			for (PtNotice ptNotice : noticeList) {
 				try {
-				        if (ptNotice!=null && ptNotice.getFileStore()!=null) {
-	                                    FileStoreMapper fsm=ptNotice.getFileStore();
-	                                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
-	                                    byte[] bFile =FileUtils.readFileToByteArray(file);
-	                                    zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile),
-	                                            file.getName(), zipOutputStream);
-	                                } 
+					if (ptNotice != null && ptNotice.getFileStore() != null) {
+						FileStoreMapper fsm = ptNotice.getFileStore();
+						File file = fileStoreService.fetch(fsm, PTMODULENAME);
+						byte[] bFile = FileUtils.readFileToByteArray(file);
+						zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
+								zipOutputStream);
+					}
 				} catch (Exception e) {
 					LOGGER.error("zipAndDownload : Getting notice failed for notice " + ptNotice, e);
 					continue;
@@ -287,13 +277,11 @@ public class SearchNoticesAction extends SearchFormAction {
 		} catch (IOException e) {
 			LOGGER.error("Exception in Zip and Download : ", e);
 			e.printStackTrace();
-			throw new ValidationException(
-					Arrays.asList(new ValidationError("error", e.getMessage())));
+			throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
 		}
 		long endTime = System.currentTimeMillis();
 		LOGGER.debug("zipAndDownload : End Time : " + endTime);
-		LOGGER.info("SearchNoticesAction | zipAndDownload | Time taken(ms) "
-				+ (endTime - startTime));
+		LOGGER.info("SearchNoticesAction | zipAndDownload | Time taken(ms) " + (endTime - startTime));
 		LOGGER.debug("Exit from zipAndDownload method");
 		return null;
 	}
@@ -301,35 +289,35 @@ public class SearchNoticesAction extends SearchFormAction {
 	/**
 	 * This method only to show Bills as Bills(file stream) saved into PT system
 	 * in egpt_notice table notice_file(type blob) column.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@SkipValidation
 	public String showNotice() throws IOException {
-		PtNotice ptNotice = (PtNotice) getPersistenceService().find(
-				"from PtNotice notice where noticeNo=?", noticeNumber);
+		PtNotice ptNotice = (PtNotice) getPersistenceService().find("from PtNotice notice where noticeNo=?",
+				noticeNumber);
 		if (ptNotice == null) {
 			addActionError(getText("DocMngr.file.unavailable"));
 			return ERROR;
 		}
-		
-		if (ptNotice!=null && ptNotice.getFileStore()!=null) {
-                    FileStoreMapper fsm=ptNotice.getFileStore();
-                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
-                    byte[] bFile =FileUtils.readFileToByteArray(file);
-                    InputStream myInputStream = new ByteArrayInputStream(bFile);
-                    fileStream = myInputStream;
-                    fileName = file.getName();
-                    contentType = "application/pdf";
-                    contentLength = Long.valueOf(file.length());
+
+		if (ptNotice != null && ptNotice.getFileStore() != null) {
+			FileStoreMapper fsm = ptNotice.getFileStore();
+			File file = fileStoreService.fetch(fsm, PTMODULENAME);
+			byte[] bFile = FileUtils.readFileToByteArray(file);
+			InputStream myInputStream = new ByteArrayInputStream(bFile);
+			fileStream = myInputStream;
+			fileName = file.getName();
+			contentType = "application/pdf";
+			contentLength = Long.valueOf(file.length());
 		}
 		return SUCCESS;
 	}
 
 	public String reset() {
-		LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : "
-				+ zoneId + " wardId : " + wardId + " propertyType : " + propertyType
-				+ " noticeType : " + noticeType + " noticeNumber : " + noticeNumber
-				+ " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
+		LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
+				+ wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
+				+ noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
 				+ " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
 		ownerName = "";
 		zoneId = -1;
@@ -352,10 +340,8 @@ public class SearchNoticesAction extends SearchFormAction {
 		super.prepare();
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE,
-				ELECTION_HIERARCHY_TYPE);
-		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-				"from PropertyTypeMaster");
+						+ "and BI.isHistory='N' order by BI.name", ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
+		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy("from PropertyTypeMaster");
 
 		addDropdownData("Zone", zoneList);
 		LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
@@ -367,8 +353,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
 		LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
 		LOGGER.debug("Property type List : " + (propTypeList != null ? propTypeList : ZERO));
-		LOGGER.debug("Notice type map size : "
-				+ (noticeTypeMap != null ? noticeTypeMap.size() : ZERO));
+		LOGGER.debug("Notice type map size : " + (noticeTypeMap != null ? noticeTypeMap.size() : ZERO));
 		LOGGER.debug("Exit from prepare method");
 	}
 
@@ -394,8 +379,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		LOGGER.debug("Boundary Id : " + boundaryId);
 		Boundary bndry = null;
 		if (boundaryId != null && !boundaryId.equals(Integer.valueOf(-1))) {
-			bndry = (Boundary) getPersistenceService().find("from BoundaryImpl BI where id = ?",
-					boundaryId);
+			bndry = (Boundary) getPersistenceService().find("from BoundaryImpl BI where id = ?", boundaryId);
 		}
 		LOGGER.debug("Boundary : " + bndry);
 		LOGGER.debug("Exit from getBoundary method");
@@ -405,8 +389,8 @@ public class SearchNoticesAction extends SearchFormAction {
 	public String getPropType(String propertyType) {
 		LOGGER.debug("Entered into getPropType method");
 		LOGGER.debug("Property type id : " + propertyType);
-		PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
-				.valueOf(propertyType));
+		PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO
+				.getPropertyTypeMasterById(Integer.valueOf(propertyType));
 		LOGGER.debug("Property type : " + propTypeMstr);
 		LOGGER.debug("Exit from getPropType method");
 		return propTypeMstr.getType();
@@ -420,19 +404,18 @@ public class SearchNoticesAction extends SearchFormAction {
 	@SuppressWarnings("unchecked")
 	private void searchOwnerNamePropType() {
 		LOGGER.debug("Entered into searchOwnerNamePropType method");
-		LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", "
-				+ "Property Type : " + propertyType);
+		LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : " + propertyType);
 		LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
 				+ (noticeList != null ? noticeList.size() : ZERO));
-		if ((ownerName != null && !ownerName.equals(""))
-				|| (propertyType != null && !propertyType.equals("-1"))) {
+		if ((ownerName != null && !ownerName.equals("")) || (propertyType != null && !propertyType.equals("-1"))) {
 			List<PtNotice> noticeRmvList = new ArrayList();
 			for (PtNotice notice : noticeList) {
 				Property prop = notice.getBasicProperty().getProperty();
 				LOGGER.debug("Property : " + prop);
 				if (ownerName != null && !ownerName.equals("")) {
 					boolean isOwnerExist = true;
-					//TODO PHOENIX If all owner other than current owner is required then iterate over Mutation
+					// TODO PHOENIX If all owner other than current owner is
+					// required then iterate over Mutation
 					for (PropertyOwnerInfo propOwner : notice.getBasicProperty().getPropertyOwnerInfo()) {
 						if (!getOwnerName().equalsIgnoreCase(propOwner.getOwner().getName())) {
 							noticeRmvList.add(notice);
@@ -462,8 +445,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
 	public String getNonHistoryOwnerName(BasicProperty basicProperty) {
 		LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
-		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-		String NonHistoryOwnerName = ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo());
+		String NonHistoryOwnerName = basicProperty.getFullOwnerName();
 		LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
 		LOGGER.debug("Exit from getNonHistoryOwnerName method");
 		return NonHistoryOwnerName;
@@ -484,10 +466,10 @@ public class SearchNoticesAction extends SearchFormAction {
 
 	private Map<String, Object> getCriteriaString() {
 		LOGGER.debug("Entered into getCriteriaString method");
-		LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", "
-				+ "Ward Id : " + wardId + ", " + "Notice Number : " + noticeNumber + ", "
-				+ "Notice FromDate : " + noticeFromDate + ", " + "noticeToDate : " + noticeToDate
-				+ ", " + "Property Id : " + indexNumber + ", " + "House Number : " + houseNumber);
+		LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId + ", "
+				+ "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
+				+ "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", " + "House Number : "
+				+ houseNumber);
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<Object> params = new ArrayList<Object>();
 
@@ -498,8 +480,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
 		// To show only the active Demand Bill
 		if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType)) {
-			criteriaString = criteriaString
-					.append(" and bill.is_History = 'N' and bill.billNo = notice.noticeNo");
+			criteriaString = criteriaString.append(" and bill.is_History = 'N' and bill.billNo = notice.noticeNo");
 
 			if (org.apache.commons.lang.StringUtils.isNotBlank(partNo) && !partNo.equals("-1")) {
 				criteriaString.append(" and bp.partNo = ? ");
@@ -565,12 +546,10 @@ public class SearchNoticesAction extends SearchFormAction {
 				&& (noticeFromDate == null || noticeFromDate.equals("DD/MM/YYYY"))) {
 			addActionError(getText("mandatory.noticeFromdt"));
 		}
-		if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY")
-				&& noticeFromDate.after(new Date())) {
+		if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY") && noticeFromDate.after(new Date())) {
 			addActionError(getText("mandatory.noticeFromdtBeforeCurr"));
 		}
-		if (noticeToDate != null && !noticeToDate.equals("DD/MM/YYYY")
-				&& noticeToDate.after(new Date())) {
+		if (noticeToDate != null && !noticeToDate.equals("DD/MM/YYYY") && noticeToDate.after(new Date())) {
 			addActionError(getText("mandatory.noticeTodtBeforeCurr"));
 		}
 		if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY") && noticeToDate != null
@@ -586,8 +565,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
 		Map<String, Object> map = getCriteriaString();
 
-		List<PtNotice> noticeList = persistenceService.findAllBy(
-				prepareSearchQuery(map.get("criteriaString")),
+		List<PtNotice> noticeList = persistenceService.findAllBy(prepareSearchQuery(map.get("criteriaString")),
 				((ArrayList<Object>) map.get("params")).toArray());
 
 		LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
@@ -686,8 +664,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		return "inline; filename=report." + fileFormat.toString();
 	}
 
-	private ZipOutputStream addFilesToZip(InputStream inputStream, String noticeNo,
-			ZipOutputStream out) {
+	private ZipOutputStream addFilesToZip(InputStream inputStream, String noticeNo, ZipOutputStream out) {
 		LOGGER.debug("Entered into addFilesToZip method");
 		byte[] buffer = new byte[1024];
 		try {
@@ -702,18 +679,15 @@ public class SearchNoticesAction extends SearchFormAction {
 		} catch (IllegalArgumentException iae) {
 			LOGGER.error("Exception in addFilesToZip : ", iae);
 			iae.printStackTrace();
-			throw new ValidationException(Arrays.asList(new ValidationError("error", iae
-					.getMessage())));
+			throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
 		} catch (FileNotFoundException fnfe) {
 			LOGGER.error("Exception in addFilesToZip : ", fnfe);
 			fnfe.printStackTrace();
-			throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe
-					.getMessage())));
+			throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
 		} catch (IOException ioe) {
 			LOGGER.error("Exception in addFilesToZip : ", ioe);
 			ioe.printStackTrace();
-			throw new ValidationException(Arrays.asList(new ValidationError("error", ioe
-					.getMessage())));
+			throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
 		}
 		LOGGER.debug("Exit from addFilesToZip method");
 		return out;
@@ -724,8 +698,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		LOGGER.debug("boundary : " + boundary);
 		StringBuilder formattedStr = new StringBuilder();
 		if (boundary != null) {
-			formattedStr.append(boundary.getBoundaryNum().toString()).append("-")
-					.append(boundary.getName());
+			formattedStr.append(boundary.getBoundaryNum().toString()).append("-").append(boundary.getName());
 		}
 		LOGGER.debug("formattedStr : " + formattedStr.toString());
 		LOGGER.debug("Exit from getFormattedBndryStr method");
@@ -868,8 +841,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		this.contentLength = contentLength;
 	}
 
-	public void setDocumentManagerService(
-			DocumentManagerService<DocumentObject> documentManagerService) {
+	public void setDocumentManagerService(DocumentManagerService<DocumentObject> documentManagerService) {
 		this.documentManagerService = documentManagerService;
 	}
 

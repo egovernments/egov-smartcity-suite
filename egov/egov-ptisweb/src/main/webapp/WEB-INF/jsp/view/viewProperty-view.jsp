@@ -167,10 +167,9 @@
 			</s:if>
 			<s:if test="isUserOperator && basicProperty.isDemandActive == true}">
 				<input type="button" class="buttonsubmit" name="btnTrnsProperty"
-					id="btnTrnsProperty" value="Mutation"
-					onclick="window.location='../transfer/transferProperty!transferForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />				
+					id="btnTrnsProperty" value="Transfer Ownership"
+					onclick="window.location='../transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />				
 			</s:if>	
-		
 			<input type="button" class="buttonsubmit" name="SearchProperty"
 				id="SearchProperty" value="Search Property" onclick="window.location='../search/searchProperty-searchForm.action';" />
 			<input type="button" class="buttonsubmit" name="btnViewDCB"

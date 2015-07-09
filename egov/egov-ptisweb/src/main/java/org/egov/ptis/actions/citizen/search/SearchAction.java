@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -70,9 +69,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -80,8 +76,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
-@Results({ @Result(name = NEW, location = "search-new.jsp") ,
-    @Result(name = SearchAction.TARGET, location = "search-result.jsp") })
+@Results({ @Result(name = NEW, location = "search-new.jsp"),
+		@Result(name = SearchAction.TARGET, location = "search-result.jsp") })
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 
@@ -108,8 +104,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		return null;
 	}
 
-	@SkipValidation 
-        @Action(value = "/citizen/search/search-searchForm")
+	@SkipValidation
+	@Action(value = "/citizen/search/search-searchForm")
 	public String searchForm() {
 		return NEW;
 	}
@@ -126,10 +122,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 				setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
 			}
 			if (assessmentNum != null && !assessmentNum.equals("")) {
-                                setSearchValue("Assessment Number : " + assessmentNum);
-                        } else if (assessmentNum != null && !assessmentNum.equals("")) {
-                                setSearchValue("Assessment Number : " + assessmentNum);
-                        }
+				setSearchValue("Assessment Number : " + assessmentNum);
+			} else if (assessmentNum != null && !assessmentNum.equals("")) {
+				setSearchValue("Assessment Number : " + assessmentNum);
+			}
 			setSearchCreteria("Search By Assessment number");
 		} catch (Exception e) {
 			LOGGER.error("Exception in Search Property By Assessment ", e);
@@ -143,7 +139,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	public void validate() {
 		LOGGER.info("Entered into validate method");
 		if (org.apache.commons.lang.StringUtils.equals(mode, "assessment")) {
-			if ((org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))) {
+			if ((org.apache.commons.lang.StringUtils.isEmpty(assessmentNum) || org.apache.commons.lang.StringUtils
+					.isBlank(assessmentNum))) {
 				addActionError(getText("mandatory.assessmentNo"));
 			}
 		}
@@ -153,31 +150,26 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	private List<Map<String, String>> getSearchResults(String assessmentNumber) {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Asssessment Number : " + assessmentNumber);
-		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 
 		if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
 
-			BasicProperty basicProperty = basicPropertyDAO
-					.getBasicPropertyByPropertyID(assessmentNumber);
+			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
 			LOGGER.debug("BasicProperty : " + basicProperty);
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
-				List<PropertyOwnerInfo> ownerSet = basicProperty.getPropertyOwnerInfo();
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("assessmentNum", assessmentNumber);
-				searchResultMap.put("ownerName", ptisCachMgr.buildOwnerFullName(ownerSet));
+				searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
 				searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
-				searchResultMap.put("address",
-						ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
+				searchResultMap.put("address", basicProperty.getAddress().toString());
 				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 				searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
-				searchResultMap.put("arrDemandDue", (demandCollMap.get(ARR_DMD_STR)
-						.subtract(demandCollMap.get(ARR_COLL_STR))).toString());
-				searchResultMap
-						.put("currDemandDue", (demandCollMap.get(CURR_DMD_STR)
-								.subtract(demandCollMap.get(CURR_COLL_STR))).toString());
+				searchResultMap.put("arrDemandDue",
+						(demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR))).toString());
+				searchResultMap.put("currDemandDue",
+						(demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))).toString());
 				searchList.add(searchResultMap);
 			}
 		}
@@ -232,12 +224,12 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		this.request = arg0;
 	}
 
-        public String getAssessmentNum() {
-            return assessmentNum;
-        }
-    
-        public void setAssessmentNum(String assessmentNum) {
-            this.assessmentNum = assessmentNum;
-        }
+	public String getAssessmentNum() {
+		return assessmentNum;
+	}
+
+	public void setAssessmentNum(String assessmentNum) {
+		this.assessmentNum = assessmentNum;
+	}
 
 }

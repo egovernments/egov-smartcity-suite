@@ -50,20 +50,18 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.Objection;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 
 /**
  * when the objection is accepted this will get invoke to show memo PDF
@@ -83,12 +81,7 @@ public class MemoGenerationAction extends BaseFormAction {
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private Integer reportId = -1;
 	public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-	PTISCacheManagerInteface ptisCacheMgr;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-
-	public PTISCacheManagerInteface getPtisCacheMgr() {
-		return new PTISCacheManager();
-	}
 
 	@Override
 	public Object getModel() {
@@ -155,8 +148,7 @@ public class MemoGenerationAction extends BaseFormAction {
 		paramMap.put("objectionDate", dateFormat.format(objection.getRecievedOn()));
 		Boundary zone = objection.getBasicProperty().getBoundary().getParent();
 		paramMap.put("zoneNo", zone != null ? zone.getBoundaryNum().toString() : "");
-		paramMap.put("owner",
-				getPtisCacheMgr().buildOwnerFullName(objection.getBasicProperty().getPropertyOwnerInfo()));
+		paramMap.put("owner", objection.getBasicProperty().getFullOwnerName());
 		paramMap.put("memoNo", propertyTaxNumberGenerator.generateMemoNumber());
 
 		return paramMap;

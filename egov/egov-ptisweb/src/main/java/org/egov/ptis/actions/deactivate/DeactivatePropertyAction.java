@@ -69,7 +69,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.eis.service.EisCommonService;
@@ -86,22 +85,21 @@ import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-/*@Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
-		"/workflow", "method", "workFlowError" }) })*/
+/*
+ * @Results({ @Result(name = "workFlowError", location = "workflow", params = {
+ * "namespace", "/workflow", "method", "workFlowError" }) })
+ */
 @Namespace("/deactivate")
 public class DeactivatePropertyAction extends WorkflowAction {
 
@@ -135,7 +133,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	FinancialUtil financialUtil = new FinancialUtil();
 	/* status values along with order date and order number */
 	PropertyStatusValues propStatusVal = new PropertyStatusValues();
-	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private UserService userService;
 	private EisCommonService eisCommonService;
@@ -179,8 +176,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					getSession().put(WFOWNER, wfMap.get(WFOWNER));
 					target = "workFlowError";
 				} else {
-					setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
-					setAddress(ptisCacheMgr.buildAddressByImplemetation(basicProp.getAddress()));
+					setOwnerName(basicProp.getFullOwnerName());
+					setAddress(basicProp.getAddress().toString());
 					setDocNumber(basicProp.getProperty().getDocNumber());
 					target = NEW;
 				}
@@ -207,13 +204,12 @@ public class DeactivatePropertyAction extends WorkflowAction {
 
 		basicProp = property.getBasicProperty();
 		LOGGER.debug("viewForm: BasicProperty: " + basicProp);
-		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		propStatusVal = (PropertyStatusValues) getPersistenceService()
 				.find("from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = 'N' and PSV.propertyStatus.statusCode=?",
 						basicProp.getUpicNo(), PROP_STATUS_INACTIVE);
 		setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
-		setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp.getPropertyOwnerInfo()));
-		setAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
+		setOwnerName(basicProp.getFullOwnerName());
+		setAddress(basicProp.getAddress().toString());
 		setDocNumber(property.getDocNumber());
 		LOGGER.debug("Exit from viewForm");
 
@@ -232,13 +228,13 @@ public class DeactivatePropertyAction extends WorkflowAction {
 
 		LOGGER.debug("Entered into the prepare method");
 		if (getModelId() != null && !getModelId().isEmpty()) {
-			property = (PropertyImpl) getPersistenceService().findByNamedQuery(
-					QUERY_PROPERTYIMPL_BYID, Long.valueOf(getModelId()));
+			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
+					Long.valueOf(getModelId()));
 			LOGGER.debug("prepare: Property: " + property);
 		}
 		if (indexNumber != null && !"".equals(indexNumber)) {
-			basicProp = basicPropertyService.findByNamedQuery(
-					PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, indexNumber);
+			basicProp = basicPropertyService.findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO,
+					indexNumber);
 			LOGGER.debug("prepare: BasicProperty: " + basicProp);
 		}
 
@@ -261,12 +257,10 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		try {
 			Map<Installment, Map<String, BigDecimal>> amounts = propService
 					.prepareRsnWiseDemandForPropToBeDeactivated(basicProp.getProperty());
-			financialUtil
-					.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_DEACTIVATE);
+			financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_DEACTIVATE);
 			basicProp.setActive(false);
 
-			PropertyStatus propertyStatus = propertyStatusDAO
-					.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
+			PropertyStatus propertyStatus = propertyStatusDAO.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
 			LOGGER.debug("save: PropertyStatus: " + propertyStatus);
 			propStatusVal.setPropertyStatus(propertyStatus);
 			propStatusVal.setIsActive("Y");
@@ -326,8 +320,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					property.setDocNumber(propDocNum);
 					basicProp.addProperty(property);
 
-					PropertyStatus propertyStatus = propertyStatusDAO
-							.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
+					PropertyStatus propertyStatus = propertyStatusDAO.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
 
 					propStatusVal.setPropertyStatus(propertyStatus);
 					propStatusVal.setIsActive("N");
@@ -349,8 +342,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 				LOGGER.debug("Exit from forward method");
 			}
 			transitionWorkFlow();
-			User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId()
-					.longValue());
+			User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
 			setAckMessage("Property Successfully Forwarded to " + approverUser.getUsername());
 
 		} catch (Exception e) {
@@ -368,25 +360,21 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
 		try {
 			PropertyImpl nonHistProperty = (PropertyImpl) getPersistenceService().findByNamedQuery(
-					QUERY_PROPERTY_BY_UPICNO_AND_STATUS, property.getBasicProperty().getUpicNo(),
-					STATUS_ISACTIVE);
+					QUERY_PROPERTY_BY_UPICNO_AND_STATUS, property.getBasicProperty().getUpicNo(), STATUS_ISACTIVE);
 			nonHistProperty.setStatus(STATUS_ISHISTORY);
 			property.setStatus(STATUS_ISACTIVE);
 			transitionWorkFlow();
-			PropertyStatus propertyStatus = propertyStatusDAO
-					.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
-			propStatusVal = (PropertyStatusValues) getPersistenceService()
-					.find("from PropertyStatusValues PSV where PSV.basicProperty = ? and PSV.propertyStatus = ?",
-							basicProp, propertyStatus);
+			PropertyStatus propertyStatus = propertyStatusDAO.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
+			propStatusVal = (PropertyStatusValues) getPersistenceService().find(
+					"from PropertyStatusValues PSV where PSV.basicProperty = ? and PSV.propertyStatus = ?", basicProp,
+					propertyStatus);
 			if (propStatusVal != null) {
 				propStatusVal.setIsActive("Y");
 			}
-			LOGGER.debug("approve: PropertyStatusValues for deactivation made active: "
-					+ propStatusVal);
+			LOGGER.debug("approve: PropertyStatusValues for deactivation made active: " + propStatusVal);
 			Map<Installment, Map<String, BigDecimal>> amounts = propService
 					.prepareRsnWiseDemandForPropToBeDeactivated(basicProp.getProperty());
-			financialUtil
-					.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_DEACTIVATE);
+			financialUtil.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_DEACTIVATE);
 			property.getBasicProperty().setActive(false);
 
 			// upload docs
@@ -485,26 +473,23 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		if (workflowBean == null) {
 			LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
 		} else {
-			LOGGER.debug("transitionWorkFlow - action : " + workflowBean.getActionName()
-					+ "property: " + property);
+			LOGGER.debug("transitionWorkFlow - action : " + workflowBean.getActionName() + "property: " + property);
 		}
 
-		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				EgovThreadLocals.getUserId(), eisCommonService);
+		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean, EgovThreadLocals.getUserId(),
+				eisCommonService);
 
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();
 		}
 
-		if (workflowAction.isStepRejectAndOwnerNextPositionSame()
-				|| workflowAction.isApproveOrSave()) {
+		if (workflowAction.isStepRejectAndOwnerNextPositionSame() || workflowAction.isApproveOrSave()) {
 			endWorkFlow();
 		} else {
 			workflowAction.changeState();
 		}
 
-		LOGGER.debug("transitionWorkFlow: Property transitioned to "
-				+ property.getState().getValue());
+		LOGGER.debug("transitionWorkFlow: Property transitioned to " + property.getState().getValue());
 		propertyImplService.persist(property);
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");

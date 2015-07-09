@@ -44,9 +44,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISCITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISVERSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -57,7 +57,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -81,10 +80,7 @@ import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,8 +131,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 	@SkipValidation
 	public void gisFormRedirect() {
-		LOGGER.debug("Entered into gisFormRedirect method : GISVERSION : " + GISVERSION
-				+ " GISCITY : " + GISCITY);
+		LOGGER.debug("Entered into gisFormRedirect method : GISVERSION : " + GISVERSION + " GISCITY : " + GISCITY);
 		HttpServletResponse response = ServletActionContext.getResponse();
 		try {
 			response.sendRedirect(response.encodeRedirectURL(GISVERSION + GISCITY
@@ -174,9 +169,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "bndry")
 	public String srchByBndry() {
 		LOGGER.debug("Entered into srchByBndry method");
-		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", "
-				+ "House Num : " + houseNum + ", " + "Owner Name :" + ownerName + ", "
-				+ "Session : " + SESSION);
+		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", " + "House Num : "
+				+ houseNum + ", " + "Owner Name :" + ownerName + ", " + "Session : " + SESSION);
 		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -234,8 +228,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByBndryForm.action");
 				setSearchCreteria("Search By Zone, Ward,Area, Plot No/House No,Owner Name");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
-						+ ", Plot No/House No: " + houseNum);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
+						+ houseNum);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -256,8 +250,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	public String srchByPropType() {
 
 		LOGGER.debug("Entered into srchByPropType method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
-				+ "Property Type : " + propTypeId);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId);
 		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -314,8 +307,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByPropType.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
-						+ ", Property Type: " + propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
+						+ propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -336,9 +329,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "demand")
 	public String srchByDemand() {
 		LOGGER.debug("Entered into srchByDemand method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
-				+ "Property Type : " + propTypeId + ", " + "Demand from amt : " + demandFromAmt
-				+ ", " + "Demand To amt : " + demandToAmt);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
+				+ ", " + "Demand from amt : " + demandFromAmt + ", " + "Demand To amt : " + demandToAmt);
 		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -403,8 +395,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByDemand.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type,Demand");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
-						+ ", Property Type: " + propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
+						+ propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -425,9 +417,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "defaulter")
 	public String srchByDefaulter() {
 		LOGGER.debug("Entered into srchByDefaulter method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
-				+ "Property Type : " + propTypeId + ", " + "Defaulter from amt : "
-				+ defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
+				+ ", " + "Defaulter from amt : " + defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
 		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -492,8 +483,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByDefaulter.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type,Defaulter");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
-						+ ", Property Type: " + propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
+						+ propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -517,16 +508,14 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into prepare method");
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE,
-				ELECTION_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 
 		LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
 		prepareWardDropDownData(zoneId != null, wardId != null);
 		prepareAreaDropDownData(wardId != null, areaId != null);
-		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-				"from PropertyTypeMaster");
+		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy("from PropertyTypeMaster");
 		LOGGER.debug("PropTypeList : " + (propTypeList != null ? propTypeList : ZERO));
 		addDropdownData("PropType", propTypeList);
 		LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
@@ -568,34 +557,28 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private List<Map<String, String>> getSearchResults(String indexNumber) {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + indexNumber);
-		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 
 		if (indexNumber != null || StringUtils.isNotEmpty(indexNumber)) {
 
-			BasicProperty basicProperty = basicPropertyDAO
-					.getBasicPropertyByPropertyID(indexNumber);
+			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
 			LOGGER.debug("Basic Property : " + basicProperty);
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
-				List<PropertyOwnerInfo> ownerSet = basicProperty.getPropertyOwnerInfo();
 				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("indexNum", indexNumber);
-				searchResultMap.put("ownerName", ptisCachMgr.buildOwnerFullName(ownerSet));
+				searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
 				searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
-				searchResultMap.put("address",
-						ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
+				searchResultMap.put("address", basicProperty.getAddress().toString());
 				searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
 				searchResultMap.put("arrDemand", demandCollMap.get(ARR_DMD_STR).toString());
-				searchResultMap
-						.put("currDemandDue", (demandCollMap.get(CURR_DMD_STR)
-								.subtract(demandCollMap.get(CURR_COLL_STR))).toString());
-				LOGGER.debug("Index Number : " + searchResultMap.get("indexNum") + ", "
-						+ "Owner Name : " + searchResultMap.get("ownerName") + ", "
-						+ "Parcel id : " + searchResultMap.get("parcelId") + ", " + "Address : "
-						+ searchResultMap.get("address") + ", " + "Current Demand : "
+				searchResultMap.put("currDemandDue",
+						(demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))).toString());
+				LOGGER.debug("Index Number : " + searchResultMap.get("indexNum") + ", " + "Owner Name : "
+						+ searchResultMap.get("ownerName") + ", " + "Parcel id : " + searchResultMap.get("parcelId")
+						+ ", " + "Address : " + searchResultMap.get("address") + ", " + "Current Demand : "
 						+ searchResultMap.get("currDemand") + ", " + "Arrears Demand Due : "
 						+ searchResultMap.get("arrDemandDue") + ", " + "Current Demand Due : "
 						+ searchResultMap.get("currDemandDue"));
@@ -643,9 +626,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 			currDemandDue.append("^");
 
 		}
-		concatResult.append(indexNum).append("@").append(ownerName).append("@").append(parcelId)
-				.append("@").append(currDemand).append("@").append(arrDemand).append("@")
-				.append(currDemandDue);
+		concatResult.append(indexNum).append("@").append(ownerName).append("@").append(parcelId).append("@")
+				.append(currDemand).append("@").append(arrDemand).append("@").append(currDemandDue);
 
 		LOGGER.debug("Search Results String : " + concatResult);
 		LOGGER.debug("Exit from getSearchResultsString method");
@@ -656,7 +638,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private List<Map<String, String>> getResultsFromMv(PropertyMaterlizeView pmv) {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + pmv.getPropertyId());
-		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 
 		if (pmv.getPropertyId() != null || StringUtils.isNotEmpty(pmv.getPropertyId())) {
 
@@ -667,10 +648,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				searchResultMap.put("parcelId", pmv.getGisRefNo());
 				searchResultMap.put("address", pmv.getPropertyAddress());
 				searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-				searchResultMap.put("currDemandDue",
-						(pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())).toString());
-				searchResultMap.put("arrDemand",
-						(pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl())).toString());
+				searchResultMap.put("currDemandDue", (pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())).toString());
+				searchResultMap.put("arrDemand", (pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl())).toString());
 				searchList.add(searchResultMap);
 			}
 		}

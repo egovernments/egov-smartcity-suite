@@ -64,9 +64,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,8 +78,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -95,11 +98,17 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
@@ -135,19 +144,6 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.ServletActionContext;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 
 /**
  * @author parvati
@@ -1140,14 +1136,13 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value="/createProperty-printAck")
 	public String printAck(){
-		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String url= WebUtils.extractRequestDomainURL(request, false);
 		String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
 		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
 		Map<String, Object> reportParams = new HashMap<String, Object>();
-		ackBean.setOwnerName(ptisCacheMgr.buildOwnerFullName(basicProp));
-		ackBean.setOwnerAddress(ptisCacheMgr.buildAddressFromAddress(basicProp.getAddress()));
+		ackBean.setOwnerName(basicProp.getFullOwnerName());
+		ackBean.setOwnerAddress(basicProp.getAddress().toString());
 		ackBean.setApplicationDate(basicProp.getCreatedDate());
 		ackBean.setApplicationNo(basicProp.getApplicationNo());
 		ackBean.setApprovedDate(property.getState().getCreatedDate().toDate());

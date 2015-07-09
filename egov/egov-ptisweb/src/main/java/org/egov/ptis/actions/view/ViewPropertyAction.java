@@ -54,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -73,13 +72,10 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("serial")
@@ -89,15 +85,12 @@ public class ViewPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;
 	private BasicProperty basicProperty;
-	private PropertyDetail propertyDetail;
-	private String ownerName;
-	private String propAddress;
+	private Property property;
 	private String ownerAddress;
 	private String currTax;
 	private String currTaxDue;
 	private String totalArrDue;
 	private Map<String, Object> viewMap;
-	private String[] floorNoStr = new String[200];
 	private PropertyTaxUtil propertyTaxUtil;
 	private String markedForDeactive = "N";
 	private String roleName;
@@ -131,41 +124,34 @@ public class ViewPropertyAction extends BaseFormAction {
 
 	@Override
 	public Object getModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return property;
 	}
 
 	@Action(value = "/view/viewProperty-viewForm")
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm method");
-		BasicProperty bp = null;
 		try {
-			LOGGER.debug("viewForm : Index Num in View Property : " + propertyId);
+			LOGGER.debug("viewForm : propertyId in View Property : " + propertyId);
 			viewMap = new HashMap<String, Object>();
-			bp = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
-			LOGGER.debug("viewForm : BasicProperty : " + bp);
+			basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+			LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
 			setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-			PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 			Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
-			Property property = getBasicProperty().getProperty();
-			setPropertyDetail(property.getPropertyDetail());
+			property = getBasicProperty().getProperty();
 			LOGGER.debug("viewForm : Property : " + property);
-			viewMap.put("ownerName", ptisCacheMgr.buildOwnerFullName(getBasicProperty().getPropertyOwnerInfo()));
-			viewMap.put("fatherName", new String());
-			viewMap.put("propAddress", ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
 
 			if (getBasicProperty().getPropertyOwnerInfo() != null
 					&& !getBasicProperty().getPropertyOwnerInfo().isEmpty()) {
 				for (PropertyOwnerInfo propOwner : getBasicProperty().getPropertyOwnerInfo()) {
-					propertyOwners.add(propOwner.getOwner());
 					List<Address> addrSet = (List<Address>) propOwner.getOwner().getAddress();
 					for (Address address : addrSet) {
-						ownerAddress = ptisCacheMgr.buildAddressByImplemetation(address);
+						ownerAddress = address.toString();
 						break;
 					}
 				}
 				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOT_AVAILABLE : ownerAddress);
-				PropertyTypeMaster propertyTypeMaster = bp.getProperty().getPropertyDetail().getPropertyTypeMaster();
+				PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
+						.getPropertyTypeMaster();
 				viewMap.put("ownershipType", propertyTypeMaster.getType());
 			}
 			Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
@@ -196,11 +182,9 @@ public class ViewPropertyAction extends BaseFormAction {
 				}
 			}
 
-			// setPropDocsSet(getBasicProperty().getPropertyDocsSet());
-			LOGGER.debug("viewForm : Owner Name : " + viewMap.get(ownerName) + ", " + "Property Address : "
-					+ viewMap.get(propAddress) + ", " + "Owner Address : " + viewMap.get(ownerAddress) + ", "
-					+ "Current Tax : " + viewMap.get(currTax) + ", " + "Current Tax Due : " + viewMap.get(currTaxDue)
-					+ ", " + "Total Arrears Tax Due : " + viewMap.get(totalArrDue));
+			LOGGER.debug("viewForm : Owner Address : " + viewMap.get(ownerAddress) + ", " + "Current Tax : "
+					+ viewMap.get(currTax) + ", " + "Current Tax Due : " + viewMap.get(currTaxDue) + ", "
+					+ "Total Arrears Tax Due : " + viewMap.get(totalArrDue));
 			LOGGER.debug("Exit from method viewForm");
 			return "view";
 		} catch (Exception e) {
@@ -235,6 +219,10 @@ public class ViewPropertyAction extends BaseFormAction {
 		return CommonServices.getWaterMeterDtls(mstrCode);
 	}
 
+	public String getFloorNoStr(Integer floorNo) {
+		return CommonServices.getFloorStr(floorNo);
+	}
+
 	public String getPropertyId() {
 		return propertyId;
 	}
@@ -249,22 +237,6 @@ public class ViewPropertyAction extends BaseFormAction {
 
 	public void setBasicProperty(BasicProperty basicProperty) {
 		this.basicProperty = basicProperty;
-	}
-
-	public String getOwnerName() {
-		return ownerName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-
-	public String getPropAddress() {
-		return propAddress;
-	}
-
-	public void setPropAddress(String propAddress) {
-		this.propAddress = propAddress;
 	}
 
 	public String getOwnerAddress() {
@@ -297,14 +269,6 @@ public class ViewPropertyAction extends BaseFormAction {
 
 	public void setTotalArrDue(String totalArrDue) {
 		this.totalArrDue = totalArrDue;
-	}
-
-	public String[] getFloorNoStr() {
-		return floorNoStr;
-	}
-
-	public void setFloorNoStr(String[] floorNoStr) {
-		this.floorNoStr = floorNoStr;
 	}
 
 	public PropertyTaxUtil getPropertyTaxUtil() {
@@ -399,12 +363,8 @@ public class ViewPropertyAction extends BaseFormAction {
 		this.parentProps = parentProps;
 	}
 
-	public PropertyDetail getPropertyDetail() {
-		return propertyDetail;
-	}
-
-	public void setPropertyDetail(PropertyDetail propertyDetail) {
-		this.propertyDetail = propertyDetail;
+	public Property getProperty() {
+		return property;
 	}
 
 }

@@ -48,7 +48,6 @@ import org.egov.ptis.client.model.ConsolidatedUnitTaxCalReport;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.utils.PTISCacheManager;
 
 /**
  * 
@@ -56,24 +55,24 @@ import org.egov.ptis.utils.PTISCacheManager;
  *
  */
 public class PropertyCalSheetInfo {
-	
+
 	private Property activeProperty;
 	private BasicProperty basicProperty;
-	
+
 	private List<ConsolidatedUnitTaxCalReport> consolidatedUnitTaxCalReportList = new ArrayList<ConsolidatedUnitTaxCalReport>();
-	private PTISCacheManager ptisCasheManager = new PTISCacheManager();
-	
-	public PropertyCalSheetInfo() {}
-	
+
+	public PropertyCalSheetInfo() {
+	}
+
 	public PropertyCalSheetInfo(Property activeProperty) {
 		this.activeProperty = activeProperty;
 		this.basicProperty = activeProperty.getBasicProperty();
 	}
-	
+
 	public static PropertyCalSheetInfo createCalSheetInfo(Property activeProperty) {
 		return new PropertyCalSheetInfo(activeProperty);
 	}
-	
+
 	public String getIndexNo() {
 		return basicProperty.getUpicNo();
 	}
@@ -91,8 +90,7 @@ public class PropertyCalSheetInfo {
 	}
 
 	public String getPropertyType() {
-		return PROPERTYTYPE_CODE_TO_STR.get(activeProperty.getPropertyDetail().getPropertyTypeMaster()
-				.getCode());
+		return PROPERTYTYPE_CODE_TO_STR.get(activeProperty.getPropertyDetail().getPropertyTypeMaster().getCode());
 	}
 
 	public String getArea() {
@@ -100,15 +98,15 @@ public class PropertyCalSheetInfo {
 	}
 
 	public String getPropertyOwnerName() {
-		return ptisCasheManager.buildOwnerFullName(basicProperty);
+		return basicProperty.getFullOwnerName();
 	}
-	
+
 	private PropertyID getPropertyID() {
 		return basicProperty.getPropertyID();
 	}
 
 	public String getPropertyAddress() {
-		return ptisCasheManager.buildAddressByImplemetation(basicProperty.getAddress());
+		return basicProperty.getAddress().toString();
 	}
 
 	public List<ConsolidatedUnitTaxCalReport> getConsolidatedUnitTaxCalReportList() {
@@ -118,7 +116,7 @@ public class PropertyCalSheetInfo {
 	public void setConsolidatedUnitTaxCalReportList(List<ConsolidatedUnitTaxCalReport> consolidatedUnitTaxCalReportList) {
 		this.consolidatedUnitTaxCalReportList = consolidatedUnitTaxCalReportList;
 	}
-	
+
 	public String getAmenities() {
 		return activeProperty.getPropertyDetail().getExtra_field4();
 	}

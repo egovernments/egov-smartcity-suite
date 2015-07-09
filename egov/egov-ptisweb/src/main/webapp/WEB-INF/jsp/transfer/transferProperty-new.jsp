@@ -148,27 +148,38 @@
 						</td>
 					</tr>
 					<tr>
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								</div>
+							</td>
+					</tr>
+					<tr>
 						<td colspan="5">
 							<table class="tablebottom" id="" width="100%" border="0"
 								cellpadding="0" cellspacing="0">
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd">Aadhaar No</th>
-										<th class="bluebgheadtd">Owner Name</th>
-										<th class="bluebgheadtd">Guardian Name</th>
-										<th class="bluebgheadtd">Gender</th>
-										<th class="bluebgheadtd">Mobile Number</th>
-										<th class="bluebgheadtd">Email</th>
-
+									    <th class="bluebgheadtd"><s:text name="adharno"/></th>
+									    <th class="bluebgheadtd"><s:text name="salutation"/></th>
+									    <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
+									    <th class="bluebgheadtd"><s:text name="gender"/></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
 									</tr>
 									<s:iterator value="basicproperty.propertyOwnerInfo" status="status">
 									<tr>
-										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber"/></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.salutation" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
-										<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.guardianRelation" default="N/A"/></td>
+				
 									</tr>
 									</s:iterator>
 								</tbody>
@@ -188,12 +199,12 @@
 							<div>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
 								    <tr>
-								    	<th class="bluebgheadtd">Aadhaar No<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Owner Name<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Guardian Name</th>
-										<th class="bluebgheadtd">Gender<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Mobile Number(without +91)<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Email<span class="mandatory1">*</span></th>
+								    	<th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+										<th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
 									<s:if test="%{transfereeInfos.size == 0}">

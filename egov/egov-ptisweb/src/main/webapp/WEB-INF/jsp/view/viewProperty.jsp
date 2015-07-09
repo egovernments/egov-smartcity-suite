@@ -60,7 +60,7 @@
 		<td class="greybox"><s:text name="PropertyAddress" /> :</td>
 		<td class="greybox">
 			<span class="bold">
-			  <s:property default="N/A" value="%{viewMap.propAddress}" /> 
+			  <s:property default="N/A" value="%{basicProperty.address}" /> 
 		    </span>
 		</td>
 		<td class="bluebox"><s:text name="CorrAddr" /> :</td>
@@ -69,8 +69,8 @@
 			 <s:property default="N/A" value="%{viewMap.ownerAddress}" /> 
 			</span>
 		</td>
-		
 	</tr>
+
 	<tr>
 	<td class="greybox" width="5%"></td>
 
@@ -174,7 +174,7 @@
 		<td class="bluebox"><s:text name="ownership.type"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{viewMap.ownershipType}" /> 
+				<s:property	default="N/A" value="%{model.propertyDetail.propertyTypeMaster.type}" /> 
 			</span>
 		</td>
 	</tr>
@@ -186,7 +186,7 @@
 		</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{propertyDetail.apartment.name}" /> 
+				<s:property	default="N/A" value="%{model.propertyDetail.apartment.name}" /> 
 			</span>
 		</td>
 	</tr>
@@ -206,8 +206,8 @@
 		<td class="bluebox"><s:text name="effectivedt" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:if test="%{propertyDetail.effective_date != null}">
-					<s:date name="%{propertyDetail.effective_date}" format="dd/MM/yyyy"/>
+				<s:if test="%{model.propertyDetail.effective_date != null}">
+					<s:date name="%{model.propertyDetail.effective_date}" format="dd/MM/yyyy"/>
 				</s:if>
 				<s:else>
 					N/A
@@ -225,28 +225,36 @@
 	</tr>
 	
 	<tr>
-	
-	<td colspan="5">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
-		    <tr>
-			    <th class="bluebgheadtd"><s:text name="adharno"/></th>
-			    <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
-				<th class="bluebgheadtd"><s:text name="Guardian"/></th>
-				<th class="bluebgheadtd"><s:text name="MobileNumber"/></th>
-				<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
-		    </tr>
-		    
-		    <s:iterator value="propertyOwners" var="propOwner">
-		    	<tr>
-			        <td class="blueborderfortd"><s:property value="%{aadhaarNumber}"/></td>
-			        <td class="blueborderfortd"><s:property value="%{name}"/></td>
-			        <td class="blueborderfortd"><s:property default="N/A" value="%{guardian}"/></td>
-			        <td class="blueborderfortd">+91 <s:property value="%{mobileNumber}"/></td>
-			        <td class="blueborderfortd"><s:property value="%{emailId}"/></td>
-			    </tr>
-		    </s:iterator>
-		</table>
-	</td>
+		<td colspan="5">
+			<table class="tablebottom" id="" width="100%" border="0"
+				cellpadding="0" cellspacing="0">
+				<tbody>
+					<tr>
+					    <th class="bluebgheadtd"><s:text name="adharno"/></th>
+					    <th class="bluebgheadtd"><s:text name="salutation"/></th>
+					    <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
+					    <th class="bluebgheadtd"><s:text name="gender"/></th>
+						<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
+						<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+						<th class="bluebgheadtd"><s:text name="Guardian"/></th>
+						<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
+					</tr>
+					<s:iterator value="basicProperty.propertyOwnerInfo" status="status">
+					<tr>
+						<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber"/></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.salutation" /></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
+						<td class="blueborderfortd" align="center"><s:property value="owner.guardianRelation" default="N/A"/></td>
+
+					</tr>
+					</s:iterator>
+				</tbody>
+			  </table> 
+		</td>
 	</tr>
 	
 	<tr>
@@ -263,13 +271,13 @@
 		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{propertyDetail.floorType.name}"/> </span>
+					value="%{model.propertyDetail.floorType.name}"/> </span>
 		</td>
 
 		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{propertyDetail.roofType.name}"/> </span>
+					value="%{model.propertyDetail.roofType.name}"/> </span>
 		</td>
 		
 	</tr>
@@ -279,13 +287,13 @@
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{propertyDetail.wallType.name}" /> </span>
+					value="%{model.propertyDetail.wallType.name}" /> </span>
 		</td>
 
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{propertyDetail.woodType.name}" /> </span>
+					value="%{model.propertyDetail.woodType.name}" /> </span>
 		</td>
 		
 	</tr>
@@ -338,27 +346,27 @@
 		    
 		    <tr>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.lift}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.lift}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.toilets}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.toilets}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.waterTap}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.waterTap}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.structure}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.structure}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.drainage}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.drainage}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.electricity}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.electricity}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
@@ -366,11 +374,11 @@
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.waterHarvesting}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.waterHarvesting}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{propertyDetail.isCable()}">Yes</s:if>
+		     	<s:if test="%{model.propertyDetail.cable}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		    </tr>
@@ -410,18 +418,17 @@
 						<th class="bluebgheadtd"><s:text name="exemption" /></th>
 					</tr>
 					<s:iterator
-						value="basicProperty.property.propertyDetail.floorDetails"
-						status="floorsstatus">
+						value="model.propertyDetail.floorDetails" status="floorsstatus">
 						<tr>
-							<s:set value="basicProperty.property.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
+							<s:set value="model.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{floorNoStr[#floorsstatus.index]}" />
+									<s:property default="N/A" value="%{floorNoStr[#floor.floorNo]}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
 							    <div align="center">
-									<s:property default="N/A" value="%{#floor.unitType.type}" />
+									<s:property default="N/A" value="%{#floor.structureClassification.typeName}" />
 								</div>
 							</td>
 						    <td class="blueborderfortd">
@@ -431,17 +438,17 @@
 						    </td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{floor.occupancy}"/>
+									<s:property default="N/A" value="%{#floor.propertyOccupation.occupation}"/>
 								</div>
 							</td>
 							<td class="blueborderfortd" width="5%">
 						    	<div align="center"> 	    		
-						    		<s:property default="N/A" value="%{#floor.occupantname}" />
+						    		<s:property default="N/A" value="%{#floor.occupantName}" />
 						        </div>
 						    </td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.extraField7}" />
+									<s:property default="N/A" value="%{#floor.depreciationMaster.depreciationName}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">

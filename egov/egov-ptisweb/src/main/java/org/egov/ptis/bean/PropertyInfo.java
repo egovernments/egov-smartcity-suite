@@ -97,8 +97,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -122,7 +120,6 @@ public class PropertyInfo {
 	private DateFormat dateFormatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	private int isCentralGovtProp = 0;
 
-	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	Map<Date, Map<Installment, TaxCalculationInfo>> installmentAndHistoryTaxCalcsByDate = new TreeMap<Date, Map<Installment, TaxCalculationInfo>>();
 	Map<Date, Map<String, String>> propertyInfoByCreatedDate = new TreeMap<Date, Map<String, String>>();
 	@Autowired
@@ -902,7 +899,7 @@ public class PropertyInfo {
 	 */
 	public String getNewOwnerName() {
 		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
-			return ptisCacheMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo());
+			return property.getBasicProperty().getFullOwnerName();
 
 		return "";
 	}

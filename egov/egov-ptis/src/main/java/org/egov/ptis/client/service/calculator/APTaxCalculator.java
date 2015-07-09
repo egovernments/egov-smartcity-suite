@@ -72,8 +72,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 //TODO name class as client specific
@@ -81,7 +79,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
 	@Autowired
 	private PersistenceService persistenceService;
-	private PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
 	private BigDecimal totalTaxPayable = BigDecimal.ZERO;
 	private HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<Installment, TaxCalculationInfo>();
 
@@ -168,9 +165,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	private APTaxCalculationInfo addPropertyInfo(Property property) {
 		APTaxCalculationInfo taxCalculationInfo = new APTaxCalculationInfo();
 		// Add Property Info
-		taxCalculationInfo.setPropertyOwnerName(ptisCachMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo()));
-		taxCalculationInfo.setPropertyAddress(ptisCachMgr.buildAddressByImplemetation(property.getBasicProperty()
-				.getAddress()));
+		taxCalculationInfo.setPropertyOwnerName(property.getBasicProperty().getFullOwnerName());
+		taxCalculationInfo.setPropertyAddress(property.getBasicProperty()
+				.getAddress().toString());
 		taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNoBldgApt());
 		taxCalculationInfo.setZone(property.getBasicProperty().getPropertyID().getZone().getName());
 		taxCalculationInfo.setWard(property.getBasicProperty().getPropertyID().getWard().getName());

@@ -203,7 +203,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.utils.PTISCacheManager;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -1657,7 +1656,7 @@ public class PropertyTaxUtil {
 		for (PropertyOwnerInfo owner : ownerSet) {
 			List<Address> addresses = owner.getOwner().getAddress();
 			for (Address address : addresses) {
-				ownerAddress = new PTISCacheManager().buildAddressByImplemetation(address);
+				ownerAddress = address.toString();
 				break;
 			}
 

@@ -88,8 +88,6 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,18 +96,17 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(BaseRecoveryAction.class);
-	public static final SimpleDateFormat  DDMMYYYYFORMATS= new SimpleDateFormat("dd/MM/yyyy",new Locale("en","IN"));
+	public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", new Locale("en", "IN"));
 	protected ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
-	protected Map<String, Object> viewMap; 
+	protected Map<String, Object> viewMap;
 	protected String ownerName;
 	protected String propertyAddress;
 	protected EisCommonService eisCommonService;
 	protected ReportService reportService;
 	protected Integer reportId = -1;
-        protected ModuleService moduleService;
+	protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	protected PersistenceService<BasicProperty, Long> basicPropertyService;
-	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	protected FinancialUtil financialUtil;
 	protected NoticeService noticeService;
@@ -117,14 +114,14 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;
-	
+
 	@Override
 	public Object getModel() {
-		
+
 		return null;
 	}
-	
-	protected BasicProperty getPropertyView(String propertyId){
+
+	protected BasicProperty getPropertyView(String propertyId) {
 		LOGGER.debug("BaseRecoveryAction | getPropertyView | Start");
 		viewPropertyAction.setPropertyId(propertyId);
 		viewPropertyAction.setPropertyTaxUtil(new PropertyTaxUtil());
@@ -135,92 +132,94 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		LOGGER.debug("BaseRecoveryAction | getPropertyView | End");
 		return viewPropertyAction.getBasicProperty();
 	}
-	
-	protected void validateStartRecovery(Recovery recovery){
-		if(getCurrentDate().after(recovery.getIntimationNotice().getPaymentDueDate())){
-			
-			throw new ValidationException(Arrays.asList(new ValidationError("paymentDueDate",getText("paymentDueDate.greaterThan.currentDate"))));
+
+	protected void validateStartRecovery(Recovery recovery) {
+		if (getCurrentDate().after(recovery.getIntimationNotice().getPaymentDueDate())) {
+
+			throw new ValidationException(Arrays.asList(new ValidationError("paymentDueDate",
+					getText("paymentDueDate.greaterThan.currentDate"))));
 		}
-		
+
 	}
-	protected void validateWarrantNotice(Recovery recovery){
-		
-		if(recovery.getIntimationNotice().getPaymentDueDate().after(recovery.getWarrantNotice().getWarrantReturnByDate())){
-			
-			throw new ValidationException(Arrays.asList(new ValidationError("warrantReturnByDate",getText("warrantReturnByDate.greaterThan.paymentDueDate"))));
+
+	protected void validateWarrantNotice(Recovery recovery) {
+
+		if (recovery.getIntimationNotice().getPaymentDueDate()
+				.after(recovery.getWarrantNotice().getWarrantReturnByDate())) {
+
+			throw new ValidationException(Arrays.asList(new ValidationError("warrantReturnByDate",
+					getText("warrantReturnByDate.greaterThan.paymentDueDate"))));
 		}
-		
+
 	}
-	protected void validateCeaseNotice(Recovery recovery){
-		
-		if(recovery.getWarrantNotice().getWarrantReturnByDate().after(recovery.getCeaseNotice().getExecutionDate())){
-			
-			throw new ValidationException(Arrays.asList(new ValidationError("executionDate",getText("executionDate.greaterThan.warrantReturnByDate"))));
+
+	protected void validateCeaseNotice(Recovery recovery) {
+
+		if (recovery.getWarrantNotice().getWarrantReturnByDate().after(recovery.getCeaseNotice().getExecutionDate())) {
+
+			throw new ValidationException(Arrays.asList(new ValidationError("executionDate",
+					getText("executionDate.greaterThan.warrantReturnByDate"))));
 		}
-		
+
 	}
-	protected String getNextState(String currectState){
-		
-		if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155CREATED)){
+
+	protected String getNextState(String currectState) {
+
+		if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155CREATED)) {
 			return "Generate Notice 155";
-		}
-		else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155GENERATED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155GENERATED)) {
 			return "Create Warrant";
-		}else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTPREPARED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTPREPARED)) {
 			return "Generate Warrant Application Pending";
-		}
-		else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED)) {
 			return "Create Notice 156";
-		}
-		else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICECREATED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICECREATED)) {
 			return "Issue Notice 156";
-		}
-		else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED)) {
 			return "Create Notice 159";
-		}
-		else if(currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_CEASENOTICECREATED)){
+		} else if (currectState.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_CEASENOTICECREATED)) {
 			return "Issue Notice 159";
-		}
-		else{
+		} else {
 			return null;
 		}
-		
+
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	protected EgBill getBil(String consumerId){
-		
+	protected EgBill getBil(String consumerId) {
+
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		Installment finYear = instalDao.getInsatllmentByModuleForGivenDate(module, new Date());
-		// get the latest bill 
+		// get the latest bill
 		StringBuffer query = new StringBuffer(100);
-		query.append("select id from eg_bill where issue_date = ( select issue_date from (select issue_date from eg_bill where").
-		append(" consumer_id='"+consumerId+"' and issue_date >=to_date('"+DDMMYYYYFORMATS.format(finYear.getFromDate())+"','dd/MM/yyyy')").
-		append("  order by issue_date desc)  group by rownum,issue_date having rownum <=1)");
-		LOGGER.debug("BaseRecoveryAction | getBilAmount | query >> "+query.toString());
+		query.append(
+				"select id from eg_bill where issue_date = ( select issue_date from (select issue_date from eg_bill where")
+				.append(" consumer_id='" + consumerId + "' and issue_date >=to_date('"
+						+ DDMMYYYYFORMATS.format(finYear.getFromDate()) + "','dd/MM/yyyy')")
+				.append("  order by issue_date desc)  group by rownum,issue_date having rownum <=1)");
+		LOGGER.debug("BaseRecoveryAction | getBilAmount | query >> " + query.toString());
 		List list = persistenceService.getSession().createSQLQuery(query.toString()).list();
-		if(list != null && list.size()>0){
-			EgBill bill =(EgBill) persistenceService.find(" from EgBill where id="+list.get(0));
+		if (list != null && list.size() > 0) {
+			EgBill bill = (EgBill) persistenceService.find(" from EgBill where id=" + list.get(0));
 			return bill;
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
-	public Long getDemandReason(String demandMaster){
+
+	public Long getDemandReason(String demandMaster) {
 		StringBuffer query = new StringBuffer();
-		query.append(" from EgDemandReason where egDemandReasonMaster.reasonMaster='"+demandMaster+"'")
-			.append(" and egInstallmentMaster.id='"+propertyTaxUtil.getCurrentInstallment().getId()+ "'");
-		EgDemandReason demandReason = (EgDemandReason)persistenceService.find(query.toString());
-		
+		query.append(" from EgDemandReason where egDemandReasonMaster.reasonMaster='" + demandMaster + "'").append(
+				" and egInstallmentMaster.id='" + propertyTaxUtil.getCurrentInstallment().getId() + "'");
+		EgDemandReason demandReason = (EgDemandReason) persistenceService.find(query.toString());
+
 		return demandReason.getId();
 	}
-	
-	protected Map<String,Object>  getNotice156Param(Recovery recovery){
-		
-		Map<String,Object>  params= new HashMap<String,Object> ();
-		params.put("currentDate",DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy"));
+
+	protected Map<String, Object> getNotice156Param(Recovery recovery) {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("currentDate", DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy"));
 		params.put("ownerFatherName", "-");
 		params.put("taxName", "Property Tax");
 		BigDecimal totalWarrantFees = BigDecimal.ZERO;
@@ -228,13 +227,14 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 			totalWarrantFees = totalWarrantFees.add(warrantFee.getAmount());
 		}
 		params.put("totalWarrantFees", totalWarrantFees.setScale(2).toString());
-		params.put("warrantReturnByDate", DateUtils.convertToWords(recovery.getWarrantNotice().getWarrantReturnByDate()));
+		params.put("warrantReturnByDate",
+				DateUtils.convertToWords(recovery.getWarrantNotice().getWarrantReturnByDate()));
 		return params;
 	}
-	
-	protected Map<String,Object>  getNotice159Param(Recovery recovery){
-		
-		Map<String,Object>  params= new HashMap<String,Object> ();
+
+	protected Map<String, Object> getNotice159Param(Recovery recovery) {
+
+		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("fatherName", "-");
 		params.put("noticeDate", DDMMYYYYFORMATS.format(new Date()));
 		BigDecimal totalWarrantFees = BigDecimal.ZERO;
@@ -242,17 +242,17 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 			totalWarrantFees = totalWarrantFees.add(warrantFee.getAmount());
 		}
 		params.put("totalWarrantFees", totalWarrantFees.setScale(2).toString());
-	
+
 		return params;
-	}	
-	
+	}
+
 	@SuppressWarnings("unchecked")
-	protected void updateDemand(Recovery recovery){
+	protected void updateDemand(Recovery recovery) {
 		StringBuffer consumerId = new StringBuffer();
 		consumerId.append(recovery.getBasicProperty().getUpicNo()).append("(Zone:")
-			.append(recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum())
-			.append(" Ward:").append(recovery.getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
-		
+				.append(recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum()).append(" Ward:")
+				.append(recovery.getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
+
 		EgBill currentBill = getBil(consumerId.toString());
 		EgDemand currentDemand = currentBill.getEgDemand();
 		Set<EgDemandDetails> demandDetails = currentDemand.getEgDemandDetails();
@@ -274,50 +274,58 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		currentBill.setTotalAmount(totalDemandAmt);
 		currentBill.setEgDemand(currentDemand);
 		egBillDAO.update(currentBill);
-		
-		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String,BigDecimal>>();
-		Map<String, BigDecimal> voucherDemandMap = new HashMap<String, BigDecimal>(); // Map for create voucher
+
+		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
+		Map<String, BigDecimal> voucherDemandMap = new HashMap<String, BigDecimal>(); // Map
+																						// for
+																						// create
+																						// voucher
 		voucherDemandMap.put(PropertyTaxConstants.DEMANDRSN_CODE_RECOVERY_FEE, totalDemandAmt);
 		amounts.put(currentDemand.getEgInstallmentMaster(), voucherDemandMap);
-		
+
 		financialUtil.createVoucher(recovery.getBasicProperty().getUpicNo(), amounts, "Recovery Fees");
-		
+
 	}
-	
+
 	protected EgwStatus getEgwStatusForModuleAndCode(String moduleName, String statusCode) {
-		
-		EgwStatus status = (EgwStatus) persistenceService.findByNamedQuery(PropertyTaxConstants.QUERY_STATUS_BY_MODULE_AND_CODE, 
-																			moduleName, statusCode);
+
+		EgwStatus status = (EgwStatus) persistenceService.findByNamedQuery(
+				PropertyTaxConstants.QUERY_STATUS_BY_MODULE_AND_CODE, moduleName, statusCode);
 		return status;
 	}
+
 	protected PropertyStatus getPropStatusByStatusCode(String statusCode) {
-		
-		PropertyStatus status = (PropertyStatus) persistenceService.findByNamedQuery(PropertyTaxConstants.QUERY_PROP_STATUS_BY_STATUSCODE,statusCode);
+
+		PropertyStatus status = (PropertyStatus) persistenceService.findByNamedQuery(
+				PropertyTaxConstants.QUERY_PROP_STATUS_BY_STATUSCODE, statusCode);
 		return status;
 	}
-	
+
 	/**
 	 * 
-	 * @param state - The state of the work flow object
-	 * @return TRUE - if  logged in user is the authorised user to view the inbox item.
-	 *         FALSE - if  logged in user is not the authenticated to view the inbox item.
+	 * @param state
+	 *            - The state of the work flow object
+	 * @return TRUE - if logged in user is the authorised user to view the inbox
+	 *         item. FALSE - if logged in user is not the authenticated to view
+	 *         the inbox item.
 	 */
-	public Boolean authenticateInboxItemRqst(State state){
-		if(null == state || null == state.getOwnerUser())
+	public Boolean authenticateInboxItemRqst(State state) {
+		if (null == state || null == state.getOwnerUser())
 			return Boolean.FALSE;
-		//FIX ME
-		//User authorisedUser = (User)eisCommonService.getUserforPosition(state.getOwnerUser());
-		//User loggedInUser =(User) new UserDAO().getUserByID(Integer.valueOf(EgovThreadLocals.getUserId()));
+		// FIX ME
+		// User authorisedUser =
+		// (User)eisCommonService.getUserforPosition(state.getOwnerUser());
+		// User loggedInUser =(User) new
+		// UserDAO().getUserByID(Integer.valueOf(EgovThreadLocals.getUserId()));
 		User authorisedUser = null;
 		User loggedInUser = null;
 		return authorisedUser.equals(loggedInUser);
-		
-	}
-	
-	protected Integer addingReportToSession(ReportOutput reportOutput){
-		 return	ReportViewerUtil.addReportToSession(reportOutput, getSession());
+
 	}
 
+	protected Integer addingReportToSession(ReportOutput reportOutput) {
+		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	}
 
 	public Map<String, Object> getViewMap() {
 		return viewMap;
@@ -347,13 +355,11 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.moduleService = moduleService;
 	}
 
-	public void setPropertyTaxNumberGenerator(
-			PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public void setbasicPropertyService(
-			PersistenceService<BasicProperty, Long> basicPropertyService) {
+	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
 		this.basicPropertyService = basicPropertyService;
 	}
 
@@ -366,19 +372,19 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	}
 
 	public void setOwnerName(Property property) {
-		this.ownerName = ptisCacheMgr.buildOwnerFullName(property.getBasicProperty().getPropertyOwnerInfo());
+		this.ownerName = property.getBasicProperty().getFullOwnerName();
 	}
 
 	public void setPropertyAddress(Address address) {
-		this.propertyAddress = ptisCacheMgr.buildAddressByImplemetation(address);
+		this.propertyAddress = address.toString();
 	}
-	 public Date getCurrentDate(){
-	    	
-	    	return new Date();
-	    }
 
-	public void setDocumentManagerService(
-			DocumentManagerService<DocumentObject> documentManagerService) {
+	public Date getCurrentDate() {
+
+		return new Date();
+	}
+
+	public void setDocumentManagerService(DocumentManagerService<DocumentObject> documentManagerService) {
 		this.documentManagerService = documentManagerService;
 	}
 

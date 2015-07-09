@@ -84,8 +84,6 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.utils.PTISCacheManager;
-import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -180,8 +178,7 @@ public class PropertyBillInfo {
 	}
 
 	public String getName() {
-		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-		return (ptisCacheMgr.buildOwnerFullName(basicProperty.getPropertyOwnerInfo()));
+		return basicProperty.getFullOwnerName();
 	}
 
 	public BigDecimal getArrGeneralTax() {
@@ -455,7 +452,7 @@ public class PropertyBillInfo {
 	}
 
 	public String getMailingAddress() {
-		return new PTISCacheManager().buildAddressByImplemetation(this.basicProperty.getAddress());
+		return this.basicProperty.getAddress().toString();
 	}
 
 	public BigDecimal getArrearsPenalty() {
