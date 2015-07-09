@@ -37,35 +37,29 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.utils.constants;
+package org.egov.wtms.utils;
 
-public class WaterTaxConstants {
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    public static final String MODULE_NAME = "Water Tax Management";
-    public static final String DASH_DELIM = "-";
-    public static final String APPROVED = "APPROVED";
-    public static final String APPLICATION_NUMBER = "applicationNumber";
-    public static final String NEWCONNECTION = "NEWCONNECTION";
-    public static final String METERED = "Metered";
-    public static final String NON_METERED = "Non-metered";
-    public static final String EGMODULES_NAME = "Water Tax";
-    public static final String EGMODULE_NAME = "Water Tax Management";
-    public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
-    public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
-    public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
-    public static final String CONNECTION_FEE = "Connection fee";
-    public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
+@Service
+public class WaterTaxUtils {
 
-    // Rest API constants
-    public static final String CURR_DMD_STR = "CURR_DMD";
-    public static final String ARR_DMD_STR = "ARR_DMD";
-    public static final String CURR_COLL_STR = "CURR_COLL";
-    public static final String ARR_COLL_STR = "ARR_COLL";
+    @Autowired
+    private AppConfigValuesDAO appConfigValuesDAO;
 
-    public static final String CONSUMERCODE_NOT_EXIST_ERR_CODE = "WTAX100";
-    public static final String WTAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Assessment Number ";
-    public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "WTAX101";
-    public static final String WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Consumer code ";
-    public static final String WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
+    public Boolean isSmsEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesDAO
+                .getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME, "SENDSMSFORWATERTAX").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
 
+    public Boolean isEmailEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesDAO
+                .getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME, "SENDEMAILFORWATERTAX").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
 }
