@@ -999,8 +999,6 @@ public class PaymentAction extends BasePaymentAction{
                         sql.append(" and ph.voucherheader.voucherNumber like '%"+voucherHeader.getVoucherNumber()+"%'");
                 if(voucherHeader.getFundId()!=null)
                         sql.append(" and ph.voucherheader.fundId.id="+voucherHeader.getFundId().getId());
-                if(voucherHeader.getFundsourceId()!=null)
-                        sql.append(" and ph.voucherheader.vouchermis.fundsource.id="+voucherHeader.getFundsourceId().getId());
                 if(voucherHeader.getVouchermis().getDepartmentid()!=null)
                         sql.append(" and ph.voucherheader.vouchermis.departmentid.id="+voucherHeader.getVouchermis().getDepartmentid().getId());
                 if(voucherHeader.getVouchermis().getSchemeid()!=null)

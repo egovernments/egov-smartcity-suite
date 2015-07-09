@@ -179,7 +179,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                  vDetailBank.setAccountName(bankAccountCode.getName());
                  vDetailBank.setDebitAmount(contraBean.getAmount());
                  vDetailBank.setCreditAmount(BigDecimal.ZERO);
-                 vDetailBank.setNarration(voucherHeader.getVouchermis().getNarration());
+                 vDetailBank.setNarration(voucherHeader.getDescription());
         
                  transactionBank.setVoucherLineId("1");
                  transactionBank.setGlCode(bankAccountCode.getGlcode());
@@ -198,7 +198,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                  vDetailCash.setAccountName(cashAccountCode.getName());
                  vDetailCash.setDebitAmount(BigDecimal.ZERO);
                  vDetailCash.setCreditAmount(contraBean.getAmount());
-                 vDetailCash.setNarration(voucherHeader.getVouchermis().getNarration());
+                 vDetailCash.setNarration(voucherHeader.getDescription());
                 
                  transactionCash.setVoucherLineId("2");
                  transactionCash.setGlCode(cashAccountCode.getGlcode());

@@ -112,7 +112,7 @@ public class VoucherReport {
 				CFunction function = fetchFunction(generalLedger.getFunctionId());
 				return function == null ? "" : function.getName();
 			}
-		}else if(voucherDetail!=null && voucherDetail.getVoucherHeaderId()!=null && voucherDetail.getVoucherHeaderId().getFunctionId()!=null){
+		}else if(voucherDetail!=null && voucherDetail.getVoucherHeaderId()!=null && voucherDetail.getVoucherHeaderId().getVouchermis().getFunction()!=null){
 			CFunction function = fetchFunction(generalLedger.getFunctionId());
 			return function == null ? "" : function.getName();
 		}

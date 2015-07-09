@@ -80,7 +80,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -599,7 +598,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                  voucherDetail.setAccountName(accountDetails.getAccounthead());
                                  voucherDetail.setDebitAmount(accountDetails.getDebitAmountDetail());
                                  voucherDetail.setCreditAmount(accountDetails.getCreditAmountDetail());
-                                 voucherDetail.setNarration(voucherHeader.getVouchermis().getNarration());
+                                 voucherDetail.setNarration(voucherHeader.getDescription());
                                  voucherHibDAO.postInVoucherDetail(voucherDetail);
                                  
                                  Transaxtion transaction = new Transaxtion();
@@ -628,7 +627,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                          String detailGlCode = subledgerDetails.getGlcode().getId().toString();
                                          if(null!=voucherHeader.getIsRestrictedtoOneFunctionCenter() && voucherHeader.getIsRestrictedtoOneFunctionCenter()){
                                         
-                                          detailedFunc = voucherHeader.getFunctionId().toString();
+                                          detailedFunc = voucherHeader.getVouchermis().getFunction().toString();
                                          }else{
                                                   detailedFunc = subledgerDetails.getFunctionDetail();
                                          }
@@ -716,7 +715,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                          voucherHeader.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));  
                          String cgn=voucherTypeBean.getCgnType()+cm.getCGNumber();      
                          voucherHeader.setCgn(cgn);
-                         voucherHeader.setCgDate(new Date()); 
                          
                          //String       vType=voucherHeader.getVoucherNumber().substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
                          String vType=voucherHeader.getFundId().getIdentifier()+"/"+getCgnType(voucherHeader.getType())+"/CGVN";
@@ -1033,7 +1031,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 if(null != voucherHeader.getVouchermis().getDivisionid()){
                         egBillregister.setFieldid(new BigDecimal(voucherHeader.getVouchermis().getDivisionid().getId().toString()));
                 }
-                egBillregister.setNarration(voucherHeader.getVouchermis().getNarration());
+                egBillregister.setNarration(voucherHeader.getDescription());
                 egBillregister.setIsactive(true);
                 egBillregister.setBilltype("Final Bill");
                 egBillregister.setPassedamount(totalBillAmount);
@@ -1047,7 +1045,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 egBillregistermis.setFundsource(voucherHeader.getVouchermis().getFundsource());
                 egBillregistermis.setScheme(voucherHeader.getVouchermis().getSchemeid());
                 egBillregistermis.setSubScheme(voucherHeader.getVouchermis().getSubschemeid());
-                egBillregistermis.setNarration(voucherHeader.getVouchermis().getNarration());
+                egBillregistermis.setNarration(voucherHeader.getDescription());
                 egBillregistermis.setPartyBillDate(voucherTypeBean.getPartyBillDate());
                 egBillregistermis.setPayto(voucherTypeBean.getPartyName());
                 egBillregistermis.setPartyBillNumber(voucherTypeBean.getPartyBillNum());
@@ -1131,7 +1129,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                         if(null != voucherHeader.getVouchermis().getDivisionid()){
                                 egBillregister.setFieldid(new BigDecimal(voucherHeader.getVouchermis().getDivisionid().getId().toString()));
                         }
-                        egBillregister.setNarration(voucherHeader.getVouchermis().getNarration());
+                        egBillregister.setNarration(voucherHeader.getDescription());
                         egBillregister.setPassedamount(totalBillAmount);
                         egBillregister.setBillamount(totalBillAmount);
                         
@@ -1143,7 +1141,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                         egBillregistermis.setFundsource(voucherHeader.getVouchermis().getFundsource());
                         egBillregistermis.setScheme(voucherHeader.getVouchermis().getSchemeid());
                         egBillregistermis.setSubScheme(voucherHeader.getVouchermis().getSubschemeid());
-                        egBillregistermis.setNarration(voucherHeader.getVouchermis().getNarration());
+                        egBillregistermis.setNarration(voucherHeader.getDescription());
                         egBillregistermis.setPartyBillDate(voucherTypeBean.getPartyBillDate());
                         egBillregistermis.setPayto(voucherTypeBean.getPartyName());
                         egBillregistermis.setPartyBillNumber(voucherTypeBean.getPartyBillNum());
@@ -1192,7 +1190,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                         if(voucherHeader.getVouchermis().getFunction()!=null && !voucherHeader.getVouchermis().getFunction().equals("0")){
                                 egBilldetail.setFunctionid(new BigDecimal( voucherHeader.getVouchermis().getFunction().getId()));             
                         }                         
-                        egBilldetail.setNarration(voucherHeader.getVouchermis().getNarration());
+                        egBilldetail.setNarration(voucherHeader.getDescription());
                         Set<EgBillPayeedetails> egBillPaydetailes = null;
                         
                         for (VoucherDetails subledgerDetail : subLedgerlist) {
@@ -1209,7 +1207,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                                         }else{
                                                 egBillPaydetail.setCreditAmount(subledgerDetail.getAmount());
                                         }
-                                        egBillPaydetail.setNarration(voucherHeader.getVouchermis().getNarration());
+                                        egBillPaydetail.setNarration(voucherHeader.getDescription());
                                         egBillPaydetailes.add(egBillPaydetail);
                                 }
                                 

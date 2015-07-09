@@ -772,8 +772,8 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                         sql.append(" and vh.voucherNumber like '%"+voucherHeader.getVoucherNumber()+"%'");
                 if(voucherHeader.getFundId()!=null)
                         sql.append(" and vh.fundId="+voucherHeader.getFundId().getId());
-                if(voucherHeader.getFundsourceId()!=null)
-                        sql.append(" and vmis.fundsourceId="+voucherHeader.getFundsourceId().getId());
+                if(voucherHeader.getVouchermis().getFundsource()!=null)
+                        sql.append(" and vmis.fundsourceId="+voucherHeader.getVouchermis().getFundsource().getId());
                 if(voucherHeader.getVouchermis().getDepartmentid()!=null)
                         sql.append(" and vmis.departmentid="+voucherHeader.getVouchermis().getDepartmentid().getId());
                 if(voucherHeader.getVouchermis().getSchemeid()!=null)

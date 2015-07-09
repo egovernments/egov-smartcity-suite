@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -72,6 +73,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -83,14 +85,12 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-
-@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="redirect", location = "voucherSearch.action")
 @ParentPackage("egov")
-@Validation
-@Transactional(readOnly=true)
+@Results({
+	@Result(name = VoucherSearchAction.SEARCH, location = "voucherSearch-search.jsp"),
+	@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="redirect", location = "voucherSearch.action")
+})
 public class VoucherSearchAction extends BaseFormAction
 {
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherSearchAction.class);
@@ -103,7 +103,7 @@ public class VoucherSearchAction extends BaseFormAction
 	public final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
 	@Autowired
-        protected AppConfigValuesDAO appConfigValuesDAO;
+    protected AppConfigValuesDAO appConfigValuesDAO;
 	private final List<String> headerFields = new ArrayList<String>();
 	private final List<String> mandatoryFields = new ArrayList<String>();
 	public Date fromDate=new Date();
@@ -248,6 +248,8 @@ public class VoucherSearchAction extends BaseFormAction
 		}
 		
 	}
+	@ValidationErrorPage(value=SEARCH)
+	@Action(value="/voucher/voucherSearch-search")
 	public String search() throws EGOVException,ParseException
 	{
 		boolean ismodifyJv=false;

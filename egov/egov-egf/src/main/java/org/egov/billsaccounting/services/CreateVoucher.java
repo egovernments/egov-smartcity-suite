@@ -1264,7 +1264,6 @@ public class CreateVoucher {
                          String cgn=getCgnType(vh.getType())+cm.getCGNumber();
                         if(LOGGER.isDebugEnabled())     LOGGER.debug("cgn------"+cgn);
                          vh.setCgn(cgn);
-                         vh.setCgDate(new Date());
                          String fundIdentifier =vh.getFundId().getIdentifier().toString(); 
                          String vType=fundIdentifier+"/"+getCgnType(vh.getType())+"/CGVN";
                          if(LOGGER.isDebugEnabled())     LOGGER.debug("vType"+vType);
@@ -1540,15 +1539,6 @@ public class CreateVoucher {
                          }
 
 
-                         if(headerdetails.containsKey(VoucherConstant.DEPARTMENTCODE) && null != headerdetails.get(VoucherConstant.DEPARTMENTCODE)){
-                                 String departmentCode = headerdetails.get(VoucherConstant.DEPARTMENTCODE).toString();
-                                 cVoucherHeader.setDepartmentId(deptM.getDepartmentByCode(departmentCode).getId().intValue());
-                         }
-                         
-                         if(headerdetails.containsKey(VoucherConstant.FUNDSOURCECODE) && null != headerdetails.get(VoucherConstant.FUNDSOURCECODE)){
-                                 String fundsourcecode = headerdetails.get(VoucherConstant.FUNDSOURCECODE).toString();
-                                 cVoucherHeader.setFundsourceId(fundSourceDAO.getFundSourceByCode(fundsourcecode));
-                         }              
                          if(headerdetails.containsKey(VoucherConstant.STATUS) && null != headerdetails.get(VoucherConstant.STATUS)){
                                  cVoucherHeader.setStatus(Integer.valueOf(headerdetails.get(VoucherConstant.STATUS).toString()));
 
@@ -2573,8 +2563,6 @@ public class CreateVoucher {
                                          }
                                  } */
                                  reversalVoucher.setFiscalPeriodId(originalVoucher.getFiscalPeriodId());
-                                 reversalVoucher.setDepartmentId(originalVoucher.getDepartmentId());
-                                 reversalVoucher.setFunctionId(originalVoucher.getFunctionId());
                                  reversalVoucher.setFundId(originalVoucher.getFundId());
                                  if(originalVoucher.getVouchermis()!=null)
                                  {

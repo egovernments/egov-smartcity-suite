@@ -88,8 +88,8 @@ public class ApprovePreapprovedVouchers extends VoucherSearchAction {
 		if (voucherHeader.getFundId() != null) {
 			sql = sql + " and vh.fundId=" + voucherHeader.getFundId().getId();
 		}
-		if (voucherHeader.getFundsourceId() != null) {
-			sql = sql + " and vh.fundsourceId=" + voucherHeader.getFundsourceId().getId();
+		if (voucherHeader.getVouchermis().getFundsource() != null) {
+			sql = sql + " and vh.fundsourceId=" + voucherHeader.getVouchermis().getFundsource().getId();
 		}
 		if (voucherHeader.getVouchermis().getDepartmentid() != null) {
 			sql = sql + " and vh.vouchermis.departmentid=" + voucherHeader.getVouchermis().getDepartmentid().getId();

@@ -78,7 +78,6 @@ public class CVoucherHeader extends StateAware {
     private Long id;
 
     private String cgn;
-    private Date cgDate;
     private String name;
     private String type;
     private String description;
@@ -86,18 +85,13 @@ public class CVoucherHeader extends StateAware {
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;
-    private Integer departmentId;
     @ManyToOne
     @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
     private Integer status;
     private Long originalvcId;
-    @ManyToOne
-    @JoinColumn(name = "fundsourceId")
-    private Fundsource fundsourceId;
     private Integer isConfirmed;
-    private Integer functionId;
     private String refcgNo;
     private String cgvn;
     private Integer moduleId;
@@ -150,20 +144,6 @@ public class CVoucherHeader extends StateAware {
         this.name = name;
     }
 
-    /**
-     * @return Returns the cgDate.
-     */
-    public Date getCgDate() {
-        return cgDate;
-    }
-
-    /**
-     * @param cgDate
-     *            The cgDate to set.
-     */
-    public void setCgDate(final Date cgDate) {
-        this.cgDate = cgDate;
-    }
 
     /**
      * @return Returns the Type.
@@ -245,21 +225,6 @@ public class CVoucherHeader extends StateAware {
         this.voucherNumber = voucherNumber;
     }
 
-    /**
-     * @return Returns the departmentId.
-     */
-
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    /**
-     * @param departmentId
-     *            The departmentId to set.
-     */
-    public void setDepartmentId(final Integer departmentId) {
-        this.departmentId = departmentId;
-    }
 
     /**
      * @return Returns the fundId.
@@ -324,21 +289,6 @@ public class CVoucherHeader extends StateAware {
         this.originalvcId = originalvcId;
     }
 
-    /**
-     * @return Returns the fundsourceId.
-     */
-
-    public Fundsource getFundsourceId() {
-        return fundsourceId;
-    }
-
-    /**
-     * @param fundsourceId
-     *            The fundsourceId to set.
-     */
-    public void setFundsourceId(final Fundsource fundsourceId) {
-        this.fundsourceId = fundsourceId;
-    }
 
     /**
      * @return Returns the isConfirmed.
@@ -356,21 +306,6 @@ public class CVoucherHeader extends StateAware {
         this.isConfirmed = isConfirmed;
     }
 
-    /**
-     * @return Returns the functionId.
-     */
-
-    public Integer getFunctionId() {
-        return functionId;
-    }
-
-    /**
-     * @param functionId
-     *            The functionId to set.
-     */
-    public void setFunctionId(final Integer functionId) {
-        this.functionId = functionId;
-    }
 
     /**
      * @return Returns the refcgNo.
@@ -440,21 +375,17 @@ public class CVoucherHeader extends StateAware {
     public void reset() {
 
         cgn = null;
-        cgDate = null;
         name = null;
         type = null;
         description = null;
         effectiveDate = null;
         voucherNumber = null;
         voucherDate = null;
-        departmentId = null;
         fundId = null;
         fiscalPeriodId = null;
         status = null;
         originalvcId = null;
-        fundsourceId = null;
         isConfirmed = null;
-        functionId = null;
         refcgNo = null;
         cgvn = null;
         moduleId = null;

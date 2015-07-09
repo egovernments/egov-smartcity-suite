@@ -224,9 +224,9 @@ public class VoucherSearchUtil {
 		if (voucherHeader.getFundId() != null) {
 			sql = sql + " and vh.fundId=" + voucherHeader.getFundId().getId();
 		}
-		if (voucherHeader.getFundsourceId() != null) {
+		if (voucherHeader.getVouchermis().getFundsource() != null) {
 			sql = sql + " and vh.fundsourceId="
-			+ voucherHeader.getFundsourceId().getId();
+			+ voucherHeader.getVouchermis().getFundsource().getId();
 		}
 		if (voucherHeader.getVouchermis().getDepartmentid() != null) {
 			sql = sql + " and vh.vouchermis.departmentid="
@@ -293,9 +293,9 @@ public class VoucherSearchUtil {
 		if (voucherHeader.getFundId() != null) {
 			sql = sql + " and vh.fundId=" + voucherHeader.getFundId().getId();
 		}
-		if (voucherHeader.getFundsourceId() != null) {
+		if (voucherHeader.getVouchermis().getFundsource() != null) {
 			sql = sql + " and vh.fundsourceId="
-			+ voucherHeader.getFundsourceId().getId();
+			+ voucherHeader.getVouchermis().getFundsource().getId();
 		}
 		if (voucherHeader.getVouchermis().getDepartmentid() != null) {
 			sql = sql + " and vh.vouchermis.departmentid="
@@ -330,7 +330,7 @@ public class VoucherSearchUtil {
 		return sql;
 	}
 	public String excludeVoucherStatus(){
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(	"finance", "statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(	"EGF", "statusexcludeReport");
 		return appList.get(0).getValue();
 	}
 

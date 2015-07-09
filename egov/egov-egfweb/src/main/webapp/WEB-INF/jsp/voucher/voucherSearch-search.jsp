@@ -37,11 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-
-<%@taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <link href="<egov:url path='/resources/css/displaytagFormatted.css'/>" rel="stylesheet" type="text/css" />
 
@@ -102,7 +98,7 @@
 				<s:hidden name="mode" value="%{mode}" id="mode"/>  
 			</table>
 			<div  class="buttonbottom">
-				<s:submit method="search" value="Search" onclick="return validate()" cssClass="buttonsubmit" />
+				<s:submit value="Search" onclick="return validateAndSubmit()" cssClass="buttonsubmit" />
 				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 			</div>
 			<br/>
@@ -246,7 +242,7 @@
 		
 		if(showMode=='nonbillPayment')
 		{
-		url="../payment/directBankPayment!nonBillPayment.action?showMode="+showMode+"&voucherHeader.id="+vid;
+		url="../payment/directBankPayment-nonBillPayment.action?showMode="+showMode+"&voucherHeader.id="+vid;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 		}
 		else if(showMode == 'sourceLink' ){
@@ -255,7 +251,7 @@
 	        return;
 		}
 		else if(showMode == '' ){
-			var url = 'preApprovedVoucher!loadvoucherview.action?vhid='+ vid;
+			var url = 'preApprovedVoucher-loadvoucherview.action?vhid='+ vid;
 		}
 		else{
 
@@ -263,10 +259,20 @@
 		}
 			window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 		}
+		function validateAndSubmit(){
+			if(validate()){
+				document.voucherSearch.action='${pageContext.request.contextPath}/voucher/voucherSearch-search.action';
+	    		document.voucherSearch.submit();
+				
+			}else{
+				return false;
+				}
+		}
 		
 		function validate()
 		{
 		document.getElementById('type').disabled=false;
+		return true;
 		}
 		
 			<s:if test="%{voucherList.size==0}">

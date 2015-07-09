@@ -108,8 +108,8 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 		if(null != voucherHeader.getFundId()){
 			 sql.append(" and vh.fundId=").append(voucherHeader.getFundId().getId());
 		}
-		if(null != voucherHeader.getFundsourceId()){
-			sql.append(" and vh.fundsourceId=" ).append(voucherHeader.getFundsourceId().getId());
+		if(null != voucherHeader.getVouchermis().getFundsource()){
+			sql.append(" and vh.fundsourceId=" ).append(voucherHeader.getVouchermis().getFundsource().getId());
 		}
 		
 		if(null != voucherHeader.getVouchermis().getDepartmentid()){

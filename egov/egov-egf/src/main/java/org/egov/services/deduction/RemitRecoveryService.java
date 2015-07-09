@@ -94,9 +94,6 @@ public class RemitRecoveryService {
 		append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("'");
 		if(detailKeyId!=null && detailKeyId!=-1)
 			query.append(" and egr.generalledgerdetail.detailkeyid="+detailKeyId);
-		if(null!= voucherHeader.getDepartmentId() && voucherHeader.getDepartmentId() !=-1){   
-			query.append(" and mis.departmentid.id="+voucherHeader.getDepartmentId());
-		}
 		query.append(VoucherHelper.getMisQuery(voucherHeader)).append(" order by vh.voucherNumber,vh.voucherDate");
 		populateDetails(voucherHeader, listRemitBean, query);
 		return listRemitBean;

@@ -863,7 +863,6 @@ public class CollectionObjectFactory {
 
 	public CVoucherHeader createVoucher(String name) {
 		CVoucherHeader voucher = new CVoucherHeader();
-		voucher.setCgDate(new Date());
 		voucher.setCgn(("CGN" + getRandomNumber()).substring(0, 9));
 		voucher.setName("testVoucher" + name);
 		voucher.setType("testType");

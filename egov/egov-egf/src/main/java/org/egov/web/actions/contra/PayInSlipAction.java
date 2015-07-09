@@ -347,7 +347,7 @@ public class PayInSlipAction extends BaseVoucherAction {
                         detailMap.put(VoucherConstant.CREDITAMOUNT, "0");
                         detailMap.put(VoucherConstant.DEBITAMOUNT, totalAmount);
                         detailMap.put(VoucherConstant.GLCODE, bankaccount.getChartofaccounts().getGlcode());
-                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getVouchermis().getNarration());
+                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getDescription());
                         
                         accountdetails.add(detailMap);
                         
@@ -355,7 +355,7 @@ public class PayInSlipAction extends BaseVoucherAction {
                         detailMap.put(VoucherConstant.DEBITAMOUNT, "0");
                         detailMap.put(VoucherConstant.CREDITAMOUNT,totalAmount);
                         detailMap.put(VoucherConstant.GLCODE, contraBean.getChequeInHand());
-                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getVouchermis().getNarration());
+                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getDescription());
                         accountdetails.add(detailMap);
                         final CreateVoucher cv = new CreateVoucher();
                         voucherHeader = cv.createVoucher(headerDetails, accountdetails, subledgerDetails);
@@ -382,7 +382,7 @@ public class PayInSlipAction extends BaseVoucherAction {
                         detailMap.put(VoucherConstant.CREDITAMOUNT, "0");
                         detailMap.put(VoucherConstant.DEBITAMOUNT, totalAmount);
                         detailMap.put(VoucherConstant.GLCODE, bankaccount.getChartofaccounts().getGlcode());
-                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getVouchermis().getNarration());
+                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getDescription());
                         
                         accountdetails.add(detailMap);
                         
@@ -390,7 +390,7 @@ public class PayInSlipAction extends BaseVoucherAction {
                         detailMap.put(VoucherConstant.DEBITAMOUNT, "0");
                         detailMap.put(VoucherConstant.CREDITAMOUNT,totalAmount);
                         detailMap.put(VoucherConstant.GLCODE, contraBean.getChequeInHand());
-                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getVouchermis().getNarration());
+                        detailMap.put(VoucherConstant.NARRATION, voucherHeader.getDescription());
                         accountdetails.add(detailMap);
                         final CreateVoucher cv = new CreateVoucher();
                         final List<Transaxtion> transactions = cv.createTransaction(null,accountdetails, subledgerDetails, voucherHeader);

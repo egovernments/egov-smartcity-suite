@@ -39,8 +39,6 @@
  */
 package org.egov.commons;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,7 +48,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -76,78 +73,10 @@ public class Vouchermis implements java.io.Serializable {
 	@JoinColumn(name = "divisionid")
 	private Boundary divisionid;
 
-	private String schemename;
-
-	private String accountcode;
-
-	private String accounthead;
-
-	private String contractamt;
-
-	private String cashbook;
-
-	private String natureofwork;
-
-	private String assetdesc;
-
-	private String userdept;
-
-	private String demandno;
-
-	private String narration;
-
-	private String currentyear;
 	@ManyToOne
 	@JoinColumn(name = "departmentid")
 	private Department departmentid;
 
-	private String deptacchead;
-
-	private String subaccounthead;
-
-	private Integer projectcode;
-	@Column(name="concurrance_pn")
-	private String concurrancePn;
-
-	private Integer zonecode;
-
-	private Integer wardcode;
-
-	private Integer divisioncode;
-
-	private Integer month;
-
-	private String grossded;
-	@Column(name="emd_security")
-	private String emdSecurity;
-
-	private String netdeduction;
-
-	private String netamt;
-
-	private String totexpenditure;
-
-	// private Integer voucherheaderid;
-
-	private String billregisterid;
-	@Column(name="acount_department")
-	private Integer acountDepartment;
-
-	private Integer projectfund;
-	@Column(name="concurrance_sn")
-	private Short concurranceSn;
-
-	private Integer segmentid;
-	@Column(name="sub_segmentid")
-	private Integer subSegmentid;
-
-	private Date updatedtimestamp;
-
-	private Date createtimestamp;
-	@Column(name="iut_status")
-	private String iutStatus;
-	@Column(name="iut_number")
-	private String iutNumber;
 	@ManyToOne
 	@JoinColumn(name = "schemeid") 
 	private Scheme schemeid;
@@ -234,93 +163,6 @@ public class Vouchermis implements java.io.Serializable {
 		this.divisionid = divisionid;
 	}
 
-	public String getSchemename() {
-		return this.schemename;
-	}
-
-	public void setSchemename(String schemename) {
-		this.schemename = schemename;
-	}
-
-	public String getAccountcode() {
-		return this.accountcode;
-	}
-
-	public void setAccountcode(String accountcode) {
-		this.accountcode = accountcode;
-	}
-
-	public String getAccounthead() {
-		return this.accounthead;
-	}
-
-	public void setAccounthead(String accounthead) {
-		this.accounthead = accounthead;
-	}
-
-	public String getContractamt() {
-		return this.contractamt;
-	}
-
-	public void setContractamt(String contractamt) {
-		this.contractamt = contractamt;
-	}
-
-	public String getCashbook() {
-		return this.cashbook;
-	}
-
-	public void setCashbook(String cashbook) {
-		this.cashbook = cashbook;
-	}
-
-	public String getNatureofwork() {
-		return this.natureofwork;
-	}
-
-	public void setNatureofwork(String natureofwork) {
-		this.natureofwork = natureofwork;
-	}
-
-	public String getAssetdesc() {
-		return this.assetdesc;
-	}
-
-	public void setAssetdesc(String assetdesc) {
-		this.assetdesc = assetdesc;
-	}
-
-	public String getUserdept() {
-		return this.userdept;
-	}
-
-	public void setUserdept(String userdept) {
-		this.userdept = userdept;
-	}
-
-	public String getDemandno() {
-		return this.demandno;
-	}
-
-	public void setDemandno(String demandno) {
-		this.demandno = demandno;
-	}
-
-	public String getNarration() {
-		return this.narration;
-	}
-
-	public void setNarration(String narration) {
-		this.narration = narration;
-	}
-
-	public String getCurrentyear() {
-		return this.currentyear;
-	}
-
-	public void setCurrentyear(String currentyear) {
-		this.currentyear = currentyear;
-	}
 
 	public Department getDepartmentid() {
 		return this.departmentid;
@@ -330,193 +172,6 @@ public class Vouchermis implements java.io.Serializable {
 		this.departmentid = departmentid;
 	}
 
-	public String getDeptacchead() {
-		return this.deptacchead;
-	}
-
-	public void setDeptacchead(String deptacchead) {
-		this.deptacchead = deptacchead;
-	}
-
-	public String getSubaccounthead() {
-		return this.subaccounthead;
-	}
-
-	public void setSubaccounthead(String subaccounthead) {
-		this.subaccounthead = subaccounthead;
-	}
-
-	public Integer getProjectcode() {
-		return this.projectcode;
-	}
-
-	public void setProjectcode(Integer projectcode) {
-		this.projectcode = projectcode;
-	}
-
-	public String getConcurrancePn() {
-		return this.concurrancePn;
-	}
-
-	public void setConcurrancePn(String concurrancePn) {
-		this.concurrancePn = concurrancePn;
-	}
-
-	public Integer getZonecode() {
-		return this.zonecode;
-	}
-
-	public void setZonecode(Integer zonecode) {
-		this.zonecode = zonecode;
-	}
-
-	public Integer getWardcode() {
-		return this.wardcode;
-	}
-
-	public void setWardcode(Integer wardcode) {
-		this.wardcode = wardcode;
-	}
-
-	public Integer getDivisioncode() {
-		return this.divisioncode;
-	}
-
-	public void setDivisioncode(Integer divisioncode) {
-		this.divisioncode = divisioncode;
-	}
-
-	public Integer getMonth() {
-		return this.month;
-	}
-
-	public void setMonth(Integer month) {
-		this.month = month;
-	}
-
-	public String getGrossded() {
-		return this.grossded;
-	}
-
-	public void setGrossded(String grossded) {
-		this.grossded = grossded;
-	}
-
-	public String getEmdSecurity() {
-		return this.emdSecurity;
-	}
-
-	public void setEmdSecurity(String emdSecurity) {
-		this.emdSecurity = emdSecurity;
-	}
-
-	public String getNetdeduction() {
-		return this.netdeduction;
-	}
-
-	public void setNetdeduction(String netdeduction) {
-		this.netdeduction = netdeduction;
-	}
-
-	public String getNetamt() {
-		return this.netamt;
-	}
-
-	public void setNetamt(String netamt) {
-		this.netamt = netamt;
-	}
-
-	public String getTotexpenditure() {
-		return this.totexpenditure;
-	}
-
-	public void setTotexpenditure(String totexpenditure) {
-		this.totexpenditure = totexpenditure;
-	}
-
-	/*
-	 * public Integer getVoucherheaderid() { return this.voucherheaderid; } public void setVoucherheaderid(Integer voucherheaderid) { this.voucherheaderid = voucherheaderid; }
-	 */
-
-	public String getBillregisterid() {
-		return this.billregisterid;
-	}
-
-	public void setBillregisterid(String billregisterid) {
-		this.billregisterid = billregisterid;
-	}
-
-	public Integer getAcountDepartment() {
-		return this.acountDepartment;
-	}
-
-	public void setAcountDepartment(Integer acountDepartment) {
-		this.acountDepartment = acountDepartment;
-	}
-
-	public Integer getProjectfund() {
-		return this.projectfund;
-	}
-
-	public void setProjectfund(Integer projectfund) {
-		this.projectfund = projectfund;
-	}
-
-	public Short getConcurranceSn() {
-		return this.concurranceSn;
-	}
-
-	public void setConcurranceSn(Short concurranceSn) {
-		this.concurranceSn = concurranceSn;
-	}
-
-	public Integer getSegmentid() {
-		return this.segmentid;
-	}
-
-	public void setSegmentid(Integer segmentid) {
-		this.segmentid = segmentid;
-	}
-
-	public Integer getSubSegmentid() {
-		return this.subSegmentid;
-	}
-
-	public void setSubSegmentid(Integer subSegmentid) {
-		this.subSegmentid = subSegmentid;
-	}
-
-	public Date getUpdatedtimestamp() {
-		return this.updatedtimestamp;
-	}
-
-	public void setUpdatedtimestamp(Date updatedtimestamp) {
-		this.updatedtimestamp = updatedtimestamp;
-	}
-
-	public Date getCreatetimestamp() {
-		return this.createtimestamp;
-	}
-
-	public void setCreatetimestamp(Date createtimestamp) {
-		this.createtimestamp = createtimestamp;
-	}
-
-	public String getIutStatus() {
-		return this.iutStatus;
-	}
-
-	public void setIutStatus(String iutStatus) {
-		this.iutStatus = iutStatus;
-	}
-
-	public String getIutNumber() {
-		return this.iutNumber;
-	}
-
-	public void setIutNumber(String iutNumber) {
-		this.iutNumber = iutNumber;
-	}
 
 	public Scheme getSchemeid() {
 		return this.schemeid;

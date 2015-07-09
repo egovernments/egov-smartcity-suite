@@ -360,6 +360,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         @Action(value="/voucher/preApprovedVoucher-loadvoucherview")
         public String loadvoucherview() throws EGOVException
         {
+        		
                 billDetails = new HashMap<String, Object>();
                 if(parameters.get("from")!=null && FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT.equals(parameters.get("from")[0]))
                 {
@@ -378,9 +379,6 @@ public class PreApprovedVoucherAction extends BaseFormAction
                         voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(parameters.get(VHID)[0]));
                         from=FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL;
                 }
-                /*List<VoucherDetail> voucherDetailList=new ArrayList<VoucherDetail>();
-                voucherDetailList = persistenceService.findAllBy("from VoucherDetail where voucherHeaderId.id=? order by decode(debitAmount,null,0, debitAmount) desc ,decode(creditAmount,null,0, creditAmount) asc",voucherHeader.getId());
-                billDetails.put("voucherDetailList", voucherDetailList);*/
                 getMasterDataForBillVoucher();
                 getHeaderMandateFields();
                 return "view";
