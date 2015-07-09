@@ -1322,7 +1322,6 @@ function delFloor(obj)
 	}
 	else
 	{	
-		
 
 		tbl.deleteRow(rIndex);	
 		
@@ -1341,17 +1340,20 @@ function delFloor(obj)
 			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
 			      },
 			   });
+			   
+			   if(jQuery(this).data('calculate'))
+			   {
+				    jQuery(this).attr('data-calculate', jQuery(this)[0].attributes['data-calculate'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
+			   }
+				 
+			   if(jQuery(this).data('result'))
+			   {
+				    jQuery(this).attr('data-result', jQuery(this)[0].attributes['data-result'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
+			   }
+			   
 		    });
 			
-			 if(jQuery(this).data('calculate'))
-		     {
-				 jQuery(this).attr('data-calculate', jQuery(obj)[0].attributes['data-calculate'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
-			 }
 			 
-			 if(jQuery(this).data('result'))
-		     {
-				 jQuery(this).attr('data-result', jQuery(obj)[0].attributes['data-result'].nodeValue.replace(/\[.\]/g, '['+ idx +']'));
-			 }
 			 
 			
 			//hide add option except first row
