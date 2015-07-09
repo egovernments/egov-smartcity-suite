@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -90,7 +90,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
     
     @Autowired
     private EgDemandDetailsDao egDemandDetailsDAO;
-    
+
     @Override
     public String getBillXML(Billable billObj) {
         if (billObj == null) {
@@ -212,11 +212,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
             /* do not create penalty demand details if penalty is zero */
             if (penDmdDtls == null && thereIsPenalty) {
                 insertPenDmdDetail = insertPenaltyDmdDetail(installment, penalty);
-                egDemandDetailsDAO.create(insertPenDmdDetail);
             } else {
                 penalty = penDmdDtls.getAmount().subtract(penDmdDtls.getAmtCollected());
             }
-
             if (thereIsPenalty) {
                 key = installmentDate.getYear() + "-" + DEMANDRSN_CODE_PENALTY_FINES;
                 BillDetailBean billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, penalty,

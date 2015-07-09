@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -59,50 +59,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public class NoticeService {
-	private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
-	PersistenceService<BasicProperty, Long> basicPropertyService;
-	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
-	@Autowired
-	private ModuleService moduleDao;
-	@Autowired
-	@Qualifier("fileStoreService")
-	protected FileStoreService fileStoreService;
+        private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
+        PersistenceService<BasicProperty, Long> basicPropertyService;
+        PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
+        @Autowired
+        private ModuleService moduleDao;
+        @Autowired
+        @Qualifier("fileStoreService")
+        protected FileStoreService fileStoreService;
 
-	/**
-	 * This method populates the <code>PtNotice</code> object along with notice
-	 * input stream
-	 * 
-	 * @param basicProperty
-	 *            the <code>BasicProperty</code> object for which the notice is
-	 *            generated
-	 * @param noticeNo - notice no
-	 * @param noticeType - type of notice
-	 * @param fileStream - input stream of generated notice.           
-	 * 
-	 */
-	public PtNotice saveNotice(String noticeNo, String noticeType, BasicProperty basicProperty, InputStream fileStream) {
-		PtNotice ptNotice = new PtNotice();
-		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		ptNotice.setModuleId(module.getId());
-		ptNotice.setNoticeDate(new Date());
-		ptNotice.setNoticeNo(noticeNo);
-		ptNotice.setNoticeType(noticeType);
-		ptNotice.setUserId(EgovThreadLocals.getUserId());
-		ptNotice.setBasicProperty(basicProperty);
-		ptNotice.setIsBlob('Y');
-		String fileName=ptNotice.getNoticeNo()+".pdf";
-		FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", "PTIS");
-		ptNotice.setFileStore(fileStore);
-		basicProperty.addNotice(ptNotice);
-		basicPropertyService.update(basicProperty);
-		return ptNotice;
-	}
-	
-	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
-		return basicPropertyService;
-	}
+        /**
+         * This method populates the <code>PtNotice</code> object along with notice
+         * input stream
+         * 
+         * @param basicProperty
+         *            the <code>BasicProperty</code> object for which the notice is
+         *            generated
+         * @param noticeNo - notice no
+         * @param noticeType - type of notice
+         * @param fileStream - input stream of generated notice.           
+         * 
+         */
+        public PtNotice saveNotice(String noticeNo, String noticeType, BasicProperty basicProperty, InputStream fileStream) {
+                PtNotice ptNotice = new PtNotice();
+                Module module = moduleDao.getModuleByName(PTMODULENAME);
+                ptNotice.setModuleId(module.getId());
+                ptNotice.setNoticeDate(new Date());
+                ptNotice.setNoticeNo(noticeNo);
+                ptNotice.setNoticeType(noticeType);
+                ptNotice.setUserId(EgovThreadLocals.getUserId());
+                ptNotice.setBasicProperty(basicProperty);
+                ptNotice.setIsBlob('Y');
+                String fileName=ptNotice.getNoticeNo()+".pdf";
+                FileStoreMapper fileStore = fileStoreService
+                            .store(fileStream, fileName, "application/pdf", PTMODULENAME);
+                ptNotice.setFileStore(fileStore);
+                basicProperty.addNotice(ptNotice);
+                basicPropertyService.update(basicProperty);
+                return ptNotice;
+        }
+        
+        public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
+                return basicPropertyService;
+        }
 
-	public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
-		this.basicPropertyService = basicPropertyService;
-	}
+        public void setbasicPropertyService(PersistenceService<BasicProperty, Long> basicPropertyService) {
+                this.basicPropertyService = basicPropertyService;
+        }
 }

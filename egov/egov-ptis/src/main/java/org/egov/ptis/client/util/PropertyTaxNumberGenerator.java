@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -61,21 +61,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
-	private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
+        private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
 	private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
+	private static final String  SEQ_EG_BILL = "SEQ_EG_BILL";
+        @Autowired
+        private SequenceNumberGenerator sequenceNumberGenerator;
+        @Autowired
+        private ModuleService moduleDao;
+        @Autowired
+        private InstallmentDao installmentDao;
+        
+        @Autowired
+        private ApplicationNumberGenerator applicationNumberGenerator;
 
-	@Autowired
-	private SequenceNumberGenerator sequenceNumberGenerator;
-	@Autowired
-	private ModuleService moduleDao;
-	@Autowired
-	private InstallmentDao installmentDao;
-	
-	@Autowired
-	private ApplicationNumberGenerator applicationNumberGenerator;
-
-	public String generateNoticeNumber(String noticeType) {
-		StringBuffer noticeNo = new StringBuffer();
+        public String generateNoticeNumber(String noticeType) {
+                StringBuffer noticeNo = new StringBuffer();
 		try {
 			if(StringUtils.isNotBlank(noticeType)){
 				if(noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE6)){
@@ -87,177 +87,172 @@ public class PropertyTaxNumberGenerator {
 			}
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
-		}
-		return noticeNo.toString();
-	}
+                }
 
-	public String generateBillNumber(String wardNo) {
-		StringBuffer billNo = new StringBuffer();
-		Module module = moduleDao
-				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		Installment finYear = installmentDao
-				.getInsatllmentByModuleForGivenDate(module, new Date());
-		//FIX ME
-		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
-				BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
-				.getFormattedNumber();
-		billNo.append(wardNo);
-		billNo.append("/");
-		billNo.append(index);
-		billNo.append("/");
-		billNo.append(finYear.getDescription());*/
-		return billNo.toString();
-	}
+                return noticeNo.toString();
+        }
 
-	public String generateManualBillNumber(PropertyID propertyID) {
-		StringBuilder billNo = new StringBuilder();
+        public String generateBillNumber(String wardNo) {
+                StringBuffer billNo = new StringBuffer();
+                Module module = moduleDao
+                                .getModuleByName(PropertyTaxConstants.PTMODULENAME);
+                Installment finYear = installmentDao
+                                .getInsatllmentByModuleForGivenDate(module, new Date());
+                //FIX ME
+                /*String index = sequenceNumberGenerator.getNextNumberWithFormat(
+                                BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
+                                .getFormattedNumber();
+                billNo.append(wardNo);
+                billNo.append("/");
+                billNo.append(index);
+                billNo.append("/");
+                billNo.append(finYear.getDescription());*/
+                return billNo.toString();
+        }
 
-		String zoneNo = propertyID.getZone().getBoundaryNum().toString();
-		String wardNo = propertyID.getWard().getBoundaryNum().toString();
+        public String generateManualBillNumber(PropertyID propertyID) {
+                StringBuffer billNo = new StringBuffer();
+                try {
+                        String cityCode = EgovThreadLocals.getCityCode();
+                        billNo.append(cityCode);
+                        String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
+                        billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));
+                } catch (Exception e) {
+                        throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+                }
+                return billNo.toString();
+        }
+        
+        
+        public String generateRecoveryNotice(String noticeType) {
+                StringBuffer noticeNo = new StringBuffer();
+                String objString = "";
+                if (PropertyTaxConstants.NOTICE155_SEQ_STR.equalsIgnoreCase(noticeType)) {
+                        objString = PropertyTaxConstants.NOTICE155_SEQ_STR;
+                        noticeNo.append(PropertyTaxConstants.NOTICE155_NOTICENO_PREFIX);
+                } else if (PropertyTaxConstants.NOTICE156_SEQ_STR
+                                .equalsIgnoreCase(noticeType)) {
+                        objString = PropertyTaxConstants.NOTICE156_SEQ_STR;
+                        noticeNo.append(PropertyTaxConstants.NOTICE156_NOTICENO_PREFIX);
+                } else if (PropertyTaxConstants.NOTICE159_SEQ_STR
+                                .equalsIgnoreCase(noticeType)) {
+                        objString = PropertyTaxConstants.NOTICE159_SEQ_STR;
+                        noticeNo.append(PropertyTaxConstants.NOTICE159_NOTICENO_PREFIX);
+                } else if (PropertyTaxConstants.WARRANT_APPLICATION
+                                .equalsIgnoreCase(noticeType)) {
+                        //FIX ME
+                        /*String index = sequenceNumberGenerator.getNextNumberWithFormat(
+                                        PropertyTaxConstants.WARRANT_APPLICATION.toUpperCase(), 5, '0',
+                                        Long.valueOf(1)).getFormattedNumber();
+                        noticeNo.append(index);*/
+                        return noticeNo.toString();
+                }
+                //FIX ME
+                /*String index = sequenceNumberGenerator.getNextNumberWithFormat(
+                                objString.toUpperCase(), 5, '0', Long.valueOf(1))
+                                .getFormattedNumber();
+                noticeNo.append(index);*/
+                noticeNo.append("/");
+                Module module = moduleDao
+                                .getModuleByName(PropertyTaxConstants.PTMODULENAME);
+                Installment finYear = installmentDao
+                                .getInsatllmentByModuleForGivenDate(module, new Date());
+                noticeNo.append(finYear.getDescription());
+                return noticeNo.toString();
+        }
 
-		zoneNo = org.apache.commons.lang.StringUtils.leftPad(zoneNo, 2, '0');
-		wardNo = org.apache.commons.lang.StringUtils.leftPad(wardNo, 3, '0');
+        public String generateIndexNumber(String wardNum) {
 
-		//FIX ME
-		/*String index = sequenceNumberGenerator
-				.getNextNumberWithFormat(
-						MANUAL_BILLGEN_SEQNAME_PREFIX + wardNo, 6, '0',
-						Long.valueOf(1)).getFormattedNumber();
+                StringBuffer indexNum = new StringBuffer();
+                try {
+                        wardNum = org.apache.commons.lang.StringUtils.leftPad(wardNum, 3, "0");
+                        indexNum.append(wardNum);
+                        //FIX ME
+                        /*Long index = sequenceNumberGenerator.getNextNumber("DIV-" + wardNum).getNumber();
+                        indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));*/
+                } catch (Exception e) {
+                        throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+                }
 
-		billNo.append(zoneNo).append("/").append(wardNo).append("/")
-				.append(index);*/
-		return billNo.toString();
-	}
+                return indexNum.toString();
+        }
+        
+        
+        public String generateIndexNumber() {
 
-	public String generateRecoveryNotice(String noticeType) {
-		StringBuffer noticeNo = new StringBuffer();
-		String objString = "";
-		if (PropertyTaxConstants.NOTICE155_SEQ_STR.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE155_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE155_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.NOTICE156_SEQ_STR
-				.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE156_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE156_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.NOTICE159_SEQ_STR
-				.equalsIgnoreCase(noticeType)) {
-			objString = PropertyTaxConstants.NOTICE159_SEQ_STR;
-			noticeNo.append(PropertyTaxConstants.NOTICE159_NOTICENO_PREFIX);
-		} else if (PropertyTaxConstants.WARRANT_APPLICATION
-				.equalsIgnoreCase(noticeType)) {
-			//FIX ME
-			/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
-					PropertyTaxConstants.WARRANT_APPLICATION.toUpperCase(), 5, '0',
-					Long.valueOf(1)).getFormattedNumber();
-			noticeNo.append(index);*/
-			return noticeNo.toString();
-		}
-		//FIX ME
-		/*String index = sequenceNumberGenerator.getNextNumberWithFormat(
-				objString.toUpperCase(), 5, '0', Long.valueOf(1))
-				.getFormattedNumber();
-		noticeNo.append(index);*/
-		noticeNo.append("/");
-		Module module = moduleDao
-				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		Installment finYear = installmentDao
-				.getInsatllmentByModuleForGivenDate(module, new Date());
-		noticeNo.append(finYear.getDescription());
-		return noticeNo.toString();
-	}
+                StringBuffer indexNum = new StringBuffer();
+                try {
+                        String cityCode = EgovThreadLocals.getCityCode();
+                        indexNum.append(cityCode);
+                        String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
+                        indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
+                } catch (Exception e) {
+                        throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
+                }
+                return indexNum.toString();
+        }
 
-	public String generateIndexNumber(String wardNum) {
+        //FIX ME
+        public String getObjectionNumber() {
+                /*String type = PropertyTaxConstants.OBJECTION_SEQ_STR;
+                return type
+                                + "/"
+                                + org.apache.commons.lang.StringUtils.leftPad(
+                                                sequenceNumberGenerator.getNextNumber(type, 1)
+                                                                .getFormattedNumber(), 8, "0");*/
+                return null;
+        }
 
-		StringBuffer indexNum = new StringBuffer();
-		try {
-			wardNum = org.apache.commons.lang.StringUtils.leftPad(wardNum, 3, "0");
-			indexNum.append(wardNum);
-			//FIX ME
-			/*Long index = sequenceNumberGenerator.getNextNumber("DIV-" + wardNum).getNumber();
-			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index.toString(), 6, "0"));*/
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
-		}
+        public String getHearingNumber(Boundary zoneBoundary) {
+                /*StringBuffer hearingNum = new StringBuffer();
+                String type = PropertyTaxConstants.HEARINGNO_SEQ_STR;
+                return hearingNum
+                                .append(org.apache.commons.lang.StringUtils.leftPad(sequenceNumberGenerator
+                                                .getNextNumber(type, 1).getFormattedNumber(), 3, "0"))
+                                .append("/")
+                                .append(type)
+                                .append("/")
+                                .append(zoneBoundary != null ? zoneBoundary.getName() : "")
+                                .append("-")
+                                .append(zoneBoundary != null ? zoneBoundary.getBoundaryNum()
+                                                .toString() : "").toString();*/
+                return null;
 
-		return indexNum.toString();
-	}
-	
-	
-	public String generateIndexNumber() {
+        }
 
-		StringBuffer indexNum = new StringBuffer();
-		try {
-			String cityCode = EgovThreadLocals.getCityCode();
-			indexNum.append(cityCode);
-			String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
-			indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("Exception : " + e.getMessage(), e);
-		}
-		return indexNum.toString();
-	}
+        public String generateNameTransApplNo(Boundary wardBndry) {
+                return applicationNumberGenerator.generate();
+        }
 
-	//FIX ME
-	public String getObjectionNumber() {
-		/*String type = PropertyTaxConstants.OBJECTION_SEQ_STR;
-		return type
-				+ "/"
-				+ org.apache.commons.lang.StringUtils.leftPad(
-						sequenceNumberGenerator.getNextNumber(type, 1)
-								.getFormattedNumber(), 8, "0");*/
-		return null;
-	}
+        //FIX ME
+        public String generateMemoNumber() {
 
-	public String getHearingNumber(Boundary zoneBoundary) {
-		/*StringBuffer hearingNum = new StringBuffer();
-		String type = PropertyTaxConstants.HEARINGNO_SEQ_STR;
-		return hearingNum
-				.append(org.apache.commons.lang.StringUtils.leftPad(sequenceNumberGenerator
-						.getNextNumber(type, 1).getFormattedNumber(), 3, "0"))
-				.append("/")
-				.append(type)
-				.append("/")
-				.append(zoneBoundary != null ? zoneBoundary.getName() : "")
-				.append("-")
-				.append(zoneBoundary != null ? zoneBoundary.getBoundaryNum()
-						.toString() : "").toString();*/
-		return null;
+                /*String memoNumber = "";
+                String type = PropertyTaxConstants.MEMONO_SEQ_STR;
+                return memoNumber
+                                + (StringUtils.leftPad(
+                                                sequenceNumberGenerator.getNextNumber(type, 1)
+                                                                .getFormattedNumber(), 5, "0"));*/
+                return null;
 
-	}
+        }
 
-	public String generateNameTransApplNo(Boundary wardBndry) {
-		return applicationNumberGenerator.generate();
-	}
+        public String getRejectionLetterSerialNum() {
+                String type = PropertyTaxConstants.REJECTION_SEQ_STR;
+                /*return sequenceNumberGenerator.getNextNumber(type, 1)
+                                .getFormattedNumber();*/
+                return null;
+        }
 
-	//FIX ME
-	public String generateMemoNumber() {
+        public String generateUnitIdentifierPrefix() {
+                /*return sequenceNumberGenerator
+                                .getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();*/
+                return null;
+        }
 
-		/*String memoNumber = "";
-		String type = PropertyTaxConstants.MEMONO_SEQ_STR;
-		return memoNumber
-				+ (StringUtils.leftPad(
-						sequenceNumberGenerator.getNextNumber(type, 1)
-								.getFormattedNumber(), 5, "0"));*/
-		return null;
-
-	}
-
-	public String getRejectionLetterSerialNum() {
-		String type = PropertyTaxConstants.REJECTION_SEQ_STR;
-		/*return sequenceNumberGenerator.getNextNumber(type, 1)
-				.getFormattedNumber();*/
-		return null;
-	}
-
-	public String generateUnitIdentifierPrefix() {
-		/*return sequenceNumberGenerator
-				.getNextNumber(UNIT_IDENTIFIER_SEQ_STR, 1).getFormattedNumber();*/
-		return null;
-	}
-
-	public void setSequenceNumberGenerator(
-			SequenceNumberGenerator sequenceNumberGenerator) {
-		this.sequenceNumberGenerator = sequenceNumberGenerator;
-	}
+        public void setSequenceNumberGenerator(
+                        SequenceNumberGenerator sequenceNumberGenerator) {
+                this.sequenceNumberGenerator = sequenceNumberGenerator;
+        }
 
 }

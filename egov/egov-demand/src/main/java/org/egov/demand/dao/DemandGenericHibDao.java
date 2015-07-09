@@ -613,18 +613,18 @@ public class DemandGenericHibDao implements DemandGenericDao {
 	public List getReasonWiseDCB(EgDemand egDemand, Module module) {
 		List list = new ArrayList();
 		String query = " SELECT drm.code, " + " i.description, " + " dd.amount, "
-				+ " dd.amt_collected, " + " dd.amt_rebate " + "FROM eg_demand_details dd, "
+				+ " dd.amt_collected, " + " dd.amt_rebate, " + " i.id " + "FROM eg_demand_details dd, "
 				+ " eg_demand_reason dr, " + " eg_installment_master i, "
 				+ " eg_demand_reason_master drm " + "WHERE dd.id_demand_reason = dr.id "
-				+ " AND dr.id_installment = i.id_installment "
+				+ " AND dr.id_installment = i.id "
 				+ " AND dr.id_demand_reason_master = drm.id " + " AND dd.id_demand =:dmdId "
-				+ " AND drm.module_id  =:moduleId " + "ORDER BY i.start_date ";
+				+ " AND drm.module  =:moduleId " + "ORDER BY i.start_date ";
 		Query qry = getCurrentSession().createSQLQuery(query).setLong("dmdId", egDemand.getId())
 				.setLong("moduleId", module.getId());
 		list = qry.list();
 		return list;
 	}
-
+	
 	/**
 	 * Method called to get ReasonMaster IDs of the Demand which is provided.
 	 * 

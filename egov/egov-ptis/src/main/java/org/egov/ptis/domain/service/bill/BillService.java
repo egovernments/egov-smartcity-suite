@@ -39,47 +39,34 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.bill;
 
-import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.dateFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.client.model.PropertyBillInfo;
+import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
-import org.egov.ptis.service.collection.DemandDetailsComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -107,6 +94,8 @@ public class BillService {
 	private InstallmentDao installmentDao;
 	@Autowired
 	private PtDemandDao ptDemandDAO;
+	@Autowired
+	private PropertyTaxBillable propertyTaxBillable;
 
 	/**
 	 * Generates a Demand Notice or the Bill giving the break up of the tax
@@ -118,78 +107,31 @@ public class BillService {
 	 */
 	public ReportOutput generateBill(BasicProperty basicProperty, Integer userId) {
 		LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
-
-		Integer reportId = -1;
-		ReportRequest reportRequest = null;
-		EgDemand egDemand = ptDemandDAO
-				.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		List<EgDemandDetails> dmdDetailsList = new ArrayList<EgDemandDetails>(
-				egDemand.getEgDemandDetails());
-		Collections.sort(dmdDetailsList, new DemandDetailsComparator());
-		Calendar calendar = Calendar.getInstance();
-		Date startDate = dmdDetailsList.get(0).getEgDemandReason().getEgInstallmentMaster()
-				.getFromDate();
-		Date endDate = dmdDetailsList.get(dmdDetailsList.size() - 1).getEgDemandReason()
-				.getEgInstallmentMaster().getFromDate();
-
-		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				new Date());
-		String arrearsPeriod = null;
-
-		Date firstSixMonthEndDate = DateUtils.add(
-				DateUtils.add(currentInstall.getFromDate(), MONTH, 6), DAY_OF_MONTH, -1);
-
-		String firstSixMonthsPeriod = dateFormat.format(currentInstall.getFromDate()) + STR_TO
-				+ dateFormat.format(firstSixMonthEndDate);
-
-		String secondSixMonthsPeriod = dateFormat.format(DateUtils.add(firstSixMonthEndDate,
-				DAY_OF_MONTH, 1)) + STR_TO + dateFormat.format(currentInstall.getToDate());
-
-		if (!startDate.equals(currentInstall.getFromDate())) {
-			calendar.setTime(startDate);
-			int fromYear = calendar.get(Calendar.YEAR);
-			calendar.setTime(endDate);
-			int endYear = calendar.get(Calendar.YEAR);
-			arrearsPeriod = fromYear + "-" + endYear;
-		}
-
-		calendar.setTime(currentInstall.getFromDate());
-		int currFromYear = calendar.get(Calendar.YEAR);
-		calendar.setTime(currentInstall.getToDate());
-		int currToYear = calendar.get(Calendar.YEAR);
-		String currentPeriod = currFromYear + "-" + currToYear;
-		reasonwiseDues = propertyTaxUtil.getDemandDues(basicProperty.getUpicNo());
-		setBillNo(propertyTaxNumberGenerator
-				.generateManualBillNumber(basicProperty.getPropertyID()));
-
-		int noOfBillGenerated = getNumberOfBills(basicProperty);
-
-		if (noOfBillGenerated > 0) {
-			setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
-		}
-
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, basicProperty,
-				billNo);
-		propertyBillInfo.setArrearsPeriod(arrearsPeriod);
-		propertyBillInfo.setCurrentPeriod(currentPeriod);
-		propertyBillInfo.setFirstSixMonthsPeriod(firstSixMonthsPeriod);
-		propertyBillInfo.setSecondSixMonthsPeriod(secondSixMonthsPeriod);
-
-		reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION, propertyBillInfo,
-				new HashMap<String, Object>());
-
-		ReportOutput reportOutput = getReportService().createReport(reportRequest);
-
-		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-			billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-		}
-
-		saveEgBill(basicProperty, userId);// saving eg_bill
-
-		noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);
-
-		LOGGER.debug("generateBill - reportId : " + reportId);
+		ReportOutput reportOutput=null;
+		try{
+        		setBillNo(propertyTaxNumberGenerator
+                                .generateManualBillNumber(basicProperty.getPropertyID()));
+        		int noOfBillGenerated = getNumberOfBills(basicProperty);
+        		if (noOfBillGenerated > 0) {
+        		    setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
+        		}
+        		//To generate Notice having installment and reasonwise balance for a property
+                         DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
+                         demandNoticeInfo.setBasicProperty(basicProperty);
+                         demandNoticeInfo.setBillNo(getBillNo());
+                         demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
+                         
+                         ReportRequest reportRequest = null;
+                         reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION,demandNoticeInfo,new HashMap<String, Object>());
+                         reportOutput = getReportService().createReport(reportRequest); 
+                         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+                             billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+                         }
+        		saveEgBill(basicProperty, userId);// saving eg_bill 
+        		noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);// Save Notice
+		} catch (final Exception e) {
+	              throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+	        }
 		LOGGER.debug("Exiting from generateBill");
 		return reportOutput;
 	}
@@ -221,15 +163,12 @@ public class BillService {
 	private void saveEgBill(BasicProperty basicProperty, Integer userId) {
 		LOGGER.debug("Entered into saveEgBill");
 		LOGGER.debug("saveEgBill : BasicProperty: " + basicProperty);
-
-		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
-		nmcPTBill.setBasicProperty(basicProperty);
-		nmcPTBill.setUserId(userId.longValue());
-		nmcPTBill.setReferenceNumber(getBillNo());
-		nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
-		nmcPTBill.setLevyPenalty(Boolean.TRUE);
-		EgBill egBill = nmcPtBillServiceImpl.generateBill(nmcPTBill);
-
+		propertyTaxBillable.setBasicProperty(basicProperty);
+		propertyTaxBillable.setUserId(userId.longValue());
+		propertyTaxBillable.setReferenceNumber(getBillNo());
+		propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
+		propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
+		EgBill egBill = nmcPtBillServiceImpl.generateBill(propertyTaxBillable);
 		LOGGER.debug("Exit from saveEgBill, EgBill: " + egBill);
 	}
 

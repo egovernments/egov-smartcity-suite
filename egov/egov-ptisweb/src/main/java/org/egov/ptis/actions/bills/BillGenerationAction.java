@@ -47,8 +47,8 @@ package org.egov.ptis.actions.bills;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
@@ -56,7 +56,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIF
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GENERATE_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -66,33 +65,37 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.dcb.service.DCBService;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.docmgmt.AssociatedFile;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.services.PersistenceService;
@@ -101,6 +104,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -112,19 +116,25 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.opensymphony.xwork2.validator.annotations.Validations;
+
+@SuppressWarnings("serial")
 @ParentPackage("egov")
-@Namespace("/bills")
-@Transactional(readOnly = true)
+@Validations
+@Results({  @Result(name = BillGenerationAction.BILL, location = "billGeneration-bill.jsp"),
+    @Result(name = BillGenerationAction.STATUS_BILLGEN, location = "billGeneration-billsGenStatus.jsp"),
+    @Result(name = BillGenerationAction.ACK, location = "billGeneration-ack.jsp")
+    })
 public class BillGenerationAction extends PropertyTaxBaseAction {
 	private Logger LOGGER = Logger.getLogger(getClass());
 
-	private static final String BILL = "bill";
+	public static final String BILL = "bill";
 	private static final String YES = "Yes";
-	private static final String STATUS_BILLGEN = "billsGenStatus";
+	public static final String STATUS_BILLGEN = "billsGenStatus";
 	private static final String STATUS_BILLGEN_BY_PARTNO = "statusByPartNo";
-	private static final String ACK = "ack";
+	public static final String ACK = "ack";
 
 	private ReportService reportService;
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
@@ -151,10 +161,14 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private ModuleService moduleDao;
 
 	@Autowired
-	private InstallmentDao isntalDao;
+	private InstallmentDao installmentDAO;
 	
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
+	
+	@Autowired
+        @Qualifier("fileStoreService")
+        protected FileStoreService fileStoreService;
 
 	@Override
 	public Object getModel() {
@@ -169,12 +183,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	 * 
 	 * @return String
 	 */
-	@Action(value = "/billGeneration-generateBill")
+	@Action(value = "/bills/billGeneration-generateBill")
 	public String generateBill() {
-
 		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
-
-		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+	  try{	
+		if(basicPropertyDAO!=null){
+		    basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+		}
 		property = (PropertyImpl) basicProperty.getProperty();
 
 		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
@@ -185,7 +200,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		ReportOutput reportOutput = null;
 
 		if (egBill == null) {
-			reportOutput = getBillService().generateBill(basicProperty,
+			reportOutput = getBillService().generateBill(basicProperty, 
 					EgovThreadLocals.getUserId().intValue());
 			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
@@ -198,69 +213,38 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 					+ "AND bp = ?";
 			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
 					NOTICE_TYPE_BILL, basicProperty);
-			reportOutput = new ReportOutput();
-			if (ptNotice.getIsBlob().equals('N')) {
-				AssociatedFile file = documentManagerService.getFileFromDocumentObject(
-						ptNotice.getNoticeNo(), "PT", ptNotice.getNoticeNo() + ".pdf");
-				InputStream inputStream = file.getFileInputStream();
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				int returnedByte;
-				do {
-					try {
-						returnedByte = inputStream.read();
-						byteArrayOutputStream.write(returnedByte);
-					} catch (IOException e) {
-						LOGGER.error("Error while reading existing Demand bill", e);
-						throw new EGOVRuntimeException("Error while reading existing Demand bill",
-								e);
-					}
-				} while (returnedByte != -1);
-
-				reportOutput.setReportOutputData(byteArrayOutputStream.toByteArray());
-			} else {
-				reportOutput.setReportOutputData(ptNotice.getNoticeFile());
-			}
+			reportOutput = new ReportOutput(); 
+			//Reading from filestore by passing filestoremapper object
+			if (ptNotice!=null && ptNotice.getFileStore()!=null) {
+			        FileStoreMapper fsm=ptNotice.getFileStore();
+			        File file=fileStoreService.fetch(fsm, PTMODULENAME); 
+			        byte[] bFile = new byte[(int) file.length()];
+				reportOutput.setReportOutputData(bFile); 
+			} 
 			reportOutput.setReportFormat(FileFormat.PDF);
+	                //To generate Notice having installment and reasonwise balance for a property
+	                DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
+	                demandNoticeInfo.setBasicProperty(basicProperty);
+	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
+	                ReportRequest reportRequest = null;	               
+	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION, demandNoticeInfo,new HashMap<String, Object>());
+	                reportOutput = getReportService().createReport(reportRequest); 
 		}
-
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-
-		if (PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail()
-				.getPropertyMutationMaster().getCode())) {
-			// to make Property status value from W to Y ,since memo generation
-			// can happen on this condition
-			propService.setWFPropStatValActive(basicProperty);
-			property.setExtra_field5(YES);
-		}
-
-		if (YES.equals(property.getExtra_field3()) && YES.equals(property.getExtra_field4())
-				&& property.getState().getValue().endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
-			if (property.getState().getValue().contains(WFLOW_ACTION_NAME_MODIFY)
-					&& PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail()
-							.getPropertyMutationMaster().getCode())) {
-				if (YES.equals(property.getExtra_field5())) {
-					workflowBean.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":"
-							+ WFLOW_ACTION_STEP_NOTICE_GENERATED);
-					transitionWorkFlow();
-				}
-			} else {
-				workflowBean.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":"
-						+ WFLOW_ACTION_STEP_NOTICE_GENERATED);// <actionname>:<wflowstep>
-				transitionWorkFlow();
-			}
-		}
 		LOGGER.debug("generateBill: ReportId: " + reportId);
 		LOGGER.debug("Exit from generateBill");
-
-		return BILL;
+    	  } catch (final Exception e) {
+    	      throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+    	  }
+	  return BILL;
 	}
 
-	@Action(value = "/billGeneration-billsGenStatus", results = { @Result(name = STATUS_BILLGEN, location = "/billGeneration-billsGenStatus.jsp") })
+	@Action(value = "/bills/billGeneration-billsGenStatus")
 	public String billsGenStatus() {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
-		Installment currInst = isntalDao.getInsatllmentByModuleForGivenDate(
+		Installment currInst = installmentDAO.getInsatllmentByModuleForGivenDate(
 				nmcPtBillServiceImpl.getModule(), new Date());
 		StringBuilder billQueryString = new StringBuilder();
 		StringBuilder propQueryString = new StringBuilder();
@@ -321,7 +305,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN;
 	}
 
-	@Action(value = "/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO, location = "/billGeneration-statusByPartNo.jsp") })
+	@Action(value = "/bills/billGeneration-billGenStatusByPartNo")
 	public String billGenStatusByPartNo() {
 		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
 
@@ -401,7 +385,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN_BY_PARTNO;
 	}
 
-	@Action(value = "/billGeneration-cancelBill", results = { @Result(name = ACK, location = "/billGeneration-ack.jsp") })
+	@Action(value = "/bills/billGeneration-cancelBill")
 	public String cancelBill() {
 		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill " + "WHERE module = ? "
 				+ "AND egBillType.code = ? "
@@ -686,4 +670,5 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	public void setWardNum(String wardNum) {
 		this.wardNum = wardNum;
 	}
+
 }

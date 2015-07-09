@@ -146,6 +146,10 @@
 					value="Edit Demand" class="buttonsubmit"
 					onclick="window.location='../edit/editDemand!newEditForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />				
 			</c:if>	
+			
+			<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="button"
+					onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
+					
 			<c:if test="${fn:contains(roleName,'ASSISTANT')}">	
 				<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
 					onclick="window.location='../bills/billGeneration!generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />

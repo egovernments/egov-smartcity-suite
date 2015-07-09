@@ -166,6 +166,7 @@ import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
+import org.egov.ptis.client.model.calculator.DemandNoticeDetailsInfo;
 import org.egov.ptis.client.workflow.ActionAmalgmate;
 import org.egov.ptis.client.workflow.ActionBifurcate;
 import org.egov.ptis.client.workflow.ActionChangeAddress;
@@ -945,34 +946,34 @@ public class PropertyTaxUtil {
 	 */
 
 	private Map<String, BigDecimal> populateReasonsSum(Object[] data, Map<String, BigDecimal> taxSum) {
-		BigDecimal tmpVal;
-		if ((data[0].toString()).equals(DEMANDRSN_CODE_GENERAL_TAX)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_GENERAL_TAX);
-			// considering rebate as collection and substracting it.
-			taxSum.put(DEMANDRSN_CODE_GENERAL_TAX, tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		} else if ((data[0].toString()).equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_LIBRARY_CESS);
-			taxSum.put(DEMANDRSN_CODE_LIBRARY_CESS, tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		} else if ((data[0].toString()).equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_EDUCATIONAL_CESS);
-			taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_CESS,
-					tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		} else if ((data[0].toString()).equals(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
-			taxSum.put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
-					tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		} else if ((data[0].toString()).equals(DEMANDRSN_CODE_PENALTY_FINES)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_PENALTY_FINES);
-			taxSum.put(DEMANDRSN_CODE_PENALTY_FINES,
-					tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		} else if ((data[0].toString()).equals(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
-			tmpVal = taxSum.get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
-			taxSum.put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY,
-					tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
-		}
+            BigDecimal tmpVal;
+            if ((data[0].toString()).equals(DEMANDRSN_CODE_GENERAL_TAX)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_GENERAL_TAX);
+                    // considering rebate as collection and substracting it.
+                    taxSum.put(DEMANDRSN_CODE_GENERAL_TAX, tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            } else if ((data[0].toString()).equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_LIBRARY_CESS);
+                    taxSum.put(DEMANDRSN_CODE_LIBRARY_CESS, tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            } else if ((data[0].toString()).equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+                    taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_CESS,
+                                    tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            } else if ((data[0].toString()).equals(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+                    taxSum.put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
+                                    tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            } else if ((data[0].toString()).equals(DEMANDRSN_CODE_PENALTY_FINES)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_PENALTY_FINES);
+                    taxSum.put(DEMANDRSN_CODE_PENALTY_FINES,
+                                    tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            } else if ((data[0].toString()).equals(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+                    tmpVal = taxSum.get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
+                    taxSum.put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY,
+                                    tmpVal.add(((BigDecimal) data[2]).subtract(((BigDecimal) data[3]))));
+            }
 
-		return taxSum;
-	}
+            return taxSum;
+    }
 
 	/**
 	 * Called to get reason wise demand dues for arrears and current
@@ -2419,4 +2420,58 @@ public class PropertyTaxUtil {
 	public static boolean afterOrEqual(Date date, Date dateToCompare) {
 		return date.after(dateToCompare) || date.equals(dateToCompare);
 	}
+	
+	
+	public List<DemandNoticeDetailsInfo> getDemandNoticeDetailsInfo(BasicProperty basicProperty) {
+            List list = new ArrayList();
+            List sublist = new ArrayList();
+            List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo= new ArrayList<DemandNoticeDetailsInfo>();
+            DemandNoticeDetailsInfo dndi;
+            Installment installment;
+            Integer instId = null;
+            int count=0;
+            BigDecimal balanceAmount;
+            String installmentCode="";
+            EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+            Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+            Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+
+            list = demandGenericDAO.getReasonWiseDCB(egDemand, module);
+
+            for (Object record : list) {
+                    Object[] data = (Object[]) record;
+                    if(installmentCode!=null && (installmentCode=="" || installmentCode.equalsIgnoreCase(data[1].toString()))){
+                        dndi=new DemandNoticeDetailsInfo();
+                        instId = Integer.valueOf(data[5].toString());
+                        installment = (Installment) installmentDao.findById(instId, false);
+                        dndi.setInstallment(installment!=null?installment:null);
+                        if (data[1].toString().compareTo(currentInstall.toString()) < 0) {
+                            dndi.setCurrentDemand(false);
+                        } else {
+                            dndi.setCurrentDemand(true);
+                        }
+                        sublist=list.subList(count, list.size());
+                        for (Object record1 : sublist) {
+                            Object[] data1 = (Object[]) record1;
+                            count++;
+                            if(data[1].toString().equalsIgnoreCase(data1[1].toString())){
+                                balanceAmount=new BigDecimal(data1[2].toString()).subtract(new BigDecimal(data1[3].toString()));
+                                if(data1[0].toString().equalsIgnoreCase((DEMANDRSN_CODE_GENERAL_TAX))){
+                                    dndi.setPropertyTax(balanceAmount);
+                                } else if(data1[0].toString().equalsIgnoreCase((DEMANDRSN_CODE_PENALTY_FINES))){
+                                    dndi.setPenalty(balanceAmount);
+                                }
+                                installmentCode=null;
+                            } else{
+                                count=count-1;
+                                installmentCode=data1[1].toString();
+                                break;
+                            }
+                        }
+                        dndi.setTotal(dndi.addTotal());
+                        demandNoticeDetailsInfo.add(dndi);
+                    }
+            }
+            return demandNoticeDetailsInfo;
+    }
 }
