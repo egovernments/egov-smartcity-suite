@@ -164,7 +164,7 @@
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
-						<span class="inline-elem"><input type="text" id="searchemployee" class="form-control input-sm"></span>
+						<span class="inline-elem"><input type="text" id="searchapp" class="form-control input-sm"></span>
 					</div>
 					
 	<table class="table table-bordered datatable dt-responsive"

@@ -63,9 +63,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 	
+	private final SearchService searchService;
 	
-	
-	 private final SearchService searchService;
 	@Autowired
 	public WaterTaxSearchController(final SearchService searchService) {
 		this.searchService=searchService;
@@ -84,7 +83,7 @@ public class WaterTaxSearchController {
 	
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchComplaints(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+    public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
         final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
                 asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
                 Sort.NULL, Page.NULL);

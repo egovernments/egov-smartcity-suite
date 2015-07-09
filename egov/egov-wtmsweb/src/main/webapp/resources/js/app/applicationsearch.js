@@ -44,13 +44,13 @@ jQuery(document).ready(function ($) {
 	    $(".datepicker").datepicker({
 	        format: "dd/mm/yyyy"
 		});
-	  
+	    tableContainer=$('#aplicationSearchResults');
 	    $('#searchapplication').click(function () {
 	    	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
 			.done(function (searchResult) {
 				console.log(JSON.stringify(searchResult));
 				
-				$('#aplicationSearchResults').dataTable({
+				tableContainer.dataTable({
 					destroy:true,
 					"sPaginationType": "bootstrap",
 					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
@@ -61,10 +61,11 @@ jQuery(document).ready(function ($) {
 					data: searchResult,
 					columns: [
 					{title: 'Application Type', data: 'resource.clauses.applicationtype'},
+					{title: 'url' ,data: 'resource.searchable.url',"bVisible": false},
 					{title: 'Applicant No.', data: 'resource.searchable.applicationnumber'},
 					{title: 'Application Date',
 						render: function (data, type, full) {
-							if(full.resource.searchable.applicationdate != undefined) {
+							if(full!=null && full.resource!=undefined &&  full.resource.searchable.applicationdate != undefined) {
 								var regDateSplit = full.resource.searchable.applicationdate.split("T")[0].split("-");		
 								return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 							}
@@ -82,19 +83,7 @@ jQuery(document).ready(function ($) {
 			})
 		});
 		
-		
-	    tableContainer = $("#csearch").dataTable({
-			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
-			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"autoWidth": false,
-			"oTableTools": {
-				"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons": ["copy", "csv", "xls", "pdf", "print"]
-			}
-		});
-		
+	
 	
 	    $(".checkdate").focus(function () {
 			
@@ -161,12 +150,22 @@ jQuery(document).ready(function ($) {
 				event.preventDefault();
 			
 		});
-	tableContainer.columnFilter({
-		"sPlaceHolder": "head:after"
+	
+	$('#searchapp').keyup(function(){
+		tableContainer.fnFilter(this.value);
 	});
 	
-	$('#searchemployee').keyup(function(){
-		tableContainer1.fnFilter(this.value);
+	$('#aplicationSearchResults').on('click','tbody tr',function() {
+		tableContainer.$('tr.row_selected').removeClass('row_selected');
+        $(this).addClass('row_selected');
+        var url= tableContainer.fnGetData( this,1);
+        //var url = '/wtms/application/view/'+applicationNumber ;
+		$('#applicationSearchRequestForm').attr('method', 'get');
+		$('#applicationSearchRequestForm').attr('action', url);
+		$('#applicationSearchRequestForm').attr('mode', 'search');
+		//window.location=url;
+		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+		 
 	});
 		
 });
