@@ -369,7 +369,14 @@
 		<script type="text/javascript">
 		jQuery("#marketValue").blur(function(){
 			var marketVal = parseInt(jQuery("#marketValue").val());
-			jQuery("#mutationFee").val((1/100)*marketVal);
+			jQuery.ajax({
+				type: "GET",
+				url: "calculate-mutationfee.action",
+				cache: true,
+				data:{"marketValue" : marketVal,"mutationId" : jQuery("#mutationId").val()}
+			}).done(function(value) {
+				jQuery("#mutationFee").val(value);
+			});
 		});
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;

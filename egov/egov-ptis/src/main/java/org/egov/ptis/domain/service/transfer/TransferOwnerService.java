@@ -66,6 +66,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.rest.client.SimpleRestClient;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
@@ -91,6 +92,8 @@ import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.hibernate.FlushMode;
+import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -143,6 +146,9 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private ScriptService scriptService;
+
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -182,6 +188,14 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
                 userToRemove = user;
         propertyMutation.getTransfereeInfos().remove(userToRemove);
         persist(propertyMutation);
+    }
+
+    public double calculateMutationFee(final double marketValue, final PropertyMutation propertyMutation) {
+        final int transferedInMonths = Months.monthsBetween(new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1),
+                new LocalDate(propertyMutation.getBasicProperty().getRegdDocDate()).withDayOfMonth(1)).getMonths();
+        //TODO Add transferReason
+        return (Double) scriptService.executeScript("PTIS-MUTATION-FEE-CALCULATOR", ScriptService.createContext("marketValue",
+                marketValue, "transferedInMonths", transferedInMonths, "transferReason", ""));
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {

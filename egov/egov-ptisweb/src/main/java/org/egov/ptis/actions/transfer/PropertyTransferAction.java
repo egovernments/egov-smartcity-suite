@@ -113,6 +113,7 @@ public class PropertyTransferAction extends BaseFormAction {
                                          // crazy.
     private Integer reportId = -1;
     private Long transfereeId;
+    private double marketValue;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -197,6 +198,16 @@ public class PropertyTransferAction extends BaseFormAction {
             ServletActionContext.getResponse().getWriter().write("false");
     }
 
+    @SkipValidation
+    @Action(value = "/calculate-mutationfee")
+    public void calculateMutationFee() throws IOException {
+        if (marketValue > 0)
+            ServletActionContext.getResponse().getWriter()
+                    .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, propertyMutation)));
+        else
+            ServletActionContext.getResponse().getWriter().write("0");
+    }
+
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(assessmentNo))
@@ -228,37 +239,37 @@ public class PropertyTransferAction extends BaseFormAction {
         if (StringUtils.isBlank(propertyMutation.getDeedNo()))
             addActionError("Registration Document Number should not be empty");
         boolean anyDocIsMandatory = false;
-        for (final DocumentType docTypes : documentTypes) {
+        for (final DocumentType docTypes : documentTypes)
             if (docTypes.isMandatory()) {
                 anyDocIsMandatory = true;
                 break;
             }
-        }
 
         if (anyDocIsMandatory)
-            if (propertyMutation.getDocuments().isEmpty()) {
+            if (propertyMutation.getDocuments().isEmpty())
                 addActionError("Please attach the mandatory documents.");
-            } else {
-                for (final Document document : propertyMutation.getDocuments()) {
-                    if (document.getType().isMandatory() && document.getFiles().isEmpty())
-                        addActionError("Please upload documents for " + document.getType());
-                }
-            }
+            else
+                for (final Document document : propertyMutation.getDocuments())
+                    if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
+                        addActionError(document.getType()
+                                + " document is either mandatory or marked as enclosed, please add the relavent documents.");
 
-        if(propertyMutation.getTransfereeInfos().isEmpty()) {
+        if (propertyMutation.getTransfereeInfos().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");
-        } else {
-            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos()) {
+        else
+            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos())
                 if (StringUtils.isBlank(propOwnerInfo.getName()))
                     addActionError(getText("mandatory.ownerName"));
-            }
-        }
-        
+
         if (getMutationId() != null) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
                 addActionError(getText("madatory.mutFeePos"));
+            if (propertyMutation.getMarketValue() == null)
+                addActionError("Market Value is mandatory");
+            else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
+                addActionError("Please enter a valid Market Value");
         }
 
         super.validate();
@@ -323,5 +334,9 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setTransfereeId(final Long transfereeId) {
         this.transfereeId = transfereeId;
+    }
+
+    public void setMarketValue(final double marketValue) {
+        this.marketValue = marketValue;
     }
 }
