@@ -93,7 +93,7 @@
 						</td>
 						<td class="bluebox">
 							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
-							<s:hidden name="indexNumber" value="%{basicproperty.upicNo}"/>
+							<s:hidden name="assessmentNo" value="%{basicproperty.upicNo}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;
@@ -206,7 +206,7 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="512" size="20" id="guardianName"
+								        	<s:textfield name="transfereeInfos[0].guardian" maxlength="512" size="20" id="guardianName"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
@@ -220,7 +220,7 @@
 								        	<s:textfield name="transfereeInfos[0].emailId" maxlength="64" size="20" id="emailId"  value="" 
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        	<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[0].type" value="CITIZEN"/>
+								        	<s:hidden name="transfereeInfos[0].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd">
 								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
@@ -253,7 +253,7 @@
 								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="64" size="20" id="emailId"  
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN"/>
+								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        
 								        <td class="blueborderfortd">
@@ -341,7 +341,7 @@
 								<s:iterator value="documentTypes" status="status" var="documentType">
 								<tr>
 									<td class="blueborderfortd" align="center">
-									  <s:checkbox name="documents[%{#status.index}].enclosed" id="docDetail[%{#status.index}].enclosed" onclick="return false"/>
+									  <s:checkbox name="documents[%{#status.index}].enclosed" id="docDetail[%{#status.index}].enclosed"/>
 									</td>
 									<td class="blueborderfortd" style="text-align:left">
 									  <s:property value="name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>

@@ -51,8 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.dcb.bean.Payment;
@@ -92,8 +90,10 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
     private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
@@ -130,7 +130,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -163,6 +163,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         final PropertySource propertySource = basicProperty.getPropertyOwnerInfo().get(0).getSource();
         basicProperty.getPropertyOwnerInfo().clear();
+        createUserIfNotExist(propertyMutation.getTransfereeInfos());
         int order = 0;
         for (final User propertyOwner : propertyMutation.getTransfereeInfos()) {
             final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource, propertyOwner,
@@ -171,6 +172,16 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         }
         basicProperty.setUnderWorkflow(false);
         basicPropertyService.persist(basicProperty);
+    }
+
+    @Transactional
+    public void deleteTransferee(final PropertyMutation propertyMutation, final Long transfereeId) {
+        User userToRemove = null;
+        for (final User user : propertyMutation.getTransfereeInfos())
+            if (user.getId().equals(transfereeId))
+                userToRemove = user;
+        propertyMutation.getTransfereeInfos().remove(userToRemove);
+        persist(propertyMutation);
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {
@@ -206,14 +217,14 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setUlbLogo(cityLogo);
         ackBean.setMunicipalityName(cityName);
-
         ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(propertyMutation.getMutationDate());
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         ackBean.setOwnerName(basicProperty.getFullOwnerName());
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
-        ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER).getResolutionTime().toString());
+        ackBean.setNoOfDays(
+                ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER).getResolutionTime().toString());
         ackBean.setLoggedInUsername(userService.getUserById(EgovThreadLocals.getUserId()).getName());
 
         final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
@@ -239,23 +250,28 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     private void createUserIfNotExist(final List<User> transferees) {
         final List<User> newOwners = new ArrayList<>();
         transferees.forEach(transferee -> {
-            final User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
-            if (user == null) {
-                if (UserType.CITIZEN.equals(transferee.getType())) {
-                    final Citizen newOwner = new Citizen();
-                    newOwner.setAadhaarNumber(transferee.getAadhaarNumber());
-                    newOwner.setEmailId(transferee.getEmailId());
-                    newOwner.setMobileNumber(transferee.getMobileNumber());
-                    newOwner.setGender(transferee.getGender());
-                    newOwner.setGuardian(transferee.getGuardian());
-                    newOwner.setName(transferee.getName());
-                    newOwner.setPassword("NOTSET");
-                    newOwner.setUsername(transferee.getMobileNumber());
-                    newOwners.add(newOwner);
-                }
+            if (transferee.isNew()) {
+                getSession().setFlushMode(FlushMode.MANUAL);
+                final User user = userService.getUserByAadhaarNumberAndType(transferee.getAadhaarNumber(), transferee.getType());
+                if (user == null) {
+                    if (UserType.CITIZEN.equals(transferee.getType())) {
+                        final Citizen newOwner = new Citizen();
+                        newOwner.setAadhaarNumber(transferee.getAadhaarNumber());
+                        newOwner.setEmailId(transferee.getEmailId());
+                        newOwner.setMobileNumber(transferee.getMobileNumber());
+                        newOwner.setGender(transferee.getGender());
+                        newOwner.setGuardian(transferee.getGuardian());
+                        newOwner.setName(transferee.getName());
+                        newOwner.setPassword("NOTSET");
+                        newOwner.setUsername(transferee.getMobileNumber());
+                        newOwners.add(newOwner);
+                    }
+                } else
+                    newOwners.add(user);
             } else
-                newOwners.add(user);
+                newOwners.add(transferee);
         });
+        getSession().setFlushMode(FlushMode.AUTO);
         transferees.clear();
         transferees.addAll(newOwners);
     }

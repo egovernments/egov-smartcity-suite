@@ -186,7 +186,7 @@ public class PropertyMutation extends StateAware {
         return transfereeInfos;
     }
 
-    public void setTransfereeInfos(List<User> transfereeInfos) {
+    public void setTransfereeInfos(final List<User> transfereeInfos) {
         this.transfereeInfos = transfereeInfos;
     }
 
@@ -226,7 +226,7 @@ public class PropertyMutation extends StateAware {
         return saleDetail;
     }
 
-    public void setSaleDetail(String saleDetail) {
+    public void setSaleDetail(final String saleDetail) {
         this.saleDetail = saleDetail;
     }
 
@@ -234,45 +234,42 @@ public class PropertyMutation extends StateAware {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(final List<Document> documents) {
         this.documents = documents;
     }
-    
+
     public String getFullTranfereeName() {
-        final StringBuilder ownerName = new StringBuilder();
-        for (final User owner : this.getTransfereeInfos()) {
-            ownerName.append(owner.getName()).append(", ");
-        }
-        ownerName.deleteCharAt(ownerName.length()-2);
-        return ownerName.toString();
+        return buildOwnerName(getTransfereeInfos());
     }
-    
+
     public String getFullTranferorName() {
-        final StringBuilder ownerName = new StringBuilder();
-        for (final User owner : this.getTransferorInfos()) {
-            ownerName.append(owner.getName()).append(", ");
-        }
-        ownerName.deleteCharAt(ownerName.length()-2);
-        return ownerName.toString();
+        return buildOwnerName(getTransferorInfos());
     }
-    
+
     public String getFullTransferorGuardianName() {
+        return buildGuarianName(getTransferorInfos());
+    }
+
+    public String getFullTransfereeGuardianName() {
+        return buildGuarianName(getTransfereeInfos());
+    }
+
+    private String buildGuarianName(final List<User> userInfo) {
         final StringBuilder guardianName = new StringBuilder();
-        for (final User owner : this.getTransferorInfos()) {
+        for (final User owner : getTransfereeInfos())
             if (StringUtils.isNotBlank(owner.getGuardian()))
                 guardianName.append(owner.getGuardian()).append(", ");
-        }
-        guardianName.deleteCharAt(guardianName.length()-2);
+        if (guardianName.length() > 0)
+            guardianName.deleteCharAt(guardianName.length() - 2);
         return guardianName.toString();
     }
-    
-    public String getFullTransfereeGuardianName() {
-        final StringBuilder guardianName = new StringBuilder();
-        for (final User owner : this.getTransfereeInfos()) {
-            if (StringUtils.isNotBlank(owner.getGuardian()))
-                guardianName.append(owner.getGuardian()).append(", ");
-        }
-        guardianName.deleteCharAt(guardianName.length()-2);
-        return guardianName.toString();
+
+    private String buildOwnerName(final List<User> userInfos) {
+        final StringBuilder ownerName = new StringBuilder();
+        for (final User owner : userInfos)
+            ownerName.append(owner.getName()).append(", ");
+        if (ownerName.length() > 0)
+            ownerName.deleteCharAt(ownerName.length() - 2);
+        return ownerName.toString();
     }
 }

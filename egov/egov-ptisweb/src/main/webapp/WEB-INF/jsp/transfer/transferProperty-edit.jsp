@@ -93,7 +93,7 @@
 						</td>
 						<td class="bluebox">
 							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
-							<s:hidden name="mutationId" value="%{id}"/>
+							<s:hidden name="mutationId" id="mutationId" value="%{id}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;
@@ -220,12 +220,12 @@
 								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="64" size="20" id="emailId"  
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN"/>
+								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        
 								        <td class="blueborderfortd">
 								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
-								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
+								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteTranferee(this);return false;" data-server="${id}" alt="Remove" width="18" height="18" border="0" />
 								        </td>
 								     </tr>
 								     </s:iterator>
@@ -312,7 +312,7 @@
 
                      <tr>
 						<td colspan="5">
-						<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<table class="tablebottom" width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tbody>
 								<tr>
 									<th class="bluebgheadtd"><s:text name="doctable.docenclosed" /></th>
@@ -325,7 +325,7 @@
 								<s:iterator value="documents" status="docstatus" var="document">
 								<tr>
 									<td class="blueborderfortd" align="center">
-									  <s:checkbox name="documents[%{#docstatus.index}].enclosed" onclick="return false"/>
+									  <s:checkbox name="documents[%{#docstatus.index}].enclosed"/>
 									</td>
 									<td class="blueborderfortd" style="text-align:left">
 									  <s:property value="type.name"/><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
@@ -406,8 +406,35 @@
 				}
 			}
 		}
+
+		function deleteTranferee(obj) {
+			if (jQuery('#nameTable tr').length > 2) {
+				var transfereeId = jQuery(obj).data('server');
+				if (transfereeId && transfereeId != "") {			
+					var result = confirm("Do you want to remove the tranfreree ?");
+			 		if(result){
+			 			jQuery.ajax({
+							type: "GET",
+							url: "delete-transferee.action",
+							cache: true,
+							data:{"transfereeId" : transfereeId,"mutationId" : jQuery("#mutationId").val()}
+						}).done(function(value) {
+							 if(value == "true") {
+								 deleteOwner(obj);
+							 } else {
+								 alert("Could not delete this Transferee Info");
+							 }
+						});
+			 			
+			 		}
+				} else {
+					deleteOwner(obj);
+				}
+			} else {
+				alert("Atleast one owner details is mandatory!");
+			}
+		}
 		jQuery('#nameTable tr:not(:eq(1)) td img[alt="Add"]').hide();
-		jQuery('#nameTable tr:eq(1) td img[alt="Remove"]').hide();
 </script>
 <div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>

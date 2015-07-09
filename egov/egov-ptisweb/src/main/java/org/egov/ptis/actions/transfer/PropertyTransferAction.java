@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +109,10 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private BasicProperty basicproperty; //Do not change variable name, struts2 crazy.
+    private BasicProperty basicproperty; // Do not change variable name, struts2
+                                         // crazy.
     private Integer reportId = -1;
+    private Long transfereeId;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -118,8 +121,6 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/new")
     public String showNewTransferForm() {
-        if (true)
-            return NEW;
         if (basicproperty.isUnderWorkflow()) {
             wfErrorMsg = "Could not do property transfer now, property is undergoing some workflow.";
             return WORKFLOW_ERROR;
@@ -166,6 +167,7 @@ public class PropertyTransferAction extends BaseFormAction {
         return ACK;
     }
 
+    @SkipValidation
     @Action(value = "/printAck")
     public String printAck() {
         final HttpServletRequest request = ServletActionContext.getRequest();
@@ -177,11 +179,22 @@ public class PropertyTransferAction extends BaseFormAction {
         return PRINTACK;
     }
 
+    @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
         reportId = ReportViewerUtil
                 .addReportToSession(transferOwnerService.generateTransferNotice(basicproperty, propertyMutation), getSession());
         return PRINTNOTICE;
+    }
+
+    @SkipValidation
+    @Action(value = "/delete-transferee")
+    public void deleteTransferee() throws IOException {
+        if (transfereeId != null) {
+            transferOwnerService.deleteTransferee(propertyMutation, transfereeId);
+            ServletActionContext.getResponse().getWriter().write("true");
+        } else
+            ServletActionContext.getResponse().getWriter().write("false");
     }
 
     @Override
@@ -215,29 +228,37 @@ public class PropertyTransferAction extends BaseFormAction {
         if (StringUtils.isBlank(propertyMutation.getDeedNo()))
             addActionError("Registration Document Number should not be empty");
         boolean anyDocIsMandatory = false;
-        for (final DocumentType docTypes : documentTypes)
+        for (final DocumentType docTypes : documentTypes) {
             if (docTypes.isMandatory()) {
                 anyDocIsMandatory = true;
                 break;
             }
+        }
 
         if (anyDocIsMandatory)
-            if (propertyMutation.getDocuments().isEmpty())
+            if (propertyMutation.getDocuments().isEmpty()) {
                 addActionError("Please attach the mandatory documents.");
-            else
-                for (final Document document : propertyMutation.getDocuments())
+            } else {
+                for (final Document document : propertyMutation.getDocuments()) {
                     if (document.getType().isMandatory() && document.getFiles().isEmpty())
                         addActionError("Please upload documents for " + document.getType());
+                }
+            }
 
+        if(propertyMutation.getTransfereeInfos().isEmpty()) {
+            addActionError("Transfree info is mandatory, add atleast one transferee info.");
+        } else {
+            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos()) {
+                if (StringUtils.isBlank(propOwnerInfo.getName()))
+                    addActionError(getText("mandatory.ownerName"));
+            }
+        }
+        
         if (getMutationId() != null) {
             if (propertyMutation.getMutationFee() == null)
                 addActionError(getText("mandatory.mutationFee"));
             else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
                 addActionError(getText("madatory.mutFeePos"));
-
-            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos())
-                if (StringUtils.isBlank(propOwnerInfo.getName()))
-                    addActionError(getText("mandatory.ownerName"));
         }
 
         super.validate();
@@ -298,5 +319,9 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setReportId(final Integer reportId) {
         this.reportId = reportId;
+    }
+
+    public void setTransfereeId(final Long transfereeId) {
+        this.transfereeId = transfereeId;
     }
 }
