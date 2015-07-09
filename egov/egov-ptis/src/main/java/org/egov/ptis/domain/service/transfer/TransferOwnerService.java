@@ -90,6 +90,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -126,6 +127,10 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
     @Qualifier("documentTypePersistenceService")
     private PersistenceService<DocumentType, Long> documentTypePersistenceService;
 
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
+    
     @Autowired
     private UserService userService;
 
@@ -208,7 +213,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         ackBean.setOwnerName(basicProperty.getFullOwnerName());
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
-        ackBean.setNoOfDays("");
+        ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER).getResolutionTime().toString());
         ackBean.setLoggedInUsername(userService.getUserById(EgovThreadLocals.getUserId()).getName());
 
         final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);

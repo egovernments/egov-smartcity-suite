@@ -49,6 +49,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -65,10 +66,12 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGPT_APPLICATION_TYPE")
 @SequenceGenerator(name = PtApplicationType.SEQ_APPLICATION_TYPE, sequenceName = PtApplicationType.SEQ_APPLICATION_TYPE, allocationSize = 1)
+@NamedQuery(name=PtApplicationType.BY_CODE, query="Select apt PtApplicationType apt where code=?")
 public class PtApplicationType extends AbstractAuditable {
 
 	protected static final String SEQ_APPLICATION_TYPE = "SEQ_EGPT_APPLICATION_TYPE";
 	private static final long serialVersionUID = 1L;
+	public static final String BY_CODE = "BY_CODE";
 
 	@Id
 	@GeneratedValue(generator = SEQ_APPLICATION_TYPE, strategy = GenerationType.SEQUENCE)

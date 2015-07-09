@@ -121,8 +121,12 @@
 		<constructor-arg index="0" ref="recoveryService"/>
 	</bean> -->
 	
-	<bean id="propertyMutationService" parent="persistenceService" scope="prototype">
+	<bean id="propertyMutationService" parent="persistenceService">
 		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+	</bean>
+	
+	<bean id="ptaxApplicationTypeService" parent="persistenceService">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PtApplicationType" />
 	</bean>
 	
 	<bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">

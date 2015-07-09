@@ -108,7 +108,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
-    private BasicProperty basicProperty;
+    private BasicProperty basicproperty; //Do not change variable name, struts2 crazy.
     private Integer reportId = -1;
 
     public PropertyTransferAction() {
@@ -118,7 +118,9 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/new")
     public String showNewTransferForm() {
-        if (basicProperty.isUnderWorkflow()) {
+        if (true)
+            return NEW;
+        if (basicproperty.isUnderWorkflow()) {
             wfErrorMsg = "Could not do property transfer now, property is undergoing some workflow.";
             return WORKFLOW_ERROR;
         } else {
@@ -135,7 +137,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
-        transferOwnerService.initiatePropertyTransfer(basicProperty, propertyMutation);
+        transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         return ACK;
     }
 
@@ -160,7 +162,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/approve")
     public String approve() {
-        transferOwnerService.approvePropertyTransfer(basicProperty, propertyMutation);
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         return ACK;
     }
 
@@ -171,28 +173,28 @@ public class PropertyTransferAction extends BaseFormAction {
                 .concat(request.getSession().getAttribute("citylogo").toString());
         final String cityName = request.getSession().getAttribute("cityname").toString();
         reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateAcknowledgement(basicProperty, propertyMutation, cityName, cityLogo), getSession());
+                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo), getSession());
         return PRINTACK;
     }
 
     @Action(value = "/printNotice")
     public String printNotice() {
         reportId = ReportViewerUtil
-                .addReportToSession(transferOwnerService.generateTransferNotice(basicProperty, propertyMutation), getSession());
+                .addReportToSession(transferOwnerService.generateTransferNotice(basicproperty, propertyMutation), getSession());
         return PRINTNOTICE;
     }
 
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(assessmentNo))
-            basicProperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
+            basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
         if (mutationId != null) {
             propertyMutation = transferOwnerService.load(mutationId, PropertyMutation.class);
-            basicProperty = propertyMutation.getBasicProperty();
+            basicproperty = propertyMutation.getBasicProperty();
         }
         final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
-                .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
+                .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
         currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
         currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
         arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
@@ -266,12 +268,12 @@ public class PropertyTransferAction extends BaseFormAction {
         return assessmentNo;
     }
 
-    public void setAssessmentNumber(final String assessmentNo) {
+    public void setAssessmentNo(final String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
 
-    public BasicProperty getBasicProperty() {
-        return basicProperty;
+    public BasicProperty getBasicproperty() {
+        return basicproperty;
     }
 
     public List<DocumentType> getDocumentTypes() {

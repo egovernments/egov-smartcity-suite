@@ -57,7 +57,7 @@
 			}
 			else if(selectedValue=="TransferProperty")
 			{
-			window.location="../property/transfer/new.action?indexNumber="+assessmentNum;
+			window.location="../property/transfer/new.action?assessmentNo="+assessmentNum;
 			}
 			else if(selectedValue=="ChangeAddress")
 			{
