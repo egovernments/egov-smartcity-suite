@@ -53,6 +53,7 @@ import javax.validation.constraints.Pattern;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.wtms.masters.entity.MeterCost;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -86,6 +87,11 @@ public class WaterConnection extends AbstractAuditable {
     @SafeHtml
     @Length(min = 10, max = 12)
     private String mobileNumber;
+
+    @Length(max = 100)
+    @SafeHtml
+    @Email(regexp = Constants.EMAIL)
+    private String email;
 
     @SafeHtml
     @Length(min = 3, max = 50)
@@ -139,6 +145,14 @@ public class WaterConnection extends AbstractAuditable {
 
     public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
     }
 
     public String getMeterNumber() {

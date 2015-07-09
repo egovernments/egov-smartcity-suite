@@ -95,4 +95,10 @@
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
 	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.email" /></label>
+	<div class="col-sm-3 add-margin">
+		<form:input  path="connection.email" class="form-control" id="email" type="email" maxlength="100"/>
+		<form:errors path="connection.email" cssClass="add-margin error-msg"/>
+	</div>
 </div>				

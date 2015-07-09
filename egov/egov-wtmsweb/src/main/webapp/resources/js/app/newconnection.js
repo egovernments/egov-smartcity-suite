@@ -58,6 +58,7 @@ $(document).ready(function(){
 						$('#propertyIdentifier').val('');
 						$('#applicantname').val('');
 						$('#mobileNumber').val('');
+						$('#email').val('');
 						$('#propertyaddress').val('');
 						$('#zonewardblock').val('');
 						$('#propertytaxdue').val('0.00');
@@ -75,6 +76,8 @@ $(document).ready(function(){
 						$("#applicantname").val(applicantName);
 						if(response.ownerNames[0].mobileNumber != '')
 							$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
+						if(response.ownerNames[0].emailId != '')
+							$("#email").val(response.ownerNames[0].emailId);
 						$("#propertyaddress").val(response.propertyAddress);
 						boundaryData = '';
 						if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
