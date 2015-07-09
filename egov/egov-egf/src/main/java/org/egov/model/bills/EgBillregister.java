@@ -128,8 +128,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	@JoinColumn(name = "statusid", nullable = true)
 	private EgwStatus status;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id",referencedColumnName = "billid")
+	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy="egBillregister")
 	private EgBillregistermis egBillregistermis;	
 	
 	private String worksdetailId;
@@ -138,7 +137,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	@Transient
 	private Date approvedOn;
 	
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL,mappedBy = "egBillregister")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "egBillregister")
 	private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
 
 	/**
