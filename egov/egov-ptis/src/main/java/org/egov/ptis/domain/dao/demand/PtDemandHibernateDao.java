@@ -72,7 +72,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "ptDemandDAO")
-@Transactional(readOnly = true)
 public class PtDemandHibernateDao implements PtDemandDao {
 	private static final String BILLID_PARAM = "billid";
 	private static final String PROPERTY = "property";

@@ -40,14 +40,16 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +68,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -75,12 +78,13 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.search.SearchQuery;
@@ -95,7 +99,7 @@ import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -108,7 +112,6 @@ import com.lowagie.text.pdf.PdfWriter;
 		@Result(name = "success", location = "fileStream", params = { "contentType",
 				"${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
 		@Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp") })
-@Transactional(readOnly = true)
 @Namespace("/reports")
 public class SearchNoticesAction extends SearchFormAction {
 	private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
@@ -151,6 +154,9 @@ public class SearchNoticesAction extends SearchFormAction {
 	private String partNo;
 	@Autowired
 	private PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+        @Qualifier("fileStoreService")
+        protected FileStoreService fileStoreService;
 
 	public SearchNoticesAction() {
 		super();
@@ -206,13 +212,12 @@ public class SearchNoticesAction extends SearchFormAction {
 
 		for (PtNotice ptNotice : noticeList) {
 			try {
-				if (ptNotice.getIsBlob().equals('Y')) {
-					pdfs.add(new ByteArrayInputStream(ptNotice.getNoticeFile()));
-				} else {
-					AssociatedFile file = documentManagerService.getFileFromDocumentObject(
-							ptNotice.getNoticeNo(), "PT", ptNotice.getNoticeNo() + ".pdf");
-					pdfs.add(file.getFileInputStream());
-				}
+			        if (ptNotice!=null && ptNotice.getFileStore()!=null) {
+                                    FileStoreMapper fsm=ptNotice.getFileStore();
+                                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
+                                    byte[] bFile =FileUtils.readFileToByteArray(file);
+                                    pdfs.add(new ByteArrayInputStream(bFile));
+                                } 
 			} catch (Exception e) {
 				LOGGER.error("mergeAndDownload : Getting notice failed for notice " + ptNotice, e);
 				continue;
@@ -263,16 +268,13 @@ public class SearchNoticesAction extends SearchFormAction {
 
 			for (PtNotice ptNotice : noticeList) {
 				try {
-					if (ptNotice.getIsBlob().equals('Y')) {
-						zipOutputStream = addFilesToZip(
-								new ByteArrayInputStream(ptNotice.getNoticeFile()),
-								ptNotice.getNoticeNo() + ".pdf", zipOutputStream);
-					} else {
-						AssociatedFile file = documentManagerService.getFileFromDocumentObject(
-								ptNotice.getNoticeNo(), "PT", ptNotice.getNoticeNo() + ".pdf");
-						zipOutputStream = addFilesToZip(file.getFileInputStream(),
-								file.getFileName(), zipOutputStream);
-					}
+				        if (ptNotice!=null && ptNotice.getFileStore()!=null) {
+	                                    FileStoreMapper fsm=ptNotice.getFileStore();
+	                                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
+	                                    byte[] bFile =FileUtils.readFileToByteArray(file);
+	                                    zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile),
+	                                            file.getName(), zipOutputStream);
+	                                } 
 				} catch (Exception e) {
 					LOGGER.error("zipAndDownload : Getting notice failed for notice " + ptNotice, e);
 					continue;
@@ -299,20 +301,27 @@ public class SearchNoticesAction extends SearchFormAction {
 	/**
 	 * This method only to show Bills as Bills(file stream) saved into PT system
 	 * in egpt_notice table notice_file(type blob) column.
+	 * @throws IOException 
 	 */
 	@SkipValidation
-	public String showNotice() {
+	public String showNotice() throws IOException {
 		PtNotice ptNotice = (PtNotice) getPersistenceService().find(
 				"from PtNotice notice where noticeNo=?", noticeNumber);
 		if (ptNotice == null) {
 			addActionError(getText("DocMngr.file.unavailable"));
 			return ERROR;
 		}
-		InputStream myInputStream = new ByteArrayInputStream(ptNotice.getNoticeFile());
-		fileStream = myInputStream;
-		fileName = ptNotice.getNoticeNo() + ".pdf";
-		contentType = "application/pdf";
-		contentLength = Long.valueOf(ptNotice.getNoticeFile().length);
+		
+		if (ptNotice!=null && ptNotice.getFileStore()!=null) {
+                    FileStoreMapper fsm=ptNotice.getFileStore();
+                    File file=fileStoreService.fetch(fsm, PTMODULENAME); 
+                    byte[] bFile =FileUtils.readFileToByteArray(file);
+                    InputStream myInputStream = new ByteArrayInputStream(bFile);
+                    fileStream = myInputStream;
+                    fileName = file.getName();
+                    contentType = "application/pdf";
+                    contentLength = Long.valueOf(file.length());
+		}
 		return SUCCESS;
 	}
 

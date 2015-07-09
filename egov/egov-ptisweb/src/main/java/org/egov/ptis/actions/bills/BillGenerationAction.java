@@ -48,7 +48,7 @@ package org.egov.ptis.actions.bills;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
@@ -66,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PEN
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -75,6 +76,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -82,7 +84,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.dcb.service.DCBService;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -95,7 +96,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.services.PersistenceService;
@@ -141,7 +141,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private PersistenceService<Property, Long> propertyImplService;
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	private PTBillServiceImpl nmcPtBillServiceImpl;
+	private PTBillServiceImpl ptBillServiceImpl;
 	private WorkflowService<PropertyImpl> propertyWorkflowService;
 	private PropertyService propService;
 	private BillService billService;
@@ -214,21 +214,26 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
 					NOTICE_TYPE_BILL, basicProperty);
 			reportOutput = new ReportOutput(); 
+			
 			//Reading from filestore by passing filestoremapper object
 			if (ptNotice!=null && ptNotice.getFileStore()!=null) {
 			        FileStoreMapper fsm=ptNotice.getFileStore();
 			        File file=fileStoreService.fetch(fsm, PTMODULENAME); 
-			        byte[] bFile = new byte[(int) file.length()];
+			        byte[] bFile =FileUtils.readFileToByteArray(file);
 				reportOutput.setReportOutputData(bFile); 
-			} 
-			reportOutput.setReportFormat(FileFormat.PDF);
-	                //To generate Notice having installment and reasonwise balance for a property
-	                DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
-	                demandNoticeInfo.setBasicProperty(basicProperty);
-	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
-	                ReportRequest reportRequest = null;	               
-	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION, demandNoticeInfo,new HashMap<String, Object>());
-	                reportOutput = getReportService().createReport(reportRequest); 
+				reportOutput.setReportFormat(FileFormat.PDF);
+			} else {
+        	                //To generate Notice having installment and reasonwise balance for a property
+        	                DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
+        	                demandNoticeInfo.setBasicProperty(basicProperty);
+        	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
+        	                ReportRequest reportRequest = null;	   
+        	                Map reportParams = new HashMap<String, Object>();
+        	                reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
+        	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,reportParams);
+        	                reportOutput = getReportService().createReport(reportRequest); 
+			}
+	                
 		}
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 		LOGGER.debug("generateBill: ReportId: " + reportId);
@@ -245,7 +250,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
 		Installment currInst = installmentDAO.getInsatllmentByModuleForGivenDate(
-				nmcPtBillServiceImpl.getModule(), new Date());
+				ptBillServiceImpl.getModule(), new Date());
 		StringBuilder billQueryString = new StringBuilder();
 		StringBuilder propQueryString = new StringBuilder();
 		billQueryString
@@ -631,14 +636,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		this.propertyWorkflowService = propertyWorkflowService;
 	}
 
-	public PTBillServiceImpl getNmcPtBillServiceImpl() {
-		return nmcPtBillServiceImpl;
-	}
-
-	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
-		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
-	}
-
 	public PropertyService getPropService() {
 		return propService;
 	}
@@ -670,5 +667,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	public void setWardNum(String wardNum) {
 		this.wardNum = wardNum;
 	}
+
+        public PTBillServiceImpl getPtBillServiceImpl() {
+            return ptBillServiceImpl;
+        }
+    
+        public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+            this.ptBillServiceImpl = ptBillServiceImpl;
+        }
 
 }

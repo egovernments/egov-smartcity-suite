@@ -92,7 +92,7 @@ public class CollectionAction extends BaseFormAction {
     
     private PersistenceService<BasicProperty, Long> basicPropertyService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    private PTBillServiceImpl nmcPtBillServiceImpl;
+    private PTBillServiceImpl ptBillServiceImpl;
     private String collectXML;
     private String indexNum;
     private Long userId;
@@ -134,7 +134,7 @@ public class CollectionAction extends BaseFormAction {
         nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
                 .getWard().getBoundaryNum().toString()));
         nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
-        collectXML = URLEncoder.encode(nmcPtBillServiceImpl.getBillXML(nmcPTBill));
+        collectXML = URLEncoder.encode(ptBillServiceImpl.getBillXML(nmcPTBill));
         LOGGER.info("Exiting method generatePropertyTaxBill, collectXML: " + collectXML);
         
         return RESULT_COLLECTTAX;
@@ -154,14 +154,6 @@ public class CollectionAction extends BaseFormAction {
 
     public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
         this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-    }
-
-    public PTBillServiceImpl getNmcPtBillServiceImpl() {
-        return nmcPtBillServiceImpl;
-    }
-
-    public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
-        this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
     }
 
     public PropertyTaxUtil getPropertyTaxUtil() {
@@ -200,6 +192,14 @@ public class CollectionAction extends BaseFormAction {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public PTBillServiceImpl getPtBillServiceImpl() {
+        return ptBillServiceImpl;
+    }
+
+    public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+        this.ptBillServiceImpl = ptBillServiceImpl;
     }
 
 }

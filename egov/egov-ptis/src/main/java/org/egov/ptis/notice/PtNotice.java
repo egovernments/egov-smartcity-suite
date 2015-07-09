@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -45,149 +45,127 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 
 public class PtNotice implements java.io.Serializable {
-	private Long id;
-	private Long moduleId;
-	private String noticeType;
-	private String noticeNo;
-	private Date noticeDate;
-	private BasicProperty basicProperty;
-	// private String objectNo;
-	// private String addressTo;
-	// private String address;
-	private Long userId;
-	// private File document;
-	private byte[] noticeFile;
-	private Character isBlob;
-	public FileStoreMapper getFileStore() {
-		return fileStore;
-	}
+        private Long id;
+        private Long moduleId;
+        private String noticeType;
+        private String noticeNo;
+        private Date noticeDate;
+        private BasicProperty basicProperty;
+        private Long userId;
+        private FileStoreMapper fileStore;
+        
+        /**
+         * @return the id
+         */
+        public Long getId() {
+                return id;
+        }
 
-	public void setFileStore(FileStoreMapper fileStore) {
-		this.fileStore = fileStore;
-	}
+        /**
+         * @param id
+         *            the id to set
+         */
+        public void setId(Long id) {
+                this.id = id;
+        }
 
-	private FileStoreMapper fileStore;
-	
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
+        /**
+         * @return the moduleId
+         */
+        public Long getModuleId() {
+                return moduleId;
+        }
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+        /**
+         * @param moduleId
+         *            the moduleId to set
+         */
+        public void setModuleId(Long moduleId) {
+                this.moduleId = moduleId;
+        }
 
-	/**
-	 * @return the moduleId
-	 */
-	public Long getModuleId() {
-		return moduleId;
-	}
+        /**
+         * @return the noticeType
+         */
+        public String getNoticeType() {
+                return noticeType;
+        }
 
-	/**
-	 * @param moduleId
-	 *            the moduleId to set
-	 */
-	public void setModuleId(Long moduleId) {
-		this.moduleId = moduleId;
-	}
+        /**
+         * @param noticeType
+         *            the noticeType to set
+         */
+        public void setNoticeType(String noticeType) {
+                this.noticeType = noticeType;
+        }
 
-	/**
-	 * @return the noticeType
-	 */
-	public String getNoticeType() {
-		return noticeType;
-	}
+        /**
+         * @return the noticeNo
+         */
+        public String getNoticeNo() {
+                return noticeNo;
+        }
 
-	/**
-	 * @param noticeType
-	 *            the noticeType to set
-	 */
-	public void setNoticeType(String noticeType) {
-		this.noticeType = noticeType;
-	}
+        /**
+         * @param noticeNo
+         *            the noticeNo to set
+         */
+        public void setNoticeNo(String noticeNo) {
+                this.noticeNo = noticeNo;
+        }
 
-	/**
-	 * @return the noticeNo
-	 */
-	public String getNoticeNo() {
-		return noticeNo;
-	}
+        /**
+         * @return the noticeDate
+         */
+        public Date getNoticeDate() {
+                return noticeDate;
+        }
 
-	/**
-	 * @param noticeNo
-	 *            the noticeNo to set
-	 */
-	public void setNoticeNo(String noticeNo) {
-		this.noticeNo = noticeNo;
-	}
+        /**
+         * @param noticeDate
+         *            the noticeDate to set
+         */
+        public void setNoticeDate(Date noticeDate) {
+                this.noticeDate = noticeDate;
+        }
 
-	/**
-	 * @return the noticeDate
-	 */
-	public Date getNoticeDate() {
-		return noticeDate;
-	}
+        /**
+         * @return the userId
+         */
+        public Long getUserId() {
+                return userId;
+        }
 
-	/**
-	 * @param noticeDate
-	 *            the noticeDate to set
-	 */
-	public void setNoticeDate(Date noticeDate) {
-		this.noticeDate = noticeDate;
-	}
+        /**
+         * @param userId
+         *            the userId to set
+         */
+        public void setUserId(Long userId) {
+                this.userId = userId;
+        }
 
-	/**
-	 * @return the userId
-	 */
-	public Long getUserId() {
-		return userId;
-	}
+        public BasicProperty getBasicProperty() {
+                return basicProperty;
+        }
 
-	/**
-	 * @param userId
-	 *            the userId to set
-	 */
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+        public void setBasicProperty(BasicProperty basicProperty) {
+                this.basicProperty = basicProperty;
+        }
 
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
-
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
-
-	public byte[] getNoticeFile() {
-		return noticeFile;
-	}
-
-	public void setNoticeFile(byte[] noticeFile) {
-		this.noticeFile = noticeFile;
-	}
-
-	public Character getIsBlob() {
-		return isBlob;
-	}
-
-	public void setIsBlob(Character isBlob) {
-		this.isBlob = isBlob;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sbf = new StringBuilder();
-		sbf.append("Id: ").append(getId()).append("|NoticeType: ").append(getNoticeType()).append("|NoticeNo: ")
-				.append(getNoticeNo()).append("|isBlob: ").append(getIsBlob());
-		return sbf.toString();
-	}
+        @Override
+        public String toString() {
+                StringBuilder sbf = new StringBuilder();
+                sbf.append("Id: ").append(getId()).append("|NoticeType: ").append(getNoticeType()).append("|NoticeNo: ")
+                                .append(getNoticeNo());
+                return sbf.toString();
+        }
+        
+        public FileStoreMapper getFileStore() {
+            return fileStore;
+        }
+    
+        public void setFileStore(FileStoreMapper fileStore) {
+                this.fileStore = fileStore;
+        }
 
 }

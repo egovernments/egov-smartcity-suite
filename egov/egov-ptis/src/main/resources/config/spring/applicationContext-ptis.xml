@@ -66,7 +66,7 @@
 		<property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
 	</bean>
 	
-	<bean id="nmcPtBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">
+	<bean id="ptBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">
 		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
 		<property name="propertyTaxCollection" ref="propertyTaxCollection" />
 	</bean>
@@ -139,7 +139,7 @@
 	    <property name="reportService" ref="reportService"/>
 	    <property name="noticeService" ref="noticeService"/>
 	    <property name="propertyTaxUtil" ref="propertyTaxUtil"/>
-	    <property name="nmcPtBillServiceImpl" ref="nmcPtBillServiceImpl"/>
+	    <property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
 	    <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>	    
 	</bean>	
 	

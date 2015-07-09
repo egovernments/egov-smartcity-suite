@@ -41,7 +41,7 @@ package org.egov.ptis.domain.service.bill;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -83,7 +83,7 @@ public class BillService {
 	private NoticeService noticeService;
 	@Autowired
         private PropertyTaxUtil propertyTaxUtil;
-	private PTBillServiceImpl nmcPtBillServiceImpl;
+	private PTBillServiceImpl ptBillServiceImpl;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private String billNo;
@@ -108,6 +108,7 @@ public class BillService {
 	public ReportOutput generateBill(BasicProperty basicProperty, Integer userId) {
 		LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
 		ReportOutput reportOutput=null;
+		Map reportParams = new HashMap<String, Object>();
 		try{
         		setBillNo(propertyTaxNumberGenerator
                                 .generateManualBillNumber(basicProperty.getPropertyID()));
@@ -122,7 +123,8 @@ public class BillService {
                          demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
                          
                          ReportRequest reportRequest = null;
-                         reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION,demandNoticeInfo,new HashMap<String, Object>());
+                         reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
+                         reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION,demandNoticeInfo,reportParams);
                          reportOutput = getReportService().createReport(reportRequest); 
                          if (reportOutput != null && reportOutput.getReportOutputData() != null) {
                              billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -168,7 +170,7 @@ public class BillService {
 		propertyTaxBillable.setReferenceNumber(getBillNo());
 		propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
 		propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
-		EgBill egBill = nmcPtBillServiceImpl.generateBill(propertyTaxBillable);
+		EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
 		LOGGER.debug("Exit from saveEgBill, EgBill: " + egBill);
 	}
 
@@ -212,14 +214,6 @@ public class BillService {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public PTBillServiceImpl getNmcPtBillServiceImpl() {
-		return nmcPtBillServiceImpl;
-	}
-
-	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
-		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
-	}
-
 	public PropertyTaxUtil getPropertyTaxUtil() {
 		return propertyTaxUtil;
 	}
@@ -231,4 +225,12 @@ public class BillService {
 	public void setNoticeService(NoticeService noticeService) {
 		this.noticeService = noticeService;
 	}
+
+        public PTBillServiceImpl getPtBillServiceImpl() {
+            return ptBillServiceImpl;
+        }
+    
+        public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+            this.ptBillServiceImpl = ptBillServiceImpl;
+        }
 }

@@ -89,7 +89,6 @@ public class NoticeService {
                 ptNotice.setNoticeType(noticeType);
                 ptNotice.setUserId(EgovThreadLocals.getUserId());
                 ptNotice.setBasicProperty(basicProperty);
-                ptNotice.setIsBlob('Y');
                 String fileName=ptNotice.getNoticeNo()+".pdf";
                 FileStoreMapper fileStore = fileStoreService
                             .store(fileStream, fileName, "application/pdf", PTMODULENAME);

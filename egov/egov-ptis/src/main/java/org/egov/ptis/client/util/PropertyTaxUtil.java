@@ -125,7 +125,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -152,6 +155,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -2474,4 +2479,12 @@ public class PropertyTaxUtil {
             }
             return demandNoticeDetailsInfo;
     }
+	
+	public String logoBasePath(){
+	    HttpServletRequest request = ServletActionContext.getRequest();
+            String url= WebUtils.extractRequestDomainURL(request, false);
+            String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+            return imagePath;
+	}
+	
 }

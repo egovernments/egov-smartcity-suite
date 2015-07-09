@@ -99,7 +99,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private PropertyTaxCollection propertyTaxCollection;
-	private PTBillServiceImpl nmcPtBillServiceImpl;
+	private PTBillServiceImpl ptBillServiceImpl;
 	private PropertyTaxUtil propertyTaxUtil;
 	private String propertyId;
 	private String collectXML = "";
@@ -142,7 +142,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 				.getPropertyID().getWard().getBoundaryNum().toString()));
 		nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
 
-		String billXml = nmcPtBillServiceImpl.getBillXML(nmcPTBill);
+		String billXml = ptBillServiceImpl.getBillXML(nmcPTBill);
 		collectXML = URLEncoder.encode(billXml);
 		LOGGER.info("Exiting method generatePropertyTaxBill, collectXML (before decode): "
 				+ billXml);
@@ -173,10 +173,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
-		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
-	}
-
+	
 	public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {
 		return propertyTaxNumberGenerator;
 	}
@@ -216,4 +213,8 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	public void setIsPenaltyConfirmed(Boolean isPenaltyConfirmed) {
 		this.isPenaltyConfirmed = isPenaltyConfirmed;
 	}
+	
+        public void setPtBillServiceImpl(PTBillServiceImpl ptBillServiceImpl) {
+            this.ptBillServiceImpl = ptBillServiceImpl;
+        }
 }

@@ -60,8 +60,6 @@
 		<many-to-one name="basicProperty"
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASICPROPERTY"
 			insert="false" update="false" />
-		<property name="noticeFile" column="NOTICE_FILE" type="binary"/>
-		<property name="isBlob" column="IS_BLOB" />
 		<many-to-one name="fileStore" class="org.egov.infra.filestore.entity.FileStoreMapper" cascade="all">
                 <column name="filestoreid" />
         </many-to-one>
