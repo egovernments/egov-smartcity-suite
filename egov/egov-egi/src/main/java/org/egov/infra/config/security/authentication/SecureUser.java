@@ -90,6 +90,9 @@ public class SecureUser implements UserDetails {
         return this.user.getPassword();
     }
 
+	public User getUser() {
+		return this.user;
+	}
     public String getUsername() {
         return this.user.getUsername();
     }

@@ -1,0 +1,1 @@
+xcopy target\egov-api-1.0-SNAPSHOT.war y:\etc\wildfly-9.0.0.CR1\standalone\deployments\egov-ear-1.0-SNAPSHOT.ear/y
