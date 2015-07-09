@@ -60,16 +60,17 @@ jQuery(document).ready(function ($) {
 	});
 	
     $('#searchComplaints').click(function () {
-    	//alert("Logged in as :"+$('#currentLoggedUser').val());
-/*    	if($('#currentLoggedUser').val()=='anonymous'){
-    		alert(" citizen");
-    		$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize());
+    	var urlStr="";
+    	if($('#currentLoggedUser').val()=='anonymous'){
+    		//alert(" citizen");
+       		urlStr="/pgr/complaint/citizen/anonymous/search";
     	}
     	else{
-    		$.post("/pgr/complaint/search", $('#searchComplaintForm').serialize());
+    		urlStr="/pgr/complaint/search";
     	}
     	
-*/		$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
+	//	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
+    	$.post(urlStr,$('#searchComplaintForm').serialize())
     	.done(function (searchResult) {
 			console.log(JSON.stringify(searchResult));
 			
