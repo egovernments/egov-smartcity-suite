@@ -923,30 +923,31 @@ function addOwner()
 	    		}
 	    		
 	    		// Generate all textboxes Id and name with new index
-				jQuery("#nameRow").clone().find("input, select").each(function() {
-						 jQuery(this).attr({
-					      'id': function(_, id) { 
-					    	  return id.replace('[0]', '['+ nextIdx +']'); 
-					       },
-					      'name': function(_, name) { 
-					    	  return name.replace('[0]', '['+ nextIdx +']'); 
-					      },
-					    });
-						
-						//if element is static attribute hold values for next row, otherwise it will be reset
-						if(!jQuery(this).data('static'))
+				jQuery("#nameRow").clone().find("input, select, img").each(function() {
+
+						if(jQuery(this).data('server'))
+						{
+							jQuery(this).removeAttr('data-server');
+						}			
+					    if(!jQuery(this).is('img'))
 					    {
-							jQuery(this).val('');
+							jQuery(this).attr({
+						      'id': function(_, id) { 
+						    	  return id.replace('[0]', '['+ nextIdx +']'); 
+						       },
+						      'name': function(_, name) { 
+						    	  return name.replace('[0]', '['+ nextIdx +']'); 
+						      },
+						    });
+							
+							//if element is static attribute hold values for next row, otherwise it will be reset
+							if(!jQuery(this).data('static'))
+						    {
+								jQuery(this).val('');
+						    }
 					    }
+					    
 			    }).end().appendTo("#nameTable");
-				
-				
-				jQuery("#nameRow").clone().find("img").each(function() {
-					if(jQuery(this).data('server'))
-					{
-						jQuery(this).removeAttr('data-server');
-					}
-				});
 				
 				jQuery("#nameTable tr:last td img[alt='Add']").hide();
 				jQuery("#nameTable tr:last td img[alt='Remove']").show();
