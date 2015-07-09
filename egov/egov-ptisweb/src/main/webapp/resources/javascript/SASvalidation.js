@@ -932,13 +932,21 @@ function addOwner()
 					    	  return name.replace('[0]', '['+ nextIdx +']'); 
 					      },
 					    });
-						 
+						
+						//if element is static attribute hold values for next row, otherwise it will be reset
 						if(!jQuery(this).data('static'))
 					    {
 							jQuery(this).val('');
 					    }
-						
 			    }).end().appendTo("#nameTable");
+				
+				
+				jQuery("#nameRow").clone().find("img").each(function() {
+					if(jQuery(this).data('server'))
+					{
+						jQuery(this).removeAttr('data-server');
+					}
+				});
 				
 				jQuery("#nameTable tr:last td img[alt='Add']").hide();
 				jQuery("#nameTable tr:last td img[alt='Remove']").show();
