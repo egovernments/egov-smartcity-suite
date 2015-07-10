@@ -481,8 +481,8 @@ td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[t
 
 input[type="text"]:read-only, select:disabled, textarea:read-only, textarea:disabled, input[type="text"]:disabled
 {
-    background-color: #eceded;
-    cursor: not-allowed;
+    background-color: #eceded !important;
+    cursor: not-allowed !important;
 }
 
 textarea

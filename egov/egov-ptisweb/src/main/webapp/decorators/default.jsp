@@ -98,7 +98,7 @@
     </head>
     
 	<body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-	    <div class="page-container">
+	  <div class="page-container">
 		    <!-- header -->
 		    <egov:breadcrumb/>
 		    
@@ -111,6 +111,57 @@
 		    <footer class="main">
 			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 			</footer>
-	   </div>
+	  </div>
+	 
+	 <!-- loading indicator --> 
+	 <div class="modal fade loader-class" data-backdrop="static">
+			<div class="modal-dialog">
+					<div class="modal-body">
+						<div class="row spinner-margin text-center">
+							<div class="col-md-12 ">
+								<div class="spinner">
+									<div class="rect1"></div>
+									<div class="rect2"></div>
+									<div class="rect3"></div>
+									<div class="rect4"></div>
+									<div class="rect5"></div>
+								</div>
+							</div>
+							
+							<div class="col-md-12 spinner-text">
+								Processing your request. Please wait..
+							</div>
+						</div>
+					</div>
+			</div>
+	 </div>
+	  
+	  <script>
+
+	    // jQuery plugin to prevent double submission of forms
+		jQuery.fn.preventDoubleSubmission = function() {
+		jQuery(this).on('submit',function(e){
+		    var $form = $(this);
+		    if ($form.data('submitted') === true) {
+		      // Previously submitted - don't submit again
+		      e.preventDefault();
+		    } else {
+		      // Mark it so that the next submit can be ignored
+		      $form.data('submitted', true);
+		    }
+		  });
+		  // Keep chainability
+		  return this;
+		};
+
+		jQuery("form").submit(function( event ) {
+			jQuery('.loader-class').modal('show', {backdrop: 'static'});
+		});
+		
+		jQuery('form').preventDoubleSubmission();
+	  
+	  </script>
+	  
+	   
     </body>
 </html>
