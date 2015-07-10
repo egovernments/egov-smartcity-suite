@@ -428,10 +428,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         }
 
         public CVoucherHeader updateVoucherHeader(CVoucherHeader voucherHeader,String voucherNumType) {
-                PersistenceService<CVoucherHeader, Long> vHeaderService;
-                 vHeaderService = new PersistenceService<CVoucherHeader, Long>();
-                // vHeaderService.setSessionFactory(new SessionFactory());
-                 vHeaderService.setType(CVoucherHeader.class);
                  CVoucherHeader existingVH=null;
                 try {
                         if(voucherHeader.getCgn()!=null && !voucherHeader.getCgn().isEmpty())
@@ -455,7 +451,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         existingVH.getVouchermis().setFundsource(voucherHeader.getVouchermis().getFundsource());
                         existingVH.setVoucherDate(voucherHeader.getVoucherDate());
                         existingVH.setDescription(voucherHeader.getDescription());
-                        vHeaderService.update(existingVH);
+                        update(existingVH);
                 } catch (HibernateException e) {
                                 LOGGER.error(e);
                                 throw new HibernateException("Exception occured in voucher service while updating voucher header"+e);
@@ -559,7 +555,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                                 existingVH.setVoucherNumber(strVoucherNumber);
                                 
                         }
-                        conn.close();
+                        //conn.close();
                 }
                 catch (Exception e) {
                         LOGGER.error(e);

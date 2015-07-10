@@ -150,7 +150,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	@SuppressWarnings("unchecked")
 	public List<CGeneralLedger> getGLInfo(final Long voucherId){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherHibernateDAO | getGLInfo | Start ");
-		return null;//HibernateUtil.getCurrentSession().createCriteria(CGeneralLedger.class).createCriteria("voucherHeaderId").add(Restrictions.eq("id", voucherId)).list()*/;
+		return HibernateUtil.getCurrentSession().createCriteria(CGeneralLedger.class).createCriteria("voucherHeaderId").add(Restrictions.eq("id", voucherId)).list();
 		
 	}
 	

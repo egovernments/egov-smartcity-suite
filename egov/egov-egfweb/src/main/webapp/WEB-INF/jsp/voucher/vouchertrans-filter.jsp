@@ -40,7 +40,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
-<s:token/>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 	<td class="greybox"><s:text name="voucher.fund"/>
 	<s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>

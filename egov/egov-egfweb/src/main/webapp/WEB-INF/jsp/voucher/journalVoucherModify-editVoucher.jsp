@@ -37,31 +37,23 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>Journal Voucher -Modify</title>
-
+<script type="text/javascript" src="/EGF/resources/javascript/ajaxCommonFunctions.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
+<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
+<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<title>Journal voucher Modify</title>
 </head>
+   	
+<body onload="loadDropDownCodes();loadDropDownCodesFunction();onloadtask()">
 
-	
-<body onload="loadDropDownCodes();loadDropDownCodesFunction();onLoadTask()">
-
-<s:form action="journalVoucherModify" theme="simple" name="jvmodifyform" >
+<s:form  theme="simple" name="jvmodifyform" >
 <s:push value="model">
 <div id="loading" style="position:absolute; left:25%; top:70%; padding:2px; z-index:20001; height:auto;width:500px;display: none;">
     <div class="loading-indicator" style="background:white;  color:#444; font:bold 13px tohoma,arial,helvetica; padding:10px; margin:0; height:auto;">
@@ -78,13 +70,16 @@
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Journal Voucher</div>
-		<div id="listid" style="display:block">
-		<br/>
-<div align="center">
-<font  style='color: red ;font-weight:bold '> 
-<p class="error-block" id="lblError" ></p></font>
-<input type="hidden" name="selectedDate" id="selectedDate">
+		<div class="formmainbox"><div class="formheading"/>
+			<div class="subheadnew">Journal Voucher
+			</div>
+				<div id="listid" style="display:block">
+				<br/>
+			<div align="center">
+			<font  style='color: red ;font-weight:bold '> 
+				<p class="error-block" id="lblError" ></p>
+			</font>
+<input type="hidden" name="selectedDate" id="selectedDate"/>
 
 	<table border="0" width="100%">
 	<tr>
@@ -152,9 +147,9 @@
 		<div class="subheadsmallnew"/></div>
 		<div class="mandatory" align="left">* Mandatory Fields</div>
 		<div id="wfHistoryDiv">
-	  	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
+	<%--   	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${voucherHeader.state.id}"></c:param>
-        </c:import>
+        </c:import> --%>
   		</div>        
 		<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>         
 			<%@include file="voucherWorkflow.jsp"%>         
@@ -174,6 +169,7 @@
 		<s:iterator value="%{getValidActions('')}" var="p">            
 			<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="update" onclick="return validateJV('close','%{name}','%{description}')"/>
 		</s:iterator>     
+		<input type="submit" class="buttonsubmit" value="Send for Approval" id="%{aa_approve}" name="%{aa_approve}" onclick="return validateAndSubmitJV('close','%{aa_approve}','%{Send for Approval}');" />
 		<input type="button" class="button" id="print" value="Print Preview" action="journalVoucherPrint" method="print" onclick="printJV()"/>
 		<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 	</div>  
@@ -211,6 +207,16 @@ function validateApproverUser(name,value){
 		return false;
 		}
 	</s:if> return true;
+}
+function validateAndSubmitJV(btnval,name,value)
+{
+	if(validateJV(btnval,name,value)){
+			document.forms[0].action='${pageContext.request.contextPath}/voucher/journalVoucherModify-update.action';
+    		document.forms[0].submit();
+			
+		}else{
+			return false;
+			}
 }
 function validateJV(saveMode,name,value)
 {
@@ -252,7 +258,7 @@ function validateJV(saveMode,name,value)
 	}
 		
 	if(!validateMIS())	return false;
-	if(!validateApproverUser(name,value)) return false;
+	//if(!validateApproverUser(name,value)) return false;
 	return true;
 }
 	function onLoadTask()

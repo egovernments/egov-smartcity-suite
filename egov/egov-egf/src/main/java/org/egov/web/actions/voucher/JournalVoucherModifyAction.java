@@ -43,7 +43,6 @@
 package org.egov.web.actions.voucher;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,20 +55,21 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.script.entity.Script;
-import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -84,18 +84,19 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 
 
-/**
- * @author msahoo
- *
- */
+
 @ParentPackage("egov")
-@Transactional(readOnly=true)
+@Results({
+	@Result(name = "editVoucher", location = "journalVoucherModify-editVoucher.jsp"),
+	@Result(name = "view", location = "journalVoucherModify-view.jsp"),
+	@Result(name = "message", location = "journalVoucherModify-message.jsp")
+	})
 public class JournalVoucherModifyAction  extends BaseVoucherAction{
 	
 	private static final long serialVersionUID = 1L;
@@ -113,7 +114,9 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 	private String wfitemstate;
 	private VoucherHelper voucherHelper;
 	//private boolean isRejectedVoucher=false;
-	
+	@Autowired
+   	private ChartOfAccounts chartOfAccounts;
+	private ChartOfAccounts engine;
 	private static final String ACTIONNAME="actionName";
 	private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
 	private String methodName=""; 
@@ -138,14 +141,19 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		addDropdownData("designationList", Collections.EMPTY_LIST);
 		addDropdownData("userList", Collections.EMPTY_LIST);
 		AppConfigValues appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues where key in " +
-				"(select id from AppConfig where key_name='WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN' and module='EGF' )");
+				"(select id from AppConfig where key_name='WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN' and module.name='EGF' )");
 		if(appConfigValues==null)
 			throw new ValidationException("Error","WORKS VOUCHERS RESTRICTION DATE FROM JV SCREEN is not defined");
 		else
 			setWorksVoucherRestrictedDate(appConfigValues.getValue());
 		setOneFunctionCenterValue();
 	} 
-	
+	  public void setChartOfAccounts() {
+      	engine.setVoucherHeaderPersitService(chartOfAccounts.getVoucherHeaderPersitService());
+      	engine.setChartOfAccountDetailService(chartOfAccounts.getChartOfAccountDetailService());
+      	engine.setBudgetDetailsDAO(chartOfAccounts.getBudgetDetailsDAO());
+
+  	}
 	@SuppressWarnings("unchecked")
 	@Action(value="/voucher/journalVoucherModify-beforeModify")
 	public String beforeModify(){
@@ -172,7 +180,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		try{
 		 if(voucherHeader != null && voucherHeader.getState() != null){
 			 if( voucherHeader.getState().getValue().contains("REJECTED")){
-				 positionsForUser = null;// eisService.getPositionsForUser(Integer.valueOf(EgovThreadLocals.getUserId()), new Date());
+				 positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
 					if(positionsForUser.contains(voucherHeader.getState().getOwnerPosition()))      
 					{
 						if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
@@ -242,7 +250,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		}
 
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);                  
-		voucherWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, voucherHeader,parameters.get("comments")[0]);
+		//voucherWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, voucherHeader,parameters.get("comments")[0]); Phoenix 
 		voucherService.persist(voucherHeader);
 	}
 
@@ -275,9 +283,10 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 	}
 	@ValidationErrorPage(value="editVoucher")	
 	@SuppressWarnings("deprecation")
+	@Action(value="/voucher/journalVoucherModify-update")
 	public String update() {
-HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
-HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
+		HibernateUtil.getCurrentSession().setDefaultReadOnly(false);
+		HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("JournalVoucherModifyAction | updateVoucher | Start");
 		target="";
 		loadSchemeSubscheme();
@@ -311,7 +320,8 @@ HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
 				voucherService.deleteVDByVHId(voucherHeader.getId());
 				List<Transaxtion> transactions = voucherService.postInTransaction(billDetailslist,subLedgerlist,
 						voucherHeader );
-				 ChartOfAccounts engine=ChartOfAccounts.getInstance();
+				 engine=chartOfAccounts.getInstance();
+				 setChartOfAccounts();
 				 Transaxtion txnList[]=new Transaxtion[transactions.size()];
 				 txnList=(Transaxtion[])transactions.toArray(txnList);
 				 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -600,5 +610,6 @@ public Position getPosition()throws EGOVRuntimeException
 	public void setRejectedVoucher(boolean isRejectedVoucher) {
 		this.isRejectedVoucher = isRejectedVoucher;
 	}*/
+	
 	
 }
