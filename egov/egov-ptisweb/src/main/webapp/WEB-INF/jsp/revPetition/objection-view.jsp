@@ -186,7 +186,7 @@
  --%>		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
-		   				<td><s:submit value="Print HearingNotice" name="forward" id="forward"  method="generateHearingNotice" cssClass="buttonsubmit" onClick="return validateIsHearningNoticeGenerated(this)"/></td>
+		   				<td><s:submit value="Forward" name="forward" id="forward"  method="generateHearingNotice" cssClass="buttonsubmit" onClick="return validateIsHearningNoticeGenerated(this)"/></td>
 		    			<!-- <td>
 		    			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="alert('Generate Hearing Notice');" >Generate Hearing Notice</button>
 		    			</td> -->
