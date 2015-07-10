@@ -41,6 +41,7 @@ package org.egov.pgr.web.controller.complaint;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.config.search.Index;
@@ -168,23 +169,47 @@ public class ComplaintSearchController {
 	@ResponseBody
 	public List<Document> searchComplaintsOffical(
 			@ModelAttribute final ComplaintSearchRequest searchRequest) {
-		final SearchResult searchResult = searchService.search(
-				asList(Index.PGR.toString()),
-				asList(IndexType.COMPLAINT.toString()),
-				searchRequest.searchQuery(), searchRequest.searchFilters(),
-				Sort.NULL, Page.NULL);
+		SearchResult searchResult=null;
+		try {
+			searchResult = searchService.search(
+					asList(Index.PGR.toString()),
+					asList(IndexType.COMPLAINT.toString()),
+					searchRequest.searchQuery(), searchRequest.searchFilters(),
+					Sort.NULL, Page.NULL);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(searchResult==null)
+		{
+			return new ArrayList<Document>();
+		}
+		else{
 		return searchResult.getDocuments();
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/complaint/citizen/anonymous/search")
 	@ResponseBody
 	public List<Document> searchComplaintsCitizen(
 			@ModelAttribute final ComplaintSearchRequest searchRequest) {
-		final SearchResult searchResult = searchService.search(
-				asList(Index.PGR.toString()),
-				asList(IndexType.COMPLAINT.toString()),
-				searchRequest.searchQuery(), searchRequest.searchFilters(),
-				Sort.NULL, Page.NULL);
+		SearchResult searchResult=null;
+		try {
+			searchResult = searchService.search(
+					asList(Index.PGR.toString()),
+					asList(IndexType.COMPLAINT.toString()),
+					searchRequest.searchQuery(), searchRequest.searchFilters(),
+					Sort.NULL, Page.NULL);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(searchResult==null)
+		{
+			return new ArrayList<Document>();
+		}
+		else{
 		return searchResult.getDocuments();
+		}
 	}
 }

@@ -42,6 +42,7 @@ package org.egov.wtms.web.controller.search;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.config.search.Index;
@@ -84,11 +85,23 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        final SearchResult searchResult = searchService.search(asList(Index.WATERTAX.toString()),
-                asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
-                Sort.NULL, Page.NULL);
-        
-        return searchResult.getDocuments();
+        SearchResult searchResult = null;
+		try {
+			searchResult = searchService.search(asList(Index.WATERTAX.toString()),
+			        asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
+			        Sort.NULL, Page.NULL);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        if(searchResult==null){
+        return new ArrayList<Document>();
+        }
+        else
+        {
+        	return searchResult.getDocuments();
+        }
+		
         
     }
 }

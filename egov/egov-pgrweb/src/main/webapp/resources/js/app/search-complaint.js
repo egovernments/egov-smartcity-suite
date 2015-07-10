@@ -96,7 +96,7 @@ jQuery(document).ready(function ($) {
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
 				{title: 'Registration Date',
 					render: function (data, type, full) {
-						if(full.resource.common.createdDate != undefined) {
+						if(full!=null && full.resource!= undefined && full.resource.common.createdDate != undefined) {
 							var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
 							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 						}
@@ -109,7 +109,7 @@ jQuery(document).ready(function ($) {
 		})
 	});
     
-    tableContainer = $("#csearch").dataTable({
+   tableContainer = $("#csearch").dataTable({
 		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
