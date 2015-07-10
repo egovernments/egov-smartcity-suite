@@ -1,0 +1,54 @@
+update eg_demand_reason set glcodeid =null;
+update egbpaextnd_mstr_bpafee set glcodeid =381;
+update chartofaccounts set parentid=null where id=74;
+delete from chartofaccounts where id not in(381,74);
+
+--Loading minor code--
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(1,110,'Tax Revenue',false,null,current_date,'I',1,110,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(2,120,'Assigned Revenues & Compensations',false,null,current_date,'I',1,120,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(3,130,'Rental Income from Municipal Properties',false,null,current_date,'I',1,130,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(4,140,'Fees & User Charges',false,null,current_date,'I',1,140,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(5,150,'Sale & Hire Charges',false,null,current_date,'I',1,150,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(6,160,'Revenue Grants, Contribution and Subsidies',false,null,current_date,'I',1,160,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(7,170,'Income from Investments',false,null,current_date,'I',1,170,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(8,171,'Interest Earned',false,null,current_date,'I',1,171,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(9,210,'Establishment Expenses',false,null,current_date,'E',1,210,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(10,220,'Administrative Expenses',false,null,current_date,'E',1,220,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(11,230,'Operations & Maintenance',false,null,current_date,'E',1,230,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(12,240,'Interest & Finance Charges',false,null,current_date,'E',1,240,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(13,250,'Programme Expenses',false,null,current_date,'E',1,250,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(14,260,'Revenue Grants, Contribution and Subsidies',false,null,current_date,'E',1,260,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(15,270,'Provisions and Write off',false,null,current_date,'E',1,270,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(16,271,'Miscellaneous Expenses',false,null,current_date,'E',1,271,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(17,272,'Depreciation',false,null,current_date,'E',1,272,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(18,280,'Prior Period Item',false,null,current_date,'E',1,280,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(19,290,'Transfer to Reserve Funds',false,null,current_date,'E',1,290,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(20,310,'Municipal Fund',false,null,current_date,'L',1,310,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(21,311,'Earmarked Funds',false,null,current_date,'L',1,311,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(22,312,'Reserves',false,null,current_date,'L',1,312,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(23,320,'Grants , Contribution for specific purposes',false,null,current_date,'L',1,320,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(24,330,'Secured Loans',false,null,current_date,'L',1,330,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(25,331,'Unsecured Loans',false,null,current_date,'L',1,331,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(26,340,'Deposits Received',false,null,current_date,'L',1,340,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(27,341,'Deposit works',false,null,current_date,'L',1,341,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(28,350,'Other Liabilities',false,null,current_date,'L',1,350,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(29,360,'Provisions',false,null,current_date,'L',1,360,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(30,410,'Fixed Assets',false,null,current_date,'A',1,410,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(31,411,'Accumulated Depreciation',false,null,current_date,'A',1,411,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(32,412,'Capital Work-In-Progress',false,null,current_date,'A',1,412,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(33,420,'Investments - General Fund',false,null,current_date,'A',1,420,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(34,421,'Investments - Other Funds',false,null,current_date,'A',1,421,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(35,430,'Stock - in- hand',false,null,current_date,'A',1,430,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(36,431,'Sundry Debtors (Receivables)',false,null,current_date,'A',1,431,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(37,432,'Accumulated Provisions against Debtors (Receivables)',false,null,current_date,'A',1,432,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(38,440,'Pre-paid Expenses',false,null,current_date,'A',1,440,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(39,450,'Cash and Bank balance',false,null,current_date,'A',1,450,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(40,460,'Loans, Advances and Deposits',false,null,current_date,'A',1,460,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(41,461,'Accumulated Provisions against Loans, Advances and Deposits',false,null,current_date,'A',1,461,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(42,470,'Other Assets',false,null,current_date,'A',1,470,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(43,480,'Miscellaneous Expenditure to be written off',false,null,current_date,'A',1,480,1,1);
+insert into chartofaccounts (id,glcode,name,isactiveforposting,parentid,created,type,classification,majorcode,createdby,modifiedby) values(553,180,'Other Income',false,null,current_date,'I',1,180,1,1);
+
+----after loading the major code--
+update egbpaextnd_mstr_bpafee set glcodeid =1;
+delete from chartofaccounts where id  in(381,74);
