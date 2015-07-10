@@ -129,6 +129,17 @@
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		</td>
+		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox">
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		</td>
+	</tr>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
@@ -138,20 +149,6 @@
 			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
-		</td>
-
-	</tr>
-	
 	<!-- Amenities section -->
 	
 	<tr>
@@ -243,7 +240,7 @@
 	
 	<!-- Ownership section -->
 	
-	<tr>
+	<tr id="ownerShipRow">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.ownership"/></span>
@@ -271,12 +268,12 @@
 				headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type"
 				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
+				cssClass="selectnew" onchange="toggleFloorDetails();enableFieldsForPropType();" />
 		</td>
 		
 	</tr>
 	
-	<tr>
+	<tr id="vacantAreaRow">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox">
 			<div id="plotArea">
@@ -297,7 +294,7 @@
 		<td class="bluebox">&nbsp;</td>
 	</tr>
 	
-	<tr>
+	<tr id="appartmentRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"

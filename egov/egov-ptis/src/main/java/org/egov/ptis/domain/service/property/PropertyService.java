@@ -208,7 +208,7 @@ public class PropertyService  {
                         property.getPropertyDetail().setWoodType(woodType);
                     }
        
-                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
 			Area area = new Area();
 			area.setArea(new Float(areaOfPlot));
 			property.getPropertyDetail().setSitalArea(area);
@@ -380,10 +380,12 @@ public class PropertyService  {
 		} else {
 			if (property.getPropertyDetail().getFloorDetails().size() > 0
 					&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-				for(Floor floorObj:property.getPropertyDetail().getFloorDetails())
+				/*for(Floor floorObj:property.getPropertyDetail().getFloorDetails())
 				{
 				    property.getPropertyDetail().removeFloor(floorObj);
-				} 
+				}*/
+				
+				property.getPropertyDetail().getFloorDetails().clear();
 			    
 			    //property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
 				//property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
@@ -2109,7 +2111,7 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 	
 	public void processAndStoreDocument(List<Document> documents) {
 		documents.forEach(document -> {
-			if (!document.getUploads().isEmpty()) {
+			if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
 				int fileCount = 0;
 				for (File file : document.getUploads()) {
 					FileStoreMapper fileStore = fileStoreService.store(file, document

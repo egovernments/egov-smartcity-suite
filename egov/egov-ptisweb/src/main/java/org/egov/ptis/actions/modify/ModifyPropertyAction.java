@@ -458,6 +458,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		oldProperty = (PropertyImpl) basicProp.getProperty();
 		modifyBasicProp(getDocNumber());
 		transitionWorkFlow(propertyModel);
+		basicProp.setUnderWorkflow(Boolean.TRUE);
 		basicPropertyService.applyAuditing(propertyModel.getState());
 		basicPropertyService.update(basicProp);
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
@@ -551,6 +552,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("reject: Property rejection started");
 		propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
 				Long.valueOf(getModelId()));
+		if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
+				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+			propertyModel.getPropertyDetail().getFloorDetails().clear();
+		}
 		LOGGER.debug("reject: Property: " + propertyModel);
 		BasicProperty basicProperty = propertyModel.getBasicProperty();
 		setBasicProp(basicProperty);
@@ -731,8 +736,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		 * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT
 		 * property type
 		 */
-		if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId())
-				|| (oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())) {
+		if (((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId())
+				|| (oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())) && !(newProperty.getStatus().equals('W'))) {
 
 			if ((propTypeMstr != null) && (StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))) {
 				changePropertyDetail(newProperty, new VacantProperty(), 0);
@@ -918,13 +923,26 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
 		propDetail.setComZone(propertyDetail.getComZone());
 		propDetail.setCornerPlot(propertyDetail.getCornerPlot());
-
+		propDetail.setCable(propertyDetail.isCable());
+		propDetail.setAttachedBathRoom(propertyDetail.isAttachedBathRoom());
+		propDetail.setElectricity(propertyDetail.isElectricity());
+		propDetail.setDrainage(propertyDetail.isDrainage());
+		propDetail.setWaterTap(propertyDetail.isWaterTap());
+		propDetail.setWaterHarvesting(propertyDetail.isWaterHarvesting());
+		propDetail.setLift(propertyDetail.isLift());
+		propDetail.setToilets(propertyDetail.isToilets());
+		propDetail.setFloorType(propertyDetail.getFloorType());
+		propDetail.setRoofType(propertyDetail.getRoofType());
+		propDetail.setWallType(propertyDetail.getWallType());
+		propDetail.setWoodType(propertyDetail.getWoodType());
+		propDetail.setExtentSite(propertyDetail.getExtentSite());
+		propDetail.setStructure(propertyDetail.isStructure());
+		propDetail.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand());
 		if (numOfFloors == 0) {
 			propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
 		} else {
 			propDetail.setPropertyUsage(null);
 		}
-
 		propDetail.setExtra_field1(propertyDetail.getExtra_field1());
 		propDetail.setExtra_field2(propertyDetail.getExtra_field2());
 		propDetail.setExtra_field3(propertyDetail.getExtra_field3());

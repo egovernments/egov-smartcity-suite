@@ -155,7 +155,7 @@
 			<key column="ID_PROPERTY" />
 			<one-to-many class="org.egov.ptis.domain.entity.property.UnitCalculationDetail" />
 		</set>
-		<bag name="documents" table="EGPT_MODIFICATION_DOCS" cascade="all">
+		<bag name="documents" table="EGPT_MODIFICATION_DOCS" cascade="all" order-by="document">
 			<key column="MODIFICATION" not-null="true"/>			
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>

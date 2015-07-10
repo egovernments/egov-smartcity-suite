@@ -373,7 +373,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 			instId = Integer.valueOf(listObj[0].toString());
 			installment = (Installment) installmentDao.findById(instId, false);
 			if (currInst.equals(installment)) {
-				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
+				if (listObj[2] != null && !(new BigDecimal((Double) listObj[2])).equals(BigDecimal.ZERO)) {
 					currCollection = currCollection.add(new BigDecimal((Double)listObj[2]));
 				}
 				/*
@@ -382,22 +382,22 @@ public class PtDemandHibernateDao implements PtDemandDao {
 				 * as a negative amt in 'Current Tax Due' in search results and
 				 * view property screen)
 				 */
-				if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO)) {
+				if (listObj[3] != null && !(new BigDecimal((Double) listObj[3])).equals(BigDecimal.ZERO)) {
 					currCollection = currCollection.add(new BigDecimal((Double)listObj[3]));
 				}
 				currDmd = currDmd.add((BigDecimal) listObj[1]);
 			} else {
 				arrDmd = arrDmd.add((BigDecimal) listObj[1]);
-				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection.add((BigDecimal) listObj[2]);
+				if (listObj[2] != null && !(new BigDecimal((Double) listObj[2])).equals(BigDecimal.ZERO)) {
+					arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
 				}
 				/*
 				 * adding rebate to collection (commenting this code because,
 				 * the rebate amt is been added to collection amt and is shown
 				 * as a negative amt in search results and view property screen)
 				 */
-				if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection.add((BigDecimal) listObj[3]);
+				if (listObj[3] != null && !(new BigDecimal((Double) listObj[3])).equals(BigDecimal.ZERO)) {
+					arrColelection = arrColelection.add(new BigDecimal((Double) listObj[3]));
 				}
 			}
 		}

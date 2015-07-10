@@ -161,18 +161,6 @@
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
-		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{buildingPermissionNo}" default="N/A"/></span>
@@ -181,7 +169,18 @@
 		<td class="greybox">
 			<span class="bold"><s:property value="%{buildingPermissionDate}" default="N/A"/></span>
 		</td>
-
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
+		</td>
 	</tr>
 	<!-- Amenities section -->
 	
@@ -256,7 +255,7 @@
 	
 	<!-- Ownership section -->
 	
-	<tr>
+	<tr id="ownerShipRow">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.ownership"/></span>
@@ -280,7 +279,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr  id="vacantAreaRow">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox">
 			<div id="plotArea">
@@ -296,7 +295,7 @@
 		<td class="bluebox">&nbsp;</td>
 	</tr>
 	
-	<tr>
+	<tr id="appartmentRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox" width="">

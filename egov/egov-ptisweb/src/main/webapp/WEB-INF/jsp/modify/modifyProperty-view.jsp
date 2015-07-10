@@ -57,16 +57,25 @@
 				return true;
 			}
 			
-			function loadOnStartUp() {
-		   		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}" />';
-		   		if(propType=="Open Plot") {
-					document.getElementById("floorDetails").style.display="none";
+			/* function loadOnStartUp() {
+		   		var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}" />';
+		   		if(propType == "Open Plot") {
+		   			document.getElementById("plotArea").style.display = "";
+		   			document.getElementById("appartmentRow").style.display = "none";
+		   			document.getElementById("ownerShipRow").style.display = "none";
+		   			document.getElementById("vacantAreaRow").style.display = "none";
+					/* document.getElementById("floorDetails").style.display="none";
 					document.getElementById("floorHeader").style.display="none";
 				    var tbl = document.getElementById('floorDetails');	
 					if(tbl!=null) {
 						var rowo = tbl.rows;
 						resetCreateFloorDetails(rowo);
-					}		
+					}	 */	
+				/*} else {
+					document.getElementById("plotArea").style.display = "none";
+		   			document.getElementById("appartmentRow").style.display = "";
+		   			document.getElementById("ownerShipRow").style.display = "";
+		   			document.getElementById("vacantAreaRow").style.display = "";
 				}
 		   		<s:if test="%{extra_field4 != 'Yes'}">
 				    var btnPVR = document.getElementById("GeneratePrativrutta");
@@ -74,8 +83,32 @@
 				    	btnPVR.disabled = false;
 				    }
 				</s:if>
+			} */
+
+			function loadOnStartUp() {
+				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}" />';
+				if (propType == "Open Plot") {
+					document.getElementById("ownerShipRow").style.display = "";
+					document.getElementById("vacantAreaRow").style.display = "";
+					document.getElementById("floorDetails").style.display = "none";
+					document.getElementById("floorHeaderRow").style.display = "none";
+					document.getElementById("appartmentRow").style.display = "none";
+					resetFloorsDetails();
+				} 
+				else if (propType == "Apartment") {
+					document.getElementById("ownerShipRow").style.display = "";
+					document.getElementById("floorDetails").style.display = "";
+					document.getElementById("floorHeaderRow").style.display = "";
+					document.getElementById("appartmentRow").style.display = "";
+				} else {
+					document.getElementById("ownerShipRow").style.display = "";
+					document.getElementById("vacantAreaRow").style.display = "none";
+					document.getElementById("floorDetails").style.display = "";
+					document.getElementById("floorHeaderRow").style.display = "";
+					document.getElementById("appartmentRow").style.display = "none";
+				}
 			}
-  
+			
 			function generateNotice6(){
 			   	document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify";
 				document.ModifyPropertyForm.submit();
@@ -206,7 +239,8 @@
 										onclick="return onSubmit('modifyProperty-approve.action', this);" />
 								</s:if>
 								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
-									'Commissioner Rejected'.equalsIgnoreCase(model.state.nextAction)}">
+									@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction) 
+									|| @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
 									<s:submit value="Forward" name="Forward" id="Modify:Forward"
 										cssClass="buttonsubmit"
 										onclick="return onSubmit('modifyProperty-forward.action', this);" />
