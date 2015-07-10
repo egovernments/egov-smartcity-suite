@@ -713,20 +713,20 @@ public interface PropertyTaxConstants {
         public static final HashMap<String, String> GLCODEMAP_FOR_CURRENTTAX = new HashMap<String, String>() {
                 {
 
-                        put(DEMANDRSN_CODE_GENERAL_TAX, "4311002");
-                        put(DEMANDRSN_CODE_LIBRARY_CESS, "4311032");
-                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311042");
-                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311012");
+                        put(DEMANDRSN_CODE_GENERAL_TAX, "1100101");
+                        put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001");
+                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "3503002");
+                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001");
 
                 }
         };
         // HashMap for GLCodes for Arrear Taxes
         public static final HashMap<String, String> GLCODEMAP_FOR_ARREARTAX = new HashMap<String, String>() {
                 {
-                        put(DEMANDRSN_CODE_GENERAL_TAX, "4311001");
-                        put(DEMANDRSN_CODE_LIBRARY_CESS, "4311031");
-                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311041");
-                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311011");
+                        put(DEMANDRSN_CODE_GENERAL_TAX, "4311004");
+                        put(DEMANDRSN_CODE_LIBRARY_CESS, "4311004");
+                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311004");
+                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311004");
                 }
         };
 
@@ -735,9 +735,9 @@ public interface PropertyTaxConstants {
         public static final HashMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = new HashMap<String, String>() {
                 {
                         put(DEMANDRSN_CODE_GENERAL_TAX, "1100101");
-                        put(DEMANDRSN_CODE_LIBRARY_CESS, "1105201");
-                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "1105201");
-                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1100102");
+                        put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001");
+                        put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "3503002");
+                        put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001");
                 }
         };
 
