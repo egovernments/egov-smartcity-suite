@@ -72,8 +72,8 @@ jQuery(document).ready(function ($) {
 							else return "";
 				    	}
 					},
-					{title: 'Application Name', data: 'resource.searchable.applicantname'},
-					{title: 'Application Address', data: 'resource.common.applicantAddress'},
+					{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
+					{title: 'Applicant Address', data: 'resource.common.applicantAddress'},
 					
 					{title: 'Status', data: 'resource.clauses.status'}
 					
