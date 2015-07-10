@@ -90,10 +90,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
-@Namespace("/notice")
-@ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = PropertyTaxNoticeAction.NOTICE, location = "notice/propertyTaxNotice-notice.jsp") })
+@Results({ @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp") })
 public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxNoticeAction.class);
 	public static final String NOTICE = "notice";
@@ -119,7 +116,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		return null;
 	}
 
-	@Action(value = "/propertyTaxNotice-generateNotice")
+	@Action(value = "/notice/propertyTaxNotice-generateNotice")
 	public String generateNotice() {
 		Map reportParams = new HashMap<String, Object>();
 		ReportRequest reportInput = null;
