@@ -52,11 +52,13 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.notice.PtNotice;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-public class NoticeService {
+public class NoticeService extends PersistenceService<PtNotice, Long> {
 	private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
 	PersistenceService<BasicProperty, Long> basicPropertyService;
 	@Autowired
@@ -96,6 +98,15 @@ public class NoticeService {
 		basicPropertyService.update(basicProperty);
 		return ptNotice;
 	}
+	
+public PtNotice getPtNoticeByNoticeNumberAndNoticeType(String noticeNo, String noticeType) {
+
+        Query qry = getSession().createQuery(
+                "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType)=:noticeType ");
+        qry.setString("noticeNumber", noticeNo.toUpperCase());
+        qry.setString("noticeType", noticeType.toUpperCase());
+        return (PtNotice) qry.uniqueResult();
+}
 
 	public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
 		return basicPropertyService;

@@ -106,12 +106,17 @@ $(document).ready(function()
 		}, {
 		displayKey: 'name',
 		source: position.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		}).on('typeahead:selected', function(event, data){ 
 			$("#positionId").val(data.value);    
+			//console.log('value set');
 	    }).on('change',function(event,data){
     		if($('#com_position').val() == ''){
     			$("#positionId").val('');
     		}
+	    	/*if (!data || $('#com_position').val() == '') {
+    		$("#positionId").val('');
+    		console.log('value clear');
+    		}*/
         }); 
 	
 	//Boundary auto-complete

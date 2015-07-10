@@ -44,19 +44,27 @@ package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -66,9 +74,17 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -102,20 +118,24 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Results({ @Result(name = "new", location = "objection-new.jsp"),
 		@Result(name = "message", location = "objection-message.jsp"),
+		  @Result(name = "notice", location = "objection-notice.jsp"),
+		      
 		@Result(name = "view", location = "objection-view.jsp"), @Result(name = "ack", location = "objection-ack.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final String STRUTS_RESULT_MESSAGE = "message";
-
+	public static final String NOTICE = "notice";
 	private final Logger LOGGER = Logger.getLogger(RevisionPetitionAction.class);
 	private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
 	private Objection objection = new Objection();
@@ -133,10 +153,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private PropertyStatusValues propStatVal;
 	private String reasonForModify;
 	private TreeMap<Integer, String> floorNoMap;
-
+	
+	private Integer reportId = -1;
 	@Autowired
 	private PropertyStatusValuesDAO propertyStatusValuesDAO;
-
+	  @Autowired
+	    private ReportService reportService;
+	    @Autowired
+	    private NoticeService noticeService;
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
 
@@ -224,20 +248,47 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	@SkipValidation
 	@Action(value = "/revPetition/revPetition-newForm")
 	public String newForm() {
-		LOGGER.debug("Entered into newForm");
-		getPropertyView(propertyId);
-		// Map<String, String> wfMap =
-		// objection.getBasicProperty().getPropertyWfStatus();
-		if (objection != null && objection.getBasicProperty() != null && objection.getBasicProperty().isUnderWorkflow()) {
-			addActionMessage(getText("property.state.objected",
-					new String[] { objection.getBasicProperty().getUpicNo() }));
-			return STRUTS_RESULT_MESSAGE;
-		} else {
-			setupWorkflowDetails();
-		}
+	        /*InputStream hearingNoticePdf = null;
+	        ReportOutput reportOutput = new ReportOutput();
+	        reportOutput.setReportFormat(FileFormat.PDF);
+	        // To generate Notice having installment and reasonwise balance for a
+	        // property
+	        ReportRequest reportRequest = null;
+	        Map reportParams = new HashMap<String, Object>();
+                reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
+                reportParams.put("cityName", ReportUtil.getCityName());
+                reportParams.put("recievedBy", objection.getRecievedBy());
+                reportParams.put("hearingNoticeDate",sdf.format(new Date()));
+                reportParams.put("currentDate", sdf.format(new Date()));
+                reportParams.put("receivedOn", sdf.format(new Date())); 
+                reportParams.put("docNumberObjection", objection.getDocNumberObjection());
+                reportParams.put("HouseNo", objection.getDocNumberObjection());
+                reportParams.put("hearingTime", objection.getDocNumberObjection());
+                
+	        reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE, objection, reportParams);
+	        reportOutput = reportService.createReport(reportRequest);
+	       
+	        if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+	            hearingNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+	        }
+	        
+	        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession()); */
+	        
+	        LOGGER.debug("Entered into newForm");
+	        getPropertyView(propertyId);
+	        // Map<String, String> wfMap =
+	        // objection.getBasicProperty().getPropertyWfStatus();
+	        if (objection != null && objection.getBasicProperty() != null && objection.getBasicProperty().isUnderWorkflow()) {
+	            addActionMessage(getText("property.state.objected",
+	                    new String[] { objection.getBasicProperty().getUpicNo() }));
+	            return STRUTS_RESULT_MESSAGE;
+	        } else {
+	            setupWorkflowDetails();
+	        }
 
-		return NEW;
-	}
+	        return NEW;
+	    //    return "bill";
+	    }
 
 	@Action(value = "/revPetition/revPetition")
 	public String create() {
@@ -269,7 +320,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	@Action(value = "/revPetition/revPetition-addHearingDate")
 	public String addHearingDate() {
-		LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
+	    Map reportParams = new HashMap<String, Object>();
+	        
+	    LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
+		InputStream hearingNoticePdf = null;
+	        ReportOutput reportOutput = new ReportOutput();
 		/*
 		 * vaidatePropertyDetails(); if (hasErrors()) { return "view"; }
 		 */
@@ -291,9 +346,40 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					PropertyTaxConstants.OBJECTION_RECORD_GENERATEHEARINGNOTICE);
 		}
 		// propertyImplService.update(objection.getReferenceProperty());
-		objectionService.update(objection);
-		LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
-		return STRUTS_RESULT_MESSAGE;
+		
+		   reportOutput.setReportFormat(FileFormat.PDF);
+		     ReportRequest reportRequest = null;
+              
+                reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
+                reportParams.put("cityName", ReportUtil.getCityName());
+                reportParams.put("recievedBy", objection.getRecievedBy());
+        
+                if (objection.getHearings() != null && objection.getHearings().size() > 0
+                        && objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
+                    reportParams.put("hearingNoticeDate",
+                            sdf.format(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
+                else
+                    reportParams.put("hearingNoticeDate", "");
+                reportParams.put("currentDate", sdf.format(new Date()));
+                reportParams.put("receivedOn", sdf.format(objection.getRecievedOn())); 
+                reportParams.put("docNumberObjection", objection.getObjectionNumber());
+                reportParams.put("HouseNo", objection.getBasicProperty().getApplicationNo());
+                reportParams.put("hearingTime", objection.getDocNumberObjection());
+        
+                reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE,
+                        objection, reportParams);
+                reportOutput = reportService.createReport(reportRequest);
+
+                if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+                    hearingNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+                }
+                // reportId = ReportViewerUtil.addReportToSession(reportOutput,
+                // getSession());
+                noticeService.saveNotice(objection.getObjectionNumber(),PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(),
+                        hearingNoticePdf);// Save Notice
+                objectionService.update(objection);
+                LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
+                return STRUTS_RESULT_MESSAGE;
 	}
 
 	@ValidationErrorPage(value = "view")
@@ -322,9 +408,53 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		propertyImplService.getSession().flush();
 		objection.setReferenceProperty(refNewProperty);
 		objectionService.update(objection);
-		return STRUTS_RESULT_MESSAGE;
+		//return STRUTS_RESULT_MESSAGE;
+		 ReportOutput reportOutput = new ReportOutput();
+	            if (objection != null && objection.getObjectionNumber() != null) {
+	                PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection.getObjectionNumber(),
+	                        PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
+	    
+	                FileStoreMapper fsm = ptNotice.getFileStore();
+	                File file = fileStoreService.fetch(fsm, PTMODULENAME);
+	                byte[] bFile;
+	                try {
+	                    bFile = FileUtils.readFileToByteArray(file);
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                    throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+	                }
+	                reportOutput.setReportOutputData(bFile);
+	                reportOutput.setReportFormat(FileFormat.PDF);
+	                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	            }
+	            return NOTICE;
+	            
 	}
 
+	/*@ValidationErrorPage(value = "view")
+        @Action(value = "/revPetition/revPetition-printHearingNotice")
+        public String printHearingNotice() {
+    
+            ReportOutput reportOutput = new ReportOutput();
+            if (objection != null && objection.getObjectionNumber() != null) {
+                PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection.getObjectionNumber(),
+                        PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
+    
+                FileStoreMapper fsm = ptNotice.getFileStore();
+                File file = fileStoreService.fetch(fsm, PTMODULENAME);
+                byte[] bFile;
+                try {
+                    bFile = FileUtils.readFileToByteArray(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new EGOVRuntimeException("Exception while generating Hearing Notcie : " + e);
+                }
+                reportOutput.setReportOutputData(bFile);
+                reportOutput.setReportFormat(FileFormat.PDF);
+                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            }
+            return NOTICE;
+        }*/
 	@ValidationErrorPage(value = "view")
 	@Action(value = "/revPetition/revPetition-recordHearingDetails")
 	public String recordHearingDetails() {
@@ -818,4 +948,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		this.propTypeId = propTypeId;
 	}
 
+	    public Integer getReportId() {
+	        return reportId;
+	    }
+
+	    public void setReportId(Integer reportId) {
+	        this.reportId = reportId;
+	    }
 }

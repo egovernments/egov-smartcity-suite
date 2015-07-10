@@ -1050,4 +1050,7 @@ public interface PropertyTaxConstants {
         public static final String REPORT_TEMPLATENAME_NOTICE6 = "specialNotice";
         public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
         public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";
+        public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "revPetitionHearingNotice";
+        public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
+
 }

@@ -138,6 +138,10 @@
 			</c:if>
 			
 			<s:if test="isDemandActive == false">
+					<input type="button" class="buttonsubmit" name="objection" id="objection"
+						value="Create Revision Petition"
+						onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+		
 						<input type="button" class="buttonsubmit" name="btnCancelBill"
 					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 			</s:if>
