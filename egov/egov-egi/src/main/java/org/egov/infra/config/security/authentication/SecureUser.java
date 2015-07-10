@@ -101,4 +101,8 @@ public class SecureUser implements UserDetails {
     public UserType getUserType() {
         return this.user.getType();
     }
+    
+    public User getUser() {
+        return this.user;
+    }
 }
