@@ -190,12 +190,11 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         persist(propertyMutation);
     }
 
-    public double calculateMutationFee(final double marketValue, final PropertyMutation propertyMutation) {
-        final int transferedInMonths = Months.monthsBetween(new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1),
-                new LocalDate(propertyMutation.getBasicProperty().getRegdDocDate()).withDayOfMonth(1)).getMonths();
-        //TODO Add transferReason
+    public double calculateMutationFee(final double marketValue, final String transferReason, final PropertyMutation propertyMutation) {
+        final int transferedInMonths = Months.monthsBetween(new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
+                new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1)).getMonths();
         return (Double) scriptService.executeScript("PTIS-MUTATION-FEE-CALCULATOR", ScriptService.createContext("marketValue",
-                marketValue, "transferedInMonths", transferedInMonths, "transferReason", ""));
+                marketValue, "transferedInMonths", transferedInMonths, "transferReason", transferReason));
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {

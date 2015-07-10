@@ -45,10 +45,10 @@
 		<title><s:text name='transOwnAck' />
 		</title>
 		<script type="text/javascript">
-  function viewProperty(){
-  	window.location="../../view/viewProperty-viewForm.action?propertyId=<s:property value='%{indexNumber}'/>";
-  }
-  </script>
+		  function printAcknowledgement() {
+			  window.location="printAck.action?mutationId=${mutationId}";
+		  }
+		</script>
 	</head>
 	<body onload=" refreshParentInbox(); ">
 		<s:form name="transPropAckForm" theme="simple">
@@ -71,15 +71,15 @@
 									<s:else>
 										<s:if test="%{nextUser != null }" >
 	                                 		<span ><s:text name="transferdet.head"></s:text> </span>
-											<s:property value="%{indexNumber}" />
+											<s:property value="%{assessmentNo}" />
 											 <span > 
 											<s:text name="forward.success"></s:text>  </span>
 										    <s:property value="%{nextUser}" />
 										</s:if>
 										<s:else>
 											 <span ><s:text name="transferOwner.ack"></s:text> </span>
-											<a href="#"
-											onclick='viewProperty();'> <s:property value="%{indexNumber}" /> </a>
+											<a href="../../view/viewProperty-viewForm.action?propertyId=<s:property value='%{assessmentNo}'/>"
+											target='_blank'> <s:property value="%{assessmentNo}" /> </a>
 										</s:else>
 									</s:else>
 							</td>
@@ -87,10 +87,8 @@
 					</table>
 				</div>
 				<div class="buttonbottom" align="center">
-					<td>
-						<input type="button" name="button2" id="button2" value="Close"
-							class="button" onclick="window.close();" />
-					</td>
+					<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="button" onclick="printAcknowledgement()" />
+					<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 				</div>
 			</s:push>
 		</s:form>

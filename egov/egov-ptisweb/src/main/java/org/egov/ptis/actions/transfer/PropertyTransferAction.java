@@ -114,6 +114,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private Integer reportId = -1;
     private Long transfereeId;
     private double marketValue;
+    private String transferReason;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -203,7 +204,7 @@ public class PropertyTransferAction extends BaseFormAction {
     public void calculateMutationFee() throws IOException {
         if (marketValue > 0)
             ServletActionContext.getResponse().getWriter()
-                    .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, propertyMutation)));
+                    .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason, propertyMutation)));
         else
             ServletActionContext.getResponse().getWriter().write("0");
     }
@@ -338,5 +339,9 @@ public class PropertyTransferAction extends BaseFormAction {
 
     public void setMarketValue(final double marketValue) {
         this.marketValue = marketValue;
+    }
+
+    public void setTransferReason(String transferReason) {
+        this.transferReason = transferReason;
     }
 }

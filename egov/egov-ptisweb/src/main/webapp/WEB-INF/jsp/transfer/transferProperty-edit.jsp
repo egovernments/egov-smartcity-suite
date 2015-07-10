@@ -94,6 +94,7 @@
 						<td class="bluebox">
 							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
 							<s:hidden name="mutationId" id="mutationId" value="%{id}"/>
+							<s:hidden name="assessmentNo" id="assessmentNo" value="%{assessmentNo}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;
@@ -369,11 +370,15 @@
 		<script type="text/javascript">
 		jQuery("#marketValue").blur(function(){
 			var marketVal = parseInt(jQuery("#marketValue").val());
+			var transferReason = document.getElementById("transRsnId").options[obj.selectedIndex].text;
+	 		if(marketVal == '' || marketVal == '0' || parseInt(marketVal) < 1)
+	  			return false;
+			
 			jQuery.ajax({
 				type: "GET",
 				url: "calculate-mutationfee.action",
 				cache: true,
-				data:{"marketValue" : marketVal,"mutationId" : jQuery("#mutationId").val()}
+				data:{"marketValue" : marketVal, "transferReason" : transferReason, "mutationId" : jQuery("#mutationId").val()}
 			}).done(function(value) {
 				jQuery("#mutationFee").val(value);
 			});
@@ -443,6 +448,5 @@
 		}
 		jQuery('#nameTable tr:not(:eq(1)) td img[alt="Add"]').hide();
 </script>
-<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 </body>
 </html>
