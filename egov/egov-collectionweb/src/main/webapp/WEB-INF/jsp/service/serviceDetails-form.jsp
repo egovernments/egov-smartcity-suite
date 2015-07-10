@@ -105,44 +105,47 @@ function clearCodeIfExists(){
 			</div><br>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-
-			<td width="25%" class="bluebox2"> <s:text name="service.master.search.category"></s:text> </td>
-			<td width="25%" class="bluebox2"><s:property value="serviceCategory.name"/></td>
-			<td width="25%" class="bluebox2"> </td><td width="25%" class="bluebox2"> </td>
+		    <td width="3%" class="bluebox"> &nbsp; </td>
+			<td width="20%" class="bluebox"> <s:text name="service.master.search.category"></s:text> </td>
+			<td width="25%" class="bluebox"><s:property value="serviceCategory.name"/></td>
+			<td width="25%" class="bluebox"> </td><td width="25%" class="bluebox"> </td>
 		</tr>
 		<s:set name="serviceCodeInitVal" id="serviceCodeInitVal" value="%{code}"></s:set>
 		<tr>
+		    <td></td>
 			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
-			<td width="25%" class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
-			<td width="25%" class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
+			<td class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
+			<td class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
 			 onkeyup="uniqueCheckCode();" onblur="clearCodeIfExists();"></s:textfield> </td>
-			<td width="25%" class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
-			<td width="25%" class="bluebox"> <s:textfield name="serviceName" id="serviceName" maxLength="100" ></s:textfield> </td>
+			<td class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
+			<td class="bluebox"> <s:textfield name="serviceName" id="serviceName" maxLength="100" ></s:textfield> </td>
 		</tr>
 		<tr>
-
-			<td width="25%" class="bluebox2"> <s:text name="service.master.enable"></s:text> </td>
-			<td width="25%" class="bluebox2"><s:checkbox name="isEnabled" /></td>
-			<td width="25%" class="bluebox2"><s:text name="service.master.type" /> </td>
-			<td width="25%" class="bluebox2"> 
+            <td></td>
+			<td class="bluebox"> <s:text name="service.master.enable"></s:text> </td>
+			<td class="bluebox"><s:checkbox name="isEnabled" /></td>
+			<td class="bluebox"><s:text name="service.master.type" /> </td>
+			<td class="bluebox"> 
 				<s:select list="#{'':'-----Select----','B':'Bill Based', 'C':'Collection', 'P':'Payment'}" 
 				name="serviceType" id="serviceType"></s:select>
 			</td>
 			
 		</tr>
 		<tr>
-			<td width="25%" class="bluebox"> <s:text name="service.master.isvouchertobecreated"></s:text> </td>
-			<td width="25%" class="bluebox" ><s:checkbox name="voucherCreation" id="voucherCreation" onchange="return EnableVoucherDetails(this)"/></td>
+		    <td></td>
+			<td class="bluebox"> <s:text name="service.master.isvouchertobecreated"></s:text> </td>
+			<td class="bluebox" ><s:checkbox name="voucherCreation" id="voucherCreation" onchange="return EnableVoucherDetails(this)"/></td>
 		</tr>
 		<tr id="voucherApprovedDetails">
-		<td width="25%" class="bluebox2"><s:text name="service.master.isvouchertobeapproved" ></s:text> </td>
-			<td width="25%" class="bluebox2">
+		<td></td>
+		<td class="bluebox"><s:text name="service.master.isvouchertobeapproved" ></s:text> </td>
+			<td class="bluebox">
 			<s:select list="#{'false':'Pre-Approved','true':'Approved'}" 
 				name="isVoucherApproved" id="isVoucherApproved"></s:select>
 			</td>
-			<td width="25%" class="bluebox2"></td>
-			<td width="25%" class="bluebox2"></td>
+			<td class="bluebox"></td>
+			<td class="bluebox"></td>
 		</tr>
 
 	</table>
@@ -152,39 +155,42 @@ function clearCodeIfExists(){
 			</div><br>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td width="25%" class="bluebox2"> <s:text name="service.master.create.fund"></s:text> </td>
-				<td width="25%" class="bluebox2">
+		    <td width="3%" class="bluebox"> &nbsp; </td>
+			<td width="20%" class="bluebox"> <s:text name="service.master.create.fund"></s:text> </td>
+				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="fund" id="fundId" cssClass="selectwk"
 					list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" onChange="populateSchemes(this);" /></td>
-				<td width="25%" class="bluebox2"><s:text name="service.master.create.fundsource"></s:text>  </td>
-				<td width="25%" class="bluebox2">
+				<td width="25%" class="bluebox"><s:text name="service.master.create.fundsource"></s:text>  </td>
+				<td width="25%" class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="fundSource" id="fundSourceId" cssClass="selectwk"
 					list="dropdownData.fundsourceList" listKey="id" listValue="name" value="%{fundSource.id}" /></td>
 			
 		</tr>
 		
 		<tr>
+		 <td></td>
 		<egov:ajaxdropdown id="schemeId" fields="['Text','Value']" dropdownId="schemeId" url="receipts/ajaxReceiptCreate-ajaxLoadSchemes.action" />
-			<td width="25%" class="bluebox"> <s:text name="service.master.create.scheme"></s:text> </td>
-				<td width="25%" class="bluebox">
+			<td class="bluebox"> <s:text name="service.master.create.scheme"></s:text> </td>
+				<td class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="scheme" id="schemeId" cssClass="selectwk"
 					list="dropdownData.schemeList" listKey="id" listValue="name" value="%{scheme.id}"  onChange= "populatesubSchemes(this)" /></td>
 		<egov:ajaxdropdown id="subschemeId" fields="['Text','Value']" dropdownId="subschemeId" url="receipts/ajaxReceiptCreate-ajaxLoadSubSchemes.action" />
-				<td width="25%" class="bluebox"><s:text name="service.master.create.subscheme"></s:text>  </td>
-				<td width="25%" class="bluebox">
+				<td class="bluebox"><s:text name="service.master.create.subscheme"></s:text>  </td>
+				<td class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="subscheme" id="subschemeId" cssClass="selectwk"
 					list="dropdownData.subschemeList" listKey="id" listValue="name" value="%{subscheme.id}" /> </td>
 			
 		</tr>
 		
 		<tr>
-			<td width="25%" class="bluebox2"> <s:text name="service.master.create.functionary"></s:text> </td>
-				<td width="25%" class="bluebox2">
+		   <td></td>
+			<td class="bluebox"> <s:text name="service.master.create.functionary"></s:text> </td>
+				<td class="bluebox">
 				<s:select headerKey="-1" headerValue="----Choose----" name="functionary" id="functionaryId" cssClass="selectwk"
 					list="dropdownData.functionaryList" listKey="id" listValue="name" value="%{functionary.id}" /></td>
 				
-			<td width="25%" class="bluebox2"> <s:text name="service.master.create.department"></s:text> </td>
-				<td width="25%" class="bluebox2">
+			<td class="bluebox"> <s:text name="service.master.create.department"></s:text> </td>
+				<td class="bluebox">
 				<s:select name="departmentList"  list="dropdownData.departmentList" listKey="id"
 					 listValue="name"  multiple="true" size="6" /></td>
 		</tr>
