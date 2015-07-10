@@ -39,11 +39,6 @@
  */
 package org.egov.eis.entity;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,11 +46,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
@@ -82,17 +76,10 @@ public class Jurisdiction extends AbstractAuditable {
     @JoinColumn(name = "boundarytype")
     private BoundaryType boundaryType;
 
-    @OneToMany(mappedBy = "jurisdiction", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<JurisdictionDetails> jurisdictionDetails = new HashSet<JurisdictionDetails>();
-
-    public Set<JurisdictionDetails> getJurisdictionDetails() {
-        return jurisdictionDetails;
-    }
-
-    public void setJurisdictionDetails(final Set<JurisdictionDetails> jurisdictionDetails) {
-        this.jurisdictionDetails = jurisdictionDetails;
-    }
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="boundary")
+    private Boundary boundary;
+    
     public Employee getEmployee() {
         return employee;
     }
@@ -118,54 +105,4 @@ public class Jurisdiction extends AbstractAuditable {
     public void setBoundaryType(final BoundaryType boundaryType) {
         this.boundaryType = boundaryType;
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null)
-            return false;
-
-        if (this == obj)
-            return true;
-
-        if (!(obj instanceof Jurisdiction))
-            return false;
-
-        final Jurisdiction other = (Jurisdiction) obj;
-        if (other.getEmployee().equals(getEmployee())) {
-            if (other.getJurisdictionDetails().equals(getJurisdictionDetails()))
-                return true;
-            else
-                return false;
-
-        } else
-            return false;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int hashCode = 0;
-        if (getEmployee() != null)
-            hashCode = hashCode + getEmployee().hashCode();
-
-        if (getJurisdictionDetails() != null)
-            hashCode = hashCode + getJurisdictionDetails().hashCode();
-
-        return hashCode;
-
-    }
-
-    public boolean validate() {
-        final BoundaryType bt = boundaryType;
-        final Set bndries = jurisdictionDetails;
-        for (final Iterator iter = bndries.iterator(); iter.hasNext();) {
-            final JurisdictionDetails element = (JurisdictionDetails) iter.next();
-            if (!element.getBoundary().getBoundaryType().equals(bt))
-                throw new EGOVRuntimeException("Invalid Boundary " + element.getBoundary().getName()
-                        + " for Boundary Type " + bt.getName() + ".");
-        }
-
-        return true;
-    }
-
 }

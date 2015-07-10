@@ -59,9 +59,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Employee findByUsername(String userName);
 
-    @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN inner join JRDN.jurisdictionDetails as JRDNDETAILS"
+    @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDNDETAILS.boundary.id=:boundaryId")
+            + " and JRDN.boundary.id=:boundaryId")
     public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
 
