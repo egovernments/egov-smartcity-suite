@@ -55,7 +55,7 @@
 </script>
 </head>
 
-<body onload=" refreshParentInbox();">
+<body>
 	<s:form name="CreatePropertyAckForm" theme="simple">
 		<s:push value="model">
 			<s:token />

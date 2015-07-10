@@ -723,9 +723,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propertyModel.setBasicProperty(basicProp);
 		propertyModel.setEffectiveDate(propCompletionDate);
 		propertyModel.getPropertyDetail().setEffective_date(propCompletionDate);
-
-		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel, oldProperty,
-				propCompletionDate, isfloorDetailsRequired);
+		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel,propCompletionDate, isfloorDetailsRequired);
 
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
 				"from PropertyTypeMaster ptm where ptm.code = ?", PROPTYPE_OPEN_PLOT);

@@ -70,15 +70,18 @@
 		<td class="bluebox2" width="8%">&nbsp;</td>
 	    <td class="bluebox" width="8%"><s:text name="elec.wardno"/> : </td>
 	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProperty.propertyID.electionBoundary.name}" /> </span></td>
-	    <td class="bluebox" width="10%"><s:text name="doorno"/> : </td>
-	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{basicProp.address.extraField2}" /> </span></td>
 	</tr>
-	
+	<tr>
+		<td class="bluebox2" width="8%">&nbsp;</td>
+	    <td class="bluebox" width="10%"><s:text name="Address"/> : </td>
+	    <td class="bluebox"><span class="bold"><s:property default="N/A" value="%{addressStr}" /> </span></td>
+	</tr>
+	<%-- 
 	<tr>
 		<td class="greybox2" width="8%">&nbsp;</td>
 	    <td class="greybox" width="8%"><s:text name="Address"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProp.address.extraField3}" /> </span></td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{Address}" /> </span></td>
 	    <td class="greybox" width="10%"><s:text name="PinCode"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProp.address.extraField4}" /> </span></td>
-	</tr>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{PinCode}" /> </span></td>
+	</tr> --%>
 </div>

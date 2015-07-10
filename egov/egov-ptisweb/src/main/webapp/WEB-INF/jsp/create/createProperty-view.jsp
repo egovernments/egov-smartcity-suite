@@ -45,16 +45,17 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-	<head>
-		<title><s:text name='NewProp.title' />
-		</title>
-		<sx:head />
-		<!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
-		
-		<script type="text/javascript">
+<head>
+<title><s:text name='NewProp.title' /></title>
+<sx:head />
+<!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
+
+<script type="text/javascript">
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
-	function loadOnStartUp() {
+	  function loadOnStartUp() {
+		enableFieldsForPropType();
+		toggleFloorDetails();
    		setCorrCheckBox();
    		<s:if test="%{extra_field4 != 'Yes'}">
 		    var btnPVR = document.getElementById("GeneratePrativrutta");
@@ -81,24 +82,21 @@
 		document.CreatePropertyForm.submit();
 	}
 </script>
-	</head>
+</head>
 
-	<body onload="loadOnStartUp();">
-		<div align="left">
-			<s:actionerror />
+<body onload="loadOnStartUp();">
+	<div align="left">
+		<s:actionerror />
+	</div>
+	<s:if test="%{hasActionMessages()}">
+		<div id="actionMessages" class="messagestyle" align="center">
+			<s:actionmessage theme="simple" />
 		</div>
-		<s:if test="%{hasActionMessages()}">
-			<div id="actionMessages" class="messagestyle" align="center">
-				<s:actionmessage theme="simple" />
-			</div>
-			<div class="blankspace">
-				&nbsp;
-			</div>
-		</s:if>
-		<!-- Area for error display -->
-		<div class="errorstyle" id="property_error_area"
-			style="display: none;"></div>
-	    <div class="formmainbox">
+		<div class="blankspace">&nbsp;</div>
+	</s:if>
+	<!-- Area for error display -->
+	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
+	<div class="formmainbox">
 		<s:form name="CreatePropertyForm" action="createProperty"
 			theme="simple" validate="true">
 			<s:token />
@@ -106,45 +104,46 @@
 			<s:hidden name="mode" value="view" />
 			<s:push value="model">
 
-						
-					<div class="headingbg">
-						<s:text name="CreatePropertyHeader" />
-					</div>
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<%@ include file="../create/createPropertyView.jsp"%>
-						</tr>
-						<%-- <s:if test="%{isApprPageReq}">
+
+				<div class="headingbg">
+					<s:text name="CreatePropertyHeader" />
+				</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<%@ include file="../create/createPropertyView.jsp"%>
+					</tr>
+					<%-- <s:if test="%{isApprPageReq}">
 							<tr>
 								<%@ include file="../workflow/property-workflow.jsp"%>
 							</tr>
 						</s:if> --%>
-							<table width="100%" border="0" cellspacing="0" cellpadding="0">
-								<tr>
-									<td class="bluebox" width="6%">
-										&nbsp;
-									</td>
-									<td class="bluebox" width="10%">
-										<s:text name='approver.comments' />
-									</td>
-									<td class="bluebox" width="8%">
-										<s:textarea name="workflowBean.comments" id="comments"
-											rows="3" cols="80" onblur="checkLength(this);" />
-									</td>
-									<td class="bluebox" width="15%" colspan="2"></td>
-								</tr>
-								<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
-							</table>
-						
-						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<font size="2"><div align="left" class="mandatory">
-									<s:text name="mandtryFlds" />
-								</div>
-							</font>
+							<td class="bluebox" width="6%">&nbsp;</td>
+							<td class="bluebox" width="10%"><s:text
+									name='approver.comments' /></td>
+							<td class="bluebox" width="8%"><s:textarea
+									name="workflowBean.comments" id="comments" rows="3" cols="80"
+									onblur="checkLength(this);" /></td>
+							<td class="bluebox" width="15%" colspan="2"></td>
 						</tr>
-						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
-						<div class="buttonbottom" align="center">
+						<s:hidden name="workflowBean.actionName"
+							id="workflowBean.actionName" />
+					</table>
+
+					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<tr>
+						<font size="2"><div align="left" class="mandatory">
+								<s:text name="mandtryFlds" />
+							</div> </font>
+					</tr>
+					<div id="loadingMask" style="display: none">
+						<p align="center">
+							<img src="/egi/resources/erp2//images/bar_loader.gif"> <span
+								id="message"><p style="color: red">Please wait....</p></span>
+						</p>
+					</div>
+					<div class="buttonbottom" align="center">
 						<tr>
 							<%-- <s:if
 								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
@@ -185,33 +184,33 @@
 											class="button" onclick="return previewPrativrutta();" />
 									</td> -->
 							</s:else> --%>
-							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
-							<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
+							<s:if
+								test="@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
+								<s:if
+									test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
 							 @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
-								<td><input type="button" name="GenerateNotice6" id="GenerateNotice6" 
-											value="Generate Notice" class="buttonsubmit" onclick="return generateNotice6();" />
-								</td>
+									<td><input type="button" name="GenerateNotice6"
+										id="GenerateNotice6" value="Generate Notice"
+										class="buttonsubmit" onclick="return generateNotice6();" /></td>
 								</s:if>
 							</s:if>
 							<s:else>
-							<td><s:submit value="Approve" name="Approve"
-									id='Create:Approve' cssClass="buttonsubmit" method="approve"
-									onclick="return onSubmit('createProperty-approve.action',this);" />
-							</td>
-							<td>
-										<s:submit value="Reject" name="Reject" id='Create:Reject'
-											cssClass="buttonsubmit" method="reject"
-											 onclick="return onSubmit('createProperty-reject.action',this);"/>
-									</td>
+								<td><s:submit value="Approve" name="Approve"
+										id='Create:Approve' cssClass="buttonsubmit" method="approve"
+										onclick="return onSubmit('createProperty-approve.action',this);" />
+								</td>
+								<td><s:submit value="Reject" name="Reject"
+										id='Create:Reject' cssClass="buttonsubmit" method="reject"
+										onclick="return onSubmit('createProperty-reject.action',this);" />
+								</td>
 							</s:else>
 							<td><input type="button" name="button2" id="button2"
 								value="Close" class="button" onclick="window.close();" /></td>
 						</tr>
-						</div>
-					</table>
-				
+					</div>
+				</table>
 			</s:push>
 		</s:form>
-		</div>
-	</body>
+	</div>
+</body>
 </html>

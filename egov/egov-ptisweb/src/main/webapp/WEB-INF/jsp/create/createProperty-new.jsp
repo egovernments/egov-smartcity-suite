@@ -78,10 +78,14 @@ jQuery(function ($) {
 });
 function loadOnStartUp() {
 	enableCorresAddr();
-	document.getElementById("plotArea").style.display = "";
-	document.getElementById("appartmentRow").style.display = "none";
-	document.getElementById("ownerShipRow").style.display = "none";
-	document.getElementById("vacantAreaRow").style.display = "none";
+	/* document.getElementById("plotArea").style.display = ""; */
+	document.getElementById("apartmentRow").style.display = "none";
+	/* document.getElementById("ownerShipRow").style.display = "none";
+	document.getElementById("vacantAreaRow").style.display = "none"; */
+	document.getElementById("vacantLandRow").style.display = "none";
+	document.getElementById("vacantLandTable").style.display = "none";
+	document.getElementById("appartenantRow").style.display = "none";
+	document.getElementById("noOfSeats").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
@@ -395,7 +399,7 @@ function finishAllChangesMsg(button) {
   
     <div class="errorcss" id="wf_error" style="display:none;"></div>
 
-  <s:form name="CreatePropertyForm" action="createProperty" theme="simple" validate="true">
+  <s:form name="CreatePropertyForm" theme="simple" validate="true">
   
   <s:push value="model">
   <s:token />
@@ -412,13 +416,6 @@ function finishAllChangesMsg(button) {
       <s:hidden name="modelId" id="modelId" value="%{modelId}" />
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        	<!-- <div id="loadingMask" style="display:none" align="center">
-        	<p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> 
-        		<span id="message">
-        			<p style="color: red">Please wait....</p>
-        		</span>
-        	</p>
-        	</div> -->
         	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>

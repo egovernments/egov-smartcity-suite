@@ -131,7 +131,7 @@ public class VacantProperty extends AbstractProperty {
 			double extentAppartenauntLand, FloorType floorType, RoofType roofType,
 			WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
 			boolean structure, boolean drainage, boolean electricity, boolean attachedBathRoom,
-			boolean waterHarvesting, boolean cable, String siteOwner) {
+			boolean waterHarvesting, boolean cable, String siteOwner,String pattaNumber,Double currentCapitalValue, Double marketValue) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -179,6 +179,9 @@ public class VacantProperty extends AbstractProperty {
 		this.waterHarvesting = waterHarvesting;
 		this.cable = cable;
 		this.siteOwner = siteOwner;
+		this.pattaNumber = pattaNumber;
+		this.currentCapitalValue = currentCapitalValue;
+		this.marketValue = marketValue;
 	}
 
 	public Date getDateOfCompletion() {

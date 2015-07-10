@@ -44,8 +44,13 @@
     <tr>
       <td colspan="5" width="5%"><div class="headingsmallbg"><span class="bold"><s:text name="CorrAddr"/></span></div></td>
     </tr>
-    
     <tr>
+    <td class="bluebox2" width="5%">&nbsp;</td>
+    <td class="greybox" width="10%">Correspondence Address:</td>
+    <td class="greybox" width="8%"><span class="bold"><s:property default="N/A" value="%{corrAddress1}" /> </span></td>
+    
+    </tr>
+   <%--  <tr>
       <td class="bluebox2" width="5%">&nbsp;</td>
       <td class="bluebox" width="10%"><s:text name="Address1"/>:</td>
       <td class="bluebox" width="15%">
@@ -60,5 +65,5 @@
       <td class="greybox" width="8%"><span class="bold"><s:property default="N/A" value="%{corrAddress.streetAddress2}" /> </span></td>
       <td class="greybox" width="8%"><s:text name="PinCode"/>:</td>
       <td class="greybox" width="15%"><span class="bold"><s:property default="N/A" value="%{corrAddress.pinCode}" /> </span></td>
-    </tr>
+    </tr> --%>
 </div>

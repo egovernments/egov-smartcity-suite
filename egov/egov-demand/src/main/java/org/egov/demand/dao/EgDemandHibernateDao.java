@@ -79,8 +79,8 @@ public class EgDemandHibernateDao implements EgDemandDao {
 
 	@Override
 	public void delete(EgDemand egDemand) {
-		// TODO Auto-generated method stub
-
+		getCurrentSession().delete(egDemand);
+		getCurrentSession().flush();
 	}
 
 	@Override

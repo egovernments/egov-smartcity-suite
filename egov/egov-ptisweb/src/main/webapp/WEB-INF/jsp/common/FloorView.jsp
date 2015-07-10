@@ -41,12 +41,13 @@
 <c:set value="no" var="isTenant"/>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom" id="floorDetails">
     <tr>
-		<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span><a
+		<th class="bluebgheadtd"><s:text name="FloorNo" /></th>
+		<th class="bluebgheadtd"><s:text name="ConstructionType" /><a
 			onclick="openWindow('ConstType.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
-		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span><a
+		<th class="bluebgheadtd"><s:text name="Usage" /><a
 			onclick="openWindow('UsageMaster.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
-		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
+		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
+		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Width" /></th>
@@ -76,6 +77,11 @@
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    	<div align="center">
 	    	<span class="bold"><s:property default="N/A" value="%{propertyOccupation.occupation}" /> </span>
+	        </div>
+	    </td>	
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+	    	<div align="center">
+	    	<span class="bold"><s:property default="N/A" value="%{occupantName}" /> </span>
 	        </div>
 	    </td>	
 	    <td class="blueborderfortd" style="padding: 2px 2px">

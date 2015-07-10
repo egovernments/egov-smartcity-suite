@@ -134,6 +134,19 @@
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
+						id="propertyDetail.floorDetails[0].extraField4" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
+						value="%{propertyDetail.floorDetails[0].extraField4}"
+						data-calculate="propertyDetail.floorDetails[0].extraField5"
+						data-result="propertyDetail.floorDetails[0].builtUpArea.area"
+						cssStyle="width:100%" />
+				</div>
+			</td>
+			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetails[0].extraField5"
@@ -148,22 +161,9 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
-						id="propertyDetail.floorDetails[0].extraField4" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
-						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
-						value="%{propertyDetail.floorDetails[0].extraField4}"
-						data-calculate="propertyDetail.floorDetails[0].extraField5"
-						data-result="propertyDetail.floorDetails[0].builtUpArea.area"
-						cssStyle="width:100%" />
-				</div>
-			</td>
-
-
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
 					<s:textfield
 						name="propertyDetail.floorDetails[0].builtUpArea.area" readOnly="true"
-						maxlength="15" size="10" id="assessableArea" value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
+						maxlength="15" size="10" id="propertyDetail.floorDetails[0].builtUpArea.area" value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
 				</div>
@@ -275,7 +275,6 @@
 				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						
 						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
 							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
@@ -299,7 +298,7 @@
 					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
 						<s:textfield autocomplete="off"
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
-							id="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" size="10"
+							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>
@@ -307,24 +306,24 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5"
-							id="length" size="5" maxlength="7" 
-							onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');calculateArea(this);"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField5}"
-							data-calculate="propertyDetail.floorDetails[0].extraField4"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" 
+							id="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" size="5" maxlength="7"
+							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField4}"
+							data-calculate="propertyDetail.floorDetails[0].extraField5"
 						    data-result="propertyDetail.floorDetails[0].builtUpArea.area"
 							cssStyle="width:100%" />
 					</div>
 				</td>
-
+				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" id="width"
-							size="5" maxlength="7"
-							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField4}"
-							data-calculate="propertyDetail.floorDetails[0].extraField5"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5"
+							id="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5" size="5" maxlength="7" 
+							onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');calculateArea(this);"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField5}"
+							data-calculate="propertyDetail.floorDetails[0].extraField4"
 						    data-result="propertyDetail.floorDetails[0].builtUpArea.area"
 							cssStyle="width:100%" />
 					</div>
@@ -333,7 +332,7 @@
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="assessableArea" readOnly="true"
+							maxlength="15" size="10" id="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area" readOnly="true"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />

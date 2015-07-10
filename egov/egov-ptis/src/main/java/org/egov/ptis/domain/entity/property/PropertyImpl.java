@@ -671,7 +671,8 @@ public class PropertyImpl extends StateAware implements Property {
 							.isWaterTap(), getPropertyDetail().isStructure(), getPropertyDetail()
 							.isDrainage(), getPropertyDetail().isElectricity(), getPropertyDetail()
 							.isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(),
-					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner());
+					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),getPropertyDetail().getPattaNumber(),
+					getPropertyDetail().getCurrentCapitalValue(),getPropertyDetail().getMarketValue());
 		}
 		propDetails.setExtra_field1(getPropertyDetail().getExtra_field1());
 		propDetails.setExtra_field2(getPropertyDetail().getExtra_field2());

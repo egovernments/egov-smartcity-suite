@@ -3,28 +3,67 @@
  * Includes all the validations for create property
  */
 
+function enableAppartnaumtLandDetails() {
+	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
+	alert(propertyType);
+	if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
+		document.getElementById("vacantLandRow").style.display = "";
+		document.getElementById("vacantLandTable").style.display = "";
+		document.getElementById("appartenantRow").style.display = "";
+		document.getElementById("floorDetails").style.display = "";
+		document.getElementById("floorHeaderRow").style.display = "";
+	} else {
+		enableFieldsForPropType();
+		document.forms[0].chkIsAppartenauntLand.checked == false;	
+		alert("Vacant Land cant not be appartenaunt");
+	}
+}
+
+function enableNumberOfSeats() {
+	if (document.forms[0].drainage.checked == true) {
+		document.getElementById("noOfSeats").style.display = "";
+	} else {
+		document.getElementById("noOfSeats").style.display = "none";
+	}
+}
+
 function enableFieldsForPropType() {
 	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType != "--select--") {
-		
+		var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 		onChangeOfPropertyTypeFromMixedToOthers(propType);
 		var tableRowTaxExempt = document.getElementById("taxExemptRow");
 		
 		if (propType == "Open Plot") {
+			document.getElementById("vacantLandRow").style.display = "";
+		    document.getElementById("vacantLandTable").style.display = "";
 			document.getElementById("ownerShipRow").style.display = "";
 			document.getElementById("vacantAreaRow").style.display = "";
 			document.getElementById("floorDetails").style.display = "none";
 			document.getElementById("floorHeaderRow").style.display = "none";
+			document.getElementById("amenitiesRow").style.display = "none";
+			document.getElementById("amenitiesHeaderRow").style.display = "none";
+			document.getElementById("constructionHeaderRow").style.display = "none";
+			document.getElementById("constructionRow1").style.display = "none";
+			document.getElementById("constructionRow2").style.display = "none";
 		} 
 		else if (propType == "Apartment") {
-			document.getElementById("appartmentRow").style.display = "";
+			document.getElementById("apartmentRow").style.display = "";
 		}
 		else {
-			document.getElementById("appartmentRow").style.display = "none";
+			document.getElementById("apartmentRow").style.display = "none";
 			document.getElementById("ownerShipRow").style.display = "none";
 			document.getElementById("vacantAreaRow").style.display = "none";
 			document.getElementById("floorDetails").style.display = "";
 			document.getElementById("floorHeaderRow").style.display = "";
+			document.getElementById("amenitiesRow").style.display = "";
+			document.getElementById("amenitiesHeaderRow").style.display = "";
+			document.getElementById("constructionHeaderRow").style.display = "";
+			document.getElementById("constructionRow1").style.display = "";
+			document.getElementById("constructionRow2").style.display = "";
+			document.getElementById("vacantLandRow").style.display = "none";
+			document.getElementById("vacantLandTable").style.display = "none";
+			document.getElementById("appartenantRow").style.display = "none";
 		}
 			/*document.getElementById("plotArea").cssStyle.display = "";
 			document.getElementById("undivArea").cssStyle.display = "none";
@@ -642,11 +681,11 @@ function toggleFloorDetails() {
 	if (propType == "Open Plot") {
 		document.getElementById("floorHeaderRow").style.display = "none";
 		document.getElementById("floorDetails").style.display = "none";
-		//document.getElementById("completionDate").style.display = "none";
+		document.getElementById("completionDate").style.display = "none";
 	} else {
 		document.getElementById("floorHeaderRow").style.display = "table-row";
 		document.getElementById("floorDetails").style.display = "table-row-group";
-		//document.getElementById("completionDate").style.display = "";
+		document.getElementById("completionDate").style.display = "";
 	}
 	if (propType == "Apartments") {
 		alert("Please select Apartment/Complex Name");

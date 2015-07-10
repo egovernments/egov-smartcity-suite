@@ -458,8 +458,7 @@ public class PropertyService  {
 		return propStatVal;
 	}
 
-	public Property createDemand(PropertyImpl property, Property oldProperty, Date dateOfCompletion,
-			boolean isfloorDetailsRequired) {
+	public Property createDemand(PropertyImpl property, Date dateOfCompletion, boolean isfloorDetailsRequired) {
 		LOGGER.debug("Entered into createDemand");
 		LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
 
@@ -478,10 +477,10 @@ public class PropertyService  {
 			dmdDetailSet = createAllDmdDetails(installment, instList, instTaxMap);
 			PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
 			ptDemand = new Ptdemand();
-			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable());
+			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable()); //shld be updated in create-edit mode
 			ptDemand.setCreateDate(new Date());
 			ptDemand.setEgInstallmentMaster(installment);
-			ptDemand.setEgDemandDetails(dmdDetailSet);
+			ptDemand.setEgDemandDetails(dmdDetailSet); // clear the exisitng and recreate the EgDemandDetails
 			ptDemand.setIsHistory("N");
 			ptDemand.setEgptProperty(property);
 			ptDmdSet.add(ptDemand);
@@ -511,7 +510,7 @@ public class PropertyService  {
 		LOGGER.debug("Exiting from createDemand");
 		return property;
 	}
-
+	
 	/**
 	 * Called to modify Property demands when the property is modified
 	 *
@@ -1441,7 +1440,7 @@ public class PropertyService  {
 		newProperty.setBasicProperty(basicProperty);
 
 		newProperty.getPtDemandSet().clear();
-		createDemand(newProperty, oldProperty, propCompletionDate, false);
+		createDemand(newProperty, propCompletionDate, false);
 		createArrearsDemand(oldProperty, propCompletionDate, newProperty);
 		basicProperty.addProperty(newProperty);
 
