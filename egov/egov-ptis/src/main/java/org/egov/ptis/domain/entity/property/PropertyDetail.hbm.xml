@@ -134,17 +134,15 @@
         <property name="extentSite" column="extentsite" type="double" />
         <property name="extentAppartenauntLand" column="extent_appurtenant_land" type="double" />
         <property name="siteOwner" column="siteowner" type="java.lang.String" />
+        <property name="currentCapitalValue" column="current_capitalValue" type="double" />
+        <property name="marketValue" column="marketvalue" type="double" />
+        <property name="pattaNumber" column="pattanumber" type="java.lang.String" />
         
-	    <many-to-one name="floorType"
-		class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />
-	    <many-to-one name="roofType"
-		class="org.egov.ptis.domain.entity.property.RoofType" column="roofType" />
-	    <many-to-one name="wallType"
-		class="org.egov.ptis.domain.entity.property.WallType" column="wallType" />
-	    <many-to-one name="woodType"
-		class="org.egov.ptis.domain.entity.property.WoodType" column="woodType" />
-		<many-to-one name="apartment" 
-		class="org.egov.ptis.domain.entity.property.Apartment" column="apartment" insert="false" update="false"/>
+	    <many-to-one name="floorType" class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />
+	    <many-to-one name="roofType" class="org.egov.ptis.domain.entity.property.RoofType" column="roofType" />
+	    <many-to-one name="wallType" class="org.egov.ptis.domain.entity.property.WallType" column="wallType" />
+	    <many-to-one name="woodType" class="org.egov.ptis.domain.entity.property.WoodType" column="woodType" />
+		<many-to-one name="apartment" class="org.egov.ptis.domain.entity.property.Apartment" column="apartment" insert="false" update="false"/>
 		
 	<!-- 	<set name="floorDetails" order-by="FLOOR_NO"
 			cascade="all" table="EGPT_FLOOR_DETAIL">

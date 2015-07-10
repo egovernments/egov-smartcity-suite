@@ -376,4 +376,16 @@ public interface PropertyDetail extends Property {
 	public Apartment getApartment();
 	
 	public void setApartment(Apartment apartment);
+	
+	public String getPattaNumber();
+	
+	public void setPattaNumber(String pattaNumber);
+	
+	public Double getCurrentCapitalValue();
+	
+	public void setCurrentCapitalValue(Double currentCapitalValue);
+	
+	public Double getMarketValue();
+	
+	public void setMarketValue(Double marketValue);
 }

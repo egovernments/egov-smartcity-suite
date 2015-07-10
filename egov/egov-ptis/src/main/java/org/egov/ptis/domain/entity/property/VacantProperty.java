@@ -114,6 +114,9 @@ public class VacantProperty extends AbstractProperty {
 	private WallType wallType;
 	private WoodType woodType;
 	private Apartment apartment = null;
+	private String pattaNumber;
+	private Double currentCapitalValue;
+	private Double marketValue;
 
 	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
 			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
@@ -903,6 +906,35 @@ public class VacantProperty extends AbstractProperty {
 	public void setApartment(Apartment apartment) {
 		this.apartment = apartment;
 	}
-	
+
+	@Override
+	public String getPattaNumber() {
+		return pattaNumber;
+	}
+
+	@Override
+	public void setPattaNumber(String pattaNumber) {
+		this.pattaNumber = pattaNumber;
+	}
+
+	@Override
+	public Double getCurrentCapitalValue() {
+		return currentCapitalValue;
+	}
+
+	@Override
+	public void setCurrentCapitalValue(Double currentCapitalValue) {
+		this.currentCapitalValue = currentCapitalValue;
+	}
+
+	@Override
+	public Double getMarketValue() {
+		return marketValue;
+	}
+
+	@Override
+	public void setMarketValue(Double marketValue) {
+		this.marketValue = marketValue;
+	}
 
 }
