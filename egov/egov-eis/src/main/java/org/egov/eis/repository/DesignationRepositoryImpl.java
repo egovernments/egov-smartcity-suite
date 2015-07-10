@@ -41,7 +41,9 @@ package org.egov.eis.repository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.pims.commons.Designation;
@@ -55,15 +57,15 @@ public class DesignationRepositoryImpl implements DesignationCustomRepository {
     @Override
     public List<Designation> getAllDesignationsByDepartment(final Long id, final Date givenDate) {
 
-        final List<Designation> designations = new ArrayList<Designation>();
+        final Set<Designation> designations = new HashSet<Designation>();
         final Date userGivenDate = null == givenDate ? new Date() : givenDate;
         final List<Assignment> assignments = assignmentRepository.findAllByDepartmentAndDate(id, userGivenDate);
         for (final Assignment assign : assignments)
             designations.add(assign.getDesignation());
 
-        return designations;
+        return new ArrayList<Designation>(designations);
     }
-    
+
     /**
      * Returns employee designation for position
      *
