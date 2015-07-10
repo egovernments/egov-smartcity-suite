@@ -334,6 +334,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			setRoofTypeId(propertyDetail.getRoofType().getId());
 			setWoodTypeId(propertyDetail.getWallType().getId());
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
+			setAreaOfPlot(propertyDetail.getSitalArea().getArea().toString());
 		}
 
 		if (basicProp != null) {

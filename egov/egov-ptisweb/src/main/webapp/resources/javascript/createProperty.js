@@ -5,7 +5,6 @@
 
 function enableAppartnaumtLandDetails() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	alert(propertyType);
 	if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
 		document.getElementById("vacantLandRow").style.display = "";
 		document.getElementById("vacantLandTable").style.display = "";
@@ -21,9 +20,9 @@ function enableAppartnaumtLandDetails() {
 
 function enableNumberOfSeats() {
 	if (document.forms[0].drainage.checked == true) {
-		document.getElementById("noOfSeats").style.display = "";
+		document.getElementById("drainageseatsrow").style.display = "";
 	} else {
-		document.getElementById("noOfSeats").style.display = "none";
+		document.getElementById("drainageseatsrow").style.display = "none";
 	}
 }
 

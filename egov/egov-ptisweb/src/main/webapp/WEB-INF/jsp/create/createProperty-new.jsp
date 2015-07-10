@@ -85,7 +85,7 @@ function loadOnStartUp() {
 	document.getElementById("vacantLandRow").style.display = "none";
 	document.getElementById("vacantLandTable").style.display = "none";
 	document.getElementById("appartenantRow").style.display = "none";
-	document.getElementById("noOfSeats").style.display = "none";
+	document.getElementById("drainageseatsrow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";

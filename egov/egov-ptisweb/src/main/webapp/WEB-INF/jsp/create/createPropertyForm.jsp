@@ -195,7 +195,9 @@
 								id="propertyDetail.waterHarvesting" /></label></td>
 					<td width="10%"></td>
 				</tr>
-				<tr>
+				
+				<tr id="drainageseatsrow">
+				<td class="greybox" width="5%">&nbsp;</td>
 				<td class="greybox"><s:text name="noOfSeats"></s:text>:</td>
 				<td class="greybox"><s:textfield maxlength="64" name="noOfSeats" id="noOfSeats"></s:textfield></td>
 				</tr>
@@ -261,7 +263,7 @@
 			</div>
 		</td>
 		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot"
-				maxlength="15" value="%{propertyDetail.sitalArea.area}"
+				maxlength="15" value="%{areaOfPlotpropertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
 			<span class="highlight2"><s:text
 					name="msgForCompulsionOfOpenPlot" /> </span></td>

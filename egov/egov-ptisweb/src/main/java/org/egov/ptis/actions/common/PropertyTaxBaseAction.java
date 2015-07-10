@@ -225,18 +225,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 		LOGGER.debug("Entered into validateProperty");
 
-		if (floorTypeId == null || floorTypeId == -1) {
-			addActionError(getText("mandatory.floorType"));
-		}
-		if (roofTypeId == null || roofTypeId == -1) {
-			addActionError(getText("mandatory.roofType"));
-		}
-		if (wallTypeId == null || wallTypeId == -1) {
-			addActionError(getText("mandatory.wallType"));
-		}
-		if (woodTypeId == null || woodTypeId == -1) {
-			addActionError(getText("mandatory.woodType"));
-		}
 		if (propTypeId == null || propTypeId.equals("-1")) {
 			addActionError(getText("mandatory.propType"));
 		}
@@ -246,6 +234,15 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 			if (propTypeMstr != null) {
 				if (propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+					
+					if (areaOfPlot == null || areaOfPlot.equals("")) {
+						addActionError(getText("mandatory.areaOfPlot"));
+					}
+					if (propTypeMstr.getType().equals(APARTMENT_PROPERTY)
+							&& property.getPropertyDetail().getApartment().getId() == null) {
+						addActionError(getText("mandatory.apartment"));
+					}
+				} else {
 					if (dateOfCompletion == null || dateOfCompletion.equals("")
 							|| dateOfCompletion.equals("DD/MM/YYYY")) {
 						addActionError(getText("mandatory.dtOfCmpln"));
@@ -261,13 +258,19 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							addActionError(getText("mandatory.dtBeforeCurr"));
 						}
 					}
-					if (areaOfPlot == null || areaOfPlot.equals("")) {
-						addActionError(getText("mandatory.areaOfPlot"));
+					if (floorTypeId == null || floorTypeId == -1) {
+						addActionError(getText("mandatory.floorType"));
 					}
-					if (propTypeMstr.getType().equals(APARTMENT_PROPERTY)
-							&& property.getPropertyDetail().getApartment().getId() == null) {
-						addActionError(getText("mandatory.apartment"));
+					if (roofTypeId == null || roofTypeId == -1) {
+						addActionError(getText("mandatory.roofType"));
 					}
+					if (wallTypeId == null || wallTypeId == -1) {
+						addActionError(getText("mandatory.wallType"));
+					}
+					if (woodTypeId == null || woodTypeId == -1) {
+						addActionError(getText("mandatory.woodType"));
+					}
+					
 				}
 				validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetails(),
 						isfloorDetailsRequired, property);
