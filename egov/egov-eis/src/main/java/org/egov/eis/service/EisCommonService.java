@@ -125,11 +125,12 @@ public class EisCommonService {
     }
 
     /**
-     * Returns employee designation for position
+     * Refer to designation service
      *
      * @param posId
      * @return Designation object
      */
+    @Deprecated
     public Designation getEmployeeDesignation(final Long posId) {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getDesignation();
     }

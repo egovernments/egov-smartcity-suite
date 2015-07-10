@@ -43,44 +43,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.pims.commons.Designation;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DesignationRepositoryImpl implements DesignationCustomRepository {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
     @Override
     public List<Designation> getAllDesignationsByDepartment(final Long id, final Date givenDate) {
 
-        new ArrayList<Designation>();
-        final Date userGivenDate = givenDate == null ? new Date() : givenDate;
-        final Criteria criteria = getCurrentSession()
-                .createCriteria(Assignment.class, "assign")
-                .createAlias("assign.department", "department")
-                .add(Restrictions.eq("department.id", id))
-                .add(Restrictions.and(Restrictions.le("assign.fromDate", userGivenDate),
-                        Restrictions.ge("assign.toDate", userGivenDate)));
+        final List<Designation> designations = new ArrayList<Designation>();
+        final Date userGivenDate = null == givenDate ? new Date() : givenDate;
+        final List<Assignment> assignments = assignmentRepository.findAllByDepartmentAndDate(id, userGivenDate);
+        for (final Assignment assign : assignments)
+            designations.add(assign.getDesignation());
 
-        final ProjectionList projections = Projections.projectionList().add(Projections.property("assign.designation"));
-        criteria.setProjection(projections);
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-
-        return criteria.list();
+        return designations;
+    }
+    
+    /**
+     * Returns employee designation for position
+     *
+     * @param posId
+     * @return Designation object
+     */
+    public Designation getEmployeeDesignation(final Long posId) {
+        return assignmentRepository.getPrimaryAssignmentForPosition(posId).getDesignation();
     }
 
 }
