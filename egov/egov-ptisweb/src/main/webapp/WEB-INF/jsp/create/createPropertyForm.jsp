@@ -11,34 +11,19 @@
 				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
 				cssClass="selectnew"
 				onchange="toggleFloorDetails();enableFieldsForPropType();" /></td>
-	</tr>
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="application.no"></s:text><span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:textfield name="applicationNo"
-				readOnly="true" id="applicationNo" value="%{applicationNo}"
-				autocomplete="off" size="12" maxlength="12"></s:textfield></td>
-		<td class="greybox" width="25%"><s:text name="application.date"></s:text>
+		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
-		<td class="greybox"><s:if test="basicProperty.createdDate != null">
-				<s:date name="%{basicProperty.createdDate}" var="createdDate"
-					format="dd/MM/yyyy" />
-				<s:textfield name="applicationDate" id="createdDate"
-					value="%{#createdDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
-			</s:if> <s:else>
-				<s:date name="currDate" var="todaysDate" format="dd/MM/yyyy" />
-				<s:textfield name="applicationDate" id="createdDate"
-					value="%{#todaysDate}" readOnly="true" size="10" maxlength="10"></s:textfield>
-			</s:else></td>
+		<td class="greybox">
+		   <s:select headerKey="-1"
+				headerValue="%{getText('default.select')}" name="propTypeId"
+				id="propTypeId" listKey="id" listValue="type"
+				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
+				cssClass="selectnew"
+				onchange="toggleFloorDetails();enableFieldsForPropType();" />
+		</td>
 	</tr>
-<%-- 
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox"><s:textfield maxlength="64"
-				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
-	</tr> --%>
+	
+
 	<!-- Owner details section -->
 	<tr>
 		<td colspan="5">
@@ -82,15 +67,11 @@
 				name="propertyDetail.extentSite" id="extentSite" size="12"
 				maxlength="15" value="%{propertyDetail.extentSite}"></s:textfield></td>
 		
-		<td class="greybox"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox"><s:textfield maxlength="64"
-				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
-
 	</tr>
 
    <tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="extent.appurtntland" /> 
+		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
 		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
 				value="%{chkIsAppartenauntLand}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
@@ -98,8 +79,6 @@
 		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
 	</tr>
 
-	<tr>
-    </tr>
 	<tr id="appartenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
@@ -108,8 +87,29 @@
 				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
-
+	
 	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
+		<td class="bluebox">
+		 <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"
+			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
+		</td>
+		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox siteowner"><s:textfield maxlength="64"
+				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner" readonly="true"></s:textfield></td>
+	</tr>
+	
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
+		<td class="bluebox">
+		 <s:checkbox name="propertyDetail.bpd" id="propertyDetail.bpd"
+			value="%{propertyDetail.structure}" onclick="enableOrDisableBPADetails(this);" />
+		</td>
+	</tr>
+	
+	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox"><s:textfield name="buildingPermissionNo"
@@ -125,6 +125,15 @@
 		</td>
 
 	</tr>
+
+    <tr class="bpddetails">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
+		<td class="greybox"><s:textfield name="devpercent"
+				id="devpercent" size="12" maxlength="12"
+				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
+		</td>
+   </tr>
 
 	<tr>
 		<td class="greybox">&nbsp;</td>
@@ -175,24 +184,27 @@
 		<td colspan="5">
 			<table width="100%" class="checkbox-section">
 				<tr>
-					<td width="20%" align="right"><label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift"
+					<td width="20%" align="right">
+					<label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift"
 								id="propertyDetail.lift" /></label> <br />
-					<label><s:text name="drainage"></s:text> <s:checkbox name="propertyDetail.drainage" id="drainage" onclick="enableNumberOfSeats();"/></label> <br />
-						<label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" /></label></td>
-					<td width="20%" align="right"><label><s:text name="toilets"></s:text> <s:checkbox
+					<label><s:text name="electricity"></s:text> <s:checkbox name="propertyDetail.electricity"
+								id="propertyDetail.electricity" /> </label>
+				  </td>
+				  <td width="20%" align="right"><label><s:text name="toilets"></s:text> <s:checkbox
 								name="propertyDetail.toilets" id="propertyDetail.toilets" /> </label> <br />
-						<label><s:text name="electricity"></s:text> <s:checkbox name="propertyDetail.electricity"
-								id="propertyDetail.electricity" /> </label></td>
-					<td width="20%" align="right"><label><s:text name="watertap"></s:text> <s:checkbox
+						<label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom"
+								id="propertyDetail.attachedBathRoom" /> </label>
+				   </td>
+				   <td width="20%" align="right"><label><s:text name="watertap"></s:text> <s:checkbox
 								name="propertyDetail.waterTap" id="propertyDetail.waterTap"
 								value="%{propertyDetail.waterTap}" /></label> <br />
-					<label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom"
-								id="propertyDetail.attachedBathRoom" /> </label></td>
-					<td width="20%" align="right"><label><s:text name="superstructure"></s:text> <s:checkbox
-								name="propertyDetail.structure" id="propertyDetail.structure"
-								value="%{propertyDetail.structure}" /></label> <br /> <label><s:text
+					     <label><s:text
 								name="waterharvesting"></s:text> <s:checkbox name="propertyDetail.waterHarvesting"
-								id="propertyDetail.waterHarvesting" /></label></td>
+								id="propertyDetail.waterHarvesting" /></label>
+				   </td>
+				   <td width="20%" align="right">
+				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" /></label><br/>
+				            </td>
 					<td width="10%"></td>
 				</tr>
 				
@@ -361,4 +373,9 @@
 			document.getElementById('locationFactor').value = <s:property value="%{propertyDetail.extra_field6}"/>;			
 		</s:if>
 	}
+
+	//disable fields
+	jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
+	jQuery('tr.bpddetails input').prop('readonly', true);
+    
 </script>

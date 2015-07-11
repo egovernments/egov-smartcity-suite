@@ -40,48 +40,78 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
+	
 	<tr>
-		<th class="bluebgheadtd"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
+	    <th class="bluebgheadtd" style="height: 45px;"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
+	    <th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span	class="mandatory1">*</span></th>
-	</tr>
+    </tr>
+	
 	<tr id="vacantLandRow">
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.surveyNumber" id="propertyDetail.surveyNumber"
+        <td class="blueborderfortd" align="center">
+		 <s:textfield name="propertyDetail.surveyNumber" id="propertyDetail.surveyNumber"
 				maxlength="15" value="%{propertyDetail.surveyNumber}" />
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
+		</td>
+        <td class="blueborderfortd" align="center">
+        	<s:textfield name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
 				maxlength="15" value="%{propertyDetail.pattaNumber}" />
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.sitalArea.area" id="propertyDetail.sitalArea.area"
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<s:textfield name="propertyDetail.sitalArea.area" id="propertyDetail.sitalArea.area"
 				maxlength="15" value="%{propertyDetail.sitalArea.area}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.marketValue" id="propertyDetail.marketValue"
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<s:textfield name="propertyDetail.marketValue" id="propertyDetail.marketValue"
 				maxlength="15" value="%{propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.currentCapitalValue"
+		</td>
+        
+        <td class="blueborderfortd">
+        	<s:textfield name="propertyDetail.currentCapitalValue"
 				id="propertyDetail.currentCapitalValue" maxlength="15"	value="%{propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
-	</tr>
+        </td>
+    </tr>
+    
+   <tr>
+   <td colspan="5">
+     <br/>
+      <table class="tablebottom" style="
+         width: 100%;
+         ">
+         <tbody>
+            <tr>
+               <th class="bluebgheadtd"><s:text name="North" /></th>
+               <th class="bluebgheadtd"><s:text name="East" /></th>
+               <th class="bluebgheadtd"><s:text name="West" /></th>
+               <th class="bluebgheadtd"><s:text name="South" /></th>
+            </tr>
+ 
+           <tr>
+		        <td class="blueborderfortd" align="center">
+				   <s:textfield name="basicProperty.propertyID.northBoundary" id="basicProperty.propertyID.northBoundary"
+				   maxlength="64" value="%{basicProperty.propertyID.northBoundary}" />
+				</td>
+				<td class="blueborderfortd" align="center">
+				   <s:textfield name="basicProperty.propertyID.eastBoundary" id="basicProperty.propertyID.eastBoundary"
+				   maxlength="64" value="%{basicProperty.propertyID.eastBoundary}" />
+				</td>
+				<td class="blueborderfortd" align="center">
+				   <s:textfield name="basicProperty.propertyID.westBoundary" id="basicProperty.propertyID.westBoundary"
+				   maxlength="64" value="%{basicProperty.propertyID.westBoundary}" />
+				</td>
+				<td class="blueborderfortd" align="center">
+				   <s:textfield name="basicProperty.propertyID.southBoundary" id="basicProperty.propertyID.southBoundary"
+				   maxlength="64" value="%{basicProperty.propertyID.southBoundary}" />
+				</td>
+		    </tr>
+            
+         </tbody>
+      </table>
+   </td>
+</tr>
 	
-	<tr>
-		<th class="bluebgheadtd"><s:text name="North" /></th>
-		<th class="bluebgheadtd"><s:text name="East" /></th>
-		<th class="bluebgheadtd"><s:text name="West" /></th>
-		<th class="bluebgheadtd"><s:text name="South" /></th>
-	</tr>
-
-	<tr>
-		<td class="bluebox" align="center"><s:textfield name="basicProperty.propertyID.northBoundary" id="basicProperty.propertyID.northBoundary"
-				maxlength="64" value="%{basicProperty.propertyID.northBoundary}" /></td>
-				
-		<td class="bluebox" align="center"><s:textfield name="basicProperty.propertyID.eastBoundary" id="basicProperty.propertyID.eastBoundary"
-				maxlength="64" value="%{basicProperty.propertyID.eastBoundary}" /></td>
-				
-		<td class="bluebox" align="center"><s:textfield name="basicProperty.propertyID.westBoundary" id="basicProperty.propertyID.westBoundary"
-				maxlength="64" value="%{basicProperty.propertyID.westBoundary}" /></td>
-		
-		<td class="bluebox" align="center"><s:textfield name="basicProperty.propertyID.southBoundary" id="basicProperty.propertyID.southBoundary"
-				maxlength="64" value="%{basicProperty.propertyID.southBoundary}" /></td>
-				
-	</tr>
 </table>

@@ -48,14 +48,11 @@
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span><a
 			onclick="openWindow('UsageMaster.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
-		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
-		<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="Width" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="Length" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
-		<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
-		<th class="bluebgheadtd"><s:text name="planappr" /></th>
+		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
+		<th class="bluebgheadtd"><s:text name="drainage" /></th>
+		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 		<s:if test="modifyRsn != 'DATA_UPDATE'">
 			<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 		</s:if>
@@ -108,24 +105,7 @@
 				</div>
 			</td>
 			
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].occupantName"
-						id="occupantName" size="20" value="%{propertyDetail.floorDetails[0].occupantName}" maxlength="64"
-						cssStyle="width:100%" data-optional="0" data-errormsg="Ocuupancy Name is required!"/>
-				</div>
-			</td>
 
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
-					<s:select headerKey="" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[0].depreciationMaster.id"
-						id="constrYear" listKey="id" listValue="depreciationName"
-						list="dropdownData.AgeFactorList" cssClass="selectnew"
-						value="%{propertyDetail.floorDetails[0].depreciationMaster.id}"
-						cssStyle="width:100%" data-optional="1"/>
-				</div>
-			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield autocomplete="off"
@@ -135,29 +115,6 @@
 				</div>
 			</td>
 			
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].extraField4"
-						id="propertyDetail.floorDetails[0].extraField4" size="5" maxlength="7" data-optional="0" data-errormsg="Width is required!"
-						onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
-						value="%{propertyDetail.floorDetails[0].extraField4}"
-						data-calculate="propertyDetail.floorDetails[0].extraField5"
-						data-result="propertyDetail.floorDetails[0].builtUpArea.area"
-						cssStyle="width:100%" />
-				</div>
-			</td>
-			
-			<td class="blueborderfortd" style="padding: 2px 2px">
-				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].extraField5"
-						id="propertyDetail.floorDetails[0].extraField5" size="5" maxlength="7" data-optional="0" data-errormsg="Length is required!"
-						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');calculateArea(this);"
-						value="%{propertyDetail.floorDetails[0].extraField5}"
-						data-calculate="propertyDetail.floorDetails[0].extraField4"
-						data-result="propertyDetail.floorDetails[0].builtUpArea.area"
-						cssStyle="width:100%" />
-				</div>
-			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
@@ -169,22 +126,30 @@
 				</div>
 			</td>
 
-
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-						<s:textfield
-							name="propertyDetail.floorDetails[0].capitalValue" data-optional="1"
-							maxlength="10" size="10" id="propertyDetail.floorDetails[0].capitalValue" value="%{propertyDetail.floorDetails[0].captialValue}"
-							cssStyle="width:100%" />
+					<s:select name="propertyDetail.floorDetails[0].exemptioncategory" id="propertyDetail.floorDetails[0].exemptioncategory" headerValue="select"
+							headerKey="" list="#{}" value="%{propertyDetail.floorDetails[0].exemptioncategory}"
+							cssClass="selectnew" data-optional="1">
+						</s:select>
 				</div>
 			</td>
-
+			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="propertyDetail.floorDetails[0].planApproved" id="propertyDetail.floorDetails[0].planApproved" headerValue="Choose"
-							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[0].planApproved}"
-							cssClass="selectwk" data-optional="1">
-						</s:select>
+					<s:select name="propertyDetail.floorDetails[0].drainage" id="propertyDetail.floorDetails[0].drainage" headerValue="select"
+							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[0].drainage}"
+							cssClass="selectnew" data-optional="1">
+					</s:select>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield autocomplete="off"
+						name="propertyDetail.floorDetails[0].noofseats" data-optional="1"
+						id="propertyDetail.floorDetails[0].noofseats" value="%{propertyDetail.floorDetails[0].noofseats}" size="10"
+						maxlength="10" cssStyle="width:100%"></s:textfield>
 				</div>
 			</td>
 
@@ -273,26 +238,7 @@
 					</div>
 				</td>
 				
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
-							cssStyle="width:100%" />
-						
-					</div>
-				</td>
 				
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:select headerKey=""
-							headerValue="%{getText('default.select')}"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].depreciationMaster.id"
-							id="constrYear" listKey="id" listValue="depreciationName"
-							list="dropdownData.AgeFactorList" cssClass="selectnew"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].depreciationMaster.id}"
-							cssStyle="width:100%" />
-					</div>
-				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
@@ -306,31 +252,6 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" 
-							id="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField4" size="5" maxlength="7"
-							onblur="trim(this,this.value);checkForTwoDecimals(this,'Width');checkZero(this,'Width');calculateArea(this);"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField4}"
-							data-calculate="propertyDetail.floorDetails[0].extraField5"
-						    data-result="propertyDetail.floorDetails[0].builtUpArea.area"
-							cssStyle="width:100%" />
-					</div>
-				</td>
-				
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5"
-							id="propertyDetail.floorDetails[%{#floorsstatus.index}].extraField5" size="5" maxlength="7" 
-							onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length');calculateArea(this);"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].extraField5}"
-							data-calculate="propertyDetail.floorDetails[0].extraField4"
-						    data-result="propertyDetail.floorDetails[0].builtUpArea.area"
-							cssStyle="width:100%" />
-					</div>
-				</td>
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
 							maxlength="15" size="10" id="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area" readOnly="true"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
@@ -341,22 +262,31 @@
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].capitalValue"
-							maxlength="64" size="10" id="propertyDetail.floorDetails[#floorsstatus.index].capitalValue" value="%{propertyDetail.floorDetails[#floorsstatus.index].capitalValue}"
-							cssStyle="width:100%" />
+						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].exemptioncategory" id="propertyDetail.floorDetails[0].exemptioncategory" headerValue="select"
+								headerKey="" list="#{}" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].exemptioncategory}"
+								cssClass="selectnew" data-optional="1">
+							</s:select>
 					</div>
 				</td>
-
+				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].planApproved" id="propertyDetail.floorDetails[#floorsstatus.index].planApproved" headerValue="Choose"
-							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[#floorsstatus.index].planApproved}"
-							cssClass="selectwk">
+						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" id="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" headerValue="select"
+								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].drainage}"
+								cssClass="selectnew" data-optional="1">
 						</s:select>
 					</div>
 				</td>
-
+				
+				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
+						<s:textfield autocomplete="off"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats" data-optional="1"
+							id="propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats}" size="10"
+							maxlength="10" cssStyle="width:100%"></s:textfield>
+					</div>
+				</td>
+				
 				<s:if test="modifyRsn != 'DATA_UPDATE'">
 					<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF"
 						name="addF"

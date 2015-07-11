@@ -45,10 +45,10 @@
     <th class="bluebgheadtd"><s:text name="salutation"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
-	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)<span class="mandatory1">*</span></th>
+	<th class="bluebgheadtd"><s:text name="MobileNumber" /> <span class="mandatory1">*</span></th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
-	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
+	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 	<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
     </tr>
     <s:if test="%{basicProperty.propertyOwnerInfo.size == 0}">
@@ -68,21 +68,22 @@
 				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfo[0].owner.mobileNumber}" 
+        	+91 <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfo[0].owner.mobileNumber}" 
         		onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.emailId" maxlength="64" size="20" id="emailId"  value="%{basicProperty.propertyOwnerInfo[0].owner.emailId}" 
         		onblur="trim(this,this.value);validateEmail(this);" data-optional="0" data-errormsg="emailid is mandatory!"/>
         </td>
+        <td class="blueborderfortd" align="center">
+            <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation"
+				 headerValue="Choose" headerKey="0" list="#{'select':'select'}"/>
+		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
         </td>
-        <td class="blueborderfortd" align="center">
-        	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardianRelation}" 
-        		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
-        </td>
+        
         <td class="blueborderfortd">
         	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />
@@ -108,7 +109,7 @@
 				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">
-        			<s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
+        			+91 <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="validNumber(this);checkZero(this,'Mobile Number');" data-optional="1" data-errormsg="Mobile no is mandatory!" />
         		</td>
         		<td class="blueborderfortd" align="center">
@@ -116,13 +117,13 @@
         				onblur="trim(this,this.value);validateEmail(this);" data-optional="1" data-errormsg="emailid is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center">
+        		    <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardianRelation}"
+				headerValue="Choose" headerKey="0" list="#{'select':'select'}"/>
+        	    </td>
+        		<td class="blueborderfortd" align="center">
         	        <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardian}" 
         		   onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
                 </td>
-                <td class="blueborderfortd" align="center">
-        	      <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" maxlength="64" size="20" id="gardianRelation"  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardianRelation}" 
-        		    onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1"/>
-                  </td>
         		<td class="blueborderfortd">
         			<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
       				<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteOwner(this); return false;" alt="Remove" width="18" height="18" border="0" />

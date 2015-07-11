@@ -944,7 +944,14 @@ function addOwner()
 							if(!jQuery(this).data('static'))
 						    {
 								jQuery(this).val('');
+								
+								//set default selection for dropdown
+								if(jQuery(this).is( "select" ))
+								{
+									jQuery(this).prop('selectedIndex', 0);
+								}
 						    }
+							
 					    }
 					    
 			    }).end().appendTo("#nameTable");
@@ -1288,7 +1295,7 @@ function addFloor()
 	    		// Generate all textboxes Id and name with new index
 				jQuery("#Floorinfo").clone().find("input, select").each(function() {
 					     
-						 jQuery(this).attr({
+						jQuery(this).attr({
 					      'id': function(_, id) { 
 					    	  return id.replace('[0]', '['+ nextIdx +']'); 
 					       },
@@ -1307,7 +1314,7 @@ function addFloor()
 							 jQuery(this).attr('data-result', jQuery(this).data('result').replace('[0]', '['+ nextIdx +']'));
 						 }
 						 
-						 //set default selection for dropdown
+						//set default selection for dropdown
 						if(jQuery(this).is( "select" ))
 						{
 							jQuery(this).prop('selectedIndex', 0);
@@ -1318,7 +1325,7 @@ function addFloor()
 				jQuery("#floorDetails tr:last td img[alt='Add']").hide();
 				
 				//re-intialize datepicker fields
-				jQuery(".datepicker").datepicker();
+				jQuery(".datepicker").datepicker({format: 'dd/mm/yyyy'});
 				
 
 		}

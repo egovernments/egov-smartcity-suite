@@ -2,7 +2,7 @@
 /**
  * Includes all the validations for create property
  */
-
+jQuery.noConflict();
 function enableAppartnaumtLandDetails() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
@@ -1249,4 +1249,29 @@ function showFloorTaxExemption() {
 	jQuery("[id^='floorTaxExemptReason']").removeAttr("disabled");
 }
 
+function enableOrDisableSiteOwnerDetails(obj)
+{
+	console.log(jQuery('#propertyDetail.siteOwner'));
+	if(jQuery(obj).is(":checked"))
+	{
+		jQuery('input[name="propertyDetail.siteOwner"]').val('');
+		jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', false);
+	}
+	else
+	{
+	    jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
+	}
+}
 
+function enableOrDisableBPADetails(obj)
+{
+	if(jQuery(obj).is(":checked"))
+	{
+		jQuery('tr.bpddetails input').val('');
+		jQuery('tr.bpddetails input').prop('readonly', false);
+	}
+	else
+	{
+	    jQuery('tr.bpddetails input').prop('readonly', true);
+	}
+}

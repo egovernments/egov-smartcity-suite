@@ -57,7 +57,6 @@
 				jQuery('#zoneName').val(response.zoneName);
 				jQuery('#wardName').val(response.wardName);
 				jQuery('#blockName').val(response.blockName);
-				
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -111,8 +110,10 @@
  
 	<tr>
 	    <td class="bluebox2">&nbsp;</td>
-	    <td class="greybox"><s:text name="Address"/> : </td>
-	    <td class="greybox"><s:textfield name="addressStr" value="%{addressStr}" maxlength="512" onblur="validateAddress(this);"/></td>
+	    <td class="greybox"><s:text name="enumerationblock"/> : </td>
+	    <td class="greybox">
+	     <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.enumerationblock" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.enumerationblock" headerValue="select" headerKey="0" list="#{}"/>
+	    </td>
 	    <td class="greybox"><s:text name="PinCode"/> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>
 	</tr>
