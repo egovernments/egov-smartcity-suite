@@ -789,7 +789,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					propService.changePropertyDetail(objection.getReferenceProperty(), new BuiltUpProperty(), objection
 							.getReferenceProperty().getPropertyDetail().getFloorDetails().size());
 
-					propService.createAttributeValues(objection.getReferenceProperty(), null);
 				}
 
 			}

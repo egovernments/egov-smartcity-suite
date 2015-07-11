@@ -1183,77 +1183,6 @@ public class PropertyService  {
 		}
 	}
 
-	public void createAttributeValues(Property property, Installment curInstall) {
-		LOGGER.debug("Entered into createAttributeValues, property: " + property + ", curInstall: " + curInstall);
-		Set<Ptdemand> ptDmdSet = property.getPtDemandSet();
-		if (currentInstall == null) {
-			currentInstall = curInstall;
-		}
-		TaxCalculationInfo taxCalInfo = instTaxMap.get(currentInstall);
-		if (ptDmdSet != null && ptDmdSet.size() > 0) {
-			Ptdemand propPtDemand = null;
-			for (Ptdemand ptDemand : ptDmdSet) {
-				if (ptDemand.getEgInstallmentMaster().equals(currentInstall)
-						&& ptDemand.getIsHistory().equalsIgnoreCase("N")) {
-					propPtDemand = ptDemand;
-				}
-				propPtDemand = ptDemand;
-			}
-
-			Set<FloorwiseDemandCalculations> floorDmdCalcSet = propPtDemand.getDmdCalculations()
-					.getFlrwiseDmdCalculations();
-			if (floorDmdCalcSet != null && floorDmdCalcSet.size() > 0) {
-				List<UnitTaxCalculationInfo> unitTaxCalInfos = taxCalInfo.getUnitTaxCalculationInfos();
-				for (FloorwiseDemandCalculations floorDmdCalc : floorDmdCalcSet) {
-					Floor floor = floorDmdCalc.getFloor();
-					UnitTaxCalculationInfo unitTaxCalInfo1 = null;
-					String floorString = (floor.getFloorNo() == null || floor.getFloorNo().equals(
-							OPEN_PLOT_UNIT_FLOORNUMBER)) ? propertyTaxUtil.getFloorStr(OPEN_PLOT_UNIT_FLOORNUMBER)
-							: propertyTaxUtil.getFloorStr(floor.getFloorNo());
-
-					try {
-							UnitTaxCalculationInfo unitTaxCalInfo = unitTaxCalInfos.get(0);
-							/**
-							 * This condition is applied because floor number is
-							 * not mandatory in case of Mixed Property.(for
-							 * UnitType = OPEN_PLOT). So UnitType(mandatory only
-							 * in case of Mixed Property) is considered.
-							 */
-							if (((floor.getUnitType() == null || !floor.getUnitType().getCode()
-									.equals(PROPTYPE_OPEN_PLOT))
-									&& (unitTaxCalInfo.getFloorNumber() == null || unitTaxCalInfo.getFloorNumber()
-											.equalsIgnoreCase(floorString))
-									&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1()) && (unitTaxCalInfo
-										.getFloorArea().toString()).equals(floor.getBuiltUpArea().getArea().toString()))
-									|| (floor.getUnitType() != null
-											&& floor.getUnitType().getCode().equals(PROPTYPE_OPEN_PLOT)
-											&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1())
-											&& (unitTaxCalInfo.getFloorArea().toString()).equals(floor.getBuiltUpArea()
-													.getArea().toString())
-											&& unitTaxCalInfo.getUnitUsage().equals(
-													floor.getPropertyUsage().getUsageName())
-											&& unitTaxCalInfo.getUnitOccupation().equals(
-													floor.getPropertyOccupation().getOccupation()) && unitTaxCalInfo
-											.getOccpancyDate().equals(sdf.parse(floor.getExtraField3())))) {
-								unitTaxCalInfo1 = unitTaxCalInfo;
-								break;
-
-							}
-							if ((unitTaxCalInfo.getFloorNumber() != null && unitTaxCalInfo.getFloorNumber()
-									.equalsIgnoreCase(floorString))
-									&& unitTaxCalInfo.getFloorNumber().equals(floor.getExtraField1())) {
-								unitTaxCalInfo1 = unitTaxCalInfo;
-								break;
-							}
-					} catch (ParseException e) {
-						LOGGER.error(e.getMessage(), e);
-					}
-				}
-			}
-		}
-		LOGGER.debug("Exiting from createAttributeValues");
-	}
-
 	public Date getLowestDtOfCompFloorWise(List<Floor> floorList) {
 		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
 		Date completionDate = null;
@@ -1445,9 +1374,6 @@ public class PropertyService  {
 		basicProperty.addProperty(newProperty);
 
 		basicProperty = basicPropertyService.update(basicProperty);
-		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			createAttributeValues(newProperty, null);
-		}
 		LOGGER.debug("Exiting from initiateModifyWfForObjection");
 	}
 
@@ -2035,10 +1961,6 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
 				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null,null,null));
-
-		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			createAttributeValues(newProperty, null);
-		}
 
 		basicProperty = basicPropertyService.update(basicProperty);
 		LOGGER.debug("Exiting from initiateDataEntryWorkflow");

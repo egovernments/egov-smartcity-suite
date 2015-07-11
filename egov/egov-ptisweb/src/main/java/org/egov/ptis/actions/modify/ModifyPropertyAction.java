@@ -813,10 +813,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 			basicProp.addProperty(modProperty);
 		}
 
-		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			propService.createAttributeValues(newProperty, PropertyTaxUtil.getCurrentInstallment());
-		}
-
 		LOGGER.debug("Exiting modifyBasicProp");
 	}
 
