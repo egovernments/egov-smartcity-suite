@@ -79,26 +79,27 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.address" /></label>
-	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="propertyaddress" disabled></textarea>
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.zonewardblock" /></label>
-	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="zonewardblock" disabled></textarea>
-	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.pt.due" /></label>
-	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.email" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input  path="connection.email" class="form-control" id="email" type="email" maxlength="100"/>
 		<form:errors path="connection.email" cssClass="add-margin error-msg"/>
 	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.address" /></label>
+	<div class="col-sm-3 add-margin">
+		<textarea class="form-control" id="propertyaddress" disabled></textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.zonewardblock" /></label>
+	<div class="col-sm-3 add-margin">
+		<textarea class="form-control" id="zonewardblock" disabled></textarea>
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.pt.due" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
+	</div>
+	
 </div>				
