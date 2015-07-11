@@ -124,10 +124,6 @@
 			<artifactId>struts2-dojo-plugin</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-jasperreports-plugin</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
@@ -222,6 +218,12 @@
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
 			<version>3.0.13</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jasperreports</artifactId>
+					<groupId>jasperreports</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- REPORTS END -->

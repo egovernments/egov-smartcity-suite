@@ -41,9 +41,8 @@ package org.egov.infra.web.struts.actions.workflow;
 
 import java.math.BigDecimal;
 
-public class GenericWorkFlowFormBean extends org.apache.struts.action.ActionForm {
+public class GenericWorkFlowFormBean  {
 
-	private static final long serialVersionUID = 1L;
 	protected String currentState;
 	protected String currentDesignation;
 	protected Integer approverPositionId;

@@ -141,10 +141,6 @@
 			<artifactId>struts2-convention-plugin</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-jasperreports-plugin</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
@@ -187,29 +183,6 @@
 			<artifactId>jackrabbit-jca</artifactId>
 		</dependency>
 		<!-- JACKRABBIT END -->
-
-		<!-- SPRING START -->
-		<dependency>
-			<groupId>org.springmodules</groupId>
-			<artifactId>spring-modules-cache</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springmodules</groupId>
-			<artifactId>spring-modules-jcr</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- SPRING END -->
 
 		<!-- SECURITY START -->
 		<dependency>

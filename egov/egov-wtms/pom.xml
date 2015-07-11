@@ -82,58 +82,6 @@
 			<artifactId>validation-api</artifactId>
 		</dependency>
 
-		<!-- STRUTS2 DEPENDENCIES START -->
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-json-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-spring-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-rest-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-convention-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-jasperreports-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.jgeppert.struts2.jquery</groupId>
-			<artifactId>struts2-jquery-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xpp3</groupId>
-			<artifactId>xpp3_min</artifactId>
-		</dependency>
-		<!-- STRUTS2 DEPENDENCIES END -->
-
-		<!-- STRUTS1 DEPENDENCIES START -->
-		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts-el</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-struts</artifactId>
-		</dependency>
 		<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
