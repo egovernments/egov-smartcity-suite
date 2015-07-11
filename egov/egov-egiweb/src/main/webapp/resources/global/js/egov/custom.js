@@ -137,8 +137,16 @@ $(document).ready(function()
 	
 	//fade out success message
 	$(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
-        $(".alert-success").alert('close');
-    });
+       		$(".alert-success").alert('close');
+    	});
+
+	var elements = document.querySelectorAll('input,select,textarea');
+
+	for (var i = elements.length; i--;) {
+	    elements[i].addEventListener('invalid', function () {
+		this.scrollIntoView(false);
+	    });
+	}
 
 	$('.upload-file').change(function(e){
 		var fileInput = $(this);
