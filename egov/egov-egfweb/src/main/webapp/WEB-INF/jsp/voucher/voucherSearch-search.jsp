@@ -59,16 +59,17 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
 	        		<jsp:param name="heading" value="Voucher Search" />
 				</jsp:include>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
 			</span>
+			<div class="formmainbox">
 			<s:if test="%{showMode=='nonbillPayment'}">
-			<div class="formmainbox"><div class="subheadnew">Non Bill Payment Search</div>
+			<div class="subheadnew">Non Bill Payment Search</div>
 			</s:if>
 			<s:else>
-			<div class="formmainbox"><div class="subheadnew">Voucher Search</div>
+			<div class="subheadnew">Voucher Search</div>
 			</s:else>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
@@ -84,10 +85,10 @@
 				<td class="bluebox"><s:select name="name" id="name" list="%{nameList}" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 				<tr>
-					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory">*</span> </td>
+					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
-					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory">*</span> </td>
+					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory1">*</span> </td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<jsp:include page="voucher-filter.jsp"/>
@@ -97,6 +98,7 @@
 				</tr>
 				<s:hidden name="mode" value="%{mode}" id="mode"/>  
 			</table>
+		</div>
 			<div  class="buttonbottom">
 				<s:submit value="Search" onclick="return validateAndSubmit()" cssClass="buttonsubmit" />
 				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
@@ -201,11 +203,6 @@
 			</s:elseif>
 			</table>
 			<br/>
-			<div id="msgdiv" style="display:none">
-				<table align="center" class="tablebottom" width="80%">
-					<tr><th class="bluebgheadtd" colspan="7">No Records Found</td></tr>
-				</table>
-			</div>
 			<br/>
 			<br/>
 			<s:hidden name="showMode"  id="showMode"/>
@@ -251,13 +248,13 @@
 	        return;
 		}
 		else if(showMode == '' ){
-			var url = 'preApprovedVoucher-loadvoucherview.action?vhid='+ vid;
+			var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
 		}
 		else{
 
 			var url =  url+'='+ vid+'&showMode='+showMode;
 		}
-			window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+			window.open(url,'','width=900, height=700');
 		}
 		function validateAndSubmit(){
 			if(validate()){
@@ -275,18 +272,6 @@
 		return true;
 		}
 		
-			<s:if test="%{voucherList.size==0}">
-				dom.get('msgdiv').style.display='block';
-				dom.get('listid').style.display='none';
-			</s:if>
-			<s:if test="%{pagedResults!=null}">
-				dom.get('msgdiv').style.display='none';
-				dom.get('listid').style.display='none';
-			</s:if>
-			<s:if test="%{voucherList.size!=0}">
-				dom.get('msgdiv').style.display='none';
-				dom.get('listid').style.display='block';
-			</s:if>
 			
 		var showMode = document.getElementById('showMode').value ;
 		if(showMode=='nonbillPayment')
