@@ -58,8 +58,9 @@ jQuery(document).ready(function ($) {
 					searchable:true,
 					data: searchResult,
 					columns:  [
-					{title: 'Consumer No.', data: 'resource.clauses.consumercode'},
+					
 					{title: 'Application Name', data: 'resource.searchable.consumername'},
+					{title: 'Consumer No.',class:'row-detail',data: 'resource.clauses.consumercode' },
 					{title: 'Address', data: 'resource.searchable.locality'},
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
 					{title: 'Total Due', data: 'resource.clauses.totaldue'},
@@ -92,6 +93,18 @@ jQuery(document).ready(function ($) {
 			}
 		}); 
 	    
+	   
+	    $('#aplicationSearchResults').on('click','tbody tr td.row-detail',function() {
+	    	var consumerNumber= tableContainer.fnGetData( this);
+	        var url = '/wtms/application/view/'+consumerNumber ;
+			$('#waterSearchRequestForm').attr('method', 'get');
+			$('#waterSearchRequestForm').attr('action', url);
+			
+			window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+		
+			 
+		});
+	   
 	    
 	   $('#searchwatertax').keyup(function(){
 			tableContainer.fnFilter(this.value);
