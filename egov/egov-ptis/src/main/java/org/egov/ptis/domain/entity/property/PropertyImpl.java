@@ -642,7 +642,10 @@ public class PropertyImpl extends StateAware implements Property {
 							.isWaterTap(), getPropertyDetail().isStructure(), getPropertyDetail()
 							.isDrainage(), getPropertyDetail().isElectricity(), getPropertyDetail()
 							.isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(),
-					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner());
+					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),
+					getPropertyDetail().getApartment(), getPropertyDetail().getPattaNumber(),
+					getPropertyDetail().getCurrentCapitalValue(), getPropertyDetail()
+							.getMarketValue());
 
 		} else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
 			VacantProperty vcp = (VacantProperty) getPropertyDetail();
@@ -684,19 +687,22 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	/*
-	 * This method returns Floor details as a Set
+	 * This method returns Floor details as a List
 	 */
 	private List<Floor> cloneFlrDtls() {
 		Floor floor = null;
 		List<Floor> flrDtlsSet = new ArrayList<Floor>();
 		for (Floor flr : getPropertyDetail().getFloorDetails()) {
 			floor = new Floor(flr.getConstructionTypeSet(), flr.getStructureClassification(),
-					flr.getPropertyUsage(), flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(),
-					flr.getBuiltUpArea(), flr.getFloorArea(), flr.getWaterMeter(), flr.getElectricMeter(), null, null,
-					flr.getRentPerMonth(), flr.getExtraField1(), flr.getExtraField2(), flr.getExtraField3(),
-					flr.getExtraField4(), flr.getExtraField5(), flr.getExtraField6(), flr.getExtraField7(),
-					flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
-					flr.getTaxExemptedReason());
+					flr.getPropertyUsage(), flr.getPropertyOccupation(), flr.getFloorNo(),
+					flr.getDepreciationMaster(), flr.getBuiltUpArea(), flr.getFloorArea(),
+					flr.getWaterMeter(), flr.getElectricMeter(), null, null, flr.getRentPerMonth(),
+					flr.getExtraField1(), flr.getExtraField2(), flr.getExtraField3(),
+					flr.getExtraField4(), flr.getExtraField5(), flr.getExtraField6(),
+					flr.getExtraField7(), flr.getManualAlv(), flr.getUnitType(),
+					flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
+					flr.getTaxExemptedReason(), flr.getOccupancyDate(), flr.getOccupantName(),
+					flr.getCapitalValue(), flr.isPlanApproved());
 			flrDtlsSet.add(floor);
 		}
 		return flrDtlsSet;
