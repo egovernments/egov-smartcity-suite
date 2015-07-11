@@ -91,7 +91,6 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.demand.dao.EgDemandDao;
-import org.egov.demand.model.EgDemand;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -259,6 +258,10 @@ public class CreatePropertyAction extends WorkflowAction {
 	private ReportService reportService;
 	private Integer reportId = -1;
 	private boolean approved = false;
+	private String northBoundary;
+	private String southBoundary;
+	private String eastBoundary;
+	private String westBoundary;
 	
 	@Autowired
 	private UserService userService;
@@ -329,12 +332,15 @@ public class CreatePropertyAction extends WorkflowAction {
 	private void populateFormData() {
 		PropertyDetail propertyDetail = property.getPropertyDetail();
 		if (propertyDetail != null) {
-			setFloorTypeId(propertyDetail.getFloorType().getId());
-			setWallTypeId(propertyDetail.getWallType().getId());
-			setRoofTypeId(propertyDetail.getRoofType().getId());
-			setWoodTypeId(propertyDetail.getWallType().getId());
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
-			setAreaOfPlot(propertyDetail.getSitalArea().getArea().toString());
+			if(!propertyDetail.getPropertyType().equals(VACANT_PROPERTY)) {
+				setFloorTypeId(propertyDetail.getFloorType().getId());
+				setWallTypeId(propertyDetail.getWallType().getId());
+				setRoofTypeId(propertyDetail.getRoofType().getId());
+				setWoodTypeId(propertyDetail.getWallType().getId());
+			} else {
+				setAreaOfPlot(propertyDetail.getSitalArea().getArea().toString());
+			}
 		}
 
 		if (basicProp != null) {
@@ -404,7 +410,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			mode = VIEW;
 			PropertyDetail propertyDetail = property.getPropertyDetail();
-			//ssetAddressStr(ptisCacheMgr.buildAddressByImplemetation(getBasicProp().getAddress()));
+			setAddressStr(basicProp.getAddress().toString());
 			corrAddress1 = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
 			if (propertyDetail.getExtra_field4() != null && !propertyDetail.getExtra_field4().trim().isEmpty()) {
 				setAmenities(CommonServices.getAmenitiesDtls(propertyDetail.getExtra_field4()));
@@ -968,6 +974,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		propertyId.setModifiedDate(new Date());
 		propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
 		propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
+		propertyId.setEastBoundary(getEastBoundary());
+		propertyId.setWestBoundary(getWestBoundary());
+		propertyId.setNorthBoundary(getNorthBoundary());
+		propertyId.setSouthBoundary(getSouthBoundary());
 		propertyId.setBasicProperty(basicProperty);
 		LOGGER.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
 		return propertyId;
@@ -1851,6 +1861,38 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setApproved(boolean approved) {
 		this.approved = approved;
+	}
+
+	public String getNorthBoundary() {
+		return northBoundary;
+	}
+
+	public void setNorthBoundary(String northBoundary) {
+		this.northBoundary = northBoundary;
+	}
+
+	public String getSouthBoundary() {
+		return southBoundary;
+	}
+
+	public void setSouthBoundary(String southBoundary) {
+		this.southBoundary = southBoundary;
+	}
+
+	public String getEastBoundary() {
+		return eastBoundary;
+	}
+
+	public void setEastBoundary(String eastBoundary) {
+		this.eastBoundary = eastBoundary;
+	}
+
+	public String getWestBoundary() {
+		return westBoundary;
+	}
+
+	public void setWestBoundary(String westBoundary) {
+		this.westBoundary = westBoundary;
 	}
 	
 }

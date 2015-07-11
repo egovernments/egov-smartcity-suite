@@ -52,14 +52,14 @@
 				maxlength="15" value="%{propertyDetail.surveyNumber}" />
 		<td class="bluebox" align="center"><s:textfield name="propertyDetail.pattaNumber" id="propertyDetail.pattaNumber"
 				maxlength="15" value="%{propertyDetail.pattaNumber}" />
-		<td class="bluebox" align="center"><s:textfield name="propertyDetail.sitalArea" id="propertyDetail.sitalArea"
-				maxlength="15" value="%{propertyDetail.sitalArea}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea');checkZero(this,'propertyDetail.sitalArea');" />
+		<td class="bluebox" align="center"><s:textfield name="propertyDetail.sitalArea.area" id="propertyDetail.sitalArea.area"
+				maxlength="15" value="%{propertyDetail.sitalArea.area}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
 		<td class="bluebox" align="center"><s:textfield name="propertyDetail.marketValue" id="propertyDetail.marketValue"
-				maxlength="15" value="%{propertyDetail.sitalArea}"
+				maxlength="15" value="%{propertyDetail.marketValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
 		<td class="bluebox" align="center"><s:textfield name="propertyDetail.currentCapitalValue"
-				id="propertyDetail.currentCapitalValue" maxlength="15"	value="%{propertyDetail.sitalArea}"
+				id="propertyDetail.currentCapitalValue" maxlength="15"	value="%{propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
 	</tr>
 	

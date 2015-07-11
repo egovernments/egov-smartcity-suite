@@ -87,14 +87,14 @@
 	    <td class="bluebox"><s:textfield name="zoneName" id="zoneName" value="%{zoneName}" maxlength="20" readOnly="true"/></td>
 	    <s:hidden id="zoneId" name="zoneId" value="%{zoneId}"></s:hidden>
 	    <td class="bluebox"><s:text name="revwardno"></s:text> <span class="mandatory1">*</span>: </td>
-	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" /></td>
+	    <td class="bluebox"><s:textfield name="wardName" id="wardName" value="%{wardName}" maxlength="20" readOnly="true" /></td>
 	    <s:hidden id="wardId" name="wardId" value="%{wardId}"></s:hidden>
 	</tr>
 	
 	<tr>
 		<td class="bluebox2">&nbsp;</td>
 	    <td class="bluebox"><s:text name="blockno"></s:text> <span class="mandatory1">*</span> :  </td>
-	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" /></td>
+	    <td class="bluebox"> <s:textfield name="blockName" id="blockName" value="%{blockName}"  maxlength="20" readOnly="true" /></td>
 	    <s:hidden id="blockId" name="blockId" value="%{blockId}"  ></s:hidden>
 	    <td class="bluebox"><s:text name="Street"></s:text> : </td>
 	    <td class="bluebox"><s:textfield id="street" name="street" maxlength="128" value="%{basicProperty.propertyID.Street.name}"/></td>

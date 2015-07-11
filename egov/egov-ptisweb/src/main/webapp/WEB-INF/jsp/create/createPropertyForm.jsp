@@ -88,7 +88,7 @@
 
 	</tr>
 
-	<%-- <tr>
+   <tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> 
 		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
@@ -96,7 +96,7 @@
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
-	</tr> --%>
+	</tr>
 
 	<tr>
     </tr>
@@ -262,11 +262,9 @@
 				<span class="mandatory1">*</span> :
 			</div>
 		</td>
-		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot"
-				maxlength="15" value="%{areaOfPlotpropertyDetail.sitalArea.area}"
+		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot" maxlength="15" value="%{areaOfPlot}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
-			<span class="highlight2"><s:text
-					name="msgForCompulsionOfOpenPlot" /> </span></td>
+			<span class="highlight2"><s:text name="msgForCompulsionOfOpenPlot" /> </span></td>
 	</tr>
 
 	<tr id="apartmentRow">
