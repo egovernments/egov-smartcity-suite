@@ -40,10 +40,6 @@
 package org.egov.web.actions.voucher;
 
 
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,7 +53,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -68,30 +67,28 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.VoucherSearchUtil;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")  
-@Validation
-@Transactional(readOnly=true)
+@Results({
+	@Result(name = CancelVoucherAction.SEARCH, location = "cancelVoucher-search.jsp")
+})
 public class CancelVoucherAction extends BaseFormAction  {
 
 	private static final Logger	LOGGER	= Logger.getLogger(CancelVoucherAction.class);
@@ -106,7 +103,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	private Date fromDate;
 	private Date toDate;
 	private Long[] selectedVhs;
-	private static final String	SEARCH	= "search";
+	protected static final String	SEARCH	= "search";
 	Integer loggedInUser ;
 	public List<CVoucherHeader> voucherSearchList=new ArrayList<CVoucherHeader>();
 	private PersistenceService<CVoucherHeader, Long> cVoucherHeaderPersistanceService;
@@ -153,6 +150,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	} 
 	
 	@ValidationErrorPage(value=SEARCH)
+	@Action(value="/voucher/cancelVoucher-search")
 	public String search() {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("...Searching for voucher of type " + voucherHeader.getType());
@@ -162,10 +160,9 @@ public class CancelVoucherAction extends BaseFormAction  {
 	
 
     private boolean isSuperUser(){
-    	Query queryFnd = HibernateUtil.getCurrentSession().createSQLQuery(" SELECT usrr.ID_USER FROM EG_USERROLE usrr,  EG_ROLES r WHERE " +
-    			" usrr.ID_ROLE       =r.ID_ROLE AND (usrr.FROMDATE      IS NULL OR usrr.FROMDATE        <='"+DDMMYYYYFORMATS.format(new Date())+"') " +
-    			" AND (usrr.TODATE  IS NULL OR usrr.TODATE >='"+DDMMYYYYFORMATS.format(new Date())+"'"+") AND " +
-     			" usrr.ID     ="+loggedInUser+ " AND  lower(r.ROLE_NAME)='"+FinancialConstants.SUPERUSER+"'");
+    	Query queryFnd = HibernateUtil.getCurrentSession().createSQLQuery(" SELECT usrr.USERID FROM EG_USERROLE usrr,  EG_ROLE r WHERE " +
+    			" usrr.ROLEID=r.ID and " +
+     			" usrr.userid     ="+loggedInUser+ " AND  lower(r.NAME)='"+FinancialConstants.SUPERUSER+"'");
 		List<Object> superUserList=queryFnd.list();   
     	if(superUserList!=null && superUserList.size()>0)
     		return true;
@@ -196,7 +193,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 		{
 			// Voucher for which payment is not generated 
 			voucheerWithNoPayment="from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail) and vh.status in ("
-							 +FinancialConstants.CREATEDVOUCHERSTATUS+")  and vh.isConfirmed != 1 ";
+							 +FinancialConstants.CREATEDVOUCHERSTATUS+")  and (vh.isConfirmed != 1 or vh.isConfirmed is null)";
 			// Filters vouchers for which payments are generated and are in cancelled state 
 			allPayment ="select distinct(vh) from  Miscbilldetail misc left join misc.billVoucherHeader vh where misc.billVoucherHeader is not null"
 						+" and vh.isConfirmed != 1 and vh.status in ("+FinancialConstants.CREATEDVOUCHERSTATUS+")"; 
@@ -294,14 +291,14 @@ public class CancelVoucherAction extends BaseFormAction  {
 		
 		Date modifiedDate=new Date();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside CancelVoucher| cancelVoucherSubmit | Selected No of Vouchers for cancellation  ="+selectedVhs.length);
-		String cancelVhQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.modifiedBy.id=:modifiedby " +
-				"			, vh.modifiedDate=:modifiedDate   where vh.id=:vhId" ;
-		String cancelVhByCGNQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.modifiedBy.id=:modifiedby " +
-				"			, vh.modifiedDate=:modifiedDate where vh.cgn=:CGN" ;
-		String cancelVhByRefCGNQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.modifiedBy.id=:modifiedby " +
-				"			, vh.modifiedDate=:modifiedDate where vh.refcgNo=:REFCGN" ;
+		String cancelVhQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.lastModifiedBy.id=:modifiedby " +
+				"			, vh.lastModifiedDate=:modifiedDate   where vh.id=:vhId" ;
+		String cancelVhByCGNQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.lastModifiedBy.id=:modifiedby " +
+				"			, vh.lastModifiedDate=:modifiedDate where vh.cgn=:CGN" ;
+		String cancelVhByRefCGNQuery="Update CVoucherHeader vh set vh.status="+FinancialConstants.CANCELLEDVOUCHERSTATUS+",vh.lastModifiedBy.id=:modifiedby " +
+				"			, vh.lastModifiedDate=:modifiedDate where vh.refcgNo=:REFCGN" ;
 		Session session=HibernateUtil.getCurrentSession();
-		for(int i=0;i<selectedVhs.length;i++){
+		for(int i=0;i<selectedVhs.length;i++){ 
 			voucherObj = (CVoucherHeader) persistenceService.find("from CVoucherHeader vh where vh.id=?",selectedVhs[i]);
 			validateBeforeCancel(voucherObj);
 			

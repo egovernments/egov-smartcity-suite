@@ -87,7 +87,8 @@ function loadNamesForSelectedType()
 		
 </script>
 	<body onload="loadNamesForSelectedType()" >  
-	<div class="formmainbox"><div class="subheadnew"><s:text name="cancel.voucher.search"/></div>
+	<div class="formmainbox">
+	<div class="subheadnew"><s:text name="cancel.voucher.search"/></div>
     	<div style="color: red">
 		<s:actionerror/>  
 		<s:fielderror />
@@ -109,22 +110,23 @@ function loadNamesForSelectedType()
 					                               
 				</tr>                                                                          
 				<tr>
-				<td class="greybox" ><s:text name="voucher.type"/><span class="mandatory">*</span></td>                                    
+				<td class="greybox" ><s:text name="voucher.type"/><span class="mandatory1">*</span></td>                                    
 				<td class="greybox"><s:select name="type" id="type" list="dropdownData.typeList" headerKey="-1" headerValue="----Choose----" onchange="loadVoucherNames(this.value)" /></td>
-				<td class="greybox" ><s:text name="voucher.name"/><span class="mandatory">*</span></td>
+				<td class="greybox" ><s:text name="voucher.name"/><span class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="name" id="name" list="%{nameMap}" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>  
 				<tr>
-					<td class="bluebox" ><s:text name="voucher.fromdate"/><span class="mandatory">*</span> </td>
+					<td class="bluebox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
 					<td class="bluebox"><s:textfield name="fromDate" id="fromDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
-					<td class="bluebox"><s:text name="voucher.todate"/><span class="mandatory">*</span></td>
+					<td class="bluebox"><s:text name="voucher.todate"/><span class="mandatory1">*</span></td>
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate"/>
 					<td class="bluebox"><s:textfield name="toDate" id="toDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempToDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 			</table>
+			</div>
 			<div  class="buttonbottom">
-				<s:submit method="search" value="Search"  cssClass="buttonsubmit" onclick="return loadSearch()"/>                   
+				<input type="submit" class="buttonsubmit" value="Search" id="Search" name="button" onclick="return loadSearch();" />                   
 				<s:submit method="beforeSearch" value="Cancel"  cssClass="button" />
 				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
 			</div>
@@ -165,7 +167,7 @@ function loadNamesForSelectedType()
 				            <s:property value="%{fundId.name}" />
 				        </td>
 				        <td style="text-align:center" class="<c:out value="${trclass}"/>">  
-				            <s:property value="%{vouchermis.departmentid.deptName}" />
+				            <s:property value="%{vouchermis.departmentid.name}" />
 				        </td>
 				        <td style="text-align:center" class="<c:out value="${trclass}"/>">  
 				            <s:property value="%{type}" />-<s:property value="%{name}" />
@@ -219,16 +221,15 @@ function loadNamesForSelectedType()
 			alert("Alert please select atleast one voucher to cancel");
 			return false;
 		}else{            
-			document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher!update.action?"+queryParams;
-		/*	var url = '../voucher/cancelVoucher!ajaxCancelVoucher.action?'+queryParams;
-		  	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);*/
+			document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-update.action?"+queryParams;
+			document.cancelVoucher.submit();
 		}          
 	 return true;
     }                     
     
 function viewVoucher(vid){
-		var url = '../voucher/preApprovedVoucher!loadvoucherview.action?vhid='+vid;
-		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+		var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
+		window.open(url,'',' width=900, height=700');
 }
 
 function doAfterSubmit(){
@@ -247,7 +248,8 @@ var callback = {
 }
 function loadSearch(){
 	document.getElementById('loading').style.display ='block';
-	return true;
+	document.cancelVoucher.action = "${pageContext.request.contextPath}/voucher/cancelVoucher-search.action";
+	document.cancelVoucher.submit();
 	}
 
 	
