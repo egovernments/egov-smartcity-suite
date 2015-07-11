@@ -344,6 +344,9 @@
                 <includes>
                     <include>**/*.*</include>
                 </includes>
+                <excludes>
+					<exclude>**/*.jrxml</exclude>
+				</excludes>
             </resource>
         </resources>
 
@@ -367,7 +370,7 @@
 	            <version>1.6</version>
 	            <executions>
 	                <execution>
-	                    <phase>process-classes</phase>
+	                    <phase>compile</phase>
 	                    <goals>
 	                            <goal>jasper</goal>
 	                    </goals>
@@ -403,8 +406,8 @@
 	            <configuration>
 	                <!-- These are the default configurations: -->
 	                <compiler>net.sf.jasperreports.engine.design.JRJdtCompiler</compiler>
-	                <sourceDirectory>src/main/java/reports/templates</sourceDirectory>
-	                <outputDirectory>${project.build.directory}/reports/templates</outputDirectory>
+	                <sourceDirectory>src/main/resources/reports/templates</sourceDirectory>
+	                <outputDirectory>${project.build.directory}/classes/reports/templates</outputDirectory>
 	                <outputFileExt>.jasper</outputFileExt>
 	                <xmlValidation>true</xmlValidation>
 	                <verbose>false</verbose>
