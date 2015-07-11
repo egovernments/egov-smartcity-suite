@@ -72,18 +72,25 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.Jurisdiction;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentType;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -99,6 +106,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	private PersistenceService persistenceService;
 
 	private CommonsServiceImpl commonsServiceImpl;
+	@Autowired
+	private DesignationService designationService;
+	@Autowired
+	private EmployeeService employeeService;
 
 	/**
 	 * @param statusCode
@@ -370,7 +381,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		//createVoucherForBillingService = receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
 		if (receiptHeader.getState() == null)
 			receiptHeader.transition().start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt created")
-			.withStateValue(CollectionConstants.WF_ACTION_CREATE_RECEIPT).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
+			.withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
 		
 		LOGGER.debug("Workflow state transition complete");
 
@@ -1370,12 +1381,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	public void performWorkflow(String actionName, ReceiptHeader receiptHeader, String remarks) {
 		try {
 			Position operatorPosition =collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
-			if (actionName.equals(CollectionConstants.WF_ACTION_CREATE_RECEIPT)) 
-				perform(receiptHeader,CollectionConstants.WF_STATE_RECEIPT_CREATED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_CREATE_VOUCHER, operatorPosition, remarks); 
-			else if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT)) 
-				perform(receiptHeader, CollectionConstants.WF_STATE_SUBMITTED, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, operatorPosition,remarks);  
+			 Department department=collectionsUtil.getDepartmentOfUser(receiptHeader.getCreatedBy());  
+			 Designation designation=designationService.getDesignationByName("Section managar");
+			 Boundary boundary = null;
+			 Employee employee = employeeService.getEmployeeById(receiptHeader.getCreatedBy().getId());  
+			 for(Jurisdiction jur :employee.getJurisdictions())
+			 {
+				 boundary = jur.getBoundary();
+			 }
+		     List<Employee> emp = employeeService.findByDepartmentDesignationAndBoundary(department.getId(),designation.getId(),boundary.getId());
+		     Position approverPosition = collectionsUtil.getPositionforEmp(emp.get(0).getId().intValue());
+			if (actionName.equals(CollectionConstants.WF_STATE_RECEIPT_CREATED)) 
+				perform(receiptHeader, CollectionConstants.WF_STATE_SUBMITTED, CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED, CollectionConstants.WF_ACTION_APPROVE, approverPosition,remarks);  
 			else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))  
-				perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", operatorPosition,remarks); 
+				perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", approverPosition,remarks); 
 			else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) 
 				perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED, CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT, operatorPosition,remarks); 
 		}

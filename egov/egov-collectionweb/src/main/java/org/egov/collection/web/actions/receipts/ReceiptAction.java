@@ -1154,10 +1154,6 @@ public class ReceiptAction extends BaseFormAction {
 	 *            copied
 	 */
 	private void populateReceiptModelWithExistingReceiptInfo(ReceiptHeader oldReceiptHeader) {
-		//modelPayeeList.clear();
-
-		/*ReceiptPayeeDetails payee = new ReceiptPayeeDetails(oldReceiptHeader.getReceiptPayeeDetails().getPayeename(),
-				oldReceiptHeader.getReceiptPayeeDetails().getPayeeAddress());*/
 		totalAmountToBeCollected = BigDecimal.valueOf(0);
 		
 		ReceiptHeader receiptHeader = new ReceiptHeader(oldReceiptHeader.getReferencenumber(),
@@ -1215,12 +1211,7 @@ public class ReceiptAction extends BaseFormAction {
 				setVoucherNum(voucherNum);
 			}
 		}
-
-		//receiptHeader.setReceiptPayeeDetails(payee);
-		//payee.addReceiptHeader(receiptHeader);
 		this.setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
-
-		//modelPayeeList.add(payee);
 	}
 
 	private void loadReceiptDetails(ReceiptHeader receiptHeader) {
@@ -1295,6 +1286,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
+	@Action(value="/receipts/receipt-saveOnCancel")
 	public String saveOnCancel() {
 		String instrumentType = "";
 		boolean isInstrumentDeposited = false;

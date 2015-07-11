@@ -169,4 +169,14 @@ public class Employee extends User {
             this.assignments.addAll(assignments);
     }
 
+	public Set<Jurisdiction> getJurisdictions() {
+		return jurisdictions;
+	}
+	
+	public void setJurisdictions(final List<Jurisdiction> jurisdictions) {
+        this.jurisdictions.clear();
+        if (jurisdictions != null)
+            this.jurisdictions.addAll(jurisdictions);
+    }
+
 }

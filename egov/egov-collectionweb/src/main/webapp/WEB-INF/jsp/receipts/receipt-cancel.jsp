@@ -69,7 +69,7 @@ function warningInfo()
 	}
 	else
 	{
-		document.searchReceiptForm.action="receipt!saveOnCancel.action";
+		document.searchReceiptForm.action="receipt-saveOnCancel.action";
 		document.searchReceiptForm.submit();
 	}
 
@@ -78,12 +78,13 @@ function warningInfo()
 
 </script>
 </head>
+
+<body >
 <span align="center" style="display:none" id="cancellationreasonerror">
   <li>
      <font size="2" color="red"><b><s:text name="cancellationreason.error"/></b></font>
   </li>
 </span>
-<body >
 <s:form theme="simple" name="searchReceiptForm" action="searchReceipt">
 <div class="formmainbox">
 	<div class="subheadnew"><s:text name="cancelreceipt.title"/></div>

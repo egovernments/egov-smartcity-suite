@@ -122,7 +122,7 @@
 		<one-to-one name="onlinePayment" class="org.egov.collection.entity.OnlinePayment" property-ref="receiptHeader" cascade="all" />
 		<one-to-one name="challan" class="org.egov.collection.entity.Challan" property-ref="receiptHeader" cascade="all" />
 
-		<set name="receiptInstrument" inverse="true" table="EGCL_COLLECTIONINSTRUMENT">
+		<set name="receiptInstrument" table="EGCL_COLLECTIONINSTRUMENT">
 			<key> 
 				<column name="collectionheader" precision="22" scale="0" />
 			</key>

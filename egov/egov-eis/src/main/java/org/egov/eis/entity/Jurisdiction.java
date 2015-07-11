@@ -74,7 +74,7 @@ public class Jurisdiction extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "boundarytype")
-    private BoundaryType boundaryType;
+    private BoundaryType boundaryType; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="boundary")
@@ -105,4 +105,12 @@ public class Jurisdiction extends AbstractAuditable {
     public void setBoundaryType(final BoundaryType boundaryType) {
         this.boundaryType = boundaryType;
     }
+
+	public Boundary getBoundary() {
+		return boundary;
+	}
+
+	public void setBoundary(Boundary boundary) {
+		this.boundary = boundary;
+	}
 }

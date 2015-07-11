@@ -1342,7 +1342,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="0.0";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  "Paid By";//TODO: Fix me for Phoenix change'<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
+		var paidby =  "Paid By" '<s:property value="%{payeeName}"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1612,7 +1612,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value="Payee";//TODO: Fix me Phoenix change'<s:property value="%{modelPayeeList[0].payeenameJS}"/>';
+	document.getElementById('paidBy').value="Payee" '<s:property value="%{payeeName}"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -2096,7 +2096,7 @@ function showHideMandataryMark(obj){
 		<tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" /></td>
+		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 		
 		<s:if test="%{!isBillSourcemisc()}">

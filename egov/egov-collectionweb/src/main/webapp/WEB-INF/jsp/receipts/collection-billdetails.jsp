@@ -57,7 +57,7 @@
 			<td class="textholder"><s:property value="%{referencenumber}"/></td>
 			<td class="textholder"><s:property value="%{displayMsg}"/></td>
 			<td class="textholder"><s:property value="%{consumerCode}"/></td>
-			<td class="textholderl"><s:property value="%{payeename}"/>,<s:property value="%{referenceDesc}"/></td>
+			<td class="textholderl"><s:property value="%{payeeName}"/>,<s:property value="%{referenceDesc}"/></td>
 			<td class="textholderl"><div id="bobcontent-title" class="billdetailaction"><s:text name="billreceipt.accountdetails"/></div></td>	
 		</tr>
 		</table>
