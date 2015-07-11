@@ -80,10 +80,10 @@
 			<s:form action="approve" name="transferform" theme="simple" enctype="multipart/form-data">
 				<s:push value="model">
 				<s:token/>
+				<div class="headingbg">
+					<s:text name="transferortitle" />
+				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<div class="headingbg">
-						<s:text name="transferortitle" />
-					</div>
 					<tr>
 						<td class="bluebox2" style="width:5%;">
 							&nbsp;
@@ -154,22 +154,26 @@
 								cellpadding="0" cellspacing="0">
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd">Aadhaar No</th>
-										<th class="bluebgheadtd">Owner Name</th>
-										<th class="bluebgheadtd">Guardian Name</th>
-										<th class="bluebgheadtd">Gender</th>
-										<th class="bluebgheadtd">Mobile Number</th>
-										<th class="bluebgheadtd">Email Address</th>
+										<th class="bluebgheadtd"><s:text name="adharno"/></th>
+									    <th class="bluebgheadtd"><s:text name="salutation"/></th>
+									    <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
+									    <th class="bluebgheadtd"><s:text name="gender"/></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
+										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 
 									</tr>
 									<s:iterator value="basicproperty.propertyOwnerInfo" status="status">
 									<tr>
-										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.aadhaarNumber"/></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.salutation" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.name" /></td>
-										<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.gender" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.mobileNumber" /></td>
 										<td class="blueborderfortd" align="center"><s:property value="owner.emailId" /></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.guardianRelation" default="N/A"/></td>
+										<td class="blueborderfortd" align="center"><s:property value="owner.guardian" default="N/A"/></td>
 									</tr>
 									</s:iterator>
 								</tbody>
@@ -189,12 +193,14 @@
 							<div>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
 								    <tr>
-								    	<th class="bluebgheadtd">Aadhaar No<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Owner Name<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Guardian Name</th>
-										<th class="bluebgheadtd">Gender<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Mobile Number(without +91)<span class="mandatory1">*</span></th>
-										<th class="bluebgheadtd">Email Address<span class="mandatory1">*</span></th>
+								    	<th class="bluebgheadtd"><s:text name="adharno"/><span class="mandatory1">*</span></th>
+								    	<th class="bluebgheadtd"><s:text name="salutation"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without +91)<span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress"/><span class="mandatory1">*</span></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
+										<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 										<th class="bluebgheadtd">Add/Delete</th>
 									</tr>
 									 <s:iterator value="transfereeInfos" status="status" >
@@ -202,28 +208,36 @@
 								        <td class="blueborderfortd" align="center">
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 										</td>
-								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="512" size="20" id="ownerName"
+										<td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].salutation" maxlength="10" size="10"  value="" 
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="512" size="20" id="guardianName"
+								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20"
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:select name="transfereeInfos[%{#status.index}].gender" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20" id="mobileNumber" 
+								        	<s:textfield name="transfereeInfos[%{#status.index}].mobileNumber" maxlength="10" size="20"
 								        		onblur="validNumber(this);checkZero(this,'Mobile Number');"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="64" size="20" id="emailId"  
+								        	<s:textfield name="transfereeInfos[%{#status.index}].emailId" maxlength="100" size="20"
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
 								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
 								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
-								        
+								        <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].guardianRelation" maxlength="10" size="10" 
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								         <td class="blueborderfortd" align="center">
+								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
+								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        </td>
+								       
 								        <td class="blueborderfortd">
 								        	<img id="addOwnerBtn" name="addOwnerBtn" src="${pageContext.request.contextPath}/resources/image/addrow.gif" onclick="javascript:addOwner(); return false;" alt="Add" width="18" height="18" border="0" />
 								      		<img id="removeOwnerBtn" name="removeOwnerBtn" src="${pageContext.request.contextPath}/resources/image/removerow.gif" onclick="javascript:deleteTranferee(this);return false;" data-server="${id}" alt="Remove" width="18" height="18" border="0" />
@@ -370,8 +384,8 @@
 		<script type="text/javascript">
 		jQuery("#marketValue").blur(function(){
 			var marketVal = parseInt(jQuery("#marketValue").val());
-			var transferReason = document.getElementById("transRsnId").options[obj.selectedIndex].text;
-	 		if(marketVal == '' || marketVal == '0' || parseInt(marketVal) < 1)
+			var transferReason = document.getElementById("transRsnId").options[document.getElementById("transRsnId").selectedIndex].text;
+	 		if(isNaN(marketVal) || marketVal < 1)
 	  			return false;
 			
 			jQuery.ajax({

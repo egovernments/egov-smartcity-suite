@@ -274,6 +274,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
                         newOwner.setMobileNumber(transferee.getMobileNumber());
                         newOwner.setGender(transferee.getGender());
                         newOwner.setGuardian(transferee.getGuardian());
+                        newOwner.setGuardianRelation(transferee.getGuardianRelation());
+                        newOwner.setSalutation(transferee.getSalutation());
                         newOwner.setName(transferee.getName());
                         newOwner.setPassword("NOTSET");
                         newOwner.setUsername(transferee.getMobileNumber());

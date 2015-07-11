@@ -211,7 +211,7 @@ public class PropertyTransferAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        if (StringUtils.isNotBlank(assessmentNo))
+        if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
             basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
         if (mutationId != null) {
