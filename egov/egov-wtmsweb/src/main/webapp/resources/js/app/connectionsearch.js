@@ -76,6 +76,7 @@ jQuery(document).ready(function ($) {
 	   
 	    $("#aplicationSearchResults").on('change','tbody tr td .dropchange',function() {
 	       var applicationNumber = tableContainer.fnGetData($(this).parent().parent(),0);
+	       var consumerNumber= tableContainer.fnGetData($(this).parent().parent(),1);
 	       if( this.value == 0){
 				 var url = '/wtms/application/addconnection/'+applicationNumber; 
 					$('#waterSearchRequestForm').attr('method', 'get');
@@ -87,7 +88,13 @@ jQuery(document).ready(function ($) {
 			}else if( this.value == 6){
 				window.location.href="disconnectionotice.html"
 			}else if( this.value == 1){
-				window.location.href="changeofuse.html"
+				if(consumerNumber != '') { 
+					 var url = '/wtms/application/changeOfUse/'+consumerNumber; 
+						$('#waterSearchRequestForm').attr('method', 'get');
+						$('#waterSearchRequestForm').attr('action', url);
+						window.location=url;
+				 }
+				//window.location.href="changeofuse.html"  
 			}else if( this.value == 3){
 				window.location.href="reconnection.html"
 			}

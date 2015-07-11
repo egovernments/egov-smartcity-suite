@@ -88,4 +88,9 @@
         <put-attribute name="body" value="/WEB-INF/views/application/addconnection-form.jsp"/>
     </definition>
     
+     <definition name="changeOfUse-form" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.changeofuse" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/changeOfUse-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

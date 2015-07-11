@@ -247,6 +247,12 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findByConnection(waterConnection);
     }
 
+    public WaterConnectionDetails findByConsumerCodeAndConnectionStatus(final String comsumerCode,
+            final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(comsumerCode,
+                connectionStatus);
+    }
+
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user = null;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
