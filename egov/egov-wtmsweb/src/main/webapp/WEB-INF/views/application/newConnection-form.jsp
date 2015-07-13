@@ -78,6 +78,3 @@
 </div>
 
 <script src="<c:url value='/resources/js/app/newconnection.js'/>"></script>
-<script>
-	
-</script>

@@ -62,8 +62,9 @@
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 			</div>	
 					<jsp:include page="connectiondetails-changeofuse.jsp"></jsp:include>	
+			<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
-			
+			</div>
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>

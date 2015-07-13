@@ -105,17 +105,4 @@ $(document).ready(function(){
 		}		
 	}
 	
-	var fileformatsexclude = ['exe'];
-	
-	$('#file0id, #file1id, #file2id, #file3id, #file4id, #file5id, #file6id, #file7id, #file8id, #file9id').on('change.bs.fileinput',function(e) {
-		/*validation for file upload*/
-		myfile= $( this ).val();
-		var ext = myfile.split('.').pop();
-		if($.inArray(ext, fileformatsexclude) > -1) {
-			alert(ext+" file format is not allowed");
-			$( this ).val('');
-			return;    
-		}		
-	});	
-	
 });

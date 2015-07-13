@@ -103,3 +103,4 @@
 </c:forEach> 
 </c:when>
 </c:choose>
+<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
