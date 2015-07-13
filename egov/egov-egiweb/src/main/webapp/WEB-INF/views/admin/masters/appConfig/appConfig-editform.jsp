@@ -259,6 +259,10 @@
             hiddenId.name = "appDataValues[" + counts + "].id";
              hiddenId.setAttribute("value", "${appDataValues[" + counts + "].id}");
              cell3.appendChild(hiddenId);
+             
+             $(".datepicker").datepicker({
+      			format: "dd/mm/yyyy"
+      		});
 
      }
 
