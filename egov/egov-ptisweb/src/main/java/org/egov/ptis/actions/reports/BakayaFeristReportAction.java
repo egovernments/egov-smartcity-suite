@@ -40,11 +40,11 @@
 package org.egov.ptis.actions.reports;
 
 import static java.util.Calendar.YEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -72,6 +72,7 @@ import org.egov.ptis.bean.DemandCollInfo;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.TaxInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Criteria;
@@ -83,98 +84,97 @@ import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class BakayaFeristReportAction extends ReportFormAction {
-	
+
 	private static final String RESULT_NEW = "new";
 	private static final Logger LOGGER = Logger.getLogger(BakayaFeristReportAction.class);
-	
+
 	private Integer zoneId;
 	private Integer wardId;
 	private String partNo;
 	private Map<Long, String> ZoneBndryMap;
 
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
-	
+	private PropertyTaxUtil propertyTaxUtil;
+
 	@Override
 	public void prepare() {
-		
+
 		@SuppressWarnings("unchecked")
 		List<Boundary> zoneList = persistenceService.findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
-		
+
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1), wardId != null && !wardId.equals(-1));
-		
+
 		if (wardId == null || wardId.equals(-1)) {
 			addDropdownData("partNumbers", Collections.EMPTY_LIST);
 		}
 	}
-	
+
 	public void prepareReport() {
 		LOGGER.debug("Entered into prepareReport method");
-		
+
 		setDataSourceType(ReportDataSourceType.JAVABEAN);
-		
+
 		// Preparing the Bakaya Ferist report data
-		
+
 		ReportInfo reportInfo = prepareReportInfo();
 		setReportData(reportInfo);
-		
+
 		LOGGER.debug("Exit from prepareReport method");
 	}
 
-	private ReportInfo prepareReportInfo() {		
+	private ReportInfo prepareReportInfo() {
 		LOGGER.debug("Entered into prepareReportInfo method");
-		
+
 		ReportInfo reportInfo = new ReportInfo();
-		
+
 		Boundary zone = (Boundary) persistenceService.find(
 				"from BoundaryImpl BI where BI.id = ? and BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", getZoneId(), ZONE_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 		Boundary ward = (Boundary) persistenceService.find(
 				"from BoundaryImpl BI where BI.id = ? and BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", getWardId(), WARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
-		
+
 		reportInfo.setZoneNo(zone.getBoundaryNum().toString());
 		reportInfo.setWardNo(ward.getBoundaryNum().toString());
 		reportInfo.setPartNo(partNo != null && !partNo.equals("-1") ? partNo : "N/A");
-		
+
 		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
-		
+
 		Calendar installmentFromDate = Calendar.getInstance();
 		installmentFromDate.setTime(currentInstallment.getFromDate());
-		
+
 		Calendar installmentToDate = Calendar.getInstance();
 		installmentToDate.setTime(currentInstallment.getToDate());
-		
+
 		reportInfo.setCurrInstallment(installmentFromDate.get(YEAR) + "-" + installmentToDate.get(YEAR));
-		
+
 		List<AssesseeInfo> assesseeInfoList = prepareAssessees();
 		List<DemandCollInfo> emptyDemandCollInfoList = Collections.emptyList();
 		List<PropertyMaterlizeView> emptyPMVList = Collections.emptyList();
-		
+
 		reportInfo.setAssesseeInfoList(assesseeInfoList);
 		reportInfo.setDemandCollInfoList(emptyDemandCollInfoList);
-		//reportInfo.setPropMatViewList(emptyPMVList);
-		
+		// reportInfo.setPropMatViewList(emptyPMVList);
+
 		LOGGER.debug("Exit from prepareReportInfo method");
-		
+
 		return reportInfo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<AssesseeInfo> prepareAssessees() {
 		LOGGER.debug("Entered into prepareAssesseeInformation method");
-		
-		List<AssesseeInfo> assessees  = new ArrayList<AssesseeInfo>();
+
+		List<AssesseeInfo> assessees = new ArrayList<AssesseeInfo>();
 		StringBuilder queryBuilder = new StringBuilder(500);
-		
+
 		queryBuilder.append("from PropertyMaterlizeView pmv left join fetch pmv.instDmdColl instDmdColl ")
 				.append("left join fetch instDmdColl.installment")
 				.append(" where pmv.ward.id = ? and pmv.propTypeMstrID.code not in ('")
-				.append(PROPTYPE_CENTRAL_GOVT).append("', '").append(PROPTYPE_STATE_GOVT)
-				.append("' ) ");
+				.append(OWNERSHIP_TYPE_CENTRAL_GOVT_50).append("', '").append(OWNERSHIP_TYPE_STATE_GOVT).append("' ) ");
 		if (partNo != null && !partNo.equals("-1")) {
 			queryBuilder.append("and pmv.partNo = ?");
 		}
@@ -187,17 +187,17 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		}
 		List<PropertyMaterlizeView> properties = (List<PropertyMaterlizeView>) qry.setResultTransformer(
 				Criteria.DISTINCT_ROOT_ENTITY).list();
-		
+
 		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
-		
-		BigDecimal grandTotal = BigDecimal.ZERO;			
-		
+
+		BigDecimal grandTotal = BigDecimal.ZERO;
+
 		for (PropertyMaterlizeView property : properties) {
 			AssesseeInfo assessee = new AssesseeInfo();
 			assessee.setIndexNo(property.getPropertyId());
 			assessee.setHouseNo(property.getHouseNo());
 			assessee.setOwnerName(property.getOwnerName());
-			
+
 			Set<TaxInfo> taxInfos = new TreeSet<TaxInfo>(new Comparator<TaxInfo>() {
 
 				@Override
@@ -205,24 +205,28 @@ public class BakayaFeristReportAction extends ReportFormAction {
 					return o2.getInstallment().compareTo(o1.getInstallment());
 				}
 			});
-			
-			Set<InstDmdCollMaterializeView> demandDetailsAndInstallments = new TreeSet<InstDmdCollMaterializeView>(new Comparator<InstDmdCollMaterializeView>() {
-				@Override
-				public int compare(InstDmdCollMaterializeView o1, InstDmdCollMaterializeView o2) {
-					return o1.getInstallment().compareTo(o2.getInstallment());
-				}
-			});
-					
+
+			Set<InstDmdCollMaterializeView> demandDetailsAndInstallments = new TreeSet<InstDmdCollMaterializeView>(
+					new Comparator<InstDmdCollMaterializeView>() {
+						@Override
+						public int compare(InstDmdCollMaterializeView o1, InstDmdCollMaterializeView o2) {
+							return o1.getInstallment().compareTo(o2.getInstallment());
+						}
+					});
+
 			demandDetailsAndInstallments.addAll(property.getInstDmdColl());
-			
+
 			grandTotal = BigDecimal.ZERO;
-			
+
 			for (InstDmdCollMaterializeView demandDetailsAndInstallment : demandDetailsAndInstallments) {
 				TaxInfo taxInfo = new TaxInfo();
 
 				/*
-				 * Installment installment = (Installment) CommonsDaoFactory.getDAOFactory().getInstallmentDao()
-				 * .findById(demandDetailsAndInstallment.getInstallment().getId(), false);
+				 * Installment installment = (Installment)
+				 * CommonsDaoFactory.getDAOFactory().getInstallmentDao()
+				 * .findById
+				 * (demandDetailsAndInstallment.getInstallment().getId(),
+				 * false);
 				 */
 
 				/*
@@ -230,12 +234,15 @@ public class BakayaFeristReportAction extends ReportFormAction {
 				 * installmentToDate.setTime(installment.getToDate());
 				 */
 
-				// taxInfo.setInstallment(installmentFromDate.get(YEAR) + "-" + installmentToDate.get(YEAR));
+				// taxInfo.setInstallment(installmentFromDate.get(YEAR) + "-" +
+				// installmentToDate.get(YEAR));
 				taxInfo.setInstallment(demandDetailsAndInstallment.getInstallment().toString());
 				taxInfo.setConservancyTax(demandDetailsAndInstallment.getSewerageTax()
-						.subtract(demandDetailsAndInstallment.getSewerageTaxColl()).setScale(2, BigDecimal.ROUND_HALF_UP));
+						.subtract(demandDetailsAndInstallment.getSewerageTaxColl())
+						.setScale(2, BigDecimal.ROUND_HALF_UP));
 				taxInfo.setGeneralTax(demandDetailsAndInstallment.getGeneralTax()
-						.subtract(demandDetailsAndInstallment.getGeneralTaxColl()).setScale(2, BigDecimal.ROUND_HALF_UP));
+						.subtract(demandDetailsAndInstallment.getGeneralTaxColl())
+						.setScale(2, BigDecimal.ROUND_HALF_UP));
 				taxInfo.setWaterTax(demandDetailsAndInstallment.getWaterTax()
 						.subtract(demandDetailsAndInstallment.getWaterTaxColl()).setScale(2, BigDecimal.ROUND_HALF_UP));
 				taxInfo.setFireServiceTax(demandDetailsAndInstallment.getFireTax()
@@ -252,9 +259,11 @@ public class BakayaFeristReportAction extends ReportFormAction {
 				taxInfo.setEgsCess(demandDetailsAndInstallment.getEgsTax()
 						.subtract(demandDetailsAndInstallment.getEgsTaxColl()).setScale(2, BigDecimal.ROUND_HALF_UP));
 				taxInfo.setBigBuildingCess(demandDetailsAndInstallment.getBigBldgTax()
-						.subtract(demandDetailsAndInstallment.getBigBldgTaxColl()).setScale(2, BigDecimal.ROUND_HALF_UP));
+						.subtract(demandDetailsAndInstallment.getBigBldgTaxColl())
+						.setScale(2, BigDecimal.ROUND_HALF_UP));
 				taxInfo.setTotal(demandDetailsAndInstallment
-						.getSewerageTax().subtract(demandDetailsAndInstallment.getSewerageTaxColl())
+						.getSewerageTax()
+						.subtract(demandDetailsAndInstallment.getSewerageTaxColl())
 						.add(demandDetailsAndInstallment.getGeneralTax().subtract(
 								demandDetailsAndInstallment.getGeneralTaxColl()))
 						.add(demandDetailsAndInstallment.getWaterTax().subtract(
@@ -284,12 +293,12 @@ public class BakayaFeristReportAction extends ReportFormAction {
 			assessee.setTaxInfoList(new ArrayList<TaxInfo>(taxInfos));
 			assessees.add(assessee);
 		}
-		
+
 		LOGGER.debug("Exit from prepareReportInfo method");
-		
+
 		return assessees;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void prepareWardDropDownData(boolean zoneExists, boolean wardExists) {
 		LOGGER.debug("Entered into prepareWardDropDownData method");
@@ -306,18 +315,17 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		}
 		LOGGER.debug("Exit from prepareWardDropDownData method");
 	}
-	
+
 	@SkipValidation
-	public String newForm() {		
+	public String newForm() {
 		return RESULT_NEW;
 	}
-	
-	@ValidationErrorPage(value="new")
+
+	@ValidationErrorPage(value = "new")
 	public String report() {
 		return super.report();
 	}
-	
-	
+
 	@Override
 	public String criteria() {
 		return null;
@@ -327,18 +335,18 @@ public class BakayaFeristReportAction extends ReportFormAction {
 	protected String getReportTemplateName() {
 		return REPORT_TEMPLATENAME_BAKAYAFERIST;
 	}
-	
+
 	public void validateReport() {
 		LOGGER.debug("Entered into validateReport method");
-		
+
 		if (getZoneId() == null || getZoneId() == -1) {
 			addActionError(getText("mandatory.zone"));
 		}
-		
+
 		if (getWardId() == null || getWardId() == -1) {
 			addActionError(getText("mandatory.ward"));
 		}
-		
+
 		LOGGER.debug("Exiting from validateReport method");
 	}
 
@@ -372,7 +380,6 @@ public class BakayaFeristReportAction extends ReportFormAction {
 
 	public void setPartNo(String partNo) {
 		this.partNo = partNo;
-	}		
-	
-}
+	}
 
+}

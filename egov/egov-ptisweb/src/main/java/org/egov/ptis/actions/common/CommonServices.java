@@ -39,36 +39,17 @@
  ******************************************************************************/
 package org.egov.ptis.actions.common;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommonServices {
@@ -185,12 +166,9 @@ public class CommonServices {
 
 	public static Map<String, String> getAmenities() {
 		Map<String, String> amenitiesMap = new HashMap<String, String>();
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL,
-				PropertyTaxConstants.AMENITY_TYPE_FULL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL,
-				PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL,
-				PropertyTaxConstants.AMENITY_TYPE_NIL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL, PropertyTaxConstants.AMENITY_TYPE_FULL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL, PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL, PropertyTaxConstants.AMENITY_TYPE_NIL);
 
 		return amenitiesMap;
 	}
@@ -204,71 +182,19 @@ public class CommonServices {
 		Map<Long, String> zoneMap = new TreeMap<Long, String>();
 		for (Boundary boundary : zoneList) {
 			zoneMap.put(boundary.getId(),
-					/*StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
-							+*/ boundary.getLocalName());
+			/*
+			 * StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0")
+			 * + '-' +
+			 */boundary.getLocalName());
 		}
 		return zoneMap;
 	}
 
-	public static List<PropertyUsage> usagesForPropType(Integer propTypeId) {
-		List<PropertyUsage> propUsageList = new ArrayList<PropertyUsage>();
-		List<PropertyUsage> usagesList = propertyUsageDAO.findAll();
-		PropertyTypeMaster propType = null;
-
-		if (!propTypeId.toString().equals("-1")) {
-			propType = propertyTypeMasterDAO.findById(propTypeId,
-					false);
-		} else {
-			return Collections.EMPTY_LIST;
-		}
-
-		if (propType != null && !(propType.getCode().toString().equals("-1"))) {
-			if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-				for (PropertyUsage pu : usagesList) {
-					if (USAGES_FOR_OPENPLOT.contains(pu.getUsageName())) {
-						propUsageList.add(pu);
-					}
-				}
-			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT)
-					|| propType.getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)
-					|| propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-
-				for (PropertyUsage pu : usagesList) {
-					if (USAGES_FOR_RESD.contains(pu.getUsageName())) {
-						propUsageList.add(pu);
-					}
-				}
-			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-				for (PropertyUsage pu : usagesList) {
-					if (USAGES_FOR_NON_RESD.contains(pu.getUsageName())) {
-						propUsageList.add(pu);
-					}
-				}
-			}
-		}
-
-		return propUsageList;
-	}
-
 	public static List<String> getTaxExemptedList() {
-		return Arrays.asList("Agiaries", "Andhalaya", "Beggars Home", "Budh Vihar",
-				"Burial ground", "Charitable", "Church", "Dharmshala", "Durgahs",
-				"Government Tenant", "Gurudwara", "Jain Temple", "Mosque", "Musafirkhana",
-				"Orphanages Asylum", "Place of cremation/burning ghat", "Prayer Halls",
-				"Remand Home", "School and Hostels for the physically challenged", "Synagogues",
-				"Temple");
-	}
-
-	public static String getUnitTypeCategory(String unitTypeCode, String categoryCode) {
-		String categoryValue = null;
-		if (unitTypeCode.equals(UNITTYPE_OPEN_PLOT)) {
-			categoryValue = OPEN_PLOT_PROPERTY_TYPE_CATEGORY.get(categoryCode);
-		} else if (unitTypeCode.equals(UNITTYPE_RESD)) {
-			categoryValue = RESIDENTIAL_PROPERTY_TYPE_CATEGORY.get(categoryCode);
-		} else {
-			categoryValue = NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY.get(categoryCode);
-		}
-		return categoryValue;
+		return Arrays.asList("Agiaries", "Andhalaya", "Beggars Home", "Budh Vihar", "Burial ground", "Charitable",
+				"Church", "Dharmshala", "Durgahs", "Government Tenant", "Gurudwara", "Jain Temple", "Mosque",
+				"Musafirkhana", "Orphanages Asylum", "Place of cremation/burning ghat", "Prayer Halls", "Remand Home",
+				"School and Hostels for the physically challenged", "Synagogues", "Temple");
 	}
 
 	public static final LinkedHashMap<String, String> outstandingAmountRanges = new LinkedHashMap<String, String>() {

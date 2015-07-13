@@ -72,18 +72,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_
 import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_PERIOD2;
 import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_PERIOD3;
 import static org.egov.ptis.constants.PropertyTaxConstants.EFFECTIVE_ASSESSMENT_PERIOD4;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOORNO_WITH_DIFF_MULFACTOR_NONRESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOORNO_WITH_DIFF_MULFACTOR_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
-import static org.egov.ptis.constants.PropertyTaxConstants.NONRESD_FLAT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_FLOOR_AREA_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
@@ -91,11 +85,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDET
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEPARTMENTS_BY_DEPTCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_FLATS;
-import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_FLOOR_AREA_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSION_VAR_LOGIN_USER_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_MIGRATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_SEPERATOR;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
@@ -512,52 +503,6 @@ public class PropertyTaxUtil {
 		return applicableTaxValueDummy;
 	}
 
-	public String multiplicativeFactorAreaWise(String propertyType, Floor floor, String areaFactor,
-			String propCategory) {
-		String unitAreaFactor = null;
-
-		if (propertyType.equals(PROPTYPE_RESD)) {
-			/**
-			 * In case of Residential Flats we have to apply the rule as (same
-			 * as in case of Ground Floor for Residential House) If Floor Area
-			 * is greater than 46.45sqmt apply full rate for first 46.45 sqmt,
-			 * 80% for next 46.45 sqmt, 70% for next 46.45 sqmt and for
-			 * remaining area exceeding 139.35 sqmt, apply 60% of full rate
-			 */
-			if (RESIDENTIAL_FLATS.equals(propCategory)) {
-				unitAreaFactor = RESIDENTIAL_FLOOR_AREA_MAP.get("0" + STRING_SEPERATOR + areaFactor);
-			} else {
-				if (FLOORNO_WITH_DIFF_MULFACTOR_RESD.contains(floor.getFloorNo().toString())) {
-					unitAreaFactor = RESIDENTIAL_FLOOR_AREA_MAP.get(floor.getFloorNo() + STRING_SEPERATOR + areaFactor);
-				} else {
-					unitAreaFactor = RESIDENTIAL_FLOOR_AREA_MAP.get("3" + STRING_SEPERATOR + areaFactor);
-				}
-			}
-		} else if (propertyType.equals(PROPTYPE_NON_RESD)) {
-			/**
-			 * In case of Non Residential Flat we have to apply the rule as
-			 * (same as in case of Ground Floor for Other Property Category of
-			 * Non Residential Property) If built up area up to depth of first
-			 * 7.62 mt. or up to first intercepting wall apply the "Full Rate"
-			 * and for the remaining area, apply 50% of the full rate
-			 */
-			if (NONRESD_FLAT.equals(propCategory)) {
-				unitAreaFactor = NON_RESIDENTIAL_FLOOR_AREA_MAP.get("0" + STRING_SEPERATOR + areaFactor);
-			} else {
-				if (FLOORNO_WITH_DIFF_MULFACTOR_NONRESD.contains(floor.getFloorNo().toString())) {
-					unitAreaFactor = NON_RESIDENTIAL_FLOOR_AREA_MAP.get(floor.getFloorNo() + STRING_SEPERATOR
-							+ areaFactor);
-				} else {
-					unitAreaFactor = NON_RESIDENTIAL_FLOOR_AREA_MAP.get("1" + STRING_SEPERATOR + areaFactor);
-				}
-			}
-		}
-
-		LOGGER.info("propertyType:" + propertyType + "; Floor No:" + floor.getFloorNo() + "; areaFactor:" + areaFactor
-				+ "; unitAreaFactor: " + unitAreaFactor);
-		return unitAreaFactor;
-
-	}
 
 	public List<ApplicableFactor> getApplicableFactorsForResidentialAndNonResidential(Floor floorImpl,
 			Boundary propertyArea, Installment installment, Long categoryId) {

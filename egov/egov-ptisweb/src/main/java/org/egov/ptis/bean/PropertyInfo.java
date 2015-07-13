@@ -39,24 +39,17 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.MIXED_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.NONRESD_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.OCCUPIER_OCC;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNER_OCC;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTGOVT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NONRESD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPENPLOT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATEGOVT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.RESD_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATE_GOVT_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TENANT_OCC;
@@ -146,7 +139,7 @@ public class PropertyInfo {
 		 * taxCalInfo.getPropertyType(), null, taxAndMinEffDate)); }
 		 */
 
-		if (taxCalInfo.getPropertyType() != null && PROPTYPE_CENTGOVT_STR.equals(taxCalInfo.getPropertyType())) {
+		if (taxCalInfo.getPropertyType() != null && OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(taxCalInfo.getPropertyType())) {
 			isCentralGovtProp = 1;
 		}
 	}
@@ -225,7 +218,8 @@ public class PropertyInfo {
 			propType = taxCalc.getPropertyType();
 			// BigDecimal totalTaxPayable = BigDecimal.ZERO;
 
-			if (taxCalInfo.getPropertyType() != null && PROPTYPE_CENTGOVT_STR.equals(taxCalInfo.getPropertyType())) {
+			if (taxCalInfo.getPropertyType() != null
+					&& OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(taxCalInfo.getPropertyType())) {
 				isCentralGovtProp = 1;
 			}
 
@@ -276,26 +270,16 @@ public class PropertyInfo {
 
 		StringBuilder occupierName = new StringBuilder();
 
-		if (PROPTYPE_OPENPLOT_STR.equals(propType)) {
+		if (OWNERSHIP_TYPE_VAC_LAND.equals(propType)) {
 			if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append(propType);
 			} else if (TENANT_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append(OPEN_PLOT_SHORTFORM + "-" + unit.getUnitOccupier());
 			}
-		} else if (PROPTYPE_RESD_STR.equals(propType)) {
-			occupierName.append(RESD_SHORTFORM);
-		} else if (PROPTYPE_NONRESD_STR.equals(propType)) {
-			occupierName.append(NONRESD_SHORTFORM);
-		} else if (PROPTYPE_STATEGOVT_STR.equals(propType)) {
-			occupierName.append(STATE_GOVT_SHORTFORM + "-" + OWNER_OCC);
-		} else if (PROPTYPE_CENTGOVT_STR.equals(propType)) {
-			occupierName.append(CENTRAL_GOVT_SHORTFORM + "-" + OWNER_OCC);
-		} else if (PROPTYPE_MIXED_STR.equals(propType)) {
-			occupierName.append(MIXED_SHORTFORM);
 		}
 
-		if (!PROPTYPE_OPENPLOT_STR.equals(propType) && !PROPTYPE_STATEGOVT_STR.equals(propType)
-				&& !PROPTYPE_CENTGOVT_STR.equals(propType)) {
+		if (!OWNERSHIP_TYPE_VAC_LAND_STR.equals(propType) && !OWNERSHIP_TYPE_STATE_GOVT.equals(propType)
+				&& !OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(propType)) {
 			if (TENANT_OCC.equals(unit.getUnitOccupation()) || OCCUPIER_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append("-" + unit.getUnitOccupier());
 			} else if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {

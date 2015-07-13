@@ -52,17 +52,15 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
@@ -146,8 +144,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly=true)
-public class PropertyService  {
+@Transactional(readOnly = true)
+public class PropertyService {
 
 	private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
 	private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
@@ -157,7 +155,7 @@ public class PropertyService  {
 	private APTaxCalculator taxCalculator;
 	private HashMap<Installment, TaxCalculationInfo> instTaxMap;
 	@Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+	private PropertyTaxUtil propertyTaxUtil;
 	@Autowired
 	protected EisCommonsService eisCommonsService;
 	@Autowired
@@ -172,51 +170,53 @@ public class PropertyService  {
 	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
 	private PropertyTaxNumberGenerator ptNumberGenerator;
 	@Autowired
-    @Qualifier("documentTypePersistenceService")
-    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
+	@Qualifier("documentTypePersistenceService")
+	private PersistenceService<DocumentType, Long> documentTypePersistenceService;
 	@Autowired
-    @Qualifier("fileStoreService")
-    private FileStoreService fileStoreService;
-	
+	@Qualifier("fileStoreService")
+	private FileStoreService fileStoreService;
 
 	public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
 			String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
-			String nonResPlotArea, boolean isfloorDetailsRequired,Long floorTypeId,Long roofTypeId,Long wallTypeId,Long woodTypeId) {
+			String nonResPlotArea, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
 		LOGGER.debug("Entered into createProperty");
 		LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
 				+ mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
 				+ propOccId + ", status: " + status);
 		currentInstall = (Installment) getPropPerServ().find(
-				"from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ",
-				PTMODULENAME, new Date(), new Date());
+				"from Installment I where I.module.name=? and (I.fromDate <= ? and I.toDate >= ?) ", PTMODULENAME,
+				new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
-                    if (floorTypeId != null) {
-                        FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
-                        property.getPropertyDetail().setFloorType(floorType);
-                    }
-                    if (roofTypeId != null) {
-                        RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
-                        property.getPropertyDetail().setRoofType(roofType);
-                    }
-                    if (wallTypeId != null) {
-                        WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?",wallTypeId);
-                        property.getPropertyDetail().setWallType(wallType);
-                    }
-                    if (woodTypeId != null) { 
-                        WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?",woodTypeId);
-                        property.getPropertyDetail().setWoodType(woodType);
-                    }
-       
-        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+		if (floorTypeId != null) {
+			FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+			property.getPropertyDetail().setFloorType(floorType);
+		}
+		if (roofTypeId != null) {
+			RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+			property.getPropertyDetail().setRoofType(roofType);
+		}
+		if (wallTypeId != null) {
+			WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
+			property.getPropertyDetail().setWallType(wallType);
+		}
+		if (woodTypeId != null) {
+			WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
+			property.getPropertyDetail().setWoodType(woodType);
+		}
+
+		if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
 			Area area = new Area();
 			area.setArea(new Float(areaOfPlot));
 			property.getPropertyDetail().setSitalArea(area);
 		}
 
-		if (property.getPropertyDetail().getApartment()!=null && property.getPropertyDetail().getApartment().getId() != null) {
-			Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?", property.getPropertyDetail().getApartment().getId());
-			property.getPropertyDetail().setApartment(apartment);;
+		if (property.getPropertyDetail().getApartment() != null
+				&& property.getPropertyDetail().getApartment().getId() != null) {
+			Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
+					property.getPropertyDetail().getApartment().getId());
+			property.getPropertyDetail().setApartment(apartment);
+			;
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}
@@ -226,19 +226,13 @@ public class PropertyService  {
 			area.setArea(new Float(nonResPlotArea));
 			property.getPropertyDetail().setNonResPlotArea(area);
 		}
-		
+
 		property.getPropertyDetail().setFieldVerified('Y');
 		property.getPropertyDetail().setProperty(property);
-		PropertyMutationMaster	propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
+		PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
 				"from PropertyMutationMaster PM where upper(PM.code) = ?", mutationCode);
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ().find(
 				"from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
-		if (propTypeMstr != null) {
-			if (!(propTypeMstr.getCode().equals(PROPTYPE_NON_RESD) || propTypeMstr.getCode().equals(PROPTYPE_RESD) || propTypeMstr
-					.getCode().equals(PROPTYPE_OPEN_PLOT))) {
-				property.getPropertyDetail().setExtra_field5(null);
-			}
-		}
 		if (propUsageId != null) {
 			PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
 					Long.valueOf(propUsageId));
@@ -253,7 +247,7 @@ public class PropertyService  {
 		} else {
 			property.getPropertyDetail().setPropertyOccupation(null);
 		}
-		if (propTypeMstr.getCode().equals(PROPTYPE_OPEN_PLOT)) {
+		if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
 			property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
 		} else {
 			property.getPropertyDetail().setPropertyType(BUILT_UP_PROPERTY);
@@ -261,7 +255,7 @@ public class PropertyService  {
 		property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
 		property.getPropertyDetail().setPropertyMutationMaster(propMutMstr);
 		property.getPropertyDetail().setUpdatedTime(new Date());
-		createFloors(property, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
+		createFloors(property, mutationCode, propUsageId, propOccId);
 		property.setStatus(status);
 		property.setIsDefaultProperty(PROPERTY_IS_DEFAULT);
 		property.setInstallment(currentInstall);
@@ -272,143 +266,100 @@ public class PropertyService  {
 		return property;
 	}
 
-	public void createFloors(Property property, String mutationCode, String propUsageId, String propOccId,
-			boolean isfloorDetailsRequired) {
+	public void createFloors(Property property, String mutationCode, String propUsageId, String propOccId) {
 		LOGGER.debug("Entered into createFloors");
 		LOGGER.debug("createFloors: Property: " + property + ", mutationCode: " + mutationCode + ", propUsageId: "
 				+ propUsageId + ", propOccId: " + propOccId);
 		Area totBltUpArea = new Area();
 		Float totBltUpAreaVal = new Float(0);
-		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			if (((property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property
-					.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && !isfloorDetailsRequired)
-					|| !(property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || property.getPropertyDetail()
-							.getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))) {
-				if ((mutationCode != null && "NEW".equals(mutationCode)) || STATUS_WORKFLOW.equals(property.getStatus())) {
-					//property.getPropertyDetail().setFloorDetails(new ArrayList<Floor>());
-				}
-				for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
-					if (floor != null) {
-						totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
-						PropertyTypeMaster unitType = null;
-						PropertyUsage usage = null;
-						PropertyOccupation occupancy = null;
-						if (floor.getUnitType() != null) {
-							unitType = (PropertyTypeMaster) getPropPerServ().find(
-									"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
-						}
-						if (floor.getPropertyUsage() != null) {
-							usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
-									floor.getPropertyUsage().getId());
-						}
-						if (floor.getPropertyOccupation() != null) {
-							occupancy = (PropertyOccupation) getPropPerServ()
-									.find("from PropertyOccupation po where po.id = ?",
-											floor.getPropertyOccupation().getId());
-						}
-
-						StructureClassification structureClass = null;
-
-						if (floor.getStructureClassification() != null) {
-							structureClass = (StructureClassification) getPropPerServ().find(
-									"from StructureClassification sc where sc.id = ?",
-									floor.getStructureClassification().getId());
-						}
-
-						DepreciationMaster depMaster = null;
-
-						if (floor.getDepreciationMaster() != null) {
-							depMaster = (DepreciationMaster) getPropPerServ().find(
-									"from DepreciationMaster dm where dm.id=?", floor.getDepreciationMaster().getId());
-						}
-
-						floor.setDepreciationMaster(depMaster);
-
-						LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
-								+ ", StructureClass: " + structureClass);
-
-						if (unitType != null
-								&& unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT)) {
-							floor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
-						}
-
-						floor.setUnitType(unitType);
-						floor.setPropertyUsage(usage);
-						floor.setPropertyOccupation(occupancy);
-						floor.setStructureClassification(structureClass);
-						
-						floor.setPropertyDetail(property.getPropertyDetail());
-						//basicPrpertyService.applyAuditing(floor);
-						floor.setCreatedDate(new Date());
-                                                floor.setModifiedDate(new Date());
-						//property.getPropertyDetail().addFloor(floor);
-						User user = userService.getUserById(EgovThreadLocals.getUserId());
-                                                floor.setCreatedBy(user);
-                                                floor.setModifiedBy(user);
-						// setting total builtup area.
-						totBltUpArea.setArea(totBltUpAreaVal);
-						property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
-
+		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+			for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+				if (floor != null) {
+					totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
+					PropertyTypeMaster unitType = null;
+					PropertyUsage usage = null;
+					PropertyOccupation occupancy = null;
+					if (floor.getUnitType() != null) {
+						unitType = (PropertyTypeMaster) getPropPerServ().find(
+								"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
 					}
-				}
-			} else {
-				// -added for state govt property without floors
-				if (property.getPropertyDetail().getFloorDetails().size() > 0
-						&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-					property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
-					//property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
-				}
-				PropertyOccupation occupancy = null;
-				PropertyUsage usage = null;
-				if(propOccId != null) {
-					occupancy = (PropertyOccupation) getPropPerServ().find(
-						"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-			    }
-			    if(usage != null) {
-			    	usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
-						Long.valueOf(propUsageId));
-			    }
-				LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
-				property.getPropertyDetail().setPropertyOccupation(occupancy);
-				property.getPropertyDetail().setPropertyUsage(usage);
-				// setting total builtup area.
-				totBltUpArea.setArea(totBltUpAreaVal);
-				property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
-			}
+					if (floor.getPropertyUsage() != null) {
+						usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+								floor.getPropertyUsage().getId());
+					}
+					if (floor.getPropertyOccupation() != null) {
+						occupancy = (PropertyOccupation) getPropPerServ().find(
+								"from PropertyOccupation po where po.id = ?", floor.getPropertyOccupation().getId());
+					}
 
-		} else {
-			if (property.getPropertyDetail().getFloorDetails().size() > 0
-					&& property.getPropertyDetail().getFloorDetails().size() > 0) {
-				/*for(Floor floorObj:property.getPropertyDetail().getFloorDetails())
-				{
-				    property.getPropertyDetail().removeFloor(floorObj);
-				}*/
-				
-				property.getPropertyDetail().getFloorDetails().clear();
-			    
-			    //property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
-				//property.getPropertyDetail().setFloorDetails(Collections.EMPTY_LIST);
+					StructureClassification structureClass = null;
+
+					if (floor.getStructureClassification() != null) {
+						structureClass = (StructureClassification) getPropPerServ().find(
+								"from StructureClassification sc where sc.id = ?",
+								floor.getStructureClassification().getId());
+					}
+
+					DepreciationMaster depMaster = null;
+
+					if (floor.getDepreciationMaster() != null) {
+						depMaster = (DepreciationMaster) getPropPerServ().find(
+								"from DepreciationMaster dm where dm.id=?", floor.getDepreciationMaster().getId());
+					}
+
+					floor.setDepreciationMaster(depMaster);
+
+					LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
+							+ ", StructureClass: " + structureClass);
+
+					if (unitType != null
+							&& unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT)) {
+						floor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
+					}
+
+					floor.setUnitType(unitType);
+					floor.setPropertyUsage(usage);
+					floor.setPropertyOccupation(occupancy);
+					floor.setStructureClassification(structureClass);
+
+					floor.setPropertyDetail(property.getPropertyDetail());
+					// basicPrpertyService.applyAuditing(floor);
+					floor.setCreatedDate(new Date());
+					floor.setModifiedDate(new Date());
+					// property.getPropertyDetail().addFloor(floor);
+					User user = userService.getUserById(EgovThreadLocals.getUserId());
+					floor.setCreatedBy(user);
+					floor.setModifiedBy(user);
+					// setting total builtup area.
+					totBltUpArea.setArea(totBltUpAreaVal);
+					property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
+
+				}
 			}
+		} else {
 			PropertyOccupation occupancy = null;
 			PropertyUsage usage = null;
-			if(propOccId != null) {
-				occupancy = (PropertyOccupation) getPropPerServ().find(
-					"from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
-		    }
-		    if(usage != null) {
-		    	usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
-					Long.valueOf(propUsageId));
-		    }
+			if (propOccId != null) {
+				occupancy = (PropertyOccupation) getPropPerServ().find("from PropertyOccupation po where po.id = ?",
+						Long.valueOf(propOccId));
+			}
+			if (usage != null) {
+				usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+						Long.valueOf(propUsageId));
+			}
 			LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
 			property.getPropertyDetail().setPropertyOccupation(occupancy);
 			property.getPropertyDetail().setPropertyUsage(usage);
+			totBltUpArea.setArea(totBltUpAreaVal);
+			property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
 		}
+
 		LOGGER.debug("Exiting from createFloors");
 	}
 
 	public PropertyStatusValues createPropStatVal(BasicProperty basicProperty, String statusCode,
-			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails, String parentPropId,Date buildingPermDate,Integer buildingPermNo) {
+			Date propCompletionDate, String courtOrdNum, Date orderDate, String judgmtDetails, String parentPropId,
+			Date buildingPermDate, Integer buildingPermNo) {
 		LOGGER.debug("Entered into createPropStatVal");
 		LOGGER.debug("createPropStatVal: basicProperty: " + basicProperty + ", statusCode: " + statusCode
 				+ ", propCompletionDate: " + propCompletionDate + ", courtOrdNum: " + courtOrdNum + ", orderDate: "
@@ -458,7 +409,7 @@ public class PropertyService  {
 		return propStatVal;
 	}
 
-	public Property createDemand(PropertyImpl property, Date dateOfCompletion, boolean isfloorDetailsRequired) {
+	public Property createDemand(PropertyImpl property, Date dateOfCompletion) {
 		LOGGER.debug("Entered into createDemand");
 		LOGGER.debug("createDemand: Property: " + property + ", dateOfCompletion: " + dateOfCompletion);
 
@@ -473,14 +424,20 @@ public class PropertyService  {
 		currentInstall = PropertyTaxUtil.getCurrentInstallment();
 		property.getPtDemandSet().clear();
 		for (Installment installment : instList) {
-			APTaxCalculationInfo taxCalcInfo = (APTaxCalculationInfo)instTaxMap.get(installment);
+			APTaxCalculationInfo taxCalcInfo = (APTaxCalculationInfo) instTaxMap.get(installment);
 			dmdDetailSet = createAllDmdDetails(installment, instList, instTaxMap);
 			PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
 			ptDemand = new Ptdemand();
-			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable()); //shld be updated in create-edit mode
+			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable()); // shld be
+																		// updated
+																		// in
+																		// create-edit
+																		// mode
 			ptDemand.setCreateDate(new Date());
 			ptDemand.setEgInstallmentMaster(installment);
-			ptDemand.setEgDemandDetails(dmdDetailSet); // clear the exisitng and recreate the EgDemandDetails
+			ptDemand.setEgDemandDetails(dmdDetailSet); // clear the exisitng and
+														// recreate the
+														// EgDemandDetails
 			ptDemand.setIsHistory("N");
 			ptDemand.setEgptProperty(property);
 			ptDmdSet.add(ptDemand);
@@ -493,7 +450,7 @@ public class PropertyService  {
 
 			// In case of Property Type as (Open Plot,State Govt,Central Govt),
 			// set the alv to PTDemandCalculations
-			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 				ptDmdCalc.setAlv(taxCalcInfo.getTotalNetARV());
 			} else {
 				if (installment.equals(currentInstall)) {
@@ -510,7 +467,7 @@ public class PropertyService  {
 		LOGGER.debug("Exiting from createDemand");
 		return property;
 	}
-	
+
 	/**
 	 * Called to modify Property demands when the property is modified
 	 *
@@ -539,8 +496,10 @@ public class PropertyService  {
 
 		if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
-				/*|| !oldProperty.getPropertyDetail().getExtra_field1()
-						.equals(newProperty.getPropertyDetail().getExtra_field1())*/
+				/*
+				 * || !oldProperty.getPropertyDetail().getExtra_field1()
+				 * .equals(newProperty.getPropertyDetail().getExtra_field1())
+				 */
 				|| (isBigResidentialType(oldProperty.getPtDemandSet()) ^ isBigResidentialType(newProperty
 						.getPtDemandSet()))
 				|| oldProperty.getTaxExemptReason() == null
@@ -617,8 +576,8 @@ public class PropertyService  {
 		LOGGER.debug("Entered into getPropOccupatedDate, dateOfCompletion: " + dateOfCompletion);
 		Date occupationDate = null;
 		try {
-		        if(dateOfCompletion!=null && !"".equals(dateOfCompletion))
-			occupationDate = sdf.parse(dateOfCompletion);
+			if (dateOfCompletion != null && !"".equals(dateOfCompletion))
+				occupationDate = sdf.parse(dateOfCompletion);
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -629,8 +588,10 @@ public class PropertyService  {
 	private Set<EgDemandDetails> createAllDmdDetails(Installment installment, List<Installment> instList,
 			HashMap<Installment, TaxCalculationInfo> instTaxMap) {
 		LOGGER.debug("Entered into createAllDmdDeatails");
-		/*LOGGER.debug("createAllDmdDeatails: installment: " + installment + ", instList: " + instList + ", instTaxMap: "
-				+ instTaxMap);*/
+		/*
+		 * LOGGER.debug("createAllDmdDeatails: installment: " + installment +
+		 * ", instList: " + instList + ", instTaxMap: " + instTaxMap);
+		 */
 
 		Set<EgDemandDetails> dmdDetSet = new HashSet<EgDemandDetails>();
 
@@ -639,7 +600,8 @@ public class PropertyService  {
 					|| inst.getFromDate().equals(installment.getFromDate())) {
 
 				TaxCalculationInfo taxCalcInfo = instTaxMap.get(inst);
-				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(taxCalcInfo.getUnitTaxCalculationInfos());
+				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(taxCalcInfo
+						.getUnitTaxCalculationInfos());
 
 				for (Map.Entry<String, BigDecimal> tax : taxMap.entrySet()) {
 					EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(tax.getKey(), inst);
@@ -1199,8 +1161,7 @@ public class PropertyService  {
 				}
 			}
 		}
-		LOGGER.debug("completionDate: " + completionDate
-				+ "\nExiting from getLowestDtOfCompFloorWise");
+		LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
 		return completionDate;
 	}
 
@@ -1338,7 +1299,7 @@ public class PropertyService  {
 		}
 		newProperty.getPropertyDetail().setFloorDetails(floorProxy);
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-				propCompletionDate, objectionNum, objectionDate, null, null,null,null));
+				propCompletionDate, objectionNum, objectionDate, null, null, null, null));
 		if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
 			propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
 		}
@@ -1346,7 +1307,8 @@ public class PropertyService  {
 			propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
 		}
 		newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false,null,null,null,null);
+				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, null,
+				null, null, null);
 
 		newProperty.setStatus(STATUS_WORKFLOW);
 		// Setting the property state to the objection workflow initiator
@@ -1369,7 +1331,7 @@ public class PropertyService  {
 		newProperty.setBasicProperty(basicProperty);
 
 		newProperty.getPtDemandSet().clear();
-		createDemand(newProperty, propCompletionDate, false);
+		createDemand(newProperty, propCompletionDate);
 		createArrearsDemand(oldProperty, propCompletionDate, newProperty);
 		basicProperty.addProperty(newProperty);
 
@@ -1377,83 +1339,82 @@ public class PropertyService  {
 		LOGGER.debug("Exiting from initiateModifyWfForObjection");
 	}
 
-public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProperty2, String objectionNum, Date objectionDate,
-                User objWfInitiator, String docNumber, String modifyRsn) {
-       
-	BasicProperty basicProperty = basicProperty2;
+	public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProperty2, String objectionNum,
+			Date objectionDate, User objWfInitiator, String docNumber, String modifyRsn) {
 
-        basicProperty.setAllChangesCompleted(FALSE);
+		BasicProperty basicProperty = basicProperty2;
 
-        LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
-       
-        PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty());
-        PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
-        
-        LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty + ", newProperty: " + newProperty);
-        List floorProxy = new ArrayList();
-        String propUsageId = null;
-        String propOccId = null;
+		basicProperty.setAllChangesCompleted(FALSE);
 
-        Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty);
+		LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
 
-        for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
-                if (floor != null) {
-                        floorProxy.add(floor);
-                }
-        }
-        newProperty.getPropertyDetail().setFloorDetails(floorProxy);
-        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-                        propCompletionDate, objectionNum, objectionDate, null, null,null,null));
-        if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
-                propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
-        }
-        if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
-                propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
-        }
-        newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-                        .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, false,null,null,null,null);
-        
-        //TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
+		PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty());
+		PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
 
-/*        Set<PropertyOwnerInfo> newOwnerSet = new HashSet<PropertyOwnerInfo>();
-        for (PropertyOwnerInfo owner : oldProperty.getPropertyOwnerSet()) {
-            newOwnerSet.add(owner);
-        }
-        newProperty.setPropertyOwnerSet(newOwnerSet);*/
-        
-        newProperty.setStatus(STATUS_WORKFLOW);
- 
-     if (newProperty.getExtra_field2() == null || newProperty.getExtra_field2().equals("")) {
-                newProperty.setExtra_field2(NOTICE127);
-        }
-        newProperty.setExtra_field3(null);
-        newProperty.setExtra_field4(null);
-        newProperty.setExtra_field5(null);
+		LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty + ", newProperty: " + newProperty);
+		List floorProxy = new ArrayList();
+		String propUsageId = null;
+		String propOccId = null;
 
-        newProperty.setBasicProperty(basicProperty);
+		Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty);
 
-        newProperty.getPtDemandSet().clear();
-       // createDemand(newProperty, oldProperty, propCompletionDate, false);
-     //   createArrearsDemand(oldProperty, propCompletionDate, newProperty);
-        basicProperty.addProperty(newProperty);
+		for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
+			if (floor != null) {
+				floorProxy.add(floor);
+			}
+		}
+		newProperty.getPropertyDetail().setFloorDetails(floorProxy);
+		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
+				propCompletionDate, objectionNum, objectionDate, null, null, null, null));
+		if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
+			propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
+		}
+		if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
+			propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
+		}
+		newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
+				.getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, null,
+				null, null, null);
 
-       // basicProperty = basicPrpertyService.update(basicProperty);
-        if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-          //      createAttributeValues(newProperty, null);
-        }
-        
-        LOGGER.debug("Exiting from creteNewPropertyForObjectionWorkflow");
-        return newProperty;
-}
-	
+		// TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
+
+		/*
+		 * Set<PropertyOwnerInfo> newOwnerSet = new
+		 * HashSet<PropertyOwnerInfo>(); for (PropertyOwnerInfo owner :
+		 * oldProperty.getPropertyOwnerSet()) { newOwnerSet.add(owner); }
+		 * newProperty.setPropertyOwnerSet(newOwnerSet);
+		 */
+
+		newProperty.setStatus(STATUS_WORKFLOW);
+
+		if (newProperty.getExtra_field2() == null || newProperty.getExtra_field2().equals("")) {
+			newProperty.setExtra_field2(NOTICE127);
+		}
+		newProperty.setExtra_field3(null);
+		newProperty.setExtra_field4(null);
+		newProperty.setExtra_field5(null);
+
+		newProperty.setBasicProperty(basicProperty);
+
+		newProperty.getPtDemandSet().clear();
+		// createDemand(newProperty, oldProperty, propCompletionDate, false);
+		// createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+		basicProperty.addProperty(newProperty);
+
+		// basicProperty = basicPrpertyService.update(basicProperty);
+		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+			// createAttributeValues(newProperty, null);
+		}
+
+		LOGGER.debug("Exiting from creteNewPropertyForObjectionWorkflow");
+		return newProperty;
+	}
+
 	private Date getPropertyCompletionDate(BasicProperty basicProperty, PropertyImpl newProperty) {
 		LOGGER.debug("Entered into getPropertyCompletionDate - basicProperty.upicNo=" + basicProperty.getUpicNo());
 		Date propCompletionDate = null;
 		String propertyTypeMasterCode = newProperty.getPropertyDetail().getPropertyTypeMaster().getCode();
-		if (propertyTypeMasterCode.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)
-				|| ((propertyTypeMasterCode.equalsIgnoreCase(PROPTYPE_STATE_GOVT) || propertyTypeMasterCode
-						.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && newProperty.getPropertyDetail().getFloorDetails()
-						.isEmpty())) {
+		if (propertyTypeMasterCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			for (PropertyStatusValues propstatval : basicProperty.getPropertyStatusValuesSet()) {
 				if (propstatval.getExtraField1() != null) {
 					try {
@@ -1484,40 +1445,31 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 	 * @param oldProp
 	 * @return @PropertyImpl
 	 */
-	/*public Property createOwnersForNew(Property newProp, Property oldProp) {
-		LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; " + oldProp);
-		Address oldOwnAddr = null;
-		for (PropertyOwner owner : oldProp.getPropertyOwnerSet()) {
-			PropertyOwner newOwner = new PropertyOwner();
-			String ownerName = owner.getName();
-			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
-			newOwner.setName(ownerName);
-			newOwner.setOrderNo(owner.getOrderNo());
-			for (Object address : owner.getAddress()) {
-				oldOwnAddr = (Address) address;
-				Address ownerAddr = new PropertyAddress();
-				String addrStr1 = oldOwnAddr.getLandmark();
-				String addrStr2 = oldOwnAddr.getAreaLocalitySector();
-				if (addrStr1 != null && !addrStr1.isEmpty()) {
-					addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
-				}
-				if (addrStr2 != null && !addrStr2.isEmpty()) {
-					addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
-				}
-				ownerAddr.setType(oldOwnAddr.getType());
-				ownerAddr.setLandmark(addrStr1);
-				ownerAddr.setAreaLocalitySector(addrStr2);
-				ownerAddr.setHouseNoBldgApt(oldOwnAddr.getHouseNoBldgApt());
-				if (oldOwnAddr.getPinCode() != null && !oldOwnAddr.getPinCode().toString().isEmpty()) {
-					ownerAddr.setPinCode(oldOwnAddr.getPinCode());
-				}
-				newOwner.addAddress(ownerAddr);
-			}
-			newProp.addPropertyOwners(newOwner);
-		}
-		LOGGER.debug("Exiting from createOwnersForNew");
-		return newProp;
-	}*/
+	/*
+	 * public Property createOwnersForNew(Property newProp, Property oldProp) {
+	 * LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp +
+	 * ", OldProp; " + oldProp); Address oldOwnAddr = null; for (PropertyOwner
+	 * owner : oldProp.getPropertyOwnerSet()) { PropertyOwner newOwner = new
+	 * PropertyOwner(); String ownerName = owner.getName(); ownerName =
+	 * propertyTaxUtil.antisamyHackReplace(ownerName);
+	 * newOwner.setName(ownerName); newOwner.setOrderNo(owner.getOrderNo()); for
+	 * (Object address : owner.getAddress()) { oldOwnAddr = (Address) address;
+	 * Address ownerAddr = new PropertyAddress(); String addrStr1 =
+	 * oldOwnAddr.getLandmark(); String addrStr2 =
+	 * oldOwnAddr.getAreaLocalitySector(); if (addrStr1 != null &&
+	 * !addrStr1.isEmpty()) { addrStr1 =
+	 * propertyTaxUtil.antisamyHackReplace(addrStr1); } if (addrStr2 != null &&
+	 * !addrStr2.isEmpty()) { addrStr2 =
+	 * propertyTaxUtil.antisamyHackReplace(addrStr2); }
+	 * ownerAddr.setType(oldOwnAddr.getType()); ownerAddr.setLandmark(addrStr1);
+	 * ownerAddr.setAreaLocalitySector(addrStr2);
+	 * ownerAddr.setHouseNoBldgApt(oldOwnAddr.getHouseNoBldgApt()); if
+	 * (oldOwnAddr.getPinCode() != null &&
+	 * !oldOwnAddr.getPinCode().toString().isEmpty()) {
+	 * ownerAddr.setPinCode(oldOwnAddr.getPinCode()); }
+	 * newOwner.addAddress(ownerAddr); } newProp.addPropertyOwners(newOwner); }
+	 * LOGGER.debug("Exiting from createOwnersForNew"); return newProp; }
+	 */
 
 	public PersistenceService getPropPerServ() {
 		return propPerServ;
@@ -1613,11 +1565,13 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 		LOGGER.debug("Entered into populateTaxesForVoucherCreation, property: " + property);
 		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
 		if ((instTaxMap != null)) {
-/*			for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec : instTaxMap.entrySet()) {
-				Map<String, BigDecimal> taxMap = taxCalculator.getMiscTaxesForProp(instTaxRec.getValue()
-						.getConsolidatedUnitTaxCalculationInfo());
-				amounts.put(instTaxRec.getKey(), taxMap);
-			}*/
+			/*
+			 * for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec :
+			 * instTaxMap.entrySet()) { Map<String, BigDecimal> taxMap =
+			 * taxCalculator.getMiscTaxesForProp(instTaxRec.getValue()
+			 * .getConsolidatedUnitTaxCalculationInfo());
+			 * amounts.put(instTaxRec.getKey(), taxMap); }
+			 */
 		} else {
 			amounts = prepareRsnWiseDemandForOldProp(property);
 		}
@@ -1960,92 +1914,91 @@ public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProp
 		basicProperty.addProperty(newProperty);
 
 		basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null,null,null));
+				getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null, null, null));
 
 		basicProperty = basicPropertyService.update(basicProperty);
 		LOGGER.debug("Exiting from initiateDataEntryWorkflow");
 
 	}
-	public PropertyImpl changePropertyDetail(PropertyImpl modProperty, PropertyDetail propDetail,
-                Integer numOfFloors) {
 
-        LOGGER.debug("Entered into changePropertyDetail, Property is Vacant Land");
+	public PropertyImpl changePropertyDetail(PropertyImpl modProperty, PropertyDetail propDetail, Integer numOfFloors) {
 
-        PropertyDetail propertyDetail = modProperty.getPropertyDetail();
+		LOGGER.debug("Entered into changePropertyDetail, Property is Vacant Land");
 
-        propDetail.setSitalArea(propertyDetail.getSitalArea());
-        propDetail.setTotalBuiltupArea(propertyDetail.getTotalBuiltupArea());
-        propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
-        propDetail.setPlinthArea(propertyDetail.getPlinthArea());
-        propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
-        propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
-        propDetail.setFieldVerified(propertyDetail.getFieldVerified());
-        propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
-        propDetail.setFloorDetails(propertyDetail.getFloorDetails());
-        propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
-        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
-        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
-        propDetail.setNo_of_floors(numOfFloors);
-        propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
-        propDetail.setCompletion_year(propertyDetail.getCompletion_year());
-        propDetail.setEffective_date(propertyDetail.getEffective_date());
-        propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
-        propDetail.setProperty(propertyDetail.getProperty());
-        propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
-        propDetail.setPropertyTypeMaster(propertyDetail.getPropertyTypeMaster());
-        propDetail.setPropertyType(propertyDetail.getPropertyType());
-        propDetail.setInstallment(propertyDetail.getInstallment());
-        propDetail.setPropertyOccupation(propertyDetail.getPropertyOccupation());
-        propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
-        propDetail.setComZone(propertyDetail.getComZone());
-        propDetail.setCornerPlot(propertyDetail.getCornerPlot());
+		PropertyDetail propertyDetail = modProperty.getPropertyDetail();
 
-        if (numOfFloors == 0) {
-                propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
-        } else {
-                propDetail.setPropertyUsage(null);
-        }
+		propDetail.setSitalArea(propertyDetail.getSitalArea());
+		propDetail.setTotalBuiltupArea(propertyDetail.getTotalBuiltupArea());
+		propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
+		propDetail.setPlinthArea(propertyDetail.getPlinthArea());
+		propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
+		propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
+		propDetail.setFieldVerified(propertyDetail.getFieldVerified());
+		propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
+		propDetail.setFloorDetails(propertyDetail.getFloorDetails());
+		propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
+		propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
+		propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+		propDetail.setNo_of_floors(numOfFloors);
+		propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
+		propDetail.setCompletion_year(propertyDetail.getCompletion_year());
+		propDetail.setEffective_date(propertyDetail.getEffective_date());
+		propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
+		propDetail.setProperty(propertyDetail.getProperty());
+		propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
+		propDetail.setPropertyTypeMaster(propertyDetail.getPropertyTypeMaster());
+		propDetail.setPropertyType(propertyDetail.getPropertyType());
+		propDetail.setInstallment(propertyDetail.getInstallment());
+		propDetail.setPropertyOccupation(propertyDetail.getPropertyOccupation());
+		propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
+		propDetail.setComZone(propertyDetail.getComZone());
+		propDetail.setCornerPlot(propertyDetail.getCornerPlot());
 
-        propDetail.setExtra_field1(propertyDetail.getExtra_field1());
-        propDetail.setExtra_field2(propertyDetail.getExtra_field2());
-        propDetail.setExtra_field3(propertyDetail.getExtra_field3());
-        propDetail.setExtra_field4(propertyDetail.getExtra_field4());
-        propDetail.setExtra_field5(propertyDetail.getExtra_field5());
-        propDetail.setExtra_field6(propertyDetail.getExtra_field6());
-        propDetail.setManualAlv(propertyDetail.getManualAlv());
-        propDetail.setOccupierName(propertyDetail.getOccupierName());
+		if (numOfFloors == 0) {
+			propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
+		} else {
+			propDetail.setPropertyUsage(null);
+		}
 
-        modProperty.setPropertyDetail(propDetail);
+		propDetail.setExtra_field1(propertyDetail.getExtra_field1());
+		propDetail.setExtra_field2(propertyDetail.getExtra_field2());
+		propDetail.setExtra_field3(propertyDetail.getExtra_field3());
+		propDetail.setExtra_field4(propertyDetail.getExtra_field4());
+		propDetail.setExtra_field5(propertyDetail.getExtra_field5());
+		propDetail.setExtra_field6(propertyDetail.getExtra_field6());
+		propDetail.setManualAlv(propertyDetail.getManualAlv());
+		propDetail.setOccupierName(propertyDetail.getOccupierName());
 
-        LOGGER.debug("Exiting from changePropertyDetail");
-        return modProperty;
+		modProperty.setPropertyDetail(propDetail);
+
+		LOGGER.debug("Exiting from changePropertyDetail");
+		return modProperty;
 	}
-	
+
 	public void setPtNumberGenerator(PropertyTaxNumberGenerator ptNumberGenerator) {
 		this.ptNumberGenerator = ptNumberGenerator;
 	}
-	
+
 	public List<DocumentType> getPropertyModificationDocumentTypes() {
-		return documentTypePersistenceService.findAllByNamedQuery(
-				DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, TransactionType.MODIFY);
+		return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
+				TransactionType.MODIFY);
 	}
-	
+
 	public void processAndStoreDocument(List<Document> documents) {
 		documents.forEach(document -> {
 			if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
 				int fileCount = 0;
 				for (File file : document.getUploads()) {
-					FileStoreMapper fileStore = fileStoreService.store(file, document
-							.getUploadsFileName().get(fileCount), document.getUploadsContentType()
-							.get(fileCount++), "PTIS");
+					FileStoreMapper fileStore = fileStoreService.store(file,
+							document.getUploadsFileName().get(fileCount),
+							document.getUploadsContentType().get(fileCount++), "PTIS");
 					document.getFiles().add(fileStore);
 				}
 			}
-			document.setType(documentTypePersistenceService.load(document.getType().getId(),
-					DocumentType.class));
+			document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
 		});
 	}
-	
+
 	public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
 		return excessCollAmtMap;
 	}

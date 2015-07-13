@@ -207,18 +207,6 @@ public class ViewPropertyAction extends BaseFormAction {
 		return roleNameList.toString().toUpperCase();
 	}
 
-	public String getAmenitiesDtls(String mstrCode) {
-		return CommonServices.getAmenitiesDtls(mstrCode);
-	}
-
-	public String getUnitTypeCategory(String unitTypeCode, String categoryCode) {
-		return CommonServices.getUnitTypeCategory(unitTypeCode, categoryCode);
-	}
-
-	public String getWaterMeterDtls(String mstrCode) {
-		return CommonServices.getWaterMeterDtls(mstrCode);
-	}
-
 	public String getFloorNoStr(Integer floorNo) {
 		return CommonServices.getFloorStr(floorNo);
 	}

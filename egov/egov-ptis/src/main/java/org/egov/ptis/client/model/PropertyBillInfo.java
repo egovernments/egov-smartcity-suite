@@ -52,10 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERA
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTGOVT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPENPLOT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
@@ -120,7 +118,7 @@ public class PropertyBillInfo {
 		this.basicProperty = basicProperty;
 		this.billNo = billNo;
 		String propType = getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
-		if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
+		if (propType != null && OWNERSHIP_TYPE_CENTRAL_GOVT_50.equals(propType)) {
 			isCentralGovtProp = 1;
 		}
 
@@ -379,9 +377,9 @@ public class PropertyBillInfo {
 
 			String propType = this.taxCalcInfo.getPropertyType();
 
-			if (propType.equals(PROPTYPE_RESD_STR)) {
+			if (propType.equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE)) {
 				return this.taxCalcInfo.getTotalNetARV();
-			} else if (propType.equals(PROPTYPE_MIXED_STR)) {
+			} else {
 				resALVTotal = sumALVOnUnitUsage(USAGES_FOR_RESD);
 			}
 		}
@@ -396,9 +394,9 @@ public class PropertyBillInfo {
 
 			String propType = this.taxCalcInfo.getPropertyType();
 
-			if (propType.equals(PropertyTaxConstants.PROPTYPE_NONRESD_STR)) {
+			if (propType.equals(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE)) {
 				return this.taxCalcInfo.getTotalNetARV();
-			} else if (propType.equals(PROPTYPE_MIXED_STR)) {
+			} else {
 				nonResALVTotal = sumALVOnUnitUsage(USAGES_FOR_NON_RESD);
 			}
 		}
@@ -441,9 +439,9 @@ public class PropertyBillInfo {
 
 			String propType = this.taxCalcInfo.getPropertyType();
 
-			if (propType.equals(PROPTYPE_MIXED_STR)) {
+			if (!propType.equals(OWNERSHIP_TYPE_VAC_LAND)) {
 				openPlotTotalALV = sumALVOnUnitUsage(USAGES_FOR_OPENPLOT);
-			} else if (propType.equals(PROPTYPE_OPENPLOT_STR)) {
+			} else {
 				openPlotTotalALV = this.taxCalcInfo.getTotalNetARV();
 			}
 		}

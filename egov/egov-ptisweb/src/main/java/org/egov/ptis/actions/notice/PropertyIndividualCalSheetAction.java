@@ -46,9 +46,8 @@ import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRALGOVT_BUILDING_ALV_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATEGOVT_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMAND_CALSHEET;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
@@ -117,16 +116,14 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNum);
 			Property property = basicProperty.getProperty();
 			ReportRequest reportInput = null;
-			if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
-					.equals(PROPTYPE_STATE_GOVT)
+			if (property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_STATE_GOVT)
 					|| property.getPropertyDetail().getPropertyTypeMaster().getCode()
-							.equals(PROPTYPE_CENTRAL_GOVT)) {
+							.equals(OWNERSHIP_TYPE_CENTRAL_GOVT_50)) {
 				reportInput = getReportInputDataForGovtProps(property);
 			} else {
 				reportInput = getReportInputData(property);
 			}
-			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput),
-					getSession());
+			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
 			LOGGER.debug("Exit from generateCalSheet method");
 			return "calsheet";
 		} catch (Exception e) {
@@ -137,14 +134,12 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 
 	private ReportRequest getReportInputDataForGovtProps(Property property) {
 		ReportRequest reportInput = null;
-		List<UnitCalculationDetail> unitCalculationDetails = getUniqueALVUnitCalcDetails(property,
-				true);
+		List<UnitCalculationDetail> unitCalculationDetails = getUniqueALVUnitCalcDetails(property, true);
 
 		GovtPropertyInfo govtPropInfo = prepareGovtPropInfo(unitCalculationDetails,
 				PropertyCalSheetInfo.createCalSheetInfo(property));
 
-		reportInput = new ReportRequest(REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS, govtPropInfo,
-				null);
+		reportInput = new ReportRequest(REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS, govtPropInfo, null);
 		reportInput.setPrintDialogOnOpenReport(false);
 		return reportInput;
 	}
@@ -165,8 +160,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			govtPropertyInfo.setPropertyType(calSheetInfo.getPropertyType());
 
 			govtPropTaxCalInfo = prepareGovtPropTaxCalTnfo(unitCalcDetail, calSheetInfo);
-			govtPropTaxCalInfo
-					.setEffectiveDate(formatter.format(unitCalcDetail.getOccupancyDate()));
+			govtPropTaxCalInfo.setEffectiveDate(formatter.format(unitCalcDetail.getOccupancyDate()));
 			govtPropertyInfo.addGovtPropTaxCalInfo(govtPropTaxCalInfo);
 		}
 
@@ -187,7 +181,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			govtPropTaxCalInfo.setPropertyArea(NOT_AVAILABLE);
 		}
 
-		if (calSheetInfo.getPropertyType().equalsIgnoreCase(PROPTYPE_STATEGOVT_STR)) {
+		if (calSheetInfo.getPropertyType().equalsIgnoreCase(OWNERSHIP_TYPE_STATE_GOVT)) {
 			govtPropTaxCalInfo.setAlvPercentage(STATEGOVT_BUILDING_ALV_PERCENTAGE);
 			govtPropTaxCalInfo.setAmenities(NOT_AVAILABLE);
 		} else {
@@ -208,17 +202,15 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		return taxCalInfoMap;
 	}
 
-	private List<UnitCalculationDetail> getUniqueALVUnitCalcDetails(Property property,
-			boolean isCompareAlv) {
+	private List<UnitCalculationDetail> getUniqueALVUnitCalcDetails(Property property, boolean isCompareAlv) {
 		LOGGER.debug("Entered into getUniqueALVUnitCalcDetails, property=" + property);
 
 		String query = "from UnitCalculationDetail ucd join fetch ucd.unitAreaCalculationDetails "
-				+ "where ucd.property = ? "
-				+ "order by ucd.unitNumber, ucd.installmentFromDate, ucd.fromDate";
+				+ "where ucd.property = ? " + "order by ucd.unitNumber, ucd.installmentFromDate, ucd.fromDate";
 
 		@SuppressWarnings("unchecked")
-		List<UnitCalculationDetail> unitCalculationDetails = HibernateUtil.getCurrentSession()
-				.createQuery(query).setEntity(0, property).list();
+		List<UnitCalculationDetail> unitCalculationDetails = HibernateUtil.getCurrentSession().createQuery(query)
+				.setEntity(0, property).list();
 
 		List<UnitCalculationDetail> uniqueALVUnitCalcDetails = new ArrayList<UnitCalculationDetail>();
 		UnitCalculationDetail prevUnitCalcDetail = null;
@@ -234,8 +226,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 							uniqueALVUnitCalcDetails.add(new UnitCalculationDetail(unitCalcDetail));
 						}
 					} else {
-						if (prevUnitCalcDetail.getBuildingCost().compareTo(
-								unitCalcDetail.getBuildingCost()) != 0) {
+						if (prevUnitCalcDetail.getBuildingCost().compareTo(unitCalcDetail.getBuildingCost()) != 0) {
 							uniqueALVUnitCalcDetails.add(new UnitCalculationDetail(unitCalcDetail));
 						}
 					}
@@ -246,8 +237,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 
 		}
 
-		LOGGER.debug("Entered into getUniqueALVUnitCalcDetails, uniqueALVUnitCalcDetails="
-				+ uniqueALVUnitCalcDetails);
+		LOGGER.debug("Entered into getUniqueALVUnitCalcDetails, uniqueALVUnitCalcDetails=" + uniqueALVUnitCalcDetails);
 		return uniqueALVUnitCalcDetails;
 	}
 
@@ -259,8 +249,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		Map<Installment, TaxCalculationInfo> taxCalInfoMap = null; // propertyTaxUtil.getTaxCalInfoMap(ptDmdSet);
 		// Map<Installment, TaxCalculationInfo> taxCalInfoList =
 		// getTaxCalInfoList(taxCalInfoMap);
-		List<UnitCalculationDetail> unitCalculationDetails = getUniqueALVUnitCalcDetails(property,
-				true);
+		List<UnitCalculationDetail> unitCalculationDetails = getUniqueALVUnitCalcDetails(property, true);
 		UnitTaxCalculationInfo unitTaxCalcInfo = null;
 
 		Map<Integer, Set<UnitAreaCalculationDetail>> unitCalcDetails = new TreeMap<Integer, Set<UnitAreaCalculationDetail>>();
@@ -268,17 +257,16 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		for (UnitCalculationDetail unitCalcDetail : unitCalculationDetails) {
 			ConsolidatedUnitTaxCalReport consolidatedUnitTaxCalReport = new ConsolidatedUnitTaxCalReport();
 
+			consolidatedUnitTaxCalReport.setAnnualLettingValue(roundOffTwo(unitCalcDetail.getAlv()));
 			consolidatedUnitTaxCalReport
-					.setAnnualLettingValue(roundOffTwo(unitCalcDetail.getAlv()));
-			consolidatedUnitTaxCalReport.setMonthlyRent(unitCalcDetail.getMonthlyRent().compareTo(
-					BigDecimal.ZERO) == 0 ? null : unitCalcDetail.getMonthlyRent());
+					.setMonthlyRent(unitCalcDetail.getMonthlyRent().compareTo(BigDecimal.ZERO) == 0 ? null
+							: unitCalcDetail.getMonthlyRent());
 
-			if (isNotNull(unitCalcDetail.getAlv())
-					&& PropertyTaxUtil.isNotZero(unitCalcDetail.getMonthlyRent())) {
-				consolidatedUnitTaxCalReport.setAnnualRentBeforeDeduction(unitCalcDetail
-						.getMonthlyRent().multiply(TOTAL_MONTHS));
-				BigDecimal dedAmt = consolidatedUnitTaxCalReport.getAnnualRentBeforeDeduction()
-						.divide(new BigDecimal(10));
+			if (isNotNull(unitCalcDetail.getAlv()) && PropertyTaxUtil.isNotZero(unitCalcDetail.getMonthlyRent())) {
+				consolidatedUnitTaxCalReport.setAnnualRentBeforeDeduction(unitCalcDetail.getMonthlyRent().multiply(
+						TOTAL_MONTHS));
+				BigDecimal dedAmt = consolidatedUnitTaxCalReport.getAnnualRentBeforeDeduction().divide(
+						new BigDecimal(10));
 				consolidatedUnitTaxCalReport.setDeductionAmount(roundOffTwo(dedAmt));
 			}
 
@@ -287,40 +275,35 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			if (yearformatter.format(unitCalcDetail.getInstallmentFromDate()).equals(
 					yearformatter.format(unitCalcDetail.getOccupancyDate()))) {
 
-				consolidatedUnitTaxCalReport.setInstDate(DateUtils
-						.getDefaultFormattedDate(unitCalcDetail.getOccupancyDate()));
+				consolidatedUnitTaxCalReport.setInstDate(DateUtils.getDefaultFormattedDate(unitCalcDetail
+						.getOccupancyDate()));
 			} else {
-				consolidatedUnitTaxCalReport.setInstDate(DateUtils
-						.getDefaultFormattedDate(unitCalcDetail.getInstallmentFromDate()));
+				consolidatedUnitTaxCalReport.setInstDate(DateUtils.getDefaultFormattedDate(unitCalcDetail
+						.getInstallmentFromDate()));
 			}
 
-			consolidatedUnitTaxCalReport
-					.setUnitTaxCalInfo(prepareUnitCalculationDetails(unitCalcDetail));
+			consolidatedUnitTaxCalReport.setUnitTaxCalInfo(prepareUnitCalculationDetails(unitCalcDetail));
 
 			consolidatedUnitTaxCalReportList.add(consolidatedUnitTaxCalReport);
 
 		}
 
-		PropertyCalSheetInfo propertyCalSheetinfo = PropertyCalSheetInfo
-				.createCalSheetInfo(property);
+		PropertyCalSheetInfo propertyCalSheetinfo = PropertyCalSheetInfo.createCalSheetInfo(property);
 		propertyCalSheetinfo.setConsolidatedUnitTaxCalReportList(consolidatedUnitTaxCalReportList);
 
-		ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DEMAND_CALSHEET,
-				propertyCalSheetinfo, null);
+		ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DEMAND_CALSHEET, propertyCalSheetinfo, null);
 		reportInput.setPrintDialogOnOpenReport(false);
 		LOGGER.debug("Exit from getReportInputData method");
 		return reportInput;
 	}
 
-	private List<UnitTaxCalculationInfo> prepareUnitCalculationDetails(
-			UnitCalculationDetail unitCalcDetail) {
+	private List<UnitTaxCalculationInfo> prepareUnitCalculationDetails(UnitCalculationDetail unitCalcDetail) {
 		List<UnitTaxCalculationInfo> unitTaxes = new ArrayList<UnitTaxCalculationInfo>();
 		Map<String, Set<UnitAreaCalculationDetail>> unitAreaDetails = new TreeMap<String, Set<UnitAreaCalculationDetail>>();
 
 		String unitId = null;
 
-		for (UnitAreaCalculationDetail unitAreaCalcDetail : unitCalcDetail
-				.getUnitAreaCalculationDetails()) {
+		for (UnitAreaCalculationDetail unitAreaCalcDetail : unitCalcDetail.getUnitAreaCalculationDetails()) {
 			unitId = unitAreaCalcDetail.getUnitIdentifier();
 
 			if (isNull(unitAreaDetails.get(unitId))) {
@@ -360,16 +343,15 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 				floorNumberString = FLOOR_MAP.get(unitArea.getFloorNumber());
 
 				if (i == 0) {
-					unitTaxInfo.setFloorNumber(isNull(floorNumberString) ? unitArea
-							.getFloorNumber() : floorNumberString);
+					unitTaxInfo.setFloorNumber(isNull(floorNumberString) ? unitArea.getFloorNumber()
+							: floorNumberString);
 					unitTaxInfo.setFloorNumber(isNull(floorNumberString) ? null : floorNumberString);
 					unitTaxInfo.setUnitOccupation(unitArea.getUnitOccupation());
 
-					manualALV = unitArea.getManualALV().compareTo(BigDecimal.ZERO) == 0 ? null
-							: roundOffTwo(unitArea.getManualALV()).toString();
+					manualALV = unitArea.getManualALV().compareTo(BigDecimal.ZERO) == 0 ? null : roundOffTwo(
+							unitArea.getManualALV()).toString();
 
-					unitTaxInfo.setBaseRatePerSqMtPerMonth(roundOffTwo(unitArea
-							.getBaseRentPerSqMtr()));
+					unitTaxInfo.setBaseRatePerSqMtPerMonth(roundOffTwo(unitArea.getBaseRentPerSqMtr()));
 				}
 
 				totalUnitArea = totalUnitArea.add(unitArea.getTaxableArea());
@@ -390,8 +372,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		return unitTaxes;
 	}
 
-	private class UnitAreaCalculationDetailComparator implements
-			Comparator<UnitAreaCalculationDetail> {
+	private class UnitAreaCalculationDetailComparator implements Comparator<UnitAreaCalculationDetail> {
 
 		@Override
 		public int compare(UnitAreaCalculationDetail o1, UnitAreaCalculationDetail o2) {
@@ -412,13 +393,11 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 
 	}
 
-	private Map<Installment, TaxCalculationInfo> getTaxCalInfoList(
-			Map<Installment, TaxCalculationInfo> taxCalInfoMap) {
+	private Map<Installment, TaxCalculationInfo> getTaxCalInfoList(Map<Installment, TaxCalculationInfo> taxCalInfoMap) {
 		Map<Installment, TaxCalculationInfo> taxCalInfoList = new TreeMap<Installment, TaxCalculationInfo>();
 		TaxCalculationInfo firstInstTxCalInfo = null;
 		TaxCalculationInfo prevTaxCalInfo = null;
-		Boolean isPropertyModified = PropertyTaxUtil
-				.isPropertyModified(basicProperty.getProperty());
+		Boolean isPropertyModified = PropertyTaxUtil.isPropertyModified(basicProperty.getProperty());
 		int i = 0;
 
 		for (Map.Entry<Installment, TaxCalculationInfo> txCalInfo : taxCalInfoMap.entrySet()) {

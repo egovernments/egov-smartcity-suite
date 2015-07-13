@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTYPE_CODE_TO_STR;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +88,7 @@ public class PropertyCalSheetInfo {
 	}
 
 	public String getPropertyType() {
-		return PROPERTYTYPE_CODE_TO_STR.get(activeProperty.getPropertyDetail().getPropertyTypeMaster().getCode());
+		return "";
 	}
 
 	public String getArea() {

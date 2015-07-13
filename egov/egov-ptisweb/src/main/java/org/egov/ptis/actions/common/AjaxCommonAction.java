@@ -44,10 +44,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -99,23 +99,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-/*
- * @Results({ @Result(name = "AJAX_RESULT", type = "Stream", location =
- * "returnStream", params = { "contentType", "application/json" }) })
- */
 @Transactional(readOnly = true)
 @Namespace("/common")
 @ResultPath("/WEB-INF/jsp/common/")
-@Results({
-    @Result(name="ward",location="ajaxCommon-ward.jsp") ,
-    @Result(name="street",location="ajaxCommon-street.jsp")  ,
-    @Result(name="area",location="ajaxCommon-area.jsp") ,
-    @Result(name="category",location="ajaxCommon-category.jsp")  ,
-    @Result(name="structural",location="ajaxCommon-structural.jsp"),
-    @Result(name="designationList",location="ajaxCommon-designationList.jsp"),
-    @Result(name="userList",location="ajaxCommon-userList.jsp")
-   /* @Result(name = "AJAX_RESULT", type = "Stream", location = "returnStream", params = { "contentType", "application/json" })*/
-  })
+@Results({ @Result(name = "ward", location = "ajaxCommon-ward.jsp"),
+		@Result(name = "street", location = "ajaxCommon-street.jsp"),
+		@Result(name = "area", location = "ajaxCommon-area.jsp"),
+		@Result(name = "category", location = "ajaxCommon-category.jsp"),
+		@Result(name = "structural", location = "ajaxCommon-structural.jsp"),
+		@Result(name = "designationList", location = "ajaxCommon-designationList.jsp"),
+		@Result(name = "userList", location = "ajaxCommon-userList.jsp"),
+		@Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp") })
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -127,7 +121,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private static final String RESULT_PART_NUMBER = "partNumber";
 	private static final String WARD = "ward";
 	private static final String AREA = "area";
-	
+
 	private Long zoneId;
 	private Long wardId;
 	private Long areaId;
@@ -154,17 +148,18 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	private HttpServletResponse response;
 	private List<Assignment> assignmentList;
 	private String currentStatusCode;
-	
+
 	@Autowired
 	private CategoryDao categoryDAO;
 	@Autowired
-    private BoundaryService boundaryService;
+	private BoundaryService boundaryService;
 	@Autowired
 	private DesignationService designationService;
 	@Autowired
 	private AssignmentService assignmentService;
 	@Autowired
 	private SecurityUtils securityUtils;
+
 	@Override
 	public Object getModel() {
 		return null;
@@ -176,13 +171,14 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		LOGGER.debug("Entered into wardByZone, zoneId: " + zoneId);
 		wardList = new ArrayList<Boundary>();
 		wardList = getPersistenceService()
-				.findAllBy("from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
+				.findAllBy(
+						"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
 						"Ward", getZoneId());
 		LOGGER.debug("Exiting from wardByZone, No of wards in zone: " + zoneId + "are "
 				+ ((wardList != null) ? wardList : ZERO));
 		return WARD;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Action(value = "/ajaxCommon-areaByWard")
 	public String areaByWard() {
@@ -202,24 +198,24 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public String streetByWard() {
 		LOGGER.debug("Entered into streetByWard, wardId: " + wardId);
 		streetList = new ArrayList<Boundary>();
-		streetList = getPersistenceService().findAllBy("select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ",getWardId());
+		streetList = getPersistenceService().findAllBy(
+				"select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ", getWardId());
 		LOGGER.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
 				+ ((streetList != null) ? streetList : ZERO));
 		return "street";
 	}
-	
-	
+
 	@Action(value = "/ajaxCommon-blockByLocality")
 	public void blockByLocality() throws IOException, NoSuchObjectException {
 		LOGGER.debug("Entered into blockByLocality, locality: " + locality);
-		
-		//streetList = new ArrayList<Boundary>(0);
-		
-		Boundary blockBoundary = (Boundary) getPersistenceService()
-				.find("select CH.parent from CrossHeirarchyImpl CH where CH.child.id = ? ", getLocality());
+
+		// streetList = new ArrayList<Boundary>(0);
+
+		Boundary blockBoundary = (Boundary) getPersistenceService().find(
+				"select CH.parent from CrossHeirarchyImpl CH where CH.child.id = ? ", getLocality());
 		Boundary wardBoundary = blockBoundary.getParent();
 		Boundary zoneBoundary = wardBoundary.getParent();
-		
+
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("zoneName", zoneBoundary.getName());
 		jsonObject.put("wardName", wardBoundary.getName());
@@ -228,8 +224,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		jsonObject.put("wardId", wardBoundary.getId());
 		jsonObject.put("blockId", blockBoundary.getId());
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(jsonObject.toString(), response.getWriter());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		IOUtils.write(jsonObject.toString(), response.getWriter());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -241,59 +237,63 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 					securityUtils.getCurrentUser().getId()).getDesignation();
 			if (designation.getName().equals(ASSISTANT_DESGN)) {
 				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
-			} else if (designation.getName().equals(REVENUE_OFFICER_DESGN)){
+			} else if (designation.getName().equals(REVENUE_OFFICER_DESGN)) {
 				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
 			}
 		}
-		
+
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
 				+ ((designationMasterList != null) ? designationMasterList.size() : ZERO));
 
 		return "designationList";
 	}
-	@SuppressWarnings("unchecked")
-        @Action(value = "/ajaxCommon-populateDesignationsByDeptForRevisionPetition")
-        public String populateDesignationsByDeptForRevisionPetition() {
-                LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId +currentStatusCode); 
-                if (departmentId != null) {
-                        //designationMasterList = designationService.getAllDesignationByDepartment(departmentId,new Date());
-                        Designation designation = assignmentService.getPrimaryAssignmentForUser(
-                                        securityUtils.getCurrentUser().getId()).getDesignation();
-                        if(currentStatusCode==null || "".equals(currentStatusCode))
-                        {
-                            designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
-                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_CREATED))
-                        {
-                            designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
-                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED))
-                        {
-                            designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
-                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED))
-                        {
-                            designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
-                        }else  if(currentStatusCode!=null && !"".equals(currentStatusCode) && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED))
-                        {
-                            designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
-                        } 
-                        else if (designation.getName().equals(ASSISTANT_DESGN)) {
-                                designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
-                        } else if (designation.getName().equals(REVENUE_OFFICER_DESGN)){
-                                designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
-                        }
-                }
-                
-                LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
-                                + ((designationMasterList != null) ? designationMasterList.size() : ZERO));
 
-                return "designationList";
-        }
+	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-populateDesignationsByDeptForRevisionPetition")
+	public String populateDesignationsByDeptForRevisionPetition() {
+		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId + currentStatusCode);
+		if (departmentId != null) {
+			// designationMasterList =
+			// designationService.getAllDesignationByDepartment(departmentId,new
+			// Date());
+			Designation designation = assignmentService.getPrimaryAssignmentForUser(
+					securityUtils.getCurrentUser().getId()).getDesignation();
+			if (currentStatusCode == null || "".equals(currentStatusCode)) {
+				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_CREATED)) {
+				designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
+			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED)) {
+				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
+			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED)) {
+				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED)) {
+				designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
+			} else if (designation.getName().equals(ASSISTANT_DESGN)) {
+				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
+			} else if (designation.getName().equals(REVENUE_OFFICER_DESGN)) {
+				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
+			}
+		}
+
+		LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
+				+ ((designationMasterList != null) ? designationMasterList.size() : ZERO));
+
+		return "designationList";
+	}
+
 	@Action(value = "/ajaxCommon-populateUsersByDeptAndDesignation")
 	public String populateUsersByDeptAndDesignation() {
 		LOGGER.debug("Entered into populateUsersByDesignation : designationId : " + designationId);
 		if (designationId != null && departmentId != null) {
-			assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId,new Date());
+			assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(departmentId,
+					designationId, new Date());
 		}
-		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : " + ((userList != null) ? userList : ZERO));
+		LOGGER.debug("Exiting from populateUsersByDesignation : No of users : "
+				+ ((userList != null) ? userList : ZERO));
 		return "userList";
 	}
 
@@ -301,13 +301,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	@Action(value = "/ajaxCommon-categoryByRateUsageAndStructClass")
 	public String categoryByRateUsageAndStructClass() {
 
-		LOGGER.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: "
-				+ usageFactor + ", Structure Classification: " + structFactor);
+		LOGGER.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: " + usageFactor
+				+ ", Structure Classification: " + structFactor);
 
 		PropertyUsage propUsage = (PropertyUsage) getPersistenceService().find(
 				"from PropertyUsage pu where pu.usageName=?", usageFactor);
-		StructureClassification structureClass = (StructureClassification) getPersistenceService()
-				.find("from StructureClassification sc where sc.typeName=?", structFactor);
+		StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
+				"from StructureClassification sc where sc.typeName=?", structFactor);
 
 		if (propUsage != null && structureClass != null && revisedRate != null) {
 			Criterion usgId = null;
@@ -338,29 +338,17 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		}
 	}
 
-	public String usageByPropType() {
-		LOGGER.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
-		setPropUsageList(CommonServices.usagesForPropType(propTypeId));
-		LOGGER.debug("Exiting from usageByPropType, No of Usages: "
-				+ ((propUsageList != null) ? propUsageList : ZERO));
-		return USAGE;
-	}
-
 	@SuppressWarnings("unchecked")
-	@Action(value = "/ajaxCommon-propTypeCategoryByPropType", results = { @Result(name = PROP_TYPE_CATEGORY, location = "/ajaxCommon-propCategory.jsp") })
+	@Action(value = "/ajaxCommon-propTypeCategoryByPropType")
 	public String propTypeCategoryByPropType() {
 		LOGGER.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
 		PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService().find(
 				"from PropertyTypeMaster ptm where ptm.id=?", propTypeId.longValue());
 		if (propType != null) {
-			if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-				propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-				propTypeCategoryMap
-						.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-				propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
-
+			if (propType.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+				propTypeCategoryMap.putAll(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+			} else {
+				propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
 			}
 			setPropTypeCategoryMap(propTypeCategoryMap);
 		} else {
@@ -378,8 +366,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		categoryList = new ArrayList<Category>();
 		categoryList.addAll(getPersistenceService().findAllBy(
 				"select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-						+ "and bc.category.propUsage = null and bc.category.structureClass = null",
-				wardId));
+						+ "and bc.category.propUsage = null and bc.category.structureClass = null", wardId));
 
 		LOGGER.debug("locationFactorsByWard: categories - " + categoryList);
 		LOGGER.debug("Exiting from locationFactorsByWard");
@@ -392,8 +379,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		LOGGER.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
 		structuralClassifications = new ArrayList<StructureClassification>();
 		try {
-			if (completionOccupationDate.after(new SimpleDateFormat(
-					PropertyTaxConstants.DATE_FORMAT_DDMMYYY).parse(DATE_CONSTANT))) {
+			if (completionOccupationDate.after(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
+					.parse(DATE_CONSTANT))) {
 				LOGGER.debug("Base Rate - Structural Factors");
 				structuralClassifications.addAll(getPersistenceService().findAllBy(
 						"from StructureClassification where code like 'R%'"));
@@ -413,8 +400,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 						((StructureClassification) object2).getTypeName());
 			}
 		});
-		LOGGER.info("getStructureClassifications - Structural Factors : "
-				+ structuralClassifications);
+		LOGGER.info("getStructureClassifications - Structural Factors : " + structuralClassifications);
 		LOGGER.debug("Exiting from getStructureClassifications");
 		return RESULT_STRUCTURAL;
 	}
@@ -430,7 +416,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		return RESULT_PART_NUMBER;
 	}
 
-	
 	public Long getZoneId() {
 		return zoneId;
 	}
@@ -628,12 +613,12 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		this.securityUtils = securityUtils;
 	}
 
-    public String getCurrentStatusCode() {
-        return currentStatusCode;
-    }
+	public String getCurrentStatusCode() {
+		return currentStatusCode;
+	}
 
-    public void setCurrentStatusCode(String currentStatusCode) {
-        this.currentStatusCode = currentStatusCode;
-    }
-	
+	public void setCurrentStatusCode(String currentStatusCode) {
+		this.currentStatusCode = currentStatusCode;
+	}
+
 }

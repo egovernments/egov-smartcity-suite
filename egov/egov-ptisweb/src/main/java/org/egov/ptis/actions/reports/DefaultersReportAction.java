@@ -41,10 +41,10 @@ package org.egov.ptis.actions.reports;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -76,8 +76,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -169,7 +169,7 @@ public class DefaultersReportAction extends BaseFormAction {
 				.append("year(dmv.fromDate) as fromYear, year(dmv.toDate) as toYear, (pmv.aggrArrDmd - pmv.aggrArrColl) as arrearsDue, (pmv.aggrCurrDmd - pmv.aggrCurrColl) as currentDue,")
 				.append("  (pmv.aggrArrDmd - pmv.aggrArrColl + pmv.aggrCurrDmd - pmv.aggrCurrColl) as total ")
 				.append("from DefaultersMaterializedView dmv, PropertyMaterlizeView pmv where dmv.basicPropertyId = pmv.basicPropertyID and pmv.propTypeMstrID.code not in ('")
-				.append(PROPTYPE_STATE_GOVT).append("', '").append(PROPTYPE_CENTRAL_GOVT)
+				.append(OWNERSHIP_TYPE_STATE_GOVT).append("', '").append(OWNERSHIP_TYPE_CENTRAL_GOVT_50)
 				.append("') ").append("and pmv.zone.id = :zoneId and pmv.ward.id = :wardId ");
 		if (amounts[0].equals("100001")) {
 			query.append("and (pmv.aggrArrDmd - pmv.aggrArrColl) > :fromAmt ");

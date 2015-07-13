@@ -49,6 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
@@ -58,11 +59,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_INACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
@@ -553,7 +549,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
 				Long.valueOf(getModelId()));
 		if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
-				.equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			propertyModel.getPropertyDetail().getFloorDetails().clear();
 		}
 		LOGGER.debug("reject: Property: " + propertyModel);
@@ -684,14 +680,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 		String mutationCode = null;
 		Character status = STATUS_WORKFLOW;
 		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer.valueOf(propTypeId));
-		if (!proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			if ((proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || proptypeMstr.getCode()
-					.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && isfloorDetailsRequired) {
-				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
-			} else {
-				propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
-						.getFloorDetails());
-			}
+		if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+			propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
+					.getFloorDetails());
 
 		} else {
 			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
@@ -717,16 +708,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 		basicProp.setPropOccupationDate(propCompletionDate);
 
 		setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode, propTypeId, propUsageId,
-				propOccId, status, propertyModel.getDocNumber(), null, isfloorDetailsRequired, floorTypeId, roofTypeId,
-				wallTypeId, woodTypeId));
+				propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId));
 
 		propertyModel.setBasicProperty(basicProp);
 		propertyModel.setEffectiveDate(propCompletionDate);
 		propertyModel.getPropertyDetail().setEffective_date(propCompletionDate);
-		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel,propCompletionDate, isfloorDetailsRequired);
+		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel, propCompletionDate);
 
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-				"from PropertyTypeMaster ptm where ptm.code = ?", PROPTYPE_OPEN_PLOT);
+				"from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
 
 		Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
 
@@ -734,8 +724,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 		 * if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT
 		 * property type
 		 */
-		if (((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId())
-				|| (oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())) && !(newProperty.getStatus().equals('W'))) {
+		if (((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId()) || (oldPropTypeId != propTypeMstr
+				.getId() && Long.parseLong(propTypeId) == propTypeMstr.getId()))
+				&& !(newProperty.getStatus().equals('W'))) {
 
 			if ((propTypeMstr != null) && (StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))) {
 				changePropertyDetail(newProperty, new VacantProperty(), 0);
@@ -1046,8 +1037,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			addActionError(getText("mandatory.rsnForMdfy"));
 		}
 		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, isAuthProp,
-				propTypeId, propUsageId, propOccId, isfloorDetailsRequired, isUpdateData(), floorTypeId, roofTypeId,
-				wallTypeId, woodTypeId);
+				propTypeId, propUsageId, propOccId, isUpdateData(), floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		super.validate();
 
@@ -1100,7 +1090,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				setJudgmtDetails(propstatval.getRemarks());
 			}
 		}
-		if (propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
+		if (propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			setDateOfCompletion(propstatval.getExtraField1());
 		}
 
@@ -1224,18 +1214,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) persistenceService.find(
 				"from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
 		String propTypeCode = propTypeMstr.getCode();
-		if (propTypeMstr != null) {
-			if (!(propTypeCode.equals(PROPTYPE_NON_RESD) || propTypeCode.equals(PROPTYPE_RESD) || propTypeCode
-					.equals(PROPTYPE_OPEN_PLOT))) {
-				// extra_field5 contains the property type category, so setting
-				// to null for other than
-				// NR, R & OP i.e., for Govt. Property & Mixed
-				property.getPropertyDetail().setExtra_field5(null);
-			}
-		}
 
-		boolean isNofloors = (PROPTYPE_OPEN_PLOT.equals(propTypeCode) || (PROPTYPE_CENTRAL_GOVT.equals(propTypeCode) || PROPTYPE_STATE_GOVT
-				.equals(propTypeCode) && isfloorDetailsRequired));
+		boolean isNofloors = (OWNERSHIP_TYPE_VAC_LAND.equals(propTypeCode));
 
 		if (propUsageId != null && isNofloors) {
 			PropertyUsage usage = (PropertyUsage) persistenceService.find("from PropertyUsage pu where pu.id = ?",
@@ -1253,7 +1233,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			property.getPropertyDetail().setPropertyOccupation(null);
 		}
 
-		if (propTypeMstr.getCode().equals(PROPTYPE_OPEN_PLOT)) {
+		if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
 			property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
 		} else {
 			property.getPropertyDetail().setPropertyType(BUILT_UP_PROPERTY);
@@ -1265,7 +1245,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				property.getPropertyDetail().getPropertyMutationMaster());
 		property.getPropertyDetail().setUpdatedTime(new Date());
 
-		propService.createFloors(propertyModel, mutationCode, propUsageId, propOccId, isfloorDetailsRequired);
+		propService.createFloors(propertyModel, mutationCode, propUsageId, propOccId);
 
 		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			for (Floor newFloorInfo : propertyModel.getPropertyDetail().getFloorDetails()) {
@@ -1306,15 +1286,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		Date propCompletionDate = null;
 		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer.valueOf(propTypeId));
-		if (!proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-			if ((proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || proptypeMstr.getCode()
-					.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) && isfloorDetailsRequired) {
-				propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
-			} else {
-				propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
-						.getFloorDetails());
-			}
-
+		if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+			propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
+					.getFloorDetails());
 		} else {
 			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
 		}

@@ -10,19 +10,43 @@
 				id="propTypeId" listKey="id" listValue="type"
 				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
 				cssClass="selectnew"
-				onchange="toggleFloorDetails();enableFieldsForPropType();" /></td>
+				onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
+		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']"
+			dropdownId="propTypeCategoryId"
+			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
 		   <s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew"
-				onchange="toggleFloorDetails();enableFieldsForPropType();" />
+				headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
+				id="propTypeCategoryId" listKey="key" listValue="value"
+				list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
+				cssClass="selectnew"/>
 		</td>
 	</tr>
 	
+	<tr class="vacantAreaRow">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="PlotArea"></s:text> :</td>
+		<td class="greybox" width=""><s:textfield name="areaOfPlot" maxlength="15" value="%{areaOfPlot}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" /></td>
+		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
+		<td class="greybox">
+		   <s:date name="%{dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
+				name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
+				size="10" maxlength="10"></s:textfield>
+		</td>
+	</tr>
+	
+	<tr id="apartmentRow">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox"><s:select headerKey=""
+				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
+				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
+				list="dropdownData.apartments" cssClass="selectnew"
+				onchange="makeMandatory();" /></td>
+	</tr>
 
 	<!-- Owner details section -->
 	<tr>
@@ -42,7 +66,7 @@
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"> Heading Not decided</span>
+				<span class="bold"><s:text name="assessmentDetails.title"/></span>
 			</div>
 		</td>
 	</tr>
@@ -180,40 +204,11 @@
 		</td>
 	</tr>
 
-	<tr id="amenitiesRow">
+	<tr>
 		<td colspan="5">
-			<table width="100%" class="checkbox-section">
-				<tr>
-					<td width="20%" align="right">
-					<label><s:text name="lift"></s:text> <s:checkbox name="propertyDetail.lift"
-								id="propertyDetail.lift" /></label> <br />
-					<label><s:text name="electricity"></s:text> <s:checkbox name="propertyDetail.electricity"
-								id="propertyDetail.electricity" /> </label>
-				  </td>
-				  <td width="20%" align="right"><label><s:text name="toilets"></s:text> <s:checkbox
-								name="propertyDetail.toilets" id="propertyDetail.toilets" /> </label> <br />
-						<label><s:text name="attachbathroom"></s:text> <s:checkbox name="propertyDetail.attachedBathRoom"
-								id="propertyDetail.attachedBathRoom" /> </label>
-				   </td>
-				   <td width="20%" align="right"><label><s:text name="watertap"></s:text> <s:checkbox
-								name="propertyDetail.waterTap" id="propertyDetail.waterTap"
-								value="%{propertyDetail.waterTap}" /></label> <br />
-					     <label><s:text
-								name="waterharvesting"></s:text> <s:checkbox name="propertyDetail.waterHarvesting"
-								id="propertyDetail.waterHarvesting" /></label>
-				   </td>
-				   <td width="20%" align="right">
-				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" /></label><br/>
-				            </td>
-					<td width="10%"></td>
-				</tr>
-				
-				<tr id="drainageseatsrow">
-				<td class="greybox" width="5%">&nbsp;</td>
-				<td class="greybox"><s:text name="noOfSeats"></s:text>:</td>
-				<td class="greybox"><s:textfield maxlength="64" name="noOfSeats" id="noOfSeats"></s:textfield></td>
-				</tr>
-			</table>
+			<div id="AmenitiesDiv">
+				<%@ include file="../common/amenitiesForm.jsp"%>
+			</div>
 		</td>
 	</tr>
 
@@ -227,66 +222,12 @@
 		</td>
 	</tr>
 	
-	<tr id="constructionRow1">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="floortype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="floorTypeId"
-				id="floorTypeId" listKey="id" listValue="name" list="dropdownData.floorType" value="%{floorTypeId}"
-				cssClass="selectnew" /></td>
-		<td class="greybox"><s:text name="rooftype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="roofTypeId"
-				id="roofTypeId" listKey="id" listValue="name" list="dropdownData.roofType" value="%{roofTypeId}"
-				cssClass="selectnew" /></td>
-	</tr>
-
-	<tr id="constructionRow2">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="walltype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="wallTypeId"
-				id="wallTypeId" listKey="id" listValue="name" list="dropdownData.wallType" value="%{wallTypeId}"
-				cssClass="selectnew" /></td>
-		<td class="greybox"><s:text name="woodtype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="woodTypeId"
-				id="woodTypeId" listKey="id" listValue="name" list="dropdownData.woodType" value="%{woodTypeId}"
-				cssClass="selectnew" /></td>
-	</tr>
-    
-
-	<!-- Ownership section -->
-
-	<tr id="ownerShipRow">
+	<tr>
 		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.ownership" /></span>
+			<div id="AmenitiesDiv">
+				<%@ include file="../common/constructionForm.jsp"%>
 			</div>
 		</td>
-	</tr>
-
-	<tr id="vacantAreaRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox">
-			<div id="plotArea">
-				<s:text name="PlotArea" />
-				<span class="mandatory1">*</span> :
-			</div>
-		</td>
-		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot" maxlength="15" value="%{areaOfPlot}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
-			<span class="highlight2"><s:text name="msgForCompulsionOfOpenPlot" /> </span></td>
-	</tr>
-
-	<tr id="apartmentRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox"><s:select headerKey=""
-				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
-				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
-				list="dropdownData.apartments" cssClass="selectnew"
-				onchange="makeMandatory();" /></td>
 	</tr>
 
 	<tr id="floorHeaderRow">
@@ -306,14 +247,6 @@
 				<br />
 			</div>
 		</td>
-	</tr>
-
-	<tr id="completionDate">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="constCompl.date"></s:text> :</td>
-		<td class="greybox"><s:date name="%{dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
-				name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
-				size="10" maxlength="10"></s:textfield></td>
 	</tr>
 
 	<tr id="vacantLandRow">
@@ -360,7 +293,7 @@
 	}
 	function populatePropTypeCategory() {
 		populatepropTypeCategoryId({
-			propTypeId : document.getElementById("propTypeMaster").value
+			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
  	function populateLocationFactors() {
@@ -368,11 +301,6 @@
 			wardId : document.getElementById("wardId").value
 		});
 	} 
-	function setLocationFactor() {
-		<s:if test="%{propertyDetail.extra_field6 != null}">
-			document.getElementById('locationFactor').value = <s:property value="%{propertyDetail.extra_field6}"/>;			
-		</s:if>
-	}
 
 	//disable fields
 	jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);

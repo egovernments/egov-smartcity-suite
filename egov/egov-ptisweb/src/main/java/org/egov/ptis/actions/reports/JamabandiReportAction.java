@@ -42,13 +42,9 @@ package org.egov.ptis.actions.reports;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Calendar.YEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_JAMABANDI;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_JAMABANDI;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
@@ -71,6 +67,7 @@ import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.UnitWiseInfo;
 import org.egov.ptis.client.util.CurrFlrDmdCalcMvComparator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -93,7 +90,7 @@ public class JamabandiReportAction extends ReportFormAction {
 	@Autowired
 	private BoundaryService boundaryDAO;
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
+	private PropertyTaxUtil propertyTaxUtil;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
@@ -150,8 +147,10 @@ public class JamabandiReportAction extends ReportFormAction {
 		List<UnitWiseInfo> unitWiseInfoList = new ArrayList<UnitWiseInfo>();
 		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		if ((zoneId != null && zoneId != -1) && (wardId != null && wardId != -1)) {
-			String strZoneNum = "";//FIXME PHOENIX (boundaryDAO.getBoundary(zoneId).getBoundaryNum()).toString();
-			String strWardNum = "";//FIXME PHOENIX(boundaryDAO.getBoundary(wardId).getBoundaryNum()).toString();
+			String strZoneNum = "";// FIXME PHOENIX
+									// (boundaryDAO.getBoundary(zoneId).getBoundaryNum()).toString();
+			String strWardNum = "";// FIXME
+									// PHOENIX(boundaryDAO.getBoundary(wardId).getBoundaryNum()).toString();
 			StringBuffer query = new StringBuffer(300);
 
 			query.append("from PropertyMaterlizeView pmv left join fetch pmv.currFloorDmdCalc left join fetch pmv.propTypeMstrID where pmv.zone.id=? and pmv.ward.id=? ");
@@ -406,18 +405,19 @@ public class JamabandiReportAction extends ReportFormAction {
 			 */
 			if (PROPTYPE_NON_RESD.equals(propTypeMstr.getCode())) {
 				unitwiseInfo.setPropType(NONRESD);
-			} else if (PROPTYPE_OPEN_PLOT.equals(propTypeMstr.getCode())) {
+			} else if (PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND.equals(propTypeMstr.getCode())) {
 				unitwiseInfo.setPropType(OPENPLOT);
-			} else if (PROPTYPE_RESD.equals(propTypeMstr.getCode())
-					|| PROPTYPE_CENTRAL_GOVT.equals(propTypeMstr.getCode())
-					|| PROPTYPE_STATE_GOVT.equals(propTypeMstr.getCode())) {
+			} else {
 				unitwiseInfo.setPropType(RESIDENTIAL);
 			}
 		}
-		// Todo : needs to be removed as waterscheme is removed from propertyMaterializedview
-		/*if (propMatView.getWaterScheme() != null && !propMatView.getWaterScheme().equals(0)) {
-			unitwiseInfo.setWaterScheme(propMatView.getWaterScheme());
-		}*/
+		// Todo : needs to be removed as waterscheme is removed from
+		// propertyMaterializedview
+		/*
+		 * if (propMatView.getWaterScheme() != null &&
+		 * !propMatView.getWaterScheme().equals(0)) {
+		 * unitwiseInfo.setWaterScheme(propMatView.getWaterScheme()); }
+		 */
 		if (propMatView.getAlv() != null && !propMatView.getAlv().equals(BigDecimal.ZERO)) {
 			unitwiseInfo.setAlv(propMatView.getAlv());
 		}

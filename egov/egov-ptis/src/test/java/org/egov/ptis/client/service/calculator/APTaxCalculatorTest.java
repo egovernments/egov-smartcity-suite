@@ -14,7 +14,6 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class APTaxCalculatorTest {
