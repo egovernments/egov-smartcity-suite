@@ -479,9 +479,15 @@ td.greybox input[type="text"]:focus, td.greybox select:focus, td.bluebox input[t
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(253, 154, 10, 0.6);
 }	
 
-input[type="text"]:read-only, select:disabled, textarea:read-only, textarea:disabled, input[type="text"]:disabled
+input[type="text"]:read-only, textarea:read-only, textarea:disabled, input[type="text"]:disabled
 {
     background-color: #eceded !important;
+    cursor: not-allowed !important;
+}
+
+input[type="text"]:-moz-read-only, select[disabled], textarea[disabled],input[disabled]
+{
+	background-color: #eceded !important;
     cursor: not-allowed !important;
 }
 

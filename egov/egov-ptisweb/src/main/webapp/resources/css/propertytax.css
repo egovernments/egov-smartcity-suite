@@ -145,12 +145,12 @@ th.bluebgheadtd {
 
 #floorDetails th.bluebgheadtd
 {
-	max-width:108px;
+	min-width:108px;
 } 	
 
 #floorDetails .selectnew
 {
-    max-width:108px;
+    min-width:108px;
 }
 	
 td.totalbg {
