@@ -204,6 +204,12 @@
 								<div class="panel-body custom-form">
 									<form role="form" class="form-horizontal form-groups-bordered">	
 									<div class="form-group">
+										<label class="col-sm-3 control-label text-right">Date of Application</label>
+										<div class="col-sm-3 add-margin">
+											<input type="text" class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" required="">
+										</div>
+									</div>
+									<div class="form-group">
 											<label class="col-sm-3 control-label text-right">Connection Type<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<select class="form-control"><option value="">Select from below</option><option value="">Metered</option><option value="">Non-Metered</option></select>
@@ -218,29 +224,19 @@
 											<div class="col-sm-3 add-margin">
 												<select class="form-control"><option value="">Select from below</option><option value="">BPL</option><option value="">Domestic</option><option value="">Commercial</option><option value="">General</option></select>
 											</div>
-											<label class="col-sm-2 control-label text-right">Water Source Type<span class="mandatory"></span></label>
-											<div class="col-sm-3 add-margin">
-												<select class="form-control"><option value="">Select from below</option><option value="">Ground Water</option><option value="">Surface Water</option></select>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-sm-3 control-label text-right">H.S.C Pipe Size (Inches)<span class="mandatory"></span></label>
+											<label class="col-sm-2 control-label text-right">H.S.C Pipe Size (Inches)<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<select class="form-control"><option value="">Select from below</option><option value="">1 Inch</option><option value="">1/2 Inch</option><option value="">3/4 Inch</option><option value="">Zero Inch</option></select>
 											</div>
-											<label class="col-sm-2 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 control-label text-right">Sump Capacity (Litres)<span class="mandatory"></span></label>
 											<div class="col-sm-3 add-margin">
 												<input type="text" class="form-control">
 											</div>
 										</div>
 									<div class="form-group">
 										<label class="col-sm-3 control-label text-right">Reason for change of use<span class="mandatory"></span></label>
-										<div class="col-sm-3 add-margin">
-											<select class="form-control"><option>Select from below</select>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-3 control-label text-right">Comments<span class="mandatory"></span></label>
 										<div class="col-sm-8 add-margin">
 											<textarea class="form-control"></textarea>
 										</div>
@@ -300,7 +296,9 @@
 					
 			</footer> 
 		</div>
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	</body>
 </html>
