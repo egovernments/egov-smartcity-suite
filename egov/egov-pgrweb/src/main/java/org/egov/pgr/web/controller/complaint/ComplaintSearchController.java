@@ -41,11 +41,11 @@ package org.egov.pgr.web.controller.complaint;
 
 import static java.util.Arrays.asList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -59,15 +59,14 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.egov.eis.service.AssignmentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 // @RequestMapping(value = "/complaint/citizen/anonymous/search")
@@ -170,46 +169,28 @@ public class ComplaintSearchController {
 	public List<Document> searchComplaintsOffical(
 			@ModelAttribute final ComplaintSearchRequest searchRequest) {
 		SearchResult searchResult=null;
-		try {
+		
 			searchResult = searchService.search(
 					asList(Index.PGR.toString()),
 					asList(IndexType.COMPLAINT.toString()),
 					searchRequest.searchQuery(), searchRequest.searchFilters(),
 					Sort.NULL, Page.NULL);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(searchResult==null)
-		{
-			return new ArrayList<Document>();
-		}
-		else{
+		
 		return searchResult.getDocuments();
-		}
+		
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/complaint/citizen/anonymous/search")
 	@ResponseBody
 	public List<Document> searchComplaintsCitizen(
 			@ModelAttribute final ComplaintSearchRequest searchRequest) {
-		SearchResult searchResult=null;
-		try {
-			searchResult = searchService.search(
+		SearchResult searchResult = searchService.search(
 					asList(Index.PGR.toString()),
 					asList(IndexType.COMPLAINT.toString()),
 					searchRequest.searchQuery(), searchRequest.searchFilters(),
 					Sort.NULL, Page.NULL);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(searchResult==null)
-		{
-			return new ArrayList<Document>();
-		}
-		else{
+		
 		return searchResult.getDocuments();
-		}
+		
 	}
 }

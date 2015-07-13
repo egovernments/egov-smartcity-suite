@@ -42,7 +42,6 @@ package org.egov.wtms.web.controller.elasticSearch;
 
 import static java.util.Arrays.asList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.config.search.Index;
@@ -97,22 +96,11 @@ public class ApplicationSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchComplaints(@ModelAttribute final ApplicationSearchRequest searchRequest) {
-    	SearchResult searchResult=null;
-        try {
-			  searchResult = searchService.search(asList(Index.APPLICATION.toString()),
+    	SearchResult  searchResult = searchService.search(asList(Index.APPLICATION.toString()),
 			        asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
 			        Sort.NULL, Page.NULL);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        if(searchResult==null)
-        {
-        	return new ArrayList<Document>();
-        }
-        else{
+	
         return searchResult.getDocuments();
-        }
+       
     }
 }
