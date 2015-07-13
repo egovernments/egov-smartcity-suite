@@ -66,26 +66,26 @@
 		var makeVoucherDetailTable = function() {
 			<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>      
 		var voucherDetailColumns = [ 
-			{key:"functionid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
-			{key:"function",hidden:true,label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},
-			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
-			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
-			{key:"debitamount",label:'Debit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
-			{key:"creditamount",label:'Credit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
+			{key:"functionid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
+			{key:"function",hidden:true,label:'Function Name', formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","hidden")},
+			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+			{key:"accounthead", label:'Account Head',formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
+			{key:"debitamount",label:'Debit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
+			{key:"creditamount",label:'Credit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];
 		</s:if>
 		<s:else>
 		var voucherDetailColumns = [ 
-     			{key:"functionid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
-     			{key:"function",label:'Function Name',width:90, formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")}, 
-     			{key:"glcodeid",hidden:true,width:90, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
-     			{key:"glcode",label:'Account Code <span class="mandatory">*</span>',width:100, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
-     			{key:"accounthead", label:'Account Head',width:250,formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
-     			{key:"debitamount",label:'Debit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
-     			{key:"creditamount",label:'Credit Amount',width:90, formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
+     			{key:"functionid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".functionIdDetail","hidden")},
+     			{key:"function",label:'Function Name', formatter:createTextFieldFormatterForFunctionJV(VOUCHERDETAILLIST,".functionDetail","text")}, 
+     			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeIdDetail","hidden")},
+     			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatterJV(VOUCHERDETAILLIST,".glcodeDetail","text")},
+     			{key:"accounthead", label:'Account Head',formatter:createLongTextFieldFormatterJV(VOUCHERDETAILLIST,".accounthead")},				
+     			{key:"debitamount",label:'Debit Amount',formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".debitAmountDetail","updateDebitAmountJV()")}, 
+     			{key:"creditamount",label:'Credit Amount', formatter:createAmountFieldFormatterJV(VOUCHERDETAILLIST,".creditAmountDetail","updateCreditAmountJV()")},
      			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
      			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
      		];
@@ -147,15 +147,20 @@
 		th.colSpan = 5;
 		th.innerHTML = 'Total&nbsp;&nbsp;&nbsp;';
 		th.align='right';
+		th.style.borderTop = "1px solid #84B1AD";
 		var td = tr.insertCell(-1);
-		td.width="90"
+		td.style.borderTop = "1px solid #84B1AD";
 		td.innerHTML="<input type='text' style='text-align:right;width:100px;'  id='totaldbamount' name='totaldbamount' readonly='true' tabindex='-1'/>";
 		var td = tr.insertCell(-1);
-		td.width="90"
-		td.align="right"
+		td.align="right";
+		td.style.borderTop = "1px solid #84B1AD";
 		td.innerHTML="<input type='text' style='text-align:right;width:100px;'  id='totalcramount' name='totalcramount' readonly='true' tabindex='-1'/>";
 		document.getElementById('totaldbamount').value=totaldbamt.toFixed(2);
 		document.getElementById('totalcramount').value=totalcramt.toFixed(2);
+		var td = tr.insertCell(-1);
+		td.style.borderTop = "1px solid #84B1AD";
+		var td = tr.insertCell(-1);
+		td.style.borderTop = "1px solid #84B1AD";
 	}
 	
 	var glcodeOptions=[{label:"--- Select ---", value:"0"}];
@@ -169,14 +174,14 @@
 	
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
-			{key:"glcode",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
-			{key:"glcode.id",label:'Account Code <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
-			{key:"detailTypeName",hidden:true,width:90, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
-			{key:"detailCode",label:'Code <span class="mandatory">*</span>',width:120, formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
-			{key:"detailKeyId",hidden:true,width:100, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
-			{key:"detailKey",label:'Name',width:180, formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount',width:90, formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
+			{key:"glcode",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".subledgerCode","hidden")},
+			{key:"glcode.id",label:'Account Code <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"detailTypeName",hidden:true, formatter:createSLTextFieldFormatterJV(SUBLEDGERLIST,".detailTypeName","hidden")},
+			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>', formatter:createDropdownFormatterJV1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailCode",label:'Code <span class="mandatory1">*</span>',formatter:createSLDetailCodeTextFieldFormatterJV(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)", ".search", "openSearchWindowFromJV(this)")},
+			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatterJV(SUBLEDGERLIST,".detailKeyId")},
+			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatterJV(SUBLEDGERLIST,".detailKey","")},
+			{key:"amount",label:'Amount',formatter:createSLAmountFieldFormatterJV(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];
@@ -238,16 +243,16 @@
         		<jsp:param name="heading" value="Journal voucher -Modify" />
 			</jsp:include>
 			
-			<span class="mandatory">
+			<span class="mandatory1">
 				<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Journal Voucher</div>
-		<div id="listid" style="display:block">
+<div class="formmainbox"><div class="subheadnew">Journal Voucher</div>
+<div id="listid" style="display:block">
 		<br/>
-<div align="center">
+		<div align="center">
 <font  style='color: red ;font-weight:bold '> 
 <p class="error-block" id="lblError" ></p></font>
 <input type="hidden" name="selectedDate" id="selectedDate">
@@ -255,7 +260,7 @@
 	<table border="0" width="100%">
 	<tr>
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="bluebox" width="22%"><s:text name="voucher.number"/><span class="mandatory1">*</span></td>
 			<td class="bluebox" width="22%">
 			<table width="100%">
 			<tr>
@@ -266,10 +271,11 @@
 			</td>
 		</s:if>
 		<s:else>
-			<td class="bluebox"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="bluebox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
 			<td class="bluebox"><s:textfield name="voucherNumber" id="voucherNumber" readonly="true" /></td>
 		</s:else>
-		<td class="bluebox"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
+		<tr>
+		<td class="bluebox"><s:text name="voucher.date"/><span class="mandatory1"> *</span></td>
 			<td class="bluebox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 			<s:textfield  name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 			<a href="javascript:show_calendar('jvmodifyform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
@@ -313,9 +319,12 @@
 		
 		<br/>
 		<div class="subheadsmallnew"/></div>
-		<div class="mandatory" align="left">* Mandatory Fields</div>
 		
-		<div class="buttonbottom" style="padding-bottom:10px;" align="center">
+		
+	<br/>
+</div>
+</div>
+<div class="buttonbottom" style="padding-bottom:10px;" align="center">
 		<table border="0" width="100%"><tr></tr>
 			<tr align="center">
 				<td/>
@@ -325,9 +334,6 @@
 			</tr>
 		</table>
 	</div>
-	<br/>
-</div>
-</div>
 <div id="codescontainer"></div>
 
 </s:push>

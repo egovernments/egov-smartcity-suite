@@ -523,7 +523,19 @@ th.bluebgheadtd {
   color: #FFF;
   padding: 4px;
   background-color: #8CBBB7;
+  background-image:none;
   text-align: center;
+}
+
+div.subheadsmallnew{
+	background-color:#fff;
+	color: #F2851F;
+}
+
+td.bluebox.setborder, td.greybox.setborder{
+	border:1px solid #84B1AD;
+	border-top:0;
+	border-left:0;
 }
 
 .yui-skin-sam .yui-dt th {

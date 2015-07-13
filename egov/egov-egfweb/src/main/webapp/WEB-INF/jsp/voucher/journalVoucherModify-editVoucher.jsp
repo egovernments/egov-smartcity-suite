@@ -64,13 +64,13 @@
         		<jsp:param name="heading" value="Journal voucher -Modify" />
 			</jsp:include>
 			
-			<span class="mandatory">
+			<span class="mandatory1">
 				<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /></font>
 			</span>
-		<div class="formmainbox"><div class="formheading"/>
+		<div class="formmainbox">
 			<div class="subheadnew">Journal Voucher
 			</div>
 				<div id="listid" style="display:block">
@@ -84,7 +84,7 @@
 	<table border="0" width="100%">
 	<tr>
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox" width="22%"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="greybox" width="22%"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
 			<td class="greybox" width="22%">
 			<table width="100%">
 			<tr>
@@ -95,10 +95,11 @@
 			</td>
 		</s:if>
 		<s:else>
-			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory">*</span></td>
+			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
 			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" readonly="true" /></td>
 		</s:else>
-		<td class="greybox"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
+		</tr>
+		<td class="greybox"><s:text name="voucher.date"/><span class="mandatory1"> *</span></td>
 			<td class="greybox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 			<s:textfield  name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 			<a href="javascript:show_calendar('jvmodifyform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
@@ -145,7 +146,6 @@
 		
 		<br/>
 		<div class="subheadsmallnew"/></div>
-		<div class="mandatory" align="left">* Mandatory Fields</div>
 		<div id="wfHistoryDiv">
 	<%--   	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${voucherHeader.state.id}"></c:param>
@@ -165,7 +165,12 @@
 			<br/>
 		</table> 
 		</div> 
-	<div  class="buttonbottom" id="buttondiv">                                     
+	
+	<br/>
+</div>
+</div>
+<div id="codescontainer"></div>
+<div  class="buttonbottom" id="buttondiv">                                     
 		<s:iterator value="%{getValidActions('')}" var="p">            
 			<s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="update" onclick="return validateJV('close','%{name}','%{description}')"/>
 		</s:iterator>     
@@ -185,10 +190,6 @@
 			</tr>
 		</table>
 	</div> -->
-	<br/>
-</div>
-</div>
-<div id="codescontainer"></div>
 <s:hidden id="cgn" name="cgn"></s:hidden>
 <s:hidden name="saveMode"  id="saveMode"/>
 <s:hidden  name="actionName" id="actionName"/>

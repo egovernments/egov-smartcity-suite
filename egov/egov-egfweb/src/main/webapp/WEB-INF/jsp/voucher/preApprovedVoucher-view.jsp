@@ -127,19 +127,19 @@ display: none;
 
 				<s:iterator var="p" value="%{billDetails.tempList}" status="s"> 
 					<tr>
-						<td width="18%"  class="bluebox"><s:property value="function"/></td>
-						<td width="17%"  class="bluebox"><s:property value="glcode"/></td>
-						<td width="19%"  class="bluebox"><s:property value="accounthead"/></td>
-						<td width="17%"  class="bluebox" style="text-align:right"><s:text name="format.number" ><s:param value="%{debitamount}"/></s:text></td>
-						<td width="16%"  class="bluebox" style="text-align:right"><s:text name="format.number" ><s:param value="%{creditamount}"/></s:text></td>
+						<td width="18%"  class="bluebox setborder"><s:property value="function"/></td>
+						<td width="17%"  class="bluebox setborder"><s:property value="glcode"/></td>
+						<td width="19%"  class="bluebox setborder"><s:property value="accounthead"/></td>
+						<td width="17%"  class="bluebox setborder" style="text-align:right"><s:text name="format.number" ><s:param value="%{debitamount}"/></s:text></td>
+						<td width="16%"  class="bluebox setborder" style="text-align:right"><s:text name="format.number" ><s:param value="%{creditamount}"/></s:text></td>
 						<c:set var="db" value="${db+debitamount}"/>
 						<c:set var="cr" value="${cr+creditamount}"/>
 					</tr>
 			</s:iterator>
 			<tr>
-				<td class="greybox" style="text-align:right" colspan="3"/><b>Total</b></td>
-				<td class="greybox" style="text-align:right"><fmt:formatNumber value="${db}" pattern="#0.00" /></td>
-				<td class="greybox" style="text-align:right"><fmt:formatNumber value="${cr}" pattern="#0.00" /></td>
+				<td class="greybox setborder" style="text-align:right" colspan="3"/><b>Total</b></td>
+				<td class="greybox setborder" style="text-align:right"><fmt:formatNumber value="${db}" pattern="#0.00" /></td>
+				<td class="greybox setborder" style="text-align:right"><fmt:formatNumber value="${cr}" pattern="#0.00" /></td>
 			</tr>
 		</table>
 		<s:hidden  name="methodName" id="methodName" value="%{methodName}"/>
@@ -161,11 +161,11 @@ display: none;
 			</tr>
 		<s:iterator var="p" value="%{billDetails.subLedgerlist}" status="s"> 
 				<tr>
-					<td width="17%"  class="bluebox"><s:property value="functionDetail"/></td>
-					<td width="17%"  class="bluebox"><s:property value="glcode.glcode"/></td>
-					<td width="19%"  class="bluebox"><s:property value="detailType.description"/></td>
-					<td width="17%"  class="bluebox"><s:property value="detailKey"/></td>
-					<td width="16%"  class="bluebox" style="text-align:right"><s:text name="format.number" ><s:param value="%{amount}"/></s:text></td>
+					<td width="17%"  class="bluebox setborder"><s:property value="functionDetail"/></td>
+					<td width="17%"  class="bluebox setborder"><s:property value="glcode.glcode"/></td>
+					<td width="19%"  class="bluebox setborder"><s:property value="detailType.description"/></td>
+					<td width="17%"  class="bluebox setborder"><s:property value="detailKey"/></td>
+					<td width="16%"  class="bluebox setborder" style="text-align:right"><s:text name="format.number" ><s:param value="%{amount}"/></s:text></td>
 					
 				</tr>
 		</s:iterator>
