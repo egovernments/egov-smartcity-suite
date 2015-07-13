@@ -39,105 +39,91 @@
  ******************************************************************************/
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_KEY_WARDSFOR_BULKBILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Namespace("/bills")
-@Transactional(readOnly = true)
+@SuppressWarnings("serial")
+@ParentPackage("egov")
+@Results({  @Result(name = BulkBillGenerationAction.NEW, location = "bulkBillGeneration-new.jsp"),
+    @Result(name = BulkBillGenerationAction.RESULT_ACK, location = "bulkBillGeneration-ack.jsp")
+    })
 public class BulkBillGenerationAction extends BaseFormAction {
 
 	Logger LOGGER = Logger.getLogger(getClass());
-	private static final String STR_HYPHEN = "-";
-	private static final String RESULT_ACK = "ack";
-
+	public static final String RESULT_ACK = "ack";
 	private Integer wardId;
 	private String ackMessage;
-	private String partNo;
-
 	@Autowired
 	private BoundaryDAO boundaryDAO;
-
+	@Autowired
+        private InstallmentDao installmentDao;
+	@Autowired
+        private ModuleService moduleService;
 	private List<Boundary> wardList = new ArrayList<Boundary>();
 
 	@Override
 	public Object getModel() {
 		return null;
 	}
-
-	@Action(value = "/bulkBillGeneration-newForm", results = { @Result(name = NEW, location = "/bulkBillGeneration-new.jsp") })
+	@Action(value = "/bills/bulkBillGeneration-newForm")
 	public String newForm() {
-		wardList = getPersistenceService().findAllBy(
-				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.boundaryNum", WARD_BNDRY_TYPE,
-				ELECTION_HIERARCHY_TYPE);
+	        wardList = getPersistenceService().findAllBy(
+                    "from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
+                                    + "and BI.isHistory='N' order by BI.boundaryNum", WARD,ADMIN_HIERARCHY_TYPE
+                    );
 		return NEW;
 	}
 
-	@Override
-	public void prepare() {
-		LOGGER.debug("Entered into prepare, wardNumber=" + wardId);
 
-		if (wardId == null || wardId.equals(-1)) {
-			addDropdownData("partNumbers", Collections.EMPTY_LIST);
-		}
-
-		LOGGER.debug("Exiting from prepare");
-	}
-
-	@Action(value = "/bulkBillGeneration-generateBills", results = { @Result(name = RESULT_ACK, location = "/bulkBillGeneration-ack.jsp") })
+	@Action(value = "/bills/bulkBillGeneration-generateBills")
 	public String generateBills() {
 		LOGGER.debug("generateBills method started for ward number " + wardId);
-		AppConfigValues appConfigValue = null;
+		BulkBillGeneration bulkBill = null;
 
 		Integer wardNumber = boundaryDAO.getBoundary(Long.valueOf(wardId)).getBoundaryNum()
 				.intValue();
-		String wardNumAndPartNo = wardNumber.toString() + STR_HYPHEN + partNo;
+		Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
-		appConfigValue = (AppConfigValues) persistenceService.find(
-				"select appConfVal from AppConfigValues appConfVal left join appConfVal.key appConf "
-						+ "where appConf.module=? and appConf.keyName=? and appConfVal.value=?",
-				PropertyTaxConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL,
-				wardNumAndPartNo);
+		bulkBill = (BulkBillGeneration) persistenceService.find(
+				"from BulkBillGeneration where wardNumber=? and installment.id=?",
+				 wardNumber.toString(),currentInstall.getId());
 
-		if (appConfigValue == null) {
-			AppConfig appConfig = (AppConfig) persistenceService
-					.find("select appConf from AppConfig appConf where appConf.module=? and appConf.keyName=?",
-							PropertyTaxConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL);
-			appConfigValue = new AppConfigValues();
-			appConfigValue.setKey(appConfig);
-			appConfigValue.setValue(wardNumAndPartNo);
-			appConfigValue.setEffectiveFrom(new Date());
-			persistenceService.setType(AppConfigValues.class);
-			getPersistenceService().persist(appConfigValue);
+		if (bulkBill == null) {
+		        bulkBill = new BulkBillGeneration();
+		        bulkBill.setWardNumber( wardNumber.toString());
+		        bulkBill.setInstallment(currentInstall);
+			persistenceService.setType(BulkBillGeneration.class);
+			getPersistenceService().persist(bulkBill);
 			setAckMessage("Bill generation scheduled for ward " + wardNumber
-					+ " and for part number " + partNo
+					+ " and for Installment " +  currentInstall.getDescription()
 					+ ", you can check the bill generation status using ");
 		} else {
 			setAckMessage("Bill generation already scheduled for ward " + wardNumber
-					+ " and for part number " + partNo
+					+ " and for Installment " +  currentInstall.getDescription()
 					+ ", you can check the bill generation status after some time using ");
 		}
-		LOGGER.debug("generateBills method ended for ward number " + wardNumber
-				+ " and for part number " + partNo);
+		LOGGER.debug("generateBills method ended for ward number " + wardNumber);
 		return RESULT_ACK;
 	}
 
@@ -163,13 +149,5 @@ public class BulkBillGenerationAction extends BaseFormAction {
 
 	public void setAckMessage(String ackMessage) {
 		this.ackMessage = ackMessage;
-	}
-
-	public String getPartNo() {
-		return partNo;
-	}
-
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
 	}
 }

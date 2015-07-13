@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------  -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -45,10 +45,16 @@
 <html>
   <head>
     <title><s:text name='BulkBillAck'/></title>
+     <script type="text/javascript">
+	   function goBacktoBulkBillGeneration(){
+		  	document.BillGenerationForm.action='${pageContext.request.contextPath}/bills/bulkBillGeneration-newForm.action';
+		   	document.BillGenerationForm.submit(); 
+		  	return true;
+		  }    
+  	</script>
   </head>
-  
   <body>
-  <s:form name="BillGenerationForm" theme="simple">
+  <s:form name="BillGenerationForm" theme="simple"> 
   <s:token />
   <div class="formmainbox">
   <div class="formheading"></div>
@@ -56,13 +62,13 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 	       	<td colspan="5" style="color: #0000A0;font-size: 15px;" align="center">
-	        	<s:property value="%{ackMessage}"/><a href="billGeneration!billsGenStatus.action">Generated Bills Report</a>
+	        	<s:property value="%{ackMessage}"/><a href="billGeneration-billsGenStatus.action">Generated Bills Report</a>
 	        </td>
 		</tr>
-		</table>
+		</table> 
 	</div>
 	<div class="buttonbottom">
-		<s:submit value="Go Back" name="newform" id='newform' cssClass="buttonsubmit" method="newForm"/>
+		<input type="submit" class="buttonsubmit" value="Go Back" id="newform" name="newform" onclick="return goBacktoBulkBillGeneration();" />&nbsp;</td>
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
   </s:form>

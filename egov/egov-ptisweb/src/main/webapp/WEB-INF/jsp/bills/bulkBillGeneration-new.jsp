@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -24,27 +24,38 @@
 #     In addition to the terms of the GPL license to be adhered to in using this
 #     program, the following additional terms are to be complied with:
 # 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
+#         1) All versions of this program, verbatim or modified must carry this 
+#            Legal Notice.
 # 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
+#         2) Any misrepresentation of the origin of the material is prohibited. It 
+#            is required that all modified versions of this material be marked in 
+#            reasonable ways as different from the original version.
 # 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
+#         3) This license does not grant any rights to any user of the program 
+#            with regards to rights under trademark law for use of the trade names 
+#            or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     <title><s:text name='BulkBillNew'/></title>
+   <script type="text/javascript">
+
+   paintAlternateColorForRows();
+   
+   function validateFormAndSubmit(){
+	  	document.BulkBillGenerationForm.action='${pageContext.request.contextPath}/bills/bulkBillGeneration-generateBills.action';
+	   	document.BulkBillGenerationForm.submit();
+	  	return true;
+	  }    
+  	
+  </script>
   </head>
   
   <body>
@@ -68,16 +79,10 @@
 			<td>
 					<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="wardId"
 					id="wardNum" listKey="id" listValue="name" list="wardList" 
-					value="%{wardNumber}" cssClass="selectnew" onchange="return populatePartNumbers(this.id);" />
+					value="%{wardNumber}" cssClass="selectnew" />
 			</td>
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td></td>
-			<%@ include file="../common/partnumber.jsp" %>
-			<td></td>
-			<td></td>			
 		</tr>
 		<tr>
 			<td colspan="5">&nbsp;</td>
@@ -85,12 +90,9 @@
 		</table>
 	</div>
 	<div class="buttonbottom">
-		<s:submit value="Generate Bills" name="generateBills" id='generateBills' cssClass="buttonsubmit" method="generateBills"/>
+		<input type="submit" class="buttonsubmit" value="Generate Bills" id="generateBills" name="generateBills" onclick="return validateFormAndSubmit();" />&nbsp;</td>
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
   </s:form>
-  <script type="text/javascript">
-  	paintAlternateColorForRows();
-  </script>
   </body>
 </html>
