@@ -254,7 +254,7 @@ public class PropertyBillInfo {
 	}
 
 	public String getWaterMeterStatus() {
-		String waterRateCode = basicProperty.getProperty().getPropertyDetail().getExtra_field1();
+		String waterRateCode = basicProperty.getProperty().getPropertyDetail().getWater_Meter_Num();
 		return waterRates.get(waterRateCode) == null ? "N/A" : waterRates.get(waterRateCode);
 	}
 

@@ -37,6 +37,8 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp"%>
 	<tr id="amenitiesRow">
 		<td colspan="5">
 			<table width="100%" class="checkbox-section">
@@ -63,12 +65,6 @@
 				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" /></label><br/>
 				            </td>
 					<td width="10%"></td>
-				</tr>
-				
-				<tr id="drainageseatsrow">
-				<td class="greybox" width="5%">&nbsp;</td>
-				<td class="greybox"><s:text name="noOfSeats"></s:text>:</td>
-				<td class="greybox"><s:textfield maxlength="64" name="noOfSeats" id="noOfSeats"></s:textfield></td>
 				</tr>
 			</table>
 		</td>

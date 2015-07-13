@@ -49,7 +49,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.commons.Area;
-//import org.egov.demand.model.DepreciationMaster;
 import org.egov.demand.model.DepreciationMaster;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.entity.Auditable;
@@ -88,39 +87,18 @@ public class Floor extends BaseModel implements Auditable {
 	private PropertyDetail propertyDetail;
 	private Date occupancyDate;
 	private String occupantName;
-
-	// This field contains Unit No For NMC Impl
-	private String extraField1;
-	// This field contains Occupier Name For NMC Impl
-	private String extraField2;
-	// This field contains Occupation Date For NMC Impl
-	private String extraField3;
-	// This field contains Width For NMC Impl
-	private String extraField4;
-	// This field contains Length For NMC Impl
-	private String extraField5;
-	// This field contains Intercepting Wall Area For NMC Impl
-	private String extraField6;
-	// This field contains floor Type
-	private String extraField7;
-
-	private String taxExemptedReason;
-
-	// private UnitRentAgreementDetail rentAgreementDetail;
-
-	private String capitalValue;
-	private boolean planApproved;
+	private TaxExeptionReason taxExemptedReason;
+	private Boolean drainage;
+	private Integer noOfSeats;
 
 	public Floor(ConstructionTypeSet constructionTypeSet,
 			StructureClassification structureClassification, PropertyUsage propertyUsage,
 			PropertyOccupation propertyOccupation, Integer floorNo,
 			DepreciationMaster depreciationMaster, Area builtUpArea, Area floorArea,
 			String waterMeter, String electricMeter, Date lastUpdatedTimeStamp,
-			Date createdTimeStamp, BigDecimal rentPerMonth, String extraField1, String extraField2,
-			String extraField3, String extraField4, String extraField5, String extraField6,
-			String extraField7, BigDecimal manualAlv, PropertyTypeMaster unitType,
-			String unitTypeCategory, String waterRate, BigDecimal alv, String taxExemptedReason,
-			Date occupancyDate, String occupierName, String capitalValue, boolean planApproved) {
+			Date createdTimeStamp, BigDecimal rentPerMonth,BigDecimal manualAlv, PropertyTypeMaster unitType,
+			String unitTypeCategory, String waterRate, BigDecimal alv, TaxExeptionReason taxExemptedReason,
+			Date occupancyDate, String occupierName,Boolean drainage,Integer noOfSeats) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
@@ -134,13 +112,6 @@ public class Floor extends BaseModel implements Auditable {
 		this.electricMeter = electricMeter;
 
 		this.rentPerMonth = rentPerMonth;
-		this.extraField1 = extraField1;
-		this.extraField2 = extraField2;
-		this.extraField3 = extraField3;
-		this.extraField4 = extraField4;
-		this.extraField5 = extraField5;
-		this.extraField6 = extraField6;
-		this.extraField7 = extraField7;
 		this.manualAlv = manualAlv;
 		this.unitType = unitType;
 		this.unitTypeCategory = unitTypeCategory;
@@ -149,8 +120,8 @@ public class Floor extends BaseModel implements Auditable {
 		this.taxExemptedReason = taxExemptedReason;
 		this.occupancyDate = occupancyDate;
 		this.occupantName = occupierName;
-		this.capitalValue = capitalValue;
-		this.planApproved = planApproved;
+		this.drainage = drainage;
+		this.noOfSeats = noOfSeats;
 	}
 
 	public Floor() {
@@ -401,62 +372,6 @@ public class Floor extends BaseModel implements Auditable {
 		this.rentPerMonth = rentPerMonth;
 	}
 
-	public String getExtraField1() {
-		return extraField1;
-	}
-
-	public void setExtraField1(String extraField1) {
-		this.extraField1 = extraField1;
-	}
-
-	public String getExtraField2() {
-		return extraField2;
-	}
-
-	public void setExtraField2(String extraField2) {
-		this.extraField2 = extraField2;
-	}
-
-	public String getExtraField3() {
-		return extraField3;
-	}
-
-	public void setExtraField3(String extraField3) {
-		this.extraField3 = extraField3;
-	}
-
-	public String getExtraField4() {
-		return extraField4;
-	}
-
-	public void setExtraField4(String extraField4) {
-		this.extraField4 = extraField4;
-	}
-
-	public String getExtraField5() {
-		return extraField5;
-	}
-
-	public void setExtraField5(String extraField5) {
-		this.extraField5 = extraField5;
-	}
-
-	public String getExtraField6() {
-		return extraField6;
-	}
-
-	public void setExtraField6(String extraField6) {
-		this.extraField6 = extraField6;
-	}
-
-	public String getExtraField7() {
-		return extraField7;
-	}
-
-	public void setExtraField7(String extraField7) {
-		this.extraField7 = extraField7;
-	}
-
 	public DepreciationMaster getDepreciationMaster() {
 		return depreciationMaster;
 	}
@@ -489,28 +404,12 @@ public class Floor extends BaseModel implements Auditable {
 		this.alv = alv;
 	}
 
-	public String getTaxExemptedReason() {
+	public TaxExeptionReason getTaxExemptedReason() {
 		return taxExemptedReason;
 	}
 
-	public void setTaxExemptedReason(String taxExemptedReason) {
+	public void setTaxExemptedReason(TaxExeptionReason taxExemptedReason) {
 		this.taxExemptedReason = taxExemptedReason;
-	}
-
-	public String getCapitalValue() {
-		return capitalValue;
-	}
-
-	public void setCapitalValue(String capitalValue) {
-		this.capitalValue = capitalValue;
-	}
-
-	public boolean isPlanApproved() {
-		return planApproved;
-	}
-
-	public void setPlanApproved(boolean planApproved) {
-		this.planApproved = planApproved;
 	}
 
 	public Date getOccupancyDate() {
@@ -548,6 +447,22 @@ public class Floor extends BaseModel implements Auditable {
 
 	public void setPropertyDetail(PropertyDetail propertyDetail) {
 		this.propertyDetail = propertyDetail;
+	}
+
+	public Boolean getDrainage() {
+		return drainage;
+	}
+
+	public void setDrainage(Boolean drainage) {
+		this.drainage = drainage;
+	}
+
+	public Integer getNoOfSeats() {
+		return noOfSeats;
+	}
+
+	public void setNoOfSeats(Integer noOfSeats) {
+		this.noOfSeats = noOfSeats;
 	}
 
 }

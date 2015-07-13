@@ -85,7 +85,7 @@ function loadOnStartUp() {
 	document.getElementById("vacantLandRow").style.display = "none";
 	document.getElementById("vacantLandTable").style.display = "none";
 	document.getElementById("appartenantRow").style.display = "none";
-	document.getElementById("drainageseatsrow").style.display = "none";
+	//document.getElementById("drainageseatsrow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
@@ -102,7 +102,8 @@ function loadOnStartUp() {
 	document.getElementById("dateOfCompletion").className="hiddentext";
 	document.getElementById("floorDetailsConfirm").style.display = "none";
 	document.getElementById("waterRate").style.display = "none"; */
-	
+	enableOrDisableBPADetails(null);
+	enableOrDisableSiteOwnerDetails(null);
 	enableFieldsForPropType();
 	//hideAddRmvBtnForResidFlats();
 	//enableCorresAddr();

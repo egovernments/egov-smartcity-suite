@@ -891,102 +891,84 @@ function deleteTenant(obj)
 * Adds an Owner row
 **/
 
-function addOwner()
-{
-    var tbl = document.getElementById('nameTable');
-    var rowO=tbl.rows.length;
-   //alert("rowO="+rowO);
-    if(rowO<11)
-    {
-    	if(document.getElementById('nameRow') != null)
-    	{
-	    		//get Next Row Index to Generate
-	    		var nextIdx = tbl.rows.length-1;
-	    		
-	    		//validate status variable for exiting function
-	    		var isValid=1;//for default have success value 0
-	    		
-	    		//validate existing rows in table
-	    		jQuery("#nameTable tr:not(:first)").find('input, select').each(function(){
-	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
-	    			{
-	    				jQuery(this).focus();
-	    				alert(jQuery(this).data('errormsg'));
-	    				isValid=0;//set validation failure
-	    				return false;
-	    			}
-	    		});
-	    		
-	    		if(isValid===0)
-	    		{
-	    			return false;
-	    		}
-	    		
-	    		// Generate all textboxes Id and name with new index
-				jQuery("#nameRow").clone().find("input, select, img").each(function() {
+function addOwner() {
+	var tbl = document.getElementById('nameTable');
+	var rowO = tbl.rows.length;
+	// alert("rowO="+rowO);
+	if (rowO < 11) {
+		if (document.getElementById('nameRow') != null) {
+			// get Next Row Index to Generate
+			var nextIdx = tbl.rows.length - 1;
 
-						if(jQuery(this).data('server'))
-						{
+			// validate status variable for exiting function
+			var isValid = 1;// for default have success value 0
+
+			// validate existing rows in table
+			jQuery("#nameTable tr:not(:first)").find('input, select').each(
+					function() {
+						if ((jQuery(this).data('optional') === 0)
+								&& (!jQuery(this).val())) {
+							jQuery(this).focus();
+							alert(jQuery(this).data('errormsg'));
+							isValid = 0;// set validation failure
+							return false;
+						}
+					});
+
+			if (isValid === 0) {
+				return false;
+			}
+
+			// Generate all textboxes Id and name with new index
+			jQuery("#nameRow").clone().find("input, select, img").each(
+					function() {
+
+						if (jQuery(this).data('server')) {
 							jQuery(this).removeAttr('data-server');
-						}			
-					    if(!jQuery(this).is('img'))
-					    {
-							jQuery(this).attr({
-						      'id': function(_, id) { 
-						    	  return id.replace('[0]', '['+ nextIdx +']'); 
-						       },
-						      'name': function(_, name) { 
-						    	  return name.replace('[0]', '['+ nextIdx +']'); 
-						      },
-						    });
-							
-							//if element is static attribute hold values for next row, otherwise it will be reset
-							if(!jQuery(this).data('static'))
-						    {
+						}
+						if (!jQuery(this).is('img')) {
+							jQuery(this).attr(
+									{
+										'id' : function(_, id) {
+											return id.replace('[0]', '['
+													+ nextIdx + ']');
+										},
+										'name' : function(_, name) {
+											return name.replace('[0]', '['
+													+ nextIdx + ']');
+										},
+									});
+
+							// if element is static attribute hold values for
+							// next row, otherwise it will be reset
+							if (!jQuery(this).data('static')) {
 								jQuery(this).val('');
-								
-								//set default selection for dropdown
-								if(jQuery(this).is( "select" ))
-								{
+
+								// set default selection for dropdown
+								if (jQuery(this).is("select")) {
 									jQuery(this).prop('selectedIndex', 0);
 								}
-						    }
-							
-					    }
-					    
-			    }).end().appendTo("#nameTable");
-				
-				jQuery("#nameTable tr:last td img[alt='Add']").hide();
-				jQuery("#nameTable tr:last td img[alt='Remove']").show();
+							}
+
+						}
+
+					}).end().appendTo("#nameTable");
+
+			jQuery("#nameTable tr:last td img[alt='Add']").hide();
+			jQuery("#nameTable tr:last td img[alt='Remove']").show();
 
 		}
-	/*	else
-		{
-			//alert("Im in else");
-				//var tbl = document.getElementById('nameTable');
-				var lastRow = tbl.rows.length;
-				var txt1 = 'firstName';
-				var txt2 = 'middleName';
-				var txt3 = 'lastName';
-				//var txt4 = 'fatherName';
-				//var btnName = 'deleteOwnr';
-				//var idName = 'idOwner';
-				createTextNodes(tbl,lastRow,txt1, txt2, txt3);
-		}*/
-    }
-    //else
-    	//document.getElementById('addOwnerBtn').disabled=true;
-    	
+	}
 }
 
 
 /**
-* Adds a Tenant row
-**/
+ * Adds a Tenant row
+ */
 
 function addTenant()
 {
-  //alert("Inside addTenant");
+  // alert("Inside addTenant");
       var tbl = document.getElementById('nameTenantTable');
       var rowT=tbl.rows.length;
       if(rowT<11)

@@ -5,22 +5,17 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew"
-				onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
+		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
+				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypeId}"
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
+				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
-		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']"
-			dropdownId="propTypeCategoryId"
+		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
 			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
-		   <s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
-				id="propTypeCategoryId" listKey="key" listValue="value"
-				list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
+		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
 				cssClass="selectnew"/>
 		</td>
 	</tr>
@@ -120,8 +115,8 @@
 			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner"><s:textfield maxlength="64"
-				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner" readonly="true"></s:textfield></td>
+		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{propertyDetail.siteOwner}"
+				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
 	
 	<tr>
@@ -136,15 +131,12 @@
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox"><s:textfield name="buildingPermissionNo"
-				id="buildingPermissionNo" size="12" maxlength="12"
+		<td class="greybox"><s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox"><s:date name="buildingPermissionDate"
-				var="buildingPermDate" format="dd/MM/yyyy" /> <s:textfield
-				name="buildingPermissionDate" cssClass="datepicker"
-				value="%{#buildingPermDate}" autocomplete="off"
+		<td class="greybox"><s:date name="buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> <s:textfield
+				name="buildingPermissionDate" cssClass="datepicker" 	value="%{#buildingPermDate}" autocomplete="off"
 				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
@@ -153,9 +145,9 @@
     <tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox"><s:textfield name="devpercent"
-				id="devpercent" size="12" maxlength="12"
-				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
+				cssClass="selectnew"/>
 		</td>
    </tr>
 
@@ -230,7 +222,7 @@
 		</td>
 	</tr>
 
-	<tr id="floorHeaderRow">
+	<tr id="floorHeaderRow" class="floordetails">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="FloorDetailsHeader" /> </span>
@@ -240,7 +232,7 @@
 
 	<!-- Floor Details Section -->
 
-	<tr>
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorForm.jsp"%>

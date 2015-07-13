@@ -66,12 +66,6 @@
 		<many-to-one name="propertySource"
 			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
 
-		<property name="extra_field1" column="EXTRA_FIELD1" />
-		<property name="extra_field2" column="EXTRA_FIELD2" />
-		<property name="extra_field3" column="EXTRA_FIELD3" />
-		<property name="extra_field4" column="EXTRA_FIELD4" />
-		<property name="extra_field5" column="EXTRA_FIELD5" />
-		<property name="extra_field6" column="EXTRA_FIELD6" />
 		<property name="effectiveDate" column="EFFECTIVE_DATE" />
 		<property name="status" column="STATUS" />
 

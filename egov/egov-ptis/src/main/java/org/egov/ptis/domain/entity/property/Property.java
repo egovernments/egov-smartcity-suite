@@ -82,18 +82,6 @@ public interface Property extends Auditable {
 
 	public void setBasicProperty(BasicProperty basicProperty);
 
-	public String getExtra_field1();
-
-	public void setExtra_field1(String extra_field1);
-
-	public String getExtra_field2();
-
-	public void setExtra_field2(String extra_field2);
-
-	public String getExtra_field3();
-
-	public void setExtra_field3(String extra_field3);
-
 	public Boolean isVacant();
 
 	public void setVacant(Boolean vacant);
@@ -163,18 +151,6 @@ public interface Property extends Auditable {
 	 * 
 	 * public void addPtDemandARV(PtDemandARV ptDemandARV);
 	 */
-
-	public void setExtra_field4(String extra_field4);
-
-	public String getExtra_field4();
-
-	public void setExtra_field5(String extra_field5);
-
-	public String getExtra_field5();
-
-	public void setExtra_field6(String extra_field6);
-
-	public String getExtra_field6();
 
 	public void setInstallment(Installment installment);
 

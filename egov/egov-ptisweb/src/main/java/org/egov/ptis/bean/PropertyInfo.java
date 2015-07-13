@@ -499,8 +499,8 @@ public class PropertyInfo {
 
 		for (Property historyProperty : property.getBasicProperty().getPropertySet()) {
 
-			Date effectiveDate = historyProperty.getPropertyDetail().getEffective_date() == null ? historyProperty
-					.getEffectiveDate() : historyProperty.getPropertyDetail().getEffective_date();
+			Date effectiveDate = historyProperty.getPropertyDetail().getDateOfCompletion() == null ? historyProperty
+					.getEffectiveDate() : historyProperty.getPropertyDetail().getDateOfCompletion();
 
 			if (STATUS_ISHISTORY.equals(historyProperty.getStatus())
 					&& propertyTaxUtil.between(effectiveDate, installment.getFromDate(), installment.getToDate())) {
@@ -534,8 +534,8 @@ public class PropertyInfo {
 			Date propCreatedDate, Map<Installment, TaxCalculationInfo> taxCalcInfoAndInstallment) {
 		Map<String, String> propertyInfo = new HashMap<String, String>();
 		propertyInfo.put(PROPERTY_TYPE, historyProperty.getPropertyDetail().getPropertyTypeMaster().getCode());
-		propertyInfo.put(PROPERTY_TYPE_CATEGORY, historyProperty.getPropertyDetail().getExtra_field5());
-		propertyInfo.put(PROPERTY_AMENITY, historyProperty.getPropertyDetail().getExtra_field4());
+		/*propertyInfo.put(PROPERTY_TYPE_CATEGORY, historyProperty.getPropertyDetail().getExtra_field5());
+		propertyInfo.put(PROPERTY_AMENITY, historyProperty.getPropertyDetail().getExtra_field4());*/
 		taxCalcInfoAndInstallment.put(installment, taxCalcInfo);
 		installmentAndHistoryTaxCalcsByDate.put(propCreatedDate, taxCalcInfoAndInstallment);
 		propertyInfoByCreatedDate.put(propCreatedDate, propertyInfo);

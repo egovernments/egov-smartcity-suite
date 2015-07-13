@@ -171,7 +171,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			PropertyCalSheetInfo calSheetInfo) {
 
 		GovtPropertyTaxCalInfo govtPropTaxCalInfo = new GovtPropertyTaxCalInfo();
-		govtPropTaxCalInfo.setAmenities(calSheetInfo.getAmenities());
+		//govtPropTaxCalInfo.setAmenities(calSheetInfo.getAmenities());
 		govtPropTaxCalInfo.setAnnualLettingValue(unitCalcDetail.getAlv());
 		govtPropTaxCalInfo.setBuildingCost(unitCalcDetail.getBuildingCost());
 

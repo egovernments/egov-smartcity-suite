@@ -115,7 +115,4 @@ public class PropertyCalSheetInfo {
 		this.consolidatedUnitTaxCalReportList = consolidatedUnitTaxCalReportList;
 	}
 
-	public String getAmenities() {
-		return activeProperty.getPropertyDetail().getExtra_field4();
-	}
 }

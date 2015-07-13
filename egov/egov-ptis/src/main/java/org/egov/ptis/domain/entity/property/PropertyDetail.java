@@ -74,14 +74,6 @@ public interface PropertyDetail extends Property {
 
 	public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster);
 
-	public Date getCompletion_year();
-
-	public void setCompletion_year(Date completion_year);
-
-	public Date getEffective_date();
-
-	public void setEffective_date(Date effective_date);
-
 	public Date getDateOfCompletion();
 
 	public void setDateOfCompletion(Date dateOfCompletion);
@@ -285,10 +277,6 @@ public interface PropertyDetail extends Property {
 
 	public String getPropertyType();
 
-	public Installment getInstallment();
-
-	public void setInstallment(Installment installment);
-
 	public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
 
 	public PropertyMutationMaster getPropertyMutationMaster();
@@ -324,10 +312,6 @@ public interface PropertyDetail extends Property {
 	public boolean isStructure();
 	
 	public void setStructure(boolean structure);
-	
-	public boolean isDrainage();
-	
-	public void setDrainage(boolean drainage);
 	
 	public boolean isElectricity();
 	
@@ -388,4 +372,12 @@ public interface PropertyDetail extends Property {
 	public Double getMarketValue();
 	
 	public void setMarketValue(Double marketValue);
+	
+	public String getCategoryType();
+	
+	public void setCategoryType(String categoryType);
+	
+	public String getOccupancyCertificationNo();
+	
+	public void setOccupancyCertificationNo(String occupancyCertificationNo);
 }

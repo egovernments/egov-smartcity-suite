@@ -1320,14 +1320,6 @@ public class PropertyService {
 				.withComments(PROPERTY_WORKFLOW_STARTED).withStateValue(value).withOwner(owner)
 				.withDateInfo(new Date());
 
-		// Notice type doesnt exist for objection so set the notice type to 127
-		if (newProperty.getExtra_field2() == null || newProperty.getExtra_field2().equals("")) {
-			newProperty.setExtra_field2(NOTICE127);
-		}
-		newProperty.setExtra_field3(null);
-		newProperty.setExtra_field4(null);
-		newProperty.setExtra_field5(null);
-
 		newProperty.setBasicProperty(basicProperty);
 
 		newProperty.getPtDemandSet().clear();
@@ -1386,14 +1378,6 @@ public class PropertyService {
 		 */
 
 		newProperty.setStatus(STATUS_WORKFLOW);
-
-		if (newProperty.getExtra_field2() == null || newProperty.getExtra_field2().equals("")) {
-			newProperty.setExtra_field2(NOTICE127);
-		}
-		newProperty.setExtra_field3(null);
-		newProperty.setExtra_field4(null);
-		newProperty.setExtra_field5(null);
-
 		newProperty.setBasicProperty(basicProperty);
 
 		newProperty.getPtDemandSet().clear();
@@ -1941,8 +1925,6 @@ public class PropertyService {
 		propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
 		propDetail.setNo_of_floors(numOfFloors);
 		propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
-		propDetail.setCompletion_year(propertyDetail.getCompletion_year());
-		propDetail.setEffective_date(propertyDetail.getEffective_date());
 		propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
 		propDetail.setProperty(propertyDetail.getProperty());
 		propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
@@ -1960,12 +1942,6 @@ public class PropertyService {
 			propDetail.setPropertyUsage(null);
 		}
 
-		propDetail.setExtra_field1(propertyDetail.getExtra_field1());
-		propDetail.setExtra_field2(propertyDetail.getExtra_field2());
-		propDetail.setExtra_field3(propertyDetail.getExtra_field3());
-		propDetail.setExtra_field4(propertyDetail.getExtra_field4());
-		propDetail.setExtra_field5(propertyDetail.getExtra_field5());
-		propDetail.setExtra_field6(propertyDetail.getExtra_field6());
 		propDetail.setManualAlv(propertyDetail.getManualAlv());
 		propDetail.setOccupierName(propertyDetail.getOccupierName());
 

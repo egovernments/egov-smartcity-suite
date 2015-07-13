@@ -517,7 +517,7 @@ public class PropertyTaxUtil {
 		Date floorCompletionOccupation = null;
 		try {
 			dateConstant = dateFormatter.parse(DATE_CONSTANT);
-			floorCompletionOccupation = dateFormatter.parse(floorImpl.getExtraField3());
+			floorCompletionOccupation = dateFormatter.parse(floorImpl.getOccupancyDate().toString());
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -1867,8 +1867,8 @@ public class PropertyTaxUtil {
 	 * @return Date the occupancy date
 	 */
 	public Date getPropertyOccupancyDate(Property property) {
-		return property.getPropertyDetail().getEffective_date() == null ? property.getEffectiveDate() : property
-				.getPropertyDetail().getEffective_date();
+		return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate() : property
+				.getPropertyDetail().getDateOfCompletion();
 	}
 
 	/**
@@ -2004,7 +2004,7 @@ public class PropertyTaxUtil {
 		LOGGER.debug("Entered into getDemandEffectiveYear, property=" + property);
 		String demandEffectiveYear = null;
 
-		demandEffectiveYear = new SimpleDateFormat("yyyy").format(property.getPropertyDetail().getEffective_date());
+		demandEffectiveYear = new SimpleDateFormat("yyyy").format(property.getPropertyDetail().getDateOfCompletion());
 		LOGGER.debug("getRevisedDemandYear - demandEffectiveYear=" + demandEffectiveYear);
 
 		LOGGER.debug("Exting from getDemandEffectiveYear");
@@ -2018,7 +2018,7 @@ public class PropertyTaxUtil {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static Integer getNoticeDaysForInactiveDemand(Property property) throws ParseException {
+	/*public static Integer getNoticeDaysForInactiveDemand(Property property) throws ParseException {
 		String query = "";
 
 		List result = null;
@@ -2053,13 +2053,13 @@ public class PropertyTaxUtil {
 
 		return days;
 	}
-
-	public static boolean isNoticeGenerated(Property property) {
+*/
+	/*public static boolean isNoticeGenerated(Property property) {
 		return (property.getExtra_field3() != null && property.getExtra_field3().equalsIgnoreCase(
 				PropertyTaxConstants.STR_YES))
 				|| (property.getExtra_field4() != null && property.getExtra_field4().equalsIgnoreCase(
 						PropertyTaxConstants.STR_YES)) ? true : false;
-	}
+	}*/
 
 	public List<String> getAdvanceYearsFromCurrentInstallment() {
 		LOGGER.debug("Entered into getAdvanceYearsFromCurrentInstallment");
@@ -2309,7 +2309,7 @@ public class PropertyTaxUtil {
 					}
 
 					if (mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY)
-							&& (nextMutationCode == null || areNoticesGenerated(property))) {
+							&& (nextMutationCode == null /*|| areNoticesGenerated(property)*/)) {
 						propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
 					}
 				}
@@ -2330,13 +2330,13 @@ public class PropertyTaxUtil {
 		return propertyByOccupancyDate;
 	}
 
-	private boolean areNoticesGenerated(Property property) {
+	/*private boolean areNoticesGenerated(Property property) {
 		boolean isNotice134Or127Generated = property.getExtra_field3() != null
 				&& property.getExtra_field3().equalsIgnoreCase("Yes") ? true : false;
 		boolean isNoticePVRGenerated = property.getExtra_field4() != null
 				&& property.getExtra_field4().equalsIgnoreCase("Yes") ? true : false;
 		return isNotice134Or127Generated && isNoticePVRGenerated ? true : false;
-	}
+	}*/
 
 	private boolean isFirstDataEntry(String prevPropMutationCode, String mutationCode, Property prevProperty) {
 
@@ -2348,7 +2348,7 @@ public class PropertyTaxUtil {
 			return true;
 		}
 
-		return (prevProperty == null || areNoticesGenerated(prevProperty))
+		return (prevProperty == null/* || areNoticesGenerated(prevProperty)*/)
 				&& mutationCode.equalsIgnoreCase(PROPERTY_MODIFY_REASON_DATA_ENTRY) ? true : false;
 	}
 

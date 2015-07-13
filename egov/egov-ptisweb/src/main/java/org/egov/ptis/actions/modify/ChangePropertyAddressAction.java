@@ -242,10 +242,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 				property.getBasicProperty().setExtraField2(PropertyTaxUtil.buildAddress(address));
 				property.setStatus(STATUS_WORKFLOW);
-				property.setExtra_field1("");
-				property.setExtra_field2("");
-				property.setExtra_field3("");
-				property.setExtra_field4("");
+			
 				if (getDocNumber() != null && getDocNumber() != "") {
 					propDocNum = getDocNumber();
 				} else {

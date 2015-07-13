@@ -712,7 +712,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		propertyModel.setBasicProperty(basicProp);
 		propertyModel.setEffectiveDate(propCompletionDate);
-		propertyModel.getPropertyDetail().setEffective_date(propCompletionDate);
 		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel, propCompletionDate);
 
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -896,8 +895,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
 		propDetail.setNo_of_floors(numOfFloors);
 		propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
-		propDetail.setCompletion_year(propertyDetail.getCompletion_year());
-		propDetail.setEffective_date(propertyDetail.getEffective_date());
 		propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
 		propDetail.setProperty(propertyDetail.getProperty());
 		propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
@@ -911,7 +908,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propDetail.setCable(propertyDetail.isCable());
 		propDetail.setAttachedBathRoom(propertyDetail.isAttachedBathRoom());
 		propDetail.setElectricity(propertyDetail.isElectricity());
-		propDetail.setDrainage(propertyDetail.isDrainage());
 		propDetail.setWaterTap(propertyDetail.isWaterTap());
 		propDetail.setWaterHarvesting(propertyDetail.isWaterHarvesting());
 		propDetail.setLift(propertyDetail.isLift());
@@ -928,12 +924,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		} else {
 			propDetail.setPropertyUsage(null);
 		}
-		propDetail.setExtra_field1(propertyDetail.getExtra_field1());
-		propDetail.setExtra_field2(propertyDetail.getExtra_field2());
-		propDetail.setExtra_field3(propertyDetail.getExtra_field3());
-		propDetail.setExtra_field4(propertyDetail.getExtra_field4());
-		propDetail.setExtra_field5(propertyDetail.getExtra_field5());
-		propDetail.setExtra_field6(propertyDetail.getExtra_field6());
 		propDetail.setManualAlv(propertyDetail.getManualAlv());
 		propDetail.setOccupierName(propertyDetail.getOccupierName());
 
@@ -1250,23 +1240,16 @@ public class ModifyPropertyAction extends WorkflowAction {
 		for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
 			for (Floor newFloorInfo : propertyModel.getPropertyDetail().getFloorDetails()) {
 				if (floor.getId().equals(newFloorInfo.getId())) {
-					floor.setExtraField1(newFloorInfo.getExtraField1());
 					floor.setUnitType(newFloorInfo.getUnitType());
 					floor.setUnitTypeCategory(newFloorInfo.getUnitTypeCategory());
 					floor.setFloorNo(newFloorInfo.getFloorNo());
-					floor.setExtraField7(newFloorInfo.getExtraField7());
-					floor.setExtraField2(newFloorInfo.getExtraField2());
 					floor.setBuiltUpArea(newFloorInfo.getBuiltUpArea());
 					floor.setPropertyUsage(newFloorInfo.getPropertyUsage());
 					floor.setPropertyOccupation(newFloorInfo.getPropertyOccupation());
 					floor.setWaterRate(newFloorInfo.getWaterRate());
-					floor.setExtraField3(newFloorInfo.getExtraField3());
 					floor.setStructureClassification(newFloorInfo.getStructureClassification());
 					floor.setDepreciationMaster(newFloorInfo.getDepreciationMaster());
 					floor.setRentPerMonth(newFloorInfo.getRentPerMonth());
-					floor.setExtraField4(newFloorInfo.getExtraField4());
-					floor.setExtraField5(newFloorInfo.getExtraField5());
-					floor.setExtraField6(newFloorInfo.getExtraField6());
 					floor.setManualAlv(newFloorInfo.getManualAlv());
 					break;
 				}
@@ -1298,15 +1281,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		existingProp = updatePropertyForMigratedProp(existingProp, getAreaOfPlot(), PROP_CREATE_RSN, propTypeId,
 				propUsageId, propOccId, propertyModel.getDocNumber(), null, isfloorDetailsRequired);
 		existingProp.setBasicProperty(basicProp);
-		existingProp.setExtra_field2(propertyModel.getExtra_field2());
 		existingProp.setEffectiveDate(propCompletionDate);
-		existingProp.getPropertyDetail().setEffective_date(propCompletionDate);
-		existingProp.getPropertyDetail().setExtra_field1(propertyModel.getPropertyDetail().getExtra_field1());
-		existingProp.getPropertyDetail().setExtra_field2(propertyModel.getPropertyDetail().getExtra_field2());
-		existingProp.getPropertyDetail().setExtra_field3(propertyModel.getPropertyDetail().getExtra_field3());
-		existingProp.getPropertyDetail().setExtra_field4(propertyModel.getPropertyDetail().getExtra_field4());
-		existingProp.getPropertyDetail().setExtra_field5(propertyModel.getPropertyDetail().getExtra_field5());
-		existingProp.getPropertyDetail().setExtra_field6(propertyModel.getPropertyDetail().getExtra_field6());
 		existingProp.getPropertyDetail().setManualAlv(propertyModel.getPropertyDetail().getManualAlv());
 		existingProp.getPropertyDetail().setOccupierName(propertyModel.getPropertyDetail().getOccupierName());
 

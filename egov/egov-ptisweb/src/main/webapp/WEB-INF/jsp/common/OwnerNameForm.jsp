@@ -65,7 +65,7 @@
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center"><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
-				headerValue="Choose" headerKey="0" list="#{'Male':'Male','Female':'Female' }" cssClass="selectwk">
+				headerValue="Choose" headerKey="0" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
         	+91 <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfo[0].owner.mobileNumber}" 

@@ -449,11 +449,9 @@ function enableAlvForNonGovtPropTypes() {
 function toggleFloorDetails() {
 	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType == "Vacant Land") {
-		document.getElementById("floorHeaderRow").style.display = "none";
-		document.getElementById("floorDetails").style.display = "none";
+		jQuery('tr.floordetails').hide();
 	} else {
-		document.getElementById("floorHeaderRow").style.display = "table-row";
-		document.getElementById("floorDetails").style.display = "table-row-group";
+		jQuery('tr.floordetails').show();
 	}
 	if (propType == "Apartments") {
 		alert("Please select Apartment/Complex Name");
@@ -1042,19 +1040,25 @@ function showFloorTaxExemption() {
 function enableOrDisableSiteOwnerDetails(obj) {
 	console.log(jQuery('#propertyDetail.siteOwner'));
 	if (jQuery(obj).is(":checked")) {
-		jQuery('input[name="propertyDetail.siteOwner"]').val('');
-		jQuery('input[name="propertyDetail.siteOwner"]')
-				.prop('readonly', false);
+		jQuery('td.siteowner').show();
+		//jQuery('input[name="propertyDetail.siteOwner"]').val('');
+		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', false);
 	} else {
-		jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
+		jQuery('td.siteowner').hide();
+		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
 	}
 }
 
 function enableOrDisableBPADetails(obj) {
 	if (jQuery(obj).is(":checked")) {
-		jQuery('tr.bpddetails input').val('');
-		jQuery('tr.bpddetails input').prop('readonly', false);
+		jQuery('tr.bpddetails').show();
+		//jQuery('tr.bpddetails input').show();
+		//jQuery('tr.bpddetails select').show();
+		//jQuery('tr.bpddetails input').prop('readonly', false);
 	} else {
-		jQuery('tr.bpddetails input').prop('readonly', true);
+		jQuery('tr.bpddetails').hide();
+		//jQuery('tr.bpddetails input').hide();
+		//jQuery('tr.bpddetails select').hide();
+		//jQuery('tr.bpddetails input').prop('readonly', true);
 	}
 }

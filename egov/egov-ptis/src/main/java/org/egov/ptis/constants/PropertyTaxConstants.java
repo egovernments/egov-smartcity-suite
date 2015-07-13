@@ -281,6 +281,7 @@ public interface PropertyTaxConstants {
 			put("RESIDENTIAl", "Residential");
 			put("NON_RESIDENTIAL", "Non Residential");
 			put("MIXED", "Mixed");
+			put("APARTMENT", "Apartment");
 		}
 	};
 

@@ -76,18 +76,6 @@
 			column="RENTPER_MONTH"
 		/>
 		
-		<property
-			name="extraField1"
-			column="EXTRA_FIELD1"
-		/>
-		<property
-			name="extraField2"
-			column="EXTRA_FIELD2"
-		/>
-		<property
-			name="extraField3"
-			column="EXTRA_FIELD3"
-		/> 		
 		<many-to-one name="structureClassification" class="org.egov.ptis.domain.entity.property.StructureClassification" cascade="none" column="ID_STRUC_CL"/>
 		
 		<many-to-one name="propertyOccupation" class="org.egov.ptis.domain.entity.property.PropertyOccupation" cascade="none" column="ID_OCCPN_MSTR"/>
@@ -107,16 +95,9 @@
 			<property name="area" column="FLOOR_AREA"/>	
 		</component>
 		
-		<property name="extraField4" column="EXTRA_FIELD4" />
-		<property name="extraField5" column="EXTRA_FIELD5" />
-		<property name="extraField6" column="EXTRA_FIELD6" /> 
-		<property name="extraField7" column="EXTRA_FIELD7" />
 		<property name="manualAlv" column="MANUAL_ALV"/>
 		<property name="alv" column="ALV"/>
-		<property name="capitalValue" column="capitalvalue" type="java.lang.String"/>
-		<property name="planApproved" column="planapproved" type="boolean" />
-		<property name="occupancyDate" column="occupancydate" type="java.util.Date" />
-		<property name="occupantName" column="occupantname" type="java.lang.String" />
+		
 		<!--
 		EXTRA_FIELD1 varchar
 		
@@ -134,6 +115,8 @@
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="waterRate" column="WATER_RATE" />
-		<property name="taxExemptedReason" column="TAX_EXEMPTED_REASON" type="java.lang.String" />		
+		<property name="noOfSeats" column="no_of_seats"	type="integer" />
+		<property name="drainage" column="drainage"	type="boolean" />
+		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.FloorType" column="TAX_EXEMPTED_REASON" />
 	</class>
 </hibernate-mapping>

@@ -308,10 +308,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 				} else {
 					property = (PropertyImpl) basicProp.getProperty().createPropertyclone();
 					property.setStatus(STATUS_WORKFLOW);
-					property.setExtra_field1("");
-					property.setExtra_field2("");
-					property.setExtra_field3("");
-					property.setExtra_field4("");
+					
 					if (getDocNumber() != null && getDocNumber() != "") {
 						propDocNum = getDocNumber();
 					} else {

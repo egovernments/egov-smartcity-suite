@@ -404,9 +404,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			PropertyDetail propertyDetail = property.getPropertyDetail();
 			setAddressStr(basicProp.getAddress().toString());
 			corrAddress1 = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
-			if (propertyDetail.getExtra_field4() != null && !propertyDetail.getExtra_field4().trim().isEmpty()) {
-				setAmenities(CommonServices.getAmenitiesDtls(propertyDetail.getExtra_field4()));
-			}
 
 			if (propertyDetail.getFloorDetails().size() > 0) {
 				setFloorDetails(property);
@@ -729,7 +726,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			property.setPropertyDetail(changePropertyDetail());
 		}
 
-		property.getPropertyDetail().setEffective_date(calendar.getTime());
 		basicProperty.addProperty(property);
 		propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
@@ -778,7 +774,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			newProperty.setPropertyDetail(changePropertyDetail());
 		}
 
-		newProperty.getPropertyDetail().setEffective_date(propCompletionDate);
 		basicProp.addProperty(newProperty);
 		// propService.createDemand(newProperty, null, propCompletionDate,
 		// isfloorDetailsRequired);
@@ -810,7 +805,6 @@ public class CreatePropertyAction extends WorkflowAction {
 				propertyDetail.getFieldVerificationDate(), propertyDetail.getFloorDetails(),
 				propertyDetail.getPropertyDetailsID(), propertyDetail.getWater_Meter_Num(),
 				propertyDetail.getElec_Meter_Num(), 0, propertyDetail.getFieldIrregular(),
-				propertyDetail.getCompletion_year(), propertyDetail.getEffective_date(),
 				propertyDetail.getDateOfCompletion(), propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
 				propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
 				propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
@@ -819,17 +813,12 @@ public class CreatePropertyAction extends WorkflowAction {
 				propertyDetail.getExtentAppartenauntLand(), propertyDetail.getFloorType(),
 				propertyDetail.getRoofType(), propertyDetail.getWallType(), propertyDetail.getWoodType(),
 				propertyDetail.isLift(), propertyDetail.isToilets(), propertyDetail.isWaterTap(),
-				propertyDetail.isStructure(), propertyDetail.isDrainage(), propertyDetail.isElectricity(),
+				propertyDetail.isStructure(), propertyDetail.isElectricity(),
 				propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
 				propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-				propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue());
+				propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),propertyDetail.getCategoryType(),
+				propertyDetail.getOccupancyCertificationNo());
 
-		vacantProperty.setExtra_field1(propertyDetail.getExtra_field1());
-		vacantProperty.setExtra_field2(propertyDetail.getExtra_field2());
-		vacantProperty.setExtra_field3(propertyDetail.getExtra_field3());
-		vacantProperty.setExtra_field4(propertyDetail.getExtra_field4());
-		vacantProperty.setExtra_field5(propertyDetail.getExtra_field5());
-		vacantProperty.setExtra_field6(propertyDetail.getExtra_field6());
 		vacantProperty.setManualAlv(propertyDetail.getManualAlv());
 		vacantProperty.setOccupierName(propertyDetail.getOccupierName());
 

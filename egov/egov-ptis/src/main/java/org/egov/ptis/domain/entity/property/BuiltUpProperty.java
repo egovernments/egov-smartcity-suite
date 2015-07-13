@@ -70,14 +70,14 @@ public class BuiltUpProperty extends AbstractProperty {
 	private Character fieldVerified;
 	private Date fieldVerificationDate;
 	private List<Floor> floorDetails = new ArrayList<Floor>();
-	/*private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();*/
+	/*
+	 * private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();
+	 */
 	private Integer propertyDetailsID;
 	private String water_Meter_Num;
 	private String elec_Meter_Num;
 	private Integer no_of_floors;
 	private char fieldIrregular = 'N';
-	private Date completion_year;
-	private Date effective_date;
 	private Property property;
 	private Date updatedTime;
 	private PropertyUsage propertyUsage;
@@ -85,7 +85,6 @@ public class BuiltUpProperty extends AbstractProperty {
 	private PropertyCreationReason creationReason;
 	private PropertyTypeMaster propertyTypeMaster;
 	private String propertyType;
-	private Installment installment;
 	private PropertyMutationMaster propertyMutationMaster;
 	private Character comZone = 'N';
 	private Character cornerPlot = 'N';
@@ -94,7 +93,6 @@ public class BuiltUpProperty extends AbstractProperty {
 	private boolean toilets = false;
 	private boolean waterTap = false;
 	private boolean structure = false;
-	private boolean drainage = false;
 	private boolean electricity = false;
 	private boolean attachedBathRoom = false;
 	private boolean waterHarvesting = false;
@@ -110,22 +108,20 @@ public class BuiltUpProperty extends AbstractProperty {
 	private String pattaNumber;
 	private Double currentCapitalValue;
 	private Double marketValue;
+	private String categoryType;
+	private String occupancyCertificationNo;
 
-	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
-			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
-			String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
-			List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date completion_year,
-			Date effective_date, Property property, Date updatedTime, PropertyUsage propertyUsage,
-			Date dateOfCompletion, PropertyCreationReason creationReason,
-			PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
-			PropertyMutationMaster propertyMutationMaster, Character comZone, Character cornerPlot,
-			PropertyOccupation propertyOccupation, double extentSite,
-			double extentAppartenauntLand, FloorType floorType, RoofType roofType,
-			WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
-			boolean structure, boolean drainage, boolean electricity, boolean attachedBathRoom,
-			boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
-			String pattaNumber, Double currentCapitalValue, Double marketValue) {
+	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
+			Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
+			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Property property, Date updatedTime,
+			PropertyUsage propertyUsage, Date dateOfCompletion, PropertyCreationReason creationReason,
+			PropertyTypeMaster propertyTypeMaster, String propertyType, PropertyMutationMaster propertyMutationMaster,
+			Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, double extentSite,
+			double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
+			boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
+			boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
+			String pattaNumber, Double currentCapitalValue, Double marketValue,String categoryType,String occupancyCertificationNo) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -143,8 +139,6 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.elec_Meter_Num = elec_Meter_Num;
 		this.no_of_floors = no_of_floors;
 		this.fieldIrregular = fieldIrregular;
-		this.completion_year = completion_year;
-		this.effective_date = effective_date;
 		this.property = property;
 		this.updatedTime = updatedTime;
 		this.propertyUsage = propertyUsage;
@@ -152,7 +146,6 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.creationReason = creationReason;
 		this.propertyTypeMaster = propertyTypeMaster;
 		this.propertyType = propertyType;
-		this.installment = installment;
 		this.propertyMutationMaster = propertyMutationMaster;
 		this.comZone = comZone;
 		this.cornerPlot = cornerPlot;
@@ -167,7 +160,6 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.toilets = toilets;
 		this.waterTap = waterTap;
 		this.structure = structure;
-		this.drainage = drainage;
 		this.electricity = electricity;
 		this.attachedBathRoom = attachedBathRoom;
 		this.waterHarvesting = waterHarvesting;
@@ -177,6 +169,8 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.pattaNumber = pattaNumber;
 		this.currentCapitalValue = currentCapitalValue;
 		this.marketValue = marketValue;
+		this.categoryType = categoryType;
+		this.occupancyCertificationNo = occupancyCertificationNo;
 	}
 
 	public BuiltUpProperty() {
@@ -226,36 +220,6 @@ public class BuiltUpProperty extends AbstractProperty {
 	 */
 	public void setCreationReason(PropertyCreationReason creationReason) {
 		this.creationReason = creationReason;
-	}
-
-	/**
-	 * @return Returns the completion_year.
-	 */
-	public Date getCompletion_year() {
-		return completion_year;
-	}
-
-	/**
-	 * @param completion_year
-	 *            The completion_year to set.
-	 */
-	public void setCompletion_year(Date completion_year) {
-		this.completion_year = completion_year;
-	}
-
-	/**
-	 * @return Returns the effective_date.
-	 */
-	public Date getEffective_date() {
-		return effective_date;
-	}
-
-	/**
-	 * @param effective_date
-	 *            The effective_date to set.
-	 */
-	public void setEffective_date(Date effective_date) {
-		this.effective_date = effective_date;
 	}
 
 	/**
@@ -605,8 +569,7 @@ public class BuiltUpProperty extends AbstractProperty {
 	}
 
 	/**
-	 * @return Returns the boolean after validating the current object
-	 * @throws
+	 * @return Returns the boolean after validating the current object @throws
 	 */
 	public boolean validateProperty() throws InvalidPropertyException {
 		/*
@@ -634,8 +597,7 @@ public class BuiltUpProperty extends AbstractProperty {
 		 * Validate() failed, Please Check !!" );
 		 */
 		if (getProperty() == null)
-			throw new InvalidPropertyException(
-					"BuiltUpProperty.validate : Property is NULL, Please Check !!");
+			throw new InvalidPropertyException("BuiltUpProperty.validate : Property is NULL, Please Check !!");
 		else if (getProperty().validateProperty() == false)
 			throw new InvalidPropertyException(
 					"BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
@@ -653,8 +615,7 @@ public class BuiltUpProperty extends AbstractProperty {
 		 * !!" );
 		 */
 		if (getPropertySource() == null)
-			throw new InvalidPropertyException(
-					"BuiltUpProperty.validate : PropertySource is NULL, Please Check !!");
+			throw new InvalidPropertyException("BuiltUpProperty.validate : PropertySource is NULL, Please Check !!");
 		else if (getPropertySource().validate() == false)
 			throw new InvalidPropertyException(
 					"BuiltUpProperty.validate : PropertySource Validate() failed, Please Check !!");
@@ -681,21 +642,6 @@ public class BuiltUpProperty extends AbstractProperty {
 	 */
 	public void setPropertyType(String propertyType) {
 		this.propertyType = propertyType;
-	}
-
-	/**
-	 * @return Returns the installment.
-	 */
-	public Installment getInstallment() {
-		return installment;
-	}
-
-	/**
-	 * @param installment
-	 *            The installment to set.
-	 */
-	public void setInstallment(Installment installment) {
-		this.installment = installment;
 	}
 
 	/**
@@ -737,23 +683,22 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.propertyOccupation = propertyOccupation;
 	}
 
-	/*public List<FloorImpl> getFloorDetailsProxy() {
-		getFloorDetails().addAll(floorDetailsProxy);
-		return floorDetailsProxy;
-	}
-
-	public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
-		this.floorDetailsProxy = floorDetailsProxy;
-		getFloorDetails().addAll(floorDetailsProxy);
-	}*/
+	/*
+	 * public List<FloorImpl> getFloorDetailsProxy() {
+	 * getFloorDetails().addAll(floorDetailsProxy); return floorDetailsProxy; }
+	 * 
+	 * public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
+	 * this.floorDetailsProxy = floorDetailsProxy;
+	 * getFloorDetails().addAll(floorDetailsProxy); }
+	 */
 
 	@Override
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
 
 		objStr.append("Id: ").append(getId()).append("|").append("Sital Area: ");
-		objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr
-				.append("NULL").append("|NoOfFloors: ").append(getNo_of_floors());
+		objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea())
+				: objStr.append("NULL").append("|NoOfFloors: ").append(getNo_of_floors());
 
 		return objStr.toString();
 	}
@@ -806,16 +751,6 @@ public class BuiltUpProperty extends AbstractProperty {
 	@Override
 	public void setStructure(boolean structure) {
 		this.structure = structure;
-	}
-
-	@Override
-	public boolean isDrainage() {
-		return drainage;
-	}
-
-	@Override
-	public void setDrainage(boolean drainage) {
-		this.drainage = drainage;
 	}
 
 	@Override
@@ -931,12 +866,12 @@ public class BuiltUpProperty extends AbstractProperty {
 	public Apartment getApartment() {
 		return apartment;
 	}
-    
+
 	@Override
 	public void setApartment(Apartment apartment) {
 		this.apartment = apartment;
 	}
-	
+
 	@Override
 	public String getPattaNumber() {
 		return pattaNumber;
@@ -967,4 +902,24 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.marketValue = marketValue;
 	}
 	
+	@Override
+	public String getCategoryType() {
+		return categoryType;
+	}
+
+	@Override
+	public void setCategoryType(String categoryType) {
+		this.categoryType = categoryType;
+	}
+
+	@Override
+	public String getOccupancyCertificationNo() {
+		return occupancyCertificationNo;
+	}
+
+	@Override
+	public void setOccupancyCertificationNo(String occupancyCertificationNo) {
+		this.occupancyCertificationNo = occupancyCertificationNo;
+	}
+
 }

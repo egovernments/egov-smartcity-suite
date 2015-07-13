@@ -360,8 +360,8 @@ public class PropertyNoticeService {
 		Date effectiveDate = null;
 
 		for (Map.Entry<Date, Property> entry : propertyByCreatedDate.entrySet()) {
-			effectiveDate = entry.getValue().getPropertyDetail().getEffective_date() == null ? entry.getValue()
-					.getEffectiveDate() : entry.getValue().getPropertyDetail().getEffective_date();
+			effectiveDate = entry.getValue().getPropertyDetail().getDateOfCompletion() == null ? entry.getValue()
+					.getEffectiveDate() : entry.getValue().getPropertyDetail().getDateOfCompletion();
 
 			propertyByOccupancyDate.put(effectiveDate, entry.getValue());
 		}
@@ -488,8 +488,8 @@ public class PropertyNoticeService {
 	 * @return Date the occupancy date
 	 */
 	private Date getPropertyOccupancyDate(Property property) {
-		return property.getPropertyDetail().getEffective_date() == null ? property.getEffectiveDate() : property
-				.getPropertyDetail().getEffective_date();
+		return property.getPropertyDetail().getDateOfCompletion() == null ? property.getEffectiveDate() : property
+				.getPropertyDetail().getDateOfCompletion();
 	}
 
 	/**
@@ -596,8 +596,10 @@ public class PropertyNoticeService {
 		List<EgDemandReasonDetails> demandReasonDetails = new ArrayList<EgDemandReasonDetails>();
 
 		String propertyType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
-		String amenities = property.getPropertyDetail().getExtra_field4();
-		String propertyTypeCategory = property.getPropertyDetail().getExtra_field5();
+		/*String amenities = property.getPropertyDetail().getExtra_field4();
+		String propertyTypeCategory = property.getPropertyDetail().getExtra_field5();*/
+		String amenities = "";
+		String propertyTypeCategory = "";
 
 		List<UnitCalculationDetail> unitCalculationDetails = new ArrayList<UnitCalculationDetail>();
 		Map<String, TaxDetail> taxDetailAndTaxName = new HashMap<String, TaxDetail>();
