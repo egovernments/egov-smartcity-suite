@@ -139,7 +139,6 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        addConnection.setApplicationDate(new Date());
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent);
         return "redirect:/application/application-success?applicationNumber=" + addConnection.getApplicationNumber();
     }
