@@ -40,6 +40,7 @@
 package org.egov.infstr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ValidationException extends RuntimeException {
@@ -51,6 +52,10 @@ public class ValidationException extends RuntimeException {
 		this.errors = errors;
 	}
 
+	public ValidationException(final ValidationError ... errors) {
+            this.errors = Arrays.asList(errors);
+        }
+	
 	public List<ValidationError> getErrors() {
 		return this.errors;
 	}

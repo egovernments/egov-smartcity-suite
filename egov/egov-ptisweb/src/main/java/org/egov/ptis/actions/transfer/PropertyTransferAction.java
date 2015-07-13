@@ -70,7 +70,7 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
-import org.egov.ptis.domain.service.transfer.TransferOwnerService;
+import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -80,7 +80,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
         @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
-        @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp") })
+        @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
+        @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
+                "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}"})})
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends BaseFormAction {
 
@@ -91,6 +93,7 @@ public class PropertyTransferAction extends BaseFormAction {
     public static final String REJECT_ON_TAXDUE = "balance";
     public static final String PRINTACK = "printAck";
     public static final String PRINTNOTICE = "printNotice";
+    public static final String REDIRECT_SUCCESS = "redirect-success";
 
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -98,7 +101,7 @@ public class PropertyTransferAction extends BaseFormAction {
     // Dependent Services
     @Autowired
     @Qualifier("transferOwnerService")
-    private TransferOwnerService transferOwnerService;
+    private PropertyTransferService transferOwnerService;
 
     // Model and View data
     private Long mutationId;
@@ -141,7 +144,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @Action(value = "/save")
     public String save() {
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        return ACK;
+        return REDIRECT_SUCCESS;
     }
 
     @SkipValidation
@@ -153,20 +156,20 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/forward")
     public String forward() {
-        return ACK;
+        return REDIRECT_SUCCESS;
     }
 
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        return ACK;
+        return REDIRECT_SUCCESS;
     }
 
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/approve")
     public String approve() {
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
-        return ACK;
+        return REDIRECT_SUCCESS;
     }
 
     @SkipValidation
@@ -209,6 +212,12 @@ public class PropertyTransferAction extends BaseFormAction {
             ServletActionContext.getResponse().getWriter().write("0");
     }
 
+    @SkipValidation
+    @Action(value = "/redirect-success")
+    public String redirectSuccess() {
+        return ACK;
+    }
+    
     @Override
     public void prepare() {
         if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
@@ -251,9 +260,9 @@ public class PropertyTransferAction extends BaseFormAction {
                 addActionError("Please attach the mandatory documents.");
             else
                 for (final Document document : propertyMutation.getDocuments())
-                    if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
+                    if (document.isEnclosed() && document.getFiles().isEmpty())
                         addActionError(document.getType()
-                                + " document is either mandatory or marked as enclosed, please add the relavent documents.");
+                                + " document marked as enclosed, please add the relavent documents.");
 
         if (propertyMutation.getTransfereeInfos().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");

@@ -87,7 +87,7 @@
     
 	<bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 	
-	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService" />
+	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.PropertyTransferService" />
 	
 	<bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
 		<property name="propPerServ" ref="persistenceService"/>

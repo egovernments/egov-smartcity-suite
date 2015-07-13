@@ -94,7 +94,7 @@
 						<td class="bluebox">
 							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
 							<s:hidden name="mutationId" id="mutationId" value="%{id}"/>
-							<s:hidden name="assessmentNo" id="assessmentNo" value="%{assessmentNo}"/>
+							<s:hidden name="assessmentNo" id="assessmentNo" value="%{basicproperty.upicNo}"/>
 						</td>
 						<td class="bluebox">
 							&nbsp;

@@ -69,6 +69,8 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -98,8 +100,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
-    private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
+public class PropertyTransferService extends PersistenceService<PropertyMutation, Long> {
+    private static final Logger LOGGER = Logger.getLogger(PropertyTransferService.class);
 
     @Autowired
     @Qualifier("propertyImplService")
@@ -167,10 +169,11 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 
     @Transactional
     public void approvePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        checkAllMandatoryDocumentsAttached(propertyMutation);
         final PropertySource propertySource = basicProperty.getPropertyOwnerInfo().get(0).getSource();
         basicProperty.getPropertyOwnerInfo().clear();
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
-        int order = 0;
+        int order = 1;
         for (final User propertyOwner : propertyMutation.getTransfereeInfos()) {
             final PropertyOwnerInfo propertyOwnerInfo = new PropertyOwnerInfo(basicProperty, propertySource, propertyOwner,
                     order++);
@@ -190,15 +193,16 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         persist(propertyMutation);
     }
 
-    public double calculateMutationFee(final double marketValue, final String transferReason, final PropertyMutation propertyMutation) {
+    public double calculateMutationFee(final double marketValue, final String transferReason,
+            final PropertyMutation propertyMutation) {
         final int transferedInMonths = Months.monthsBetween(new LocalDate(propertyMutation.getMutationDate()).withDayOfMonth(1),
                 new LocalDate(propertyMutation.getDeedDate()).withDayOfMonth(1)).getMonths();
         return (Double) scriptService.executeScript("PTIS-MUTATION-FEE-CALCULATOR", ScriptService.createContext("marketValue",
                 marketValue, "transferedInMonths", transferedInMonths, "transferReason", transferReason));
     }
 
-    public BigDecimal getWaterTaxDues(final String wtmsTaxDueRESTurl, final String upicNo) {
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueRESTurl);
+    public BigDecimal getWaterTaxDues(final String wtmsTaxDueChecking_REST_url, final String upicNo) {
+        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueChecking_REST_url);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO
                 : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }
@@ -258,6 +262,12 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
         final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
+    }
+
+    private void checkAllMandatoryDocumentsAttached(final PropertyMutation propertyMutation) {
+        for (final Document document : propertyMutation.getDocuments())
+            if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
+                throw new ValidationException(new ValidationError("documents", "Please attach mandatory/marked enclosed documents."));
     }
 
     private void createUserIfNotExist(final List<User> transferees) {
