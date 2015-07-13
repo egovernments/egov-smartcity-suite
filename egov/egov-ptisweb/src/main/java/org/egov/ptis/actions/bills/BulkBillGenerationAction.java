@@ -39,27 +39,35 @@
  ******************************************************************************/
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.lib.admbndry.BoundaryDAO;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("serial")
@@ -71,59 +79,119 @@ public class BulkBillGenerationAction extends BaseFormAction {
 
 	Logger LOGGER = Logger.getLogger(getClass());
 	public static final String RESULT_ACK = "ack";
-	private Integer wardId;
+	private Long zoneId;
+	private Long wardId;
+	private Map<Long, String> ZoneBndryMap;
 	private String ackMessage;
-	@Autowired
-	private BoundaryDAO boundaryDAO;
 	@Autowired
         private InstallmentDao installmentDao;
 	@Autowired
         private ModuleService moduleService;
+	@Autowired
+        private BoundaryService boundaryService;
 	private List<Boundary> wardList = new ArrayList<Boundary>();
 
 	@Override
 	public Object getModel() {
 		return null;
 	}
+	
+	@SkipValidation
 	@Action(value = "/bills/bulkBillGeneration-newForm")
 	public String newForm() {
-	        wardList = getPersistenceService().findAllBy(
-                    "from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
-                                    + "and BI.isHistory='N' order by BI.boundaryNum", WARD,ADMIN_HIERARCHY_TYPE
-                    );
 		return NEW;
 	}
-
-
+	
+	@Override
+        public void prepare() {
+	    try{
+                LOGGER.debug("Entered into prepare method");
+                LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
+                List<Boundary> zoneList = getPersistenceService().findAllBy(
+                                "from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
+                                                + "and BI.isHistory='N' order by BI.id", "Zone", ADMIN_HIERARCHY_TYPE);
+                setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
+                prepareWardDropDownData(zoneId != null, wardId != null);
+               LOGGER.debug("Exit from prepare method");
+	    }catch (final Exception e) {
+	              throw new EGOVRuntimeException("Bill Generation Exception : " + e);
+	          }
+        }
+	
+	@SuppressWarnings("unchecked")
+        @SkipValidation
+        private void prepareWardDropDownData(boolean zoneExists, boolean wardExists) {
+                LOGGER.debug("Entered into prepareWardDropDownData method");
+                LOGGER.debug("Zone exists ? : " + zoneExists + ", " + "Ward exists ? : " + wardExists);
+                if (zoneExists && wardExists) {
+                        List<Boundary> wardNewList = new ArrayList<Boundary>();
+                        wardNewList = getPersistenceService()
+                                        .findAllBy("from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
+                                                WARD_BNDRY_TYPE, getZoneId());
+                        addDropdownData("wardList", wardNewList);
+                } else {
+                        addDropdownData("wardList", Collections.EMPTY_LIST);
+                }
+                LOGGER.debug("Exit from prepareWardDropDownData method");
+        }
+	
+	@Override
+        public void validate() {
+                LOGGER.debug("Entered into validate method");
+                if (zoneId == null || zoneId == -1) {
+                        addActionError(getText("mandatory.zone"));
+                }
+                LOGGER.debug("Exit from validate method");
+        }
+	
+	@ValidationErrorPage(value = "new")
 	@Action(value = "/bills/bulkBillGeneration-generateBills")
 	public String generateBills() {
-		LOGGER.debug("generateBills method started for ward number " + wardId);
+		LOGGER.debug("generateBills method started for zone "+ zoneId +" and ward number :" + wardId);
 		BulkBillGeneration bulkBill = null;
-
-		Integer wardNumber = boundaryDAO.getBoundary(Long.valueOf(wardId)).getBoundaryNum()
-				.intValue();
+		String wardMessage="";
 		Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-
-		bulkBill = (BulkBillGeneration) persistenceService.find(
-				"from BulkBillGeneration where wardNumber=? and installment.id=?",
-				 wardNumber.toString(),currentInstall.getId());
+		
+		StringBuilder queryStr = new StringBuilder();
+                queryStr.append("select bbg from BulkBillGeneration bbg ").append(
+                                " where bbg.zone.id=:zoneid and bbg.installment.id=:installment ");
+                if (wardId != null && wardId != -1) {
+                        queryStr.append("and bbg.ward.id=:wardid ");
+                }
+                Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
+                query.setLong("zoneid", zoneId);
+                query.setLong("installment", currentInstall.getId());
+                if (wardId != null && wardId != -1) {
+                        query.setLong("wardid", wardId);
+                }
+                List<BulkBillGeneration> bbgList = query.list();
+                if(bbgList!=null && !bbgList.isEmpty()){
+        		bulkBill = (BulkBillGeneration) bbgList.get(0);
+                }
 
 		if (bulkBill == null) {
 		        bulkBill = new BulkBillGeneration();
-		        bulkBill.setWardNumber( wardNumber.toString());
+		        bulkBill.setZone(boundaryService.getBoundaryById(zoneId));
+		        bulkBill.setWard(boundaryService.getBoundaryById(wardId));
 		        bulkBill.setInstallment(currentInstall);
 			persistenceService.setType(BulkBillGeneration.class);
 			getPersistenceService().persist(bulkBill);
-			setAckMessage("Bill generation scheduled for ward " + wardNumber
+			if (wardId != null && wardId != -1) {
+                             wardMessage=", Ward "+bulkBill.getWard().getName(); 
+                         }
+			setAckMessage("Bill generation scheduled for zone " + bulkBill.getZone().getName() + wardMessage
 					+ " and for Installment " +  currentInstall.getDescription()
 					+ ", you can check the bill generation status using ");
 		} else {
-			setAckMessage("Bill generation already scheduled for ward " + wardNumber
+        		if (wardId != null && wardId != -1) {
+                            wardMessage=", Ward "+bulkBill.getWard().getName(); 
+                        }
+			setAckMessage("Bill generation already scheduled for zone " + bulkBill.getZone().getName() + wardMessage
 					+ " and for Installment " +  currentInstall.getDescription()
 					+ ", you can check the bill generation status after some time using ");
 		}
-		LOGGER.debug("generateBills method ended for ward number " + wardNumber);
+		LOGGER.debug("generateBills method started for zone "+ zoneId +" and ward number :" + wardId);
 		return RESULT_ACK;
 	}
 
@@ -135,11 +203,11 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		this.wardList = wardList;
 	}
 
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 
@@ -150,4 +218,16 @@ public class BulkBillGenerationAction extends BaseFormAction {
 	public void setAckMessage(String ackMessage) {
 		this.ackMessage = ackMessage;
 	}
+    public Long getZoneId() {
+        return zoneId;
+    }
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+    public Map<Long, String> getZoneBndryMap() {
+        return ZoneBndryMap;
+    }
+    public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
+        ZoneBndryMap = zoneBndryMap;
+    }
 }

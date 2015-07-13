@@ -51,9 +51,10 @@
         <many-to-one name="installment" class="org.egov.commons.Installment" >
             <column name="installment"  not-null="true" />
         </many-to-one>
-        <property name="wardNumber" type="java.lang.String">
-            <column name="WARDNO" length="50" not-null="true" />
-        </property>
+        <many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary"
+			column="ZONE" not-null="true" />
+		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
+			column="WARD" />
          <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="createdby" not-null="true"/>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="lastmodifiedby"/>
         <property name="createdDate" type="java.util.Date">

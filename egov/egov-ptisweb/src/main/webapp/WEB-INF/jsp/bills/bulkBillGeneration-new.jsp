@@ -48,6 +48,12 @@
    <script type="text/javascript">
 
    paintAlternateColorForRows();
+ 
+   function populateWard() {
+		populatewardId( {
+			zoneId : document.getElementById("zoneId").value
+		});
+	}
    
    function validateFormAndSubmit(){
 	  	document.BulkBillGenerationForm.action='${pageContext.request.contextPath}/bills/bulkBillGeneration-generateBills.action';
@@ -62,6 +68,17 @@
   <s:form name="BulkBillGenerationForm" theme="simple">
   <s:token />
   <div class="formmainbox">
+  <s:if test="%{hasErrors()}">
+		<div align="left">
+			<s:actionerror />
+			<s:fielderror/>
+		</div>			
+	</s:if>
+	<s:if test="%{hasActionMessages()}">
+	    <div id="actionMessages" class="messagestyle">
+	    	<s:actionmessage theme="simple"/>
+	    </div>
+	</s:if>
   <div class="formheading"></div>
 		<div class="headingbg"><s:text name="BulkBillNew"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -72,18 +89,38 @@
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
 		</tr>
+		
+		
 		<tr>
 			<td>&nbsp;</td>
-			<td><s:text name="Ward" /> <span
-				class="mandatory1">*</span> :</td>
 			<td>
-					<s:select headerKey="-1" headerValue="%{getText('default.select')}" name="wardId"
-					id="wardNum" listKey="id" listValue="name" list="wardList" 
-					value="%{wardNumber}" cssClass="selectnew" />
+				<s:text name="Zone" />
+				<span class="mandatory1">*</span> :
+			</td>
+			<td>
+				<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
+					listKey="key" listValue="value" headerKey="-1"
+					headerValue="%{getText('default.select')}" value="%{zoneId}"
+					onchange="populateWard()" />
+				<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
+					dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 			</td>
 			<td>&nbsp;</td>
+			
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				<s:text name="Ward" /> :
+			</td>
+			<td>
+				<s:select name="wardId" id="wardId" list="dropdownData.wardList"
+					listKey="id" listValue="name" headerKey="-1"
+					headerValue="%{getText('default.select')}" value="%{wardId}"/>
+			</td>
 			<td>&nbsp;</td>
 		</tr>
+		
 		<tr>
 			<td colspan="5">&nbsp;</td>
 		</tr>
