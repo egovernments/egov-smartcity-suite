@@ -1073,7 +1073,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                  		billRegisterSer.applyAuditing(egBillregister);
                         billRegisterSer.persist(egBillregister);	
                         
-                        voucherHeader.getVouchermis().setSourcePath("/EGF/voucher/journalVoucherModify!beforeModify.action?voucherHeader.id="+voucherHeader.getId());
+                        voucherHeader.getVouchermis().setSourcePath("/EGF/voucher/journalVoucherModify-beforeModify.action?voucherHeader.id="+voucherHeader.getId());
                         update(voucherHeader);
         }catch (ValidationException e) {
                  List<ValidationError> errors=new ArrayList<ValidationError>();
