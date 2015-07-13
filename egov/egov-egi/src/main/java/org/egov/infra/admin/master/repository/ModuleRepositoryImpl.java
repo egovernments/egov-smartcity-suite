@@ -56,11 +56,11 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
     @Override
     public List<Object[]> fetchModulesForRoles(final Set<Role> roles) {
         final StringBuffer sql = new StringBuffer()
-                .append("SELECT DISTINCT mod.name,mod.contextRoot,mod.displayName, mod.id, mod.ordernumber FROM eg_module mod,eg_action act,eg_roleaction ram ")
-                .append("WHERE act.id IN (SELECT DISTINCT actionid FROM eg_roleaction WHERE roleid IN ( ");
+                .append("SELECT DISTINCT mod.name,mod.contextRoot,mod.displayName, mod.id, mod.ordernumber ")
+                .append("FROM eg_module mod,eg_action act, eg_module cm WHERE act.id IN (SELECT DISTINCT actionid FROM eg_roleaction WHERE roleid IN ( ");
         roles.parallelStream().forEach(role -> sql.append("?,"));
         sql.deleteCharAt(sql.length() - 1);
-        sql.append(")) AND mod.enabled=true AND act.parentmodule = mod.id AND mod.parentmodule is null ORDER BY mod.ordernumber ASC");
+        sql.append(")) AND mod.enabled=true AND act.enabled = true AND cm.id = act.parentmodule AND cm.parentmodule=mod.id AND mod.parentmodule is null ORDER BY mod.ordernumber ASC");
         final Query query = entityManager.createNativeQuery(sql.toString());
 
         int i = 1;
