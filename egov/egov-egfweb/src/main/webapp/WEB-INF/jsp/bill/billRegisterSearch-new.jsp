@@ -37,41 +37,35 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 
 <html>  
 <head>  
     <title><s:text name="bill.search.heading"></s:text></title>
 </head>
-	<body >  
-		<s:form name="billRegisterForm" id ="billRegisterForm" action="billRegisterSearch" theme="simple"  method="post" onsubmit="javascript:doAfterSubmit()" >
+	<body>
+	<s:form name="billRegisterForm" action="billRegisterSearch" theme="simple">  
 			<jsp:include page="../budget/budgetHeader.jsp">
         		<jsp:param name="heading" value="Voucher Search" />
 			</jsp:include>
 <font  style='color: red ; font-weight:bold '> 
 <p class="error-block" id="lblError" ></p></font>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
 			</span>
-			<div class="subheadnew"><s:text name="bill.search.heading"></s:text></div>
+			<div class="formmainbox"><div class="subheadnew"><s:text name="bill.search.heading"></s:text></div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-				<td class="bluebox" ><s:text name="bill.search.expType"/> <span class="mandatory">*</span></td>
+				<td class="bluebox" ><s:text name="bill.search.expType"/> <span class="mandatory1">*</span></td>
 				<td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expType" headerKey="-1" headerValue="----Choose----" value="%{expType}"/></td>
 				</tr>
 				<tr>
-					<td class="greybox" ><s:text name="bill.search.dateFrom"/> <span class="mandatory">*</span></td>
+					<td class="greybox" ><s:text name="bill.search.dateFrom"/> <span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="billDateFrom" id="billDateFrom" cssStyle="width:100px" value='%{billDateFrom}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateFrom');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-					<td class="greybox"><s:text name="bill.search.dateTo"/> <span class="mandatory">*</span></td>
+					<td class="greybox"><s:text name="bill.search.dateTo"/> <span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="billDateTo" id="billDateTo" cssStyle="width:100px" value='%{billDateTo}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateTo');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp"/>
@@ -82,14 +76,14 @@
 					<td class="greybox">
 				</tr>
 			</table>
-	<div class="subheadsmallnew" id="savebuttondiv1"/></div>
-	<div class="mandatory" align="left" id="mandatorymarkdiv">* Mandatory Fields</div>
+			</div>
+	<div class="mandatory1" align="left" id="mandatorymarkdiv">* Mandatory Fields</div>
 			<div  class="buttonbottom">
-				<s:submit method="search" value="Search" cssClass="buttonsubmit" onclick="return validate()"/>
-				<input type="submit" value="Close" onclick="javascript:window.close()" class="buttonsubmit"/>
+				<input type="submit" class="buttonsubmit" value="Search" id="Search" name="button" onclick="return validateFormAndSubmit();" />
+				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 			</div>
 			<br/>
-			
+			<s:if test="%{billList.size!=0 || billList!=null}">
 			<div id="listid" style="display:block">
 					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 			        <tr>  
@@ -112,13 +106,13 @@
 				            <s:property value="#s.index+1" />  
 				        </td>
 				        <td>  
-				            <s:property value="%{expendituretype}" />  
+				            <s:property value="%{expendituretype}" />
 				        </td>
 				        <td>  
 				            <s:property value="%{billtype}" />  
 				        </td>
 						<td>  
-				            <a href="<s:property value='%{sourcepath}' />"><s:property value="%{billnumber}" /> </a> 
+				             <a href="#" onclick="openBill('<s:property value='%{sourcepath}' />')"><s:property value="%{billnumber}" /></a>
 				        </td>
 				        <td>  
 				            <s:date name="%{billdate}" format="dd/MM/yyyy"/>  
@@ -140,6 +134,7 @@
 				    </s:iterator>
 				    </table>  
 			</div>
+			</s:if>
 				    <div id="msgdiv" style="display:none">
 						<table align="center" class="tablebottom" width="80%">
 							<tr><th class="bluebgheadtd" colspan="7">No Records Found</td></tr>
@@ -153,6 +148,15 @@
 		
 		</s:form>  
 		<script>
+	 function validateFormAndSubmit(){
+	    if (validate())
+		   {
+	       	document.billRegisterForm.action='${pageContext.request.contextPath}/bill/billRegisterSearch-search.action';
+		 	document.billRegisterForm.submit();
+		   }else{
+		       	return false;
+			}
+		 }
 	function validate(){
 	
 		document.getElementById('lblError').innerHTML ="";
@@ -221,7 +225,11 @@
 			
 		return true;
 	}
-	
+function openBill(url){
+		
+			window.open(url,'','width=900, height=700');
+			
+		}
 function doAfterSubmit(){
 		document.getElementById('loading').style.display ='block';
 		dom.get('msgdiv').style.display='none';
@@ -235,6 +243,7 @@ String.prototype.trim = function () {
 
 	<s:if test="%{billList.size<=0}">
 				dom.get('msgdiv').style.display='block';
+				dom.get('listid').style.display='none';
 			</s:if>
 	<s:if test="%{billList.size!=0}">
 				dom.get('msgdiv').style.display='none';

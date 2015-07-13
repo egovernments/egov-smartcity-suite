@@ -50,17 +50,20 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -68,13 +71,14 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
  * 
  */
-@Transactional(readOnly=true)
+@ParentPackage("egov")
+@Results({ 
+		@Result(name = BillRegisterSearchAction.NEW, location = "billRegisterSearch-new.jsp")})
 public class BillRegisterSearchAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger
@@ -150,7 +154,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("BillRegisterSearchAction | newform | Start");
 		return NEW;
 	}
-
+@Action(value="/bill/billRegisterSearch-search")
 	public String search() {
 
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("BillRegisterSearchAction | search | Start");
@@ -158,7 +162,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 		query
 				.append(
 						"select br.expendituretype , br.billtype ,br.billnumber , br.billdate , br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
-						.append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.modifiedBy.id ")
+						.append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy.id ")
 				.append(
 						" from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
 				.append(" and br.expendituretype=?").append(
@@ -210,7 +214,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 					billMap.put("sourcepath", object[7].toString());
 				} else {
 					billMap.put("sourcepath",
-						"/EGF/bill/billView!view.action?billId="+object[8].toString());
+						"/EGF/bill/billView-view.action?billId="+object[8].toString());
 				}   
 				// If bill is created from create bill screen
 				if(object[11]!=null) 
@@ -236,8 +240,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
 	private List<Object[]> getOwnersForWorkFlowState(List<Long> stateIds)
 	{
 		List<Object[]> ownerNamesList = new ArrayList<Object[]>();
-		String ownerNamesQueryStr = "select egusr.userName,bill.state.id from User egusr,org.egov.infra.workflow.entity.State state, EgBillregister bill,EmployeeView emp " 
-						+"where emp.position.id=state.owner.id  and egusr.id=emp.userMaster.id and bill.state.id=state.id and bill.state.id in (:IDS)";
+		String ownerNamesQueryStr = "select state.ownerUser.username,bill.state.id from User egusr,State state, EgBillregister bill" 
+						+" where bill.state.id=state.id and bill.state.id in (:IDS)";
 		int size = stateIds.size();
 		if(size>999)
 		{
@@ -279,9 +283,9 @@ public class BillRegisterSearchAction extends BaseFormAction {
 
 		}else
 		{
-			Query ownerNamesQuery = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr);
-			ownerNamesQuery.setParameterList("IDS",stateIds);
-			ownerNamesList = ownerNamesQuery.list();
+			ownerNamesList = HibernateUtil.getCurrentSession().createQuery(ownerNamesQueryStr)
+			.setParameterList("IDS",stateIds)
+			.list();
 		}
 		return ownerNamesList;
 	}

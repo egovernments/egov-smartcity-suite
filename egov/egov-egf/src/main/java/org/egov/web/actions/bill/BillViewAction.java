@@ -125,7 +125,7 @@ public class BillViewAction extends BaseFormAction
 		Map<String, Object> subLedgerTemp = null;
 		if(egBillRegister.getEgBilldetailes()!= null && egBillRegister.getEgBilldetailes().size() != 0)
 		{
-			List<EgBilldetails> billDetList = persistenceService.findAllBy(" from EgBilldetails where egBillregister.id=? order by decode(debitamount,null,0, debitamount) desc ,decode(creditamount,null,0, creditamount) asc ", egBillRegister.getId());
+			List<EgBilldetails> billDetList = persistenceService.findAllBy(" from EgBilldetails where egBillregister.id=? ", egBillRegister.getId());
 			for(EgBilldetails billDetail:billDetList)
 			{
 				CChartOfAccounts coa =   (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?  ", billDetail.getGlcodeid().longValue() ) ;

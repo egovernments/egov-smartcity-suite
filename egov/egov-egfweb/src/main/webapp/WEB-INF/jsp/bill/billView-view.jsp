@@ -45,8 +45,6 @@
 <html>  
 <head>  
     <title><s:text name="bill.view"/></title>
-    <link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-	<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 	<script type="text/javascript">
@@ -80,13 +78,13 @@
 </head> 
 	<body >  
 		<s:form action="billView" theme="simple" >  
-			<span class="mandatory">
+			<span class="mandatory1">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage />
 			</span>
 			
-			<div class="formmainbox"><div class="subheadnew"><s:property value="expendituretype"/>&nbsp<s:text name="bill.view"/></div></div>
+			<div class="formmainbox"><div class="subheadnew"><s:property value="expendituretype"/>&nbsp<s:text name="bill.view"/></div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">		
 				<tr>
 				    <td width="18%" class="bluebox"><s:text name="billDate"/></td>
@@ -100,7 +98,7 @@
 					<td class="greybox"><s:text name="bill.search.fund"/></td>
 					<td class="greybox"><s:property value="egBillregistermis.fund.name"/></td>  
 					<td class="greybox"><s:text name="bill.search.dept"/></td>
-					<td class="greybox"><s:property value="egBillregistermis.egDepartment.deptName"/></td>
+					<td class="greybox"><s:property value="egBillregistermis.egDepartment.name"/></td>
 				</tr>
 				<tr>
 					<td class="bluebox"> <s:text name="bill.search.functionary"/></td>
@@ -171,9 +169,10 @@
 					</table>
 				</div>
 			</s:if>
+			</div>
 			<div class="buttonbottom">
 				<input name="button" type="button" class="buttonsubmit" id="button1" value="Print" onclick="window.print()"/>&nbsp;
-				<input type="submit" id="button2" value="Close" onclick="javascript:window.close()" class="button"/>
+				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>&nbsp;
 			</div>
 		</s:form>  
 	</body>  
