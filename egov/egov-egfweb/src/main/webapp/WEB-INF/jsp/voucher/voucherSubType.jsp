@@ -74,7 +74,7 @@
 	</tr>
 <input type="hidden" id="voucherTypeBean.voucherSubType" name="voucherTypeBean.voucherSubType" value="${voucherTypeBean.voucherSubType}"/>
 
-<script>
+<script type="text/javascript" >
 function onChangeVSubType(){
 	
 	var vType = document.getElementById('vType').value;

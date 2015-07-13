@@ -94,7 +94,7 @@
 	</s:if>   
 
 </tr>
-<script>
+<script type="text/javascript" >
 function populateSchemes(fund){
 	if(null != document.getElementById("schemeid")){
 		populateschemeid({fundId:fund.options[fund.selectedIndex].value});

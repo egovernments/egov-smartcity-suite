@@ -37,22 +37,12 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title>Journal Voucher -Modify</title>
 <style type="text/css">
@@ -67,7 +57,7 @@
 </style>
 </head>
 
-	<script>
+	<script type="text/javascript" >
 		path="${pageContext.request.contextPath}";
 		var totaldbamt=0,totalcramt=0;
 		
@@ -300,7 +290,7 @@
 	<div class="yui-skin-sam" align="center">
        <div id="billDetailTable"></div>
      </div>
-     <script>
+     <script type="text/javascript" >
 		
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
@@ -314,7 +304,7 @@
 		<div class="yui-skin-sam" align="center">
 	       <div id="subLedgerTable"></div>
 	     </div>
-		<script>
+		<script type="text/javascript" >
 			
 			makeSubLedgerTable();
 			
@@ -343,7 +333,7 @@
 </s:push>
 </s:form>
 
-<script>               
+<script type="text/javascript" >               
 
 	function onLoadTask()
 	{

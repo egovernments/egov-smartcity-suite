@@ -199,6 +199,7 @@ display: none;
 	  		</s:if>
   		</s:if>
 	</div>
+	</div>
  	<div  class="buttonbottom">
 		<s:if test="%{from=='Receipt'}">
 			<s:iterator value="%{getValidActions()}" var="p"  status="s">
@@ -220,7 +221,7 @@ display: none;
 	</div>
 <s:hidden id="vhid" name="vhid" value="%{voucherHeader.id}"/>
 <s:hidden id="id" name="id" value="%{voucherHeader.id}"/><s:hidden id="contraId" name="contraId" value="%{contraVoucher.id}"/>
-</div>
+
 <script type="text/javascript">
 	function openSource()
 	{

@@ -122,11 +122,11 @@
 	<div class="yui-skin-sam" align="center">
        <div id="billDetailTable"></div>
      </div>
-     <script>
+     <script type="text/javascript" >
 		
 		makeVoucherDetailTable();
 		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
-	 </script>
+	 </script type="text/javascript" >
 	 <div id="codescontainer"></div>
 	 <br/>
 	 	<div id="labelSL" align="center">
@@ -136,7 +136,7 @@
 		<div class="yui-skin-sam" align="center">
 	       <div id="subLedgerTable"></div>
 	     </div>
-		<script>
+		<script type="text/javascript" >
 			
 			makeSubLedgerTable();
 			
@@ -198,7 +198,7 @@
 </s:push>
 </s:form>
 
-<script>
+<script type="text/javascript" >
 function validateApproverUser(name,value){
 //	alert("name value"+name);    
 	document.getElementById("actionName").value= name;
