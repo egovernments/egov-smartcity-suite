@@ -502,3 +502,29 @@ textarea
 {
 	margin:5px;
 }
+
+th.bluebgheadtd {
+  height: 28px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-right-color: #84B1AD;
+  border-bottom-color: #84B1AD;
+  font-family: semibold;
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  padding: 4px;
+  background-color: #8CBBB7;
+  text-align: center;
+}
+
+.yui-skin-sam .yui-dt th {
+  background: #84B1AD;
+  border-right: 1px solid #84B1AD;
+}
+
+.yui-skin-sam .yui-dt td {
+  border-right: 1px solid #84B1AD;
+}

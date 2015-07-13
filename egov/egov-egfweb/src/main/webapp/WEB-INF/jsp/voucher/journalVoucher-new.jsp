@@ -137,7 +137,7 @@
 		</script>
 		<br/>
 		<div class="subheadsmallnew"/></div>
-		<div class="mandatory1" align="left">* Mandatory Fields</div>
+		<!-- <div class="mandatory1" align="left">* Mandatory Fields</div> -->
 		<s:if test='%{! wfitemstate.equalsIgnoreCase("END")}'>
 			<%@include file="voucherWorkflow.jsp"%>         
 		</s:if>	
