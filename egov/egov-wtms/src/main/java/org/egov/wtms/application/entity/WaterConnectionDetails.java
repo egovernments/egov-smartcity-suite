@@ -151,6 +151,7 @@ public class WaterConnectionDetails extends StateAware {
 
     private Integer numberOfPerson;
     
+    @Length(max = 1024)
     private String connectionReason;
     
     private String connectionOrder;

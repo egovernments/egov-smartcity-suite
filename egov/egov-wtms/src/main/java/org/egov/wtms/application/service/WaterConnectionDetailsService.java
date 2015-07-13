@@ -252,6 +252,10 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(comsumerCode,
                 connectionStatus);
     }
+    
+    public WaterConnectionDetails getActiveConnectionDetailsByConnection(final WaterConnection waterConnection) {
+        return waterConnectionDetailsRepository.findByConnectionAndConnectionStatus(waterConnection, ConnectionStatus.ACTIVE);
+    }
 
     public List<Hashtable<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user = null;
@@ -465,6 +469,25 @@ public class WaterConnectionDetailsService {
                 emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody.toString(),
                         emailSubject.toString());
             }
+    }
+    
+    @Transactional
+    public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
+            final Long approvalPosition, final String approvalComent) {
+        if (changeOfUse.getApplicationNumber() == null)
+            changeOfUse.setApplicationNumber(applicationNumberGenerator.generate());
+
+        final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                changeOfUse.getApplicationType(), changeOfUse.getCategory());
+        if (appProcessTime != null) {
+            final Calendar c = Calendar.getInstance();
+            c.setTime(changeOfUse.getApplicationDate());
+            c.add(Calendar.DATE, appProcessTime);
+            changeOfUse.setDisposalDate(c.getTime());
+        }
+        final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository
+                .save(changeOfUse);
+        return savedChangeOfUse;
     }
 
     public void setApplicantName(final String applicantName) {

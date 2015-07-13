@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="row">
 	<div class="col-md-12">
-	
+	 
 		<form:form action="changeOfUse-create"
 			modelAttribute="changeOfUse" id="changeOfUseform"
 			cssClass="form-horizontal form-groups-bordered"
@@ -55,14 +55,15 @@
 						<spring:message  code="lbl.basicdetails"/>
 					</div>
 				</div>
-				<div class="panel-body custom-form ">
-				<form:hidden path="applicationType" id="applicationType.id" value="${changeOfUse.applicationType.id}"/>
+				<form:hidden path="connection" id="connection" value="${changeOfUse.connection.id}"/>
+				<form:hidden path="applicationType" id="applicationType" value="${changeOfUse.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${changeOfUse.connectionStatus}"/>
+				<form:hidden path="waterSource" id="waterSource" value="${waterConnectionDetails.waterSource.id}"/>
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+			</div>	
 					<jsp:include page="connectiondetails-changeofuse.jsp"></jsp:include>	
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
-				</div>
-			</div>	
+			
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>

@@ -85,29 +85,16 @@ public class ChangeOfUseController extends GenericConnectionController {
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (parentConnectionDetails == null) {
             // TODO - error handling
-        } else {
-            changeOfUse.setConnectionStatus(ConnectionStatus.INPROGRESS);
-            changeOfUse.setConnectionType(parentConnectionDetails.getConnectionType());
-            changeOfUse.setUsageType(parentConnectionDetails.getUsageType());
-            changeOfUse.setCategory(parentConnectionDetails.getCategory());
-            changeOfUse.setPropertyType(parentConnectionDetails.getPropertyType());
-            changeOfUse.setPipeSize(parentConnectionDetails.getPipeSize());
-            changeOfUse.setSumpCapacity(parentConnectionDetails.getSumpCapacity());
-
-            model.addAttribute("waterConnectionDetails", parentConnectionDetails);
-            model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                    .get(parentConnectionDetails.getConnectionType().name()));
-            model.addAttribute("changeOfUse", changeOfUse);
-            model.addAttribute("mode", "changeOfUse");
-        }
+        } else
+            loadBasicData(model, parentConnectionDetails, changeOfUse);
         return "changeOfUse-form";
     }
 
-    //TODO - Basic save. Still working on
+    // TODO - Basic save. Still working on
     @RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request) {
+            final HttpServletRequest request, final Model model) {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -125,8 +112,12 @@ public class ChangeOfUseController extends GenericConnectionController {
                 i++;
             }
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                    .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
+            loadBasicData(model, parentConnectionDetails, changeOfUse);
             return "changeOfUse-form";
+        }
 
         changeOfUse.getApplicationDocs().clear();
         changeOfUse.setApplicationDocs(applicationDocs);
@@ -143,7 +134,26 @@ public class ChangeOfUseController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         changeOfUse.setApplicationDate(new Date());
-        waterConnectionDetailsService.createNewWaterConnection(changeOfUse, approvalPosition, approvalComent);
+        waterConnectionDetailsService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent);
         return "redirect:/application/application-success?applicationNumber=" + changeOfUse.getApplicationNumber();
     }
+
+    private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,
+            final WaterConnectionDetails changeOfUse) {
+        changeOfUse.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        changeOfUse.setConnectionType(parentConnectionDetails.getConnectionType());
+        changeOfUse.setUsageType(parentConnectionDetails.getUsageType());
+        changeOfUse.setCategory(parentConnectionDetails.getCategory());
+        changeOfUse.setPropertyType(parentConnectionDetails.getPropertyType());
+        changeOfUse.setPipeSize(parentConnectionDetails.getPipeSize());
+        changeOfUse.setSumpCapacity(parentConnectionDetails.getSumpCapacity());
+        changeOfUse.setConnection(parentConnectionDetails.getConnection());
+
+        model.addAttribute("waterConnectionDetails", parentConnectionDetails);
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(parentConnectionDetails.getConnectionType().name()));
+        model.addAttribute("changeOfUse", changeOfUse);
+        model.addAttribute("mode", "changeOfUse");
+    }
+
 }

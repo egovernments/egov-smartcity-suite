@@ -77,6 +77,8 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
             ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
+    
+    WaterConnectionDetails findByConnectionAndConnectionStatus(WaterConnection waterConnection, ConnectionStatus connectionStatus);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode=:consumerCode and wcd.demand.egInstallmentMaster=:installment")
     WaterConnectionDetails findByConsumerCodeAndInstallment(@Param("installment") Installment installment,
