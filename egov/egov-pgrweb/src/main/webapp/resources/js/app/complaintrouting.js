@@ -99,25 +99,32 @@ $(document).ready(function()
 	
 	position.initialize();
 	
-	$('#com_position').typeahead({
-		hint: true,
+	var com_pos_typeahead = $('#com_position').typeahead({
+		hint: false,
 		highlight: true,
 		minLength: 3
 		}, {
 		displayKey: 'name',
 		source: position.ttAdapter()
-		}).on('typeahead:selected', function(event, data){ 
+	});
+	
+	typeaheadWithEventsHandling(com_pos_typeahead, '#positionId');
+	
+	/*.on('typeahead:selected', function(event, data){
+			//setting hidden value
 			$("#positionId").val(data.value);    
-			//console.log('value set');
-	    }).on('change',function(event,data){
-    		if($('#com_position').val() == ''){
-    			$("#positionId").val('');
-    		}
-	    	/*if (!data || $('#com_position').val() == '') {
-    		$("#positionId").val('');
-    		console.log('value clear');
-    		}*/
-        }); 
+	    }).on('keyup', this, function (event) {
+	    	//avoid tab and enter key
+	    	if(event.keyCode === 9 || event.keyCode === 13){ return false; }
+	    	//clearing input hidden value on keyup
+    	    $("#positionId").val('');
+       }).on('focusout', this, function (event) { 
+    	    //focus out clear textbox, when no values selected from suggestion list
+    	    if(!$("#positionId").val())
+    	    {	
+    	    	$(this).typeahead('val', '');
+    	    }
+    });*/
 	
 	//Boundary auto-complete
 	$("#boundary_type_id").change(function(){
@@ -182,4 +189,5 @@ $(document).ready(function()
 			$('.loader-class').modal('show', {backdrop: 'static'});
 		}
 	});
+		
 });

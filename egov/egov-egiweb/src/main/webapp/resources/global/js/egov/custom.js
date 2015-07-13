@@ -178,7 +178,82 @@ $(document).ready(function()
 		parent.window.opener.inboxloadmethod();
 	});
 	
+
+	
 });
+
+//Typeahead event handling
+$.fn.getCursorPosition = function() {
+    var el = $(this).get(0);
+    var pos = 0;
+    var posEnd = 0;
+    if('selectionStart' in el) {
+        pos = el.selectionStart;
+        posEnd = el.selectionEnd;
+    } else if('selection' in document) {
+        el.focus();
+        var Sel = document.selection.createRange();
+        var SelLength = document.selection.createRange().text.length;
+        Sel.moveStart('character', -el.value.length);
+        pos = Sel.text.length - SelLength;
+        posEnd = Sel.text.length;
+    }
+    return [pos, posEnd];
+};
+
+function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
+{
+	  typeaheadobj.on('typeahead:selected', function(event, data){
+		//setting hidden value
+		$(hiddeneleid).val(data.value);    
+	    }).on('keydown', this, function (event) {
+	    	var e = event;
+	    	
+	    	var position = $(this).getCursorPosition();
+	        var deleted = '';
+	        var val = $(this).val();
+	        if (e.which == 8) {
+	            if (position[0] == position[1]) {
+	                if (position[0] == 0)
+	                    deleted = '';
+	                else
+	                    deleted = val.substr(position[0] - 1, 1);
+	            }
+	            else {
+	                deleted = val.substring(position[0], position[1]);
+	            }
+	        }
+	        else if (e.which == 46) {
+	            var val = $(this).val();
+	            if (position[0] == position[1]) {
+	                
+	                if (position[0] === val.length)
+	                    deleted = '';
+	                else
+	                    deleted = val.substr(position[0], 1);
+	            }
+	            else {
+	                deleted = val.substring(position[0], position[1]);
+	            }
+	        }
+	        
+	        if(deleted){ $(hiddeneleid).val(''); }
+
+        }).on('keypress', this, function (event) {
+	    	//avoid tab and enter key
+	    	if((event.keyCode >= 32 && event.keyCode <= 127)){ 
+	    		//clearing input hidden value on keyup
+	    	    $(hiddeneleid).val('');
+	    	}
+        }).on('focusout', this, function (event) { 
+    	    //focus out clear textbox, when no values selected from suggestion list
+    	    if(!$(hiddeneleid).val())
+    	    {	
+    	    	$(this).typeahead('val', '');
+    	    }
+       });
+}
+
 
 /*$(".refreshInBox refeshDraft").on('click', function() {
 	if(window.opener)
