@@ -265,11 +265,11 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			}
 		}
 
-		String beanActionName[] = workflowBean.getActionName().split(":");
+		/*String beanActionName[] = workflowBean.getActionName().split(":");
 		if (beanActionName.length > 1) {
 			actionName = beanActionName[0];
 			wflowAction = beanActionName[1];
-		}
+		}*/
 
 		LOGGER.debug("Exiting from validateProperty");
 	}

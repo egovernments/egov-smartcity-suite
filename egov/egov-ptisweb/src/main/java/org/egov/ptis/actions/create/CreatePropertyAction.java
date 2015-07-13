@@ -64,12 +64,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REV
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,8 +87,10 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.demand.dao.EgDemandDao;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -101,9 +105,15 @@ import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.PersonalInformation;
+import org.egov.pims.service.EisUtilService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
@@ -139,6 +149,7 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.utils.OwnerNameComparator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -210,6 +221,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	private BasicProperty basicProp;
 	private Map<String, String> waterMeterMap;
 	@Autowired
+	private PositionMasterService positionMasterService;
+	@Autowired
 	private PropertyService propService;
 	private Long mutationId;
 	private String parentIndex;
@@ -256,15 +269,29 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String westBoundary;
 
 	@Autowired
+	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
+
+	@Autowired
 	private UserService userService;
 
 	private AssignmentService assignmentService;
+
+	@Autowired
+	private EisCommonService eisCommonService;
 
 	@Autowired
 	private BoundaryService boundaryService;
 
 	@Autowired
 	private SecurityUtils securityUtils;
+	private List<String> validActions;
+
+
+	private String nextAction;
+	private String approverName;
+	private Long approverPositionId;
+	private String approverComments;
+	private String workFlowAction; 
 
 	@Autowired
 	private EgDemandDao egDemandDAO;
@@ -294,6 +321,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-newForm")
 	public String newForm() {
+		populateWorkflowEntities();
 		return RESULT_NEW;
 	}
 
@@ -309,6 +337,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
+		//this should be appending to messgae 
+		setAckMessage("Property Created Successfully in System with application number : ");
 		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.persist(basicProperty);
@@ -390,6 +420,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-view")
 	public String view() {
+		populateWorkflowEntities();
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
 		String nextAction = property.getState().getNextAction();
@@ -421,14 +452,34 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-forward")
 	public String forward() {
-		LOGGER.debug("forward: Property forward started " + property);
-		this.validate();
-		if (hasErrors()) {
-			mode = EDIT;
-			return RESULT_NEW;
+		if(mode.equalsIgnoreCase(EDIT) && !workFlowAction.equalsIgnoreCase("reject") || workFlowAction.equalsIgnoreCase("cancel") )
+		{
+			
+			this.validate();
+			if (hasErrors()) {
+				return RESULT_NEW;
+			}
 		}
-		long startTimeMillis = System.currentTimeMillis();
+		
 		transitionWorkFlow(property);
+		
+		if(workFlowAction.equalsIgnoreCase("approve"))
+		{
+			return approve();
+		}else if (workFlowAction.equalsIgnoreCase("reject"))
+		{
+			return reject();
+		}
+
+		else if (workFlowAction.equalsIgnoreCase("generate notice"))
+		{
+			return generateNotice();
+		}
+
+		LOGGER.debug("forward: Property forward started " + property);
+		
+		long startTimeMillis = System.currentTimeMillis();
+		
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
 		updatePropertyDetails();
@@ -539,15 +590,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Action(value = "/createProperty-reject")
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
-		if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
-			this.validate();
-			if (hasErrors()) {
-				mode = EDIT;
-				return RESULT_NEW;
-			}
-			updatePropertyDetails();
-		}
-		transitionWorkFlow(property);
+		updatePropertyDetails();
 		basicPropertyService.applyAuditing(property.getState());
 		if (property.getPropertyDetail().getApartment() != null
 				&& property.getPropertyDetail().getApartment().getId() != null) {
@@ -566,6 +609,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
+	  public void populateWorkflowEntities()    {        
+          List approverDepartmentList = persistenceService.findAllBy("from Department order by name");
+        //  PersonalInformation loggedInEmp=eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        //  List desgnationList = persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
+          addDropdownData("approverDepartmentList",approverDepartmentList);
+          addDropdownData("designationList", Collections.EMPTY_LIST);       
+          addDropdownData("approverList", Collections.EMPTY_LIST);        
+          
+  }
+	
 	private void setFloorDetails(Property property) {
 		LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 		List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
@@ -582,6 +635,31 @@ public class CreatePropertyAction extends WorkflowAction {
 		return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
 	}
 
+	   public List<String> getValidActions()
+       {
+               List<String> validActionsList = Collections.emptyList();
+               String tempValidAction=null;
+               if ((null== getModel()) || ( property.getId() == null)) {
+                       validActions = Arrays.asList("Save");
+               }else {
+                       String validAction=(String)persistenceService.find("select validActions from WorkFlowMatrix where objectType=? " +
+                                       "and currentState =?",property.getStateType(),property.getCurrentState().getValue());
+                       if(null!=validAction){
+                               StringTokenizer strToken=new StringTokenizer(validAction, ",");
+                               tempValidAction=null;
+                               validActionsList=new ArrayList<String>();
+                               while (strToken.hasMoreElements()) {
+                                       tempValidAction=(String)strToken.nextToken();
+                                       validActionsList.add(tempValidAction)   ;         
+                               }
+                       }  
+                       validActions=validActionsList;
+
+               }
+               
+               if(LOGGER.isDebugEnabled())  LOGGER.debug(">>>>>>"+validActions);
+               return validActions;
+       }
 	@Override
 	@SuppressWarnings("unchecked")
 	@SkipValidation
@@ -1008,6 +1086,71 @@ public class CreatePropertyAction extends WorkflowAction {
 	public PropertyImpl getProperty() {
 		return property;
 	}
+
+	public void transitionWorkFlow(PropertyImpl property) {
+		final DateTime currentDate = new DateTime();
+		User user = securityUtils.getCurrentUser();
+		Position pos=null;
+		
+		if(workFlowAction.equalsIgnoreCase("reject"))
+		{
+			Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+			property.transition(true).withSenderName(user.getName())
+			.withComments(approverComments)
+			.withStateValue("Rejected")
+			.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
+			.withOwner(preOwner.getPosition()).withNextAction("Cancel");
+			
+		}else{
+		
+		if(null!=approverPositionId)
+		{
+			pos=(Position)persistenceService.find("from Position where id=?",approverPositionId);
+		}
+		if(null == property.getState())
+		{
+			WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,null,null);
+			//WorkFlowMatrix wfmatrix2 = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,"New",null);
+			property.transition().start().withSenderName(user.getName())
+			.withComments(approverComments)
+			.withStateValue(wfmatrix.getNextState())
+			.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
+			.withOwner(pos).withNextAction(wfmatrix.getNextAction());
+		}
+		else
+		{
+			if(property.getCurrentState().getNextAction().equalsIgnoreCase("END") ||  workFlowAction.equalsIgnoreCase("cancel"))
+			{
+				property.transition(true).end()
+				.withSenderName(user.getName())
+				.withComments(approverComments)
+				.withDateInfo(currentDate.toDate());
+			}else
+			{
+				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,property.getCurrentState().getNextAction()
+						,null);	
+				property.transition(true).withSenderName(user.getName())
+				.withComments(approverComments)
+				.withStateValue(wfmatrix.getCurrentState())
+				.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
+				.withOwner(pos).withNextAction(wfmatrix.getNextAction());
+			}
+		}
+		}
+		if(approverName!=null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
+		{
+			String approvalmesg=" Succesfully Forwarded to "+approverName+".";
+			ackMessage=	ackMessage==null?approvalmesg:ackMessage+approvalmesg;
+		}else if(workflowAction!=null && workFlowAction.equalsIgnoreCase("cancel"))
+		{
+			String approvalmesg=" Succesfully Cancelled.";
+			ackMessage=	ackMessage==null?approvalmesg:ackMessage+approvalmesg;
+		}
+
+		LOGGER.debug("Exiting method : transitionWorkFlow");
+	}
+
+
 
 	@Override
 	public void setProperty(PropertyImpl property) {
@@ -1653,6 +1796,17 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public ApplicationNumberGenerator getApplicationNumberGenerator() {
 		return applicationNumberGenerator;
+
+	}
+
+
+	public String getNextAction() {
+		String nextActionTemp=""; 
+		if((null!= property) && (null!=property.getId())){
+			nextActionTemp=(String)persistenceService.find("select nextAction from WorkFlowMatrix where objectType=? " +
+					" and currentState=?",property.getStateType(),property.getCurrentState().getValue());
+		}
+		return nextActionTemp;
 	}
 
 	public void setApplicationNumberGenerator(ApplicationNumberGenerator applicationNumberGenerator) {
@@ -1698,5 +1852,59 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void setWestBoundary(String westBoundary) {
 		this.westBoundary = westBoundary;
 	}
+	public void setNextAction(String nextAction) {
+		this.nextAction = nextAction;
+	}
+
+	public SimpleWorkflowService<PropertyImpl> getPropertyWorkflowService() {
+		return propertyWorkflowService;
+	}
+
+	public void setPropertyWorkflowService(
+			SimpleWorkflowService<PropertyImpl> propertyWorkflowService) {
+		this.propertyWorkflowService = propertyWorkflowService;
+	}
+
+	public String getApproverComments() {
+		return approverComments;
+	}
+
+	public void setApproverComments(String approverComments) {
+		this.approverComments = approverComments;
+	}
+
+	public Long getApproverPositionId() {
+		return approverPositionId;
+	}
+
+	public void setApproverPositionId(Long approverPositionId) {
+		this.approverPositionId = approverPositionId;
+	}
+
+	public String getWorkFlowAction() {
+		return workFlowAction;
+	}
+
+	public void setWorkFlowAction(String workFlowAction) {
+		this.workFlowAction = workFlowAction;
+	}
+	private String generateNotice() {
+		transitionWorkFlow(property);
+		setAckMessage("Notice generated and property creation workflow completed " );
+		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
+		LOGGER.debug("approve: Property approval ended");
+		basicPropertyService.applyAuditing(property.getState());
+		basicPropertyService.update(basicProp);
+		return RESULT_ACK;
+	}
+
+	public String getApproverName() {
+		return approverName;
+	}
+
+	public void setApproverName(String approverName) {
+		this.approverName = approverName;
+	}
+
 
 }

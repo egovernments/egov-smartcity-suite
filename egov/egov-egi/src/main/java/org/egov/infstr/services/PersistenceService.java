@@ -207,7 +207,7 @@ public class PersistenceService<T, ID extends Serializable> {
         int index = 0;
         for (final Object param : params) {
             if (param instanceof Collection)
-                q.setParameterList(String.valueOf(index), (Collection) param);
+            	q.setParameterList(String.valueOf("param_"+index), (Collection)param);
             else
                 q.setParameter(index, param);
             index++;

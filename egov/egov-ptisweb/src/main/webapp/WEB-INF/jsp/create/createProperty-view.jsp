@@ -54,6 +54,8 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	  function loadOnStartUp() {
+		/* 
+		 Assuming this is not require for view --Mani
 		enableFieldsForPropType();
 		toggleFloorDetails();
    		setCorrCheckBox();
@@ -62,7 +64,7 @@
 		    if (btnPVR != null) {
 		    	btnPVR.disabled = false;
 		    }
-		</s:if>
+		</s:if> */
 	}
  function setCorrCheckBox(){
     
@@ -77,10 +79,32 @@
 		document.forms[0].submit;
 	   return true;
 	}
+	
+ function onSubmit() {
+	 alert("setting action ");
+	 	 //document.getElementById('workflowBean.actionName').value = obj.id;
+	 	 document.forms[0].action = 'createProperty-forward.action';
+	 	 alert("setting action "+document.forms[0].action);
+	 			document.forms[0].submit;
+	 	   return true;
+	 	}  
+	 	
  	function generateNotice6(){
 	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
 		document.CreatePropertyForm.submit();
 	}
+	
+  	function loadDesignationFromMatrix() {
+  		var e = dom.get('approverDepartment');
+  		var dept = e.options[e.selectedIndex].text;
+  			var currentState = dom.get('currentState').value;
+  			var amountRule="";
+  		var pendingAction=document.getElementById('pendingActions').value;
+  		loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
+  	}
+  	function populateApprover() {
+  		getUsersByDesignationAndDept();
+  	}  
 </script>
 </head>
 
@@ -95,6 +119,7 @@
 		<div class="blankspace">&nbsp;</div>
 	</s:if>
 	<!-- Area for error display -->
+	  <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
 	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
 	<div class="formmainbox">
 		<s:form name="CreatePropertyForm" action="createProperty"
@@ -119,23 +144,8 @@
 						</s:if> --%>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td class="bluebox" width="6%">&nbsp;</td>
-							<td class="bluebox" width="10%"><s:text
-									name='approver.comments' /></td>
-							<td class="bluebox" width="8%"><s:textarea
-									name="workflowBean.comments" id="comments" rows="3" cols="80"
-									onblur="checkLength(this);" /></td>
-							<td class="bluebox" width="15%" colspan="2"></td>
-						</tr>
-						<s:hidden name="workflowBean.actionName"
-							id="workflowBean.actionName" />
-					</table>
-
-					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
-					<tr>
-						<font size="2"><div align="left" class="mandatory">
-								<s:text name="mandtryFlds" />
-							</div> </font>
+							<%@ include file="../create/createPropertyView.jsp"%>
+/font>
 					</tr>
 					<div id="loadingMask" style="display: none">
 						<p align="center">
@@ -194,19 +204,13 @@
 										class="buttonsubmit" onclick="return generateNotice6();" /></td>
 								</s:if>
 							</s:if>
-							<s:else>
-								<td><s:submit value="Approve" name="Approve"
-										id='Create:Approve' cssClass="buttonsubmit" method="approve"
-										onclick="return onSubmit('createProperty-approve.action',this);" />
-								</td>
-								<td><s:submit value="Reject" name="Reject"
-										id='Create:Reject' cssClass="buttonsubmit" method="reject"
-										onclick="return onSubmit('createProperty-reject.action',this);" />
-								</td>
-							</s:else>
-							<td><input type="button" name="button2" id="button2"
-								value="Close" class="button" onclick="window.close();" /></td>
-						</tr>
+									<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+											
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>  
+						</tr>  
+						
+				
 					</div>
 				</table>
 			</s:push>

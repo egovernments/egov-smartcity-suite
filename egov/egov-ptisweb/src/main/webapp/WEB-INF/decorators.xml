@@ -43,6 +43,7 @@
         <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
         <pattern>/commonyui/egov/menutree.jsp</pattern>
         <pattern>/*Ajax.action</pattern>
+         <pattern>/*ajax*.action</pattern>
         <pattern>/*Ajax.do</pattern>
         <pattern>/*decorate=false*</pattern>
     </excludes>

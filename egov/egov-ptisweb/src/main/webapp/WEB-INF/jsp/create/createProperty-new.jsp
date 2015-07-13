@@ -85,7 +85,7 @@ function loadOnStartUp() {
 	document.getElementById("vacantLandRow").style.display = "none";
 	document.getElementById("vacantLandTable").style.display = "none";
 	document.getElementById("appartenantRow").style.display = "none";
-	//document.getElementById("drainageseatsrow").style.display = "none";
+	document.getElementById("drainageseatsrow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";
@@ -102,8 +102,7 @@ function loadOnStartUp() {
 	document.getElementById("dateOfCompletion").className="hiddentext";
 	document.getElementById("floorDetailsConfirm").style.display = "none";
 	document.getElementById("waterRate").style.display = "none"; */
-	enableOrDisableBPADetails(null);
-	enableOrDisableSiteOwnerDetails(null);
+	
 	enableFieldsForPropType();
 	//hideAddRmvBtnForResidFlats();
 	//enableCorresAddr();
@@ -144,8 +143,21 @@ function loadOnStartUp() {
 	//enableSubmitButton();  
 }
 function onSubmit(action,obj) { 
+	//alert("On Submit called");
 	document.getElementById('workflowBean.actionName').value = obj.id;
-	document.forms[0].action = action;
+	document.forms[0].action = 'createProperty-create.action';
+	//alert("On Submit called with  "+document.forms[0].action );
+	document.forms[0].submit;
+   return true;      
+}
+
+function onSubmit() { 
+	//alert("On Submit called");
+	document.forms[0].action = 'createProperty-create.action';
+	<s:if test="mode=='edit'">
+	document.forms[0].action = 'createProperty-forward.action';
+	</s:if>
+//	alert("On Submit called with  "+document.forms[0].action );
 	document.forms[0].submit;
    return true;
 }
@@ -389,6 +401,18 @@ function finishAllChangesMsg(button) {
 	}
 }  */
 
+
+function loadDesignationFromMatrix() {
+	var e = dom.get('approverDepartment');
+	var dept = e.options[e.selectedIndex].text;
+		var currentState = dom.get('currentState').value;
+		var amountRule="";
+	var pendingAction=document.getElementById('pendingActions').value;
+	loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
+}
+function populateApprover() {
+	getUsersByDesignationAndDept();
+}
 </script>
 </head>
  
@@ -397,29 +421,43 @@ function finishAllChangesMsg(button) {
   <div align="left">
   	<s:actionerror/>
   </div>
-  
-    <div class="errorcss" id="wf_error" style="display:none;"></div>
+    <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
 
-  <s:form name="CreatePropertyForm" theme="simple" validate="true">
+  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" validate="true">
   
   <s:push value="model">
   <s:token />
   
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
- <%--  <s:hidden name="mode" value="form" /> --%>
+  <s:hidden name="mode" value="form" />
   <div class="formmainbox">
 		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
-		
-       	<%@ include file="createPropertyForm.jsp"%>  
-       
-    	<%@ include file="../workflow/property-workflow.jsp" %>
-      
-      <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+        	<%@  include file="createPropertyForm.jsp"%>  
+        </tr>
+        	<% System.out.println("hellllo.111................"); %>
+         <tr>
+        	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
+        </tr>
+        <s:hidden name="modelId" id="modelId" value="%{modelId}" />
       <tr>
+        	<!-- <div id="loadingMask" style="display:none" align="center">
+        	<p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> 
+        		<span id="message">
+        			<p style="color: red">Please wait....</p>
+        		</span>
+        	</p>
+        	</div> -->
         	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>
+		<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+		</tr>
+		<!--  
+		<tr>
+		
+		
 		    <td>
 			    <div class="buttonbottom" align="center">		   
 					<s:if test="mode=='create'">
@@ -430,12 +468,12 @@ function finishAllChangesMsg(button) {
 					<s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE}">
 								<s:submit value="Approve" name="Approve" id='Create:Approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-approve.action',this);"/>&nbsp;	
 					</s:if>	
-					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;
-					</s:if>
+					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;		
 					<input type="button" class="button" onclick="window.close();" value="Close">
+					</s:if>
 				</div>
 			</td>
-		</tr> 
+		</tr> -->
 		</table>
 	</div>
   </s:push>

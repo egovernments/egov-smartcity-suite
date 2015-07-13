@@ -70,7 +70,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EG_WF_STATES")
 @NamedQueries({
-        @NamedQuery(name = State.WORKFLOWTYPES_QRY, query = "select distinct s.type from State s where s.ownerPosition.id in (?0)  and s.status is not 2"),
+        @NamedQuery(name = State.WORKFLOWTYPES_QRY, query = "select distinct s.type from State s where s.ownerPosition.id in (:param_0)  and s.status is not 2"),
         @NamedQuery(name = State.WORKFLOWTYPES_BY_ID, query = "select s from State s where s.id=?") })
 @SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
 public class State extends AbstractAuditable {

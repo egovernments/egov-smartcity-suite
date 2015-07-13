@@ -38,16 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>     
-
-<link href="/EGF/resources/css/budget.css" rel="stylesheet" type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>        
+ 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <script>
@@ -110,22 +101,37 @@ function validateWorkFlowApprover(name)
 
 function validateWorkFlowApprover(name,errorDivId)
 {
+	//alert(errorDivId);
+if(document.getElementById(errorDivId))
 	document.getElementById(errorDivId).style.display='none';
     document.getElementById('workFlowAction').value=name;
+   // alert("inside validation for approve"+name);
 	<s:if test="%{getNextAction()!='END'}">
-    if((name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && 
+    if(  (name=="Save" || name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && 
     		document.getElementById('approverPositionId').value=="-1")
     {
+       // alert("inside validation for approver");
         document.getElementById(errorDivId).style.display='';
         document.getElementById(errorDivId).innerHTML = "Please Select the Approver";
 		return false;
     }
     </s:if>
-    return true;
+    
+      var propTypeMstr = document.getElementById("approverPositionId");
+      if(propTypeMstr)
+      {
+	  var  approver=	propTypeMstr.options[propTypeMstr.selectedIndex].text; 
+	  alert(approver);
+      document.getElementById("approverName").value= approver.split('~')[0];
+      alert(document.getElementById("approverName").value);
+      }     
+		
+    onSubmit();
 }
 	
 	
 </script>
+	<% System.out.println("hellllo................."); %>
 <s:hidden id="workFlowAction" name="workFlowAction"/>
 <s:if test="%{getNextAction()!='END'}">
 <div class="blueshadow"></div>
@@ -133,52 +139,54 @@ function validateWorkFlowApprover(name,errorDivId)
 <s:hidden id="currentDesignation" name="currentDesignation" value="%{currentDesignation}"/>
 <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
 <s:hidden id="amountRule" name="amountRule" value="%{amountRule}"/>
-<s:hidden id="approverName" name="approverName"/>
 <s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
+<s:hidden id="approverName" name="approverName" />
 
 <s:if test="%{#request.approverOddTextCss==null}">
-   
       <c:set var="approverOddTextCss" value="greybox" scope="request"/>
+       <c:set var="approverOddCSS" value="greybox" scope="request"/>
 </s:if>
 
 <s:if test="%{#request.approverEvenTextCSS==null}">
    <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
+     <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
+   
 </s:if>
 
  <table width="100%" border="0" cellspacing="0" cellpadding="0">
  
-        <tr>
-            <td colspan="9" class="formmainbox">
-               	<s:if test="%{#request.headerImgCss!=null}"><div class="subheadnew"></s:if>
-               	<s:if test="%{#request.headerImgUrl!=null}"><img src="${headerImgUrl}"/></div></s:if>
-                <div class="subheadsmallnew">Approval Information</div>
-            </td>
-        </tr>
+ <tr>
+		
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="title.approval.information"/></span>
+			</div>
+		
+	</tr>
         
 	  	<tr>   
 	  	 	 <td class="${approverOddCSS}" width="16%">&nbsp;</td>
 			 <td class="${approverOddCSS}" id="deptLabel">Approver Department:</td>
 			 <td class="${approverOddTextCss}">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
-					listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  
+					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
 					cssClass="dropDownCss" />
-				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow!getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
-					contextToBeUsed="/egi"/>
+				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
+					contextToBeUsed="/ptis"/>
 			</td>
 			<td class="${approverOddCSS}" width="10%">&nbsp;</td>	  
 			<td class="${approverOddCSS}" width="14%">Approver Designation:</td>
 			<td class="${approverOddTextCss}" width="33%">
-				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.desgnationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
+				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
-					url="workflow/ajaxWorkFlow!getPositionByPassingDesigId.action" contextToBeUsed="/egi" />
+					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/ptis" />
 			</td>
 			<td class="${approverOddCSS}" width="10%">Approver:</td>
 			<td class="${approverOddTextCss}" width="16%" >
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
-			  			value="%{approverPositionId}" cssClass="dropDownCss"  /></td> 
+			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
 			<td class="${approverOddCSS}" width="16%">&nbsp;</td>
 		</tr>
 		</table>
@@ -199,4 +207,4 @@ function validateWorkFlowApprover(name,errorDivId)
            <td  class="${approverEvenCSS}">&nbsp;</td>
            </tr>
          </table>
-  </div>
+  </div>       
