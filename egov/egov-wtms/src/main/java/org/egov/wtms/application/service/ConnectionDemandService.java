@@ -40,6 +40,7 @@
 package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -54,13 +55,23 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.dao.EgBillDao;
+import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.WaterTaxDue;
+import org.egov.wtms.application.service.collection.ConnectionBillService;
+import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.SecurityDeposit;
@@ -105,6 +116,21 @@ public class ConnectionDemandService {
 
     @Autowired
     WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
+
+    @Autowired
+    private EgBillDao egBillDAO;
+
+    @Autowired
+    private ConnectionBillService connectionBillService;
+
+    @Autowired
+    private PropertyExternalService propertyExternalService;
+
+    @Autowired
+    private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -320,5 +346,49 @@ public class ConnectionDemandService {
                         + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
         return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
+    }
+
+    public String generateBill(final String consumerCode) {
+        String collectXML = "";
+        final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) beanProvider
+                .getBean("waterConnectionBillable");
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCode(consumerCode);
+        final AssessmentDetails assessmentDetails = propertyExternalService
+                .getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+        waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
+        waterConnectionBillable.setAssessmentDetails(assessmentDetails);
+        waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
+        waterConnectionBillable.setReferenceNumber(
+                generateBillNumber(assessmentDetails.getBoundaryDetails().getWardNumber().toString()));
+        waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
+
+        final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
+        collectXML = URLEncoder.encode(billXml);
+        return collectXML;
+    }
+
+    public EgBillType getBillTypeByCode(final String typeCode) {
+        final EgBillType billType = egBillDAO.getBillTypeByCode(typeCode);
+        return billType;
+    }
+
+    public String generateBillNumber(final String wardNo) {
+        final StringBuffer billNo = new StringBuffer();
+        final Module module = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+        installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        // FIX ME
+        /*
+         * String index = sequenceNumberGenerator.getNextNumberWithFormat(
+         * BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
+         * .getFormattedNumber(); billNo.append(wardNo); billNo.append("/");
+         * billNo.append(index); billNo.append("/");
+         * billNo.append(finYear.getDescription());
+         */
+        return billNo.toString();
+    }
+
+    public EgDemand getDemandByInstAndConsumerCode(final Installment installment, final String consumerCode) {
+        return waterConnectionDetailsRepository.findByConsumerCodeAndInstallment(installment, consumerCode).getDemand();
     }
 }

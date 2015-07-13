@@ -68,5 +68,9 @@ public class WaterTaxConstants {
     public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "WTAX101";
     public static final String WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Consumer code ";
     public static final String WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
-
+   
+    public static final String BILLTYPE_AUTO = "AUTO";
+    public static final String BILLTYPE_MANUAL = "MANUAL";
+    public static final String CITIZENUSER = "9999999999";
+    public static final String BILLTYPE_ONLINE = "ONLINE";
 }

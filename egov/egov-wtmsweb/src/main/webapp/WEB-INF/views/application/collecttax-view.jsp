@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,13 +36,38 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-msg.newapplication.create.success=Your application for new water tap connection has been successfully created
-msg.application.number.info=Please use this number for all future references
-msg.newconnection.ack.success=Application for new water tap connection received and registered
-msg.ack.assistant=Service Center Assistant
-msg.sign=Signature
-msg.newconnection.approved.success=Application for new water tap connection has been approved
-msg.addconnection.ack.msg = Application for additional water tap connection received and registered
-msg.addconnection.approved = Application for additional water tap connection has been approved
-msg.application.fee.collection = Application for new water tap connection charges
+#------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
+<div id="main">
+<div class="row">
+	<div class="col-md-12">
+		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+					<spring:message code="msg.application.fee.collection" />
+				</div>
+			</div>
+				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+		</div>
+		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
+		<input id="consumerCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" />  
+	<div class="row text-center">
+		<div class="add-margin">
+			<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+			<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+		</div>
+	</div>
+		</form:form>
+	</div>					
+</div>					
+</div>
+
+
+<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
+

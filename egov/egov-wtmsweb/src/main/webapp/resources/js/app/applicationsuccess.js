@@ -50,3 +50,9 @@ $(document).ready(function(){
 		$("#propertytaxdue").addClass("error-msg");
 	}
 });
+
+$('#payBtn').click(function() {
+	var url = '/wtms/application/generatebill/'+ $('#consumerCode').val();
+	$('#waterConnectionSuccess').attr('method', 'post');
+	$('#waterConnectionSuccess').attr('action', url);
+})

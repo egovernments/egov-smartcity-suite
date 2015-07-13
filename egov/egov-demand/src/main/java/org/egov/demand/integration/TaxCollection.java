@@ -146,7 +146,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		linkBillToReceipt(bri);
 		updateBillDetails(bri);
 		updateDemandDetails(bri);
-		LOGGER.info("--end of Updation of all the Demand and PTIS tables-------------------");
+		LOGGER.info("--end of Updation of all the Demand ");
 	}
 
 	/**

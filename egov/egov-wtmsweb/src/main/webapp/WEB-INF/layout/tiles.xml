@@ -93,4 +93,13 @@
         <put-attribute name="body" value="/WEB-INF/views/application/changeOfUse-form.jsp"/>
     </definition>
     
+    <definition name="application/collecttax-view" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.collect.tax.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/collecttax-view.jsp"/>
+    </definition>
+    
+    <definition name="collecttax-redirection" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.collect.tax.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/collecttax-redirection.jsp"/>
+    </definition>
 </tiles-definitions>

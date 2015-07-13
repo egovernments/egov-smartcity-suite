@@ -65,7 +65,7 @@ jQuery(document).ready(function ($) {
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
 					{title: 'Total Due', data: 'resource.clauses.totaldue'},
 					{title: 'Actions',  data : null, "target":-1,"defaultContent": 
-						'<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option></select>'}
+						'<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>'}
 					
 					
 					]
@@ -97,6 +97,11 @@ jQuery(document).ready(function ($) {
 				//window.location.href="changeofuse.html"  
 			}else if( this.value == 3){
 				window.location.href="reconnection.html"
+			}else if( this.value == 7){
+				 var url = '/wtms/application/generatebill/'+consumerCode; 
+					$('#waterSearchRequestForm').attr('method', 'get');
+					$('#waterSearchRequestForm').attr('action', url);
+					window.location=url;
 			}
 		}); 
 	    

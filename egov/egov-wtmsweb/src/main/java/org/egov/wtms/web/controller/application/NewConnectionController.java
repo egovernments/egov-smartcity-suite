@@ -62,6 +62,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -137,7 +138,7 @@ public class NewConnectionController extends GenericConnectionController {
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                 approvalComent);
-        
+
         return "redirect:/application/application-success?applicationNumber="
                 + waterConnectionDetails.getApplicationNumber();
     }
@@ -165,5 +166,30 @@ public class NewConnectionController extends GenericConnectionController {
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
+    }
+
+    @RequestMapping(value = "/generatebill/{consumerCode}", method = GET)
+    public String showCollectFeeForm(final Model model, @PathVariable final String consumerCode) {
+        return "redirect:/application/collecttax-view?consumerCode=" + consumerCode;
+    }
+
+    @RequestMapping(value = "/collecttax-view", method = GET)
+    public ModelAndView collectTaxView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+            final HttpServletRequest request, final Model model) {
+        if (request.getParameter("consumerCode") != null)
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCode(request.getParameter("consumerCode"));
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
+        return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
+    }
+
+    @RequestMapping(value = "/generatebill/{consumerCode}", method = POST)
+    public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+            final RedirectAttributes redirectAttributes, @PathVariable final String consumerCode, final Model model) {
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        model.addAttribute("collectxml", connectionDemandService.generateBill(consumerCode));
+        return "collecttax-redirection";
     }
 }

@@ -42,11 +42,14 @@ package org.egov.wtms.application.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.Installment;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -69,9 +72,14 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCode(String applicationNumber,
             String consumerCode);
-    
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatus(String consumerCode, ConnectionStatus connectionStatus);
+
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatus(String consumerCode,
+            ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
+
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode=:consumerCode and wcd.demand.egInstallmentMaster=:installment")
+    WaterConnectionDetails findByConsumerCodeAndInstallment(@Param("installment") Installment installment,
+            @Param("consumerCode") String consumerCode);
 
 }

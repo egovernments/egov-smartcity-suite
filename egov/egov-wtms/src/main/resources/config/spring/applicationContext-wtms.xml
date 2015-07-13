@@ -51,4 +51,5 @@
 
     <context:component-scan base-package="org.egov.wtms" />
     <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="waterConnectionBillable" class="org.egov.wtms.application.service.collection.WaterConnectionBillable" scope="prototype" />
 </beans>

@@ -42,10 +42,7 @@ package org.egov.wtms.web.controller.rest;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +50,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -62,7 +58,9 @@ public class RestWaterTaxController {
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
-    // Returns Total tax due for the water connection for a given ConsumerCode
+    /*
+     * Returns Total tax due for the water connection for a given ConsumerCode
+     */
     @RequestMapping(value = "rest/watertax/due/bycode/{consumerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByConsumerCode(@PathVariable final String consumerCode)
             throws JsonGenerationException, JsonMappingException, IOException {
@@ -70,8 +68,10 @@ public class RestWaterTaxController {
 
     }
 
-    // Returns Total tax due for list of water connections for a given
-    // PropertyIdentifier
+    /*
+     * Returns Total tax due for list of water connections for a given
+     * PropertyIdentifier
+     */
     @RequestMapping(value = {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
