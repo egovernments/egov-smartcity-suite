@@ -70,7 +70,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
 	protected static final String EDIT ="edit";
 	protected static final String DELETE ="del";
 	// Forjquery datatable pagination, saving and search filter.
-	protected Integer id;
+	protected Long id;
 	protected String oper;
 	private boolean _search;
 	private Integer rows;
@@ -241,7 +241,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
 		}
 	}
 
-	public void setId(final Integer id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 

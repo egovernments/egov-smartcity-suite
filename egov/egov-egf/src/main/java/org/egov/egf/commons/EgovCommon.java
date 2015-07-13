@@ -250,7 +250,7 @@ public class EgovCommon {
          */
         @SuppressWarnings("unchecked")
         public BigDecimal getAccountBalance(final Date VoucherDate,
-                        final Integer bankId) {
+                        final Long bankId) {
                 return getAccountBalance(VoucherDate, bankId, null, null, null);
         }
 
@@ -271,7 +271,7 @@ public class EgovCommon {
                 BigDecimal bankBalanceasofBankBookReport = BigDecimal.ZERO;
                 BigDecimal amountApprovedForPayment = BigDecimal.ZERO;
                 bankBalanceasofBankBookReport = getAccountBalance(VoucherDate,
-                                bankaccountId, null, null, null);
+                                bankaccountId.longValue(), null, null, null);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Bank balance as per Bank book:"
                                 + bankBalanceasofBankBookReport);
                 amountApprovedForPayment = getAmountApprovedForPaymentAndVoucherNotCreated(
@@ -491,7 +491,7 @@ public class EgovCommon {
 
         @SuppressWarnings("unchecked")
         public BigDecimal getAccountBalance(final Date VoucherDate,
-                        final Integer bankId, final BigDecimal amount, final Long paymentId, Long accGlcodeId) {
+                        final Long bankId, final BigDecimal amount, final Long paymentId, Long accGlcodeId) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("EgovCommon | getCashBalance");
                 LOGGER
                                 .info("--------------------------------------------------------------------------------getAccountBalance-----------------");
@@ -510,7 +510,7 @@ public class EgovCommon {
                         if (balanceChequeBasedOnFundFlowReport.equalsIgnoreCase("Y")) {
                                 bankBalance = fundFlowService.getBankBalance(Long.valueOf(bankId), VoucherDate, accGlcodeId);
                         } else {
-                                bankBalance = getAccountBalanceFromLedger(VoucherDate, bankId,
+                                bankBalance = getAccountBalanceFromLedger(VoucherDate, bankId.intValue(),
                                                 amount, paymentId);
                         }
                         LOGGER

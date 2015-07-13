@@ -64,6 +64,16 @@
   <body>
     <div class="formmainbox"><div class="subheadnew"><s:text name="bank.modify.new"/></div>
     <jsp:include page="bank-form.jsp"></jsp:include>
+    </div>
+      	<div class="buttonbottom" > 
+  	<input type="button" id="Search" value="Search" onclick="javascript:window.location.href='bank.action?mode=MODIFY'" class="button"/>
+	
+	<input type="submit" class="button" value="Save"
+							id="saveButton" name="button"
+							onclick="validateFormAndSubmit();" />
+	
+	<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
+	</div>
     <script src="../resources/javascript/jquery/grid.locale-en.js" type="text/javascript"></script>
 	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js" type="text/javascript"></script>
     <script>

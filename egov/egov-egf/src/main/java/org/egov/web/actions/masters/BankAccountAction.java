@@ -47,25 +47,25 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-@Transactional(readOnly=true)
+import com.google.gson.GsonBuilder;
+@ParentPackage("egov")
 public class BankAccountAction extends JQueryGridActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String mode;
@@ -73,8 +73,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	private Integer bankBranchId;
 	private PersistenceService<Bankaccount, Integer> bankAccountPersistenceService;
 	private PersistenceService<CChartOfAccounts, Long> chartOfAccountService;
-	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;
+    private AppConfigValuesDAO appConfigValuesDAO;
 	
 	String code = EGovConfig.getProperty("egf_config.xml",
 			"glcodeMaxLength", "", "AccountCode");
@@ -109,14 +108,12 @@ public class BankAccountAction extends JQueryGridActionSupport {
 			PersistenceService<CChartOfAccounts, Long> chartOfAccountService) {
 		this.chartOfAccountService = chartOfAccountService;
 	}
-
 	private void addBankAccount() {
 		final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
 		final Date currentDate = new Date();
 		final Bankaccount bankAccount = new Bankaccount();
 		final HttpServletRequest request = ServletActionContext.getRequest();
 		bankAccount.setBankbranch(bankBranch);
-		bankAccount.setCreated(currentDate);
 		bankAccount.setCurrentbalance(BigDecimal.ZERO);
 		try {
 			newGLCode = prepareBankAccCode(request.getParameter("accounttype").split("#")[0],code);
@@ -147,8 +144,6 @@ public class BankAccountAction extends JQueryGridActionSupport {
 
 	private void populateBankAccountDetail(final Bankaccount bankAccount) {
 		final HttpServletRequest request = ServletActionContext.getRequest();
-		bankAccount.setModifiedby(BigDecimal.valueOf(Long.valueOf(EgovThreadLocals.getUserId())));
-		bankAccount.setLastmodified(new Date());
 		bankAccount.setAccountnumber(request.getParameter("accountnumber"));
 		bankAccount.setAccounttype(request.getParameter("accounttype").split("#")[1]);
 		if (StringUtils.isNotBlank(request.getParameter("fundname"))) {
@@ -187,8 +182,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
 				sendAJAXResponse("error");
 			}
 		}
-		/*final JSONArray jsonArray = new JSONArray(jsonObjects);
-		sendAJAXResponse(constructJqGridResponse(jsonArray.toString()));*/
+		final String jsonString = new GsonBuilder().create().toJson(jsonObjects);
+		sendAJAXResponse(constructJqGridResponse(jsonString));
 	}
 	public String prepareBankAccCode(String accID, String code)
 			throws Exception {
@@ -250,4 +245,14 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	public void setBankBranchId(final Integer bankBranchId) {
 		this.bankBranchId = bankBranchId;
 	}
+
+	public AppConfigValuesDAO getAppConfigValuesDAO() {
+		return appConfigValuesDAO;
+	}
+
+	public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
+		this.appConfigValuesDAO = appConfigValuesDAO;
+	}
+	
+	
 }

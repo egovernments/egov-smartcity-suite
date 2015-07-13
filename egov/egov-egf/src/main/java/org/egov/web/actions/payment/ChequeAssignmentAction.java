@@ -346,7 +346,7 @@ private void setTNEBMandatoryFields(){
 				bank_account = propartyAppConfigResultList.get(key);
 				Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?",bank_account);
 				if(ba.getId()!=null){
-				bankaccount = ba.getId();
+				bankaccount = ba.getId().intValue();
 				}
 			}
 		}
@@ -1772,11 +1772,11 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 					{
 					if(reassignSurrenderChq)
 					{
-						if(!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),assignment.getSerialNo()))
+						if(!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(), bankaccount.longValue(),voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),assignment.getSerialNo()))
 							addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 					}
 					else{
-						if(!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), assignment.getSerialNo()))
+						if(!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount.longValue(),voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), assignment.getSerialNo()))
 							addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 					}
 					}
@@ -1824,10 +1824,10 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 				}
 				if(reassignSurrenderChq)   
 				{                              
-					if(!instrumentService.isReassigningChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),parameters.get("serialNo")[0]))
+					if(!instrumentService.isReassigningChequeNumberValid(parameters.get("chequeNo")[0], bankaccount.longValue(),voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),parameters.get("serialNo")[0]))
 						addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 				}else{
-				if(!instrumentService.isChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
+				if(!instrumentService.isChequeNumberValid(parameters.get("chequeNo")[0], bankaccount.longValue(),voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
 					addFieldError("chequeN0",getMessage("payment.chequenumber.invalid"));
 				} 
 			}

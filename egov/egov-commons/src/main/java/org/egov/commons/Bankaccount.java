@@ -44,26 +44,59 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.commons.utils.BankAccountType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public class Bankaccount implements java.io.Serializable {
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
+@Entity
+@Table(name = "BANKACCOUNT")
+@SequenceGenerator(name = Bankaccount.SEQ_BANKACCOUNT, sequenceName = Bankaccount.SEQ_BANKACCOUNT, allocationSize = 1)
+public class Bankaccount extends AbstractAuditable implements java.io.Serializable {
 
         private static final long serialVersionUID = 1L;
-
-        private Integer id;
+        public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
+        @DocumentId
+        @Id
+        @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
+        private Long id;
+        @ManyToOne
+        @JoinColumn(name = "branchid",nullable = true)
         private Bankbranch bankbranch;
+        @ManyToOne
+        @JoinColumn(name = "glcodeid")
         private CChartOfAccounts chartofaccounts;
+        @ManyToOne
+        @JoinColumn(name = "fundid")
         private Fund fund;
+        @NotNull
         private String accountnumber;
+        @NotNull
         private String accounttype;
         private String narration;
+        @NotNull
         private int isactive;
-        private Date created;
-        private BigDecimal modifiedby;
-        private Date lastmodified;
+        @NotNull
         private BigDecimal currentbalance;
         private String payTo;
+        @Enumerated(EnumType.STRING)
+        @Column(name = "type")
         private BankAccountType type;
+        @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "bankaccount")
         private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
 
         public Bankaccount() {
@@ -75,9 +108,6 @@ public class Bankaccount implements java.io.Serializable {
                 this.accountnumber = accountnumber;
                 this.accounttype = accounttype;
                 this.isactive = isactive;
-                this.created = created;
-                this.modifiedby = modifiedby;
-                this.lastmodified = lastmodified;
                 this.currentbalance = currentbalance;
                 this.payTo = payTo;
                 this.type = type;
@@ -92,19 +122,16 @@ public class Bankaccount implements java.io.Serializable {
                 this.accounttype = accounttype;
                 this.narration = narration;
                 this.isactive = isactive;
-                this.created = created;
-                this.modifiedby = modifiedby;
-                this.lastmodified = lastmodified;
                 this.currentbalance = currentbalance;
                 this.payTo = payTo;
                 this.egSurrenderedChequeses = egSurrenderedChequeses;
         }
 
-        public Integer getId() {
+        public Long getId() {
                 return this.id;
         }
 
-        public void setId(Integer id) {
+        public void setId(Long id) {
                 this.id = id;
         }
 
@@ -157,30 +184,6 @@ public class Bankaccount implements java.io.Serializable {
         }
 
         
-
-        public Date getCreated() {
-                return this.created;
-        }
-
-        public void setCreated(Date created) {
-                this.created = created;
-        }
-
-        public BigDecimal getModifiedby() {
-                return this.modifiedby;
-        }
-
-        public void setModifiedby(BigDecimal modifiedby) {
-                this.modifiedby = modifiedby;
-        }
-
-        public Date getLastmodified() {
-                return this.lastmodified;
-        }
-
-        public void setLastmodified(Date lastmodified) {
-                this.lastmodified = lastmodified;
-        }
 
         public BigDecimal getCurrentbalance() {
                 return this.currentbalance;

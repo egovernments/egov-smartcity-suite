@@ -58,9 +58,9 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js"></script>
 		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-		<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script> --%>  
+		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js"></script>
-		<%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" /> --%>
+		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
 		<link href="<c:url value='/css/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />

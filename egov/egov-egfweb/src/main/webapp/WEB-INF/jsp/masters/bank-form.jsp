@@ -46,6 +46,7 @@
 <div style="color: green">
 <s:actionmessage/>
 </div>
+
    <s:form name="bankForm" action="bank" theme="simple" >
    	<s:token name="%{tokenName()}"/>
 	<s:push value="model">
@@ -54,7 +55,7 @@
    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
    		<tr>
    			<td class="bluebox" width="30%"></td>
-		    <td class="bluebox"><s:text name="bank.create.name"/><span class="mandatory">*</span></td>
+		    <td class="bluebox"><s:text name="bank.create.name"/><span class="mandatory1">*</span></td>
 		    <td class="bluebox" colspan="2">
 		    	<s:textfield id="name" name="name"   onblur="checkUniqueBankName(this);"/>
 	    	<span style="display:none;color:red" id="nameuniquename" >
@@ -64,7 +65,7 @@
 	</tr>
 	<tr>
 	    <td class="greybox"></td>
-		<td class="greybox"><s:text name="bank.create.code"/><span class="mandatory">*</span></td>
+		<td class="greybox"><s:text name="bank.create.code"/><span class="mandatory1">*</span></td>
 	    <td class="greybox" colspan="2">
 	    	<s:textfield id="code" name="code"  onblur="checkUniqueBankCode(this);"/>
 	    	<span style="display:none;color:red" id="codeuniquecode" >
@@ -92,15 +93,8 @@
 		</div>
 	</s:if>	    	
   	<br/>
-  	<div class="buttonbottom" > 
-  	<input type="button" id="Search" value="Search" onclick="javascript:window.location.href='bank.action?mode=MODIFY'" class="button"/>
+ </s:push>
+
 	
-	<input type="submit" class="button" value="Save"
-							id="saveButton" name="button"
-							onclick="validateFormAndSubmit();" />
-	
-	<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
-	</div>
-	</s:push>
   </s:form>
   <script src="../resources/javascript/bank.js" type="text/javascript"></script>

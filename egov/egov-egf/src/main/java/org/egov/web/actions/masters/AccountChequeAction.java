@@ -239,7 +239,7 @@ public class AccountChequeAction extends BaseFormAction{
 		append(" and ac.bankAccountId.id=:bankAccId) and bankAccountId.id=:bankAccId)");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("AccountChequeAction | save | accChqDelquery "+ accChqDelquery.toString());
 		Query delqry = session.createQuery(accChqDelquery.toString());
-		delqry.setInteger("bankAccId",bankaccount.getId());
+		delqry.setInteger("bankAccId",bankaccount.getId().intValue());
 		delqry.executeUpdate();
 		
 	}

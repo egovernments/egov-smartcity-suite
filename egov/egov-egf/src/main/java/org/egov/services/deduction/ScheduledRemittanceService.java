@@ -814,7 +814,7 @@ private void loadGJVbankAccounts() {
 			List<Bankaccount> bankAcountsList = remittancePersistenceService.getPersistenceService().findAllBy("from Bankaccount ba where accountNumber=?",value.split("-")[1]);
 			if(bankAcountsList.size()==1)
 			{
-				GJVBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId());
+				GJVBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
 			}else
 			{
 				throw new ValidationException(Arrays.asList(new ValidationError("AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account","AuoRemittance_Account_Number_For_GJV app config value  does not return proper single account")));
@@ -869,7 +869,7 @@ private void loadReceiptBankAccounts() {
 				List<Bankaccount> bankAcountsList = remittancePersistenceService.getPersistenceService().findAllBy("from Bankaccount ba where accountNumber=?",value.split("-")[1]);
 				if(bankAcountsList.size()==1)
 				{
-					receiptBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId());
+					receiptBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
 				}else
 				{
 					throw new ValidationException(Arrays.asList(new ValidationError("AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account","AuoRemittance_Account_Number_For_Receipts app config value  does not return proper single account")));

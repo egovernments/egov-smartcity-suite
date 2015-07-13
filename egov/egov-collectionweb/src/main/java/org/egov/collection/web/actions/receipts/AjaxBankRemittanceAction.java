@@ -134,7 +134,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction{
 		{	
 			Object[] arrayObjectInitialIndex=queryResults.get(i);
 			Bankaccount newBankaccount=new Bankaccount();
-			newBankaccount.setId(Integer.valueOf(arrayObjectInitialIndex[0].toString()));
+			newBankaccount.setId(Long.valueOf(arrayObjectInitialIndex[0].toString()));
 			newBankaccount.setAccountnumber(arrayObjectInitialIndex[1].toString());
 			getBankAccountArrayList().add(newBankaccount);
 		}

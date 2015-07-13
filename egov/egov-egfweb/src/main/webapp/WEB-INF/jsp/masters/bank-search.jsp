@@ -76,13 +76,16 @@
 				</tr>	    	
 	    	</table>
 	    	<br/>
+	    	
+	    	
+	    	</div>
 	    	<div class="buttonbottom" style="padding-bottom:10px;">
 	    		<s:hidden name="mode"></s:hidden> 
 		<input type="submit" class="button" value="Modify" id="modifyButton" name="Modify" onclick="validateAndSubmit();" />
 		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 			</div>
     </s:form>   
-    <script>
+    <script type="text/javascript">
     jQuery( "#bankName" ).autocomplete({
         source: "bank.action?mode=AUTO_COMP_BANK_NAME",
         minLength: 2

@@ -218,9 +218,8 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             if ((purposeId == null) || (purposeId.intValue() == 0)) {
                 throw new EGOVException("Purpose Id is null or zero");
             }
-            Query query = HibernateUtil.getCurrentSession().createQuery(" from EgfAccountcodePurpose purpose where purpose.id=:purposeId");
-            query.setInteger("purposeId", purposeId);
-            if (query.uniqueResult() == null) {
+            Query query = HibernateUtil.getCurrentSession().createQuery(" from EgfAccountcodePurpose purpose where purpose.id="+purposeId+"");
+            if (query.list().size() == 0) {
                 throw new EGOVException("Purpose ID provided is not defined in the system");
             }
             query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=1 ");

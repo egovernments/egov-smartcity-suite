@@ -117,7 +117,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 		setBank_branch(account.getBankAccount().getBankbranch().getId());
 		List<Bankaccount> accNumList = (List<Bankaccount>) persistenceService.findAllBy("from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",
 				bank_branch,fundId);
-		setBankaccount(account.getBankAccount().getId());
+		setBankaccount(account.getBankAccount().getId().intValue());
 		
 		addDropdownData("bankaccountList", accNumList);
 		List<Bankbranch> branchList =  (List<Bankbranch>)persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=1 order by br.bank.name asc",fundId);

@@ -285,7 +285,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 		BigDecimal accountBalance;
 		try {
 			accountBalance = egovCommon.getAccountBalance(voucherHeader
-					.getVoucherDate(), Integer.valueOf(contraBean
+					.getVoucherDate(), Long.valueOf(contraBean
 					.getAccountNumberId()));
 		} catch (ValidationException e) {
 			LOGGER.error("Error in retriving" + e.getMessage(), e);
@@ -298,7 +298,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 	private boolean validateChequeNumber() {
 		if (instrumentHeader == null
 				&& !instrumentService.isChequeNumberValid(contraBean
-						.getChequeNumber(), Integer.parseInt(contraBean
+						.getChequeNumber(), Long.parseLong(contraBean
 						.getAccountNumberId()), voucherHeader.getVouchermis()
 						.getDepartmentid().getId().intValue(), null)) {
 			return false;
@@ -306,7 +306,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 				&& !contraBean.getChequeNumber().equalsIgnoreCase(
 						instrumentHeader.getInstrumentNumber())
 				&& !instrumentService.isChequeNumberValid(contraBean
-						.getChequeNumber(), Integer.parseInt(contraBean
+						.getChequeNumber(), Long.parseLong(contraBean
 						.getAccountNumberId()), voucherHeader.getVouchermis()
 						.getDepartmentid().getId().intValue(), null)) {
 			return false;
@@ -417,7 +417,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 				&& voucherHeader.getVoucherDate() != null) {
 			try {
 				availableBalance = egovCommon.getAccountBalance(voucherHeader
-						.getVoucherDate(), Integer.valueOf(parameters
+						.getVoucherDate(), Long.valueOf(parameters
 						.get("accountNumberId")[0]));
 			} catch (Exception e) {
 				LOGGER.error("Error in retriving balance" + e.getMessage(), e);

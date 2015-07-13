@@ -61,6 +61,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.services.masters.BankService;
@@ -124,7 +125,7 @@ public class BankAction extends BaseFormAction {
         public Object getModel() {
                 return bank;
         }
-
+        @ValidationErrorPage(value=MODIFY)
         @Action(value="/masters/bank-save")
         public String save() { 
                 try {

@@ -193,10 +193,10 @@ public class ContingentBillAction extends BaseBillAction {
                 for(int i=0;i<configValuesByModuleAndKey.size();i++)
                 {
                         try {
-                                accountCodeByPurpose = coaDAO.getAccountCodeByPurpose(Integer.valueOf(configValuesByModuleAndKey.get(i).getValue()));
+                                 accountCodeByPurpose = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(configValuesByModuleAndKey.get(i).getValue()));
                         } catch (NumberFormatException e) {
-                                LOGGER.error("Inside getNetPayableCodes"+e.getMessage(), e);    
-                        } catch (EGOVException e) {
+                                LOGGER.error("Inside getNetPayableCodes"+e.getMessage(), e);
+                        } catch (Exception e) {
                                 LOGGER.error("inside getNetPayableCodes"+e.getMessage());
                         }
                         for(CChartOfAccounts coa:accountCodeByPurpose)

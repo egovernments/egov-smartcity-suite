@@ -85,13 +85,13 @@
     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
     		<tr>
     		<td class="bluebox" width="10%"></td>
-			    <td class="bluebox" width="10%"><s:text name="bank.create.name"/><span class="mandatory">*</span></td>
+			    <td class="bluebox" width="10%"><s:text name="bank.create.name"/><span class="mandatory1">*</span></td>
 			    <td class="bluebox" width="46%"><s:textfield id="name" name="name"   onblur="checkuniquenessname();"/></td>
 			    <egov:uniquecheck id="nameuniquename" name="nameuniquename" fieldtoreset="name" fields="['Value']" url='masters/bank!nameUniqueCheckName.action'/>
 			    </tr>
 			    <tr>
 			    <td class="greybox" width="10%"></td>
-				<td class="greybox" width="10%"><s:text name="bank.create.code"/><span class="mandatory">*</span></td>
+				<td class="greybox" width="10%"><s:text name="bank.create.code"/><span class="mandatory1">*</span></td>
 			    <td class="greybox" width="30%" colspan=8><s:textfield id="code" name="code"  onblur="checkuniquenesscode();"/></td>
 			    <egov:uniquecheck id="codeuniquecode" name="codeuniquecode" fieldtoreset="code" fields="['Value']" url='masters/bank!codeUniqueCheckCode.action'/>
 			   	<td class="greybox" width="2%"><s:text name="bank.create.isactive"/></td>

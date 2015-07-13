@@ -151,7 +151,7 @@ function initializeGrid() {
 												            {name : "accounttype", index : "accounttype", width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson}, editrules : {required : true}},
 												            {name : "narration", index : "narration", width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
 												            {name : "payto", index : "payto", width : 70, editable : true, editoptions : {size : 25}},
-												            {name : "typename", index : "typename", width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}},
+												            {name : "typename", index : "typename", width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true}},
 												            {name : "active", index : "active", width : 70, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}},
 												            {name : 'glcode', index : 'glcode', key : true, width : 60, editable : false, editoptions : {readonly : true, size : 20}}
 												           ],

@@ -286,7 +286,7 @@ public class ContraCTBAction extends BaseVoucherAction
 		}else {
 			 // get bank account balance.
 			BigDecimal accountBalance = egovCommon.getAccountBalance(voucherHeader.getVoucherDate(),
-					Integer.valueOf(contraBean.getAccountNumberId()));
+					Long.valueOf(contraBean.getAccountNumberId()));
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Account balance for the bank account id : "+ contraBean.getAccountNumberId() + " is :"+ accountBalance);
 			contraBean.setAccountBalance(accountBalance);
 		}

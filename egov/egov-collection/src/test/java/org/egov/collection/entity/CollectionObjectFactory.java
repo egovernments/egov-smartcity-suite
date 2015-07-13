@@ -124,10 +124,6 @@ public class CollectionObjectFactory {
 		bankaccount.setFund(createFund("testFund"));
 		bankaccount.setChartofaccounts(createCOA(this.getRandomNumber(99999999)+""));
 		bankaccount.setBankbranch(createBankBranch());
-		bankaccount.setCreated(new Date());
-		bankaccount.setLastmodified(new Date());
-		bankaccount.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
 		session.saveOrUpdate(bankaccount);
 		return bankaccount;
 	}

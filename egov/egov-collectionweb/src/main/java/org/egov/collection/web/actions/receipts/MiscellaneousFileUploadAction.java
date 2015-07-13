@@ -187,7 +187,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 			instrHeaderBank.setTransactionNumber(dept.getCode()+new SimpleDateFormat ("ddMMyy", Locale.getDefault()).format(dt)+"UPL");
 			
 			Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where accountnumber=?",input[4]);
-			receiptAction.setBankAccountId(account.getId());
+			receiptAction.setBankAccountId(account.getId().intValue());
 			
 			receiptAction.setInstrHeaderBank(instrHeaderBank);
 			receiptAction.setInstrumentTypeCashOrCard(CollectionConstants.INSTRUMENTTYPE_BANK);

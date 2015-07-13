@@ -764,13 +764,13 @@ public class InstrumentService {
 
 	}
 
-	public InstrumentHeader getInstrumentHeader(Integer bankaccountId, String instrumentNo, String payTo) {
+	public InstrumentHeader getInstrumentHeader(Long bankaccountId, String instrumentNo, String payTo) {
 		return instrumentHeaderService.find(
 				" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? ", bankaccountId,
 				instrumentNo, payTo);
 	}
 
-	public InstrumentHeader getInstrumentHeader(Integer bankaccountId, String instrumentNo, String payTo,
+	public InstrumentHeader getInstrumentHeader(Long bankaccountId, String instrumentNo, String payTo,
 			String serialNo) {
 		return instrumentHeaderService.find(
 				" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? and serialNo=? ",
@@ -820,7 +820,7 @@ public class InstrumentService {
 		this.bankreconciliationService = bankreconciliationService;
 	}
 
-	public boolean isChequeNumberWithinRange(String chequeNumber, Integer bankAccountId, Integer departmentId,
+	public boolean isChequeNumberWithinRange(String chequeNumber, Long bankAccountId, Integer departmentId,
 			String serialNo) {
 		AccountCheques accountCheques = (AccountCheques) persistenceService
 				.find(
@@ -832,7 +832,7 @@ public class InstrumentService {
 		return true;
 	}
 
-	boolean isChequeNumberUnique(String chequeNumber, Integer bankAccountId, String serialNo) {
+	boolean isChequeNumberUnique(String chequeNumber, Long bankAccountId, String serialNo) {
 		InstrumentType instrumentType = getInstrumentTypeByType("cheque");
 		List<InstrumentHeader> list = instrumentHeaderService.findAllBy(
 				"from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque=1 and "
@@ -841,7 +841,7 @@ public class InstrumentService {
 			return false;
 		return true;
 	}                     
-	boolean isRtgsNumberUnique(String chequeNumber, Integer bankAccountId) {
+	boolean isRtgsNumberUnique(String chequeNumber, Long bankAccountId) {
 		InstrumentType instrumentType = getInstrumentTypeByType("advice");                 
 		List<InstrumentHeader> list = instrumentHeaderService.findAllBy(                         
 				"from InstrumentHeader where transactionNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque=1 "
@@ -851,7 +851,7 @@ public class InstrumentService {
 		return true;               
 	}
 
-	boolean isChequeIsSurrenderdForReassign(String chequeNumber, Integer bankAccountId, String serialNo) {
+	boolean isChequeIsSurrenderdForReassign(String chequeNumber, Long bankAccountId, String serialNo) {
 		InstrumentType instrumentType = getInstrumentTypeByType("cheque");
 		List<InstrumentHeader> list = instrumentHeaderService.findAllBy(
 				"from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and statusId in (?) "
@@ -862,14 +862,14 @@ public class InstrumentService {
 		return false;
 	}
 
-	public boolean isChequeNumberValid(String chequeNumber, Integer bankAccountId, Integer departmentId, String serialNo) {
+	public boolean isChequeNumberValid(String chequeNumber, Long bankAccountId, Integer departmentId, String serialNo) {
 		if (!isChequeNumberWithinRange(chequeNumber, bankAccountId, departmentId, serialNo))
 			return false;
 		if (!isChequeNumberUnique(chequeNumber, bankAccountId, serialNo))
 			return false;
 		return true;
 	}
-	public boolean isRtgsNumberValid(String chequeNumber, Integer bankAccountId) {
+	public boolean isRtgsNumberValid(String chequeNumber, Long bankAccountId) {
 		if (!isRtgsNumberUnique(chequeNumber, bankAccountId))
 			return false;
 		return true;
@@ -995,7 +995,7 @@ public class InstrumentService {
 	 * @param departmentId
 	 * @return
 	 */
-	public boolean isReassigningChequeNumberValid(String chequeNumber, Integer bankAccountId, Integer departmentId,
+	public boolean isReassigningChequeNumberValid(String chequeNumber, Long bankAccountId, Integer departmentId,
 			String serialNo) {
 		if (!isChequeNumberWithinRange(chequeNumber, bankAccountId, departmentId, serialNo))
 			return false;

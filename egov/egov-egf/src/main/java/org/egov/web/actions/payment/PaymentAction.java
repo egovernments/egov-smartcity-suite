@@ -344,7 +344,7 @@ public class PaymentAction extends BasePaymentAction{
                                 bank_account = propartyAppConfigResultList.get(key);
                                 Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?",bank_account);
                                 if(ba.getId()!=null){
-                                bankaccount = ba.getId();
+                                bankaccount = ba.getId().intValue();
                                 }
                 }
                 

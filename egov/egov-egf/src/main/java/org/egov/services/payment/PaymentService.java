@@ -160,7 +160,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 common.setPersistenceService(persistenceService);
                 common.setFundFlowService(fundFlowService);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getAccountBalance.");
-                return common.getAccountBalance(formatter.parse(voucherDate), Integer.valueOf(accountId),amount,paymentId, accGlcodeID);
+                return common.getAccountBalance(formatter.parse(voucherDate), Long.valueOf(accountId),amount,paymentId, accGlcodeID);
         }
         public boolean isChequeNoGenerationAuto()
         {
@@ -2386,7 +2386,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 Map<String,Object> instrumentVoucherMap =new HashMap<String,Object>();
                 instrumentVoucherMap.put(VoucherConstant.VOUCHER_HEADER, voucherHeader);
                 // get the InstrumnetHeader for the party & chequeno & bankaccountid 
-                InstrumentHeader instrumentHeader = instrumentService.getInstrumentHeader(account.getId(),chqNo,paidTo);
+                InstrumentHeader instrumentHeader = instrumentService.getInstrumentHeader(account.getId().longValue(),chqNo,paidTo);
                 instrumentVoucherMap.put(VoucherConstant.INSTRUMENT_HEADER, instrumentHeader);
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed preapreInstrumentVoucher.");
                 return instrumentVoucherMap;

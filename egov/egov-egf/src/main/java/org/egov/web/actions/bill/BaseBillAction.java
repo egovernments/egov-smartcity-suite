@@ -47,7 +47,7 @@ import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.dao.ChartOfAccountsDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.service.CommonsService;
@@ -126,7 +126,7 @@ public class BaseBillAction extends BaseVoucherAction {
         protected EisUtilService eisUtilService;
         protected VoucherHelper voucherHelper;
         @Autowired
-        protected ChartOfAccountsDAO coaDAO;
+        protected ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
         @Autowired
         protected FunctionDAO functionDAO;
         @Autowired
@@ -404,5 +404,39 @@ public class BaseBillAction extends BaseVoucherAction {
         public void setEisUtilService(EisUtilService eisUtilService) {
                 this.eisUtilService = eisUtilService;
         }
+
+		public AppConfigValuesDAO getAppConfigValuesDAO() {
+			return appConfigValuesDAO;
+		}
+
+		public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
+			this.appConfigValuesDAO = appConfigValuesDAO;
+		}
+
+
+		public ChartOfAccountsHibernateDAO getChartOfAccountsHibernateDAO() {
+			return chartOfAccountsHibernateDAO;
+		}
+
+		public void setChartOfAccountsHibernateDAO(
+				ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
+			this.chartOfAccountsHibernateDAO = chartOfAccountsHibernateDAO;
+		}
+
+		public FunctionDAO getFunctionDAO() {
+			return functionDAO;
+		}
+
+		public void setFunctionDAO(FunctionDAO functionDAO) {
+			this.functionDAO = functionDAO;
+		}
+
+		public FinancialYearDAO getFinancialYearDAO() {
+			return financialYearDAO;
+		}
+
+		public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+			this.financialYearDAO = financialYearDAO;
+		}
         
 }

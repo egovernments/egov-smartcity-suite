@@ -414,7 +414,7 @@ public class BankAdviceReportAction extends BaseFormAction {
 		return bankBranch.getBranchname();
 	}
 	
-	private String getBankAccountNumber(Integer bankAccountId){
+	private String getBankAccountNumber(Long bankAccountId){
 		Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankAccountId);
 		return bankAccount.getAccountnumber();
 	}

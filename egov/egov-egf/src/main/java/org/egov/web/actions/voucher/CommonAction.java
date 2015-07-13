@@ -147,7 +147,7 @@ public class CommonAction extends BaseFormAction{
 	private List<Map<String, Object>> bankBranchList;
 	private Integer  branchId;
 	private Integer departmentId;
-	private Integer bankaccountId;
+	private Long bankaccountId;
 	private String rtgsNumber;
 	private String chequeNumber;
 	private List<Bankaccount> accNumList ;
@@ -1351,7 +1351,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 						Bankaccount bankaccount = new Bankaccount();
 						bankaccount.setAccountnumber(account[0].toString());
 						bankaccount.setAccounttype(account[1].toString());
-						bankaccount.setId(Integer.valueOf(account[2].toString()));
+						bankaccount.setId(Long.valueOf(account[2].toString()));
 						CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 						chartofaccounts.setGlcode(account[3].toString());
 						bankaccount.setChartofaccounts(chartofaccounts);
@@ -1401,7 +1401,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					Bankaccount bankaccount = new Bankaccount();
 					bankaccount.setAccountnumber(account[0].toString());
 					bankaccount.setAccounttype(account[1].toString());
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
@@ -1472,10 +1472,10 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	public void setBranchList(List<Bankbranch> branchList) {
 		this.branchList = branchList;
 	}
-	public Integer getBankaccountId() {
+	public Long getBankaccountId() {
 		return bankaccountId;
 	}
-	public void setBankaccountId(Integer bankaccountId) {
+	public void setBankaccountId(Long bankaccountId) {
 		this.bankaccountId = bankaccountId;
 	}
 	public String getChequeNumber() {
@@ -2187,7 +2187,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					addedBanks.add(accountNumberAndType);
 					accNumList.add(bankaccount);
 				}
@@ -2258,7 +2258,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					addedBanks.add(accountNumberAndType);
 					accNumList.add(bankaccount);
 				}
@@ -2328,7 +2328,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					addedBanks.add(accountNumberAndType);
 					accNumList.add(bankaccount);
 				}
@@ -2394,7 +2394,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					addedBanks.add(accountNumberAndType);
 					accNumList.add(bankaccount);
 				}
@@ -2938,7 +2938,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 					CChartOfAccounts chartofaccounts = new CChartOfAccounts();
 					chartofaccounts.setGlcode(account[3].toString());
 					bankaccount.setChartofaccounts(chartofaccounts);
-					bankaccount.setId(Integer.valueOf(account[2].toString()));
+					bankaccount.setId(Long.valueOf(account[2].toString()));
 					addedBanks.add(accountNumberAndType);
 					accNumList.add(bankaccount);
 				}

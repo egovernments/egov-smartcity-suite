@@ -1827,7 +1827,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		instrumentService.updateInstrumentVoucherReference(iList);
 	}
 
-	private void validateChqNumber(final String chqNo, final int bankaccId,
+	private void validateChqNumber(final String chqNo, final Long bankaccId,
 			final CVoucherHeader voucherHeader) {
 		if (!instrumentService.isChequeNumberValid(chqNo, bankaccId,
 				voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), null)) {
