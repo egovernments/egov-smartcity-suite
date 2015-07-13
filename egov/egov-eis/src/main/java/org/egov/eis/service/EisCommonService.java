@@ -156,23 +156,24 @@ public class EisCommonService {
     }
 
     /**
-     * Returns employee assignment
+     * Please refer the same API from Assignment service
      *
      * @param empId
      * @return Assignment object
      */
+    @Deprecated
     public Assignment getLatestAssignmentForEmployee(final Long empId) {
-        return assignmentService.getPriamryAssignmentForEmployee(empId);
+        return assignmentService.getPrimaryAssignmentForEmployee(empId);
     }
 
     /**
-     * Returns latest employee primary assignment for a given date and employee
-     * id
+     * Please refer the same API from Assignment service
      *
      * @param empId
      * @param toDate
      * @return Assignment object
      */
+    @Deprecated
     public Assignment getLatestAssignmentForEmployeeByToDate(final Long empId, final Date toDate) {
         return assignmentService.getPrimaryAssignmentForEmployeeByToDate(empId, toDate);
     }
@@ -184,7 +185,7 @@ public class EisCommonService {
      * @return Position object
      */
     public Position getPrimaryAssignmentPositionForEmp(final Long empId) {
-        return assignmentService.getPriamryAssignmentForEmployee(empId).getPosition();
+        return assignmentService.getPrimaryAssignmentForEmployee(empId).getPosition();
     }
 
     /**

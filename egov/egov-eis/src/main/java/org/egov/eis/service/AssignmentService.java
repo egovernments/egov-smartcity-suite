@@ -148,7 +148,7 @@ public class AssignmentService {
      * @param empId
      * @return Assignment object
      */
-    public Assignment getPriamryAssignmentForEmployee(final Long empId) {
+    public Assignment getPrimaryAssignmentForEmployee(final Long empId) {
         return assignmentRepository.getPrimaryAssignmentForEmployee(empId);
     }
 
