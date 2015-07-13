@@ -144,6 +144,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @Action(value = "/save")
     public String save() {
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
+        this.mutationId = propertyMutation.getId();
         return REDIRECT_SUCCESS;
     }
 

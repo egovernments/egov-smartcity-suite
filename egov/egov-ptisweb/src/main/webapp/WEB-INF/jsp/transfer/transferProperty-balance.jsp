@@ -42,6 +42,7 @@
 
 <html>
 <head>
+	<title>Tax Dues</title>
 </head>
 <body>
 	<div class="formmainbox" align="center">
@@ -84,9 +85,8 @@
 				</td>
 			</tr>
 		</table>
-		<div align="left" class="mandatory">
-				Arrears in demand must be cleared in order for the user to carry out
-				this action.
+		<div align="center" class="mandatory">
+				Above tax dues must be payed before initiating this property transfer.
 		</div>
 	</div>
 </body>
