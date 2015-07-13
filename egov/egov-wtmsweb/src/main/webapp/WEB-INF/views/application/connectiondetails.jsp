@@ -48,7 +48,7 @@
 <c:if test="${mode=='addconnection'}">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.app.date" /><span class="mandatory"></span></label>
+			code="lbl.application.date" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" required="" path="applicationDate"/>
 			<form:errors path="applicationDate" cssClass="add-margin error-msg" />
