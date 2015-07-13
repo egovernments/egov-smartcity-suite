@@ -48,7 +48,7 @@
   </head>
   
   <body onload="refreshParentInbox();">
-  <s:form name="BillGenerationForm" theme="simple">
+  <s:form name="NoticeGenerationForm" theme="simple">
   <s:if test="%{hasErrors()}">
 		<div class="errorstyle"><s:actionerror /> <s:fielderror /></div>
 	</s:if>

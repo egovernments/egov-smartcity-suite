@@ -147,6 +147,31 @@ function validateIsHearningNoticeGenerated(obj)
 	else
 		return false;
 }
+function printHearingNotice(obj)
+{
+	var url;
+	//alert(document.getElementById("model.id").value);
+	url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
+		+ document.getElementById("model.id").value ;
+	document.getElementById("lblError").style.display='none';
+	document.getElementById("workflowBean.actionName").value=obj.value;
+
+	window.open(url, 'printHearingNotice', 'width=1000,height=400');   
+	
+}
+
+function printEnodresementNotice(obj)
+{
+	var url;
+	//alert(document.getElementById("model.id").value);
+	url = "/ptis/revPetition/revPetition-printEnodresementNotice.action?objectionId="
+		+ document.getElementById("model.id").value ;
+	document.getElementById("lblError").style.display='none';
+	document.getElementById("workflowBean.actionName").value=obj.value;
+
+	window.open(url, 'printEnodresementNotice', 'width=1000,height=400');   
+	
+}
 
 function validateRecordHearing(obj){
 	

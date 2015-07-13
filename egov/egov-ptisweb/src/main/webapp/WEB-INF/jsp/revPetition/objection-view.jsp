@@ -68,7 +68,7 @@
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body   onload="loadOnStartUp();" class="yui-skin-sam">
-	<s:form action="objection" method="post" name="objectionViewForm" theme="simple">
+	<s:form action="revPetition-view" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<div class="errorstyle" id="lblError" style="display:none;"></div>
 	<s:actionerror/>  <s:fielderror />
@@ -190,13 +190,16 @@
 		    			<!-- <td>
 		    			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="alert('Generate Hearing Notice');" >Generate Hearing Notice</button>
 		    			</td> -->
-		    		    		
+		    	  		    		
 		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE)">
 		   				<%-- <td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td> --%>
 		    			<td><s:submit value="Save" name="save" id="save"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this);"/></td>
-		   		</s:elseif>
+		   	<!-- 					<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printEnodresementNotice(this);" >Print Enodresement Notice</button> </td>
+		  	 -->	<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printHearingNotice(this);" >Print HearingNotice</button> </td>
+		
+	 	   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							&& hearings[hearings.size()-1].inspectionRequired == true">
@@ -214,6 +217,8 @@
 							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
 							">
+				<!-- 				<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printEnodresementNotice(this);" >Print Enodresement Notice</button> </td>
+		  -->
 		    			<td><s:submit value="Generate Notice" name="save" id="save"  method="recordObjectionOutcome" cssClass="buttonsubmit" onClick="return validateEndoresementNoticeGenerated(this)"/></td>
 		    	</s:elseif>
 		    	<td><input type="button" name="closeButton" id="closeButton" value="Close" class="button" onclick="window.close();"/></td>

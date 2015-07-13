@@ -97,9 +97,9 @@ public class Objection extends StateAware implements Auditable{
 	@Valid
 	private List<Inspection> inspections = new LinkedList<Inspection>();
 
-	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
+/*	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
 	@org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.outcomedate")
-	private Date dateOfOutcome;
+*/	private Date dateOfOutcome;
 
 	private String remarks;// for dateOfOutcome
 

@@ -882,5 +882,8 @@ public interface PropertyTaxConstants {
 	public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";
 	public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "revPetitionHearingNotice";
 	public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
+	public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
+        public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT = "Revision Petition Endorsement";
+        public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX ="ENDORSEMENT";
 
 }

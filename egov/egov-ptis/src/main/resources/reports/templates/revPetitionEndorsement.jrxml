@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionEndorsement" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="docNumberObjection" class="java.lang.String"/>
+	<parameter name="receivedOn" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="HouseNo" class="java.lang.String"/>
+	<parameter name="wardNumber" class="java.lang.String"/>
+	<parameter name="AnnualPropertyTaxFrom" class="java.lang.String"/>
+	<parameter name="AnnualPropertyTaxTo" class="java.lang.String"/>
+	<parameter name="HalfYearPropertyTaxFrom" class="java.lang.String"/>
+	<parameter name="HalfYearPropertyTaxTo" class="java.lang.String"/>
+	<parameter name="recievedBy" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="65" splitType="Stretch">
+			<staticText>
+				<reportElement x="103" y="32" width="367" height="32" uuid="bccf3998-ed33-41bf-aa2a-9e192a0cb77d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Revision Petition Endorsement]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="32" y="3" width="60" height="57" uuid="c5473d80-13d2-44c8-8350-92be64567d8c"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="103" y="1" width="367" height="33" uuid="269bd412-e3e3-4297-b355-2b7cd93e942f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Serif" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="99" splitType="Stretch">
+			<staticText>
+				<reportElement x="14" y="5" width="57" height="36" uuid="671442c6-680b-4755-a65a-b797dc290f7f"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[R.P.NO.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="424" y="5" width="148" height="36" uuid="56608ea1-3a46-44c3-a2ef-83648f8de1cc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{currentDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="5" width="181" height="35" isPrintWhenDetailOverflows="true" uuid="1b5cdb8f-cd61-48cf-860b-2c98dc373709"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{docNumberObjection}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="50" width="57" height="24" uuid="2f33018d-c906-49ae-b8bd-e22a8655c8ce"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Subject:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="71" y="50" width="500" height="24" uuid="69f42a76-16f2-4e2f-a270-d221bfc17a4d"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Taxes "+ $P{cityName}+" - Revision petition endoresement" ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="75" width="57" height="24" uuid="e40c0ee2-fd11-4214-8aab-70f173d25e5b"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Reference:	]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="71" y="75" width="500" height="24" uuid="b52b0e6b-1fd2-4adc-b081-996586af7a77"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Revision Petition dated on  "+ $P{receivedOn} ]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="199" splitType="Stretch">
+			<textField>
+				<reportElement x="5" y="12" width="566" height="39" uuid="e6dec114-7213-468e-93b3-4396a6134008"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Property enquiry have been done on your revision petition on assessment No."  +$P{HouseNo} +" with property tax reduced from Rs."+$P{AnnualPropertyTaxFrom}+" to Rs."+$P{AnnualPropertyTaxTo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="90" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["If you are not satisfied with this notice, you can file Appleal petition within 15 days after paying the Property Tax."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="371" y="166" width="200" height="32" uuid="05d607a4-8727-447c-8c52-578a667914f2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Signature of Commissioner]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="142" width="78" height="32" uuid="ace941f2-07be-4c23-914f-40dbe32ca2a4"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[To, Sri/Smt./Kum.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="78" y="145" width="196" height="32" uuid="0d73bbd8-554f-4713-9f4a-8feeca04e673"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{recievedBy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="7" y="176" width="76" height="20" uuid="83fd3821-2aff-4aa6-9b36-64b68ac982f9"/>
+				<text><![CDATA[Ward Number:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="83" y="174" width="195" height="23" uuid="5f1dc1e9-8e54-4854-a3e7-728e659ca699"/>
+				<textFieldExpression><![CDATA[$P{wardNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="58" width="566" height="26" uuid="45188127-6beb-45e3-81d3-733a45334c8d"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["It is to be noted that Half year tax is reduced from Rs."+$P{HalfYearPropertyTaxFrom} +" to Rs."+$P{HalfYearPropertyTaxTo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
