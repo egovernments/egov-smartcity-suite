@@ -100,8 +100,8 @@
 		<property name="currentCapitalValue" column="current_capitalValue"	type="double" />
 		<property name="marketValue" column="marketvalue" type="double" />
 		<property name="pattaNumber" column="pattanumber" type="java.lang.String" />
-		<property name="categoryType" column="categoryType" type="java.lang.String" />
-		<property name="occupancyCertificationNo" column="occupancyCertificationNo" type="java.lang.String" />
+		<property name="categoryType" column="category_type" type="java.lang.String" />
+		<property name="occupancyCertificationNo" column="occupancy_certificationno" type="java.lang.String" />
 
 		<many-to-one name="floorType"
 			class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />
