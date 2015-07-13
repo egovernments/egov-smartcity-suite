@@ -162,6 +162,28 @@ public class Complaint extends StateAware {
 	@Transient
 	private String district;
 
+	@Searchable
+	@Transient
+	private String zone;
+
+	@Searchable
+	@Transient
+	private String ward;
+	@Searchable
+	@Transient
+	private Date completionDate;
+
+	@Searchable
+	@Transient
+	private double complaintDuration;
+	@Searchable
+	@Transient
+	private boolean isClosed;
+
+	@Searchable
+	@Transient
+	private String durationRange;
+
 	@Transient
 	public String getUlb() {
 		return ulb;
@@ -296,19 +318,64 @@ public class Complaint extends StateAware {
 				.toDate();
 	}
 
-	@Transient
 	public void setUlb(String ulb) {
 		this.ulb = ulb;
 	}
 
-	@Transient
 	public String getDistrict() {
 		return district;
 	}
 
-	@Transient
 	public void setDistrict(String district) {
 		this.district = district;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+	public String getWard() {
+		return ward;
+	}
+
+	public void setWard(String ward) {
+		this.ward = ward;
+	}
+
+	public Date getCompletionDate() {
+		return completionDate;
+	}
+
+	public void setCompletionDate(Date completionDate) {
+		this.completionDate = completionDate;
+	}
+
+	public double getComplaintDuration() {
+		return complaintDuration;
+	}
+
+	public void setComplaintDuration(double complaintDuration) {
+		this.complaintDuration = complaintDuration;
+	}
+
+	public boolean getIsClosed() {
+		return isClosed;
+	}
+
+	public void setIsClosed(boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+
+	public String getDurationRange() {
+		return durationRange;
+	}
+
+	public void setDurationRange(String durationRange) {
+		this.durationRange = durationRange;
 	}
 
 	@Override
