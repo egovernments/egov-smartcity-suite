@@ -130,15 +130,6 @@
 				<div class="headingbg">
 					<s:text name="CreatePropertyHeader" />
 				</div>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<%@ include file="../create/createPropertyView.jsp"%>
-					</tr>
-					<%-- <s:if test="%{isApprPageReq}">
-							<tr>
-								<%@ include file="../workflow/property-workflow.jsp"%>
-							</tr>
-						</s:if> --%>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<%@ include file="../create/createPropertyView.jsp"%>

@@ -485,12 +485,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		updatePropertyDetails();
 		basicPropertyService.persist(basicProp);
 		setDocNumber(getDocNumber());
-		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
-		setAckMessage("Property forwarded successfully to " + approverUser.getUsername()
-				+ " with application Number : ");
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-		LOGGER.debug("forward: Property forwarded successfully to " + approverUser.getUsername()
-				+ "; Time taken(ms) = " + elapsedTimeMillis);
+		LOGGER.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
 		LOGGER.debug("forward: Property forward ended");
 		return RESULT_ACK;
 	}
