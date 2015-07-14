@@ -62,26 +62,30 @@ jQuery(document).ready(function($)
 	
 	complaintType.initialize();
 	
-	$('#com_type').typeahead({
-		hint: true,
-		highlight: true,
+	var com_type_typeahead=$('#com_type').typeahead({
+		hint: false,
+		highlight: false,
 		minLength: 3
 		}, {
 		displayKey: 'name',
 		source: complaintType.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		});
+	typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
+	/*.on('typeahead:selected', function(event, data){            
 			$("#complaintTypeId").val(data.value);    
 	    }).on('change',function(event,data){
     		if($('#com_type').val() == ''){
     			$("#complaintTypeId").val('');
     		}
-        });
+        });*/
 	
 	
 	
 	//Boundary auto-complete
 	$("#boundary_type_id").change(function(){
+		$('#com_boundry').typeahead('val', '');
 		$('#com_boundry').typeahead('destroy');
+		$("#boundaryId").val('');
 		var b_id = $("#boundary_type_id").val();
 		$("#hiddenBoundaryTypeId").val(b_id);    
 		var boundaries = new Bloodhound(
@@ -106,22 +110,23 @@ jQuery(document).ready(function($)
 					}
 				});
 	boundaries.initialize();
-	$('#com_boundry').typeahead({
-		hint: true,
-		highlight: true,
+	var com_boundry_typeahead =$('#com_boundry').typeahead({
+		hint: false,
+		highlight: false,
 		minLength: 3
 		}, {
 		displayKey: 'name',
 		source: boundaries.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		});
+	typeaheadWithEventsHandling(com_boundry_typeahead, '#boundaryId');
+	/*.on('typeahead:selected', function(event, data){            
 			$("#boundaryId").val(data.value);    
 	    }).on('change',function(event,data){
     		if($('#com_boundry').val() == ''){
     			$("#boundaryId").val('');
     		}
-        });
+        });*/
 	});
-
 	$('#routerSearch').click(function(e){
 		if($('#boundaryId').val()=="")
 			var bndryId=0;

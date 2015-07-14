@@ -118,21 +118,23 @@ jQuery(document)
 
 					complaintType.initialize();
 
-					$('#com_type').typeahead({
-						hint : true,
-						highlight : true,
+					var com_type_typeahead = $('#com_type').typeahead({
+						hint : false,
+						highlight : false,
 						minLength : 3
 					}, {
 						displayKey : 'name',
 						source : complaintType.ttAdapter()
-					}).on('typeahead:selected', function(event, data) {
+					});
+					typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
+					/*.on('typeahead:selected', function(event, data) {
 						$("#complaintTypeId").val(data.value);
 					}).on('change', function(event, data) {
 						if ($('#com_type').val() == '') {
 							$("#complaintTypeId").val('');
 
 						}
-					});
+					});*/
 
 					var designations = new Bloodhound(
 							{
@@ -162,20 +164,22 @@ jQuery(document)
 					 * $("#escalationDescription").change(function(){ });
 					 */
 
-					$('#designation_type').typeahead({
-						hint : true,
-						highlight : true,
+					var designation_type_typeahead=$('#designation_type').typeahead({
+						hint : false,
+						highlight : false,
 						minLength : 3
 					}, {
 						displayKey : 'name',
 						source : designations.ttAdapter()
-					}).on('typeahead:selected', function(event, data) {
+					});
+					typeaheadWithEventsHandling(designation_type_typeahead, '#designationId');
+					/*.on('typeahead:selected', function(event, data) {
 						$("#designationId").val(data.value);
 					}).on('change', function(event, data) {
 						if ($('#designation_type').val() == '') {
 							$("#designationId").val('');
 
 						}
-					});
+					});*/
 
 				});

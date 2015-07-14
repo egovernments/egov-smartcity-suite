@@ -196,21 +196,82 @@ jQuery(document).ready(function($)
 						complaintType.initialize();
 
 					$('#com_type').typeahead({
-						hint : true,
-						highlight : true,
+						hint : false,
+						highlight : false,
 						minLength : 3
 					}, {
-						displayKey : 'name',
+						displayKey : 'name', 
 						source : complaintType.ttAdapter()
 					}).on('typeahead:selected', function(event, data) {
 						$("#complaintTypeId").val(data.value);
-					}).on('change', function(event, data) {
+					}).on('keydown', this, function (event) {
+				    	var e = event;
+				    	
+				    	var position = $(this).getCursorPosition();
+				        var deleted = '';
+				        var val = $(this).val();
+				        if (e.which == 8) {
+				            if (position[0] == position[1]) {
+				                if (position[0] == 0)
+				                    deleted = '';
+				                else
+				                    deleted = val.substr(position[0] - 1, 1);
+				            }
+				            else {
+				                deleted = val.substring(position[0], position[1]);
+				            }
+				        }
+				        else if (e.which == 46) {
+				            var val = $(this).val();
+				            if (position[0] == position[1]) {
+				                
+				                if (position[0] === val.length)
+				                    deleted = '';
+				                else
+				                    deleted = val.substr(position[0], 1);
+				            }
+				            else {
+				                deleted = val.substring(position[0], position[1]);
+				            }
+				        }
+				        
+				        if(deleted){ 
+				        	$("#complaintTypeId").val('');
+							$("#noescalationDataFoundDiv").hide();
+							$("#escalationDiv").hide();
+				        	}
+
+			        }).on('keypress', this, function (event) {
+			        	//getting charcode by independent browser
+			        	var evt = (evt) ? evt : event;
+			        	var charCode = (evt.which) ? evt.which : 
+			                ((evt.charCode) ? evt.charCode : 
+			                  ((evt.keyCode) ? evt.keyCode : 0));
+			        	//only characters keys condition
+				    	if((charCode >= 32 && charCode <= 127)){
+				    		//clearing input hidden value on keyup
+				    		$("#complaintTypeId").val('');
+							$("#noescalationDataFoundDiv").hide();
+							$("#escalationDiv").hide();
+				    	}
+			        }).on('focusout', this, function (event) { 
+			    	    //focus out clear textbox, when no values selected from suggestion list
+			    	    if(!$("#complaintTypeId").val())
+			    	    {	
+			    	    	$(this).typeahead('val', '');
+			    	    	$("#complaintTypeId").val('');
+							$("#noescalationDataFoundDiv").hide();
+							$("#escalationDiv").hide();
+			    	    }
+			       })/*.on('change', function(event, data) {
 						if ($('#com_type').val() == '') {
 							$("#complaintTypeId").val('');
 							$("#noescalationDataFoundDiv").hide();
 							$("#escalationDiv").hide();
 						}
-					});
+					})*/;
+					
+					
 
 					var designations = new Bloodhound(
 							{

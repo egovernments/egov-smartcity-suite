@@ -145,36 +145,40 @@ jQuery(document)
 
 					complaintType.initialize();
 
-					$('#com_type').typeahead({
-						hint : true,
-						highlight : true,
+					var com_type_typeahead=$('#com_type').typeahead({
+						hint : false,
+						highlight : false,
 						minLength : 3
 					}, {
 						displayKey : 'name',
 						source : complaintType.ttAdapter()
-					}).on('typeahead:selected', function(event, data) {
+					});
+					typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
+					/*.on('typeahead:selected', function(event, data) {
 						$("#complaintTypeId").val(data.value);
 					}).on('change', function(event, data) {
 						if ($('#com_type').val() == '') {
 							$("#complaintTypeId").val('');
 
 						}
-					});
-					$('#com_subtype').typeahead({
+					});*/
+					var com_subtype_typeahead=$('#com_subtype').typeahead({
 						hint : true,
 						highlight : true,
 						minLength : 3
 					}, {
 						displayKey : 'name',
 						source : complaintType.ttAdapter()
-					}).on('typeahead:selected', function(event, data) {
+					});
+					typeaheadWithEventsHandling(com_subtype_typeahead, '#objectSubType');
+					/*.on('typeahead:selected', function(event, data) {
 						$("#objectSubType").val(data.value);
 					}).on('change', function(event, data) {
 						if ($('#com_subtype').val() == '') {
 							$("#objectSubType").val('');
 
 						}
-					});
+					});*/
 
 	// Position auto-complete
 	var position = new Bloodhound({
@@ -197,20 +201,22 @@ jQuery(document)
 	});
 	
 	position.initialize();
-	$('#com_position').typeahead({
-		hint: true,
-		highlight: true,
+	var com_position_typeahead=$('#com_position').typeahead({
+		hint: false,
+		highlight: false,
 		minLength: 3
 		}, {
 		displayKey: 'name',
 		source: position.ttAdapter()
-		}).on('typeahead:selected', function(event, data){ 
+		});
+	typeaheadWithEventsHandling(com_position_typeahead, '#positionId');
+	/*.on('typeahead:selected', function(event, data){ 
 			$("#positionId").val(data.value);    
 	    }).on('change',function(event,data){
 			if($('#com_position').val() == ''){
 				$("#positionId").val('');
 			}
-	    }); 
+	    }); */
 	
 	$("#boundary_type_id").change(function(){
 		$('#com_boundry').typeahead('destroy');
