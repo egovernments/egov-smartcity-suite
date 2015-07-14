@@ -118,7 +118,7 @@
 			</textField>
 			<image>
 				<reportElement x="10" y="10" width="60" height="60" uuid="0df2ed0a-84b0-402b-9f41-e7b12b27680f"/>
-				<imageExpression><![CDATA[]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="132" y="10" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>

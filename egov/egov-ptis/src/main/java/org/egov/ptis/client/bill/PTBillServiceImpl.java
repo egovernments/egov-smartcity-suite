@@ -161,13 +161,15 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
                 
-                key = installmentDate.getYear() + "-" + reasonMasterCode;
+                if (!reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
+                    key = installmentDate.getYear() + "-" + reasonMasterCode;
 
-                billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, demandDetail.getAmount()
-                        .subtract(demandDetail.getAmtCollected()), demandDetail.getEgDemandReason().getGlcodeId()
-                        .getGlcode(), reason.getEgDemandReasonMaster().getReasonMaster(), Integer.valueOf(1));
+                    billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, demandDetail.getAmount()
+                            .subtract(demandDetail.getAmtCollected()), demandDetail.getEgDemandReason().getGlcodeId()
+                            .getGlcode(), reason.getEgDemandReasonMaster().getReasonMaster(), Integer.valueOf(1));
 
-                billDetails.add(createBillDet(billDetailBean));
+                    billDetails.add(createBillDet(billDetailBean));
+                }
                 
                 if (reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)) {
                     

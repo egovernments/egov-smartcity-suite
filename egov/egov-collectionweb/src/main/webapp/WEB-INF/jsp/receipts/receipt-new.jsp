@@ -1342,7 +1342,7 @@ function onBodyLoad()
 		document.getElementById('instrumentChequeAmount').value="0.0";
 	}
 	if(document.getElementById('paidBy').value==""){
-		var paidby =  "Paid By" '<s:property value="%{payeeName}"/>';
+		var paidby =  "Paid By" + '<s:property value="%{payeeName}"/>';
 		paidby = paidby.replace('&amp;','&');
 		document.getElementById('paidBy').value=paidby;
 	}
@@ -1612,7 +1612,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
-	document.getElementById('paidBy').value="Payee" '<s:property value="%{payeeName}"/>';
+	document.getElementById('paidBy').value="Payee" + '<s:property value="%{payeeName}"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
 		if(resetMisc){
@@ -1761,6 +1761,8 @@ function showHideMandataryMark(obj){
 </head>
 <!-- Area for error display -->
 <body onLoad="onBodyLoad();refreshInbox();"><br>
+
+
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
 <div class="errorstyle" id="common_error_area" style="display:none;"></div>
 <span align="center" style="display:none" id="delerror">
@@ -1815,7 +1817,6 @@ function showHideMandataryMark(obj){
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr><td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" id="billsheaderinfotable">
-	
 		<s:hidden name="collectXML" id="collectXML" value="%{collectXML}" />
 		<s:hidden label="totalNoOfAccounts" id="totalNoOfAccounts" value="%{totalNoOfAccounts}" name="totalNoOfAccounts"/>
 		<s:hidden label="reasonForCancellation" id="reasonForCancellation" name="reasonForCancellation" />
@@ -1837,7 +1838,7 @@ function showHideMandataryMark(obj){
 				
 		<s:if test="%{!isBillSourcemisc()}">
 		      	<%@ include file='collection-billdetails.jsp'%>
-		</s:if>
+		</s:if> 
 		</table>
 		</td></tr>
 

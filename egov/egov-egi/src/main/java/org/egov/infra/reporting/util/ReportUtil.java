@@ -50,9 +50,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberUtil;
@@ -300,5 +304,11 @@ public final class ReportUtil {
 		return NumberUtil.formatNumber(number, fractionDigits, useGrouping);
 	}
 	
+	public static String logoBasePath(){
+            HttpServletRequest request = ServletActionContext.getRequest();
+            String url= WebUtils.extractRequestDomainURL(request, false);
+            String imagePath = url.concat(ReportConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+            return imagePath;
+        }
 	
 }

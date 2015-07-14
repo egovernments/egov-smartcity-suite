@@ -52,7 +52,7 @@ public class ReportConstants {
 	/**
 	 * The path (in CLASSPATH) where the report engine will look for images during report generation.
 	 */
-	public static final String IMAGES_BASE_PATH = "/images/";
+	public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
 
 	/**
 	 * Path of the directory that is checked first for any customised report templates before looking at the standard template path. i.e. System will first check in /custom/reports/templates, and then in /reports/templates
