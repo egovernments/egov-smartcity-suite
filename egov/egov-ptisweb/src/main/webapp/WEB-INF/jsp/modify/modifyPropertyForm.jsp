@@ -163,7 +163,6 @@
 		<td colspan="5">
 		  <table width="100%" class="checkbox-section">
 	        <tr>
-	            <td width="10%"></td>
 				<td width="20%" align="right">
 				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift"/></label>
 				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage"/></label>
@@ -249,7 +248,7 @@
 	</tr>
 	
 	<tr>
-		<td class="bluebox">&nbsp;</td>
+		<td class="greybox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1"
