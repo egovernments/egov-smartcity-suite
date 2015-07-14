@@ -255,8 +255,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private PropertyImpl newProperty = new PropertyImpl();
 	private Date currDate;
-	private Integer buildingPermissionNo;
-	private Date buildingPermissionDate;
 	private String regdDocNo;
 	private Date regdDocDate;
 	private String mode = CREATE;
@@ -269,6 +267,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String eastBoundary;
 	private String westBoundary;
 	private Map<String, String> deviationPercentageMap;
+	private boolean chkBuildingPlanDetails;
 
 	@Autowired
 	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
@@ -410,11 +409,6 @@ public class CreatePropertyAction extends WorkflowAction {
 					setBlockId(boundaryService.getBoundaryById(area.getId()).getId());
 					setBlockName(area.getName());
 				}
-			}
-
-			for (PropertyStatusValues statusValue : basicProp.getPropertyStatusValuesSet()) {
-				setBuildingPermissionDate(statusValue.getBuildingPermissionDate());
-				setBuildingPermissionNo(statusValue.getBuildingPermissionNo());
 			}
 		}
 	}
@@ -633,31 +627,31 @@ public class CreatePropertyAction extends WorkflowAction {
 		return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
 	}
 
-	   public List<String> getValidActions()
-       {
-               List<String> validActionsList = Collections.emptyList();
-               String tempValidAction=null;
-               if ((null== getModel()) || ( property.getId() == null)) {
-                       validActions = Arrays.asList("Save");
-               }else {
-                       String validAction=(String)persistenceService.find("select validActions from WorkFlowMatrix where objectType=? " +
-                                       "and currentState =?",property.getStateType(),property.getCurrentState().getValue());
-                       if(null!=validAction){
-                               StringTokenizer strToken=new StringTokenizer(validAction, ",");
-                               tempValidAction=null;
-                               validActionsList=new ArrayList<String>();
-                               while (strToken.hasMoreElements()) {
-                                       tempValidAction=(String)strToken.nextToken();
-                                       validActionsList.add(tempValidAction)   ;         
-                               }
-                       }  
-                       validActions=validActionsList;
+	public List<String> getValidActions() {
+		List<String> validActionsList = Collections.emptyList();
+		String tempValidAction = null;
+		if ((null == getModel()) || (property.getId() == null)) {
+			validActions = Arrays.asList("Save");
+		} else {
+			String validAction = (String) persistenceService.find(
+					"select validActions from WorkFlowMatrix where objectType=? " + "and currentState =?",
+					property.getStateType(), property.getCurrentState().getValue());
+			if (null != validAction) {
+				StringTokenizer strToken = new StringTokenizer(validAction, ",");
+				tempValidAction = null;
+				validActionsList = new ArrayList<String>();
+				while (strToken.hasMoreElements()) {
+					tempValidAction = (String) strToken.nextToken();
+					validActionsList.add(tempValidAction);
+				}
+			}
+			validActions = validActionsList;
+		}
 
-               }
-               
-               if(LOGGER.isDebugEnabled())  LOGGER.debug(">>>>>>"+validActions);
-               return validActions;
-       }
+		if (LOGGER.isDebugEnabled()) LOGGER.debug(">>>>>>" + validActions);
+		return validActions;
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	@SkipValidation
@@ -775,7 +769,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
 		basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, "CREATE", null, null, null,
-				null, getParentIndex(), getBuildingPermissionDate(), getBuildingPermissionNo()));
+				null, getParentIndex()));
 		basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
 		createOwners(basicProperty);
@@ -828,7 +822,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
 		basicProp.setPropertyMutationMaster(propertyMutationMaster);
 		basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, "CREATE", null, null, null, null,
-				getParentIndex(), null, null));
+				getParentIndex()));
 		basicProp.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		newProperty = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(),
 				propTypeId, propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(),
@@ -892,14 +886,15 @@ public class CreatePropertyAction extends WorkflowAction {
 				propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
 				propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
 				propertyDetail.getComZone(), propertyDetail.getCornerPlot(), propertyDetail.getExtentSite(),
-				propertyDetail.getExtentAppartenauntLand(), propertyDetail.getFloorType(),
-				propertyDetail.getRoofType(), propertyDetail.getWallType(), propertyDetail.getWoodType(),
-				propertyDetail.isLift(), propertyDetail.isToilets(), propertyDetail.isWaterTap(),
-				propertyDetail.isStructure(), propertyDetail.isElectricity(),
-				propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-				propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-				propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),propertyDetail.getCategoryType(),
-				propertyDetail.getOccupancyCertificationNo());
+				propertyDetail.getExtentAppartenauntLand(), propertyDetail.getFloorType(), propertyDetail.getRoofType(),
+				propertyDetail.getWallType(), propertyDetail.getWoodType(), propertyDetail.isLift(),
+				propertyDetail.isToilets(), propertyDetail.isWaterTap(), propertyDetail.isStructure(),
+				propertyDetail.isElectricity(), propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(),
+				propertyDetail.isCable(), propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+				propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+				propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+				propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+				propertyDetail.getDeviationPercentage());
 
 		vacantProperty.setManualAlv(propertyDetail.getManualAlv());
 		vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -1006,10 +1001,6 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", ParcelID:" + parcelID
 				+ ", MutationId: " + mutationId + ", PartNo: " + partNo);
 
-		/*
-		 * if (isBlank(vacantLandNo)) {
-		 * addActionError(getText("mandatory.vacantLandNo")); }
-		 */
 		if (locality == null || locality == -1) {
 			addActionError(getText("mandatory.localityId"));
 		}
@@ -1021,12 +1012,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			addActionError(getText("mandatory.doorNo"));
 		}
-
-		/*
-		 * if (null == property.getPropertyDetail() &&
-		 * property.getPropertyDetail().getExtentAppartenauntLand() == 0.0) {
-		 * addActionError(getText("mandatory.extentAppartenauntLand")); }
-		 */
 
 		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (owner != null) {
@@ -1046,7 +1031,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		validateProperty(property, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, isAuthProp,
-				propTypeId, propUsageId, propOccId, null, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
+				propTypeId, propUsageId, propOccId, chkBuildingPlanDetails, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		if (chkIsCorrIsDiff) {
 			if (isBlank(corrAddress1)) {
@@ -1094,61 +1079,46 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void transitionWorkFlow(PropertyImpl property) {
 		final DateTime currentDate = new DateTime();
 		User user = securityUtils.getCurrentUser();
-		Position pos=null;
-		
-		if(workFlowAction.equalsIgnoreCase("reject"))
-		{
+		Position pos = null;
+
+		if (workFlowAction.equalsIgnoreCase("reject")) {
 			Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-			property.transition(true).withSenderName(user.getName())
-			.withComments(approverComments)
-			.withStateValue("Rejected")
-			.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
-			.withOwner(preOwner.getPosition()).withNextAction("Cancel");
-			
-		}else{
-		
-		if(null!=approverPositionId)
-		{
-			pos=(Position)persistenceService.find("from Position where id=?",approverPositionId);
-		}
-		if(null == property.getState())
-		{
-			WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,null,null);
-			//WorkFlowMatrix wfmatrix2 = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,"New",null);
-			property.transition().start().withSenderName(user.getName())
-			.withComments(approverComments)
-			.withStateValue(wfmatrix.getNextState())
-			.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
-			.withOwner(pos).withNextAction(wfmatrix.getNextAction());
-		}
-		else
-		{
-			if(property.getCurrentState().getNextAction().equalsIgnoreCase("END") ||  workFlowAction.equalsIgnoreCase("cancel"))
-			{
-				property.transition(true).end()
-				.withSenderName(user.getName())
-				.withComments(approverComments)
-				.withDateInfo(currentDate.toDate());
-			}else
-			{
-				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,property.getCurrentState().getNextAction()
-						,null);	
-				property.transition(true).withSenderName(user.getName())
-				.withComments(approverComments)
-				.withStateValue(wfmatrix.getCurrentState())
-				.withDateInfo(currentDate.toDate())//.withStateValue(beanActionName[0])
-				.withOwner(pos).withNextAction(wfmatrix.getNextAction());
+			property.transition(true).withSenderName(user.getName()).withComments(approverComments)
+					.withStateValue("Rejected").withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
+					.withOwner(preOwner.getPosition()).withNextAction("Cancel");
+
+		} else {
+			if (null != approverPositionId) {
+				pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+			}
+			if (null == property.getState()) {
+				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, null,
+						null, null);
+				// WorkFlowMatrix wfmatrix2 =
+				// propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,"New",null);
+				property.transition().start().withSenderName(user.getName()).withComments(approverComments)
+						.withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
+						.withOwner(pos).withNextAction(wfmatrix.getNextAction());
+			} else {
+				if (property.getCurrentState().getNextAction().equalsIgnoreCase("END")
+						|| workFlowAction.equalsIgnoreCase("cancel")) {
+					property.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+							.withDateInfo(currentDate.toDate());
+				} else {
+					WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
+							null, property.getCurrentState().getNextAction(), null);
+					property.transition(true).withSenderName(user.getName()).withComments(approverComments)
+							.withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
+							.withOwner(pos).withNextAction(wfmatrix.getNextAction());
+				}
 			}
 		}
-		}
-		if(approverName!=null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----"))
-		{
-			String approvalmesg=" Succesfully Forwarded to "+approverName+".";
-			ackMessage=	ackMessage==null?approvalmesg:ackMessage+approvalmesg;
-		}else if(workflowAction!=null && workFlowAction.equalsIgnoreCase("cancel"))
-		{
-			String approvalmesg=" Succesfully Cancelled.";
-			ackMessage=	ackMessage==null?approvalmesg:ackMessage+approvalmesg;
+		if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
+			String approvalmesg = " Succesfully Forwarded to " + approverName + ".";
+			ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+		} else if (workflowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
+			String approvalmesg = " Succesfully Cancelled.";
+			ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
 		}
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");
@@ -1164,7 +1134,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
-
+	public String getNextAction() {
+		String nextActionTemp = "";
+		if ((null != property) && (null != property.getId())) {
+			nextActionTemp = (String) persistenceService.find(
+					"select nextAction from WorkFlowMatrix where objectType=? " + " and currentState=?",
+					property.getStateType(), property.getCurrentState().getValue());
+		}
+		return nextActionTemp;
+	}
+	
 	@Override
 	public void setProperty(PropertyImpl property) {
 		this.property = property;
@@ -1480,11 +1459,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.ackMessage = ackMessage;
 	}
 
-	/*
-	 * public Address getCorrAddress() { return
-	 * property.getPropertyOwnerProxy().get(0).getAddress().iterator().next(); }
-	 */
-
 	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
@@ -1699,22 +1673,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.applicationDate = applicationDate;
 	}
 
-	public Integer getBuildingPermissionNo() {
-		return buildingPermissionNo;
-	}
-
-	public void setBuildingPermissionNo(Integer buildingPermissionNo) {
-		this.buildingPermissionNo = buildingPermissionNo;
-	}
-
-	public Date getBuildingPermissionDate() {
-		return buildingPermissionDate;
-	}
-
-	public void setBuildingPermissionDate(Date buildingPermissionDate) {
-		this.buildingPermissionDate = buildingPermissionDate;
-	}
-
 	public String getRegdDocNo() {
 		return regdDocNo;
 	}
@@ -1810,16 +1768,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	public ApplicationNumberGenerator getApplicationNumberGenerator() {
 		return applicationNumberGenerator;
 
-	}
-
-
-	public String getNextAction() {
-		String nextActionTemp=""; 
-		if((null!= property) && (null!=property.getId())){
-			nextActionTemp=(String)persistenceService.find("select nextAction from WorkFlowMatrix where objectType=? " +
-					" and currentState=?",property.getStateType(),property.getCurrentState().getValue());
-		}
-		return nextActionTemp;
 	}
 
 	public void setApplicationNumberGenerator(ApplicationNumberGenerator applicationNumberGenerator) {
@@ -1918,4 +1866,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.deviationPercentageMap = deviationPercentageMap;
 	}
 
+	public boolean isChkBuildingPlanDetails() {
+		return chkBuildingPlanDetails;
+	}
+
+	public void setChkBuildingPlanDetails(boolean chkBuildingPlanDetails) {
+		this.chkBuildingPlanDetails = chkBuildingPlanDetails;
+	}
+	
 }

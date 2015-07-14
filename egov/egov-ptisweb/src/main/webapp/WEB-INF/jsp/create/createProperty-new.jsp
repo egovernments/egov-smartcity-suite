@@ -78,6 +78,7 @@ jQuery(function ($) {
 });
 function loadOnStartUp() {
 	enableCorresAddr();
+	enableAppartnaumtLandDetails();
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
@@ -425,6 +426,7 @@ function populateApprover() {
   
   <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
   <s:hidden name="mode" value="form" />
+  <s:hidden name="modelId" id="modelId" value="%{modelId}" />
   <div class="formmainbox">
 		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -432,43 +434,16 @@ function populateApprover() {
         	<%@  include file="createPropertyForm.jsp"%>  
         </tr>
         	<% System.out.println("hellllo.111................"); %>
-         <tr>
+        <tr>
         	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
         </tr>
-        <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-      <tr>
-        	<!-- <div id="loadingMask" style="display:none" align="center">
-        	<p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> 
-        		<span id="message">
-        			<p style="color: red">Please wait....</p>
-        		</span>
-        	</p>
-        	</div> -->
+        <tr>
         	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
         </tr>
 		<tr>
 		<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 		</tr>
-		<!--  
-		<tr>
 		
-		
-		    <td>
-			    <div class="buttonbottom" align="center">		   
-					<s:if test="mode=='create'">
-					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-create.action',this);"/>&nbsp;			
-					</s:if>
-					<s:if test="mode=='edit'">
-					<s:submit value="Forward" name="Forward" id='Create:Forward' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-forward.action',this);"/>&nbsp;
-					<s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE}">
-								<s:submit value="Approve" name="Approve" id='Create:Approve' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-approve.action',this);"/>&nbsp;	
-					</s:if>	
-					<s:submit value="Reject" name="Reject" id='Create:Reject' cssClass="buttonsubmit" onclick="return onSubmit('createProperty-reject.action',this);"/>&nbsp;		
-					<input type="button" class="button" onclick="window.close();" value="Close">
-					</s:if>
-				</div>
-			</td>
-		</tr> -->
 		</table>
 	</div>
   </s:push>

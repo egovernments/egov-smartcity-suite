@@ -380,4 +380,16 @@ public interface PropertyDetail extends Property {
 	public String getOccupancyCertificationNo();
 	
 	public void setOccupancyCertificationNo(String occupancyCertificationNo);
+	
+	public String getBuildingPermissionNo();
+	
+	public void setBuildingPermissionNo(String buildingPermissionNo);
+	
+	public Date getBuildingPermissionDate();
+	
+	public void setBuildingPermissionDate(Date buildingPermissionDate);
+	
+	public String getDeviationPercentage();
+	
+	public void setDeviationPercentage(String deviationPercentage);
 }

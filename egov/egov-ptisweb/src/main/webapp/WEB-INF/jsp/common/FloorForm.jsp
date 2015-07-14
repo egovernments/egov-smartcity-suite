@@ -46,6 +46,7 @@
 		<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
+		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
@@ -102,7 +103,15 @@
 						data-optional="0" data-errormsg="Occupancy is required!"/>
 				</div>
 			</td>
-			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:textfield name="propertyDetail.floorDetails[0].occupantName"
+						id="occupantName" size="20"
+						value="%{propertyDetail.floorDetails[0].occupantName}"
+						maxlength="64" cssStyle="width:100%" data-optional="0"
+						data-errormsg="Ocuupancy Name is required!" />
+				</div>
+			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
@@ -112,7 +121,6 @@
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
-			
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
@@ -126,7 +134,7 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="taxExemptedReason" id="taxExemptedReason" headerValue="select"
+					<s:select name="propertyDetail.floorDetails[0].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
 							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetails[0].taxExemptedReason.id}" 
 							listKey="id" listValue="name"
 							cssClass="selectnew" data-optional="1">
@@ -235,8 +243,7 @@
 							cssStyle="width:100%" />
 					</div>
 				</td>
-				
-				
+
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
@@ -244,6 +251,14 @@
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
 							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+					</div>
+				</td>
+				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
+						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
+							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
+							cssStyle="width:100%" />
+						
 					</div>
 				</td>
 
@@ -260,10 +275,11 @@
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].exemptioncategory" id="propertyDetail.floorDetails[0].exemptioncategory" headerValue="select"
-								headerKey="" list="#{}" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].exemptioncategory}"
-								cssClass="selectnew" data-optional="1">
-							</s:select>
+						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
+							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetails[#floorsstatus.index].taxExemptedReason.id}" 
+							listKey="id" listValue="name"
+							cssClass="selectnew" data-optional="1">
+						</s:select>
 					</div>
 				</td>
 				

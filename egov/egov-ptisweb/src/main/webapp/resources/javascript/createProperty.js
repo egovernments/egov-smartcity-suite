@@ -38,6 +38,7 @@ function enableFieldsForPropType() {
 			document.getElementById("constructionHeaderRow").style.display = "none";
 			document.getElementById("constructionRow1").style.display = "none";
 			document.getElementById("constructionRow2").style.display = "none";
+			jQuery('#appartenantRow').hide();
 		} else {
 			document.getElementById("floorDetails").style.display = "";
 			document.getElementById("floorHeaderRow").style.display = "";
@@ -46,9 +47,8 @@ function enableFieldsForPropType() {
 			document.getElementById("constructionHeaderRow").style.display = "";
 			document.getElementById("constructionRow1").style.display = "";
 			document.getElementById("constructionRow2").style.display = "";
-			//document.getElementById("vacantLandRow").style.display = "none";
-			//document.getElementById("vacantLandTable").style.display = "none";
 			jQuery('tr.vacantlanddetaills').hide();
+			jQuery('#appartenantRow').hide();
 		}
 	}
 }
@@ -1033,8 +1033,8 @@ function showFloorTaxExemption() {
 function enableOrDisableSiteOwnerDetails(obj) {
 	console.log(jQuery('#propertyDetail.siteOwner'));
 	if (jQuery(obj).is(":checked")) {
+		jQuery('input[name="propertyDetail.siteOwner"]').val('');
 		jQuery('td.siteowner').show();
-		//jQuery('input[name="propertyDetail.siteOwner"]').val('');
 		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', false);
 	} else {
 		jQuery('td.siteowner').hide();

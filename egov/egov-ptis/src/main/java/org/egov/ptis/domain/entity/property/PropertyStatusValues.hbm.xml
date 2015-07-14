@@ -80,8 +80,6 @@
 		<property name="extraField1" column="EXTRA_FIELD1" />
 		<property name="extraField2" column="EXTRA_FIELD2" />
 		<property name="extraField3" column="EXTRA_FIELD3" />
-		<property name="buildingPermissionNo" column="building_permission_no" type="integer"/> 		
-		<property name="buildingPermissionDate" column="building_permission_date" type="java.util.Date"/>
 
 		<many-to-one name="referenceBasicProperty" column="REF_ID_BASIC"
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />

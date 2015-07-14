@@ -542,7 +542,8 @@ public class PropertyImpl extends StateAware implements Property {
 					getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
 					getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
 					getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(),
-					getPropertyDetail().getOccupancyCertificationNo());
+					getPropertyDetail().getOccupancyCertificationNo(),getPropertyDetail().getBuildingPermissionNo(),
+					getPropertyDetail().getBuildingPermissionDate(),getPropertyDetail().getDeviationPercentage());
 
 		} else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
 			VacantProperty vcp = (VacantProperty) getPropertyDetail();
@@ -568,7 +569,8 @@ public class PropertyImpl extends StateAware implements Property {
 					getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),
 					getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
 					getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(),
-					getPropertyDetail().getOccupancyCertificationNo());
+					getPropertyDetail().getOccupancyCertificationNo(),getPropertyDetail().getBuildingPermissionNo(),
+					getPropertyDetail().getBuildingPermissionDate(),getPropertyDetail().getDeviationPercentage());
 		}
 		return propDetails;
 	}

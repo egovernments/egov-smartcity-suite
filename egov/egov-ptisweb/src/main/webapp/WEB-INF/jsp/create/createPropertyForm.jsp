@@ -14,8 +14,8 @@
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
 			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
-		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
-				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
+		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
 				cssClass="selectnew"/>
 		</td>
 	</tr>
@@ -39,8 +39,7 @@
 		<td class="greybox"><s:select headerKey=""
 				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
-				list="dropdownData.apartments" cssClass="selectnew"
-				onchange="makeMandatory();" /></td>
+				list="dropdownData.apartments" cssClass="selectnew" /></td>
 	</tr>
 
 	<!-- Owner details section -->
@@ -131,13 +130,13 @@
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox"><s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12"
-				onchange="trim(this,this.value);" onblur="checkZero(this);"></s:textfield>
+		<td class="greybox"><s:textfield name="propertyDetail.buildingPermissionNo" id="propertyDetail.buildingPermissionNo" size="12" maxlength="12"
+				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox"><s:date name="buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> <s:textfield
-				name="buildingPermissionDate" cssClass="datepicker" 	value="%{#buildingPermDate}" autocomplete="off"
-				id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		<td class="greybox"><s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
+		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
+				id="propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -145,8 +144,8 @@
     <tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
-				id="propTypeCategoryId" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.extra_field5}"
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
+				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
 		</td>
    </tr>

@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -215,7 +216,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 
 	protected void validateProperty(Property property, String areaOfPlot, String dateOfCompletion,
 			boolean chkIsTaxExempted, String taxExemptReason, String isAuthProp, String propTypeId, String propUsageId,
-			String propOccId, Boolean isDataUpdate, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
+			String propOccId, Boolean chkBuildingPlanDetails, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
 
 		LOGGER.debug("Entered into validateProperty");
 
@@ -253,13 +254,25 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					}
 				} else {
 
+					if (null != property.getPropertyDetail()) {
+						if (chkBuildingPlanDetails) {
+							if (StringUtils.isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
+								addActionError(getText("mandatory.buildingPlanNo"));
+							}
+							if (null != property.getPropertyDetail().getBuildingPermissionDate()) {
+								addActionError(getText("mandatory.buildingPlanDate"));
+							}
+							if (StringUtils.isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
+								addActionError(getText("mandatory.deviationPercentage"));
+							}
+						}
+					}
 					if (floorTypeId == null || floorTypeId == -1) {
 						addActionError(getText("mandatory.floorType"));
 					}
 					if (roofTypeId == null || roofTypeId == -1) {
 						addActionError(getText("mandatory.roofType"));
 					}
-
 				}
 				validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetails(), property);
 			}

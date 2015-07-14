@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
- 
+<%@ include file="/includes/taglibs.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <script>
@@ -102,11 +102,11 @@ function validateWorkFlowApprover(name)
 function validateWorkFlowApprover(name,errorDivId)
 {
 	//alert(errorDivId);
-if(document.getElementById(errorDivId))
+ if(document.getElementById(errorDivId))
 	document.getElementById(errorDivId).style.display='none';
     document.getElementById('workFlowAction').value=name;
    // alert("inside validation for approve"+name);
-	<s:if test="%{getNextAction()!='END'}">
+	/* <s:if test="%{getNextAction()!='END'}">
     if(  (name=="Save" || name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && 
     		document.getElementById('approverPositionId').value=="-1")
     {
@@ -115,7 +115,7 @@ if(document.getElementById(errorDivId))
         document.getElementById(errorDivId).innerHTML = "Please Select the Approver";
 		return false;
     }
-    </s:if>
+    </s:if> */
     
       var propTypeMstr = document.getElementById("approverPositionId");
       if(propTypeMstr)
@@ -134,6 +134,7 @@ if(document.getElementById(errorDivId))
 	<% System.out.println("hellllo................."); %>
 <s:hidden id="workFlowAction" name="workFlowAction"/>
 <s:if test="%{getNextAction()!='END'}">
+
 <s:hidden id="currentState" name="currentState" value="%{state.value}"/>
 <s:hidden id="currentDesignation" name="currentDesignation" value="%{currentDesignation}"/>
 <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
@@ -150,19 +151,16 @@ if(document.getElementById(errorDivId))
 <s:if test="%{#request.approverEvenTextCSS==null}">
    <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
      <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
-   
 </s:if>
 
  <table width="100%" border="0" cellspacing="0" cellpadding="0">
- 
  <tr>
-		
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.approval.information"/></span>
 			</div>
 		
 	</tr>
-        
+        <% System.out.println("getNextAction()!='END'--"); %>
 	  	<tr>   
 	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
 			 <td class="${approverOddCSS}" id="deptLabel" width="14%">Approver Department:</td>

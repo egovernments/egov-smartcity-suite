@@ -110,6 +110,9 @@ public class BuiltUpProperty extends AbstractProperty {
 	private Double marketValue;
 	private String categoryType;
 	private String occupancyCertificationNo;
+	private String buildingPermissionNo;
+	private Date buildingPermissionDate;
+	private String deviationPercentage;
 
 	public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
 			Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -121,7 +124,8 @@ public class BuiltUpProperty extends AbstractProperty {
 			double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
 			boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
 			boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
-			String pattaNumber, Double currentCapitalValue, Double marketValue,String categoryType,String occupancyCertificationNo) {
+			String pattaNumber, Double currentCapitalValue, Double marketValue,String categoryType,String occupancyCertificationNo,
+			String buildingPermissionNo,Date buildingPermissionDate,String deviationPercentage) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -171,6 +175,10 @@ public class BuiltUpProperty extends AbstractProperty {
 		this.marketValue = marketValue;
 		this.categoryType = categoryType;
 		this.occupancyCertificationNo = occupancyCertificationNo;
+		this.buildingPermissionNo = buildingPermissionNo;
+		this.buildingPermissionDate = buildingPermissionDate;
+		this.deviationPercentage = deviationPercentage;
+		
 	}
 
 	public BuiltUpProperty() {
@@ -921,5 +929,37 @@ public class BuiltUpProperty extends AbstractProperty {
 	public void setOccupancyCertificationNo(String occupancyCertificationNo) {
 		this.occupancyCertificationNo = occupancyCertificationNo;
 	}
+
+	@Override
+	public String getBuildingPermissionNo() {
+		return buildingPermissionNo;
+	}
+
+	@Override
+	public void setBuildingPermissionNo(String buildingPermissionNo) {
+		this.buildingPermissionNo = buildingPermissionNo;
+	}
+
+	@Override
+	public Date getBuildingPermissionDate() {
+		return buildingPermissionDate;
+	}
+
+	@Override
+	public void setBuildingPermissionDate(Date buildingPermissionDate) {
+		this.buildingPermissionDate = buildingPermissionDate;
+	}
+
+	@Override
+	public String getDeviationPercentage() {
+		return deviationPercentage;
+	}
+
+	@Override
+	public void setDeviationPercentage(String deviationPercentage) {
+		this.deviationPercentage = deviationPercentage;
+	}
+	
+	
 
 }

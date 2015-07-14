@@ -281,7 +281,6 @@ public interface PropertyTaxConstants {
 			put("RESIDENTIAl", "Residential");
 			put("NON_RESIDENTIAL", "Non Residential");
 			put("MIXED", "Mixed");
-			put("APARTMENT", "Apartment");
 		}
 	};
 
@@ -294,9 +293,9 @@ public interface PropertyTaxConstants {
 	
 	public static final TreeMap<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
 		{
-			put("MINIMUN", "1-10%");
-			put("MEDIUM", "11-25%");
-			put("MAXIMUM", "26-100%");
+			put("1-10%", "1-10%");
+			put("11-25%", "11-25%");
+			put("26-100%", "26-100%");
 		}
 	};
 

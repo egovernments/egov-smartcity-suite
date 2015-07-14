@@ -690,19 +690,19 @@ public class ModifyPropertyAction extends WorkflowAction {
 		// AMALG & BIFUR
 		if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, getModifyRsn(),
-					propCompletionDate, null, null, null, null, buildingPermissionDate, buildingPermissionNo));
+					propCompletionDate, null, null, null, null));
 			if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
 				propService.createAmalgPropStatVal(amalgPropIds, basicProp);
 			}
 			mutationCode = getModifyRsn();
 		} else if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)) { // MODIFY
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROPERTY_MODIFY_REASON_MODIFY,
-					propCompletionDate, null, null, null, null, buildingPermissionDate, buildingPermissionNo));
+					propCompletionDate, null, null, null, null));
 			mutationCode = getReasonForModify();
 		} else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getReasonForModify())) { // COURT_RULE
 			basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROPERTY_MODIFY_REASON_MODIFY,
 					propCompletionDate, getCourtOrdNum(), propService.getPropOccupatedDate(getOrderDate()),
-					getJudgmtDetails(), null, buildingPermissionDate, buildingPermissionNo));
+					getJudgmtDetails(), null));
 			mutationCode = getReasonForModify();
 		}
 		basicProp.setPropOccupationDate(propCompletionDate);
@@ -1083,9 +1083,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			setDateOfCompletion(propstatval.getExtraField1());
 		}
-
-		setBuildingPermissionNo(propstatval.getBuildingPermissionNo());
-		setBuildingPermissionDate(propstatval.getBuildingPermissionDate());
 
 		LOGGER.debug("Entered into setPropStatValForView");
 	}
