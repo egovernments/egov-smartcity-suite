@@ -47,7 +47,7 @@
 		<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
+		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>

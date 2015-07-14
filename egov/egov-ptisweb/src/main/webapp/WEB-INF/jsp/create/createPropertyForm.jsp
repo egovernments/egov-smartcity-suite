@@ -123,8 +123,8 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 <s:checkbox name="propertyDetail.bpd" id="propertyDetail.bpd"
-			value="%{propertyDetail.structure}" onclick="enableOrDisableBPADetails(this);" />
+		 <s:checkbox name="chkBuildingPlanDetails" id="chkBuildingPlanDetails"
+			value="%{chkBuildingPlanDetails}" onclick="enableOrDisableBPADetails(this);" />
 		</td>
 	</tr>
 	
@@ -187,7 +187,7 @@
 
 	<!-- Amenities section -->
 
-	<tr id="amenitiesHeaderRow">
+	<tr id="amenitiesHeaderRow" class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"> <s:text name="amenities"></s:text>
@@ -196,7 +196,7 @@
 		</td>
 	</tr>
 
-	<tr>
+	<tr class="amenities">
 		<td colspan="5">
 			<div id="AmenitiesDiv">
 				<%@ include file="../common/amenitiesForm.jsp"%>
@@ -206,7 +206,7 @@
 
 	<!-- Floor type details -->
 
-	<tr id="constructionHeaderRow">
+	<tr id="constructionHeaderRow" class="construction">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.constructiontypes" /></span>
@@ -214,7 +214,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr class="construction">
 		<td colspan="5">
 			<div id="AmenitiesDiv">
 				<%@ include file="../common/constructionForm.jsp"%>
@@ -241,7 +241,7 @@
 		</td>
 	</tr>
 
-	<tr id="vacantLandRow">
+	<tr id="vacantLandRow" class="vacantlanddetaills">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="VacantLandDetailsHeader" /> </span>
@@ -249,7 +249,7 @@
 		</td>
 	</tr>
 
-	<tr>
+	<tr class="vacantlanddetaills">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/vacantLandForm.jsp"%>

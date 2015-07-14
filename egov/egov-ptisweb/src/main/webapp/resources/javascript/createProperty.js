@@ -4,17 +4,13 @@
 jQuery.noConflict();
 function enableAppartnaumtLandDetails() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	if (document.forms[0].chkIsAppartenauntLand.checked == true
-			&& propertyType != "Open Plot") {
-		document.getElementById("vacantLandRow").style.display = "";
-		document.getElementById("vacantLandTable").style.display = "";
+	if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
+		jQuery('tr.vacantlanddetaills').show();
 		document.getElementById("appartenantRow").style.display = "";
 		document.getElementById("floorDetails").style.display = "";
 		document.getElementById("floorHeaderRow").style.display = "";
 	} else {
 		enableFieldsForPropType();
-		document.forms[0].chkIsAppartenauntLand.checked == false;
-		alert("Vacant Land cant not be appartenaunt");
 	}
 }
 
@@ -31,9 +27,10 @@ function enableFieldsForPropType() {
 	if (propType != "select") {
 		onChangeOfPropertyTypeFromMixedToOthers(propType);
 		if (propType == "Vacant Land") {
-			document.getElementById("vacantLandRow").style.display = "";
-			document.getElementById("vacantLandTable").style.display = "";
-			document.getElementById("vacantAreaRow").style.display = "";
+			//document.getElementById("vacantLandRow").style.display = "";
+			//document.getElementById("vacantLandTable").style.display = "";
+			//document.getElementById("vacantAreaRow").style.display = "";
+			jQuery('tr.vacantlanddetaills').show();
 			document.getElementById("floorDetails").style.display = "none";
 			document.getElementById("floorHeaderRow").style.display = "none";
 			document.getElementById("amenitiesRow").style.display = "none";
@@ -45,7 +42,7 @@ function enableFieldsForPropType() {
 			document.getElementById("apartmentRow").style.display = "";
 		} else {
 			document.getElementById("apartmentRow").style.display = "none";
-			document.getElementById("vacantAreaRow").style.display = "none";
+			//document.getElementById("vacantAreaRow").style.display = "none";
 			document.getElementById("floorDetails").style.display = "";
 			document.getElementById("floorHeaderRow").style.display = "";
 			document.getElementById("amenitiesRow").style.display = "";
@@ -53,9 +50,9 @@ function enableFieldsForPropType() {
 			document.getElementById("constructionHeaderRow").style.display = "";
 			document.getElementById("constructionRow1").style.display = "";
 			document.getElementById("constructionRow2").style.display = "";
-			document.getElementById("vacantLandRow").style.display = "none";
-			document.getElementById("vacantLandTable").style.display = "none";
-			document.getElementById("appartenantRow").style.display = "none";
+			//document.getElementById("vacantLandRow").style.display = "none";
+			//document.getElementById("vacantLandTable").style.display = "none";
+			jQuery('tr.vacantlanddetaills').hide();
 		}
 	}
 }
