@@ -103,6 +103,7 @@ document.viewform.submit();
 	</head>
 	<body>
 		<div class="formmainbox">
+		    <div class="headingbg">Search Results</div>
 			<table width=100% border="0" class="tablebottom">
 				<s:form name="viewform" theme="simple">
 					<div class="headingsmallbgnew">
@@ -249,10 +250,10 @@ document.viewform.submit();
 					<tr>
 						<td>
 							<div class="buttonsearch" align="center">
+							    <input type="submit" value="Search Again" class="buttonsubmit"
+									onClick="gotoSearchForm();" />
 								<input type="button" value="Close" class="button"
 									onClick="window.close()" />
-								<input type="submit" value="Search Again" class="button"
-									onClick="gotoSearchForm();" />
 								
 							</div>
 						</td>
