@@ -240,8 +240,13 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
 	        if(deleted){ $(hiddeneleid).val(''); }
 
         }).on('keypress', this, function (event) {
-	    	//avoid tab and enter key
-	    	if((event.keyCode >= 32 && event.keyCode <= 127)){ 
+        	//getting charcode by independent browser
+        	var evt = (evt) ? evt : event;
+        	var charCode = (evt.which) ? evt.which : 
+                ((evt.charCode) ? evt.charCode : 
+                  ((evt.keyCode) ? evt.keyCode : 0));
+        	//only characters keys condition
+	    	if((charCode >= 32 && charCode <= 127)){
 	    		//clearing input hidden value on keyup
 	    	    $(hiddeneleid).val('');
 	    	}
