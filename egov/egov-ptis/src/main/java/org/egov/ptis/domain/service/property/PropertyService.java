@@ -133,6 +133,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
@@ -279,9 +280,14 @@ public class PropertyService {
 					PropertyTypeMaster unitType = null;
 					PropertyUsage usage = null;
 					PropertyOccupation occupancy = null;
+					TaxExeptionReason taxExemption = null;
 					if (floor.getUnitType() != null) {
 						unitType = (PropertyTypeMaster) getPropPerServ().find(
 								"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
+					}
+					if(floor.getTaxExemptedReason() != null){
+						taxExemption = (TaxExeptionReason) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+								floor.getTaxExemptedReason().getId());
 					}
 					if (floor.getPropertyUsage() != null) {
 						usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",

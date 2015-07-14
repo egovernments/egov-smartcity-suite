@@ -38,11 +38,7 @@ function enableFieldsForPropType() {
 			document.getElementById("constructionHeaderRow").style.display = "none";
 			document.getElementById("constructionRow1").style.display = "none";
 			document.getElementById("constructionRow2").style.display = "none";
-		} else if (propType == "Apartment") {
-			document.getElementById("apartmentRow").style.display = "";
 		} else {
-			document.getElementById("apartmentRow").style.display = "none";
-			//document.getElementById("vacantAreaRow").style.display = "none";
 			document.getElementById("floorDetails").style.display = "";
 			document.getElementById("floorHeaderRow").style.display = "";
 			document.getElementById("amenitiesRow").style.display = "";

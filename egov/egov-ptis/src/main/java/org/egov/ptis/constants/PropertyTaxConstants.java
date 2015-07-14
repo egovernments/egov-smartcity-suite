@@ -291,6 +291,14 @@ public interface PropertyTaxConstants {
 			put("VACANTLAND", "Vacant Land");
 		}
 	};
+	
+	public static final TreeMap<String, String> DEVIATION_PERCENTAGE = new TreeMap<String, String>() {
+		{
+			put("MINIMUN", "1-10%");
+			put("MEDIUM", "11-25%");
+			put("MAXIMUM", "26-100%");
+		}
+	};
 
 	// Named Queries
 	public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";

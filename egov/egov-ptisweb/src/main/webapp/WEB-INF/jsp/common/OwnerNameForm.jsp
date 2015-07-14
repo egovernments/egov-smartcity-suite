@@ -77,7 +77,7 @@
         </td>
         <td class="blueborderfortd" align="center">
             <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.gardianRelation"
-				 headerValue="Choose" headerKey="0" list="#{'select':'select'}"/>
+				 headerValue="Choose" headerKey="0" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()"/>
 		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 

@@ -112,7 +112,8 @@
 	    <td class="bluebox2">&nbsp;</td>
 	    <td class="greybox"><s:text name="enumerationblock"/> : </td>
 	    <td class="greybox">
-	     <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.enumerationblock" name="propertyOwnerInfo[%{#ownerStatus.index}].owner.enumerationblock" headerValue="select" headerKey="0" list="#{}"/>
+	     <s:select id="enumBlock" name="enumBlock" headerValue="%{getText('default.select')}" value="%{enumBlock}" listKey="id" listValue="name" headerKey="0" 
+	     list="dropdownData.enumerationBlockList"/>
 	    </td>
 	    <td class="greybox"><s:text name="PinCode"/> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>

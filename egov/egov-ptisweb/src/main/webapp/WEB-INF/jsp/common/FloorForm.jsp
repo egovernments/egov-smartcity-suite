@@ -126,8 +126,9 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="propertyDetail.floorDetails[0].exemptioncategory" id="propertyDetail.floorDetails[0].exemptioncategory" headerValue="select"
-							headerKey="" list="#{}" value="%{propertyDetail.floorDetails[0].exemptioncategory}"
+					<s:select name="taxExemptedReason" id="taxExemptedReason" headerValue="select"
+							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetails[0].taxExemptedReason.id}" 
+							listKey="id" listValue="name"
 							cssClass="selectnew" data-optional="1">
 						</s:select>
 				</div>
@@ -144,9 +145,8 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield autocomplete="off"
-						name="propertyDetail.floorDetails[0].noofseats" data-optional="1"
-						id="propertyDetail.floorDetails[0].noofseats" value="%{propertyDetail.floorDetails[0].noofseats}" size="10"
+					<s:textfield autocomplete="off" name="propertyDetail.floorDetails[0].noOfSeats" data-optional="1"
+						id="propertyDetail.floorDetails[0].noOfSeats" value="%{propertyDetail.floorDetails[0].noOfSeats}" size="10"
 						maxlength="10" cssStyle="width:100%"></s:textfield>
 				</div>
 			</td>

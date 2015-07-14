@@ -79,11 +79,8 @@ jQuery(function ($) {
 function loadOnStartUp() {
 	enableCorresAddr();
 	/* document.getElementById("plotArea").style.display = ""; */
-	document.getElementById("apartmentRow").style.display = "none";
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
-	document.getElementById("appartenantRow").style.display = "none";
-	document.getElementById("drainageseatsrow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		
 	document.getElementById("rentBox").className="hiddentext";
 	document.getElementById("bldngCostId").className="hiddentext";

@@ -61,6 +61,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -267,6 +268,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String southBoundary;
 	private String eastBoundary;
 	private String westBoundary;
+	private Map<String, String> deviationPercentageMap;
 
 	@Autowired
 	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
@@ -691,12 +693,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
 		List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+		List<String> taxExemptionReasonList = getPersistenceService().findAllBy("from TaxExeptionReason order by name");
 
 		List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
 				LOCATION_HIERARCHY_TYPE);
 		List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
 				ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
+		List<Boundary> enumerationBlockList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+				ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE);
 
+		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 		addDropdownData("PropTypeMaster", propTypeList);
 		addDropdownData("floorType", floorTypeList);
 		addDropdownData("roofType", roofTypeList);
@@ -713,6 +719,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		setFloorNoMap(CommonServices.floorMap());
 		addDropdownData("localityList", localityList);
 		addDropdownData("electionWardList", electionWardList);
+		addDropdownData("enumerationBlockList", enumerationBlockList);
+		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
 
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
 			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1146,6 +1154,15 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting method : transitionWorkFlow");
 	}
 
+	private String generateNotice() {
+		transitionWorkFlow(property);
+		setAckMessage("Notice generated and property creation workflow completed " );
+		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
+		LOGGER.debug("approve: Property approval ended");
+		basicPropertyService.applyAuditing(property.getState());
+		basicPropertyService.update(basicProp);
+		return RESULT_ACK;
+	}
 
 
 	@Override
@@ -1884,15 +1901,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void setWorkFlowAction(String workFlowAction) {
 		this.workFlowAction = workFlowAction;
 	}
-	private String generateNotice() {
-		transitionWorkFlow(property);
-		setAckMessage("Notice generated and property creation workflow completed " );
-		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
-		LOGGER.debug("approve: Property approval ended");
-		basicPropertyService.applyAuditing(property.getState());
-		basicPropertyService.update(basicProp);
-		return RESULT_ACK;
-	}
 
 	public String getApproverName() {
 		return approverName;
@@ -1902,5 +1910,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.approverName = approverName;
 	}
 
+	public Map<String, String> getDeviationPercentageMap() {
+		return deviationPercentageMap;
+	}
+
+	public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
+		this.deviationPercentageMap = deviationPercentageMap;
+	}
 
 }

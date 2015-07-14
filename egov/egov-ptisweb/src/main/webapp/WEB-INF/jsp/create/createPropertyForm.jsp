@@ -146,7 +146,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
 		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.extra_field5"
-				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.extra_field5}"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.extra_field5}"
 				cssClass="selectnew"/>
 		</td>
    </tr>
