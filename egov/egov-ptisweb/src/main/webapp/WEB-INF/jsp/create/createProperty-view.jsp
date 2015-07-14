@@ -81,11 +81,8 @@
 	}
 	
  function onSubmit() {
-	 alert("setting action ");
-	 	 //document.getElementById('workflowBean.actionName').value = obj.id;
 	 	 document.forms[0].action = 'createProperty-forward.action';
-	 	 alert("setting action "+document.forms[0].action);
-	 			document.forms[0].submit;
+	     document.forms[0].submit;
 	 	   return true;
 	 	}  
 	 	

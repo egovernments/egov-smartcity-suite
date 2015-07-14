@@ -54,6 +54,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.NotBlank;
@@ -63,6 +64,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "eg_designation")
 @Unique(id = "id", tableName = "eg_designation", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
 @SequenceGenerator(name = Designation.SEQ_DESIGNATION, sequenceName = Designation.SEQ_DESIGNATION, allocationSize = 1)
+@NamedQuery(name="getDesignationForListOfDesgNames",query="from Designation where trim(upper(name)) in(:param_0)")
 public class Designation extends AbstractAuditable {
 
     private static final long serialVersionUID = -3775503109625394145L;

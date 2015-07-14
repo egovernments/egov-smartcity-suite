@@ -121,9 +121,9 @@ if(document.getElementById(errorDivId))
       if(propTypeMstr)
       {
 	  var  approver=	propTypeMstr.options[propTypeMstr.selectedIndex].text; 
-	  alert(approver);
+	  //alert(approver);
       document.getElementById("approverName").value= approver.split('~')[0];
-      alert(document.getElementById("approverName").value);
+      //alert(document.getElementById("approverName").value);
       }     
 		
     onSubmit();
