@@ -142,72 +142,23 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<%@ include file="../create/createPropertyView.jsp"%>
-/font>
-					</tr>
-					<div id="loadingMask" style="display: none">
-						<p align="center">
-							<img src="/egi/resources/erp2//images/bar_loader.gif"> <span
-								id="message"><p style="color: red">Please wait....</p></span>
-						</p>
-					</div>
-					<div class="buttonbottom" align="center">
+						</tr>
 						<tr>
-							<%-- <s:if
-								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
-								<s:if test="%{extra_field3!='Yes'}">
-									<input type="button" name="GenerateNotice" id="GenerateNotice"
-										value="Generate Notice" class="button"
-										onclick="return generatenotice();" />
-								</s:if>
-
-								<s:if test="%{extra_field4!='Yes'}">
-									<input type="button" name="GeneratePrativrutta"
-										id="GeneratePrativrutta" value="Generate Prativrutta"
-										class="button" onclick="return generatePrativrutta();" />
-								</s:if>
-
-							</s:if>
-							<s:else>
-									<td>
-										<s:submit value="Approve" name="Approve" id='Create:Approve'
-											cssClass="buttonsubmit" method="approve"
-											onclick="return onSubmit('createProperty-approve.action');" />
-									</td>									
-									<s:if test="%{isApprPageReq}">
-										<td>
-											<s:submit value="Forward" name="Forward" id='Create:Forward'
-												cssClass="buttonsubmit" method="forward"
-												onclick="return onSubmit('createProperty-forward.action');" />
-										</td>
-									</s:if>																	
-									<td>
-										<s:submit value="Reject" name="Reject" id='Reject'
-											cssClass="buttonsubmit" method="reject"
-											 onclick="return onSubmit('createProperty-reject.action');"/>
-									</td>	
-									<!-- <td>
-										<input type="button" name="PreviewPrativrutta"
-											id="PreviewPrativrutta" value="Preview Prativrutta"
-											class="button" onclick="return previewPrativrutta();" />
-									</td> -->
-							</s:else> --%>
-							<s:if
-								test="@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
-								<s:if
-									test="@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
-							 @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
-									<td><input type="button" name="GenerateNotice6"
-										id="GenerateNotice6" value="Generate Notice"
-										class="buttonsubmit" onclick="return generateNotice6();" /></td>
-								</s:if>
-							</s:if>
-									<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+						 	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
+						</tr>		
+						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+						<tr>
+							<font size="2"><div align="left" class="mandatory">
+									<s:text name="mandtryFlds" />
+								</div>
+							</font>
+						</tr>
+						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 											
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>  
 						</tr>  
 						
-				
 					</div>
 				</table>
 			</s:push>
