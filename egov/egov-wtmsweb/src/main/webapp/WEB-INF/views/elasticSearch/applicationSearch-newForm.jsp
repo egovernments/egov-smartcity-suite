@@ -103,7 +103,7 @@
 						</div>
 						<div class="form-group">
 							<label for="field-1" class="col-sm-3 control-label"><spring:message
-										code="lbl.application.code" />
+										code="lbl1.consumer.number" />
 								</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="applicationCode" class="form-control" id="app-appcodo"

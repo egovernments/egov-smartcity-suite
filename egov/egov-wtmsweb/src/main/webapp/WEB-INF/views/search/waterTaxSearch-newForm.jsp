@@ -70,8 +70,8 @@
 								 />
 						</div></div>
 						<div class="form-group">
-				<label for="field-1" class="col-sm-4 control-label"> Consumer Code</label>
-										<div class="col-md-4 add-margin">
+				<label for="field-1" class="col-sm-4 control-label">Consumer No.</label>
+										  <div class="col-md-4 add-margin">
 							<input type="text" name="consumerCode" class="form-control" id="app-appcodo"/>
 						</div>
 						</div>
