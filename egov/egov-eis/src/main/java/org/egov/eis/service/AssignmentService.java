@@ -255,4 +255,8 @@ public class AssignmentService {
             final Date givenDate) {
         return assignmentRepository.findAllAssignmentsByDeptDesigAndGivenDate(deptId, desigId, givenDate);
     }
+    
+    public List<Assignment> findByEmployeeAndGivenDate(final Long empId,final Date givenDate) {
+        return assignmentRepository.findByEmployeeAndGivenDate(empId, givenDate);
+    }
 }

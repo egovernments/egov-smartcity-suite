@@ -39,7 +39,11 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -52,6 +56,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
+import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.RoleService;
@@ -79,6 +84,9 @@ public class EmployeeService {
     }
 
     private final EmployeeRepository employeeRepository;
+    
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -263,5 +271,41 @@ public class EmployeeService {
             final Long boundaryId) {
         return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, boundaryId);
     }
+    
+    /**
+     * Returns list of employee for a given position
+     *
+     * @param posId
+     * @return List of PersonalInformation
+     */
+    public List<Employee> getEmployeesForPosition(final Long posId) {
+        final Set<Employee> employees = new HashSet<Employee>();
+        final List<Assignment> assignList = assignmentRepository.getAssignmentsForPosition(posId);
+        for (final Assignment assign : assignList)
+            employees.add(assign.getEmployee());
+        return new ArrayList<Employee>(employees);
+    }
+    
+    /**
+     * Returns primary assignment's employee for position
+     *
+     * @param posId
+     * @return Employee object
+     */
+    public Employee getPrimaryAssignmentEmployeeForPos(final Long posId) {
+        return assignmentRepository.getPrimaryAssignmentForPosition(posId).getEmployee();
+    }
+    
+    /**
+     * Returns employee object for position id and given date
+     *
+     * @param posId
+     * @param givenDate
+     * @return Employee object
+     */
+    public Employee getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
+        return assignmentRepository.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
+    }
+
 
 }

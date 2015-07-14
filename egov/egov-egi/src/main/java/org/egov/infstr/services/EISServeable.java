@@ -58,13 +58,14 @@ public interface EISServeable {
     };
 
     /**
-     * Used get all Positions for a User Id for a particular Date.
+     * Use getPositionsForEmployee API in position master service
      * 
      * @param user
      *            id
      * @param forDate
      * @return List of Position
      **/
+    @Deprecated
     List<Position> getPositionsForUser(Long userId, Date forDate);
 
     /**
@@ -148,7 +149,7 @@ public interface EISServeable {
     public List<Position> getUniquePositionList(HashMap<String, String> paramMap, Date date);
 
     /**
-     * Use the API getAllDesignationsByDepartment in DesignationService.java<br>
+     * Use the API getAllDesignationsByDepartment in DesignationService <br>
      * 
      */
     @Deprecated

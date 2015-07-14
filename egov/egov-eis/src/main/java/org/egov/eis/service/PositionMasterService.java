@@ -40,11 +40,13 @@
 package org.egov.eis.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.repository.PositionHierarchyRepository;
 import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,9 @@ public class PositionMasterService {
 
     @Autowired
     private AssignmentService assignmentService;
+
+    @Autowired
+    private PositionHierarchyRepository positionHierarchyRepository;
 
     @Autowired
     public PositionMasterService(final PositionMasterRepository positionMasterRepository) {
@@ -103,17 +108,16 @@ public class PositionMasterService {
         return positionMasterRepository.findAllByDeptDesig_Id(deptDesigId);
     }
 
-    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,final Date fromDate,final Date toDate,
-            final String posName) {
+    public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,
+            final Date fromDate, final Date toDate, final String posName) {
         List<Position> posList = new ArrayList<Position>();
-        List<Assignment> assignList = assignmentService.getAssignmentsByDeptDesigAndDates(departmentId, designationId, fromDate, toDate);
+        final List<Assignment> assignList = assignmentService.getAssignmentsByDeptDesigAndDates(departmentId,
+                designationId, fromDate, toDate);
         posList = positionMasterRepository
                 .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
                         designationId, posName);
-        for(Assignment assign:assignList)
-        {
-            posList.removeIf( m -> m.getId() == assign.getPosition().getId());
-        }
+        for (final Assignment assign : assignList)
+            posList.removeIf(m -> m.getId() == assign.getPosition().getId());
         return posList;
     }
 
@@ -176,18 +180,94 @@ public class PositionMasterService {
 
         final List<Position> positionList = new ArrayList<Position>();
 
-        List<Assignment> assignmentList = assignmentService
-                .getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, givenDate);
+        final List<Assignment> assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange(
+                departmentId, designationId, givenDate);
 
         for (final Assignment assignmentObj : assignmentList)
             positionList.add(assignmentObj.getPosition());
 
         return positionList;
     }
-    
+
     public Position getCurrentPositionForUser(final Long userId) {
-    	Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
-    	return assign.getPosition();
+        final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
+        return assign.getPosition();
+    }
+
+    /**
+     * Returns the superior employee position
+     *
+     * @param objectId
+     * @param posId
+     * @return returns position object
+     */
+    public Position getSuperiorPositionByObjectTypeAndPositionFrom(final Integer objectId, final Long posId) {
+        return positionHierarchyRepository.getPositionHierarchyByPosAndObjectType(posId, objectId).getToPosition();
+    }
+
+    /**
+     * Returns the superior employee position
+     *
+     * @param objectId
+     * @param objectSubType
+     * @param posId
+     * @return returns position object
+     */
+    public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,
+            final String objectSubType, final Long posId) {
+        return positionHierarchyRepository.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType)
+                .getToPosition();
+    }
+
+    /**
+     * Return list of positions of an employee for employee id and given date,
+     * if null is passed to given date then it is replaced with current date
+     *
+     * @param employeeId
+     * @param forDate
+     * @return list of position object
+     */
+    List<Position> getPositionsForEmployee(final Long employeeId, final Date forDate) {
+        final Date userGivenDate = null == forDate ? new Date() : forDate;
+        final Set<Position> positions = new HashSet<Position>();
+        final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(employeeId, userGivenDate);
+        for (final Assignment assign : assignments)
+            positions.add(assign.getPosition());
+        return new ArrayList<Position>(positions);
+    }
+
+    /**
+     * Returns list of positions for an employee irrespective of assignment date
+     *
+     * @param empId
+     * @return List of position objects
+     */
+    public List<Position> getPositionsForEmployee(final Long employeeId) {
+        final Set<Position> positions = new HashSet<Position>();
+        final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(employeeId);
+        for (final Assignment assign : assignList)
+            positions.add(assign.getPosition());
+        return new ArrayList<Position>(positions);
+    }
+    
+    /**
+     * Returns employee position for user
+     *
+     * @param userId
+     * @return Position object
+     */
+    public Position getPositionByUserId(final Long userId) {
+        return assignmentService.getPrimaryAssignmentForUser(userId).getPosition();
+    }
+    
+    /**
+     * Returns primary assignment position for employee id
+     *
+     * @param empId
+     * @return Position object
+     */
+    public Position getPrimaryAssignmentPositionForEmp(final Long empId) {
+        return assignmentService.getPrimaryAssignmentForEmployee(empId).getPosition();
     }
 
 }

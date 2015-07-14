@@ -117,4 +117,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     
     @Query(" from Assignment A where A.department.id=:deptId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.fromDate ")
     public List<Assignment> findAllByDepartmentAndDate(@Param("deptId")Long deptId,@Param("givenDate")Date givenDate);
+    
+    @Query(" from Assignment A where A.employee.id=:empId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.fromDate ")
+    public List<Assignment> findByEmployeeAndGivenDate(@Param("empId")Long empId,@Param("givenDate")Date givenDate);
 }

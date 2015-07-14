@@ -83,24 +83,26 @@ public class EisCommonService {
     private HeadOfDepartmentsRepository employeeDepartmentRepository;
 
     /**
-     * Returns the superior employee position
+     * Refer to position master service for the same API
      *
      * @param objectId
      * @param posId
      * @return returns position object
      */
+    @Deprecated
     public Position getSuperiorPositionByObjectTypeAndPositionFrom(final Integer objectId, final Long posId) {
         return positionHierarchyService.getPositionHierarchyByPosAndObjectType(posId, objectId).getToPosition();
     }
 
     /**
-     * Returns the superior employee position
+     * Refer to position master service for the same API
      *
      * @param objectId
      * @param objectSubType
      * @param posId
      * @return returns position object
      */
+    @Deprecated
     public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,
             final String objectSubType, final Long posId) {
         return positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType)
@@ -151,6 +153,7 @@ public class EisCommonService {
      * @param userId
      * @return Position object
      */
+    @Deprecated
     public Position getPositionByUserId(final Long userId) {
         return assignmentService.getPrimaryAssignmentForUser(userId).getPosition();
     }
@@ -179,54 +182,25 @@ public class EisCommonService {
     }
 
     /**
-     * Returns primary assignment position for employee id
+     * Refer to Position master service for the same API
      *
      * @param empId
      * @return Position object
      */
+    @Deprecated
     public Position getPrimaryAssignmentPositionForEmp(final Long empId) {
         return assignmentService.getPrimaryAssignmentForEmployee(empId).getPosition();
     }
 
     /**
-     * Returns primary assignment's employee for position
+     * Refer to employee service for the same API
      *
      * @param posId
      * @return Employee object
      */
+    @Deprecated
     public Employee getPrimaryAssignmentEmployeeForPos(final Long posId) {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getEmployee();
-    }
-
-    /**
-     * Returns list of positions for an employee
-     *
-     * @param empId
-     * @return List of position objects
-     */
-    public List<Position> getPositionsForEmployee(final Long empId) {
-        final List<Position> posList = null;
-        final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(empId);
-        for (final Assignment assign : assignList)
-            posList.add(assign.getPosition());
-
-        return posList;
-    }
-
-    /**
-     * Returns list of employee for a given position
-     *
-     * @param posId
-     * @return List of PersonalInformation
-     */
-    public List<Employee> getEmployeesForPosition(final Long posId) {
-        final List<Employee> empList = null;
-
-        final List<Assignment> assignList = assignmentService.getAssignmentsForPosition(posId);
-        for (final Assignment assign : assignList)
-            empList.add(assign.getEmployee());
-
-        return empList;
     }
 
     /**
@@ -240,23 +214,25 @@ public class EisCommonService {
     }
 
     /**
-     * Returns true if the given employee is an HOD
+     * Refer the same API in assignment service
      *
      * @param assignId
      * @return true if HOD else false
      */
+    @Deprecated
     public Boolean isHod(final Long assignId) {
         final List<HeadOfDepartments> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
         return !hodList.isEmpty();
     }
 
     /**
-     * Returns employee object for position id and given date
+     * Refer the same API in employee service
      *
      * @param posId
      * @param givenDate
      * @return Employee object
      */
+    @Deprecated
     public Employee getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
         return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
     }
