@@ -304,6 +304,11 @@ public final class ReportUtil {
 		return NumberUtil.formatNumber(number, fractionDigits, useGrouping);
 	}
 	
+	/**
+	 * Gives the absolute path of the logo image
+	 * 
+	 * @return absolute path of the logo image
+	 */
 	public static String logoBasePath(){
             HttpServletRequest request = ServletActionContext.getRequest();
             String url= WebUtils.extractRequestDomainURL(request, false);
