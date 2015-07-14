@@ -1,5 +1,5 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+   eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -66,19 +66,18 @@ public abstract class StateAware extends AbstractAuditable {
     private State state;
 
     /**
-     * Need to overridden by the implementing class to give details about the
-     * State <I>Used by Inbox to fetch the State Detail at runtime</I>
+     * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
+     * runtime</I>
      *
      * @return String Detail
      */
     public abstract String getStateDetails();
 
     /**
-     * To set the Group Link, Any State Aware Object which needs Grouping should
-     * override this method
+     * To set the Group Link, Any State Aware Object which needs Grouping should override this method
      **/
     public String myLinkId() {
-        return this.getId().toString();
+        return getId().toString();
     }
 
     public State getState() {
@@ -107,6 +106,10 @@ public abstract class StateAware extends AbstractAuditable {
 
     public final boolean stateIsEnded() {
         return hasState() && getCurrentState().isEnded();
+    }
+
+    public final boolean stateInProgress() {
+        return hasState() && getState().getStatus().equals(StateStatus.INPROGRESS);
     }
 
     public final boolean hasState() {

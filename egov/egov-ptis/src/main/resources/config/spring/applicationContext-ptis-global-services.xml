@@ -71,5 +71,43 @@
     </bean>
     
     <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
-        
+    
+    <bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
+    
+    <bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.PropertyTransferService" />
+     
+     <bean id="propertyMutationService" parent="persistenceService">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+	</bean>
+	
+	<bean id="ptaxApplicationTypeService" parent="persistenceService">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PtApplicationType" />
+	</bean>
+	
+	<bean id="documentTypePersistenceService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.DocumentType" />
+	</bean>
+
+	<bean id="basicPropertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService">
+		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
+	</bean>
+	
+	<bean id="propertyImplService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
+	</bean>
+	
+	 <bean id="ptBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">
+		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
+		<property name="propertyTaxCollection" ref="propertyTaxCollection" />
+	</bean>
+	
+	<bean id="propertyTaxBillable" class="org.egov.ptis.domain.bill.PropertyTaxBillable" scope="prototype" />
+	
+	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil">
+	</bean>
+	
+	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+    </bean>
+      
 </beans>

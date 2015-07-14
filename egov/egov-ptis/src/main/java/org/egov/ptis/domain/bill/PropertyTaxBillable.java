@@ -86,8 +86,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ch.qos.logback.classic.Logger;
-
 /**
  * @author satyam
  */
@@ -127,8 +125,9 @@ RebateCalculator {
     private String collType;
     private String pgType;
     private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
-    private Boolean isMiscellaneous = Boolean.FALSE;
+    private boolean mutationFeePayment;
     private BigDecimal mutationFee;
+    private String mutationApplicationNo;
 
     private final DateTime PENALTY_EFFECTIVE_DATE_FIRST_HALF = new DateTime().withDayOfMonth(30).withMonthOfYear(06);
     private final DateTime PENALTY_EFFECTIVE_DATE_SECOND_HALF = new DateTime().withDayOfMonth(31).withMonthOfYear(12);
@@ -384,6 +383,9 @@ RebateCalculator {
 
     @Override
     public String getPropertyId() {
+        if(isMutationFeePayment()){
+            return mutationApplicationNo;
+        }else {
         final StringBuilder consumerCode = new StringBuilder();
         consumerCode.append(getBasicProperty().getUpicNo());
         if (getBasicProperty().getPropertyID() != null) {
@@ -395,6 +397,7 @@ RebateCalculator {
                 consumerCode.append(getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
         }
         return consumerCode.toString();
+        }
     }
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property,
@@ -560,19 +563,23 @@ RebateCalculator {
         return pgType;
     }
 
-    public Boolean isMiscellaneous() {
-        return isMiscellaneous;
-    }
-
-    public void setIsMiscellaneous(final Boolean isMiscellaneous) {
-        this.isMiscellaneous = isMiscellaneous;
-    }
-
     public BigDecimal getMutationFee() {
         return mutationFee;
     }
 
     public void setMutationFee(final BigDecimal mutationFee) {
         this.mutationFee = mutationFee;
+    }
+
+    public boolean isMutationFeePayment() {
+        return mutationFeePayment;
+    }
+
+    public void setMutationFeePayment(boolean mutationFeePayment) {
+        this.mutationFeePayment = mutationFeePayment;
+    }
+
+    public void setMutationApplicationNo(String mutationApplicationNo) {
+        this.mutationApplicationNo = mutationApplicationNo;
     }
 }

@@ -893,5 +893,8 @@ public interface PropertyTaxConstants {
 	public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
         public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT = "Revision Petition Endorsement";
         public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX ="ENDORSEMENT";
+        
+        //Property Transfer related constants
+        public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
 
 }

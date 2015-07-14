@@ -110,15 +110,15 @@ public class PTBillServiceImpl extends BillServiceInterface {
         List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
         LOGGER.debug("Entered method getBilldetails : " + billObj);
         EgBillDetails billdetail = null;
-        PropertyTaxBillable nmcBillable = (PropertyTaxBillable) billObj;
+        PropertyTaxBillable billable = (PropertyTaxBillable) billObj;
 
-        if (nmcBillable.isMiscellaneous()) {
+        if (billable.isMutationFeePayment()) {
             Installment currInstallment = PropertyTaxUtil.getCurrentInstallment();
             billdetail = new EgBillDetails();
             billdetail.setOrderNo(1);
             billdetail.setCreateDate(new Date());
             billdetail.setModifiedDate(new Date());
-            billdetail.setCrAmount(nmcBillable.getMutationFee());
+            billdetail.setCrAmount(billable.getMutationFee());
             billdetail.setDrAmount(BigDecimal.ZERO);
             billdetail.setGlcode(GLCODE_FOR_MUTATION_FEE);
             billdetail.setDescription(MUTATION_FEE_STR + "-" + currInstallment.getDescription());
@@ -138,15 +138,15 @@ public class PTBillServiceImpl extends BillServiceInterface {
         Installment installment = null;
         String reasonMasterCode = null;
 
-        Property activeProperty = nmcBillable.getBasicProperty().getProperty();
+        Property activeProperty = billable.getBasicProperty().getProperty();
         List<EgDemandDetails> pendmdList = new ArrayList<EgDemandDetails>();
         
-        Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = nmcBillable.getCalculatedPenalty();
-        nmcBillable.setInstTaxBean(installmentPenaltyAndRebate);
+        Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = billable.getCalculatedPenalty();
+        billable.setInstTaxBean(installmentPenaltyAndRebate);
         
         Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
-                ptDemand.getEgDemandDetails(), nmcBillable);
+                ptDemand.getEgDemandDetails(), billable);
         
         for (EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
 
@@ -186,7 +186,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         
         EgDemandDetails penaltyDemandDetail = null;
         for (Map.Entry<Installment, PenaltyAndRebate> penaltyAndRebate : installmentPenaltyAndRebate.entrySet()) {
-            penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, nmcBillable, orderMap, penaltyAndRebate.getValue()
+            penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, orderMap, penaltyAndRebate.getValue()
                             .getPenalty(), installment);
             if (penaltyDemandDetail != null)
                 ptDemand.getEgDemandDetails().add(penaltyDemandDetail);

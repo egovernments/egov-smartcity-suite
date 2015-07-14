@@ -64,6 +64,8 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -74,6 +76,8 @@ import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.opensymphony.xwork2.ActionContext;
+
 @Results({ @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
         @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
         @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
@@ -81,19 +85,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
         @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
         @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
+        @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
+        @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
         @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
-                "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}"})})
+                "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }) })
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public static final String ACK = "ack";
+    public static final String SEARCH = "search";
     public static final String WORKFLOW_ERROR = "workFlowError";
     public static final String REJECT_ON_TAXDUE = "balance";
     public static final String PRINTACK = "printAck";
     public static final String PRINTNOTICE = "printNotice";
     public static final String REDIRECT_SUCCESS = "redirect-success";
+    public static final String COLLECT_FEE = "collect-fee";
 
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
@@ -113,11 +121,13 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty; // Do not change variable name, struts2
-                                         // crazy.
+ // crazy.
     private Integer reportId = -1;
     private Long transfereeId;
     private double marketValue;
     private String transferReason;
+    private String collectXML;
+    private String applicationNo;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -144,7 +154,7 @@ public class PropertyTransferAction extends BaseFormAction {
     @Action(value = "/save")
     public String save() {
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        this.mutationId = propertyMutation.getId();
+        mutationId = propertyMutation.getId();
         return REDIRECT_SUCCESS;
     }
 
@@ -152,6 +162,28 @@ public class PropertyTransferAction extends BaseFormAction {
     @Action(value = "/view")
     public String view() {
         return EDIT;
+    }
+
+    @SkipValidation
+    @Action(value = "/search")
+    public String search() {
+        return SEARCH;
+    }
+
+    @SkipValidation
+    @ValidationErrorPage(value = SEARCH)
+    @Action(value = "/collect-fee")
+    public String collectFee() {
+        if (StringUtils.isNotBlank(assessmentNo))
+            propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
+        else if (StringUtils.isNotBlank(applicationNo))
+            propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
+        if (propertyMutation == null)
+            throw new ValidationException(new ValidationError("assessmentNo",
+                    "There is no property transfer exist for the given Assessment No / Application No"));
+        else
+            collectXML = transferOwnerService.generateReceipt(propertyMutation);
+        return COLLECT_FEE;
     }
 
     @ValidationErrorPage(value = EDIT)
@@ -208,7 +240,8 @@ public class PropertyTransferAction extends BaseFormAction {
     public void calculateMutationFee() throws IOException {
         if (marketValue > 0)
             ServletActionContext.getResponse().getWriter()
-                    .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason, propertyMutation)));
+                    .write(String
+                            .valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason, propertyMutation)));
         else
             ServletActionContext.getResponse().getWriter().write("0");
     }
@@ -218,24 +251,28 @@ public class PropertyTransferAction extends BaseFormAction {
     public String redirectSuccess() {
         return ACK;
     }
-    
+
     @Override
     public void prepare() {
-        if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
-            basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
+        final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
+        if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
+            if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
+                basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
-        if (mutationId != null) {
-            propertyMutation = transferOwnerService.load(mutationId, PropertyMutation.class);
-            basicproperty = propertyMutation.getBasicProperty();
+            if (mutationId != null) {
+                propertyMutation = transferOwnerService.load(mutationId, PropertyMutation.class);
+                basicproperty = propertyMutation.getBasicProperty();
+            }
+
+            final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
+                    .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
+            currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
+            documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
+            addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
+            super.prepare();
         }
-        final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
-                .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
-        currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-        currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
-        arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
-        documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
-        addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
-        super.prepare();
     }
 
     @Override
@@ -351,7 +388,15 @@ public class PropertyTransferAction extends BaseFormAction {
         this.marketValue = marketValue;
     }
 
-    public void setTransferReason(String transferReason) {
+    public void setTransferReason(final String transferReason) {
         this.transferReason = transferReason;
+    }
+
+    public String getCollectXML() {
+        return collectXML;
+    }
+
+    public void setApplicationNo(final String applicationNo) {
+        this.applicationNo = applicationNo;
     }
 }

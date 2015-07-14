@@ -38,7 +38,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.transfer;
 
-import static org.egov.dcb.bean.Payment.AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
 
@@ -52,9 +51,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.dcb.bean.Payment;
-import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -73,7 +69,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
-import org.egov.ptis.client.integration.utils.CollectionHelper;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
@@ -150,6 +146,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private ScriptService scriptService;
+
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -228,6 +227,20 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         return propertyMutationMasterDAO.getAllPropertyMutationMastersByType(TRANSFER);
     }
 
+    public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
+        return findByNamedQuery("BY_APPLICATION_NO", applicationNo);
+    }
+
+    public PropertyMutation getCurrentPropertyMutationByAssessmentNo(final String assessmentNo) {
+        PropertyMutation currentPropertyMutation = null;
+        for (final PropertyMutation propertyMutation : getBasicPropertyByUpicNo(assessmentNo).getPropertyMutations())
+            if (propertyMutation.stateInProgress()) {
+                currentPropertyMutation = propertyMutation;
+                break;
+            }
+        return currentPropertyMutation;
+    }
+
     public ReportOutput generateAcknowledgement(final BasicProperty basicProperty, final PropertyMutation propertyMutation,
             final String cityName, final String cityLogo) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -267,7 +280,8 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     private void checkAllMandatoryDocumentsAttached(final PropertyMutation propertyMutation) {
         for (final Document document : propertyMutation.getDocuments())
             if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
-                throw new ValidationException(new ValidationError("documents", "Please attach mandatory/marked enclosed documents."));
+                throw new ValidationException(
+                        new ValidationError("documents", "Please attach mandatory/marked enclosed documents."));
     }
 
     private void createUserIfNotExist(final List<User> transferees) {
@@ -315,32 +329,18 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         });
     }
 
-    public BillReceiptInfo generateMiscReceipt(final BasicProperty basicProperty, final BigDecimal amount) {
-        LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
-        final org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
+    public String generateReceipt(final PropertyMutation propertyMutation) {
         final PropertyTaxBillable billable = new PropertyTaxBillable();
-        billable.setBasicProperty(basicProperty);
-        billable.setIsMiscellaneous(Boolean.TRUE);
-        billable.setMutationFee(amount);
+        billable.setBasicProperty(propertyMutation.getBasicProperty());
+        billable.setMutationFeePayment(Boolean.TRUE);
+        billable.setMutationFee(propertyMutation.getMutationFee());
         billable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
         billable.setCallbackForApportion(Boolean.FALSE);
-        billable.setUserId(Long.valueOf(EgovThreadLocals.getUserId()));
+        billable.setMutationApplicationNo(propertyMutation.getApplicationNo());
+        billable.setUserId(EgovThreadLocals.getUserId());
         billable.setReferenceNumber(propertyTaxNumberGenerator
-                .generateBillNumber(basicProperty.getPropertyID().getWard().getBoundaryNum().toString()));
-        property.setBillable(billable);
-        final EgBill bill = property.createBill();
-        final CollectionHelper collHelper = new CollectionHelper(bill);
-        final Payment payment = preparePayment(amount);
-        return collHelper.generateMiscReceipt(payment);
-    }
-
-    private Payment preparePayment(final BigDecimal amount) {
-        LOGGER.debug("Inside preparePayment method, Mutation Amount: " + amount);
-        final Map<String, String> payDetailMap = new HashMap<String, String>();
-        payDetailMap.put(AMOUNT, String.valueOf(amount));
-        final Payment payment = Payment.create(Payment.CASH, payDetailMap);
-        LOGGER.debug("Exit from preparePayment method ");
-        return payment;
+                .generateManualBillNumber(propertyMutation.getBasicProperty().getPropertyID()));
+        return ptBillServiceImpl.getBillXML(billable);
     }
 
 }

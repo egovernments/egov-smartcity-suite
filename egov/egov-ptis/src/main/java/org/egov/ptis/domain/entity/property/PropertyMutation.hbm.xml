@@ -85,4 +85,7 @@
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>
 	</class>
+	<query name="BY_APPLICATION_NO">
+		<![CDATA[from PropertyMutation p where p.applicationNo=:param_0]]>
+	</query>
 </hibernate-mapping>
