@@ -1,4 +1,4 @@
-<!-- #-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -79,12 +79,7 @@
 					<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
 					<span style="font-size:15px; color:red">
 						<s:text name="msg.payBill.verification" /> <br><br>
-						<s:if test="basicProperty.isDemandActive == true">
-							<s:text name="msg.activeDemand" />	
-						</s:if>
-						<s:else>
-							<s:text name="getText('msg.inactiveDemand' , {demandEffectiveYear, noOfDaysForInactiveDemand})" />
-						</s:else>
+						<s:text name="msg.activeDemand" />	
 					</span> 
 				</div><br>
 				<div align="center">
