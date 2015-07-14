@@ -81,6 +81,10 @@
 							<input type="hidden" name="currentLoggedUser" class="form-control" id="currentLoggedUser"
 								 value="${currentLoggedUser}"/>
 						</div>
+							<div class="col-md-4 add-margin">
+							<input type="hidden" name="currentUlb" class="form-control" id="currentUlb"
+								 value="${currentUlb}"/>
+						</div>
 
 					</div>
 

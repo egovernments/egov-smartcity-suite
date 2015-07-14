@@ -53,7 +53,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 import org.egov.infra.security.utils.SecurityUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +64,7 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
@@ -101,12 +104,14 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     private AssignmentService assignmentService;
     @Mock
     private SecurityUtils securityUtils;
+    @Mock
+    private CityWebsiteService cityWebsiteService; 
     
     @Override
     protected ComplaintSearchController initController() {
         MockitoAnnotations.initMocks(this);
         return new ComplaintSearchController(searchService, complaintService, complaintStatusService,
-                complaintTypeService,assignmentService,securityUtils);
+                complaintTypeService,assignmentService,securityUtils,cityWebsiteService);
     }
 
     @Before
@@ -149,7 +154,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
         assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
     }
 
-    /*@Test
+/*    @Test
     public void shouldSearchForGivenDateRange() throws Exception {
         when(searchService.search(anyList(), anyList(), anyString(), any(Filters.class), eq(Sort.NULL), eq(Page.NULL)))
                 .thenReturn(

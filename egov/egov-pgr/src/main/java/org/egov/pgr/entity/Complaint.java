@@ -154,11 +154,11 @@ public class Complaint extends StateAware {
 	 * For indexing the below fields are kept. These will not be added to the
 	 * database. This will be available only in index.
 	 */
-	@Searchable
+	@Searchable(group = Searchable.Group.CLAUSES)
 	@Transient
 	private String ulb;
 
-	@Searchable
+	@Searchable(group = Searchable.Group.CLAUSES)
 	@Transient
 	private String district;
 
