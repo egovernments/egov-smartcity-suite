@@ -39,6 +39,7 @@
  */
 package org.egov.infra.web.controller.admin.masters.appConfig;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,7 @@ import javax.validation.Valid;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,10 +73,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ModifyAppConfigController {
 
 	private AppConfigService appConfigValueService;
+	private AppConfigValueService appConfig111Service;
+	
 
 	@Autowired
-	public ModifyAppConfigController(AppConfigService appConfigValueService,
+	public ModifyAppConfigController(AppConfigService appConfigValueService,AppConfigValueService appConfigService,
 			ModuleService moduleService) {
+		this.appConfig111Service=appConfigService;
 		this.appConfigValueService = appConfigValueService;
 	}
 
@@ -103,9 +108,14 @@ public class ModifyAppConfigController {
 		if (appConfig != null) {
 			if (appConfig.getAppDataValues().isEmpty()) {
 				appConfig.addAppDataValues(new AppConfigValues());
+				
 			} else {
+				
 				appConfig.setAppDataValues(appConfig.getAppDataValues());
 			}
+			List<AppConfigValues> appval=appConfig111Service.getConfigValuesByModuleAndKey( appConfig.getModule().getName(), appConfig.getKeyName());
+			//AppConfigValues appvalda=appConfig111Service.getAppConfigValueByDate( appConfig.getModule().getName(), appConfig.getKeyName(),new Date());
+			List<AppConfig> appval1=appConfigValueService.getAppConfigKeys( appConfig.getModule().getName());
 			model.addAttribute("mode", "update");
 			return "appConfig-editform";
 		} else {
