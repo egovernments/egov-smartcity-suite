@@ -82,8 +82,6 @@ function loadOnStartUp() {
 	document.getElementById("apartmentRow").style.display = "none";
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
-	document.getElementById("vacantLandRow").style.display = "none";
-	document.getElementById("vacantLandTable").style.display = "none";
 	document.getElementById("appartenantRow").style.display = "none";
 	document.getElementById("drainageseatsrow").style.display = "none";
 	/* document.getElementById("undivArea").style.display = "none";		

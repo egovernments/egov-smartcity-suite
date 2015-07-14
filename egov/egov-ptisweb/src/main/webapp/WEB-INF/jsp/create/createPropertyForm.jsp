@@ -236,7 +236,6 @@
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorForm.jsp"%>
-				<br />
 			</div>
 		</td>
 	</tr>
@@ -253,7 +252,6 @@
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/vacantLandForm.jsp"%>
-				<br />
 			</div>
 		</td>
 	</tr>
@@ -294,8 +292,9 @@
 		});
 	} 
 
-	//disable fields
-	jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', true);
-	jQuery('tr.bpddetails input').prop('readonly', true);
+	//hide rows and columns of fields
+	jQuery('td.siteowner').hide();
+	jQuery('tr.bpddetails').hide();
+	jQuery('tr.vacantlanddetaills').hide();
     
 </script>

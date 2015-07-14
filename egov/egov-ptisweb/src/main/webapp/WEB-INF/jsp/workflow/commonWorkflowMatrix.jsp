@@ -134,7 +134,6 @@ if(document.getElementById(errorDivId))
 	<% System.out.println("hellllo................."); %>
 <s:hidden id="workFlowAction" name="workFlowAction"/>
 <s:if test="%{getNextAction()!='END'}">
-<div class="blueshadow"></div>
 <s:hidden id="currentState" name="currentState" value="%{state.value}"/>
 <s:hidden id="currentDesignation" name="currentDesignation" value="%{currentDesignation}"/>
 <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
@@ -165,9 +164,9 @@ if(document.getElementById(errorDivId))
 	</tr>
         
 	  	<tr>   
-	  	 	 <td class="${approverOddCSS}" width="16%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel">Approver Department:</td>
-			 <td class="${approverOddTextCss}">
+	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
+			 <td class="${approverOddCSS}" id="deptLabel" width="14%">Approver Department:</td>
+			 <td class="${approverOddTextCss}" width="14%">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
@@ -175,19 +174,18 @@ if(document.getElementById(errorDivId))
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/ptis"/>
 			</td>
-			<td class="${approverOddCSS}" width="10%">&nbsp;</td>	  
 			<td class="${approverOddCSS}" width="14%">Approver Designation:</td>
-			<td class="${approverOddTextCss}" width="33%">
+			<td class="${approverOddTextCss}" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/ptis" />
 			</td>
-			<td class="${approverOddCSS}" width="10%">Approver:</td>
-			<td class="${approverOddTextCss}" width="16%" >
+			<td class="${approverOddCSS}" width="14%">Approver:</td>
+			<td class="${approverOddTextCss}" width="14%">
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
 			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
-			<td class="${approverOddCSS}" width="16%">&nbsp;</td>
+			<td class="${approverOddCSS}" width="5%">&nbsp;</td>
 		</tr>
 		</table>
 </s:if>
