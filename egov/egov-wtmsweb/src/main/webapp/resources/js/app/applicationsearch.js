@@ -62,7 +62,7 @@ jQuery(document).ready(function ($) {
 					columns: [
 					{title: 'Application Type', data: 'resource.clauses.applicationtype'},
 					{title: 'url' ,data: 'resource.searchable.url',"bVisible": false},
-					{title: 'Applicant No.', data: 'resource.searchable.applicationnumber'},
+					{title: 'Application Number', data: 'resource.searchable.applicationnumber'},
 					{title: 'Application Date',
 						render: function (data, type, full) {
 							if(full!=null && full.resource!=undefined &&  full.resource.searchable.applicationdate != undefined) {

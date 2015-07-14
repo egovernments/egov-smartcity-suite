@@ -58,8 +58,7 @@ jQuery(document).ready(function ($) {
 					searchable:true,
 					data: searchResult,
 					columns:  [
-					
-					{title: 'Application Name', data: 'resource.searchable.consumername'},
+					{title: 'Applicant Name', data: 'resource.searchable.consumername'},
 					{title: 'Consumer No.',class:'row-detail',data: 'resource.clauses.consumercode' },
 					{title: 'Address', data: 'resource.searchable.locality'},
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
@@ -75,18 +74,18 @@ jQuery(document).ready(function ($) {
 		
 	   
 	    $("#aplicationSearchResults").on('change','tbody tr td .dropchange',function() {
-	       var applicationNumber = tableContainer.fnGetData($(this).parent().parent(),0);
+	      // var applicationNumber = tableContainer.fnGetData($(this).parent().parent(),0);
 	       var consumerNumber= tableContainer.fnGetData($(this).parent().parent(),1);
 	       if( this.value == 0){
-				 var url = '/wtms/application/addconnection/'+applicationNumber; 
+				 var url = '/wtms/application/addconnection/'+consumerNumber; 
 					$('#waterSearchRequestForm').attr('method', 'get');
 					$('#waterSearchRequestForm').attr('action', url);
 					window.location=url;
 				//window.location.href="applyforadditionalconnection.html"
 			}else if( this.value == 2){
-				window.location.href="closingwatertap.html"
+				//window.location.href="closingwatertap.html"
 			}else if( this.value == 6){
-				window.location.href="disconnectionotice.html"
+				//window.location.href="disconnectionotice.html"
 			}else if( this.value == 1){
 				if(consumerNumber != '') { 
 					 var url = '/wtms/application/changeOfUse/'+consumerNumber; 
@@ -96,9 +95,10 @@ jQuery(document).ready(function ($) {
 				 }
 				//window.location.href="changeofuse.html"  
 			}else if( this.value == 3){
-				window.location.href="reconnection.html"
+				
+				//window.location.href="reconnection.html"
 			}else if( this.value == 7){
-				 var url = '/wtms/application/generatebill/'+consumerCode; 
+				 var url = '/wtms/application/generatebill/'+consumerNumber; 
 					$('#waterSearchRequestForm').attr('method', 'get');
 					$('#waterSearchRequestForm').attr('action', url);
 					window.location=url;
