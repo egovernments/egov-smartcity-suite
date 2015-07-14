@@ -52,7 +52,7 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="collectFee" name="transferform" theme="simple">
+			<s:form action="collect-fee" name="transferform" theme="simple">
 				<s:push value="model">
 				<s:token/>
 				<div class="headingbg">
@@ -85,7 +85,7 @@
 							Assessment No :
 						</td>
 						<td class="bluebox">
-							<span class="bold"><input type="text" name="applicationNo"/></span>
+							<span class="bold"><input type="text" name="assessmentNo"/></span>
 						</td>
 						<td class="bluebox">
 							&nbsp;
