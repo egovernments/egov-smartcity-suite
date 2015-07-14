@@ -57,6 +57,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -71,11 +73,11 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -89,8 +91,6 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
 		@Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
@@ -121,9 +121,9 @@ public class BudgetReportAction extends BaseFormAction {
 	BudgetReport							budgetReport			= new BudgetReport();
 	private 	EisCommonService 	eisCommonService;
 	List					budgetReportList		= new ArrayList<BudgetReportView>();
-	
+		
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	
 	int										majorCodeLength			= 0;
 	FinancialYearDAO						financialYearDAO;
@@ -1122,7 +1122,7 @@ public class BudgetReportAction extends BaseFormAction {
 				financialYearForBE=budgetReport.getFinancialYear();
 			}
 		}
-		List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
+		List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
 		String value = list.get(0).getValue();
 		//TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav 
 		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),new Date());
@@ -1169,7 +1169,7 @@ public class BudgetReportAction extends BaseFormAction {
 	}
 	
 	protected String getAppConfigValueFor(String module, String key) {
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
+		return appConfigValuesService.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
 	}
 	
 	protected void populateData() {
@@ -1930,7 +1930,7 @@ private String getSqlForFinYearBE(Long finYearForRE) {
 		this.eisCommonService = eisCommonService;
 	}
 	private boolean getConsiderReAppropriationAsSeperate(){
-		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
+		List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
 		String appValue = "-1"; 
 		appValue = appList.get(0).getValue();
 		return "Y".equalsIgnoreCase(appValue);

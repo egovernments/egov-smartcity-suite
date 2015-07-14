@@ -59,15 +59,14 @@ import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.VoucherDetail;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -643,10 +642,10 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		BudgetService budgetService = new BudgetService();
 		budgetService.setType(Budget.class);
 		budgetDetailsDAO.setBudgetService(budgetService);
-		budgetDetailsDAO.setAppConfigValuesDAO(new AppConfigValuesDAO());
+		//budgetDetailsDAO.setAppConfigValuesService(new AppConfigValueService());
 		budgetDetailsDAO.setFinancialYearDAO(new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession()));
 
-	}
+	}	
 	public void setScriptService()
 	{
 		//This fix is for Phoenix Migration.

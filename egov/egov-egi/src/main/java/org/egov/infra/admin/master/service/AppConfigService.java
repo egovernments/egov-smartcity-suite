@@ -44,6 +44,7 @@ package org.egov.infra.admin.master.service;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.repository.AppConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,8 @@ public class AppConfigService {
 	        this.appConfigValueRepository = appConfigValueRepos;
 	    }
 
-	 public AppConfig findBykeyNameAndModuleName( Long keyName,Long moduleName) {
-	        return appConfigValueRepository.findBykeyNameAndModuleName(keyName,moduleName);
+	 public AppConfig findBykeyNameAndModuleName( final Long keyId,final Long moduleId) {
+	        return appConfigValueRepository.findByIdAndModule_Id(keyId,moduleId);
 	    }
 	    public AppConfig findBykeyName(final String keyName) {
 	        return appConfigValueRepository.findBykeyName(keyName);
@@ -87,8 +88,8 @@ public class AppConfigService {
 	  public List<AppConfig> findAll() {
 	        return appConfigValueRepository.findAll();
 	    }
-	  public List<AppConfig> findAllByModule(Long module) {
-	        return appConfigValueRepository.findAllByModuleId(module);
+	  public List<AppConfig> findAllByModule(final Long module) {
+	        return appConfigValueRepository.findByModule_Id(module);
 	    }
 	  
 	  public Page<AppConfig> getListOfAppConfig(final Integer pageNumber, final Integer pageSize) {
@@ -107,6 +108,17 @@ public class AppConfigService {
 	    	appConfigValueRepository.save(appConfig);
 	    }
 	    
+	    public  AppConfig getConfigKeyByName(final String keyName, final String moduleName)
+	    {
+	    	return appConfigValueRepository.findByKeyNameAndModule_Name(keyName, moduleName);
+	    }
+	    public List<AppConfig> getAppConfigKeys(final String moduleName) {
+	    	return appConfigValueRepository.findByModule_Name(moduleName);
+	   
+	    }
 	    
-	
+	    public List<String> getAllAppConfigModule() {
+	    	return appConfigValueRepository.getAllAppConfigModule();
+			
+		}
 }

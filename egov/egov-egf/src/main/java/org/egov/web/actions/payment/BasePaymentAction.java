@@ -47,7 +47,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
@@ -97,7 +97,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 		this.canCheckBalance = canCheckBalance;
 	}
 	@Autowired
-	protected AppConfigValuesDAO appConfigValuesDAO;
+	protected AppConfigValueService appConfigValuesService;
 	
 	protected String showMode;
 @Action(value="/payment/basePayment-viewInboxItems")

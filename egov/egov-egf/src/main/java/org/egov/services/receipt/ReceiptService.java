@@ -41,7 +41,6 @@ package org.egov.services.receipt;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.egov.egf.commons.EgovCommon;
@@ -53,8 +52,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.pims.commons.Position;
@@ -64,8 +63,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
         @Autowired
 	protected EisCommonService eisCommonService;
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
-	 private EmployeeServiceOld employeeServiceOld;
+	private @Autowired AppConfigValueService appConfigValuesService;
+	 private EmployeeServiceOld employeeServiceOld;		
 	private  PersistenceService persistenceService;
 	public Position getPositionForEmployee(Employee emp)throws EGOVRuntimeException
 	{
@@ -76,12 +75,12 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 		this.persistenceService = persistenceService;
 	}
 	public void createVoucherfromPreApprovedVoucher(ReceiptVoucher rv){
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
 		final String approvedVoucherStatus = appList.get(0).getValue();
 		rv.getVoucherHeader().setStatus(Integer.valueOf(approvedVoucherStatus));
 	}
 	public void cancelVoucher(ReceiptVoucher rv){
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","cancelledstatus");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","cancelledstatus");
 		final String approvedVoucherStatus = appList.get(0).getValue();
 		rv.getVoucherHeader().setStatus(Integer.valueOf(approvedVoucherStatus));
 	}

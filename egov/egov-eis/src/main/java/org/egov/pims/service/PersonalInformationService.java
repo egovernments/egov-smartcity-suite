@@ -57,9 +57,9 @@ import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -97,7 +97,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private EntityManager entityManager;
 	
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;	
     
 	public Session  getCurrentSession() {
 		return entityManager.unwrap(Session.class);
@@ -158,7 +158,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	{
 		Integer pageSize = (maxRecords > 0 ? maxRecords : null);
 		autoValue=(autoValue+"%");
-		String filterByDept = appConfigValuesDAO.getAppConfigValue("EIS-PAYROLL","FILTERBYDEPT","false");
+		String filterByDept = appConfigValuesService.getAppConfigValue("EIS-PAYROLL","FILTERBYDEPT","false");
 
 		if(filterByDept!=null && filterByDept.toUpperCase().equals("YES"))
 		{    	
@@ -187,7 +187,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	{
 		Integer pageSize = (maxRecords > 0 ? maxRecords : null);
 		autoValue=(autoValue+"%");
-		String filterByDept = appConfigValuesDAO.getAppConfigValue("EIS-PAYROLL","FILTERBYDEPT","false");
+		String filterByDept = appConfigValuesService.getAppConfigValue("EIS-PAYROLL","FILTERBYDEPT","false");
 
 		if(filterByDept!=null && filterByDept.toUpperCase().equals("YES"))
 		{   

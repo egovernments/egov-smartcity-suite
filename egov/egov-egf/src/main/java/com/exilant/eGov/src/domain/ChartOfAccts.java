@@ -54,7 +54,7 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -93,7 +93,7 @@ public class ChartOfAccts {
 	private String updateQuery = "UPDATE ChartOfAccounts SET ";
 	private boolean isId = false, isField = false;
 	private static final Logger LOGGER = Logger.getLogger(ChartOfAccts.class);
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;  
+    @Autowired private AppConfigValueService appConfigValuesService; 
 	EGovernCommon cm = new EGovernCommon();
 	private TaskFailedException taskExc;
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
@@ -299,7 +299,7 @@ public class ChartOfAccts {
 	 * @throws TaskFailedException
 	 */
 	private String getMajorCode(String glcode) throws TaskFailedException {
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
 						"coa_majorcode_length");
 		if (appList == null || appList.isEmpty())
 			throw new TaskFailedException(

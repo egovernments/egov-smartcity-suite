@@ -81,11 +81,11 @@ import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.instrument.InstrumentHeader;
@@ -141,10 +141,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 	List<InstrumentHeader> instVoucherDisplayList;
 	private static final Logger LOGGER = Logger.getLogger(ChequeAssignmentAction.class);
 	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;  
+        private AppConfigValueService appConfigValuesService;  
 	private static final String JASPER_PATH="/org/egov/payment/client/bankAdviceReport.jasper";
 	InputStream inputStream;
-	ReportHelper reportHelper;
+	ReportHelper reportHelper;	
 	Map<String,Object> paramMap = new HashMap<String,Object>();
 	List<Object> adviceList = new ArrayList<Object>();
 	String fromDate;
@@ -317,7 +317,7 @@ private void setTNEBMandatoryFields(){
 		for(String key:propartyAppConfigKeysList){
 			String value = null;
 		try{
-			List<AppConfigValues> configValues =appConfigValuesDAO.
+			List<AppConfigValues> configValues =appConfigValuesService.
 					getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,key); 
 			
 			for (AppConfigValues appConfigVal : configValues) {
@@ -563,7 +563,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		rtgsChequeAssignmentList.addAll(dbpRtgsAssignmentList);
 		if(!paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE))
 		{
-			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
+			List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
 			inFavourOf = appList.get(0).getValue();
 		}
 		chequeDt = new Date();
@@ -686,7 +686,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		if(!paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE))
 		{
 			chequeDt = new Date();
-			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
+			List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"cheque.assignment.infavourof");
 			inFavourOf = appList.get(0).getValue();
 		}
 		loadBankAndAccount();
@@ -1434,7 +1434,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 
 		List<AppConfigValues> appConfigValuesList;
 		surrendarReasonMap=new LinkedHashMap<String, String>();
-		appConfigValuesList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
+		appConfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
 		for(AppConfigValues app:appConfigValuesList)
 		{
 			String value = app.getValue();

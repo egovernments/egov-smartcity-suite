@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -68,9 +70,9 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.ReportBean;
@@ -87,8 +89,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.reports.TrialBalanceBean;
-
-import net.sf.jasperreports.engine.JRException;
 
 @Results(value={
 		@Result(name="trialBalance-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf","contentDisposition","no-cache;filename=trialBalance.pdf"}),
@@ -132,12 +132,12 @@ public class TrialBalanceAction extends BaseFormAction {
 	private FinancialYearDAO financialYearDAO;
 	private String removeEntrysWithZeroAmount = ""; 
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	
 	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
 		this.financialYearDAO = financialYearDAO;
 	}
-	@Override
+	@Override	
 	public Object getModel() {
 	return rb;
 	}
@@ -194,7 +194,7 @@ public class TrialBalanceAction extends BaseFormAction {
 	public String search()
 	{
 		try{
-			List<AppConfigValues> configValues =appConfigValuesDAO.
+			List<AppConfigValues> configValues =appConfigValuesService.
 					getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.REMOVE_ENTRIES_WITH_ZERO_AMOUNT_IN_REPORT); 
 			
 			for (AppConfigValues appConfigVal : configValues) {
@@ -275,7 +275,7 @@ public class TrialBalanceAction extends BaseFormAction {
 			tsFieldIdCond=" and divisionId= :divisionId";
 		}
 		String defaultStatusExclude=null;
-		List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+		List<AppConfigValues> listAppConfVal=appConfigValuesService.
 		getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		if(null!= listAppConfVal)
 		{
@@ -553,7 +553,7 @@ public class TrialBalanceAction extends BaseFormAction {
 		 tsdivisionIdCond=" and ts.divisionId= :divisionId";
 	}
 	String defaultStatusExclude=null;
-	List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+	List<AppConfigValues> listAppConfVal=appConfigValuesService.
 	getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 	if(null!= listAppConfVal)
 	{

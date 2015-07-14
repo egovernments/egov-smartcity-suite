@@ -60,7 +60,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
@@ -90,8 +90,7 @@ public class RptSubLedgerSchedule
     private boolean isStartDateFirstApril = false;
     @Autowired
     private FinancialYearDAO financialYearDao;
-    @Autowired
-    private AppConfigValuesDAO appConfigValuesDAO;
+    @Autowired  private AppConfigValueService appConfigValuesService;
     
     Query pst;
         public RptSubLedgerSchedule(){} 
@@ -169,7 +168,7 @@ public class RptSubLedgerSchedule
                         departmentFromCondition = ",vouchermis vmis";
                         departmentWhereCondition = "AND vh.id = vmis.voucherheaderid and vmis.departmentid=? ";
                 }
-                List<AppConfigValues> listAppConfVal= appConfigValuesDAO.
+                List<AppConfigValues> listAppConfVal= appConfigValuesService.
                 getConfigValuesByModuleAndKey("finance","statusexcludeReport");
                 if(null!= listAppConfVal)
                 {

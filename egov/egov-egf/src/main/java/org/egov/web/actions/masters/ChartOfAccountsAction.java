@@ -54,10 +54,10 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.masters.AccountCodePurpose;
@@ -84,7 +84,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 	boolean budgetCheckRequired = false;
 	Long coaId;
 	Long parentId;
-	@Autowired AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired AppConfigValueService appConfigValuesService;	
 	String glCode = "";
 	List<CChartOfAccounts> allChartOfAccounts;
 	int majorCodeLength = 0;
@@ -460,7 +460,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 	}
 	
 	String getAppConfigValueFor(String module,String key){
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+		return appConfigValuesService.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 	}
 
 	void populateCodeLength() {

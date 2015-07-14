@@ -72,12 +72,12 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.Page;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.Constants;
@@ -103,11 +103,11 @@ public class VoucherSearchAction extends BaseFormAction
 	public final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
 	@Autowired
-    protected AppConfigValuesDAO appConfigValuesDAO;
+    protected AppConfigValueService appConfigValuesService;
 	private final List<String> headerFields = new ArrayList<String>();
 	private final List<String> mandatoryFields = new ArrayList<String>();
 	public Date fromDate=new Date();
-	public Date toDate;
+	public Date toDate;	
 	private String showMode;
 	private VoucherSearchUtil voucherSearchUtil;
 	private Map<Integer,String> sourceMap=new HashMap<Integer, String>();

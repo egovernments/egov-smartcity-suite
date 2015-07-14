@@ -47,12 +47,12 @@ import java.util.List;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -61,7 +61,6 @@ import org.egov.ptis.domain.service.bill.BillService;
 import org.hibernate.Query;
 import org.quartz.StatefulJob;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
@@ -82,7 +81,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 	@Autowired
 	private ModuleService moduleDao;
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDao;
+    private AppConfigValueService appConfigValuesService;
 	@Autowired
         private PropertyTaxUtil propertyTaxUtil;
 
@@ -158,8 +157,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 		// for Bulk bill generation for particular ward, getting the ward number
 		// from
 		// AppConfigValues, if available then by ward else irrespective of ward
-		List<AppConfigValues> appConfigValues = appConfigValuesDao
-				.getConfigValuesByModuleAndKey(PropertyTaxConstants.PTMODULENAME,
+		List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PropertyTaxConstants.PTMODULENAME,
 						APPCONFIG_KEY_BULKBILL_WARD);
 
 		queryString = queryString

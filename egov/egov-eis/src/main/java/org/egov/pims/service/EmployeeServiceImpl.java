@@ -60,7 +60,6 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -69,7 +68,7 @@ import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -112,7 +111,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     private SessionFactory sessionFactory;
     private PersonalInformationDAO personalInformationDAO;
     private AssignmentDAO assignmentDAO;
-    private AppConfigValuesDAO appConfigValuesDAO;
+    private AppConfigValueService appConfigValuesService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -2183,7 +2182,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public boolean isFilterByDept() {
         boolean isFilterByDept = false;
         String filterByDept = "NO";
-        AppConfigValues configValue = appConfigValuesDAO.getAppConfigValueByDate("EIS-PAYROLL", "FILTERBYDEPT",
+        AppConfigValues configValue = appConfigValuesService.getAppConfigValueByDate("EIS-PAYROLL", "FILTERBYDEPT",
                 new Date());
         if (null != configValue) {
             filterByDept = configValue.getValue();
@@ -2318,12 +2317,15 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         this.assignmentDAO = assignmentDAO;
     }
 
-    public AppConfigValuesDAO getAppConfigValuesDAO() {
-        return appConfigValuesDAO;
-    }
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
 
-    public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
-        this.appConfigValuesDAO = appConfigValuesDAO;
-    }
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
+
+    
 
 }

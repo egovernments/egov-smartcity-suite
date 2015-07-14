@@ -80,6 +80,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -88,7 +89,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -152,8 +152,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
         private Accountdetailtype accDetailType; 
         private CChartOfAccounts coaDebit;
         private SequenceGenerator sequenceGenerator;
-        @Autowired
-        private AppConfigValuesDAO appConfigValuesHibernateDAO;
+        private AppConfigValueService appConfigValuesService;
         private EBBillInfoService billInfoService;
         private BudgetDetailsHibernateDAO budgetDetailsDAO;
         private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -698,7 +697,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 egBillRegister.setBilltype(FinancialConstants.STANDARD_BILLTYPE_FINALBILL);
 
                 egBillregistermis.setEgBillregister(egBillRegister);
-                List<AppConfigValues> appConfigPayTo = appConfigValuesHibernateDAO
+                List<AppConfigValues> appConfigPayTo = appConfigValuesService
                                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                                                 EBConstants.APPCONFIG_KEY_NMAE_PAYTO);
                 if (appConfigPayTo == null || appConfigPayTo.isEmpty()) {
@@ -1002,7 +1001,16 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
                 this.sequenceGenerator = sequenceGenerator;
         }
 
-        public void setBillInfoService(EBBillInfoService billInfoService) {
+        public AppConfigValueService getAppConfigValuesService() {
+			return appConfigValuesService;
+		}
+
+		public void setAppConfigValuesService(
+				AppConfigValueService appConfigValuesService) {
+			this.appConfigValuesService = appConfigValuesService;
+		}
+
+		public void setBillInfoService(EBBillInfoService billInfoService) {
                 this.billInfoService = billInfoService;
         }
 

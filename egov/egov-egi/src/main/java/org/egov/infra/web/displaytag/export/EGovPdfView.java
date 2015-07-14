@@ -335,7 +335,7 @@ public class EGovPdfView implements BinaryExportView {
 			cb.restoreState();
 			// write the headertable
 			table.setTotalWidth(document.right() - document.left());
-			table.writeSelectedRows(0, -1, document.left(), document.getPageSize().getHeight() - 50, cb);
+			//table.writeSelectedRows(0, -1, document.left(), document.getPageSize().getHeight() - 50, cb);
 			// compose the footer
 			final String text = "Page " + writer.getPageNumber();
 			final float textSize = helv.getWidthPoint(text, 12);

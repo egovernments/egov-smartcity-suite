@@ -58,7 +58,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
@@ -73,7 +73,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	private Integer bankBranchId;
 	private PersistenceService<Bankaccount, Integer> bankAccountPersistenceService;
 	private PersistenceService<CChartOfAccounts, Long> chartOfAccountService;
-    private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	
 	String code = EGovConfig.getProperty("egf_config.xml",
 			"glcodeMaxLength", "", "AccountCode");
@@ -210,7 +210,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		return glCode;
 	}
 	String getAppConfigValueFor(String module,String key){
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+		return appConfigValuesService.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 	}
 	public String postInChartOfAccounts(String glCode, String parentId,
 			String accNumber) throws Exception {
@@ -246,13 +246,15 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		this.bankBranchId = bankBranchId;
 	}
 
-	public AppConfigValuesDAO getAppConfigValuesDAO() {
-		return appConfigValuesDAO;
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
 	}
 
-	public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
-		this.appConfigValuesDAO = appConfigValuesDAO;
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
 	}
+
 	
 	
 }

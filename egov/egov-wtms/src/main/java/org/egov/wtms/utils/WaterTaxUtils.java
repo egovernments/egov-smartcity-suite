@@ -40,7 +40,7 @@
 package org.egov.wtms.utils;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,17 +48,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class WaterTaxUtils {
 
-    @Autowired
-    private AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public Boolean isSmsEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesDAO
+        final AppConfigValues appConfigValue = appConfigValuesService
                 .getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME, "SENDSMSFORWATERTAX").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isEmailEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesDAO
+        final AppConfigValues appConfigValue = appConfigValuesService
                 .getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME, "SENDEMAILFORWATERTAX").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }

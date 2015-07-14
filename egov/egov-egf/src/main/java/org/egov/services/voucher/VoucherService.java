@@ -88,13 +88,13 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
@@ -131,7 +131,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         protected PersistenceService persistenceService;
         protected EisCommonService eisCommonService;
         private BudgetDetailsDAO budgetDetailsDAO;
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        private @Autowired AppConfigValueService appConfigValuesService;	
         private VoucherHibernateDAO voucherHibDAO;
         @Autowired
         private ChartOfAccountsDAO coaDAO;
@@ -299,7 +299,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                         
                 }
         public void createVoucherfromPreApprovedVoucher(CVoucherHeader vh){
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                 final String approvedVoucherStatus = appList.get(0).getValue();
                 vh.setStatus(Integer.valueOf(approvedVoucherStatus));
         }

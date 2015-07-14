@@ -50,7 +50,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 public class VoucherSearchUtil {
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired  private AppConfigValueService appConfigValuesService;
 	private PersistenceService persistenceService;
 	private static final Logger LOGGER=Logger.getLogger(VoucherSearchUtil.class);
 	private FinancialYearDAO financialYearDAO;
@@ -250,7 +250,7 @@ public class VoucherSearchUtil {
 		}
 		String sql1 = sql
 		+ " and  (vh.id  in (select voucherHeader.id from EgBillregistermis) and vh.id not in (select billVoucherHeader.id from Miscbilldetail where billVoucherHeader is not null and  payVoucherHeader  in (select id from CVoucherHeader where status not in (4,1) and type='Payment')) )";
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
 				"finance", "statusexcludeReport");
 		String statusExclude = appList.get(0).getValue();
 		statusExclude = statusExclude + ","
@@ -330,7 +330,7 @@ public class VoucherSearchUtil {
 		return sql;
 	}
 	public String excludeVoucherStatus(){
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(	"EGF", "statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(	"EGF", "statusexcludeReport");
 		return appList.get(0).getValue();
 	}
 

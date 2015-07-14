@@ -61,9 +61,9 @@ import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.model.payment.Paymentheader;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,12 +80,12 @@ public class PaymentReversalAction extends BaseVoucherAction{
 	Bankaccount bankAccount;
 	private List<Paymentheader> paymentHeaderList = new ArrayList<Paymentheader>();
 	private Paymentheader paymentHeader = new Paymentheader();
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;	
 
 	@Override
 	public void prepare() {
 		super.prepare();
-		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
+		List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		String statusExclude = appList.get(0).getValue();
 		if("".equalsIgnoreCase(statusExclude) || statusExclude == null)
 			throw new ValidationException(Arrays.asList(new ValidationError("voucher.excludestatus.not.set", "voucher.excludestatus.not.set")));

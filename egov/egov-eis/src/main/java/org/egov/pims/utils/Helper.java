@@ -39,18 +39,12 @@
  */
 package org.egov.pims.utils;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public  class Helper {
-	private AppConfigValuesDAO appConfigValuesDAO;
+	 @Autowired
+	    private AppConfigValueService appConfigValuesService;
 	
 	/*public static Integer getStatusTypeByDescAndModule()
 	{
@@ -61,7 +55,7 @@ public  class Helper {
 		
 		try {
 			//moduleType=EGovConfig.getProperty("eis_egov_config.xml", "STATUS_MODULE_TYPE", "","EIS.STATUS");
-			AppConfigValues appConfigValuesForModule = appConfigValuesDAO.getAppConfigValueByDate("EIS_STATUS","STATUS_MODULE_TYPE",new Date());
+			AppConfigValues appConfigValuesForModule = appConfigValuesService.getAppConfigValueByDate("EIS_STATUS","STATUS_MODULE_TYPE",new Date());
 			if(appConfigValuesForModule!=null){
 				moduleType= appConfigValuesForModule.getValue();
 			}

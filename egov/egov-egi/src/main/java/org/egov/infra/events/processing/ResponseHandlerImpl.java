@@ -42,9 +42,9 @@ package org.egov.infra.events.processing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.events.entity.schema.EmailType;
 import org.egov.infra.events.entity.schema.Response;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.mail.Email;
 import org.egov.infstr.mail.Email.Builder;
 import org.slf4j.Logger;
@@ -58,8 +58,8 @@ public class ResponseHandlerImpl implements ResponseHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ResponseHandlerImpl.class);
 
     @Autowired
-    AppConfigValuesDAO appConfigValueDao;
-    
+    AppConfigValueService appConfigValuesService;
+    	
 
     @Override
     public void respond(final Response r) {

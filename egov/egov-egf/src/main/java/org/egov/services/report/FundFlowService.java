@@ -51,9 +51,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.FundFlowBean;
@@ -73,14 +73,14 @@ public class FundFlowService extends PersistenceService {
 	private static Logger LOGGER=Logger.getLogger(FundFlowService.class);
 	SimpleDateFormat sqlformat=new SimpleDateFormat("dd-MMM-yyyy");
 	final String START_FINANCIALYEAR_DATE="01-Apr-2012";
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;	
 	/**
 	 * All amounts is in lakhs
 	 */
 	
 	public List<FundFlowBean> getOutStandingPayments(Date asPerDate,Long fundId) {
 		String voucherDate=sqlformat.format(asPerDate);
-		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
+		List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 		
@@ -163,7 +163,7 @@ public class FundFlowService extends PersistenceService {
 	
 	public List<FundFlowBean> getConcurrancePayments(Date asPerDate,Long fundId) {
 		String voucherDate=sqlformat.format(asPerDate);
-		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
+		List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
 		String voucherStatus ="";
@@ -448,7 +448,7 @@ private BigDecimal getContraReceipt(Long bankaccountId, Date asPerDate, Long acc
  */
 private BigDecimal getOutStandingPayment(Long bankaccountId, Date asPerDate)
 {
-	List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
+	List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
 	if(appConfig == null || appConfig.isEmpty())
 		throw new ValidationException("","PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK is not defined in AppConfig");
 	String voucherStatus ="";

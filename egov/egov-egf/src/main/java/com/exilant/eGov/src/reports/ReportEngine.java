@@ -45,8 +45,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -64,8 +63,7 @@ public class ReportEngine {
 	 * 
 	 */
 	
-	@Autowired
-	     private AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired  private AppConfigValueService appConfigValuesService;
 	
 	public String	getVouchersListQuery(ReportEngineBean reBean)throws EGOVRuntimeException
 	{
@@ -199,7 +197,7 @@ public class ReportEngine {
 			 */
 			ArrayList<String> defaultStatusExcludeList=new ArrayList<String>();
 			String defaultStatusExclude=null;
-			List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+			List<AppConfigValues> listAppConfVal=appConfigValuesService.
 			getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 			if(null!= listAppConfVal)
 			{

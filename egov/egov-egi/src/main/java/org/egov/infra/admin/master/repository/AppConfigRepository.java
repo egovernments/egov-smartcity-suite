@@ -51,13 +51,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig,Long>{
 	
-	@Query("select app from AppConfig app where app.id = :keyid and app.module.id = :moduleid")
-    public AppConfig findBykeyNameAndModuleName(@Param("keyid") Long keyid, @Param("moduleid") Long moduleid);
+	public AppConfig findByIdAndModule_Id(final Long keyid, final Long moduleid);
 
-	AppConfig findById(@Param("id") Long id);
-	@Query("select b from AppConfig b where b.module.id=:id")
-	List<AppConfig> findAllByModuleId(@Param("id") Long id);
-	AppConfig findBykeyName(String keyName);
+	AppConfig findByKeyNameAndModule_Name(final String keyName,final String moduleName);
+	
+	AppConfig findById(final Long id);
+	//@Query("select b from AppConfig b where b.module.id=:id")
+	List<AppConfig> findByModule_Id(final Long id);
+	
+	AppConfig findBykeyName(final String keyName);
+	
+	List<AppConfig> findByModule_Name(final String moduleName);
+	
+	@Query("select distinct(a.module.name) from AppConfig a order by a.module.name")
+	List<String> getAllAppConfigModule();
 	
 	   @Query("select b from Module b where  b.enabled=true AND "
 	   		+ "(b.parentModule IS NULL OR (b.parentModule IN (select c.id from Module c where c.parentModule IS NULL ))) "

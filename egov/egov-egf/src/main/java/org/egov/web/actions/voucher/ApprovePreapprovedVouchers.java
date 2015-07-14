@@ -52,6 +52,7 @@ import org.egov.billsaccounting.services.BillsAccountingService;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.VoucherDetail;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -64,7 +65,7 @@ public class ApprovePreapprovedVouchers extends VoucherSearchAction {
 	
 	private String[]				approveList;
 	
-	
+	private AppConfigValueService appConfigValuesService;
 	@SuppressWarnings("unchecked")
 	@Override
 	@ValidationErrorPage(value=SEARCH)
@@ -107,7 +108,7 @@ public class ApprovePreapprovedVouchers extends VoucherSearchAction {
 			sql = sql + " and vh.vouchermis.divisionid=" + voucherHeader.getVouchermis().getDivisionid().getId();
 		}
 		
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");
 		final String statusInclude = appList.get(0).getValue();
 		
 		final List<CVoucherHeader> list = persistenceService.findAllBy(" from CVoucherHeader vh where vh.status  in (" + statusInclude + ") and vh.moduleId is not null " + sql
@@ -169,6 +170,15 @@ public class ApprovePreapprovedVouchers extends VoucherSearchAction {
 	
 	public void setBillsAccountingService(final BillsAccountingService billsAccountingService) {
 		this.billsAccountingService = billsAccountingService;
+	}
+
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
+
+	public void setAppConfigValuesService(
+			AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
 	}
 	
 }

@@ -48,10 +48,10 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.messaging.email.EmailService;
 import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
@@ -79,7 +79,7 @@ public class EscalationService {
     private EmailService emailService;
 
     @Autowired
-    private AppConfigValuesDAO appConfigValuesDAO;
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private ComplaintService complaintService;
@@ -138,8 +138,7 @@ public class EscalationService {
 
     @Transactional
     public void escalateComplaint() {
-        final AppConfigValues appConfigValue = appConfigValuesDAO
-                .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();

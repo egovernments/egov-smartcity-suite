@@ -53,10 +53,10 @@ import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -67,10 +67,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class JournalVoucherReverseAction extends BaseVoucherAction {
 	
 	private static final Logger	LOGGER	= Logger.getLogger(JournalVoucherReverseAction.class);
-	
+		
 	public  Map<String,String> nameList = new LinkedHashMap<String, String>();
 	public List<Map<String,Object>> voucherList;
-	public @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	public @Autowired AppConfigValueService appConfigValuesService;
 	
 	public String fromDate;
 	public String toDate;

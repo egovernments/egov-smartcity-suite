@@ -47,8 +47,8 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.hibernate.Query;
@@ -69,8 +69,7 @@ public class BillsAccountingService  {
 	 
 	private static final String MISSINGMSG= "is not defined in AppConfig values cannot proceed creating voucher";
 	
-	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;  
+	@Autowired  private AppConfigValueService appConfigValuesService; 
 	
 	/**
 	 * API to create voucher in pre approved status
@@ -83,7 +82,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		long vh=-1;
 		try {
-			List vStatusList=appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
+			List vStatusList=appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
 			
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -121,7 +120,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		long vh=-1;
 		try {
-			List vStatusList=appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
+			List vStatusList=appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "PREAPPROVEDVOUCHERSTATUS");	
 			
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -153,7 +152,7 @@ public class BillsAccountingService  {
 		String voucherStatus=null;
 		
 			try {
-				List vStatusList=	appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");	
+				List vStatusList=	appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");	
 				if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 				{	
 					AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);
@@ -185,7 +184,7 @@ public class BillsAccountingService  {
 	{
 		try {
 			String voucherStatus=null;
-			List vStatusList=	appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");	
+			List vStatusList=	appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");	
 			if(!vStatusList.isEmpty()&&vStatusList.size()==1)
 			{	
 				AppConfigValues appVal=(AppConfigValues)vStatusList.get(0);

@@ -70,13 +70,13 @@ import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -110,7 +110,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
         private static final long serialVersionUID = 1L;
         private static final String PRINT = "print";
         String functionName;
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        private @Autowired AppConfigValueService appConfigValuesService;	
 
         private  BudgetDetailsHibernateDAO budgetDetailsDAO;
         @Autowired
@@ -479,7 +479,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 
                 Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
                 boolean budgetcheck=false;
-                List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","budgetCheckRequired");
+                List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey("EGF","budgetCheckRequired");
                 if(!list.isEmpty())
                 {
                         String value = list.get(0).getValue();

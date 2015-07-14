@@ -69,8 +69,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -112,7 +112,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
         @Autowired
         protected EisCommonService eisCommonService;
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        @Autowired  private AppConfigValueService appConfigValuesService;
         private EmployeeServiceOld employeeServiceOld;
         private int preapprovalStatus=0;
         private int instrumentCount=0;
@@ -322,7 +322,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         public Map prepareForUpdateInstrumentDeposit(String toBankaccountGlcode)
         {
                 Map<String,Object> valuesMap=new HashMap<String, Object>();
-                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","PREAPPROVEDVOUCHERSTATUS");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","PREAPPROVEDVOUCHERSTATUS");
                 preapprovalStatus=Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
                 EgwStatus instrumentDepositedStatus = (EgwStatus) persistenceService.find("from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper(?)",
                                 FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);
@@ -389,13 +389,13 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Contra Service | updateCashDeposit | End");
         }
         public void createVoucherfromPreApprovedVoucher(ContraJournalVoucher cjv){
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                 final String approvedVoucherStatus = appList.get(0).getValue();
                 cjv.getVoucherHeaderId().setStatus(Integer.valueOf(approvedVoucherStatus));
         }
         
         public void cancelVoucher(ContraJournalVoucher cjv){
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","cancelledstatus");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","cancelledstatus");
                 final String approvedVoucherStatus = appList.get(0).getValue();
                 cjv.getVoucherHeaderId().setStatus(Integer.valueOf(approvedVoucherStatus));
         }
@@ -454,7 +454,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      public Map prepareForUpdateInstrumentDepositSQL()
         {
                 Map<String,Object> valuesMap=new HashMap<String, Object>();
-                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","PREAPPROVEDVOUCHERSTATUS");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","PREAPPROVEDVOUCHERSTATUS");
                 preapprovalStatus=Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
                 Integer instrumentDepositedStatusId = (Integer) persistenceService.find("select id from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=upper(?)",
                                 FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);

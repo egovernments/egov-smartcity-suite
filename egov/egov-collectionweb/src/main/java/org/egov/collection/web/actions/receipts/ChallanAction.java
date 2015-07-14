@@ -79,14 +79,13 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
@@ -132,9 +131,9 @@ public class ChallanAction extends BaseFormAction {
 	private ReceiptHeaderService receiptHeaderService;
 	
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	
-	//Added for Challan Approval
+	//Added for Challan Approval	
 	private String challanId;
 	private String approvalRemarks;
 	private Long positionUser;
@@ -1132,12 +1131,12 @@ public class ChallanAction extends BaseFormAction {
 			}
 		}
 		
-		String isBillNoReqd = appConfigValuesDAO.getAppConfigValue(
+		String isBillNoReqd = appConfigValuesService.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
 				CollectionConstants.APPCONFIG_VALUE_ISBILLNUMREQD,
 				CollectionConstants.NO);
 		
-		String isServiceReqd = appConfigValuesDAO.getAppConfigValue(
+		String isServiceReqd = appConfigValuesService.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
 				CollectionConstants.APPCONFIG_VALUE_ISSERVICEREQD,
 				CollectionConstants.NO);

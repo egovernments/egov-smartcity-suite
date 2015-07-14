@@ -62,7 +62,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.ChequeAssignment;
@@ -77,7 +77,7 @@ public class ChequeAssignmentService {
 
         public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
         public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        @Autowired  private AppConfigValueService appConfigValuesService;
         protected PersistenceService persistenceService;
         private Query query;
         private List<ChequeAssignment> finalCBillChequeAssignmentList ;
@@ -911,7 +911,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                 finalChequeAssignmentList=new ArrayList<ChequeAssignment>();
                 finalCBillChequeAssignmentList = new ArrayList<ChequeAssignment>();
                 tempExpenseChequeAssignmentList = new ArrayList<ChequeAssignment>();
-                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
+                List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","APPROVEDVOUCHERSTATUS");
                 approvedstatus = appList.get(0).getValue();
                 List<String> descriptionList = new ArrayList<String>();
                 descriptionList.add("New");
@@ -989,7 +989,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                         salaryBillGlcodeList = populateGlCodeIds("salaryBillPurposeIds");
                         
                         //Contingent Bill
-                        appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CONTINGENCY_BILL_PURPOSE_IDS);
+                        appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CONTINGENCY_BILL_PURPOSE_IDS);
                         cBillGlcodeIdList = new ArrayList<BigDecimal>();
                         if(appList != null && appList.size() > 0 ) {
                                 Integer iPurposeIds [] = new Integer[appList.size()]; 
@@ -1016,7 +1016,7 @@ private BigDecimal getNonSubledgerDeductions(BigDecimal billVHId) {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting populateGlCodeIds...");
                 List<CChartOfAccounts> glCodeList = new ArrayList<CChartOfAccounts>();
                 
-                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,appConfigKey);
+                List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,appConfigKey);
                 String purposeids = appList.get(0).getValue();
                 if(purposeids != null && !purposeids.equals("")){
                         final String purposeIds[] = purposeids.split(",");

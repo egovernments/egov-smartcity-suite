@@ -58,10 +58,10 @@ import org.egov.commons.Functionary;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -98,7 +98,7 @@ public class SalaryBillRegisterAction extends BaseFormAction{
 	private Long billregisterId;
 	private List<EgSalaryCodes> earningsCodes = new ArrayList<EgSalaryCodes>();
 	private List<EgSalaryCodes> deductionsCodes = new ArrayList<EgSalaryCodes>();
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;	
 	private CChartOfAccounts	defaultNetPayCode;
 	
 	public SalaryBillRegisterAction() {
@@ -157,8 +157,8 @@ public class SalaryBillRegisterAction extends BaseFormAction{
 		netPayList = new ArrayList<EgBilldetails>();
 //		String salaryBillDefaultPurposeId = EGovConfig.getProperty("egf_config.xml","salaryBillDefaultPurposeId","","defaultValues");
 //		String salaryBillPurposeIds = EGovConfig.getProperty("egf_config.xml","salaryBillPurposeIds","","defaultValues");
-		List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","salaryBillPurposeIds");
-		List<AppConfigValues> defaultConfigValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","salaryBillDefaultPurposeId");
+		List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","salaryBillPurposeIds");
+		List<AppConfigValues> defaultConfigValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","salaryBillDefaultPurposeId");
 		String cBillDefaulPurposeId = defaultConfigValuesByModuleAndKey.get(0).getValue();
 		List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy("FROM CChartOfAccounts WHERE purposeid in ("+cBillDefaulPurposeId+") and isactiveforposting = 1 and classification=4");
 		for (CChartOfAccounts chartOfAccounts : salaryPayableCoa) {

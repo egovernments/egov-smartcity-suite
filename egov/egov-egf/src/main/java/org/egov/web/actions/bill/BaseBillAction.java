@@ -57,12 +57,12 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.workflow.Action;
@@ -104,7 +104,7 @@ public class BaseBillAction extends BaseVoucherAction {
         protected PersistenceService<Cbill, Long> cbillService;
         protected EgovCommon egovCommon;
         @Autowired
-        protected AppConfigValuesDAO appConfigValuesDAO;
+        protected AppConfigValueService appConfigValuesService;
         protected CChartOfAccounts      defaultNetPayCode;
         protected Long billRegisterId;
         protected static final String   FALSE   = "false";
@@ -144,7 +144,7 @@ public class BaseBillAction extends BaseVoucherAction {
         
         public boolean isBillNumberGenerationAuto()
         {
-                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","Bill_Number_Geneartion_Auto");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","Bill_Number_Geneartion_Auto");
                 billNumberGenerationAuto=false;
                 if(configValuesByModuleAndKey.size()>0)
                 {
@@ -405,14 +405,17 @@ public class BaseBillAction extends BaseVoucherAction {
                 this.eisUtilService = eisUtilService;
         }
 
-		public AppConfigValuesDAO getAppConfigValuesDAO() {
-			return appConfigValuesDAO;
+		
+
+
+		public AppConfigValueService getAppConfigValuesService() {
+			return appConfigValuesService;
 		}
 
-		public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
-			this.appConfigValuesDAO = appConfigValuesDAO;
+		public void setAppConfigValuesService(
+				AppConfigValueService appConfigValuesService) {
+			this.appConfigValuesService = appConfigValuesService;
 		}
-
 
 		public ChartOfAccountsHibernateDAO getChartOfAccountsHibernateDAO() {
 			return chartOfAccountsHibernateDAO;

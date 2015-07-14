@@ -65,7 +65,6 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
@@ -85,19 +84,15 @@ import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
-import org.egov.commons.dao.SchemeDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
-import org.egov.commons.dao.SubSchemeDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
-import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -109,6 +104,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -116,7 +112,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -127,8 +122,6 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
-import org.egov.model.budget.Budget;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.pims.commons.Designation;
@@ -136,7 +129,6 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.services.bills.BillsService;
-import org.egov.services.budget.BudgetService;
 import org.egov.services.voucher.EgfRecordStatusService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
@@ -149,7 +141,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -173,7 +164,8 @@ public class CreateVoucher {
         private static final String DD_MM_YYYY = "dd/MM/yyyy";
         private static final String REVERSAL_VOUCHER_DATE = "Reversal voucher date";
         private static final String VOUCHER_HEADER_ID = "Original voucher header id";
-        private AppConfigValuesDAO    appConfigValuesDAO;
+        
+
         final private static Logger LOGGER=Logger.getLogger(CreateVoucher.class);
         //Expenditure Types
         private final static String CONBILL="Works";
@@ -191,6 +183,7 @@ public class CreateVoucher {
         private final String SELECT ="  Please Select  ";
        @Autowired
         private AppConfigService appConfigService;
+       @Autowired  private AppConfigValueService appConfigValuesService;
        @Autowired
         private PersistenceService persistenceService; 
         //add here for other bills
@@ -476,7 +469,7 @@ public class CreateVoucher {
                                   * If NO, set the value as system date
                                   **/
                                 try{
-                                List<AppConfigValues> configValues =appConfigValuesDAO.
+                                List<AppConfigValues> configValues =appConfigValuesService.
                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"VOUCHERDATE_FROM_UI"); 
                                 
                                 for (AppConfigValues appConfigVal : configValues) {
@@ -500,7 +493,7 @@ public class CreateVoucher {
                                 else{
                                         
                                         try{
-                                                List<AppConfigValues> configValues =appConfigValuesDAO.
+                                                List<AppConfigValues> configValues =appConfigValuesService.
                                                                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"USE BILLDATE IN CREATE VOUCHER FROM BILL"); 
                                                 
                                                 for (AppConfigValues appConfigVal : configValues) {
@@ -2716,17 +2709,19 @@ public class CreateVoucher {
 				public void setPersistenceService(PersistenceService persistenceService) {
 					this.persistenceService = persistenceService;
 				}
-				public AppConfigValuesDAO getAppConfigValuesDAO() {
-					return appConfigValuesDAO;
-				}
-				public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
-					this.appConfigValuesDAO = appConfigValuesDAO;
-				}
+				
 				public FinancialYearDAO getFinancialYearDAO() {
 					return financialYearDAO;
 				}
 				public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
 					this.financialYearDAO = financialYearDAO;
+				}
+				public AppConfigValueService getAppConfigValuesService() {
+					return appConfigValuesService;
+				}
+				public void setAppConfigValuesService(
+						AppConfigValueService appConfigValuesService) {
+					this.appConfigValuesService = appConfigValuesService;
 				}
                 
 }

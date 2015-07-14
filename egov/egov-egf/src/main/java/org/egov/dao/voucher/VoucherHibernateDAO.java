@@ -59,9 +59,9 @@ import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
@@ -83,7 +83,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherHibernateDAO.class);
 	private PersistenceService<VoucherDetail, Integer> vdPersitSer;
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired  private AppConfigValueService appConfigValuesService;
 	public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
 			final Map<String, Object> searchFilterMap) throws EGOVException,ParseException{
 		
@@ -131,7 +131,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 		}
 			
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("sql===================="+ sql.toString());
-		final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
+		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		final String statusExclude = appList.get(0).getValue();
 		
 		List<CVoucherHeader> list = (List<CVoucherHeader>)findAllBy(" from CVoucherHeader vh where vh.status not in ("+statusExclude+") "+sql.toString()+" order by vh.cgn,vh.voucherNumber,vh.voucherDate ");

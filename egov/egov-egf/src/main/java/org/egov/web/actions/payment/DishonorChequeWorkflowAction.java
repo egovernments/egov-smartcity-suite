@@ -72,13 +72,13 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
@@ -123,7 +123,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
         private EisCommonService eisCommonService; 
         private boolean isRestrictedtoOneFunctionCenter;
         @Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;
+        private AppConfigValueService appConfigValuesService;
         private CVoucherHeader paymentVoucher ;
         private static final String     APPROVE = "approve";
         private final SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
@@ -392,10 +392,10 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
         private String createReversalVoucher() throws ParseException{
                 
                 String appConfigKey = "GJV_FOR_RCPT_CHQ_DISHON";
-                AppConfigValues appConfigValues = appConfigValuesDAO.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
+                AppConfigValues appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
                 String gjvForRcpt=appConfigValues.getValue();
                 CVoucherHeader voucherHeader=null;  
-                //DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
+                //DishonoredEntriesDelegate delegat	e = new DishonoredEntriesDelegate();
                 
                 //Create bank charges 
                 if(dishonorChequeView.getBankChargesAmt().compareTo(BigDecimal.ZERO)>0){

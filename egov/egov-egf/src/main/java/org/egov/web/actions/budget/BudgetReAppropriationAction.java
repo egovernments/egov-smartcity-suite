@@ -62,12 +62,12 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -117,7 +117,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	private String type="";
 	String finalStatus = "";
 	private static final String ACTIONNAME="actionName";
-	@Autowired AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired   AppConfigValueService appConfigValuesService;
 	private String message = "";
 	
 	public BudgetReAppropriationMisc getAppropriationMisc() {
@@ -376,7 +376,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 	
 	protected String getFinalStatus() {
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"budget_final_approval_status").get(0).getValue();
+		return appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"budget_final_approval_status").get(0).getValue();
 	}
 
 	public String loadActuals(){

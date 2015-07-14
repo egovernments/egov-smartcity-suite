@@ -143,12 +143,12 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
@@ -213,7 +213,7 @@ public class PropertyTaxUtil {
 	@Autowired
 	private EisCommonService eisCommonService;
 	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	@Autowired
 	private ModuleService moduleService;
 	@Autowired
@@ -221,7 +221,7 @@ public class PropertyTaxUtil {
 	@Autowired
 	private PtDemandDao ptDemandDAO;
 	@Autowired
-	private BoundaryCategoryDao boundaryCategoryDAO;
+	private BoundaryCategoryDao boundaryCategoryDAO;	
 
 	@Autowired
 	private DemandGenericHibDao demandGenericDAO;
@@ -748,7 +748,7 @@ public class PropertyTaxUtil {
 	public String getAppConfigValue(String key, String moduleName) {
 		String value = "";
 		if (key != null && moduleName != null) {
-			AppConfigValues appConfigValues = appConfigValuesDAO.getAppConfigValueByDate(moduleName, key, new Date());
+			AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(moduleName, key, new Date());
 			if (appConfigValues != null) {
 				value = appConfigValues.getValue();
 			}
@@ -772,7 +772,7 @@ public class PropertyTaxUtil {
 	 * @return <code>String</code> representing the configuration value
 	 */
 	public String getAppConfigValue(String moduleName, String key, String defaultValue) {
-		AppConfigValues appConfigValues = appConfigValuesDAO.getAppConfigValueByDate(moduleName, key, new Date());
+		AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(moduleName, key, new Date());
 		return appConfigValues == null ? defaultValue : appConfigValues.getValue();
 	}
 

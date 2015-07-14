@@ -57,9 +57,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.web.actions.report.IEStatementEntry;
@@ -74,8 +74,8 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReportService  {
-	@Autowired AppConfigValuesDAO appConfigValuesDAO;
-	int minorCodeLength;
+	@Autowired AppConfigValueService appConfigValuesService;
+	int minorCodeLength;	
 	List<Character> coaType = new ArrayList<Character>();
 	private FinancialYearHibernateDAO financialYearDAO;
 	String voucherStatusToExclude;
@@ -204,7 +204,7 @@ public abstract class ReportService  {
 
 	public String getAppConfigValueFor(String module, String key) {
 		try {
-			return appConfigValuesDAO
+			return appConfigValuesService
 					.getConfigValuesByModuleAndKey(module, key).get(0)
 					.getValue();
 		} catch (Exception e) {

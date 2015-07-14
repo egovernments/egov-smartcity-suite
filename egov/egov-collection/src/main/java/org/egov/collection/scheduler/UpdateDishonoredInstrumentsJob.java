@@ -61,8 +61,8 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.config.AppData;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -77,7 +77,8 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 	private static final long serialVersionUID = 1L;
 
 	protected PersistenceService persistenceService;
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 	@Autowired
 	private ReceiptHeaderService receiptHeaderService;
 
@@ -130,7 +131,7 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 			
 			bouncedToDate = DateUtils.add(bouncedToDate,Calendar.DAY_OF_MONTH , 1);
 			
-			AppData appData = (AppData) appConfigValuesDAO.getConfigValuesByModuleAndKey(
+			AppData appData = (AppData) appConfigValuesService.getConfigValuesByModuleAndKey(
 							CollectionConstants.MODULE_NAME_COLLECTIONS,
 							CollectionConstants.BOUNCEDINSTRUPDATE_RECONDATE);
 			bouncedFromDate = sdf.parse(appData.getValue());

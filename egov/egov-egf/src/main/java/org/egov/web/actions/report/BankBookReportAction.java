@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -69,9 +71,9 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
@@ -84,8 +86,6 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.jasperreports.engine.JRException;
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BankBookReport.pdf"}),
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BankBookReport.xls"})
@@ -122,7 +122,7 @@ public class BankBookReportAction extends BaseFormAction{
 	private StringBuffer header=new StringBuffer();
 	private Date todayDate;
 	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;
+	private AppConfigValueService appConfigValuesService;
 	private SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 	private List<String> voucherNo=new ArrayList<String>();
 	private boolean isCreditOpeningBalance=false;
@@ -565,7 +565,7 @@ public class BankBookReportAction extends BaseFormAction{
 
 	private String getAppConfigValueFor(String module,String key){
 		try {
-			return appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
+			return appConfigValuesService.getConfigValuesByModuleAndKey(module,key).get(0).getValue();
 		} catch (Exception e) {
 			throw new ValidationException(EMPTY_STRING,"The key '"+key+"' is not defined in appconfig");
 		}

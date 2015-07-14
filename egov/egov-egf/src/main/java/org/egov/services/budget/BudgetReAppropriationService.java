@@ -51,11 +51,11 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -76,7 +76,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 	BudgetDetailConfig budgetDetailConfig;
 	PersistenceService persistenceService;
 	SequenceGenerator sequenceGenerator;
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired  private AppConfigValueService appConfigValuesService;
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 	private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationService.class);
 	protected ScriptService sequenceNumberScript;
@@ -354,7 +354,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
 	private String getAppConfigFor(String module,String key) {
 		try {
-			List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key);
+			List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(module,key);
 			return list.get(0).getValue().toString();
 		} catch (Exception e) {
 			throw new ValidationException(Arrays.asList(new ValidationError(key+" not defined in appconfig",key+" not defined in appconfig")));

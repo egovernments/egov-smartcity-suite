@@ -51,7 +51,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -66,12 +66,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DEReportService {
 
 	final static Logger LOGGER = Logger.getLogger(DEReportService.class);
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;	
 	private FinancialYearHibernateDAO financialYearDAO;
 	private PersistenceService persistenceService;
 	   
 	
-	public Date getPreviousYearFor(Date date) {
+	public Date getPreviousYearFor(Date date) {	
 		GregorianCalendar previousYearToDate = new GregorianCalendar();
 		previousYearToDate.setTime(date);
 		int prevYear = previousYearToDate.get(Calendar.YEAR) - 1;

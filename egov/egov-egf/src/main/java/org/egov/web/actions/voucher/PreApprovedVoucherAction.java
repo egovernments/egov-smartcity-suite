@@ -66,7 +66,6 @@ import org.egov.commons.Relation;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
-import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVException;
@@ -74,6 +73,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -81,7 +81,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -138,7 +137,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         protected List<String> mandatoryFields = new ArrayList<String>();
         protected EisUtilService eisService;
         private static  BillsService billsMngr=null;
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        private @Autowired AppConfigValueService appConfigValuesService;		
         private BillsAccountingService billsAccountingService;
         private BillsService billsManager;
         private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
@@ -221,7 +220,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         {
                 egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?", Long.valueOf(parameters.get(BILLID)[0]));
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("egBillregister=="+egBillregister);
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
                 final String pjv_wc_enabled = appList.get(0).getValue();
                 // loading aprover user info
                 preApprovedVoucher.setVoucherDate(new Date());
@@ -229,7 +228,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 getHeaderMandateFields();
                 String purposeValueVN="",purposeValue="";
                 try{
-                        List<AppConfigValues> configValues =appConfigValuesDAO.
+                        List<AppConfigValues> configValues =appConfigValuesService.
                                         getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"VOUCHERDATE_FROM_UI"); 
                         
                         for (AppConfigValues appConfigVal : configValues) {
@@ -283,7 +282,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                                  throw new ValidationException(errors);
                         }
                 }
-                List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
+                List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
                 String pjv_wc_enabled = appList.get(0).getValue();
                 
                 type = billsManager.getBillTypeforVoucher(voucherHeader);
@@ -466,7 +465,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                         }
                         getMasterDataForBill();
                         //Check if budgetary Appropriation is enabled for the application. Only if required we need to do the check.
-                        List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
+                        List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
                         Long vhid = null;
                         if(list.isEmpty())
                                 throw new ValidationException(EMPTY_STRING,"budgetCheckRequired is not defined in AppConfig");

@@ -55,7 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class GeneralLedgerReport {
     CommnFunctions cmnFun=new CommnFunctions();
     
     @Autowired
-     private AppConfigValuesDAO appConfigValuesDAO;
+    private AppConfigValueService appConfigValuesService;
     
 	public GeneralLedgerReport(){}
 /**
@@ -966,7 +966,7 @@ public class GeneralLedgerReport {
 				functionCondition = " and gl.functionid=? ";
 			String queryTillDateOpBal="";
 			String defaultStatusExclude=null;
-			List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+			List<AppConfigValues> listAppConfVal=appConfigValuesService.
 			getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 			if(null!= listAppConfVal)
 			{

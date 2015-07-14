@@ -183,8 +183,8 @@ public class ContingentBillAction extends BaseBillAction {
         }
         
         private void getNetPayableCodes() {
-                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","contingencyBillPurposeIds");
-                List<AppConfigValues>  configValuesByModuleAndKeydefault = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","contingencyBillDefaultPurposeId");
+                List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","contingencyBillPurposeIds");
+                List<AppConfigValues>  configValuesByModuleAndKeydefault = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","contingencyBillDefaultPurposeId");
                 String tempCBillDefaulPurposeId = configValuesByModuleAndKeydefault.get(0).getValue();
                 Long cBillDefaulPurposeId = Long.valueOf(tempCBillDefaulPurposeId);
                 netPayList = new ArrayList<CChartOfAccounts>();

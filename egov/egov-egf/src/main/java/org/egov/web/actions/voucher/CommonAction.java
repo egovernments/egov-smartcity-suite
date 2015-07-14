@@ -90,9 +90,9 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
@@ -105,7 +105,6 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.masters.SubSchemeAction;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -175,11 +174,11 @@ public class CommonAction extends BaseFormAction{
 	private String billType;
 	private String searchType;
 	@Autowired
-        private AppConfigValuesDAO appConfigValuesDAO;  
+        private AppConfigValueService appConfigValuesService;
 	private List<AppConfigValues>	checkList;
 	private RelationService relationService;
 	private String accountDetailTypeName;
-	private String typeOfAccount;
+	private String typeOfAccount;	
 	private Date asOnDate;
 	private String scriptName;
 	private Long recoveryId;
@@ -829,7 +828,7 @@ public class CommonAction extends BaseFormAction{
 			if(billSubType!=null && !billSubType.equalsIgnoreCase("")){
 				String bankAccount= null;
 				try{
-					List<AppConfigValues> configValues =appConfigValuesDAO.
+					List<AppConfigValues> configValues =appConfigValuesService.
 							getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.EB_VOUCHER_PROPERTY_BANKACCOUNT); 
 					
 					for (AppConfigValues appConfigVal : configValues) {
@@ -1195,10 +1194,10 @@ public String ajaxLoadCheckList()
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadCheckList...");
 	if(LOGGER.isInfoEnabled())     LOGGER.info("..............................................................................ajaxLoadCheckList");
 	EgBillSubType egBillSubType =(EgBillSubType) persistenceService.find("from EgBillSubType where id=?",billSubtypeId);
-	checkList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
+	checkList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
 	if(checkList.size()==0)
 	{
-		checkList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
+		checkList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
 	}
 
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadCheckList.");
@@ -1968,7 +1967,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksWithPaymentInWorkFlow...");
 		try {
 			String voucherStatusKey = parameters.get("voucherStatusKey")[0];
-			List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
+			List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
 			if(appConfig == null || appConfig.isEmpty())
 				throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 			
@@ -2070,7 +2069,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		try {
 			accNumList = new ArrayList<Bankaccount>();
 			String voucherStatusKey = parameters.get("voucherStatusKey")[0];
-			List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
+			List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,voucherStatusKey);
 			if(appConfig == null || appConfig.isEmpty())
 				throw new ValidationException("","VOUCHER_STATUS_TO_CHECK_BANK_BALANCE is not defined in AppConfig");
 

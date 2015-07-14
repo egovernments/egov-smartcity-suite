@@ -63,13 +63,13 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -81,7 +81,6 @@ import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 public class CollectionsUtil {
 	private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
@@ -92,8 +91,8 @@ public class CollectionsUtil {
 	private PersistenceService<Script, Long> scriptService;
 	@Autowired
 	private ModuleService moduleService;
-	@Autowired
-	private AppConfigValuesDAO appConfigValuesDAO;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 	@Autowired
 	private EisCommonService eisCommonService;
 	private EISServeable eisService;
@@ -419,7 +418,7 @@ public class CollectionsUtil {
 	 * @return <code>String</code> representing the configuration value
 	 */
 	public String getAppConfigValue(String moduleName, String key, String defaultValue) {
-		AppConfigValues configVal = appConfigValuesDAO.getAppConfigValueByDate(moduleName, key, new Date());
+		AppConfigValues configVal = appConfigValuesService.getAppConfigValueByDate(moduleName, key, new Date());
 		return configVal == null ? defaultValue : configVal.getValue();
 	}
 
@@ -435,7 +434,7 @@ public class CollectionsUtil {
 	 * @return <code>String</code> representing the configuration value
 	 */
 	public String getAppConfigValue(String moduleName, String key) {
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
+		return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key).get(0).getValue();
 	}
 
 	/**
@@ -452,7 +451,7 @@ public class CollectionsUtil {
 	 *         configuration values
 	 */
 	public List<AppConfigValues> getAppConfigValues(String moduleName, String key) {
-		return appConfigValuesDAO.getConfigValuesByModuleAndKey(moduleName, key);
+		return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
 	}
 
 	/**
@@ -599,8 +598,8 @@ public class CollectionsUtil {
 	 * 
 	 */
 	public boolean isPropertyTaxArrearAccountHead(String glcode, String description) {
-		List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-		AppConfigValues penaltyGlCode = appConfigValuesDAO.getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+		List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+		AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
 		boolean retValue = false;
 		LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
 		if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {

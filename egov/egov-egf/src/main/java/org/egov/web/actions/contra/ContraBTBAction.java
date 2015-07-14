@@ -74,10 +74,10 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
@@ -140,10 +140,10 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private String mode;
 	private VoucherService voucherService;
 	private VoucherTypeBean voucherTypeBean;
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;
 	private Long vhId;
 	private String departmentName;
-	private Long departmentId;
+	private Long departmentId;	
 	private String usrName;
 	private Paymentheader paymentheader;
 	private PaymentService paymentService;
@@ -183,7 +183,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 				.findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=1 order by coa.glcode ");
 		addDropdownData("interFundList", glCodeList);
 		LoadAjaxedDropDowns();
-		List<AppConfigValues> appConfig = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"BANKBALANCE_CHECK_DATE");
+		List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"BANKBALANCE_CHECK_DATE");
 		if(appConfig == null || appConfig.isEmpty())
 			throw new ValidationException("","BANKBALANCE_CHECK_DATE is not defined in AppConfig");
 		startDateForBalanceCheckStr = appConfig.get(0).getValue();

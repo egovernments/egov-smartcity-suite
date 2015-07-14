@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -89,8 +90,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(applicationNumber);
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        model.addAttribute("parentConnection", waterConnectionService.findParentWaterConnection(waterConnectionDetails
-                .getConnection().getPropertyIdentifier()));
+        model.addAttribute("parentConnection", new WaterConnection());
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute(
                 "connectionType",

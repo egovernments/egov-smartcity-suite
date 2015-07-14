@@ -58,7 +58,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
@@ -100,8 +100,7 @@ public class TrialBalance
 	private BigDecimal totalDebitAmount=BigDecimal.ZERO;
 	private BigDecimal totalCreditAmount=BigDecimal.ZERO;
 	
-	@Autowired
-	    private AppConfigValuesDAO appConfigValuesDAO;
+	@Autowired  private AppConfigValueService appConfigValuesService;
 	
 	//	This method is called by the TrialBalance.jsp
 	public ArrayList getTBReport(String asOnDate,String fId,String departmentId,String functionaryId,String functionCodeId,String fieldId)throws Exception
@@ -186,7 +185,7 @@ public String getDateTime() throws Exception
 			tsFieldIdCond=" and divisionId= ?";
 		}
 		String defaultStatusExclude=null;
-		List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+		List<AppConfigValues> listAppConfVal=appConfigValuesService.
 		getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 		if(null!= listAppConfVal)
 		{
@@ -849,7 +848,7 @@ public String getDateTime() throws Exception
     			tsFieldIdCond=" and divisionId= ?";
     		}
     		String defaultStatusExclude=null;
-			List<AppConfigValues> listAppConfVal=appConfigValuesDAO.
+			List<AppConfigValues> listAppConfVal=appConfigValuesService.
 			getConfigValuesByModuleAndKey("finance","statusexcludeReport");
 			if(null!= listAppConfVal)
 			{

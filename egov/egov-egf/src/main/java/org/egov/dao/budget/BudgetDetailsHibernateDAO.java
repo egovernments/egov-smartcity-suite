@@ -72,11 +72,11 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -111,7 +111,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	private static final String EMPTY_STRING="";
 	private PersistenceService persistenceService;
 	private PersistenceService service;
-    private AppConfigValuesDAO appConfigValuesDAO;	
+	@Autowired  private AppConfigValueService appConfigValuesService;	
 	private String budgetFinalStatus=null;
 	protected ScriptService scriptExecutionService;
 	protected SequenceGenerator sequenceGenerator;	
@@ -581,7 +581,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 		if(boundaryid!=null && boundaryid!=0)
 				query = query+getQuery(Boundary.class, boundaryid," and bd.boundary=");
 		
-		List<AppConfigValues> appconfiglist =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budget_final_approval_status");
+		List<AppConfigValues> appconfiglist =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budget_final_approval_status");
 		if(appconfiglist.isEmpty())
 			throw new ValidationException(EMPTY_STRING,"budget_final_approval_status is not defined in AppConfig");
 
@@ -594,7 +594,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	{
 		String query=EMPTY_STRING;
 		
-		List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
 		if(list.isEmpty())
 		{
 			throw new ValidationException(EMPTY_STRING,"budgetaryCheck_groupby_values is not defined in AppConfig");
@@ -658,7 +658,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					throw new ValidationException(EMPTY_STRING,"budgetaryCheck_groupby_values is not matching="+values[i]);
 			}
 		}
-		List<AppConfigValues> appconfiglist =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budget_final_approval_status");
+		List<AppConfigValues> appconfiglist =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budget_final_approval_status");
 		if(appconfiglist.isEmpty())
 			throw new ValidationException(EMPTY_STRING,"budget_final_approval_status is not defined in AppConfig");
 
@@ -675,7 +675,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	}
 	
 	protected List<String> getFieldConfigValues() {
-		List<AppConfigValues> appconfigFieldlist = appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues> appconfigFieldlist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
 		return Arrays.asList(appconfigFieldlist.get(0).getValue().split(","));
 	}
 
@@ -830,7 +830,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			if(budgetgroup==null || budgetgroup.getId()==null)
 				throw new ValidationException(EMPTY_STRING,"Budget Head is not defined for this id [ "+budgetheadid+" ]");
 			
-			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"coa_majorcode_length");
+			List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"coa_majorcode_length");
 			if(appList.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"coa_majorcode_length is not defined in AppConfig");
 			int majorcodelength = Integer.valueOf(appList.get(0).getValue());
@@ -857,7 +857,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 				select=" SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
 			}
 			
-			List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"exclude_status_forbudget_actual");
+			List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"exclude_status_forbudget_actual");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"exclude_status_forbudget_actual is not defined in AppConfig");
 			
@@ -948,7 +948,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	        	throw new ValidationException(EMPTY_STRING,"Financial year is not fefined for this date ["+sdf.format(asondate)+"]");
 	        fromdate = finyear.getStartingDate();
 
-	        List<AppConfigValues> budgetGrouplist =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
+	        List<AppConfigValues> budgetGrouplist =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
 			if(budgetGrouplist.isEmpty())
 			{
 				throw new ValidationException(EMPTY_STRING,"budgetaryCheck_groupby_values is not defined in AppConfig");
@@ -995,7 +995,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			else
 				select=" SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
 			
-			List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"exclude_status_forbudget_actual");
+			List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"exclude_status_forbudget_actual");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"exclude_status_forbudget_actual is not defined in AppConfig");
 			
@@ -1466,7 +1466,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 		
 		try
 		{
-			List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
+			List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"budgetCheckRequired is not defined in AppConfig");
 			
@@ -1490,7 +1490,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 				throw new ValidationException(EMPTY_STRING,"Both Debit and Credit amount is greater than zero");
 			
 			// get the type of budget from appconfig .
-			list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetaryCheck_budgettype_cashbased");
+			list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budgetaryCheck_budgettype_cashbased");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"budgetaryCheck_budgettype_cashbased is not defined in AppConfig");
 			
@@ -1709,12 +1709,12 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	{                               
 		try
 		{
-			List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"coa_majorcode_length");
+			List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"coa_majorcode_length");
 			if(appList.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"coa_majorcode_length is not defined");
 			int majorcodelength = Integer.valueOf(appList.get(0).getValue());
 			
-			appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"coa_minorcode_length");
+			appList = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"coa_minorcode_length");
 			if(appList.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"coa_minorcode_length is not defined");
 			int minorcodelength = Integer.valueOf(appList.get(0).getValue());
@@ -1868,7 +1868,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 		Date fromdate = null;
 		try
 		{
-			List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
+			List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budgetCheckRequired");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"budgetCheckRequired is not defined in AppConfig");
 			
@@ -1897,7 +1897,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 				throw new ValidationException(EMPTY_STRING,"Both Debit and Credit amount is greater than zero");
 			
 			// get the type of budget from appconfig .
-			list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,"budgetaryCheck_budgettype_cashbased");
+			list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,"budgetaryCheck_budgettype_cashbased");
 			if(list.isEmpty())
 				throw new ValidationException(EMPTY_STRING,"budgetaryCheck_budgettype_cashbased is not defined in AppConfig");
 			
@@ -2085,7 +2085,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			if(asondate==null)
 				throw new ValidationException(EMPTY_STRING,"As On Date is null");
 
-			List<AppConfigValues> budgetGrouplist =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
+			List<AppConfigValues> budgetGrouplist =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
 			if(budgetGrouplist.isEmpty())
 			{
 				throw new ValidationException(EMPTY_STRING,"budgetaryCheck_groupby_values is not defined in AppConfig");
@@ -2332,7 +2332,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	
 	private String getAppConfigFor(String module,String key) {
 		try {
-			List<AppConfigValues> list = appConfigValuesDAO.getConfigValuesByModuleAndKey(module,key);
+			List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(module,key);
 			return list.get(0).getValue().toString();
 		} catch (Exception e) {
 			throw new ValidationException(Arrays.asList(new ValidationError(key+" not defined in appconfig",key+" not defined in appconfig")));
@@ -2377,7 +2377,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 		Map<String, String> grpByVls = new HashMap<String, String>();
 		List<BudgetUsage> listBudgetUsage = null;
 		query.append("select bu from BudgetUsage bu,BudgetDetail bd where  bu.budgetDetail.id=bd.id");
-		List<AppConfigValues> list =appConfigValuesDAO.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues> list =appConfigValuesService.getConfigValuesByModuleAndKey(EGF,BUDGETARY_CHECK_GROUPBY_VALUES);
 		if(list.isEmpty())
 		{
 			throw new ValidationException(EMPTY_STRING,"budgetaryCheck_groupby_values is not defined in AppConfig");
@@ -2584,12 +2584,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 	public void setBudgetService(BudgetService budgetService) {
 		this.budgetService = budgetService;
 	}
-	public AppConfigValuesDAO getAppConfigValuesDAO() {
-		return appConfigValuesDAO;
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
 	}
-	public void setAppConfigValuesDAO(AppConfigValuesDAO appConfigValuesDAO) {
-		this.appConfigValuesDAO = appConfigValuesDAO;
+	public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
 	}
+	
 		
 	
 }

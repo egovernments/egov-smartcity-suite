@@ -213,7 +213,7 @@ public class BalanceSheetService extends ReportService{
 
 	public void populateBalanceSheet(Statement balanceSheet){
 		try{
-			List<AppConfigValues> configValues =appConfigValuesDAO.
+			List<AppConfigValues> configValues =appConfigValuesService.
 					getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,FinancialConstants.REMOVE_ENTRIES_WITH_ZERO_AMOUNT_IN_REPORT); 
 			
 			for (AppConfigValues appConfigVal : configValues) {

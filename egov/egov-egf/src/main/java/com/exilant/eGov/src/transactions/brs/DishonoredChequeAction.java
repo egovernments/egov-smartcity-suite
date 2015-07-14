@@ -82,13 +82,13 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -122,7 +122,7 @@ public class DishonoredChequeAction extends DispatchAction {
         private static final String ERROR = "error";
         private static final String SUCCESS = "success";
         private InstrumentService instrumentService;
-        protected @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        protected @Autowired AppConfigValueService appConfigValuesService;
         private boolean isRestrictedtoOneFunctionCenter;
         public PersistenceService<InstrumentHeader, Long> instrumentHeaderService ;
         PersistenceService persistenceService;
@@ -759,7 +759,7 @@ public class DishonoredChequeAction extends DispatchAction {
                 //String functionId=null;
                 String departmentId=null;
                 String appConfigKey = "GJV_FOR_RCPT_CHQ_DISHON";
-                AppConfigValues appConfigValues = appConfigValuesDAO.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
+                AppConfigValues appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
                 String gjvForRcpt=appConfigValues.getValue();
                 //DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
                 try{

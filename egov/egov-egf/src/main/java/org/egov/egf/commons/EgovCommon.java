@@ -80,11 +80,11 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -112,7 +112,7 @@ public class EgovCommon {
 
         private static final Logger LOGGER = Logger.getLogger(EgovCommon.class);
         private PersistenceService persistenceService;
-        private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+        @Autowired  private AppConfigValueService appConfigValuesService;
         @Autowired
         private ChartOfAccountsDAO chartOfAccountsDAO;
         @Autowired
@@ -210,7 +210,7 @@ public class EgovCommon {
                                         .findAllBy(opBalncQuery1.toString(), cashInHandCode, fundId);
                         opeAvailable1 = BigDecimal.valueOf((Double) tsummarylist.get(0));
 
-                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                         "EGF", "cancelledstatus");
                         final String statusExclude = appList.get(0).getValue();
 
@@ -309,7 +309,7 @@ public class EgovCommon {
                         Integer glcodeid = Integer.valueOf(list.get(0).toString());
                         CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
                                         "from CChartOfAccounts where id=?", Long.valueOf(glcodeid));
-                        final List<AppConfigValues> paymentStatusList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> paymentStatusList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                         "EGF", "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
                         for (AppConfigValues values : paymentStatusList) {
                                 paymentWFStatus = paymentWFStatus + "'" + values.getValue()
@@ -319,7 +319,7 @@ public class EgovCommon {
                                 paymentWFStatus = paymentWFStatus.substring(0, paymentWFStatus
                                                 .length() - 1);
 
-                        final List<AppConfigValues> preAppList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> preAppList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                         "EGF", "PREAPPROVEDVOUCHERSTATUS");
                         final String preApprovedStatus = preAppList.get(0).getValue();
 
@@ -502,7 +502,7 @@ public class EgovCommon {
                 BigDecimal opeAvailable = BigDecimal.ZERO;
                 BigDecimal bankBalance = BigDecimal.ZERO;
 
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF",
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                                                 "Balance Check Based on Fund Flow Report");
                 final String balanceChequeBasedOnFundFlowReport = appList.get(0).getValue();
 
@@ -639,7 +639,7 @@ public class EgovCommon {
                                                         bankId);
                         Integer glcodeid = Integer.valueOf(list.get(0).toString());
 
-                        final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                         "finance", "statusexcludeReport");
                         final String statusExclude = appList.get(0).getValue();
 
@@ -678,7 +678,7 @@ public class EgovCommon {
                                                                 " from org.egov.infra.workflow.entity.State where id in (select state.id from Paymentheader where id=?) ",
                                                                 paymentId);
                                 String paymentWFStatus = "";
-                                final List<AppConfigValues> paymentStatusList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                                final List<AppConfigValues> paymentStatusList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                                 "EGF",
                                                                 "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
                                 for (AppConfigValues values : paymentStatusList) {
@@ -691,7 +691,7 @@ public class EgovCommon {
                                         paymentWFStatus = paymentWFStatus.substring(0,
                                                         paymentWFStatus.length() - 1);
 
-                                final List<AppConfigValues> preAppList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                                final List<AppConfigValues> preAppList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                                 "EGF", "PREAPPROVEDVOUCHERSTATUS");
                                 final String preApprovedStatus = preAppList.get(0).getValue();
 
@@ -793,7 +793,7 @@ public class EgovCommon {
                 Long cashInHandId = null;
                 // String
                 // boundaryTypeval=EGovConfig.getProperty("egf_config.xml","city","","BoundaryType");
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF, "boundaryforaccounts");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF, "boundaryforaccounts");
                 final String boundaryTypeval = appList.get(0).getValue();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Boundary Type Level  = " + boundaryTypeval);
                 if (null == boundaryTypeval || boundaryTypeval.trim().equals(""))
@@ -862,7 +862,7 @@ public class EgovCommon {
         }
 
         public boolean isShowChequeNumber() {
-                String value = appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CHEQUE_NO_GENERATION_APPCONFIG_KEY).get(0)
+                String value = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,Constants.CHEQUE_NO_GENERATION_APPCONFIG_KEY).get(0)
                                 .getValue();
                 if ("Y".equalsIgnoreCase(value))
                         return false;
@@ -1153,7 +1153,7 @@ public class EgovCommon {
                 }
 
 
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {
                         glCodeBalQry
@@ -1244,7 +1244,7 @@ public class EgovCommon {
                 }
 
 
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {
                         glCodeBalQry
@@ -1840,7 +1840,7 @@ public class EgovCommon {
                 BigDecimal subledgerDbtBalance = BigDecimal.ZERO;
                 BigDecimal subledgerCrdBalance = BigDecimal.ZERO;
 
-                final List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey(
+                final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
                                                 "finance", "statusexcludeReport");
                 final String statusExclude = appList.get(0).getValue();
                 if (null == accountdetailType && null == accountdetailkey) {

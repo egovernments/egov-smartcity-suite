@@ -66,10 +66,10 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
@@ -131,19 +131,19 @@ public class BudgetSearchAction extends BaseFormAction{
 	protected String nextfinYearRange = "";
 	private String previousfinYearRange = "";
 	private String twopreviousfinYearRange = "";
-	private @Autowired AppConfigValuesDAO appConfigValuesDAO;
+	private @Autowired AppConfigValueService appConfigValuesService;
 	private boolean shouldShowREAppropriations=true;
 	List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
 	public String getMessage(){
 		return message;
 	}
-	
+		
 	public boolean isRe() {
 		return re;
 	}
 	
 	public List<AppConfigValues> getExcludeStatusForBudget(){
-		excludeList=appConfigValuesDAO.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
+		excludeList=appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
 		 return excludeList;
 	}
 	public boolean isErrorMessage() {
@@ -591,7 +591,7 @@ public class BudgetSearchAction extends BaseFormAction{
 		return previousfinYearRange;
 	}
 	private boolean getConsiderReAppropriationAsSeperate(){
-		List<AppConfigValues> appList = appConfigValuesDAO.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
+		List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
 		String appValue = "-1"; 
 		appValue = appList.get(0).getValue();
 		return "Y".equalsIgnoreCase(appValue);
