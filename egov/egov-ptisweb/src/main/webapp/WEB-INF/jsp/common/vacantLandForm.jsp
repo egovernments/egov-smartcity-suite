@@ -78,45 +78,35 @@
         
         <td class="blueborderfortd">
 		   <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
-				name="dateOfCompletion" id="propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
+				name="propertyDetail.dateOfCompletion" id="propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
 				size="10" maxlength="10"></s:textfield>
 		</td>
     </tr>
     
    <tr>
-   <td colspan="5">
-     <br/>
-      <table class="tablebottom" style="width: 100%;">
-         <tbody>
-            <tr>
-               <th class="bluebgheadtd"><s:text name="North" /></th>
-               <th class="bluebgheadtd"><s:text name="East" /></th>
-               <th class="bluebgheadtd"><s:text name="West" /></th>
-               <th class="bluebgheadtd"><s:text name="South" /></th>
-            </tr>
- 
-           <tr>
-		        <td class="blueborderfortd" align="center">
-				   <s:textfield name="basicProperty.propertyID.northBoundary" id="basicProperty.propertyID.northBoundary"
-				   maxlength="64" value="%{basicProperty.propertyID.northBoundary}" />
-				</td>
-				<td class="blueborderfortd" align="center">
-				   <s:textfield name="basicProperty.propertyID.eastBoundary" id="basicProperty.propertyID.eastBoundary"
-				   maxlength="64" value="%{basicProperty.propertyID.eastBoundary}" />
-				</td>
-				<td class="blueborderfortd" align="center">
-				   <s:textfield name="basicProperty.propertyID.westBoundary" id="basicProperty.propertyID.westBoundary"
-				   maxlength="64" value="%{basicProperty.propertyID.westBoundary}" />
-				</td>
-				<td class="blueborderfortd" align="center">
-				   <s:textfield name="basicProperty.propertyID.southBoundary" id="basicProperty.propertyID.southBoundary"
-				   maxlength="64" value="%{basicProperty.propertyID.southBoundary}" />
-				</td>
-		    </tr>
-            
-         </tbody>
-      </table>
-   </td>
-</tr>
+		<td colspan="6"><br />
+			<table class="tablebottom" style="width: 100%;">
+				<tbody>
+					<tr>
+						<th class="bluebgheadtd"><s:text name="North" /></th>
+						<th class="bluebgheadtd"><s:text name="East" /></th>
+						<th class="bluebgheadtd"><s:text name="West" /></th>
+						<th class="bluebgheadtd"><s:text name="South" /></th>
+					</tr>
+					<tr>
+						<td class="blueborderfortd" align="center"><s:textfield name="northBoundary" id="northBoundary" maxlength="64"
+								value="%{northBoundary}" /></td>
+						<td class="blueborderfortd" align="center"><s:textfield name="eastBoundary" id="eastBoundary" maxlength="64"
+								value="%{eastBoundary}" /></td>
+						<td class="blueborderfortd" align="center"><s:textfield name="westBoundary" id="westBoundary" maxlength="64"
+								value="%{westBoundary}" /></td>
+						<td class="blueborderfortd" align="center"><s:textfield	name="southBoundary" id="southBoundary" maxlength="64"
+								value="%{southBoundary}" /></td>
+					</tr>
+
+				</tbody>
+			</table>
+			</td>
+	</tr>
 	
 </table>

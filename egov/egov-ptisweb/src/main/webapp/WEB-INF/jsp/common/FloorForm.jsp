@@ -243,6 +243,14 @@
 					</div>
 				</td>
 
+               <td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
+						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
+							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
+							cssStyle="width:100%" />
+						
+					</div>
+				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
@@ -250,14 +258,6 @@
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
 							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
-					</div>
-				</td>
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
-							cssStyle="width:100%" />
-						
 					</div>
 				</td>
 

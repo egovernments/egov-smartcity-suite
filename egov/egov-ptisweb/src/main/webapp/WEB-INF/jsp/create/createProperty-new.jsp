@@ -57,7 +57,46 @@
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script type="text/javascript">
+
+</head>
+ 
+  <body onload="loadOnStartUp();">
+  
+  <div align="left">
+  	<s:actionerror/>
+  </div>
+    <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
+
+  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" validate="true">
+  
+  <s:push value="model">
+  <s:token />
+  
+  <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
+  <s:hidden name="mode" value="form" />
+  <s:hidden name="modelId" id="modelId" value="%{modelId}" />
+  <div class="formmainbox">
+		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+        	<%@  include file="createPropertyForm.jsp"%>  
+        </tr>
+        	<% System.out.println("hellllo.111................"); %>
+        <tr>
+        	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
+        </tr>
+        <tr>
+        	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
+        </tr>
+		<tr>
+		<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+		</tr>
+		
+		</table>
+	</div>
+  </s:push>
+  </s:form>
+  <script type="text/javascript">
 
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
@@ -80,6 +119,8 @@ function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
 	document.getElementById("appartenantRow").style.display = "none";
+	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
+	enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
@@ -411,43 +452,5 @@ function populateApprover() {
 	getUsersByDesignationAndDept();
 }
 </script>
-</head>
- 
-  <body onload="loadOnStartUp();">
-  
-  <div align="left">
-  	<s:actionerror/>
-  </div>
-    <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
-
-  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" validate="true">
-  
-  <s:push value="model">
-  <s:token />
-  
-  <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
-  <s:hidden name="mode" value="form" />
-  <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-  <div class="formmainbox">
-		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-        	<%@  include file="createPropertyForm.jsp"%>  
-        </tr>
-        	<% System.out.println("hellllo.111................"); %>
-        <tr>
-        	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
-        </tr>
-        <tr>
-        	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
-        </tr>
-		<tr>
-		<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
-		</tr>
-		
-		</table>
-	</div>
-  </s:push>
-  </s:form>
   </body>
 </html>

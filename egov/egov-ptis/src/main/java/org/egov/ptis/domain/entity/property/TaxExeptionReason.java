@@ -15,7 +15,11 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, sequenceName = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, allocationSize = 1)
 public class TaxExeptionReason extends AbstractAuditable {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ_TAX_EXEMPTION_REASON = "SEQ_EGPT_EXEMPTION_REASON";
 
 	@Id

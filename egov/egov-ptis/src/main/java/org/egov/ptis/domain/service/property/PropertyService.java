@@ -343,6 +343,8 @@ public class PropertyService {
 				}
 			}
 		} else {
+			property.getPropertyDetail().setNo_of_floors(0);
+			property.getPropertyDetail().setFloorDetails(null);
 			PropertyOccupation occupancy = null;
 			PropertyUsage usage = null;
 			if (propOccId != null) {

@@ -37,7 +37,8 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-	<tr id="constructionRow1">
+<%@ include file="/includes/taglibs.jsp" %>
+	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="floorTypeId"
@@ -49,7 +50,7 @@
 				cssClass="selectnew" /></td>
 	</tr>
 	
-	<tr id="constructionRow2">
+	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="wallTypeId"

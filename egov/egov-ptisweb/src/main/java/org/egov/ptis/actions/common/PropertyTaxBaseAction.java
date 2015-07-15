@@ -51,6 +51,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.io.File;
 import java.text.ParseException;
@@ -229,38 +231,54 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 			if (propTypeMstr != null) {
 				if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+					if (null != property.getPropertyDetail()) {
+						if (isBlank(property.getPropertyDetail().getSurveyNumber())) {
+							addActionError(getText("mandatory.surveyNo"));
+						}
+						if (isBlank(property.getPropertyDetail().getPattaNumber())) {
+							addActionError(getText("mandatory.pattaNum"));
+						}
+						if (null == property.getPropertyDetail().getSitalArea().getArea()) {
+							addActionError(getText("mandatory.vacantLandArea"));
+						}
+						if (null == property.getPropertyDetail().getDateOfCompletion()) {
+							addActionError(getText("mandatory.dtOfCmpln"));
+						} /*else {
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							Date occupationDate = null;
+							try {
+								occupationDate = sdf.parse(dateOfCompletion);
+							} catch (ParseException e) {
+								LOGGER.error(e.getMessage(), e);
+							}
+							if (occupationDate != null && occupationDate.after(new Date())) {
+								addActionError(getText("mandatory.dtBeforeCurr"));
+							}
+						}*/
+						if (null == property.getPropertyDetail().getCurrentCapitalValue()) {
+							addActionError(getText("mandatory.capitalValue"));
+						}
+						if (null == property.getPropertyDetail().getMarketValue()) {
+							addActionError(getText("mandatory.marketValue"));
+						}
+					}
 
-					if (propTypeMstr.getType().equals(APARTMENT_PROPERTY)
-							&& property.getPropertyDetail().getApartment().getId() == null) {
-						addActionError(getText("mandatory.apartment"));
-					}
-					if (dateOfCompletion == null || dateOfCompletion.equals("")
-							|| dateOfCompletion.equals("DD/MM/YYYY")) {
-						addActionError(getText("mandatory.dtOfCmpln"));
-					} else {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-						Date occupationDate = null;
-						try {
-							occupationDate = sdf.parse(dateOfCompletion);
-						} catch (ParseException e) {
-							LOGGER.error(e.getMessage(), e);
-						}
-						if (occupationDate != null && occupationDate.after(new Date())) {
-							addActionError(getText("mandatory.dtBeforeCurr"));
-						}
-					}
 				} else {
-
 					if (null != property.getPropertyDetail()) {
 						if (chkBuildingPlanDetails) {
-							if (StringUtils.isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
+							if (isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
 								addActionError(getText("mandatory.buildingPlanNo"));
 							}
 							if (null == property.getPropertyDetail().getBuildingPermissionDate()) {
 								addActionError(getText("mandatory.buildingPlanDate"));
 							}
-							if (StringUtils.isBlank(property.getPropertyDetail().getDeviationPercentage())) {
+							if (isBlank(property.getPropertyDetail().getDeviationPercentage())) {
 								addActionError(getText("mandatory.deviationPercentage"));
+							}
+						}
+						if (property.getPropertyDetail().isStructure()) {
+							if (isBlank(property.getPropertyDetail().getSiteOwner())) {
+								addActionError(getText("mandatory.siteowner"));
 							}
 						}
 					}
@@ -297,8 +315,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 						if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10)) {
 							addActionError(getText("mandatory.floorNO"));
 						}
-						msgParams.add(floor.getFloorNo() != null ? CommonServices.getFloorStr(floor.getFloorNo())
-								: "N/A");
+						msgParams.add(floor.getFloorNo() != null ? CommonServices.getFloorStr(floor.getFloorNo()) : "N/A");
 
 						if (floor.getStructureClassification() == null
 								|| floor.getStructureClassification().getId() == null

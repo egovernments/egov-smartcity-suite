@@ -198,16 +198,9 @@
 			</div>
 		</td>
 	</tr>
-	
-	<tr class="construction">
-		<td colspan="5">
-			<div id="AmenitiesDiv">
-				<%@ include file="../common/constructionForm.jsp"%>
-			</div>
-		</td>
-	</tr>
+	<%@ include file="../common/constructionForm.jsp"%>
 
-	<tr id="floorHeaderRow" class="floordetails">
+	<tr class="floordetails">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="FloorDetailsHeader" /> </span>
@@ -276,10 +269,5 @@
 			wardId : document.getElementById("wardId").value
 		});
 	} 
-
-	//hide rows and columns of fields
-	jQuery('td.siteowner').hide();
-	jQuery('tr.bpddetails').hide();
-	jQuery('tr.vacantlanddetaills').hide();
     
 </script>

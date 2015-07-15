@@ -442,34 +442,28 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-forward")
 	public String forward() {
-		if(mode.equalsIgnoreCase(EDIT) && !workFlowAction.equalsIgnoreCase("reject") || workFlowAction.equalsIgnoreCase("cancel") )
-		{
-			
+		if (mode.equalsIgnoreCase(EDIT) && !workFlowAction.equalsIgnoreCase("reject")
+				|| workFlowAction.equalsIgnoreCase("cancel")) {
+
 			this.validate();
 			if (hasErrors()) {
 				return RESULT_NEW;
 			}
 		}
-		
 		transitionWorkFlow(property);
-		
-		if(workFlowAction.equalsIgnoreCase("approve"))
-		{
+
+		if (workFlowAction.equalsIgnoreCase("approve")) {
 			return approve();
-		}else if (workFlowAction.equalsIgnoreCase("reject"))
-		{
+		} else if (workFlowAction.equalsIgnoreCase("reject")) {
 			return reject();
 		}
-
-		else if (workFlowAction.equalsIgnoreCase("generate notice"))
-		{
+		else if (workFlowAction.equalsIgnoreCase("generate notice")) {
 			return generateNotice();
 		}
 
 		LOGGER.debug("forward: Property forward started " + property);
-		
 		long startTimeMillis = System.currentTimeMillis();
-		
+
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
 		updatePropertyDetails();
@@ -641,7 +635,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 			validActions = validActionsList;
 		}
-
 		if (LOGGER.isDebugEnabled()) LOGGER.debug(">>>>>>" + validActions);
 		return validActions;
 	}
@@ -798,7 +791,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		basicProperty.addProperty(property);
-		propService.createDemand(property, propCompletionDate);
+		//propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}

@@ -131,7 +131,6 @@ function validateWorkFlowApprover(name,errorDivId)
 	
 	
 </script>
-	<% System.out.println("hellllo................."); %>
 <s:hidden id="workFlowAction" name="workFlowAction"/>
 <s:if test="%{getNextAction()!='END'}">
 

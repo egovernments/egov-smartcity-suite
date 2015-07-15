@@ -13,6 +13,12 @@ function enableAppartnaumtLandDetails() {
 	}
 }
 
+function enableBuildingPlanDetails() {
+	if (document.forms[0].chkIsSuperStructure.checked == true) {
+		
+	}
+}
+
 function enableFieldsForPropType() {
 	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType != "select") {
@@ -1012,7 +1018,7 @@ function showFloorTaxExemption() {
 }
 
 function enableOrDisableSiteOwnerDetails(obj) {
-	console.log(jQuery('#propertyDetail.siteOwner'));
+	
 	if (jQuery(obj).is(":checked")) {
 		jQuery('input[name="propertyDetail.siteOwner"]').val('');
 		jQuery('td.siteowner').show();

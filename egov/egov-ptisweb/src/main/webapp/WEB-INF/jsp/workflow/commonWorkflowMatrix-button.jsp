@@ -1,10 +1,8 @@
-  <%@ include file="/includes/taglibs.jsp" %>
-  <% System.out.println("added.commonWorkflowMatrix-button.jsp................"); %>
+ <%@ include file="/includes/taglibs.jsp" %>
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
-			name:<s:property value="%{name}"/>
 					<s:if test="%{name!=''}">
 						<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
 							id="%{name}" name="%{name}" method="save"
