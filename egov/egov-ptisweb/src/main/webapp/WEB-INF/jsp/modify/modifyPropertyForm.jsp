@@ -72,10 +72,10 @@
 					value="%{ownerName}" /> </span>
 		</td>
 		<td class="greybox">
-			&nbsp;
+			<s:text name="MobileNumber" />:
 		</td>
 		<td class="greybox">
-			&nbsp;
+			<span class="bold"><s:property value="%{basicProp.mobileNumber}" default="N/A"/></span>
 		</td>
 	</tr>
 
@@ -101,7 +101,7 @@
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"> Heading Not decided</span>
+				<span class="bold"><s:text name="assessmentDetails.title"/></span>
 			</div>
 		</td>
 	</tr>
@@ -112,30 +112,8 @@
 		   <span class="bold"><s:property value="%{propertyDetail.extentSite}" default="N/A"/></span>
 		   <s:hidden name="propertyDetail.extentSite" value="%{propertyDetail.extentSite}"/>
 		</td>
-		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"/> :</td>
+		<td class="greybox" width="25%"></td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProp.vacantLandAssmtNo}" default="N/A"/></span>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.appurtntland"/> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
-			<s:hidden name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 	</tr>
 	<tr>
@@ -149,104 +127,7 @@
 			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
-	<!-- Amenities section -->
-	
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"> <s:text name="amenities"></s:text> </span>
-			</div>
-		</td>
-	</tr>
-	 
-	<tr>
-		<td colspan="5">
-		  <table width="100%" class="checkbox-section">
-	        <tr>
-				<td width="20%" align="right">
-				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift"/></label>
-				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage"/></label>
-				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable"/></label> 
-				</td>
-				<td width="20%" align="right">
-				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets"/> </label>
-				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity"/> </label>
-				</td>
-				<td width="20%" align="right">
-				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap"/></label> 
-				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom"/> </label>
-			    </td>
-			    <td width="20%" align="right">
-				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"/></label>
-				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting"/></label>
-			    </td>
-			    <td width="10%"></td>
-			</tr>
-			
-		   </table>
-		</td>
-	</tr>
-	
-	<!-- Floor type details -->
-	
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.constructiontypes"/></span>
-			</div>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="floortype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="floorTypeId"
-				id="floorTypeId" listKey="id" listValue="name"
-				list="dropdownData.floorType" value="%{floorTypeId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-		<td class="greybox" width="25%"><s:text name="rooftype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="roofTypeId"
-				id="roofTypeId" listKey="id" listValue="name"
-				list="dropdownData.roofType" value="%{roofTypeId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="walltype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="wallTypeId"
-				id="wallTypeId" listKey="id" listValue="name"
-				list="dropdownData.wallType" value="%{wallTypeId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-		<td class="greybox" width="25%"><s:text name="woodtype"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="woodTypeId"
-				id="woodTypeId" listKey="id" listValue="name"
-				list="dropdownData.woodType" value="%{woodTypeId}"
-				cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-	</tr>
-	
-	<!-- Ownership section -->
-	
-	<tr id="ownerShipRow">
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.ownership"/></span>
-			</div>
-		</td>
-	</tr>
-	
+
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> <span
@@ -261,15 +142,87 @@
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type"
-				list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew" onchange="toggleFloorDetails();enableFieldsForPropType();" />
+		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
+			<span class="mandatory1">*</span> :</td>
+		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
+				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypeId}"
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
+				
+		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
+			<span class="mandatory1" id="prntMandatory">*</span> :</td>
+		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
+			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
+		<td class="greybox">
+		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
+				cssClass="selectnew"/>
 		</td>
-		
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
+		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
+				value="%{chkIsAppartenauntLand}" onclick="enableAppartnaumtLandDetails();" />
+		</td>
+		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
+		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
+	</tr>
+	<tr id="appartenantRow">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
+			<span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand"
+				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
+				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox" width="">
+		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
+		</td>
+		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox">
+		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		</td>
+	</tr>
+	<!-- Amenities section -->
+	
+	<tr id="amenitiesHeaderRow" class="amenities">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"> <s:text name="amenities"></s:text>
+				</span>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="amenities">
+		<td colspan="5">
+			<div id="AmenitiesDiv">
+				<%@ include file="../common/amenitiesForm.jsp"%>
+			</div>
+		</td>
+	</tr>
+	 
+	
+	<!-- Floor type details -->
+	
+	<tr id="constructionHeaderRow" class="construction">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="title.constructiontypes" /></span>
+			</div>
+		</td>
+	</tr>
+	
+	<tr class="construction">
+		<td colspan="5">
+			<div id="AmenitiesDiv">
+				<%@ include file="../common/constructionForm.jsp"%>
+			</div>
+		</td>
 	</tr>
 	
 	<tr id="vacantAreaRow">
@@ -303,22 +256,36 @@
 			cssClass="selectnew" onchange="makeMandatory();" />
 		</td>
 	</tr>
-	<tr id="floorHeaderRow">
-			<td colspan="5" width="5%">
-				<div class="headingsmallbg">
-					<span class="bold"><s:text name="FloorDetailsHeader" />
-					</span>
-				</div>
-			</td>
-	 </tr>
-	
+	<tr id="floorHeaderRow" class="floordetails">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="FloorDetailsHeader" /> </span>
+			</div>
+		</td>
+	</tr>
+
 	<!-- Floor Details Section -->
-		
-	<tr>
+
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorForm.jsp"%>
-				<br/>
+			</div>
+		</td>
+	</tr>
+
+	<tr id="vacantLandRow" class="vacantlanddetaills">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="VacantLandDetailsHeader" /> </span>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="vacantlanddetaills">
+		<td colspan="5">
+			<div align="center">
+				<%@ include file="../common/vacantLandForm.jsp"%>
 			</div>
 		</td>
 	</tr>
@@ -338,3 +305,15 @@
 		<%@ include file="../common/DocumentUploadForm.jsp"%>
 	</s:else>
 </table>
+<script type="text/javascript">
+	function populatePropTypeCategory() {
+		populatepropTypeCategoryId({
+			propTypeId : document.getElementById("propTypeId").value
+		});
+	}
+	//hide rows and columns of fields
+	jQuery('td.siteowner').hide();
+	jQuery('tr.bpddetails').hide();
+	jQuery('tr.vacantlanddetaills').hide();
+    
+</script>

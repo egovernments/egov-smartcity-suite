@@ -52,9 +52,7 @@
 		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
-		<s:if test="modifyRsn != 'DATA_UPDATE'">
-			<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
-		</s:if>
+		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 	</tr>
 	<s:if test="propertyDetail.floorDetails.size()==0">
 		<tr id="Floorinfo">
@@ -158,18 +156,15 @@
 				</div>
 			</td>
 
+			<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF"
+				name="addF"
+				src="${pageContext.request.contextPath}/resources/image/addrow.gif"
+				alt="Add" onclick="javascript:addFloor(); return false;" width="18"
+				height="18" border="0" /><img id="dDelF" name="dDelF"
+				src="${pageContext.request.contextPath}/resources/image/removerow.gif"
+				alt="Remove" onclick="javascript:delFloor(this);return false;"
+				width="18" height="18" border="0" /></td>
 
-			<s:if test="modifyRsn != 'DATA_UPDATE'">
-				<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF"
-					name="addF"
-					src="${pageContext.request.contextPath}/resources/image/addrow.gif"
-					alt="Add" onclick="javascript:addFloor(); return false;" width="18"
-					height="18" border="0" /><img id="dDelF" name="dDelF"
-					src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-					alt="Remove" onclick="javascript:delFloor(this);return false;"
-					width="18" height="18" border="0" /></td>
-
-			</s:if>
 		</tr>
 	</s:if>
 	<s:else>
@@ -253,14 +248,22 @@
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-					<s:date name="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}" var="occupationDate" format="dd/MM/yyyy" />
+						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
+							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
+							cssStyle="width:100%" />
+						
+					</div>
+				</td>
+ 
+ 				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
 						<s:textfield autocomplete="off"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" value="%{#occupationDate}"
+							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" 
+							value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate}"
 							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>
-
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
@@ -299,12 +302,10 @@
 					</div>
 				</td>
 				
-				<s:if test="modifyRsn != 'DATA_UPDATE'">
-					<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF" name="addF"
-						src="${pageContext.request.contextPath}/resources/image/addrow.gif"	alt="Add" onclick="javascript:addFloor(); return false;"
-						width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-						alt="Remove" onclick="javascript:delFloor(this);return false;"	width="18" height="18" border="0" /></td>
-				</s:if>
+				<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF" name="addF"
+					src="${pageContext.request.contextPath}/resources/image/addrow.gif"	alt="Add" onclick="javascript:addFloor(); return false;"
+					width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/resources/image/removerow.gif"
+					alt="Remove" onclick="javascript:delFloor(this);return false;"	width="18" height="18" border="0" /></td>
 			</tr>
 		</s:iterator>
 	</s:else>

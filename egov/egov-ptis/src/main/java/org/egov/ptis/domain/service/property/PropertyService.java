@@ -285,8 +285,9 @@ public class PropertyService {
 						unitType = (PropertyTypeMaster) getPropPerServ().find(
 								"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
 					}
-					if(null != floor.getTaxExemptedReason() && floor.getTaxExemptedReason().getId() != null){
-						taxExemption = (TaxExeptionReason) getPropPerServ().find("from TaxExeptionReason where id = ?",
+					if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() != null
+							&& floor.getTaxExemptedReason().getId() != -1) {
+						taxExemption = (TaxExeptionReason) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
 								floor.getTaxExemptedReason().getId());
 					}
 					if (floor.getPropertyUsage() != null) {

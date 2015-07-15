@@ -221,7 +221,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
 			floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
 			floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
-			floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
+			//floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
 			floorInfo.setMonthlyRentalValue(BigDecimal.ZERO);
 			floorInfo.setYearlyRentalValue(BigDecimal.ZERO);
 			floorInfo.setTaxPayableForCurrYear(totalTax);

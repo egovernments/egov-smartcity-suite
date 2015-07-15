@@ -77,27 +77,9 @@
 	}
 
 	function loadOnStartUp() {
-		var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-		if (propType == "Open Plot") {
-			document.getElementById("ownerShipRow").style.display = "";
-			document.getElementById("vacantAreaRow").style.display = "";
-			document.getElementById("floorDetails").style.display = "none";
-			document.getElementById("floorHeaderRow").style.display = "none";
-			document.getElementById("appartmentRow").style.display = "none";
-			resetFloorsDetails();
-		} 
-		else if (propType == "Apartment") {
-			document.getElementById("ownerShipRow").style.display = "";
-			document.getElementById("floorDetails").style.display = "";
-			document.getElementById("floorHeaderRow").style.display = "";
-			document.getElementById("appartmentRow").style.display = "";
-		} else {
-			document.getElementById("ownerShipRow").style.display = "";
-			document.getElementById("vacantAreaRow").style.display = "none";
-			document.getElementById("floorDetails").style.display = "";
-			document.getElementById("floorHeaderRow").style.display = "";
-			document.getElementById("appartmentRow").style.display = "none";
-		}
+		enableAppartnaumtLandDetails();
+		enableFieldsForPropType();
+		toggleFloorDetails();
 	}
 </script>
 </head>

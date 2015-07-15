@@ -45,7 +45,11 @@
 	<head>
 		<title><s:text name='ModProp.title' /></title>
 		<sx:head />
-		
+		<link
+			href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+			rel="stylesheet" type="text/css" />
+		<script
+			src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -57,55 +61,58 @@
 				return true;
 			}
 			
-			/* function loadOnStartUp() {
-		   		var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}" />';
-		   		if(propType == "Open Plot") {
-		   			document.getElementById("plotArea").style.display = "";
-		   			document.getElementById("appartmentRow").style.display = "none";
-		   			document.getElementById("ownerShipRow").style.display = "none";
-		   			document.getElementById("vacantAreaRow").style.display = "none";
-					/* document.getElementById("floorDetails").style.display="none";
-					document.getElementById("floorHeader").style.display="none";
-				    var tbl = document.getElementById('floorDetails');	
-					if(tbl!=null) {
-						var rowo = tbl.rows;
-						resetCreateFloorDetails(rowo);
-					}	 */	
-				/*} else {
-					document.getElementById("plotArea").style.display = "none";
-		   			document.getElementById("appartmentRow").style.display = "";
-		   			document.getElementById("ownerShipRow").style.display = "";
-		   			document.getElementById("vacantAreaRow").style.display = "";
-				}
-		   		<s:if test="%{extra_field4 != 'Yes'}">
-				    var btnPVR = document.getElementById("GeneratePrativrutta");
-				    if (btnPVR != null) {
-				    	btnPVR.disabled = false;
-				    }
-				</s:if>
-			} */
-
 			function loadOnStartUp() {
-				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}" />';
-				if (propType == "Open Plot") {
-					document.getElementById("ownerShipRow").style.display = "";
-					document.getElementById("vacantAreaRow").style.display = "";
-					document.getElementById("floorDetails").style.display = "none";
-					document.getElementById("floorHeaderRow").style.display = "none";
-					document.getElementById("appartmentRow").style.display = "none";
-					resetFloorsDetails();
-				} 
-				else if (propType == "Apartment") {
-					document.getElementById("ownerShipRow").style.display = "";
+				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
+					jQuery('tr.vacantlanddetaills').show();
+					document.getElementById("appartenantRow").style.display = "";
 					document.getElementById("floorDetails").style.display = "";
 					document.getElementById("floorHeaderRow").style.display = "";
-					document.getElementById("appartmentRow").style.display = "";
+				}
+				enableFieldsForPropTypeView();
+				toggleFloorDetailsView();
+			}
+
+			function enableFieldsForPropTypeView() {
+				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				if (propType != "select") {
+					onChangeOfPropertyTypeFromMixedToOthers(propType);
+					if (propType == "Vacant Land") {
+						//document.getElementById("vacantLandRow").style.display = "";
+						//document.getElementById("vacantLandTable").style.display = "";
+						//document.getElementById("vacantAreaRow").style.display = "";
+						jQuery('tr.vacantlanddetaills').show();
+						document.getElementById("floorDetails").style.display = "none";
+						document.getElementById("floorHeaderRow").style.display = "none";
+						document.getElementById("amenitiesRow").style.display = "none";
+						document.getElementById("amenitiesHeaderRow").style.display = "none";
+						document.getElementById("constructionHeaderRow").style.display = "none";
+						document.getElementById("constructionRow1").style.display = "none";
+						document.getElementById("constructionRow2").style.display = "none";
+						jQuery('#appartenantRow').hide();
+					} else {
+						document.getElementById("floorDetails").style.display = "";
+						document.getElementById("floorHeaderRow").style.display = "";
+						document.getElementById("amenitiesRow").style.display = "";
+						document.getElementById("amenitiesHeaderRow").style.display = "";
+						document.getElementById("constructionHeaderRow").style.display = "";
+						document.getElementById("constructionRow1").style.display = "";
+						document.getElementById("constructionRow2").style.display = "";
+						jQuery('tr.vacantlanddetaills').hide();
+						jQuery('#appartenantRow').hide();
+					}
+				}
+			}
+
+			function toggleFloorDetailsView() {
+				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				if (propType == "Vacant Land") {
+					jQuery('tr.floordetails').hide();
 				} else {
-					document.getElementById("ownerShipRow").style.display = "";
-					document.getElementById("vacantAreaRow").style.display = "none";
-					document.getElementById("floorDetails").style.display = "";
-					document.getElementById("floorHeaderRow").style.display = "";
-					document.getElementById("appartmentRow").style.display = "none";
+					jQuery('tr.floordetails').show();
+				}
+				if (propType == "Apartments") {
+					alert("Please select Apartment/Complex Name");
 				}
 			}
 			

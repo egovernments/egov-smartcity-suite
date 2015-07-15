@@ -49,6 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
@@ -68,6 +69,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
@@ -270,7 +272,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private ReportService reportService;
 	private Integer reportId = -1;
 	private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
-
+	private PropertyTypeMaster propTypeMstr;
+	private boolean chkBuildingPlanDetails;
+	
 	public ModifyPropertyAction() {
 		super();
 		propertyModel.setPropertyDetail(new BuiltUpProperty());
@@ -629,12 +633,15 @@ public class ModifyPropertyAction extends WorkflowAction {
 		List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
 		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
 				"from PropertyTypeMaster order by orderNo");
-		List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
-				"from PropertyMutationMaster where type = 'MODIFY' and code not in('AMALG','BIFURCATE', 'DATA_ENTRY')");
+		List<PropertyMutationMaster> propMutList = getPersistenceService()
+				.findAllBy(
+						"from PropertyMutationMaster where type = 'MODIFY' and code not in('DATA_ENTRY', 'COURT_RULE', 'OBJ', 'ADD OR ALTER', 'PART DEMOLITION')");
 		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
 		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
 		List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
 		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+		List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+		List<String> taxExemptionReasonList = getPersistenceService().findAllBy("from TaxExeptionReason order by name");
 		setFloorNoMap(CommonServices.floorMap());
 		addDropdownData("floorType", floorTypes);
 		addDropdownData("roofType", roofTypes);
@@ -646,7 +653,19 @@ public class ModifyPropertyAction extends WorkflowAction {
 		addDropdownData("MutationList", propMutList);
 		addDropdownData("StructureList", StructureList);
 		addDropdownData("AgeFactorList", ageFacList);
-		addDropdownData("Appartments", Collections.EMPTY_LIST);
+		addDropdownData("Appartments", apartmentsList);
+		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
+		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
+			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+			if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+				setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+			} else {
+				setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+			}
+		} else {
+			setPropTypeCategoryMap(Collections.EMPTY_MAP);
+		}
 		if (getBasicProp() != null) {
 			setPropAddress(getBasicProp().getAddress().toString());
 		}
@@ -1027,7 +1046,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			addActionError(getText("mandatory.rsnForMdfy"));
 		}
 		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, isAuthProp,
-				propTypeId, propUsageId, propOccId, isUpdateData(), floorTypeId, roofTypeId, wallTypeId, woodTypeId);
+				propTypeId, propUsageId, propOccId, chkBuildingPlanDetails, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		super.validate();
 
@@ -1963,5 +1982,21 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setReportService(ReportService reportService) {
 		this.reportService = reportService;
+	}
+	
+	public PropertyTypeMaster getPropTypeMstr() {
+		return propTypeMstr;
+	}
+
+	public void setPropTypeMstr(PropertyTypeMaster propTypeMstr) {
+		this.propTypeMstr = propTypeMstr;
+	}
+	
+	public boolean isChkBuildingPlanDetails() {
+		return chkBuildingPlanDetails;
+	}
+
+	public void setChkBuildingPlanDetails(boolean chkBuildingPlanDetails) {
+		this.chkBuildingPlanDetails = chkBuildingPlanDetails;
 	}
 }

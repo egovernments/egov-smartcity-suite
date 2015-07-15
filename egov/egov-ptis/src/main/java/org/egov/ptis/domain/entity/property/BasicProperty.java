@@ -265,5 +265,7 @@ public interface BasicProperty {
 	void setUnderWorkflow(boolean underWorkflow);
 	
 	String getFullOwnerName();
+	
+	String getMobileNumber();
 
 }

@@ -697,6 +697,10 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		return ownerName.toString();
 	}
 
+	public String getMobileNumber() {
+		return this.getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
