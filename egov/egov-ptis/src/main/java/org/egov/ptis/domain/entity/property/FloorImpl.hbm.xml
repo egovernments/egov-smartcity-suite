@@ -97,9 +97,6 @@
 		
 		<property name="manualAlv" column="MANUAL_ALV"/>
 		<property name="alv" column="ALV"/>
-		<property name="waterRate" column="WATER_RATE" />
-		<property name="noOfSeats" column="no_of_seats"	type="integer" />
-		<property name="drainage" column="drainage"	type="boolean" />
 		<property name="occupantName" column="occupantname" type="java.lang.String"/> 
 		<property name="occupancyDate" column="occupancydate" type="java.util.Date"/>
 		
