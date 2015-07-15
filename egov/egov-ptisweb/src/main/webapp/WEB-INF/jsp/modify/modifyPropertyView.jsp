@@ -161,6 +161,15 @@
 		</td>
 	</tr>
 	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
+		<td class="greybox">
+			<span class="bold"><s:checkbox name="propertyDetail.structure" disabled="true"/></span>
+		</td>
+		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox siteowner"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></td>
+	</tr>
+	<tr>
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
 		<td class="bluebox" width="">
@@ -193,7 +202,13 @@
 			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
 		</td>
 	</tr>
-	
+	<tr>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
+		<td class="bluebox">
+		 	<span class="bold"><s:checkbox name="chkBuildingPlanDetails" disabled="true" /></span>
+		</td>
+	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
@@ -205,6 +220,12 @@
 			<span class="bold"><s:property value="%{buildingPermissionDate}" default="N/A"/></span>
 		</td>
 	</tr>
+	<tr class="bpddetails">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
+		<td class="bluebox"><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/>
+		</td>
+   </tr>
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -298,15 +319,6 @@
 		</td>
 	</tr>
 
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
-		<td class="greybox" width="">
-			<s:date name="dateOfCompletion" format="dd/MM/yyyy" var="completionDate"/>
-			<s:property value="%{#completionDate}" default="N/A"/>
-		</td>
-	</tr>
-	
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">

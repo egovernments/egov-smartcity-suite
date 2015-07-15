@@ -246,14 +246,6 @@
 						
 					</div>
 				</td>
-				<td class="blueborderfortd" style="padding: 2px 2px">
-					<div align="center">
-						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
-							cssStyle="width:100%" />
-						
-					</div>
-				</td>
  
  				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">

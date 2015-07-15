@@ -61,7 +61,6 @@
 	</tr>
 	<tr>
 		<td class="greybox2">
-			&nbsp;
 		</td>
 		<td class="greybox">
 			<s:text name="OwnerName" />
@@ -117,26 +116,35 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
-		<td class="greybox" width="">
+		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="reg.docno"/> :</td>
+		<td class="bluebox" width="">
 			<span class="bold"><s:property value="%{basicProp.regdDocNo}" default="N/A"/></span>
 		</td>
-		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
-		<td class="greybox">
+		<td class="bluebox" width="25%"><s:text name="reg.docdate"/> :</td>
+		<td class="bluebox">
 			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
-
 	<tr>
 		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
+		<td class="greybox">
+			<s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/>
+		</td>
+		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
+		<td class="greybox siteowner"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></td>
+	</tr>
+
+	<tr>
+		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> <span
 			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
+		<td class="bluebox" width=""><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}" name="reasonForModify"
 				id="reasonForModify" listKey="code" listValue="mutationName"
 				list="dropdownData.MutationList" value="%{reasonForModify}"
-				cssClass="selectnew" onchange="return enableCourtRulingDets();" />
+				cssClass="selectnew"/>
 		</td>
 	</tr>
 	
@@ -159,13 +167,13 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox">&nbsp;</td>
+		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
 		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
 				value="%{chkIsAppartenauntLand}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
-		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
+		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
+		<td class="bluebox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
 	</tr>
 	<tr id="appartenantRow">
 		<td class="greybox">&nbsp;</td>
@@ -177,16 +185,37 @@
 	</tr>
 	
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="buildingPermissionNo" id="buildingPermissionNo" size="12" maxlength="12" onchange="trim(this,this.value);" onblur = "validNumber(this);checkZero(this);"></s:textfield>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		  <s:textfield name="buildingPermissionDate"  cssClass="datepicker" id="buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
+		<td class="bluebox">
+		 <s:checkbox name="chkBuildingPlanDetails" id="chkBuildingPlanDetails"
+			value="%{chkBuildingPlanDetails}" onclick="enableOrDisableBPADetails(this);" />
 		</td>
 	</tr>
+	
+	<tr class="bpddetails">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox"><s:textfield name="propertyDetail.buildingPermissionNo" id="propertyDetail.buildingPermissionNo" size="12" maxlength="12"
+				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{propertyDetail.buildingPermissionNo}"></s:textfield>
+		</td>
+		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox"><s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
+		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
+				id="propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		</td>
+
+	</tr>
+
+    <tr class="bpddetails">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
+		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
+				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
+				cssClass="selectnew"/>
+		</td>
+   </tr>
+	
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -226,7 +255,7 @@
 	</tr>
 	
 	<tr id="vacantAreaRow">
-		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%">&nbsp;</td>
 		<td class="bluebox">
 			<div id="plotArea">
 				<s:text name="PlotArea"/>
@@ -290,13 +319,6 @@
 		</td>
 	</tr>
 
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
-		<td class="greybox" width="">
-		   <s:textfield name="dateOfCompletion" id="basicProperty.propOccupationDate" cssClass="datepicker" size="10" maxlength="10"></s:textfield>
-		</td>
-	</tr>
 	<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) || 
 		@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
 		<%@ include file="../common/DocumentUploadView.jsp"%>

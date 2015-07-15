@@ -46,11 +46,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
@@ -274,6 +276,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
 	private PropertyTypeMaster propTypeMstr;
 	private boolean chkBuildingPlanDetails;
+	private Map<String, String> deviationPercentageMap;
 	
 	public ModifyPropertyAction() {
 		super();
@@ -436,14 +439,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 	public String forwardModify() {
 		LOGGER.debug("forwardModify: Modify property started " + propertyModel);
 		this.validate();
-		if (hasErrors()) {
-			if (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)) {
-				return NEW;
-			} else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)
-					|| COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)) {
-				return VIEW;
-			}
-		}
 		long startTimeMillis = System.currentTimeMillis();
 		if (getModelId() != null && !getModelId().trim().isEmpty()) {
 			propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
@@ -456,6 +451,23 @@ public class ModifyPropertyAction extends WorkflowAction {
 			populateBasicProp();
 		}
 		oldProperty = (PropertyImpl) basicProp.getProperty();
+		PropertyTypeMaster oldPropTypeMstr = oldProperty.getPropertyDetail()
+				.getPropertyTypeMaster();
+		PropertyTypeMaster newPropTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+				"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+		if (!newPropTypeMstr.getType().equals(oldPropTypeMstr.getType())) {
+			if (newPropTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR)) {
+				addActionError(getText("error.nonVacantToVacant"));
+			}
+		}
+		if (hasErrors()) {
+			if (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)) {
+				return NEW;
+			} else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)
+					|| COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)) {
+				return VIEW;
+			}
+		}
 		modifyBasicProp(getDocNumber());
 		transitionWorkFlow(propertyModel);
 		basicProp.setUnderWorkflow(Boolean.TRUE);
@@ -666,6 +678,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		} else {
 			setPropTypeCategoryMap(Collections.EMPTY_MAP);
 		}
+		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 		if (getBasicProp() != null) {
 			setPropAddress(getBasicProp().getAddress().toString());
 		}
@@ -704,7 +717,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 					.getFloorDetails());
 
 		} else {
-			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
+			propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
 		}
 		// AMALG & BIFUR
 		if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
@@ -1999,4 +2012,13 @@ public class ModifyPropertyAction extends WorkflowAction {
 	public void setChkBuildingPlanDetails(boolean chkBuildingPlanDetails) {
 		this.chkBuildingPlanDetails = chkBuildingPlanDetails;
 	}
+
+	public Map<String, String> getDeviationPercentageMap() {
+		return deviationPercentageMap;
+	}
+
+	public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
+		this.deviationPercentageMap = deviationPercentageMap;
+	}
+	
 }
