@@ -56,10 +56,17 @@ html, body {
 	word-wrap:break-word;
 }
 
-.panel-title, th{
+.panel-title{
 	font-weight:normal;
 	font-family: regular;
-	font-size:15px;
+	font-size:19px;
+	color:#f5861f;
+}
+
+th{
+	font-weight:normal;
+	font-family: regular;
+	font-size:14px;
 }
 
 *
@@ -83,7 +90,7 @@ a:focus{
 	position:relative;
 	min-height:100%;
 	width: 100%;
-	background:#fff;
+	background:#f4f5f6;
 	/* display: table; */
 	table-layout: fixed;
 }
@@ -149,7 +156,7 @@ a:focus{
 	display:block;
 	vertical-align: top;
 	padding: 20px;
-	background: #ffffff;
+	background: #f4f5f6;
 	width: 100%;
 	/* min-height: 100%; */
 	padding-bottom:70px;
@@ -266,7 +273,7 @@ table.dataTable tbody tr:hover
 }
 
 .panel-body.custom-form {
-	padding: 15px 0;
+	padding: 0;
 }
 
 .form-horizontal .form-group {
@@ -275,10 +282,9 @@ table.dataTable tbody tr:hover
 }
 
 .panel-heading.custom_form_panel_heading {
-	background-color: #f2851f;
+	/*background-color: #f2851f;*/
 	color:#fff;
 	margin-top: 10px;
-	margin-bottom: 10px;
 }
 
 table .replace-inputs input {
@@ -853,7 +859,7 @@ footer.main{
 	position:absolute;
 	bottom:0;
 	left:0;
-	background: #F5F5F5;
+	background: #fff;
 	line-height:40px;
 	padding:0 20px;
 	font-size:13px;
@@ -1359,12 +1365,14 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .panel-primary {
-	border-color: #f2851f;
+	border-color: #fff;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .panel-primary > .panel-heading {
-	background-color: #f2851f;
-	border-color: #f2851f;
+	background-color: #fff;
+	border-color: #fff;
+	padding:15px;
 }
 
 .bootcards-summary-item {
