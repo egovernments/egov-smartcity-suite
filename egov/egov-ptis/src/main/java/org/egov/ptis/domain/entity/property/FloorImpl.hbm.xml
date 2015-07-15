@@ -99,6 +99,9 @@
 		<property name="alv" column="ALV"/>
 		<property name="occupantName" column="occupantname" type="java.lang.String"/> 
 		<property name="occupancyDate" column="occupancydate" type="java.util.Date"/>
+		<property name="waterRate" column="WATER_RATE" />
+		<property name="noOfSeats" column="no_of_seats"	type="integer" />
+		<property name="drainage" column="drainage"	type="boolean" />
 		
 		<!--
 		EXTRA_FIELD1 varchar
@@ -116,9 +119,6 @@
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
-		<property name="waterRate" column="WATER_RATE" />
-		<property name="noOfSeats" column="no_of_seats"	type="integer" />
-		<property name="drainage" column="drainage"	type="boolean" />
-		<!-- <many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExeptionReason" column="TAX_EXEMPTED_REASON" /> -->
+		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExeptionReason" column="TAX_EXEMPTED_REASON" />
 	</class>
 </hibernate-mapping>
