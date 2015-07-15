@@ -77,7 +77,7 @@
 	<bean type="org.apache.struts2.convention.ActionNameBuilder" name="defaultActionNameBuilder" class="org.apache.struts2.convention.DefaultActionNameBuilder" />
 	<constant name="struts.convention.actionNameBuilder" value="defaultActionNameBuilder" />
 	<constant name="struts.convention.action.name.lowercase" value="true"/>
-	<constant name="struts.convention.action.alwaysMapExecute" value="false"/>
+	<!-- <constant name="struts.convention.action.alwaysMapExecute" value="false"/> -->
 	<constant name="struts.action.excludePattern" value="/rest/.*" />
 	<package name="egov" extends="struts-default">
 		<interceptors>
