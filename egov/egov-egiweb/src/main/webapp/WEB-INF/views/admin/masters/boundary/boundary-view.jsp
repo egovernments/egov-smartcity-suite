@@ -94,6 +94,14 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.parent.boundary.name"/>
+						</label>
+						<div class="col-sm-6" style="padding-top: 7px">
+							<strong><c:out value="${boundary.parent.name}" default="NA"/></strong>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.boundary.number"/>
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">

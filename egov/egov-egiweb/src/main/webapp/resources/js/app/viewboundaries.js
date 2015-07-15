@@ -55,9 +55,12 @@ $(document).ready(function() {
 				"mData" : "name",
 				"sTitle" : "Name",
 			}, {
-				"mData" : "boundaryNameLocal",
+				"mData" : "boundaryNameLocal", 
 				"sTitle" : "Local Name"
-			}, {
+			},  {
+				"mData" : "boundaryParentName", 
+				"sTitle" : "Parent Boundary Name"
+			},{
 				"mData" : "boundaryNum",
 				"sTitle" : "Boundary Number"
 			}, {

@@ -40,6 +40,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+ 
 
 <link rel="stylesheet"	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <div class="row" id="page-content">
@@ -57,6 +58,16 @@
 							<input type="hidden" id="btnHierarchyType" value="<c:out value="${boundaryType.hierarchyType.id}" />" />            
 						</div>
 					</div>
+					<c:if test="${boundaryType.parent!=null}">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.boundaryParentType.boundaryType"/>
+						</label>
+						<div class="col-sm-6" style="padding-top: 7px">
+							<strong><c:out value="${boundaryType.parent.name}" /></strong>
+						</div>
+					</div>
+					</c:if>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.boundaryType"/>

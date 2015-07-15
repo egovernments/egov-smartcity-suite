@@ -60,7 +60,7 @@ public class BoundaryAdapter implements JsonSerializer<Boundary> {
 		jsonObject.addProperty("boundaryNameLocal", boundary.getLocalName());
 		jsonObject.addProperty("boundaryNum", boundary.getBoundaryNum());
 		jsonObject.addProperty("fromDate", dateFormatter.format(boundary.getFromDate()));
-
+		jsonObject.addProperty("boundaryParentName", (boundary.getParent()!=null?boundary.getParent().getName():""));
 		if (boundary.getToDate() == null)
 			jsonObject.addProperty("toDate", "NA");
 		else

@@ -88,6 +88,22 @@
 							<input type="hidden" name="boundaryTypeId" value="<c:out value="${boundaryType.id}" />" />
 						</div>
 					</div>
+					  <div class="panel-body custom-form">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">
+									<spring:message code="lbl.parent.boundary.name" />
+									<span class="mandatory"></span>
+								</label>
+								<div class="col-sm-6 add-margin">
+		                            <form:select path="parent"
+		                                         id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error" required="required">
+		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
+		                            </form:select>
+		                            <form:errors path="name" cssClass="error-msg"/>
+	                        	</div>
+	                        </div>
+	                        
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.boundary.name"/><span class="mandatory"></span>

@@ -95,17 +95,25 @@ public class BoundaryController {
     public String showCreateBoundaryForm(final Model model, final RedirectAttributes redirectAttributes) {
         model.addAttribute("isUpdate", false);
         final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
-
+         
         if (boundaryService.validateBoundary(boundaryType)) {
             redirectAttributes.addFlashAttribute("warning", "Root Boundary already exists");
             return "redirect:/search-boundary";
-        } else
+        } else{
+            if(boundaryType!=null && boundaryType.getParent()!=null)
+                model.addAttribute("parentBoundary",boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
             return "boundary-create";
+        }
+           
     }
 
     @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.GET)
     public String showUpdateBoundaryForm(final Model model) {
         model.addAttribute("isUpdate", true);
+        final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
+        if(boundaryType!=null && boundaryType.getParent()!=null)
+            model.addAttribute("parentBoundary",boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+     
         return "boundary-create";
     }
 
