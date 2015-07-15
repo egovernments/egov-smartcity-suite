@@ -47,6 +47,7 @@
 		<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="constCompl.date" /><span	class="mandatory1">*</span></th>
     </tr>
 	
 	<tr id="vacantLandRow">
@@ -74,14 +75,18 @@
 				id="propertyDetail.currentCapitalValue" maxlength="15"	value="%{propertyDetail.currentCapitalValue}"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
         </td>
+        
+        <td class="blueborderfortd">
+		   <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
+				name="dateOfCompletion" id="propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
+				size="10" maxlength="10"></s:textfield>
+		</td>
     </tr>
     
    <tr>
    <td colspan="5">
      <br/>
-      <table class="tablebottom" style="
-         width: 100%;
-         ">
+      <table class="tablebottom" style="width: 100%;">
          <tbody>
             <tr>
                <th class="bluebgheadtd"><s:text name="North" /></th>

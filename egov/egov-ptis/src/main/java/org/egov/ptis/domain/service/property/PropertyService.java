@@ -189,19 +189,19 @@ public class PropertyService {
 				new Date(), new Date());
 		PropertySource propertySource = (PropertySource) getPropPerServ().find(
 				"from PropertySource where propSrcCode = ?", PROP_SOURCE);
-		if (floorTypeId != null) {
+		if (floorTypeId != -1 && floorTypeId != null) {
 			FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
 			property.getPropertyDetail().setFloorType(floorType);
 		}
-		if (roofTypeId != null) {
+		if (roofTypeId != -1 && roofTypeId != null) {
 			RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
 			property.getPropertyDetail().setRoofType(roofType);
 		}
-		if (wallTypeId != null) {
+		if (wallTypeId != -1 && wallTypeId != null) {
 			WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
 			property.getPropertyDetail().setWallType(wallType);
 		}
-		if (woodTypeId != null) {
+		if (woodTypeId != -1 && woodTypeId != null) {
 			WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
 			property.getPropertyDetail().setWoodType(woodType);
 		}
@@ -285,8 +285,8 @@ public class PropertyService {
 						unitType = (PropertyTypeMaster) getPropPerServ().find(
 								"from PropertyTypeMaster utype where utype.id = ?", floor.getUnitType().getId());
 					}
-					if(floor.getTaxExemptedReason() != null){
-						taxExemption = (TaxExeptionReason) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+					if(null != floor.getTaxExemptedReason() && floor.getTaxExemptedReason().getId() != null){
+						taxExemption = (TaxExeptionReason) getPropPerServ().find("from TaxExeptionReason where id = ?",
 								floor.getTaxExemptedReason().getId());
 					}
 					if (floor.getPropertyUsage() != null) {
@@ -327,7 +327,7 @@ public class PropertyService {
 					floor.setPropertyUsage(usage);
 					floor.setPropertyOccupation(occupancy);
 					floor.setStructureClassification(structureClass);
-
+                    floor.setTaxExemptedReason(taxExemption);
 					floor.setPropertyDetail(property.getPropertyDetail());
 					// basicPrpertyService.applyAuditing(floor);
 					floor.setCreatedDate(new Date());

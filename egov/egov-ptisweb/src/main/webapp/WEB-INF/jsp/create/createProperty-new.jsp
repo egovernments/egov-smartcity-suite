@@ -79,6 +79,7 @@ jQuery(function ($) {
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
+	document.getElementById("appartenantRow").style.display = "none";
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
@@ -99,7 +100,7 @@ function loadOnStartUp() {
 	document.getElementById("floorDetailsConfirm").style.display = "none";
 	document.getElementById("waterRate").style.display = "none"; */
 	
-	enableFieldsForPropType();
+	//enableFieldsForPropType();
 	//hideAddRmvBtnForResidFlats();
 	//enableCorresAddr();
 	//enableTaxExemptReason();

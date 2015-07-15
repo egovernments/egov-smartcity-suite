@@ -60,6 +60,12 @@
 			}, 
 			error: function (response) {
 				console.log("failed");
+				jQuery('#zoneId').val('');
+				jQuery('#wardId').val('');
+				jQuery('#blockId').val('');
+				jQuery('#zoneName').val('');
+				jQuery('#wardName').val('');
+				jQuery('#blockName').val('');
 				alert("No boundary details mapped for locality")
 			}
 		});

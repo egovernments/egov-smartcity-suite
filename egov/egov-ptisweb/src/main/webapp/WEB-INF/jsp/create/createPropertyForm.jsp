@@ -20,19 +20,6 @@
 		</td>
 	</tr>
 	
-	<tr class="vacantAreaRow">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="PlotArea"></s:text> :</td>
-		<td class="greybox" width=""><s:textfield name="areaOfPlot" maxlength="15" value="%{areaOfPlot}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" /></td>
-		<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
-		<td class="greybox">
-		   <s:date name="%{dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
-				name="dateOfCompletion" id="basicProperty.propOccupationDate" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
-				size="10" maxlength="10"></s:textfield>
-		</td>
-	</tr>
-	
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
@@ -81,8 +68,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:textfield
-				name="propertyDetail.extentSite" id="extentSite" size="12"
+		<td class="greybox" width=""><s:textfield name="propertyDetail.extentSite" id="propertyDetail.extentSite" size="12"
 				maxlength="15" value="%{propertyDetail.extentSite}"></s:textfield></td>
 		
 	</tr>
@@ -186,7 +172,7 @@
 
 	<!-- Amenities section -->
 
-	<tr id="amenitiesHeaderRow" class="amenities">
+	<tr class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"> <s:text name="amenities"></s:text>
@@ -205,7 +191,7 @@
 
 	<!-- Floor type details -->
 
-	<tr id="constructionHeaderRow" class="construction">
+	<tr class="construction">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.constructiontypes" /></span>

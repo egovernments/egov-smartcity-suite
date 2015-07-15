@@ -230,9 +230,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 			if (propTypeMstr != null) {
 				if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 
-					if (areaOfPlot == null || areaOfPlot.equals("")) {
-						addActionError(getText("mandatory.areaOfPlot"));
-					}
 					if (propTypeMstr.getType().equals(APARTMENT_PROPERTY)
 							&& property.getPropertyDetail().getApartment().getId() == null) {
 						addActionError(getText("mandatory.apartment"));
@@ -259,10 +256,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							if (StringUtils.isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
 								addActionError(getText("mandatory.buildingPlanNo"));
 							}
-							if (null != property.getPropertyDetail().getBuildingPermissionDate()) {
+							if (null == property.getPropertyDetail().getBuildingPermissionDate()) {
 								addActionError(getText("mandatory.buildingPlanDate"));
 							}
-							if (StringUtils.isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
+							if (StringUtils.isBlank(property.getPropertyDetail().getDeviationPercentage())) {
 								addActionError(getText("mandatory.deviationPercentage"));
 							}
 						}
@@ -309,6 +306,9 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							addActionError(getText("mandatory.constType", msgParams));
 						}
 
+						if(floor.getDrainage() && null == floor.getNoOfSeats()){
+							addActionError(getText("mandatory.noofseats"));
+						}
 						if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
 								|| (floor.getPropertyUsage().getId().toString()).equals("-1")) {
 							addActionError(getText("mandatory.floor.usage", msgParams));
@@ -336,8 +336,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							}
 						}
 
-						if (floor.getBuiltUpArea() == null
-								|| (floor.getBuiltUpArea().getArea() == null || floor.getBuiltUpArea().getArea()
+						if (floor.getBuiltUpArea() == null || (floor.getBuiltUpArea().getArea() == null || floor.getBuiltUpArea().getArea()
 										.equals(""))) {
 							addActionError(getText("mandatory.assbleArea"));
 						}

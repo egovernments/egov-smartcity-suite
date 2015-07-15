@@ -124,8 +124,7 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield
-						name="propertyDetail.floorDetails[0].builtUpArea.area" 
+					<s:textfield name="propertyDetail.floorDetails[0].builtUpArea.area" 
 						maxlength="15" size="10" id="propertyDetail.floorDetails[0].builtUpArea.area" value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
@@ -153,7 +152,7 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield autocomplete="off" name="propertyDetail.floorDetails[0].noOfSeats" data-optional="1"
+					<s:textfield autocomplete="off" name="propertyDetail.floorDetails[0].noOfSeats" 
 						id="propertyDetail.floorDetails[0].noOfSeats" value="%{propertyDetail.floorDetails[0].noOfSeats}" size="10"
 						maxlength="10" cssStyle="width:100%"></s:textfield>
 				</div>
@@ -266,7 +265,7 @@
 					<div align="center">
 						<s:textfield
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area" readOnly="true"
+							maxlength="15" size="10" id="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
 							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />
@@ -286,7 +285,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" id="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" headerValue="select"
-								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].drainage}"
+								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[#floorsstatus.index].drainage}"
 								cssClass="selectnew" data-optional="1">
 						</s:select>
 					</div>
@@ -294,23 +293,17 @@
 				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:textfield autocomplete="off"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats" data-optional="1"
-							id="propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats" value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].noofseats}" size="10"
+						<s:textfield autocomplete="off" name="propertyDetail.floorDetails[%{#floorsstatus.index}].noOfSeats" 
+							id="propertyDetail.floorDetails[%{#floorsstatus.index}].noOfSeats" value="%{propertyDetail.floorDetails[#floorsstatus.index].noOfSeats}" size="10"
 							maxlength="10" cssStyle="width:100%"></s:textfield>
 					</div>
 				</td>
 				
 				<s:if test="modifyRsn != 'DATA_UPDATE'">
-					<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF"
-						name="addF"
-						src="${pageContext.request.contextPath}/resources/image/addrow.gif"
-						alt="Add" onclick="javascript:addFloor(); return false;"
-						width="18" height="18" border="0" /><img id="dDelF" name="dDelF"
-						src="${pageContext.request.contextPath}/resources/image/removerow.gif"
-						alt="Remove" onclick="javascript:delFloor(this);return false;"
-						width="18" height="18" border="0" /></td>
-
+					<td class="blueborderfortd" id="AddRemoveFloor"><img id="addF" name="addF"
+						src="${pageContext.request.contextPath}/resources/image/addrow.gif"	alt="Add" onclick="javascript:addFloor(); return false;"
+						width="18" height="18" border="0" /><img id="dDelF" name="dDelF" src="${pageContext.request.contextPath}/resources/image/removerow.gif"
+						alt="Remove" onclick="javascript:delFloor(this);return false;"	width="18" height="18" border="0" /></td>
 				</s:if>
 			</tr>
 		</s:iterator>
