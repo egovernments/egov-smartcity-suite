@@ -83,7 +83,14 @@ jQuery(document).ready(function ($) {
 				"autoWidth": false,
 				"oTableTools": {
 					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons": ["copy", "csv", "xls", "pdf", "print"]
+					"aButtons": [
+					             { "sExtends": "xls",
+					                 "mColumns": [0,1,2, 3, 4,5.6]},
+					             { "sExtends": "pdf",
+					                 "mColumns": [0,1,2, 3, 4,5.6]},
+					             { "sExtends": "print",
+					                 "mColumns": [0,1,2, 3, 4,5.6]},
+					             ]
 				},
 				searchable:true,
 				data: searchResult,
