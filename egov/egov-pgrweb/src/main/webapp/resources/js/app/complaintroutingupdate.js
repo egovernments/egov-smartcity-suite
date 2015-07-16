@@ -41,9 +41,14 @@
 $(document).ready(function()
 {
 	$('#routerUpdateBtn').click(function() {
-		var url = '/pgr/router/update-search/'+ $('#routerId').val();
-		$('#updateRouter').attr('method', 'post');
-		$('#updateRouter').attr('action', url);
+		if($('#positionId').val() != ""){
+			var url = '/pgr/router/update-search/'+ $('#routerId').val();
+			$('#updateRouter').attr('method', 'post');
+			$('#updateRouter').attr('action', url);
+		}else{
+			$('.positionerror').html('Position is required').show();
+			return false;
+		}
 	})
 	
 	$('#routerDel').click(function() {
