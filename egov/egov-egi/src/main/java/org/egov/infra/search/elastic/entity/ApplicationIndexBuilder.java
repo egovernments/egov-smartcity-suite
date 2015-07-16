@@ -39,6 +39,7 @@
  */
 package org.egov.infra.search.elastic.entity;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
@@ -54,16 +55,32 @@ public class ApplicationIndexBuilder {
 	private ApplicationIndex applicationIndex;
 
 	public ApplicationIndexBuilder(String moduleName, String applicationNumber, Date applicationDate, String applicationType, String applicantName, String status, String url) {
+		
 		applicationIndex =  new ApplicationIndex();
 		applicationIndex.setModuleName(moduleName);
 		applicationIndex.setApplicationNumber(applicationNumber);
-		applicationIndex.setApplicationDate(applicationDate);
+		applicationIndex.setApplicationDate(formatDateUTC(applicationDate));
 		applicationIndex.setApplicationType(moduleName.concat("-".concat(applicationType)));
 		applicationIndex.setApplicantName(applicantName);
 		applicationIndex.setStatus(status);
 		applicationIndex.setUrl(url);
 	}
 	
+	private Date formatDateUTC(Date date) {
+		Calendar oldcl = Calendar.getInstance();
+		oldcl.setTime(date);
+		
+		Date now = new Date();
+		Calendar newcl = Calendar.getInstance();
+		
+		newcl.setTime(now);
+		newcl.set(Calendar.DATE,oldcl.get(Calendar.DATE));
+		newcl.set(Calendar.MONTH, oldcl.get(Calendar.MONTH));
+		newcl.set(Calendar.YEAR, oldcl.get(Calendar.YEAR));
+		
+		return newcl.getTime();
+	}
+
 	public ApplicationIndexBuilder applicationAddress(String applicantAddress) {
 		applicationIndex.setApplicantAddress(applicantAddress);
 		return this;
