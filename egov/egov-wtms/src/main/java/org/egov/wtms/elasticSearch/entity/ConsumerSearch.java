@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import org.egov.infra.search.elastic.Indexable;
 import org.egov.search.domain.Searchable;
+import org.joda.time.DateTime;
 
 public class ConsumerSearch implements Indexable {
 
@@ -27,57 +28,22 @@ public class ConsumerSearch implements Indexable {
 	private String usageType;
 	@Searchable(name="totaldue", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalDue;
-
-	public ConsumerSearch(String consumerCode, String mobileNumber,String usageType) {
+	@Searchable(name = "createdDate", group = Searchable.Group.COMMON)
+    private DateTime createdDate;
+	@Searchable(name = "applicationcode", group = Searchable.Group.CLAUSES)
+	private String applicationCode;
+	
+	public ConsumerSearch(String consumerCode, String mobileNumber,String usageType, DateTime createdDate) {
 		this.consumerCode = consumerCode;
 		this.mobileNumber = mobileNumber;
 		this.usageType = usageType;
+		this.createdDate = createdDate;
 	}
 	
 	
 	@Override
 	public String getIndexId() {
 		return this.consumerCode;
-	}
-	
-	public void setZone(String zone) {
-		this.zone = zone;
-	}
-
-	public void setWard(String ward) {
-		this.ward = ward;
-	}
-	
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-	}
-	
-	public void setBpaId(String bpaId) {
-		this.bpaId = bpaId;
-	}
-
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-
-	public String getConsumerName() {
-		return this.consumerName;
-	}
-	
-	public void setConsumerName(String consumerName) {
-		this.consumerName = consumerName;
-	}
-
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
-
-	public void setUsageType(String usageType) {
-		this.usageType = usageType;
-	}
-
-	public void setTotalDue(BigDecimal totalDue) {
-		this.totalDue = totalDue;
 	}
 
 
@@ -90,10 +56,26 @@ public class ConsumerSearch implements Indexable {
 
 
 	/**
+	 * @param zone the zone to set
+	 */
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+
+	/**
 	 * @return the ward
 	 */
 	public String getWard() {
 		return ward;
+	}
+
+
+	/**
+	 * @param ward the ward to set
+	 */
+	public void setWard(String ward) {
+		this.ward = ward;
 	}
 
 
@@ -114,10 +96,26 @@ public class ConsumerSearch implements Indexable {
 
 
 	/**
+	 * @param propertyId the propertyId to set
+	 */
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
+	}
+
+
+	/**
 	 * @return the bpaId
 	 */
 	public String getBpaId() {
 		return bpaId;
+	}
+
+
+	/**
+	 * @param bpaId the bpaId to set
+	 */
+	public void setBpaId(String bpaId) {
+		this.bpaId = bpaId;
 	}
 
 
@@ -130,10 +128,34 @@ public class ConsumerSearch implements Indexable {
 
 
 	/**
+	 * @return the consumerName
+	 */
+	public String getConsumerName() {
+		return consumerName;
+	}
+
+
+	/**
+	 * @param consumerName the consumerName to set
+	 */
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
+	}
+
+
+	/**
 	 * @return the locality
 	 */
 	public String getLocality() {
 		return locality;
+	}
+
+
+	/**
+	 * @param locality the locality to set
+	 */
+	public void setLocality(String locality) {
+		this.locality = locality;
 	}
 
 
@@ -152,4 +174,35 @@ public class ConsumerSearch implements Indexable {
 		return totalDue;
 	}
 
+
+	/**
+	 * @param totalDue the totalDue to set
+	 */
+	public void setTotalDue(BigDecimal totalDue) {
+		this.totalDue = totalDue;
+	}
+
+
+	/**
+	 * @return the createdDate
+	 */
+	public DateTime getCreatedDate() {
+		return createdDate;
+	}
+
+
+	/**
+	 * @return the applicationCode
+	 */
+	public String getApplicationCode() {
+		return applicationCode;
+	}
+
+
+	/**
+	 * @param applicationCode the applicationCode to set
+	 */
+	public void setApplicationCode(String applicationCode) {
+		this.applicationCode = applicationCode;
+	}
 }

@@ -61,12 +61,16 @@ public class ConsumerIndexService {
         final ConsumerSearch consumerSearch = new ConsumerSearch(
                 waterConnectionDetails.getConnection().getConsumerCode(),
                 waterConnectionDetails.getConnection().getMobileNumber(),
-                waterConnectionDetails.getUsageType().getName());
+                waterConnectionDetails.getUsageType().getName(),waterConnectionDetails.getCreatedDate());
 
+        consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+        consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
         consumerSearch.setLocality(
                 assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
         consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
+        consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
+        
         final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr.hasNext()) {
             consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());
