@@ -40,16 +40,13 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.ApplicationDocuments;
-import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -75,8 +72,6 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @Autowired
     private ApplicationTypeService applicationTypeService;
     @Autowired
-    private ConnectionDemandService connectionDemandService;
-    @Autowired
     private WaterConnectionService waterConnectionService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -85,26 +80,34 @@ public class AdditionalConnectionController extends GenericConnectionController 
         return waterConnectionDetailsService.getAllActiveDocumentNames(addConnection.getApplicationType());
     }
 
-    @RequestMapping(value = "/addconnection/{applicationNumber}", method = RequestMethod.GET)
-    public String showAdditionalApplicationForm(final Model model, @PathVariable final String applicationNumber) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(applicationNumber);
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        model.addAttribute("parentConnection",waterConnectionService.findParentWaterConnection(waterConnectionDetails
+    @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
+    public String showAdditionalApplicationForm(@ModelAttribute final WaterConnectionDetails addConnection,
+            final Model model, @PathVariable final String consumerCode) {
+        final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+        loadBasicDetails(addConnection, model, parentConnectionDetails);
+        return "addconnection-form";
+    }
+
+    private void loadBasicDetails(final WaterConnectionDetails addConnection, final Model model,
+            final WaterConnectionDetails parentConnectionDetails) {
+        addConnection.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        addConnection.setConnection(parentConnectionDetails.getConnection());
+        addConnection.getConnection().setParentConnection(parentConnectionDetails.getConnection());
+        model.addAttribute("parentConnection", waterConnectionService.findParentWaterConnection(parentConnectionDetails
                 .getConnection().getPropertyIdentifier()));
-        model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("waterConnectionDetails", parentConnectionDetails);
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
-                        waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("addConnection", new WaterConnectionDetails());
+                        parentConnectionDetails.getConnectionType().name()));
+        model.addAttribute("addConnection", addConnection);
         model.addAttribute("mode", "addconnection");
-        return "addconnection-form";
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request) {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
@@ -123,9 +126,12 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 i++;
             }
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+                    .getActiveConnectionDetailsByConnection(addConnection.getConnection());
+            loadBasicDetails(addConnection, model, parentConnectionDetails);
             return "addconnection-form";
-
+        }
         addConnection.getApplicationDocs().clear();
         addConnection.setApplicationDocs(applicationDocs);
 

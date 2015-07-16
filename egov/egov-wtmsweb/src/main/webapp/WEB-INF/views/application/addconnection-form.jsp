@@ -56,8 +56,8 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-				<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
-				<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/>
+				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
+				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
 					<jsp:include page="documentdetails.jsp"></jsp:include>	

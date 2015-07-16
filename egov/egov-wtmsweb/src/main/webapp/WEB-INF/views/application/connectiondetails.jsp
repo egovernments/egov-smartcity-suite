@@ -154,38 +154,6 @@
 	</c:if>
 </div>
 <c:if test="${mode=='addconnection'}">
-	<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
-	<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
-	<form:hidden path="connection.mobileNumber" value="${waterConnectionDetails.connection.mobileNumber}"/>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.plintarea.assessment" /><span class="mandatory"></span></label> 
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="plinthArea" path="plinthArea" required="required" />
-			<form:errors path="plinthArea" cssClass="add-margin error-msg" />		
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.no.of.persons" /><span class="mandatory"></span></label> 
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="numberOfPerson" path="numberOfPerson" required="required" />
-			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.connection.order" /><span class="mandatory"></span></label> 
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="connectionOrder" path="connectionOrder" required="required" />
-			<form:errors path="connectionOrder" cssClass="add-margin error-msg" />		
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.addconnection.reason" /><span class="mandatory"></span></label> 
-		<div class="col-sm-8 add-margin">
-			<form:textarea class="form-control patternvalidation" data-pattern="string" maxlength="1024" id="connectionReason" path="connectionReason" required="required" />
-			<form:errors path="connectionReason" cssClass="add-margin error-msg" />		
-		</div>
-	</div>
+	<jsp:include page="addconnectiondetails.jsp"></jsp:include>	
 </c:if>
 					
