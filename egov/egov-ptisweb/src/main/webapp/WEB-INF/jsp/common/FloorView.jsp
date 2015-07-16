@@ -42,19 +42,15 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom" id="floorDetails">
     <tr>
 		<th class="bluebgheadtd"><s:text name="FloorNo" /></th>
-		<th class="bluebgheadtd"><s:text name="ConstructionType" /><a
-			onclick="openWindow('ConstType.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
-		<th class="bluebgheadtd"><s:text name="Usage" /><a
-			onclick="openWindow('UsageMaster.jsp');"> <img src="../resources/image/help.gif" style="border: none" /></a></th>
+		<th class="bluebgheadtd"><s:text name="ConstructionType" /></th>
+		<th class="bluebgheadtd"><s:text name="Usage"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
-		<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="Width" /></th>
-		<th class="bluebgheadtd"><s:text name="Length" /></th>
-		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
-		<th class="bluebgheadtd"><s:text name="planappr" /></th>
+		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
+		<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
+		<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
+		<th class="bluebgheadtd"><s:text name="drainage" /></th>
+		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
     </tr>
     <s:iterator value="floorDetails" status="floorsstatus">
         <tr id="Floorinfo">
@@ -84,34 +80,29 @@
 	    	<span class="bold"><s:property default="N/A" value="%{occupantName}" /> </span>
 	        </div>
 	    </td>	
-	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<span class="bold"><div align="center"><s:property default="N/A" value="%{depreciationMaster.depreciationName}" /></div></span>
-	    </td>	
+
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 	    <s:date name="createdDate" var="cdFormat" format="dd/MM/yyyy"/>
 	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
 	    </td>
-	    <td class="blueborderfortd" style="padding: 2px 2px">
-        <div align="center">
-        	<span class="bold"><s:property default="N/A" value="%{extraField5}" /></span>
-        </div>
-        </td>
-         <td class="blueborderfortd" style="padding: 2px 2px">
-        <div align="center">
-        	<span class="bold"><s:property default="N/A" value="%{extraField4}" /></span>
-        </div>
-        </td>
+	   
         <td class="blueborderfortd" style="padding: 2px 2px">
 			<span class="bold"><div align="center"><s:property default="N/A" value="%{builtUpArea.area}" /></div></span>
 	    </td>
-	    <td class="blueborderfortd" style="padding: 2px 2px">
-	    	<span class="bold"><s:property default="N/A" value="%{capitalValue}" /></span>
+	    
+	     <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{taxExemptedReason.name}" /></div></span>
 	    </td>
+	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-	     <s:if test="%{planApproved == true}">
-	    <span class="bold"> Yes</span>
-	     </s:if>
-	    <span class="bold"> <s:else>No</s:else></span>
+			<s:if test="%{drainage == true}">
+	          <span class="bold"> Yes</span>
+	        </s:if>
+	         <span class="bold"> <s:else>No</s:else></span>
+	    </td>
+	    
+	    <td class="blueborderfortd" style="padding: 2px 2px">
+			<span class="bold"><div align="center"><s:property default="N/A" value="%{noOfSeats}" /></div></span>
 	    </td>
 	</tr>
    </s:iterator>

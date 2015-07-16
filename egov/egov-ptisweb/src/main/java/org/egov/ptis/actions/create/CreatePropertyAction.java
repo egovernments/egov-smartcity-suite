@@ -262,6 +262,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String westBoundary;
 	private Map<String, String> deviationPercentageMap;
 	private boolean chkBuildingPlanDetails;
+	private boolean chkIsAppurtenantLand;
 
 	@Autowired
 	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
@@ -786,12 +787,12 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
 
-		if ((propTypeMstr != null) && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
+		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) || chkIsAppurtenantLand) {
 			property.setPropertyDetail(changePropertyDetail());
 		}
 
 		basicProperty.addProperty(property);
-		//propService.createDemand(property, propCompletionDate);
+		propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
@@ -1018,7 +1019,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 		}
 
-		validateProperty(property, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, isAuthProp,
+		validateProperty(property, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, chkIsAppurtenantLand,
 				propTypeId, propUsageId, propOccId, chkBuildingPlanDetails, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		if (chkIsCorrIsDiff) {
@@ -1860,6 +1861,14 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setChkBuildingPlanDetails(boolean chkBuildingPlanDetails) {
 		this.chkBuildingPlanDetails = chkBuildingPlanDetails;
+	}
+
+	public boolean isChkIsAppurtenantLand() {
+		return chkIsAppurtenantLand;
+	}
+
+	public void setChkIsAppurtenantLand(boolean chkIsAppurtenantLand) {
+		this.chkIsAppurtenantLand = chkIsAppurtenantLand;
 	}
 	
 }

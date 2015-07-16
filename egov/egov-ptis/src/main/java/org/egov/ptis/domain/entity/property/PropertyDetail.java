@@ -329,13 +329,13 @@ public interface PropertyDetail extends Property {
 	
 	public void setCable(boolean cable);
 	
-	public double getExtentSite();
+	public Double getExtentSite();
 	
-	public void setExtentSite(double extentSite);
+	public void setExtentSite(Double extentSite);
 	
-	public double getExtentAppartenauntLand();
+	public Double getExtentAppartenauntLand();
 	
-	public void setExtentAppartenauntLand(double extentAppartenauntLand);
+	public void setExtentAppartenauntLand(Double extentAppartenauntLand);
 	
 	public String getSiteOwner();
 	

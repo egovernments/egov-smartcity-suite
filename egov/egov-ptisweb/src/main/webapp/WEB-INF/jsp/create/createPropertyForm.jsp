@@ -64,26 +64,26 @@
 
 	</tr>
 
-	<tr>
+	<tr class="extentSite">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:textfield name="propertyDetail.extentSite" id="propertyDetail.extentSite" size="12"
-				maxlength="15" value="%{propertyDetail.extentSite}"></s:textfield></td>
+		<td class="greybox" width=""><s:textfield name="areaOfPlot" id="areaOfPlot" size="12"
+				maxlength="15" value="%{areaOfPlot}"></s:textfield></td>
 		
 	</tr>
-
-   <tr>
+ 
+   <tr class="appurtenant">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
-				value="%{chkIsAppartenauntLand}" onclick="enableAppartnaumtLandDetails();" />
+		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" id="chkIsAppurtenantLand"
+				value="%{chkIsAppurtenantLand}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
 	</tr>
 
-	<tr id="appartenantRow">
+	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
 			<span class="mandatory1">*</span> :</td>

@@ -42,25 +42,25 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
-			:</td>
-		<td class="greybox" width=""><span class="bold"><s:property
-					value="%{propertyDetail.propertyTypeMaster.type}" default="N/A" /></span>
-		</td>
-	</tr>
-	<tr>
+    <tr>
 		<td class="greybox2">&nbsp;</td>
 		<s:if test="%{basicProp.upicNo!=null}">
 			<td class="greybox"><s:text name="prop.Id" /> :</td>
 			<td class="greybox"><span class="bold"><s:property
 						default="N/A" value="%{basicProp.upicNo}" /> </span></td>
 		</s:if>
-		<td class="greybox"><s:text name="application.date" /> :</td>
-		<td class="greybox"><s:date name="%{basicProperty.createdDate}"
-				var="createdDate" format="dd/MM/yyyy" /> <span class="bold"><s:property
-					default="N/A" value="%{#createdDate}" /> </span></td>
+	</tr>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
+			:</td>
+		<td class="greybox" width=""><span class="bold"><s:property
+					value="%{propertyDetail.propertyTypeMaster.type}" default="N/A" /></span>
+		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
+			:</td>
+		<td class="greybox" width=""><span class="bold"><s:property
+					value="%{propertyDetail.categoryType}" default="N/A" /></span>
+		</td>
 	</tr>
 
 	<tr>

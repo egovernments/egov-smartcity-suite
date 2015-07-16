@@ -45,7 +45,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
-import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 
 /**
@@ -97,8 +96,8 @@ public class BuiltUpProperty extends AbstractProperty {
 	private boolean attachedBathRoom = false;
 	private boolean waterHarvesting = false;
 	private boolean cable = false;
-	private double extentSite;
-	private double extentAppartenauntLand;
+	private Double extentSite;
+	private Double extentAppartenauntLand;
 	private String siteOwner;
 	private FloorType floorType;
 	private RoofType roofType;
@@ -120,8 +119,8 @@ public class BuiltUpProperty extends AbstractProperty {
 			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Property property, Date updatedTime,
 			PropertyUsage propertyUsage, Date dateOfCompletion, PropertyCreationReason creationReason,
 			PropertyTypeMaster propertyTypeMaster, String propertyType, PropertyMutationMaster propertyMutationMaster,
-			Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, double extentSite,
-			double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
+			Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, Double extentSite,
+			Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
 			boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
 			boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
 			String pattaNumber, Double currentCapitalValue, Double marketValue,String categoryType,String occupancyCertificationNo,
@@ -802,21 +801,22 @@ public class BuiltUpProperty extends AbstractProperty {
 	}
 
 	@Override
-	public double getExtentSite() {
+	public Double getExtentSite() {
 		return extentSite;
 	}
 
 	@Override
-	public void setExtentSite(double extentSite) {
+	public void setExtentSite(Double extentSite) {
 		this.extentSite = extentSite;
 	}
 
-	public double getExtentAppartenauntLand() {
+	@Override
+	public Double getExtentAppartenauntLand() {
 		return extentAppartenauntLand;
 	}
 
 	@Override
-	public void setExtentAppartenauntLand(double extentAppartenauntLand) {
+	public void setExtentAppartenauntLand(Double extentAppartenauntLand) {
 		this.extentAppartenauntLand = extentAppartenauntLand;
 	}
 

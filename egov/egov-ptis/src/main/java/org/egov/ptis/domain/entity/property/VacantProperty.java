@@ -128,7 +128,7 @@ public class VacantProperty extends AbstractProperty {
 			Date updatedTime, PropertyUsage propertyUsage, PropertyCreationReason creationReason,
 			PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
 			PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster, Character comZone,
-			Character cornerPlot, double extentSite, double extentAppartenauntLand, FloorType floorType,
+			Character cornerPlot, Double extentSite, Double extentAppartenauntLand, FloorType floorType,
 			RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
 			boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
 			String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
@@ -774,22 +774,22 @@ public class VacantProperty extends AbstractProperty {
 	}
 
 	@Override
-	public double getExtentSite() {
+	public Double getExtentSite() {
 		return extentSite;
 	}
 
 	@Override
-	public void setExtentSite(double extentSite) {
+	public void setExtentSite(Double extentSite) {
 		this.extentSite = extentSite;
 	}
 
 	@Override
-	public double getExtentAppartenauntLand() {
+	public Double getExtentAppartenauntLand() {
 		return extentAppartenauntLand;
 	}
 
 	@Override
-	public void setExtentAppartenauntLand(double extentAppartenauntLand) {
+	public void setExtentAppartenauntLand(Double extentAppartenauntLand) {
 		this.extentAppartenauntLand = extentAppartenauntLand;
 	}
 

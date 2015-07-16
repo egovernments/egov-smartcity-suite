@@ -217,7 +217,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	}
 
 	protected void validateProperty(Property property, String areaOfPlot, String dateOfCompletion,
-			boolean chkIsTaxExempted, String taxExemptReason, String isAuthProp, String propTypeId, String propUsageId,
+			boolean chkIsTaxExempted, String taxExemptReason, boolean chkIsAppurtenantLand, String propTypeId, String propUsageId,
 			String propOccId, Boolean chkBuildingPlanDetails, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
 
 		LOGGER.debug("Entered into validateProperty");
@@ -262,7 +262,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							addActionError(getText("mandatory.marketValue"));
 						}
 					}
-
 				} else {
 					if (null != property.getPropertyDetail()) {
 						if (chkBuildingPlanDetails) {
@@ -280,6 +279,11 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							if (isBlank(property.getPropertyDetail().getSiteOwner())) {
 								addActionError(getText("mandatory.siteowner"));
 							}
+						}
+						if (chkIsAppurtenantLand && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
+							addActionError(getText("mandatory.extentAppartnant"));
+						} else if (areaOfPlot == null || areaOfPlot.equals("")) {
+							addActionError(getText("mandatory.areaOfPlot"));
 						}
 					}
 					if (floorTypeId == null || floorTypeId == -1) {

@@ -118,7 +118,7 @@ jQuery(function ($) {
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
-	document.getElementById("appartenantRow").style.display = "none";
+	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 	enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
 	/* document.getElementById("plotArea").style.display = ""; */

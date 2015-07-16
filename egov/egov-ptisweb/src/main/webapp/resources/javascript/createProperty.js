@@ -4,18 +4,13 @@
 jQuery.noConflict();
 function enableAppartnaumtLandDetails() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	if (document.forms[0].chkIsAppartenauntLand.checked == true) {
+	if (document.forms[0].chkIsAppurtenantLand.checked == true) {
 		jQuery('tr.vacantlanddetaills').show();
-		jQuery('#appartenantRow').show();
+		jQuery('#appurtenantRow').show();
 		jQuery('tr.floordetails').show();
+		jQuery('tr.extentSite').hide();
 	} else {
 		enableFieldsForPropType();
-	}
-}
-
-function enableBuildingPlanDetails() {
-	if (document.forms[0].chkIsSuperStructure.checked == true) {
-		
 	}
 }
 
@@ -28,13 +23,17 @@ function enableFieldsForPropType() {
 			jQuery('tr.vacantlanddetaills').show();
 			jQuery('tr.construction').hide();
 			jQuery('tr.amenities').hide();
-			jQuery('#appartenantRow').hide();
+			jQuery('#appurtenantRow').hide();
+			jQuery('tr.extentSite').hide();
+			jQuery('tr.appurtenant').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery('tr.vacantlanddetaills').hide();
 			jQuery('tr.construction').show();
 			jQuery('tr.amenities').show();
-			jQuery('#appartenantRow').hide();
+			jQuery('#appurtenantRow').hide();
+			jQuery('tr.extentSite').show();
+			jQuery('tr.appurtenant').show();
 		}
 	}
 }

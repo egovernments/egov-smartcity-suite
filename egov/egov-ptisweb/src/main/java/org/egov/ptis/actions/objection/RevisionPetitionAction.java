@@ -893,7 +893,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 						: ""),
 				(objection.getReferenceProperty().getPropertyDetail().getDateOfCompletion() != null ? sdf.format(
 						objection.getReferenceProperty().getPropertyDetail().getDateOfCompletion()).toString() : ""),
-				isShowAckMessage, "", "",
+				isShowAckMessage, "", false,
 				(objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection
 						.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString() : null),
 				ownerName, ownerName, Boolean.TRUE, objection.getReferenceProperty().getPropertyDetail().getFloorType()

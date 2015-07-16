@@ -1058,7 +1058,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (reasonForModify == null || reasonForModify.equals("-1")) {
 			addActionError(getText("mandatory.rsnForMdfy"));
 		}
-		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, isAuthProp,
+		validateProperty(propertyModel, areaOfPlot, dateOfCompletion, chkIsTaxExempted, taxExemptReason, false,
 				propTypeId, propUsageId, propOccId, chkBuildingPlanDetails, floorTypeId, roofTypeId, wallTypeId, woodTypeId);
 
 		super.validate();
