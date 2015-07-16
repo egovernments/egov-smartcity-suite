@@ -53,7 +53,7 @@ import org.springframework.stereotype.Repository;
 public interface DesignationRepository extends JpaRepository<Designation,Long>,DesignationCustomRepository{
 	
 	Designation findByName(String designationName);
-	List<Designation> findByNameContainingIgnoreCase(String designationName);
+	List<Designation> findByNameContainingIgnoreCaseOrderByNameAsc(String designationName);
 	List<Designation> findAllByOrderByNameAsc();
 
 }

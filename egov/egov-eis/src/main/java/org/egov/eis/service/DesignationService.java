@@ -95,7 +95,7 @@ public class DesignationService {
     }
 
     public List<Designation> getAllDesignationsByNameLike(final String name) {
-        return designationRepository.findByNameContainingIgnoreCase(name);
+        return designationRepository.findByNameContainingIgnoreCaseOrderByNameAsc(name);
     }
 
     public List<Designation> getAllDesignationByDepartment(final Long id, final Date givenDate) {
