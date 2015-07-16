@@ -52,18 +52,16 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="collect-fee" name="transferform" theme="simple">
-				<s:push value="model">
-				<s:token/>
+			<form action="collect-fee.action" name="transferform" theme="simple">
 				<div class="headingbg">
 					Property Transfer Fee Payment
 				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td class="bluebox2" style="width:5%;">
+						<td class="bluebox2" style="width:23%;">
 							&nbsp;
 						</td>
-						<td class="bluebox" style="width:20%">
+						<td class="bluebox" style="width:20%;text-align:right;">
 							Application No :
 						</td>
 						<td class="bluebox">
@@ -72,16 +70,15 @@
 						<td class="bluebox">
 							&nbsp;
 						</td>
-						<td style="width:25%;">&nbsp;</td>
 					</tr>
 					<tr>
-						<td colspan="5" align="center">OR</td>
+						<td colspan="4" align="center">OR</td>
 					</tr>
 					<tr>
 						<td class="bluebox2" style="width:5%;">
 							&nbsp;
 						</td>
-						<td class="bluebox" style="width:20%">
+						<td class="bluebox" style="width:20%;text-align:right;">
 							Assessment No :
 						</td>
 						<td class="bluebox">
@@ -90,15 +87,13 @@
 						<td class="bluebox">
 							&nbsp;
 						</td>
-						<td style="width:25%;">&nbsp;</td>
 					</tr>
 				</table>
 				<div class="buttonbottom">
-					<s:submit value="Pay Fee" cssClass="buttonsubmit" align="center"></s:submit>
+					<input type="submit" value="Pay Fee" class="buttonsubmit" align="center"/>
 					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
 				</div>
-				</s:push>
-			</s:form>
+			</form>
 		</div>
 	</body>
 </html>

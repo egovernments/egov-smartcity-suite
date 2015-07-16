@@ -84,12 +84,13 @@ import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
  * @author satyam
  */
-@Component
+@Component("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
 RebateCalculator {
 
@@ -105,6 +106,7 @@ RebateCalculator {
     @Autowired
     private PropertyDAO propertyDAO;
     @Autowired
+    @Qualifier("ptDemandDAO")
     private PtDemandDao ptDemandDAO;
     @Autowired
     private EgBillDao egBillDAO;

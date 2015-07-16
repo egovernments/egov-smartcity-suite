@@ -86,6 +86,6 @@
 		</bag>
 	</class>
 	<query name="BY_APPLICATION_NO">
-		<![CDATA[from PropertyMutation p where p.applicationNo=:param_0]]>
+		<![CDATA[from PropertyMutation p where p.applicationNo=?]]>
 	</query>
 </hibernate-mapping>

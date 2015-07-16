@@ -85,10 +85,10 @@
 							</td>
 						</tr>
 					</table>
-				</div>
-				<div class="buttonbottom" align="center">
-					<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="button" onclick="printAcknowledgement()" />
-					<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+					<div class="buttonbottom" align="center">
+						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="button" onclick="printAcknowledgement()" />
+						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+					</div>
 				</div>
 			</s:push>
 		</s:form>

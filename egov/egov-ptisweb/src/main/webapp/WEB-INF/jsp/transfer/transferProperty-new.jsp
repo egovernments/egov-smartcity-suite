@@ -74,6 +74,7 @@
 				<div class="errorstyle" id="property_error_area">
 					<div class="errortext">
 						<s:actionerror />
+						<s:fielderror/>
 					</div>
 				</div>
 			</s:if>

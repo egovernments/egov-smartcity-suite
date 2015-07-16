@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -67,6 +66,7 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
+import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -97,7 +97,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PropertyTransferService extends PersistenceService<PropertyMutation, Long> {
-    private static final Logger LOGGER = Logger.getLogger(PropertyTransferService.class);
 
     @Autowired
     @Qualifier("propertyImplService")
@@ -149,6 +148,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
+
+    @Autowired
+    private ApplicationContextBeanProvider beanProvider;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -330,17 +332,17 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     }
 
     public String generateReceipt(final PropertyMutation propertyMutation) {
-        final PropertyTaxBillable billable = new PropertyTaxBillable();
-        billable.setBasicProperty(propertyMutation.getBasicProperty());
-        billable.setMutationFeePayment(Boolean.TRUE);
-        billable.setMutationFee(propertyMutation.getMutationFee());
-        billable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
-        billable.setCallbackForApportion(Boolean.FALSE);
-        billable.setMutationApplicationNo(propertyMutation.getApplicationNo());
-        billable.setUserId(EgovThreadLocals.getUserId());
-        billable.setReferenceNumber(propertyTaxNumberGenerator
+        final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) beanProvider.getBean("propertyTaxBillable");
+        propertyTaxBillable.setBasicProperty(propertyMutation.getBasicProperty());
+        propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
+        propertyTaxBillable.setMutationFee(propertyMutation.getMutationFee());
+        propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
+        propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
+        propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
+        propertyTaxBillable.setUserId(EgovThreadLocals.getUserId());
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator
                 .generateManualBillNumber(propertyMutation.getBasicProperty().getPropertyID()));
-        return ptBillServiceImpl.getBillXML(billable);
+        return ptBillServiceImpl.getBillXML(propertyTaxBillable);
     }
 
 }

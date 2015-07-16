@@ -45,7 +45,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +66,6 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -121,7 +121,7 @@ public class PropertyTransferAction extends BaseFormAction {
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty; // Do not change variable name, struts2
- // crazy.
+    // crazy.
     private Integer reportId = -1;
     private Long transfereeId;
     private double marketValue;
@@ -171,17 +171,16 @@ public class PropertyTransferAction extends BaseFormAction {
     }
 
     @SkipValidation
-    @ValidationErrorPage(value = SEARCH)
     @Action(value = "/collect-fee")
     public String collectFee() {
         if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
         else if (StringUtils.isNotBlank(applicationNo))
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
-        if (propertyMutation == null)
-            throw new ValidationException(new ValidationError("assessmentNo",
-                    "There is no property transfer exist for the given Assessment No / Application No"));
-        else
+        if (propertyMutation == null) {
+            addActionError("There is no property transfer exist for the given Assessment No / Application No");
+            return SEARCH;
+        } else
             collectXML = transferOwnerService.generateReceipt(propertyMutation);
         return COLLECT_FEE;
     }
@@ -392,8 +391,8 @@ public class PropertyTransferAction extends BaseFormAction {
         this.transferReason = transferReason;
     }
 
-    public String getCollectXML() {
-        return collectXML;
+    public String getCollectXML() throws UnsupportedEncodingException {
+        return URLEncoder.encode(collectXML,"utf-8");
     }
 
     public void setApplicationNo(final String applicationNo) {
