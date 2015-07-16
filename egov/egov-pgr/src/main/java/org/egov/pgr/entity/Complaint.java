@@ -88,7 +88,7 @@ public class Complaint extends StateAware {
 
 	@NotNull
 	@Column(name = "crn", unique = true)
-	@Searchable(name = "crn")
+	@Searchable(name = "crn",group = Searchable.Group.CLAUSES)
 	private String crn = "";
 
 	@ManyToOne

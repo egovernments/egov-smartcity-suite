@@ -75,6 +75,7 @@ import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.QueryStringFilter;
+import org.egov.search.domain.TermsStringFilter;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
@@ -149,9 +150,9 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
 
         final Filters actualFilters = filterCaptor.getValue();
         final Filter filter = actualFilters.getAndFilters().get(0);
-        assertThat(filter.field(), is("searchable.crn"));
-        assertThat(filter, instanceOf(QueryStringFilter.class));
-        assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
+        assertThat(filter.field(), is("clauses.crn"));
+        assertThat(filter, instanceOf(TermsStringFilter.class));
+        //assertThat(((TermsStringFilter) filter).value(), is("CRN123"));
     }
 
 /*    @Test

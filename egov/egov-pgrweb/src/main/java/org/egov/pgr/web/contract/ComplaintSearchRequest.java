@@ -169,7 +169,7 @@ public class ComplaintSearchRequest {
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>();
         andFilters.add(termsStringFilter("clauses.ulb", currentUlb));
-        andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
+        andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
         andFilters.add(queryStringFilter("common.citizen.name", complainantName));
         andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
         andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));

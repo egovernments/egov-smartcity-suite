@@ -46,11 +46,13 @@ import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.QueryStringFilter;
 import org.egov.search.domain.RangeFilter;
+import org.egov.search.domain.TermsStringFilter;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class ComplaintSearchRequestTest {
@@ -64,7 +66,7 @@ public class ComplaintSearchRequestTest {
 
 	@Test
 	public void shouldConstructFilters() {
-		request.setComplaintNumber("CRN123");
+		request.setComplaintNumber("CRN-123-XYZ");
 		request.setSearchText("road");
 
 		Filters filters = request.searchFilters();
@@ -74,9 +76,9 @@ public class ComplaintSearchRequestTest {
 		assertThat(filters.getAndFilters().size(), is(1));
 
 		Filter filter = filters.getAndFilters().get(0);
-		assertThat(filter.field(), is("searchable.crn"));
-		assertThat(filter, instanceOf(QueryStringFilter.class));
-		assertThat(((QueryStringFilter) filter).value(), is("CRN123"));
+		assertThat(filter.field(), is("clauses.crn"));
+		assertThat(filter, instanceOf(TermsStringFilter.class));
+		//assertThat((((TermsStringFilter) filter).values()),is ("CRN-123".toArray));
 	}
 
 	@Test

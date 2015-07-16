@@ -95,7 +95,7 @@ jQuery(document).ready(function ($) {
 				searchable:true,
 				data: searchResult,
 				columns: [
-				{title: 'Complaint Number', data: 'resource.searchable.crn'},
+				{title: 'Complaint Number', data: 'resource.clauses.crn'},
 				{title: 'Complaint Type', data: 'resource.searchable.complaintType.name'},
 				{title: 'Name', data: 'resource.common.citizen.name'},
 				{title: 'Location', data: 'resource.common.boundary.name'},
