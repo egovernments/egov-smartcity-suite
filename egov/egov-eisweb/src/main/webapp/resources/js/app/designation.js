@@ -48,6 +48,7 @@ $(document).ready(function(){
 		var url = '/eis/designation/update/'+ $('#desigName').val();
 		$('#designationForm').attr('method', 'get');
 		$('#designationForm').attr('action', url);
+		window.location=url;
 	});
 	
 	

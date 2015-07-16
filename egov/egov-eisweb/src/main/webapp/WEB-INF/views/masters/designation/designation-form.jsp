@@ -49,11 +49,18 @@
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 		<div class="panel-body">
-		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="designation" id="designationForm" >
+		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="designation" id="designationForm" action="" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.createDesignation"/></strong>
+					<c:choose>
+						<c:when test="${mode=='update'}">
+							<strong><spring:message code="lbl.title.updatedesignation"/></strong>
+						</c:when>
+						<c:otherwise>
+							<strong><spring:message code="lbl.hdr.createDesignation"/></strong>
+						</c:otherwise>
+					</c:choose>
 					</div>
 				</div> 
 				

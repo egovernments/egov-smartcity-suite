@@ -79,6 +79,7 @@ public class UpdateDesignationController {
 	public String updateDesignation(@Valid @ModelAttribute Designation designation, BindingResult errors,
 			RedirectAttributes redirectAttrs, Model model) {
 		if (errors.hasErrors()) {
+		    model.addAttribute("mode", "update");
 			return "designation-form";
 		}
 		designationService.updateDesignation(designation);;

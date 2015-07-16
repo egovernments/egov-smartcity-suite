@@ -11,25 +11,25 @@
 					<strong>${message}</strong>
 				</div>
 			</div>
-			<form:form id="designationForm" method="post"
+			<form:form id="designationForm" method="post" modelAttribute="designation"
 				class="form-horizontal form-groups-bordered">
 				<div class="panel-body">
 					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.name" />
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.name" /> :
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content" id="emp-name">
-							<c:out value="${employeeBean.employee.name }"></c:out>
-							<input id="employeeName" type="hidden"	value="<c:out value="${employeeBean.employee.name }" />" />
+						<div class="col-xs-3 add-margin view-content" id="desig-form">
+							<c:out value="${designation.name}"/>
+							<form:hidden path="name" id="desigName"/>
 						</div>
 						</div>
-                   
+                   <br/>
 					<div class="row text-center">
 						<div class="row">
 								<button type="submit" id="buttonCreate" class="btn btn-success">
 									<spring:message code="lbl.create" />
 								</button>
-								<button type="submit" id="buttonEdit" class="btn btn-success">
+								<button type="button" id="buttonEdit" class="btn btn-success">
 									<spring:message code="lbl.edit" />
 								</button>
 								<a href="javascript:void(0)" class="btn btn-default"
