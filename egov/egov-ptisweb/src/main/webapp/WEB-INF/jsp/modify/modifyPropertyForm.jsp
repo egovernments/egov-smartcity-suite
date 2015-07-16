@@ -192,7 +192,7 @@
 				value="%{chkIsAppurtenantLand}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="bluebox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
+		<td class="bluebox"><s:textfield maxlength="64" name="propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{propertyDetail.occupancyCertificationNo}"/></td>
 	</tr>
 	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>

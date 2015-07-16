@@ -62,44 +62,45 @@
 			}
 			
 			function loadOnStartUp() {
-				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-				if (document.forms[0].chkIsAppurtenantLand.checked == true	&& propertyType != "Open Plot") {
-					jQuery('tr.vacantlanddetaills').show();
-					document.getElementById("appurtenantRow").style.display = "";
-					document.getElementById("floorDetails").style.display = "";
-					document.getElementById("floorHeaderRow").style.display = "";
-				}
+				enableAppartnaumtLandDetailsView();
 				enableFieldsForPropTypeView();
+				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
+				enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
 				toggleFloorDetailsView();
+			}
+
+			function enableAppartnaumtLandDetailsView() {
+				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				if (document.forms[0].chkIsAppurtenantLand.checked == true) {
+					jQuery('tr.vacantlanddetaills').show();
+					jQuery('#appurtenantRow').show();
+					jQuery('tr.floordetails').show();
+					jQuery('tr.extentSite').hide();
+				} else {
+					enableFieldsForPropTypeView();
+				}
 			}
 
 			function enableFieldsForPropTypeView() {
 				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
-					onChangeOfPropertyTypeFromMixedToOthers(propType);
+					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
-						//document.getElementById("vacantLandRow").style.display = "";
-						//document.getElementById("vacantLandTable").style.display = "";
-						//document.getElementById("vacantAreaRow").style.display = "";
+						jQuery('tr.floordetails').hide();
 						jQuery('tr.vacantlanddetaills').show();
-						document.getElementById("floorDetails").style.display = "none";
-						document.getElementById("floorHeaderRow").style.display = "none";
-						document.getElementById("amenitiesRow").style.display = "none";
-						document.getElementById("amenitiesHeaderRow").style.display = "none";
-						document.getElementById("constructionHeaderRow").style.display = "none";
-						document.getElementById("constructionRow1").style.display = "none";
-						document.getElementById("constructionRow2").style.display = "none";
+						jQuery('tr.construction').hide();
+						jQuery('tr.amenities').hide();
 						jQuery('#appurtenantRow').hide();
+						jQuery('tr.extentSite').hide();
+						jQuery('tr.appurtenant').hide();
 					} else {
-						document.getElementById("floorDetails").style.display = "";
-						document.getElementById("floorHeaderRow").style.display = "";
-						document.getElementById("amenitiesRow").style.display = "";
-						document.getElementById("amenitiesHeaderRow").style.display = "";
-						document.getElementById("constructionHeaderRow").style.display = "";
-						document.getElementById("constructionRow1").style.display = "";
-						document.getElementById("constructionRow2").style.display = "";
+						jQuery('tr.floordetails').show();
 						jQuery('tr.vacantlanddetaills').hide();
+						jQuery('tr.construction').show();
+						jQuery('tr.amenities').show();
 						jQuery('#appurtenantRow').hide();
+						jQuery('tr.extentSite').show();
+						jQuery('tr.appurtenant').show();
 					}
 				}
 			}

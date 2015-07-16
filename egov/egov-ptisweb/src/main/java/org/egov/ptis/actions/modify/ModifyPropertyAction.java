@@ -144,6 +144,7 @@ import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
@@ -349,6 +350,13 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 			if (propertyModel.getPropertyDetail().getSitalArea() != null) {
 				setAreaOfPlot(propertyModel.getPropertyDetail().getSitalArea().getArea().toString());
+			}
+			if (basicProp.getPropertyID() != null) {
+				PropertyID propertyID = basicProp.getPropertyID();
+				northBoundary = propertyID.getNorthBoundary();
+				southBoundary = propertyID.getSouthBoundary();
+				eastBoundary = propertyID.getEastBoundary();
+				westBoundary = propertyID.getWestBoundary();
 			}
 			PropertyTypeMaster propertyType = propertyModel.getPropertyDetail().getPropertyTypeMaster();
 			propTypeId = propertyType.getId().toString();
@@ -743,7 +751,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 		setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), mutationCode, propTypeId, propUsageId,
 				propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId));
-
+		updatePropertyID(basicProp);
 		propertyModel.setBasicProperty(basicProp);
 		propertyModel.setEffectiveDate(propCompletionDate);
 		PropertyImpl newProperty = (PropertyImpl) propService.createDemand(propertyModel, propCompletionDate);
@@ -838,6 +846,16 @@ public class ModifyPropertyAction extends WorkflowAction {
 		}
 
 		LOGGER.debug("Exiting modifyBasicProp");
+	}
+	
+	private void updatePropertyID(BasicProperty basicProperty) {
+		PropertyID propertyId = basicProperty.getPropertyID();
+		if (propertyId != null) {
+			propertyId.setEastBoundary(getEastBoundary());
+			propertyId.setWestBoundary(getWestBoundary());
+			propertyId.setNorthBoundary(getNorthBoundary());
+			propertyId.setSouthBoundary(getSouthBoundary());
+		}
 	}
 
 	private Set<EgDemandDetails> getOldDemandDetails(Property oldProperty, Property newProperty) {
@@ -2029,6 +2047,14 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setWestBoundary(String westBoundary) {
 		this.westBoundary = westBoundary;
+	}
+
+	public String getSouthBoundary() {
+		return southBoundary;
+	}
+
+	public void setSouthBoundary(String southBoundary) {
+		this.southBoundary = southBoundary;
 	}
 	
 }
