@@ -33,7 +33,8 @@
         <module>egov-portalweb</module>
       	<module>egov-collectionweb</module>
         <module>egov-ptisweb</module>        
-       <module>egov-wtmsweb</module>
+        <module>egov-wtmsweb</module>
+        <module>egov-dashboardweb</module>
         <module>egov-ear</module>
     </modules>
 
