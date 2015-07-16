@@ -23,21 +23,16 @@ $(document).ready(function(){
 	// Initialize the Bloodhound suggestion engine
 	designation.initialize();
 	// Instantiate the Typeahead UI
-	$('#designationName').typeahead({
-		  hint: true,
-		  highlight: true,
+	var typeaheadobj =$('#designationName').typeahead({
+		  hint: false,
+		  highlight: false,
 		  minLength: 1
 		}, {
 		displayKey: 'name',
 		source: designation.ttAdapter()
-	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
-		$("#designationId").val(data.value);    
-    });
+	});
+	typeaheadWithEventsHandling(typeaheadobj, '#designationId'); 
 	
-	
-	function setDesignationId(obj) {
-		$("#designationId").val(obj)
-	}
 	
 	function validateAssignment() {
 		var deptId = $("#deptId").val();
@@ -72,14 +67,14 @@ $(document).ready(function(){
 	$("#deptId").blur(function (){
 		var deptId = $("#deptId").val();
 		if(null!=deptId || ''!=deptId){
-			$('.departmenterror').html('Department is required').hide();
+			$('.departmenterror').hide();
 		}
 	});
 	
 	$("#designationName").blur(function (){
 		var desigId = $("#designationName").val();
 		if(null!=desigId || ''!=desigId){
-			$('.designationerror').html('Designation is required').hide();
+			$('.designationerror').hide();
 		}
 		else
 			$("#designationId").val("");
@@ -88,7 +83,7 @@ $(document).ready(function(){
 	$("#positionName").blur(function (){
 		var posId = $("#positionName").val();
 		if(null!=posId || ''!=posId){
-			$('.positionerror').html('Position is required').hide();
+			$('.positionerror').hide();
 		}
 		else
 			$("#positionId").val("");
@@ -97,7 +92,7 @@ $(document).ready(function(){
 	$("#fromDate").blur(function (){
 		var fromDate = $("#fromDate").val();
 		if(null!=fromDate || ''!=fromDate){
-			$('.fromdateerror').html('From Date is required').hide();
+			$('.fromdateerror').hide();
 		}
 	});
 	
@@ -140,15 +135,21 @@ $(document).ready(function(){
 		positions.initialize();
 		
 	
-	$('#positionName').typeahead({
-		hint: true,
-		highlight: true,
+	var typeaheadobj = $('#positionName').typeahead({
+		hint: false,
+		highlight: false,
 		minLength: 1
 		}, {
 		displayKey: 'name',
 		source: positions.ttAdapter()
-		}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
-			$("#positionId").val(data.value);    
+		});
+	
+	typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
+	
+	$("#positionName").focus(function() {
+		validateAssignment();
+		$('.positionerror').hide();
+		positions.initialize();
 	});
 	
 	var rowCount=0;
@@ -307,10 +308,6 @@ $(document).ready(function(){
 		}	
 	});
 	
-	function setPositionId(obj) {
-		$("#positionId").val(obj)
-	}
-	
 	$("#isHodYes").click(function () {
 		$('#hodDeptDiv').show();
 	});
@@ -329,5 +326,19 @@ $(document).ready(function(){
 		$("#primary_no").prop("checked",true);
 		$("#primary_yes").prop("checked",false);
 	});
+	
+	$("#submit").click(function () {
+		if($("#assignmentTable tr").length==1){
+			$('.assignmentserror').html('At least one assignment should be entered ').show().fadeOut(5000);
+			$('.fromdateerror').hide();
+			$('.departmenterror').hide();
+			$('.designationerror').hide();
+			$('.positionerror').hide();
+			$('.todateerror').hide();
+			$('.fromdateerror').focus();
+			return false;
+		}
+	});
+	
 	
 });
