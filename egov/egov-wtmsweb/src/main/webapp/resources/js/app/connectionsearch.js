@@ -61,12 +61,20 @@ jQuery(document).ready(function ($) {
 					{title: 'Applicant Name', data: 'resource.searchable.consumername'},
 					{title: 'Consumer No.',class:'row-detail',data: 'resource.clauses.consumercode' },
 					{title: 'Address', data: 'resource.searchable.locality'},
+					{title: 'apptype' ,data: 'resource.clauses.applicationcode',"bVisible": false},
 					{title: 'Usage Type',	data: 'resource.clauses.usage'},
 					{title: 'Total Due', data: 'resource.clauses.totaldue'},
-					{title: 'Actions',  data : null, "target":-1,"defaultContent": 
-						'<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>'}
+					{title: 'Actions' ,
+					render: function (data, type, full) {
 					
-					
+						if(full!=null && full.resource!= undefined && full.resource.clauses.applicationcode!= undefined && full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
+							return 	('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>');
+						}
+						else 
+							return 	('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>');
+						
+			    	}
+					}
 					]
 				});
 			})
