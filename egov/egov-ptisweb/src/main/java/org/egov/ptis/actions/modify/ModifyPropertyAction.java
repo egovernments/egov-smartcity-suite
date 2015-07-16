@@ -236,10 +236,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private boolean updateData;
 	private PropertyAddress propertyAddr;
 	private String parcelId;
-	private String northBound;
-	private String southBound;
-	private String eastBound;
-	private String westBound;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private String errorMessage;
 	private String partNo;
@@ -277,6 +273,12 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private PropertyTypeMaster propTypeMstr;
 	private boolean chkBuildingPlanDetails;
 	private Map<String, String> deviationPercentageMap;
+	private Boolean chkIsAppurtenantLand;
+	private String certificationNumber;
+	private String northBoundary;
+	private String southBoundary;
+	private String eastBoundary;
+	private String westBoundary;
 	
 	public ModifyPropertyAction() {
 		super();
@@ -665,7 +667,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		addDropdownData("MutationList", propMutList);
 		addDropdownData("StructureList", StructureList);
 		addDropdownData("AgeFactorList", ageFacList);
-		addDropdownData("Appartments", apartmentsList);
+		addDropdownData("apartments", apartmentsList);
 		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
 			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1317,10 +1319,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 		existingProp.setDocNumber(docNumber);
 		updateAddress();
 		basicProp.setGisReferenceNo(parcelId);
-		basicProp.getPropertyID().setNorthBoundary(northBound);
-		basicProp.getPropertyID().setSouthBoundary(southBound);
-		basicProp.getPropertyID().setEastBoundary(eastBound);
-		basicProp.getPropertyID().setWestBoundary(westBound);
+		basicProp.getPropertyID().setNorthBoundary(northBoundary);
+		basicProp.getPropertyID().setSouthBoundary(southBoundary);
+		basicProp.getPropertyID().setEastBoundary(eastBoundary);
+		basicProp.getPropertyID().setWestBoundary(westBoundary);
 
 		propertyImplService.merge(existingProp);
 		basicPropertyService.update(basicProp);
@@ -1789,38 +1791,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		this.propertyAddr = propertyAddr;
 	}
 
-	public String getNorthBound() {
-		return northBound;
-	}
-
-	public void setNorthBound(String northBound) {
-		this.northBound = northBound;
-	}
-
-	public String getSouthBound() {
-		return southBound;
-	}
-
-	public void setSouthBound(String southBound) {
-		this.southBound = southBound;
-	}
-
-	public String getEastBound() {
-		return eastBound;
-	}
-
-	public void setEastBound(String eastBound) {
-		this.eastBound = eastBound;
-	}
-
-	public String getWestBound() {
-		return westBound;
-	}
-
-	public void setWestBound(String westBound) {
-		this.westBound = westBound;
-	}
-
 	public String getParcelId() {
 		return parcelId;
 	}
@@ -2019,6 +1989,46 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
 		this.deviationPercentageMap = deviationPercentageMap;
+	}
+
+	public Boolean isChkIsAppurtenantLand() {
+		return chkIsAppurtenantLand;
+	}
+
+	public void setChkIsAppurtenantLand(Boolean chkIsAppurtenantLand) {
+		this.chkIsAppurtenantLand = chkIsAppurtenantLand;
+	}
+
+	public String getCertificationNumber() {
+		return certificationNumber;
+	}
+
+	public void setCertificationNumber(String certificationNumber) {
+		this.certificationNumber = certificationNumber;
+	}
+
+	public String getNorthBoundary() {
+		return northBoundary;
+	}
+
+	public void setNorthBoundary(String northBoundary) {
+		this.northBoundary = northBoundary;
+	}
+
+	public String getEastBoundary() {
+		return eastBoundary;
+	}
+
+	public void setEastBoundary(String eastBoundary) {
+		this.eastBoundary = eastBoundary;
+	}
+
+	public String getWestBoundary() {
+		return westBoundary;
+	}
+
+	public void setWestBoundary(String westBoundary) {
+		this.westBoundary = westBoundary;
 	}
 	
 }

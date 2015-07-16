@@ -46,11 +46,10 @@
 <title><s:text name='ModProp.title' /></title>
 <sx:head />
 
-<link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
-	rel="stylesheet" type="text/css" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 
 <script type="text/javascript">
 	jQuery.noConflict();
@@ -79,7 +78,23 @@
 	function loadOnStartUp() {
 		enableAppartnaumtLandDetails();
 		enableFieldsForPropType();
+		populatePropTypeCategory();
+		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
+		enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
 		toggleFloorDetails();
+	}
+
+	function loadDesignationFromMatrix() {
+		var e = dom.get('approverDepartment');
+		var dept = e.options[e.selectedIndex].text;
+			var currentState = dom.get('currentState').value;
+			var amountRule="";
+		var pendingAction=document.getElementById('pendingActions').value;
+		loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
+	}
+	
+	function populateApprover() {
+		getUsersByDesignationAndDept();
 	}
 </script>
 </head>
@@ -89,7 +104,7 @@
 		<s:actionerror />
 	</div>
 	<!-- Area for error display -->
-	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
+	<div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
 	<s:form name="ModifyPropertyForm" action="modifyProperty" enctype="multipart/form-data" method="post"
 		theme="simple" validate="true">
 		<s:push value="model">

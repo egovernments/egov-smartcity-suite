@@ -60,7 +60,8 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="greybox2">
+		<td class="greybox">
+			&nbsp;
 		</td>
 		<td class="greybox">
 			<s:text name="OwnerName" />
@@ -104,12 +105,12 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
+	<tr class="extentSite">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="">
-		   <span class="bold"><s:property value="%{propertyDetail.extentSite}" default="N/A"/></span>
-		   <s:hidden name="propertyDetail.extentSite" value="%{propertyDetail.extentSite}"/>
+		   <span class="bold"><s:property value="%{areaOfPlot}" default="N/A"/></span>
+		   <s:hidden name="areaOfPlot" value="%{areaOfPlot}"/>
 		</td>
 		<td class="greybox" width="25%"></td>
 		<td class="greybox">
@@ -131,9 +132,13 @@
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
 			<s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/>
+			<s:hidden name="propertyDetail.structure" value="%{propertyDetail.structure}"/>
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></td>
+		<td class="greybox siteowner">
+			<span class="bold"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></span>
+			<s:hidden name="propertyDetail.siteOwner" value="%{propertyDetail.siteOwner}"/>
+		</td>
 	</tr>
 
 	<tr>
@@ -145,6 +150,9 @@
 				id="reasonForModify" listKey="code" listValue="mutationName"
 				list="dropdownData.MutationList" value="%{reasonForModify}"
 				cssClass="selectnew"/>
+		</td>
+		<td class="bluebox" colspan="2">
+			&nbsp;
 		</td>
 	</tr>
 	
@@ -166,22 +174,37 @@
 				cssClass="selectnew"/>
 		</td>
 	</tr>
-	<tr>
+	<tr id="apartmentRow">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox"><s:select headerKey=""
+				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
+				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
+				list="dropdownData.apartments" cssClass="selectnew" /></td>
+		<td class="greybox" colspan="2">
+			&nbsp;			
+		</td>
+	</tr>
+	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" id="chkIsAppartenauntLand"
-				value="%{chkIsAppartenauntLand}" onclick="enableAppartnaumtLandDetails();" />
+		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" id="chkIsAppurtenantLand"
+				value="%{chkIsAppurtenantLand}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
 	</tr>
-	<tr id="appartenantRow">
+	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="propertyDetail.extentAppartenauntLand"
 				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
+				onblur="validNumber(this);checkZero(this);"></s:textfield>
+		</td>
+		<td class="bluebox" colspan="2">
+			&nbsp;
+		</td>
 	</tr>
 	
 	<tr>
@@ -190,6 +213,9 @@
 		<td class="bluebox">
 		 <s:checkbox name="chkBuildingPlanDetails" id="chkBuildingPlanDetails"
 			value="%{chkBuildingPlanDetails}" onclick="enableOrDisableBPADetails(this);" />
+		</td>
+		<td class="bluebox" colspan="2">
+			&nbsp;
 		</td>
 	</tr>
 	
@@ -213,6 +239,9 @@
 		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
 				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
+		</td>
+		<td class="bluebox" colspan="2">
+			&nbsp;
 		</td>
    </tr>
 	
@@ -254,37 +283,6 @@
 		</td>
 	</tr>
 	
-	<tr id="vacantAreaRow">
-		<td class="bluebox" width="5%">&nbsp;</td>
-		<td class="bluebox">
-			<div id="plotArea">
-				<s:text name="PlotArea"/>
-				<span class="mandatory1">*</span> :
-			</div>
-			<div id="undivArea">
-				<s:text name="undivArea"/>
-				<span class="mandatory1">*</span> :
-			</div>
-		</td>
-		<td class="bluebox" colspan="2"><s:textfield name="areaOfPlot"
-				maxlength="15"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'Area Of Plot');checkZero(this,'Area Of Plot');" />
-			<span class="highlight2"><s:text
-					name="msgForCompulsionOfOpenPlot" /> </span>
-		</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
-	
-	<tr id="appartmentRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1"
-			headerValue="%{getText('default.select')}" name="appartmentId"
-			id="sbapartcomplex" listKey="id" listValue="name"
-			list="dropdownData.Appartments" value="%{appartmentId}"
-			cssClass="selectnew" onchange="makeMandatory();" />
-		</td>
-	</tr>
 	<tr id="floorHeaderRow" class="floordetails">
 		<td colspan="5">
 			<div class="headingsmallbg">

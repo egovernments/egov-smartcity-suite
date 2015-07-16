@@ -190,12 +190,12 @@
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="chkIsAppartenauntLand" disabled="true" />
+		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" disabled="true" />
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:property value="%{certificationNumber}"/></td>
 	</tr>
-	<tr id="appartenantRow">
+	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text> :</td>
 		<td class="greybox">

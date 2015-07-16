@@ -63,9 +63,9 @@
 			
 			function loadOnStartUp() {
 				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-				if (document.forms[0].chkIsAppartenauntLand.checked == true	&& propertyType != "Open Plot") {
+				if (document.forms[0].chkIsAppurtenantLand.checked == true	&& propertyType != "Open Plot") {
 					jQuery('tr.vacantlanddetaills').show();
-					document.getElementById("appartenantRow").style.display = "";
+					document.getElementById("appurtenantRow").style.display = "";
 					document.getElementById("floorDetails").style.display = "";
 					document.getElementById("floorHeaderRow").style.display = "";
 				}
@@ -89,7 +89,7 @@
 						document.getElementById("constructionHeaderRow").style.display = "none";
 						document.getElementById("constructionRow1").style.display = "none";
 						document.getElementById("constructionRow2").style.display = "none";
-						jQuery('#appartenantRow').hide();
+						jQuery('#appurtenantRow').hide();
 					} else {
 						document.getElementById("floorDetails").style.display = "";
 						document.getElementById("floorHeaderRow").style.display = "";
@@ -99,7 +99,7 @@
 						document.getElementById("constructionRow1").style.display = "";
 						document.getElementById("constructionRow2").style.display = "";
 						jQuery('tr.vacantlanddetaills').hide();
-						jQuery('#appartenantRow').hide();
+						jQuery('#appurtenantRow').hide();
 					}
 				}
 			}

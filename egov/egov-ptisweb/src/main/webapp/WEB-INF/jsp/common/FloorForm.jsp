@@ -251,7 +251,7 @@
 					<div align="center">
 						<s:textfield autocomplete="off"
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" 
-							value="%{propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate}"
+							value="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}"
 							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
