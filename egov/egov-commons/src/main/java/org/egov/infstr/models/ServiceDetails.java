@@ -66,7 +66,7 @@ public class ServiceDetails extends BaseModel {
 	private Boolean voucherCreation;
 	private Boolean isVoucherApproved;
 	private Date voucherCutOffDate;
-	//private Integer orderNumber;
+	private Integer orderNumber;
 
 	private Set<BankAccountServiceMap> bankAccountServiceMap = new HashSet<BankAccountServiceMap>(
 			0);
@@ -360,12 +360,12 @@ public class ServiceDetails extends BaseModel {
 		this.voucherCutOffDate = voucherCutOffDate;
 	}
 
-/*	public Integer getOrderNumber() {
+	public Integer getOrderNumber() {
 		return orderNumber;
 	}
 
 	public void setOrderNumber(Integer orderNumber) {
 		this.orderNumber = orderNumber;
-	}*/
+	}
 
 }

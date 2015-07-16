@@ -484,17 +484,10 @@ function onLoad(){
 		       </td>
 		       
 		       </tr>
-		       
-		      
-	            
-		            </table> <!-- End of accountdetailtable i -->
-	            
-	          
+          </table> <!-- End of accountdetailtable i -->
 	          <%i=i+1;%>
 	        <!-- End of table enclosing all account detail tables -->
 	      </div></td>
-	      
-	      
 	  </tr>
       
       </table>
@@ -502,25 +495,22 @@ function onLoad(){
       <div class="text-left margin-5"><s:text name="onlineReceipts.paythrough"/></div>
       
       <table class="table-payment">
-      
         <tr>
         
           <td class="blueborderfortd" width="50%">
            <div>
-             <s:radio id="radiobutton" name="paythrough" title="Axis Bank" list="#{'1' : ' &nbsp;Axis Bank'}"/>
-           </div> 
-           <div>Transaction fees is NIL.</div>
-          </td>
-          <td class="blueborderfortd" width="50%"> 
-            <div>
-             <s:radio id="radiobutton" name="paythrough" title="Axis Bank" list="#{'2' : ' &nbsp;Bill Desk Payment Gateway'}"/>
-            </div> 
-            <div>
-              Transaction fees for various modes of payment are as follows :-
-              <ul>
-                <li>Net Banking : Rs.6/- Per Transaction + 12.36% on Rs.6/- (Service tax + Education cess)</li>
-                <li>Credit Card (Master Card/Visa) : 1.75% on Bill Amount + 12.36% on 1.75% of bill amount (Service tax + Education cess)</li>
-              </ul>
+             <s:iterator var="p" value="%{serviceDetailsList}" status="s">
+		    <s:if test="%{ (#s.index+1)%2 ==1}"> 
+				<tr>
+			</s:if> 
+					<td width="30%" valign="top" ><input type="radio" onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'  name="radioButton1"/><span class="complaintmsg"> <s:property value="serviceName"/> </span>
+						<br><s:text name="%{code}.transactionmessage"/>
+					</td>
+			<s:if test="%{ (#s.index+1)%2 ==0}"> 
+				</tr>
+			</s:if>  
+		</s:iterator>
+      	 <div id="transactiondiv" style="display:none"> </div>
             </div>
           </td>
           
@@ -551,7 +541,6 @@ function onLoad(){
         <tr>
           <td class="blueborderfortd" colspan="2">Any Discrepancy found in the arrears mentioned above you may contact respective Zonal Revenue Officer with payment receipt for rectification.</td>
         </tr>
-        
       
       </table>
       

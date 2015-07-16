@@ -1,0 +1,4 @@
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','To Be Submitted',to_date('22-11-09','DD-MM-RR'),'TO_BE_SUBMITTED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Submitted',to_date('22-11-09','DD-MM-RR'),'SUBMITTED',2);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Approved',to_date('22-11-09','DD-MM-RR'),'APPROVED',3);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'ReceiptHeader','Cancelled',to_date('22-11-09','DD-MM-RR'),'CANCELLED',4);

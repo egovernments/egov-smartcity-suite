@@ -56,10 +56,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -81,6 +79,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -91,7 +90,6 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
@@ -105,7 +103,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     public static final String REDIRECT = "redirect";
     private static final long serialVersionUID = 1L;
 
-    //private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionCommon collectionCommon;
@@ -136,17 +133,17 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private String responseMsg = "";
     private HttpSession session = null;
     private HttpServletRequest request;
-    
     private static final String RESULT = "result";
     private static final String RECONRESULT = "reconresult";
     private Boolean callbackForApportioning;
     private String receiptNumber;
-	private String consumerCode;
-	private String receiptResponse = "";
+    private String consumerCode;
+    private String receiptResponse = "";
+    private ReceiptHeader receiptHeader;
+    private List<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>(0);
 	
-	private ReceiptHeader receiptHeader;
-	
-	public Object getModel() {
+	@Override
+    public Object getModel() {
 	        return null;
 	}
 	
@@ -167,15 +164,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 		 */
 		if (callbackForApportioning && !overrideAccountHeads){
 			this.apportionBillAmount();
-			/*for (ReceiptPayeeDetails payee : modelPayeeList) {
-				for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
-					if(receiptDetailList == null || receiptDetailList.isEmpty() || receiptDetailList.size() == 0){
-						throw new EGOVRuntimeException("Receipt could not be created as the apportioned receipt detail list is empty");
-					}else{
-						receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
-					}
-				}
-			}*/	
 		}
 		populateAndPersistReceipts();
 		return REDIRECT;
@@ -706,15 +694,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                         this.setTotalAmountToBeCollected(totalAmountToBeCollected.setScale(
                                         CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
                 }
-                    
-                /*modelPayeeList = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
-
-                for (ReceiptPayeeDetails payeeDetails : modelPayeeList) {
-                    for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders()) {
-                    	setTotalAmountToBeCollected(receiptHeader.getTotalAmountToBeCollected());
-						this.setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
-                    }
-                }*/
             } catch (Exception e) {
                 LOGGER.error(getText("billreceipt.error.improperbilldata") + e.getMessage());
                 addActionError(getText("billreceipt.error.improperbilldata"));
@@ -722,7 +701,36 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         }
         addDropdownData("paymentServiceList", getPersistenceService().findAllByNamedQuery(
                 CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_PAYMENT));
+        constructServiceDetailsList();
     }
+    
+    /**
+     * Construct list of Payment Gateway to appear in the UI based on the
+     * configuration defined in AppConfig. Default is ALL, which means all
+     * payment gateway will appear for the billing service. Otherwise, only the
+     * payment gateway codes defined as comma separated values will appear for
+     * the Billing Service.
+     * 
+     */
+    private void constructServiceDetailsList() {
+            List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                            CollectionConstants.PGI_BILLINGSERVICE_CONFIGKEY);
+                    for (AppConfigValues appConfigVal : appConfigValuesList) {
+                            String value = appConfigVal.getValue();
+                            String attr = value.substring(0, value.indexOf('|'));
+                            if (attr.equalsIgnoreCase(collDetails.getServiceCode())) {
+                                    String attrVal = value.substring(value.indexOf('|') + 1);
+                                    List<String> serviceCodes = new ArrayList<String>(0);
+                                    for (String code : attrVal.split(","))
+                                            serviceCodes.add(code);
+                                    serviceDetailsList = getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICES_BY_CODES, CollectionConstants.SERVICE_TYPE_PAYMENT,
+                                                    serviceCodes);
+                            }
+                    }
+            if(serviceDetailsList.size() == 0)
+                    serviceDetailsList = getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_PAYMENT);
+    }
+
 
     private void populateAndPersistReceipts() {
         ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
@@ -1190,6 +1198,12 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 	public void setReceiptResponse(String receiptResponse) {
 		this.receiptResponse = receiptResponse;
 	}
-	
-	
+
+        public List<ServiceDetails> getServiceDetailsList() {
+            return serviceDetailsList;
+        }
+    
+        public void setServiceDetailsList(List<ServiceDetails> serviceDetailsList) {
+            this.serviceDetailsList = serviceDetailsList;
+        }
 }

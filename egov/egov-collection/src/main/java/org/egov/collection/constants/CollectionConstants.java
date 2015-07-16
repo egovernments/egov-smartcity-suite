@@ -91,7 +91,7 @@ public final class CollectionConstants {
 	public static final String REPORT_TEMPLATE_RECEIPT_REGISTER = "collection_receipt_register";
 
 	//Receipt View Source Path for Financials
-	public static final String RECEIPT_VIEW_SOURCEPATH = "/collection/receipts/receipt!viewReceipts.action?selectedReceipts=";
+	public static final String RECEIPT_VIEW_SOURCEPATH = "/collection/receipts/receipt-viewReceipts.action?selectedReceipts=";
 	
 	// action method return values
 	public static final String REPORT = "report";
@@ -152,6 +152,8 @@ public final class CollectionConstants {
 	public static final String QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE = "RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE";
 	public static final String QUERY_RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER = "RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER";
 	public static final String QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE = "RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE";
+	public static final String QUERY_ACTIVE_SERVICES_BY_CODES  = "getActiveServiceByCodes";
+	public static final String QUERY_ACTIVE_SERVICES_BY_TYPE  = "getActiveServiceByType";
 		
 	// named queries (other modules)
 	public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -435,4 +437,6 @@ public final class CollectionConstants {
 	
 	public static final String RCPT_CREATE = "Receipt Creation";
 	public static final String RCPT_CANCEL = "Receipt Cancellation";
+	
+	public static final String PGI_BILLINGSERVICE_CONFIGKEY  = "BILLINGSERVICEPAYMENTGATEWAY";
 }
