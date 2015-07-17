@@ -134,7 +134,7 @@
 							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
 							<c:if test="${null!=mode}">
 							<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax" target="_blank"> 
+									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax Management" target="_blank"> 
 									<c:out value="${file.fileName}"/></a>
 								</c:forEach>
 							</td>

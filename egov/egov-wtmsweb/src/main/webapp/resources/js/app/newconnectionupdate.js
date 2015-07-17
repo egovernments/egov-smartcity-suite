@@ -48,26 +48,33 @@ $(document).ready(function()
 	
 	$("#submitBtn").click(function(){
 		if($('#approvalDate') && $('#approvalDate').val() != '') {
-			if(!validateSanctionDate())
-				return false;				
+			var applicationDate = $('#applicationDate').html();
+		    var approvalDate = $('#approvalDate').val();
+			if(!validateDateRange(applicationDate, approvalDate)) {
+				alert("The Approval Date can not be less than the Date of Application.");
+				return false;			
+			}
 		}
 		document.forms[0].submit();		
 	});	
 	
-	function validateSanctionDate() {
-		var applicationDate = $('#applicationDate').html();
-	    var approvalDate = $('#approvalDate').val();
-        var startDate = Date.parse(applicationDate);
-        var endDate = Date.parse(approvalDate);
-		
-        // Check the date range, 86400000 is the number of milliseconds in one day
-        var difference = (endDate - startDate) / (86400000 * 7);
-        if (difference < 0) {
-			alert("The Approval Date can not be less than the Date of Application.");
-			return false;
-			} else {
-			return true;
-		}		
+	function validateDateRange(fromDate, toDate) {
+        if (fromDate != "" && toDate != "") {
+			var stsplit = fromDate.split("/");
+			var ensplit = toDate.split("/");
+			
+			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
+			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
+			
+	        // Check the date range, 86400000 is the number of milliseconds in one day
+	        var difference = (endDate - startDate) / (86400000 * 7);
+	        if (difference < 0) {
+				return false;
+				} 
+	        else {
+				return true;
+			}	
+        }
         return true;		
 	}
 	
