@@ -44,6 +44,7 @@ public class WaterTaxConstants {
     public static final String MODULE_NAME = "Water Tax Management";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
+    public static final String CREATEWORKFLOWSTATE = "CREATED";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String METERED = "Metered";
