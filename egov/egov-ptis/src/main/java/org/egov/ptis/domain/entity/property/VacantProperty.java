@@ -37,12 +37,6 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
-/*
- * VacantProperty.java Created on Oct 21, 2005
- *
- * Copyright 2005 eGovernments Foundation. All rights reserved.
- * EGOVERNMENTS PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.ptis.domain.entity.property;
 
 import java.util.ArrayList;
@@ -57,14 +51,13 @@ import org.egov.exceptions.InvalidPropertyException;
 /**
  * The Implementation Class for the VacantProperty
  * 
- * @author Neetu
- * @version 2.00
  * @see org.egov.ptis.domain.entity.property.PropertyDetail
  *      org.egov.ptis.property.model.AbstractProperty,
  * 
  */
 public class VacantProperty extends AbstractProperty {
 
+	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(VacantProperty.class);
 	private Area sitalArea;
 	private Area totalBuiltupArea;
@@ -77,9 +70,6 @@ public class VacantProperty extends AbstractProperty {
 	private Character fieldVerified;
 	private java.util.Date fieldVerificationDate;
 	private java.util.List<Floor> floorDetails = new ArrayList<Floor>();
-	/*
-	 * private List<FloorImpl> floorDetailsProxy = new ArrayList<FloorImpl>();
-	 */
 	private Integer propertyDetailsID;
 	private String water_Meter_Num;
 	private String elec_Meter_Num;
@@ -120,20 +110,27 @@ public class VacantProperty extends AbstractProperty {
 	private String buildingPermissionNo;
 	private Date buildingPermissionDate;
 	private String deviationPercentage;
+	private Boolean appurtenantLandChecked;
+	private Boolean buildingPlanDetailsChecked;
 
-	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
-			Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
-			Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date dateOfCompletion, Property property,
-			Date updatedTime, PropertyUsage propertyUsage, PropertyCreationReason creationReason,
+	public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea,
+			Area plinthArea, Area commVacantLand, Area nonResPlotArea, Boolean irregular,
+			String surveyNumber, Character fieldVerified, Date fieldVerificationDate,
+			List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
+			String elec_Meter_Num, Integer no_of_floors, char fieldIrregular,
+			Date dateOfCompletion, Property property, Date updatedTime,
+			PropertyUsage propertyUsage, PropertyCreationReason creationReason,
 			PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
-			PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster, Character comZone,
-			Character cornerPlot, Double extentSite, Double extentAppartenauntLand, FloorType floorType,
-			RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
-			boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
-			String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-			String occupancyCertificationNo, String buildingPermissionNo, Date buildingPermissionDate,
-			String deviationPercentage) {
+			PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster,
+			Character comZone, Character cornerPlot, Double extentSite,
+			Double extentAppartenauntLand, FloorType floorType, RoofType roofType,
+			WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
+			boolean structure, boolean electricity, boolean attachedBathRoom,
+			boolean waterHarvesting, boolean cable, String siteOwner, String pattaNumber,
+			Double currentCapitalValue, Double marketValue, String categoryType,
+			String occupancyCertificationNo, String buildingPermissionNo,
+			Date buildingPermissionDate, String deviationPercentage,
+			Boolean appurtenantLandChecked, Boolean buildingPlanDetailsChecked) {
 		super();
 		this.sitalArea = sitalArea;
 		this.totalBuiltupArea = totalBuiltupArea;
@@ -185,6 +182,8 @@ public class VacantProperty extends AbstractProperty {
 		this.buildingPermissionNo = buildingPermissionNo;
 		this.buildingPermissionDate = buildingPermissionDate;
 		this.deviationPercentage = deviationPercentage;
+		this.appurtenantLandChecked = appurtenantLandChecked;
+		this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
 	}
 
 	public Date getDateOfCompletion() {
@@ -577,7 +576,8 @@ public class VacantProperty extends AbstractProperty {
 	 */
 	public boolean validateProperty() throws InvalidPropertyException {
 		if (getSitalArea() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : SitalArea Data is NULL, Please Check !!");
 		}
 		/*
 		 * if(getTotalBuiltupArea() == null) throw newEGOVRuntimeException(
@@ -586,12 +586,15 @@ public class VacantProperty extends AbstractProperty {
 		 */
 
 		if (getPropertyAddress() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : PropertyAddress is NULL, Please Check !!");
 		}
 		if (getProperty() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : Property is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : Property is NULL, Please Check !!");
 		} else if (!getProperty().validateProperty()) {
-			throw new InvalidPropertyException("VacantProperty.validate : Property Validate() failed, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : Property Validate() failed, Please Check !!");
 		}
 		// can't use validate, not implemented
 		/*
@@ -606,7 +609,8 @@ public class VacantProperty extends AbstractProperty {
 		 * !!" );
 		 */
 		if (getPropertySource() == null) {
-			throw new InvalidPropertyException("VacantProperty.validate : PropertySource is NULL, Please Check !!");
+			throw new InvalidPropertyException(
+					"VacantProperty.validate : PropertySource is NULL, Please Check !!");
 		} else if (!getPropertySource().validate()) {
 			throw new InvalidPropertyException(
 					"VacantProperty.validate : PropertySource Validate() failed, Please Check !!");
@@ -677,8 +681,8 @@ public class VacantProperty extends AbstractProperty {
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
 
-		objStr.append("Id: ").append(getId()).append("|Sital Area: ").append(getSitalArea().getArea())
-				.append("|NoOfFloors: ").append(getNo_of_floors());
+		objStr.append("Id: ").append(getId()).append("|Sital Area: ")
+				.append(getSitalArea().getArea()).append("|NoOfFloors: ").append(getNo_of_floors());
 
 		return objStr.toString();
 	}
@@ -931,6 +935,26 @@ public class VacantProperty extends AbstractProperty {
 	@Override
 	public void setDeviationPercentage(String deviationPercentage) {
 		this.deviationPercentage = deviationPercentage;
+	}
+
+	@Override
+	public Boolean isAppurtenantLandChecked() {
+		return appurtenantLandChecked;
+	}
+
+	@Override
+	public void setAppurtenantLandChecked(Boolean appurtenantLandChecked) {
+		this.appurtenantLandChecked = appurtenantLandChecked;
+	}
+
+	@Override
+	public Boolean isBuildingPlanDetailsChecked() {
+		return buildingPlanDetailsChecked;
+	}
+
+	@Override
+	public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked) {
+		this.buildingPlanDetailsChecked = buildingPlanDetailsChecked;
 	}
 
 }

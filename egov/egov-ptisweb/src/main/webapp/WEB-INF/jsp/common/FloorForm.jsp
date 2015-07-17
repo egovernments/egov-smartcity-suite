@@ -113,9 +113,10 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
+					<s:date name="propertyDetail.floorDetails[0].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
 					<s:textfield autocomplete="off"
 						name="propertyDetail.floorDetails[0].occupancyDate" data-optional="0" data-errormsg="Ocuupancy date is required!"
-						id="propertyDetail.floorDetails[0].occupancyDate" value="%{propertyDetail.floorDetails[0].occupancyDate}" size="10"
+						id="propertyDetail.floorDetails[0].occupancyDate" value="%{occDate}" size="10"
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
@@ -249,9 +250,10 @@
  
  				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
+						<s:date name="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
 						<s:textfield autocomplete="off"
 							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" 
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].occupancyDate}"
+							value="%{occDate}"
 							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>

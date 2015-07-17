@@ -76,8 +76,8 @@
    <tr class="appurtenant">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" id="chkIsAppurtenantLand"
-				value="%{chkIsAppurtenantLand}" onclick="enableAppartnaumtLandDetails();" />
+		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
+				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
@@ -108,8 +108,8 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 <s:checkbox name="chkBuildingPlanDetails" id="chkBuildingPlanDetails"
-			value="%{chkBuildingPlanDetails}" onclick="enableOrDisableBPADetails(this);" />
+		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
+			value="%{propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
 		</td>
 	</tr>
 	

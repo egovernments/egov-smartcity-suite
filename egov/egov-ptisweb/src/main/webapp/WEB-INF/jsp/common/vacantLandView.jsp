@@ -51,20 +51,20 @@
 	
 	<tr id="vacantLandRow">
         <td class="blueborderfortd" align="center">
-		 <s:property value="%{propertyDetail.surveyNumber}" default="N/A"/>
+		 	<span class="bold"><s:property value="%{propertyDetail.surveyNumber}" default="N/A"/></span>
 		</td>
         <td class="blueborderfortd" align="center">
-        	<s:property value="%{propertyDetail.pattaNumber}" default="N/A"/>
+        	<span class="bold"><s:property value="%{propertyDetail.pattaNumber}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/>
+        	<span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:property value="%{propertyDetail.marketValue}" default="N/A"/>
+        	<span class="bold"><s:property value="%{propertyDetail.marketValue}" default="N/A"/></span>
 		</td>
         
         <td class="blueborderfortd">
-        	<s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/>
+        	<span class="bold"><s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/></span>
         </td>
     </tr>
     
@@ -84,16 +84,16 @@
  
            <tr>
 		        <td class="blueborderfortd" align="center">
-				   <s:property value="%{basicProperty.propertyID.northBoundary}" default="N/A"/>
+				   <span class="bold"><s:property value="%{basicProperty.propertyID.northBoundary}" default="N/A"/></span>
 				</td>
 				<td class="blueborderfortd" align="center">
-				   <s:property value="%{basicProperty.propertyID.eastBoundary}" default="N/A"/>
+				   <span class="bold"><s:property value="%{basicProperty.propertyID.eastBoundary}" default="N/A"/></span>
 				</td>
 				<td class="blueborderfortd" align="center">
-				   <s:property value="%{basicProperty.propertyID.westBoundary}" default="N/A"/>
+				   <span class="bold"><s:property value="%{basicProperty.propertyID.westBoundary}" default="N/A"/></span>
 				</td>
 				<td class="blueborderfortd" align="center">
-				   <s:property value="%{basicProperty.propertyID.southBoundary}" default="N/A"/>
+				   <span class="bold"><s:property value="%{basicProperty.propertyID.southBoundary}" default="N/A"/></span>
 				</td>
 		    </tr>
             

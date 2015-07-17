@@ -62,16 +62,15 @@
 			}
 			
 			function loadOnStartUp() {
-				enableAppartnaumtLandDetailsView();
 				enableFieldsForPropTypeView();
+				enableAppartnaumtLandDetailsView();
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-				enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
+				enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
 			}
 
 			function enableAppartnaumtLandDetailsView() {
-				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-				if (document.forms[0].chkIsAppurtenantLand.checked == true) {
+				if (document.forms[0].appurtenantLandChecked.checked == true) {
 					jQuery('tr.vacantlanddetaills').show();
 					jQuery('#appurtenantRow').show();
 					jQuery('tr.floordetails').show();
@@ -82,7 +81,7 @@
 			}
 
 			function enableFieldsForPropTypeView() {
-				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
 					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
@@ -106,7 +105,7 @@
 			}
 
 			function toggleFloorDetailsView() {
-				var propertyType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType == "Vacant Land") {
 					jQuery('tr.floordetails').hide();
 				} else {

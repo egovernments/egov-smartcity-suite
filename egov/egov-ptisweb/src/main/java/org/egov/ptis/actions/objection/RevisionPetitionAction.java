@@ -888,18 +888,22 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		validateProperty(
 				objection.getReferenceProperty(),
 				(objection.getReferenceProperty().getPropertyDetail().getSitalArea() != null
-						&& objection.getReferenceProperty().getPropertyDetail().getSitalArea().getArea() != null ? objection
-						.getReferenceProperty().getPropertyDetail().getSitalArea().getArea().toString()
-						: ""),
-				(objection.getReferenceProperty().getPropertyDetail().getDateOfCompletion() != null ? sdf.format(
-						objection.getReferenceProperty().getPropertyDetail().getDateOfCompletion()).toString() : ""),
-				isShowAckMessage, "", false,
+						&& objection.getReferenceProperty().getPropertyDetail().getSitalArea()
+								.getArea() != null ? objection.getReferenceProperty()
+						.getPropertyDetail().getSitalArea().getArea().toString() : ""),
+				(objection.getReferenceProperty().getPropertyDetail().getDateOfCompletion() != null ? sdf
+						.format(objection.getReferenceProperty().getPropertyDetail()
+								.getDateOfCompletion()).toString() : ""),
+				isShowAckMessage,
+				"",
 				(objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster() != null ? objection
-						.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString() : null),
-				ownerName, ownerName, Boolean.TRUE, objection.getReferenceProperty().getPropertyDetail().getFloorType()
-						.getId(), objection.getReferenceProperty().getPropertyDetail().getRoofType().getId(), objection
-						.getReferenceProperty().getPropertyDetail().getWallType().getId(), objection
-						.getReferenceProperty().getPropertyDetail().getWoodType().getId());
+						.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId()
+						.toString()
+						: null), ownerName, ownerName, objection.getReferenceProperty()
+						.getPropertyDetail().getFloorType().getId(), objection
+						.getReferenceProperty().getPropertyDetail().getRoofType().getId(),
+				objection.getReferenceProperty().getPropertyDetail().getWallType().getId(),
+				objection.getReferenceProperty().getPropertyDetail().getWoodType().getId());
 
 	}
 

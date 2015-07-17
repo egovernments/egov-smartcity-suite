@@ -167,7 +167,9 @@
 			<span class="bold"><s:checkbox name="propertyDetail.structure" disabled="true"/></span>
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></td>
+		<td class="greybox siteowner">
+			<span class="bold"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></span>
+		</td>
 	</tr>
 	<tr>
 		<td class="bluebox">&nbsp;</td>
@@ -204,10 +206,12 @@
 	<tr class="appurtenant">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" disabled="true" />
+		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="greybox"><s:property value="%{certificationNumber}"/></td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{propertyDetail.occupancyCertificationNo}"/></span>
+		</td>
 	</tr>
 	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
@@ -223,7 +227,7 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 	<span class="bold"><s:checkbox name="chkBuildingPlanDetails" disabled="true" /></span>
+		 	<span class="bold"><s:checkbox name="propertyDetail.buildingPlanDetailsChecked" disabled="true" id="buildingPlanDetailsChecked"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -233,17 +237,18 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{buildingPermissionNo}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{propertyDetail.buildingPermissionNo}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{buildingPermissionDate}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{propertyDetail.buildingPermissionDate}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr class="bpddetails">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
-		<td class="bluebox"><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/>
+		<td class="bluebox">
+			<span class="bold"><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;

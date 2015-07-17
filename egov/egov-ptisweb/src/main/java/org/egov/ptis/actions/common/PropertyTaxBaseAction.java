@@ -40,7 +40,7 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.APARTMENT_PROPERTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -51,18 +51,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -217,8 +212,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	}
 
 	protected void validateProperty(Property property, String areaOfPlot, String dateOfCompletion,
-			boolean chkIsTaxExempted, String taxExemptReason, boolean chkIsAppurtenantLand, String propTypeId, String propUsageId,
-			String propOccId, Boolean chkBuildingPlanDetails, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
+			boolean chkIsTaxExempted, String taxExemptReason, String propTypeId, String propUsageId,
+			String propOccId, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId) {
 
 		LOGGER.debug("Entered into validateProperty");
 
@@ -264,7 +259,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					}
 				} else {
 					if (null != property.getPropertyDetail()) {
-						if (chkBuildingPlanDetails) {
+						if (property.getPropertyDetail().isBuildingPlanDetailsChecked()) {
 							if (isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
 								addActionError(getText("mandatory.buildingPlanNo"));
 							}
@@ -280,7 +275,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 								addActionError(getText("mandatory.siteowner"));
 							}
 						}
-						if (chkIsAppurtenantLand && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
+						if (property.getPropertyDetail().isAppurtenantLandChecked() && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
 							addActionError(getText("mandatory.extentAppartnant"));
 						} else if (areaOfPlot == null || areaOfPlot.equals("")) {
 							addActionError(getText("mandatory.areaOfPlot"));

@@ -178,7 +178,7 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox"><s:select headerKey=""
-				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment.id" id="propertyDetail.apartment.id"
+				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="propertyDetail.apartment.id"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
 		<td class="greybox" colspan="2">
@@ -188,8 +188,8 @@
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="chkIsAppurtenantLand" id="chkIsAppurtenantLand"
-				value="%{chkIsAppurtenantLand}" onclick="enableAppartnaumtLandDetails();" />
+		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
+				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{propertyDetail.occupancyCertificationNo}"/></td>
@@ -211,8 +211,8 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 <s:checkbox name="chkBuildingPlanDetails" id="chkBuildingPlanDetails"
-			value="%{chkBuildingPlanDetails}" onclick="enableOrDisableBPADetails(this);" />
+		 <s:checkbox name="propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
+			value="%{propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;

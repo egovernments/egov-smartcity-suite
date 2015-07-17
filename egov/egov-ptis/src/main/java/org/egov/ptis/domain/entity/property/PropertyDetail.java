@@ -392,4 +392,13 @@ public interface PropertyDetail extends Property {
 	public String getDeviationPercentage();
 	
 	public void setDeviationPercentage(String deviationPercentage);
+	
+	public Boolean isAppurtenantLandChecked();
+
+	public void setAppurtenantLandChecked(Boolean appurtenantLandChecked);
+
+	public Boolean isBuildingPlanDetailsChecked();
+
+	public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked);
+	
 }

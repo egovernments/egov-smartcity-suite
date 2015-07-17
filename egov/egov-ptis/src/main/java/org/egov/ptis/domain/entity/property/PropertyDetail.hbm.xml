@@ -102,13 +102,14 @@
 		<property name="pattaNumber" column="pattanumber" type="java.lang.String" />
 		<property name="categoryType" column="category_type" type="java.lang.String" />
 		<property name="occupancyCertificationNo" column="occupancy_certificationno" type="java.lang.String" />
+		<property name="appurtenantLandChecked" column="appurtenantland_checked" type="java.lang.Boolean"/>
+		<property name="buildingPlanDetailsChecked" column="buildingplandetails_checked" type="java.lang.Boolean"/>
 
 		<many-to-one name="floorType" class="org.egov.ptis.domain.entity.property.FloorType" column="floorType" />
 		<many-to-one name="roofType" class="org.egov.ptis.domain.entity.property.RoofType" column="roofType" />
 		<many-to-one name="wallType" class="org.egov.ptis.domain.entity.property.WallType" column="wallType" />
 		<many-to-one name="woodType" class="org.egov.ptis.domain.entity.property.WoodType" column="woodType" />
-		<many-to-one name="apartment" class="org.egov.ptis.domain.entity.property.Apartment" column="apartment"
-			insert="false" update="false" />
+		<many-to-one name="apartment" class="org.egov.ptis.domain.entity.property.Apartment" column="apartment"/>
 		<property name="buildingPermissionNo" column="building_permission_no" type="java.lang.String"/> 		
 		<property name="buildingPermissionDate" column="building_permission_date" type="java.util.Date"/>
 		<property name="deviationPercentage" column="deviation_percentage" type="java.lang.String"/>
@@ -157,7 +158,5 @@
 				<property name="area" column="TOTAL_BUILTUP_AREA" />
 			</component>
 		</subclass>
-
-
 	</class>
 </hibernate-mapping>

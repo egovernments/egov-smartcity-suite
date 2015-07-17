@@ -217,7 +217,6 @@ public class PropertyService {
 			Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
 					property.getPropertyDetail().getApartment().getId());
 			property.getPropertyDetail().setApartment(apartment);
-			;
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}

@@ -76,11 +76,10 @@
 	}
 
 	function loadOnStartUp() {
-		enableAppartnaumtLandDetails();
 		enableFieldsForPropType();
-		populatePropTypeCategory();
+		enableAppartnaumtLandDetails();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-		enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
+		enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 		toggleFloorDetails();
 	}
 

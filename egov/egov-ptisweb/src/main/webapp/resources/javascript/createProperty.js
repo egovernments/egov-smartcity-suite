@@ -4,7 +4,7 @@
 jQuery.noConflict();
 function enableAppartnaumtLandDetails() {
 	var propertyType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
-	if (document.forms[0].chkIsAppurtenantLand.checked == true) {
+	if (document.forms[0].appurtenantLandChecked.checked == true) {
 		jQuery('tr.vacantlanddetaills').show();
 		jQuery('#appurtenantRow').show();
 		jQuery('tr.floordetails').show();
@@ -1019,7 +1019,6 @@ function showFloorTaxExemption() {
 function enableOrDisableSiteOwnerDetails(obj) {
 	
 	if (jQuery(obj).is(":checked")) {
-		jQuery('input[name="propertyDetail.siteOwner"]').val('');
 		jQuery('td.siteowner').show();
 		//jQuery('input[name="propertyDetail.siteOwner"]').prop('readonly', false);
 	} else {

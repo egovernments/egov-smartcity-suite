@@ -120,7 +120,7 @@ function loadOnStartUp() {
 	enableAppartnaumtLandDetails();
 	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
-	enableOrDisableBPADetails(jQuery('input[name="chkBuildingPlanDetails"]'));
+	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */
