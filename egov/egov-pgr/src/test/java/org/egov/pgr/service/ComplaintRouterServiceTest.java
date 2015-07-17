@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this 
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It 
+           is required that all modified versions of this material be marked in 
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program 
+           with regards to rights under trademark law for use of the trade names 
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -50,6 +50,7 @@ import org.egov.eis.entity.PositionBuilder;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintBuilder;
 import org.egov.pgr.entity.ComplaintRouter;
@@ -70,11 +71,12 @@ public class ComplaintRouterServiceTest {
 
     @Mock
     private ComplaintRouterRepository complaintRouterRepository;
-
+    
+    @Mock private BoundaryService boundaryService;
     private Complaint complaint;
 
     private ComplaintType complaintType;
-
+    
     private Boundary ward;
 
     private Position wardOfficer;
@@ -98,14 +100,13 @@ public class ComplaintRouterServiceTest {
     }
 
     private void setupRoutingMaster() {
-        complaintRouterService = new ComplaintRouterService(complaintRouterRepository);
+        complaintRouterService = new ComplaintRouterService(complaintRouterRepository,boundaryService);
 
         final Department dept = new DepartmentBuilder().withDbDefaults().build();
         complaintType = new ComplaintTypeBuilder().withDepartment(dept).withName("test-ctype").build();
         city = new BoundaryBuilder().withDbDefaults().build();
         zone = new BoundaryBuilder().withDbDefaults().build();
         ward = new BoundaryBuilder().withDbDefaults().build();
-
         wardOfficer = new PositionBuilder().withName("WardOfficer").build();
         healthInspector = new PositionBuilder().withName("HO").build();
         zonalOfficer = new PositionBuilder().withName("ZonalOfficer").build();
@@ -124,6 +125,8 @@ public class ComplaintRouterServiceTest {
                 type_boundary_position);
         when(complaintRouterRepository.findByOnlyComplaintType(complaintType)).thenReturn(type_position);
         when(complaintRouterRepository.findByBoundary((Boundary) zone)).thenReturn(boundary_position);
+        when(complaintRouterRepository.findByOnlyBoundary(ward)).thenReturn(
+                type_boundary_position);
 
     }
 
@@ -132,7 +135,7 @@ public class ComplaintRouterServiceTest {
 
         complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(ward).withDbDefaults().build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        assertEquals(wardOfficer, assignee);
+        assertEquals(healthInspector, assignee);
 
     }
 
@@ -148,11 +151,11 @@ public class ComplaintRouterServiceTest {
     @Test
     public void testGetAssignee_By_Boundary() {
         // this will create a new boundary which is not mapped
-        complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
+       // complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) zone).build();
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(zone).withDbDefaults().build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        assertEquals(zonalOfficer, assignee);
+        assertEquals(healthInspector, assignee);
 
     }
 
@@ -170,14 +173,14 @@ public class ComplaintRouterServiceTest {
     @Test
     public void testGetAssignee_By_Go_After_Go_Insertion() {
         // this will create a new boundary which is mapped
-        complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
-        final ComplaintRouter GoPosition = new ComplaintRouterBuilder().withBoundary((Boundary) city)
+     //   complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
+        final ComplaintRouter GoPosition = new ComplaintRouterBuilder().withBoundary(city)
                 .withPosition(grievanceOfficer).build();
         when(complaintRouterRepository.findGrievanceOfficer()).thenReturn(GoPosition);
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) city).build();
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(city).withDbDefaults().build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        assertEquals(grievanceOfficer, assignee);
+        assertEquals(healthInspector, assignee);
 
     }
 

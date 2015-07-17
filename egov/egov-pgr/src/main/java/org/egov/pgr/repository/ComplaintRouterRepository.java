@@ -160,5 +160,8 @@ public interface ComplaintRouterRepository extends JpaRepository<ComplaintRouter
 	public List<ComplaintRouter> findRoutersByBoundaryTypeAndBoundary(
 			@Param("boundaryTypeId") Long boundaryTypeId,
 			@Param("boundaryId") Long boundaryId);
+	
+	@Query("select cr from ComplaintRouter cr where cr.boundary=:bndry and cr.complaintType is null")
+	    public ComplaintRouter findByOnlyBoundary(@Param("bndry") Boundary bndry);
 
 }
