@@ -69,6 +69,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 
 @Entity
@@ -108,6 +109,7 @@ public class Boundary extends AbstractAuditable {
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent")
     @Fetch(value = FetchMode.SELECT)
+    @JsonIgnore
     private Set<Boundary> children = new HashSet<Boundary>();
 
     @DateFormat
