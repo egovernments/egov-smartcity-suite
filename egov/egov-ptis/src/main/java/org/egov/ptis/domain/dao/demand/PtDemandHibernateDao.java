@@ -43,9 +43,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -477,6 +480,39 @@ public class PtDemandHibernateDao implements PtDemandDao {
 	public Ptdemand update(Ptdemand ptdemand) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Object> getPropertyTaxDetails(String applicationNo) {
+		List<Object> list = new ArrayList<Object>();
+		String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected, dd.amt_rebate, dd.create_date, dd.modified_date "
+				+ " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+				+ " where bp.id = prop.id_basic_property and prop.status = 'A' "
+				+ " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+				+ " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+				+ " and dr.id_installment = inst.id and bp.applicationno =:applicationNo "
+				+ " and d.id_installment = 81 order by inst.start_date ";
+		Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("applicationNo", applicationNo);
+		list = qry.list();
+		return list;
+	}
+	
+	@Override
+	public Set<String> getDemandYears(String applicationNo) {
+		Set<String> demandYears = new LinkedHashSet<String>();
+		String selectQuery = " select inst.description "
+				+ " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+				+ " where bp.id = prop.id_basic_property and prop.status = 'A' "
+				+ " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
+				+ " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+				+ " and dr.id_installment = inst.id and bp.applicationno =:applicationNo "
+				+ " and d.id_installment = 81 order by inst.start_date ";
+		Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("applicationNo", applicationNo);
+		for (Object record : qry.list()) {
+			demandYears.add((String) record);
+		}
+		return demandYears;
 	}
 
 }

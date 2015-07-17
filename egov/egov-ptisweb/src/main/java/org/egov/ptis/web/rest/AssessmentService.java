@@ -41,7 +41,9 @@ package org.egov.ptis.web.rest;
 
 import java.io.IOException;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -52,7 +54,10 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -89,6 +94,38 @@ public class AssessmentService {
 		AssessmentDetails assessmentDetail = propertyExternalService.getPropertyDetails(assessmentNumber);
 
 		return getJSONResponse(assessmentDetail);
+	}
+	
+	/**
+	 * This method is used get the property tax details.
+	 * 
+	 * @param assessmentNo
+	 *            - assessment no
+	 * @param username
+	 *            - username
+	 * @param password
+	 *            - password
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@POST
+	@Path("/property/getPropertyTaxDetails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getPropertyTaxDetails(@FormParam("assessmentNo") String assessmentNo, @FormParam("username") String username, @FormParam("password") String password)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
+		if(isAuthenticatedUser) {
+			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+		} else {
+			ErrorDetails errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
+			propertyTaxDetails.setErrorDetails(errorDetails);
+		}
+		return getJSONResponse(propertyTaxDetails);
 	}
 
 	/**

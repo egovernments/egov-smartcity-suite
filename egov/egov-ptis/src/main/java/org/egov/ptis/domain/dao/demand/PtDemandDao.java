@@ -42,7 +42,9 @@ package org.egov.ptis.domain.dao.demand;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -180,5 +182,7 @@ public interface PtDemandDao {
 	public void delete(Ptdemand ptdemand);
 
 	public Ptdemand update(Ptdemand ptdemand);
-
+	
+	public List<Object> getPropertyTaxDetails(String applicationNo);
+	public Set<String> getDemandYears(String applicationNo);
 }

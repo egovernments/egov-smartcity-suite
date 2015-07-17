@@ -896,4 +896,38 @@ public interface PropertyTaxConstants {
         //Property Transfer related constants
         public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
 
+    public static final String GEN_TAX = "GEN_TAX";
+    public static final String EDU_CESS = "EDU_CESS";
+    public static final String LIB_CESS = "LIB_CESS";
+    public static final String SEW_TAX = "LIB_CESS";
+
+    public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "0";
+    public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
+    public static final String THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS = "1";
+    public static final String THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS = "Invaild Credentials";
+    public static final String THIRD_PARTY_ERR_CODE_COMMUNICATION_FAILURE = "3";
+    public static final String THIRD_PARTY_ERR_MSG_COMMUNICATION = "Communication Failure or Server may be down";
+    public static final String THIRD_PARTY_ERR_CODE_ULBCODE = "4";
+    public static final String THIRD_PARTY_ERR_MSG_ULBCODE = "Please Make Sure That First 4 Characters Of Assessment Must Match With ULB";
+    public static final String THIRD_PARTY_ERR_CODE_PENDINGTAX = "5";
+    public static final String THIRD_PARTY_ERR_MSG_PENDINGTAX = "No Pending Tax For This Assessment";
+    public static final String THIRD_PARTY_ERR_CODE_TAXDTLS = "6";
+    public static final String THIRD_PARTY_ERR_MSG_TAXDTLS = "Please Contact Municipality for Tax Details";
+    public static final String THIRD_PARTY_ERR_CODE_NAME_DOOR = "7";
+    public static final String THIRD_PARTY_ERR_MSG_NAME_DOOR = "Please enter name or door no";
+    public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN = "8";
+    public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN = "Assessment number length can not less than 10 digits";
+    public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_ULB = "9";
+    public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_ULB = "Assessment number first 4 digits should be ulbcode";
+    public static final String THIRD_PARTY_ERR_CODE_ULBCODE_INVALID = "10";
+    public static final String THIRD_PARTY_ERR_MSG_ULBCODE_INVALID = "Entered ulbid for search assesment or consumer number does not exist";
+    public static final String THIRD_PARTY_ERR_CODE_DB_CONN_FAILED = "100";
+    public static final String THIRD_PARTY_ERR_MSG_DB_CONN_FAILED = "DB Connection Problem";
+    public static final String THIRD_PARTY_ERR_CODE_SAVE_FAILED = "103";
+    public static final String THIRD_PARTY_ERR_MSG_SAVE_FAILED = "Fail to save your data";
+    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_UPDATE_FAILED = "104";
+    public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED = "Payment update fail due other issues";
+    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_UPDATE_FAILED_WITH_INPUT = "106";
+    public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED_WITH_INPUT = "Payment update fail due to input data issues";
+    
 }
