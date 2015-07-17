@@ -203,7 +203,7 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
         updateIndexes(savedWaterConnectionDetails);
-        sendSmsOnCreateNewConnection(waterConnectionDetails);
+        sendSmsOnCreateAndApproval(waterConnectionDetails);
         sendEmailOnCreateNewConnection(waterConnectionDetails);
         return savedWaterConnectionDetails;
     }
@@ -340,7 +340,7 @@ public class WaterConnectionDetailsService {
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        sendSmsOnApprovalOfNewConnection(waterConnectionDetails);
+        sendSmsOnCreateAndApproval(waterConnectionDetails);
         sendEmailOnApprovalOfNewConnection(waterConnectionDetails);
         return updatedWaterConnectionDetails;
     }
@@ -386,42 +386,63 @@ public class WaterConnectionDetailsService {
         }
     }
 
-    private void sendSmsOnCreateNewConnection(final WaterConnectionDetails waterConnectionDetails) {
+	private void sendSmsOnCreateAndApproval(final WaterConnectionDetails waterConnectionDetails) {
 
-        if (waterConnectionDetails.getConnection().getMobileNumber() != null)
-            if (waterTaxUtils.isSmsEnabled()) {
-                final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
-                        .append(", Your new water tap connection application request accepted with Acknowledgement No.")
-                        .append(waterConnectionDetails.getApplicationNumber())
-                        .append(". Please use this number in all future communication.").append(" -- Thanks, ")
-                        .append(getCityName());
-
-                smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
-            }
-    }
-
-    private void sendSmsOnApprovalOfNewConnection(final WaterConnectionDetails waterConnectionDetails) {
-
-        if (waterConnectionDetails.getConnection().getMobileNumber() != null
-                && waterConnectionDetails.getConnection().getConsumerCode() != null)
-            if (waterTaxUtils.isSmsEnabled()) {
-                // TODO -- This is temporary sms message. This needs to be
+		if (waterConnectionDetails.getConnection().getMobileNumber() != null)
+			if (waterTaxUtils.isSmsEnabled()) {
+				  // TODO -- This is temporary sms message. This needs to be
                 // replaced
                 // with proper message once the requirements are clear
-                final StringBuffer smsBody = new StringBuffer().append("Dear ").append(applicantName)
-                        .append(", Your new water tap connection application processed with Consumer No.")
-                        .append(waterConnectionDetails.getConnection().getConsumerCode())
-                        .append(". Monthly water tax will be generated after the tap execution.")
-                        // .append("and the connection charges/security
-                        // deposit/donation charges is fixed @ Rs.xxxxx/-. ")
-                        // .append(". You may collect the demand notice from the
-                        // office ")
-                        .append(" -- Thanks, ").append(getCityName());
+               StringBuffer smsBody = new StringBuffer().append("Dear ")
+						.append(applicantName);
+				if (waterConnectionDetails != null && waterConnectionDetails.getState() == null || (waterConnectionDetails.getState() != null && waterConnectionDetails
+								.getState().getValue().equals(WaterTaxConstants.CREATEWORKFLOWSTATE))) {
+					if ( waterConnectionDetails.getApplicationType() != null
+							&& waterConnectionDetails.getApplicationType().getCode() != null
+							&& waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)) {
+						smsBody = smsBody
+								.append(", Your additional water tap connection application request accepted with Acknowledgement No.");
+					} else {
+						// TODO:for New Water Connection on Create
+						smsBody = smsBody
+								.append(", Your new water tap connection application request accepted with Acknowledgement No.");
+					}
+					smsBody = smsBody.append(waterConnectionDetails.getApplicationNumber())
+							.append(". Please use this number in all future communication.")
+							.append(" -- Thanks, ").append(getCityName());
+				} else {
+					if (waterConnectionDetails != null && waterConnectionDetails.getState() != null
+							&& waterConnectionDetails.getState().getValue() != null
+							&& waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
+						if ( waterConnectionDetails.getApplicationType() != null
+								&& waterConnectionDetails.getApplicationType().getCode() != null
+								&& waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)){
+							smsBody = smsBody
+									.append(", Your additional water tap connection application processed with Consumer No.");
+						} else {
+							// TODO:for New Water Connection Approval
+							smsBody = smsBody
+									.append(", Your new water tap connection application processed with Consumer No.");
+						}
+						smsBody = smsBody
+								.append(waterConnectionDetails.getConnection()
+										.getConsumerCode())
+								.append(". Monthly water tax will be generated after the tap execution.")
+								// .append("and the connection charges/security
+								// deposit/donation charges is fixed @
+								// Rs.xxxxx/-. ")
+								// .append(". You may collect the demand notice
+								// from the
+								// office ")
+								.append(" -- Thanks, ").append(getCityName());
+					}
+				}
 
-                smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
-            }
-    }
+				smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
+			}
+	}
 
+ 
     private void sendEmailOnCreateNewConnection(final WaterConnectionDetails waterConnectionDetails) {
 
         if (waterConnectionDetails.getConnection().getEmail() != null)
