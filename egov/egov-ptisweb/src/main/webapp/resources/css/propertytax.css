@@ -403,24 +403,22 @@ td.totalbg {
 }
 
 div.headingbg {
-	font-family: semibold;
-	font-size:14px;
-	font-weight:bold;
-	color: #fff;
-	text-align: center;
-	padding: 10px 15px;
-	background-color: #F2851F;
-    border-color: #F2851F;
+  font-family: semibold;
+  font-size: 16px;
+  font-weight: bold;
+  color: #6b4f2c;
+  text-align: left;
+  padding: 15px 15px;
 }
 
 div.headingsmallbg {
-	font-family: semibold;
-	font-size: 13px;
-	color: #fff;
-	background-color: #F2851F;
-	padding:10px 15px;
-	text-align: center;
-	margin: 10px 0;
+	  font-family: semibold;
+	  font-size: 15px;
+	  color: #F2851F;
+	  /* background-color: #F2851F; */
+	  padding: 10px 15px;
+	  text-align: left;
+	  margin: 10px 0;
 }
 
 div.headingsmallbg1 {
@@ -477,10 +475,11 @@ input.button2 {
 	}
 	
 .mandatory1 {
-	font-weight: bold;
-	font-size: 12px;
-	color: #cc0000;
-	}
+	  font-weight: bold;
+	  font-size: 12px;
+	  color: #cc0000;
+	  font-family: semibold;
+}
 	
 div.displaydate {
 	font-family: regular;
