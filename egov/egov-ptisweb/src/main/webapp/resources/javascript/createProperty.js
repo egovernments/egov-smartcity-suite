@@ -1040,3 +1040,26 @@ function enableOrDisableBPADetails(obj) {
 		//jQuery('tr.bpddetails input').prop('readonly', true);
 	}
 }
+
+function enableFieldsForPropTypeView(propType) {
+	if (propType != "select") {
+		//onChangeOfPropertyTypeFromMixedToOthers(propType);
+		if (propType == "Vacant Land") {
+			jQuery('tr.floordetails').hide();
+			jQuery('tr.vacantlanddetaills').show();
+			jQuery('tr.construction').hide();
+			jQuery('tr.amenities').hide();
+			jQuery('#appurtenantRow').hide();
+			jQuery('tr.extentSite').hide();
+			jQuery('tr.appurtenant').hide();
+		} else {
+			jQuery('tr.floordetails').show();
+			jQuery('tr.vacantlanddetaills').hide();
+			jQuery('tr.construction').show();
+			jQuery('tr.amenities').show();
+			jQuery('#appurtenantRow').hide();
+			jQuery('tr.extentSite').show();
+			jQuery('tr.appurtenant').show();
+		}
+	}
+}

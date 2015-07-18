@@ -298,6 +298,15 @@ public interface PropertyTaxConstants {
 			put("26-100%", "26-100%");
 		}
 	};
+	//TreeMap for Guardian Relation
+	public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {
+		{
+			put("FATHER", "Father");
+			put("MOTHER", "Mother");
+			put("HUSBAND", "Husband");
+			put("OTHERS", "Others");
+		}
+	};
 
 	// Named Queries
 	public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";

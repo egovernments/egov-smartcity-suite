@@ -87,7 +87,7 @@ public class Floor extends BaseModel implements Auditable {
 	private PropertyDetail propertyDetail;
 	private Date occupancyDate;
 	private String occupantName;
-	private TaxExeptionReason taxExemptedReason;
+	private TaxExeptionReason taxExemptedReason = null;
 	private Boolean drainage;
 	private Integer noOfSeats;
 

@@ -14,7 +14,7 @@
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
 			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
-		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
+		   <s:select headerKey=""	headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
 				cssClass="selectnew"/>
 		</td>
@@ -130,7 +130,7 @@
     <tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
+		<td class="greybox"><s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
 				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
 		</td>
@@ -233,6 +233,13 @@
 			</div>
 		</td>
 	</tr>
+	<%-- <s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) || 
+		@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
+		<%@ include file="../common/DocumentUploadView.jsp"%>
+	</s:if>
+	<s:else>
+		<%@ include file="../common/DocumentUploadForm.jsp"%>
+	</s:else> --%>
 </table>
 <script type="text/javascript">
 	function showDocumentManager() {

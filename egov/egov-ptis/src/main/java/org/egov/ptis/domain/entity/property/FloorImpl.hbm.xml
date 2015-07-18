@@ -119,6 +119,6 @@
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
-		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExeptionReason" column="TAX_EXEMPTED_REASON" />
+		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExeptionReason"  cascade="none" column="TAX_EXEMPTED_REASON" />
 	</class>
 </hibernate-mapping>

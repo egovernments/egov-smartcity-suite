@@ -54,17 +54,28 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	  function loadOnStartUp() {
-		/* 
-		 Assuming this is not require for view --Mani
-		enableFieldsForPropType();
-		toggleFloorDetails();
-   		setCorrCheckBox();
-   		<s:if test="%{extra_field4 != 'Yes'}">
-		    var btnPVR = document.getElementById("GeneratePrativrutta");
-		    if (btnPVR != null) {
-		    	btnPVR.disabled = false;
-		    }
-		</s:if> */
+		//enableFieldsForPropType();
+		//toggleFloorDetails();
+   		//setCorrCheckBox();
+   		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+		enableFieldsForPropTypeView(propType);
+		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
+		if(appurtenantLandChecked == null) {
+			jQuery('#appurtenantRow').hide();
+			}
+		var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
+		alert("buildingPlanDetailsChecked"+buildingPlanDetailsChecked)
+		if(buildingPlanDetailsChecked == null) {
+			alert("hide buildingPlanDetailsChecked");
+			jQuery('tr.bpddetails').hide();
+			}
+		var structure = '<s:property value="%{propertyDetail.structure}"/>';
+		alert(structure);
+		if(structure == 'false') {
+			alert("hide site owner")
+			jQuery('td.siteowner').hide();
+			}
+   		
 	}
  function setCorrCheckBox(){
     
@@ -81,6 +92,13 @@
 	}
 	
  function onSubmit() {
+	 var department = jQuery('#approverDepartment').val();
+	 var designation = jQuery('#approverDesignation').val();
+	 var approver = jQuery('#approverPositionId').val();
+	 if(approverPositionId == -1) {
+		 alert("Please select approver details");
+		 return false;
+		 }
 	 	 document.forms[0].action = 'createProperty-forward.action';
 	     document.forms[0].submit;
 	 	   return true;
@@ -116,7 +134,7 @@
 		<div class="blankspace">&nbsp;</div>
 	</s:if>
 	<!-- Area for error display -->
-	  <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
+	<div class="errorcss" id="jsValidationErrors" style="display: none;"></div>
 	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
 	<div class="formmainbox">
 		<s:form name="CreatePropertyForm" action="createProperty"
@@ -130,27 +148,24 @@
 				<div class="headingbg">
 					<s:text name="CreatePropertyHeader" />
 				</div>
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<%@ include file="../create/createPropertyView.jsp"%>
-						</tr>
-						<tr>
-						 	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
-						</tr>		
-						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
-						<tr>
-							<font size="2"><div align="left" class="mandatory">
-									<s:text name="mandtryFlds" />
-								</div>
-							</font>
-						</tr>
-						<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2//images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
-											
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>  
-						</tr>  
-						
-					</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<%@ include file="../create/createPropertyView.jsp"%>
+					</tr>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+					</tr>
+					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<tr>
+						<font size="2"><div align="left" class="mandatory">
+								<s:text name="mandtryFlds" />
+							</div> </font>
+					</tr>
+
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
+
 				</table>
 			</s:push>
 		</s:form>

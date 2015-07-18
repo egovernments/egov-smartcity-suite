@@ -43,6 +43,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
@@ -62,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,6 +124,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
@@ -137,6 +140,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
@@ -258,6 +262,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String eastBoundary;
 	private String westBoundary;
 	private Map<String, String> deviationPercentageMap;
+	private Map<String, String> guardianRelationMap;
+	private List<DocumentType> documentTypes = new ArrayList<>();
 
 	@Autowired
 	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
@@ -301,7 +307,9 @@ public class CreatePropertyAction extends WorkflowAction {
 				PropertyOccupation.class);
 		this.addRelatedEntity("propertyDetail.floorDetails.structureClassification",
 				StructureClassification.class);
+		this.addRelatedEntity("propertyDetail.floorDetails.taxExemptedReason",TaxExeptionReason.class);
 		this.addRelatedEntity("propertyOwnerInfo.owner", Citizen.class);
+		this.addRelatedEntity("propertyDetail.apartment", Apartment.class);
 
 	}
 
@@ -349,13 +357,22 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (propertyDetail != null) {
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
 			if (!propertyDetail.getPropertyType().equals(VACANT_PROPERTY)) {
-				setFloorTypeId(propertyDetail.getFloorType().getId());
-				setWallTypeId(propertyDetail.getWallType().getId());
-				setRoofTypeId(propertyDetail.getRoofType().getId());
-				setWoodTypeId(propertyDetail.getWallType().getId());
-			} else {
-				setAreaOfPlot(propertyDetail.getSitalArea().getArea().toString());
-			}
+				if (property.getPropertyDetail().getFloorType() != null) {
+					floorTypeId = property.getPropertyDetail().getFloorType().getId();
+				}
+				if (property.getPropertyDetail().getRoofType() != null) {
+					roofTypeId = property.getPropertyDetail().getRoofType().getId();
+				}
+				if (property.getPropertyDetail().getWallType() != null) {
+					wallTypeId = property.getPropertyDetail().getWallType().getId();
+				}
+				if (property.getPropertyDetail().getWoodType() != null) {
+					woodTypeId = property.getPropertyDetail().getWoodType().getId();
+				}
+				if (property.getPropertyDetail().getSitalArea() != null) {
+					setAreaOfPlot(property.getPropertyDetail().getSitalArea().getArea().toString());
+				}
+			} 
 		}
 
 		if (basicProp != null) {
@@ -456,6 +473,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			if (hasErrors()) {
 				return RESULT_NEW;
 			}
+			updatePropertyDetails();
 		}
 		transitionWorkFlow(property);
 
@@ -472,7 +490,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
-		updatePropertyDetails();
 		basicPropertyService.persist(basicProp);
 		setDocNumber(getDocNumber());
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -494,6 +511,9 @@ public class CreatePropertyAction extends WorkflowAction {
 		updateBasicProperty(basicProp);
 		if (!property.getPropertyDetail().getPropertyType().equals(VACANT_PROPERTY)) {
 			for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+				if(null == floor.getTaxExemptedReason().getId()) {
+					floor.setTaxExemptedReason(null);
+				}
 				User user = securityUtils.getCurrentUser();
 				if (floor.getId() == null) {
 					floor.setPropertyDetail(property.getPropertyDetail());
@@ -673,6 +693,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
 		}
 
+		this.documentTypes = propService.getPropertyModificationDocumentTypes();
 		List<FloorType> floorTypeList = getPersistenceService().findAllBy(
 				"from FloorType order by name");
 		List<RoofType> roofTypeList = getPersistenceService().findAllBy(
@@ -709,6 +730,7 @@ public class CreatePropertyAction extends WorkflowAction {
 						ELECTION_HIERARCHY_TYPE);
 
 		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
+		setGuardianRelationMap(GUARDIAN_RELATION);
 		addDropdownData("PropTypeMaster", propTypeList);
 		addDropdownData("floorType", floorTypeList);
 		addDropdownData("roofType", roofTypeList);
@@ -815,11 +837,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(lowestInstDate);
 
-		basicProperty
-				.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
+		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
 
 		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-				|| property.getPropertyDetail().isAppurtenantLandChecked()) {
+				|| null != property.getPropertyDetail().isAppurtenantLandChecked()) {
 			property.setPropertyDetail(changePropertyDetail());
 		}
 
@@ -900,32 +921,55 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into changePropertyDetail, Property is Vacant land");
 
 		PropertyDetail propertyDetail = property.getPropertyDetail();
-		VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
-				propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
-				propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(),
-				propertyDetail.getNonResPlotArea(), false, propertyDetail.getSurveyNumber(),
-				propertyDetail.getFieldVerified(), propertyDetail.getFieldVerificationDate(),
-				propertyDetail.getFloorDetails(), propertyDetail.getPropertyDetailsID(),
-				propertyDetail.getWater_Meter_Num(), propertyDetail.getElec_Meter_Num(), 0,
-				propertyDetail.getFieldIrregular(), propertyDetail.getDateOfCompletion(),
-				propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
-				propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
-				propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
-				propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
-				propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
-				propertyDetail.getExtentSite(), propertyDetail.getExtentAppartenauntLand(),
+		VacantProperty vacantProperty = new VacantProperty(
+				propertyDetail.getSitalArea(),
+				propertyDetail.getTotalBuiltupArea(),
+				propertyDetail.getCommBuiltUpArea(),
+				propertyDetail.getPlinthArea(),
+				propertyDetail.getCommVacantLand(),
+				propertyDetail.getNonResPlotArea(),
+				false,
+				propertyDetail.getSurveyNumber(),
+				propertyDetail.getFieldVerified(),
+				propertyDetail.getFieldVerificationDate(),
+				propertyDetail.getFloorDetails(),
+				propertyDetail.getPropertyDetailsID(),
+				propertyDetail.getWater_Meter_Num(),
+				propertyDetail.getElec_Meter_Num(),
+				0,
+				propertyDetail.getFieldIrregular(),
+				propertyDetail.getDateOfCompletion(),
+				propertyDetail.getProperty(),
+				propertyDetail.getUpdatedTime(),
+				propertyDetail.getPropertyUsage(),
+				null,
+				propertyDetail.getPropertyTypeMaster(),
+				propertyDetail.getPropertyType(),
+				propertyDetail.getInstallment(),
+				propertyDetail.getPropertyOccupation(),
+				propertyDetail.getPropertyMutationMaster(),
+				propertyDetail.getComZone(),
+				propertyDetail.getCornerPlot(),
+				propertyDetail.getExtentSite() != null ? propertyDetail
+						.getExtentSite() : 0.0,
+				propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail
+						.getExtentAppartenauntLand() : 0.0,
 				propertyDetail.getFloorType(), propertyDetail.getRoofType(),
 				propertyDetail.getWallType(), propertyDetail.getWoodType(),
-				propertyDetail.isLift(), propertyDetail.isToilets(), propertyDetail.isWaterTap(),
-				propertyDetail.isStructure(), propertyDetail.isElectricity(),
-				propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(),
-				propertyDetail.isCable(), propertyDetail.getSiteOwner(),
-				propertyDetail.getPattaNumber(), propertyDetail.getCurrentCapitalValue(),
-				propertyDetail.getMarketValue(), propertyDetail.getCategoryType(),
+				propertyDetail.isLift(), propertyDetail.isToilets(),
+				propertyDetail.isWaterTap(), propertyDetail.isStructure(),
+				propertyDetail.isElectricity(),
+				propertyDetail.isAttachedBathRoom(),
+				propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+				propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+				propertyDetail.getCurrentCapitalValue(),
+				propertyDetail.getMarketValue(),
+				propertyDetail.getCategoryType(),
 				propertyDetail.getOccupancyCertificationNo(),
 				propertyDetail.getBuildingPermissionNo(),
 				propertyDetail.getBuildingPermissionDate(),
-				propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+				propertyDetail.getDeviationPercentage(),
+				propertyDetail.isAppurtenantLandChecked(),
 				propertyDetail.isBuildingPlanDetailsChecked());
 
 		vacantProperty.setManualAlv(propertyDetail.getManualAlv());
@@ -1115,6 +1159,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void transitionWorkFlow(PropertyImpl property) {
 		final DateTime currentDate = new DateTime();
 		User user = securityUtils.getCurrentUser();
+		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+		String designationName = userAssignment.getDesignation().getName();
 		Position pos = null;
 
 		if (workFlowAction.equalsIgnoreCase("reject")) {
@@ -1126,8 +1172,10 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		} else {
 			if (null != approverPositionId) {
-				pos = (Position) persistenceService.find("from Position where id=?",
-						approverPositionId);
+				pos = (Position) persistenceService.find(
+						"from Position where id=?", approverPositionId);
+			} else if (COMMISSIONER_DESGN.equals(designationName)) {
+				pos = (Position) persistenceService.find("from Position where id=?", property.getCreatedBy().getId());
 			}
 			if (null == property.getState()) {
 				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(
@@ -1907,4 +1955,20 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.deviationPercentageMap = deviationPercentageMap;
 	}
 
+	public Map<String, String> getGuardianRelationMap() {
+		return guardianRelationMap;
+	}
+
+	public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
+		this.guardianRelationMap = guardianRelationMap;
+	}
+
+	public List<DocumentType> getDocumentTypes() {
+		return documentTypes;
+	}
+
+	public void setDocumentTypes(List<DocumentType> documentTypes) {
+		this.documentTypes = documentTypes;
+	}
+	
 }

@@ -119,8 +119,9 @@ public class User extends AbstractAuditable {
     @Length(min = 2, max = 64)
     private String guardian;
 
-    @Enumerated(EnumType.ORDINAL)
-    private GuardianRelation guardianRelation;
+    @SafeHtml
+    @Length(min = 2, max = 64)
+    private String guardianRelation;
 
     @NotNull
     @SafeHtml
@@ -355,11 +356,11 @@ public class User extends AbstractAuditable {
         this.guardian = guardian;
     }
 
-	public GuardianRelation getGuardianRelation() {
+	public String getGuardianRelation() {
 		return guardianRelation;
 	}
 
-	public void setGuardianRelation(GuardianRelation guardianRelation) {
+	public void setGuardianRelation(String guardianRelation) {
 		this.guardianRelation = guardianRelation;
 	}
 

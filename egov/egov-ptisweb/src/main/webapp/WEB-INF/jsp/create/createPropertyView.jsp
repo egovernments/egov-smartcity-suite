@@ -46,28 +46,30 @@
 		<td class="greybox2">&nbsp;</td>
 		<s:if test="%{basicProp.upicNo!=null}">
 			<td class="greybox"><s:text name="prop.Id" /> :</td>
-			<td class="greybox"><span class="bold"><s:property
-						default="N/A" value="%{basicProp.upicNo}" /> </span></td>
+			<td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProp.upicNo}" /> </span></td>
 		</s:if>
 	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
-			:</td>
-		<td class="greybox" width=""><span class="bold"><s:property
-					value="%{propertyDetail.propertyTypeMaster.type}" default="N/A" /></span>
-		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
-			:</td>
-		<td class="greybox" width=""><span class="bold"><s:property
-					value="%{propertyDetail.categoryType}" default="N/A" /></span>
+		<td class="greybox" width="20%"><s:text name="ownership.type"></s:text>:</td>
+		<td class="greybox" width="20%"><span class="bold">
+		     <s:property value="%{propertyDetail.propertyTypeMaster.type}" default="N/A" /></span>
+		<td class="greybox" width="20%"><s:text name="property.type"></s:text>:</td>
+		<td class="greybox" width="20%"><span class="bold">
+		    <s:property value="%{propertyDetail.categoryType}" default="N/A" /></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="20%"><s:text name="apartcomplex.name"></s:text> :</td>
+		<td class="greybox" width="20%"><span class="bold"><s:property
+					value="%{propertyDetail.apartment.name}" default="N/A" /></span>
 		</td>
 	</tr>
 
 	<tr>
 		<td class="greybox2">&nbsp;</td>
-		<td class="greybox"><s:text name="siteowner" /> :</td>
-		<td class="greybox"><span class="bold"><s:property
-					default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
+		
 	</tr>
 
 	<!-- Owner details section -->
@@ -88,7 +90,7 @@
     <tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"> Heading Not decided</span>
+				<span class="bold"><s:text name="assessmentDetails.title"/></span>
 			</div>
 		</td>
 	</tr>
@@ -101,24 +103,80 @@
 	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
-		<td class="greybox" width="">
-		   <span class="bold"><s:property value="%{propertyDetail.extentSite}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="vacantland.assmtno"/> :</td>
-		<td class="greybox">
-			<span class="bold"><s:property value="%{basicProperty.vacantLandAssmtNo}" default="N/A"/></span>
+		<td class="greybox" width="20%"><s:text name="extent.site"/> :</td>
+		<td class="greybox" width="20%">
+		   <span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
 		</td>
 	</tr>
-	
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.appurtntland"/> :</td>
-		<td class="greybox" width="">
+	<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="20%"><s:text name="extent.appurtntland"/> :</td>
+		<td class="greybox" width="20%">
+		<s:if test="propertyDetail.appurtenantLandChecked == true">
+				<span class="bold">Yes</span>
+			</s:if> <s:else>
+				<span class="bold">No</span>
+			</s:else>
+		</td>
+		<td class="greybox" width="20%"><s:text name="certificationNumber"/>:</td>
+		<td class="greybox" width="20%">
 			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
 		</td>
+		</tr>
+	<tr id="appurtenantRow">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="20%"><s:text name="extent.appurtntland"/> :</td>
+		<td class="greybox" width="20%">
+			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+		</td>
+		
+	</tr>
+	<tr>
+	<td class="greybox" width="5%">&nbsp;</td>
+	<td class="greybox" width="20%"><s:text name="superstructure"/>:</td>
+		<td class="greybox" width="20%">
+		<s:if test="propertyDetail.structure == true">
+				<span class="bold">Yes</span>
+			</s:if> <s:else>
+				<span class="bold">No</span>
+			</s:else>
+		</td>
+	<td class="greybox siteowner"><s:text name="siteowner"/> :</td>
+		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
+	</tr>
+	<tr>
+	<td class="greybox" width="5%">&nbsp;</td>
+	<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
+	<td class="greybox" width="20%">
+	<s:if test="propertyDetail.buildingPlanDetailsChecked == true">
+				<span class="bold">Yes</span>
+			</s:if> <s:else>
+				<span class="bold">No</span>
+			</s:else>
+		</td>
 	</tr>
 	
+	<tr class="bpddetails">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.buildingPermissionNo}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox">
+		    <s:date name="%{propertyDetail.buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
+			<span class="bold"><s:property value="%{#buildingPermNo}" default="N/A"/></span>
+		</td>
+
+	</tr>
+	<tr class="bpddetails">
+	<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox"><s:text name="deviationper"></s:text> :</td>
+		<td class="greybox" width="">
+			<span class="bold"><s:property value="%{propertyDetail.deviationPercentage}" default="N/A"/></span>
+		</td>
+	
+	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
@@ -131,20 +189,6 @@
 			<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
 		</td>
 	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{buildingPermissionNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox">
-		    <s:date name="%{buildingPermissionDate}" var="buildingPermNo" format="dd/MM/yyyy" />
-			<span class="bold"><s:property value="%{#buildingPermNo}" default="N/A"/></span>
-		</td>
-
-	</tr>
 	<!-- property address section -->
 	
 	<tr>
@@ -154,54 +198,31 @@
 			</div>
 		</td>
 	</tr>
-	
+<%-- 	
 	<tr>
 		<td colspan="5">
 			<div id="CorrAddrDiv">
 				<%@ include file="../common/CorrAddressView.jsp"%>
 			</div>
 		</td>
-	</tr>
+	</tr> --%>
 	
 	
-	<tr>
+	<tr class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"> <s:text name="amenities"></s:text> </span>
 			</div>
 		</td>
 	</tr>
-	<tr>
+	<tr class="amenities">
 		<td colspan="5">
-		  <table width="100%" class="checkbox-section">
-	        <tr>
-	            <td width="10%"></td>
-				<td width="20%" align="right">
-				  <label> Lift <s:checkbox name="propertyDetail.lift" id="propertyDetail.lift" disabled="true"/></label>
-				  <br/> <label> Drainage <s:checkbox name="propertyDetail.drainage" id="propertyDetail.drainage" disabled="true"/></label>
-				  <br/> <label>Cable Connection <s:checkbox name="propertyDetail.cable" id="propertyDetail.cable" disabled="true"/></label> 
-				</td>
-				<td width="20%" align="right">
-				  <label>Toilets <s:checkbox name="propertyDetail.toilets" id="propertyDetail.toilets" disabled="true"/> </label>
-				  <br/> <label>Electricity <s:checkbox name="propertyDetail.electricity" id="propertyDetail.electricity" disabled="true"/> </label>
-				</td>
-				<td width="20%" align="right">
-				  <label>Water Tap <s:checkbox name="propertyDetail.waterTap" id="propertyDetail.waterTap" disabled="true"/></label> 
-				   <br/> <label>Attached Bathroom <s:checkbox name="propertyDetail.attachedBathRoom" id="propertyDetail.attachedBathRoom" disabled="true"/> </label>
-			    </td>
-			    <td width="20%" align="right">
-				  <label>Super Structure <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/></label>
-				  <br/>  <label>Water Harvesting <s:checkbox name="propertyDetail.waterHarvesting" id="propertyDetail.waterHarvesting" disabled="true"/></label>
-			    </td>
-			    <td width="10%"></td>
-			</tr>
-			
-		   </table>
+		 <%@ include file="../common/amenitiesViewForm.jsp"%>
 		</td>
 	</tr>
 	<!-- Floor type details -->
 	
-	<tr>
+	<tr class="construction">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.constructiontypes"/></span>
@@ -209,7 +230,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr class="construction">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox" width="">
@@ -221,7 +242,7 @@
 		</td>
 	</tr>
 	
-	<tr>
+	<tr class="construction">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox" width="">
@@ -232,40 +253,8 @@
 			<span class="bold"><s:property value="%{propertyDetail.woodType.name}" default="N/A"/></span>
 		</td>
 	</tr>
-	<!-- Ownership section -->
 	
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<span class="bold"><s:text name="title.ownership"/></span>
-			</div>
-		</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="bluebox">
-			<div id="plotArea">
-				<s:text name="PlotArea"/> :
-			</div>
-			<div id="undivArea">
-				<s:text name="undivArea"/> :
-			</div>
-		</td>
-		<td class="bluebox" colspan="2">
-			<span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
-		</td>
-		<td class="bluebox">&nbsp;</td>
-	</tr>
-	
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox" width="">
-			
-		</td>
-	</tr>
-	<tr id="floorHeaderRow">
+	<tr class="floordetails">
 			<td colspan="5" width="5%">
 				<div class="headingsmallbg">
 					<span class="bold"><s:text name="FloorDetailsHeader" />
@@ -273,38 +262,29 @@
 				</div>
 			</td>
 	 </tr>
-	
-		<tr>
-			<td colspan="5">
-				<div align="center">
-					<%@ include file="../common/FloorView.jsp"%>
-				</div>
-			</td>
-		</tr>
-	<%-- <tr>
-		<td class="greybox">
-			&nbsp;
+
+	<tr class="floordetails">
+		<td colspan="5">
+			<div align="center">
+				<%@ include file="../common/FloorView.jsp"%>
+			</div>
 		</td>
-		<td class="greybox">
-			<s:text name="allChangesDone" />
-			:
+	</tr>
+	<tr class="vacantlanddetaills">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="VacantLandDetailsHeader" />
+				</span>
+			</div>
 		</td>
-		<td class="greybox">
-			<span class="bold">
-				<s:if test="basicProp.allChangesCompleted != null && basicProp.allChangesCompleted == true">
-					Yes
-				</s:if>
-				<s:else>
-					<s:property default="N/A" value="%{basicProp.allChangesCompleted}" />
-				</s:else> 
-			</span>
+	</tr>
+
+	<tr class="vacantlanddetaills">
+		<td colspan="5">
+			<div align="center">
+				<%@ include file="../common/vacantLandView.jsp"%>
+			</div>
 		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-		<td class="greybox">
-			&nbsp;
-		</td>
-	</tr> --%>
+	</tr>
 
 </table>

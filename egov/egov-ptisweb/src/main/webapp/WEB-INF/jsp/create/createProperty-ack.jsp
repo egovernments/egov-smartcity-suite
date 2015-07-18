@@ -88,11 +88,9 @@
 						<td>
 							<div class="buttonbottom" align="center">
 								<s:if test="mode == 'create'">
-									<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
 										<s:submit value="Print" name="PrintAck" id="PrintAck"
 											method="printAck" cssClass="buttonsubmit" align="center"
 											onclick="return onSubmit('createProperty-printAck.action');" />
-									</s:if>
 								</s:if>
 								<input type="button" class="button" onclick="window.close();" value="Close">
 							</div>

@@ -259,14 +259,14 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					}
 				} else {
 					if (null != property.getPropertyDetail()) {
-						if (property.getPropertyDetail().isBuildingPlanDetailsChecked()) {
+						if (null != property.getPropertyDetail().isBuildingPlanDetailsChecked()) {
 							if (isBlank(property.getPropertyDetail().getBuildingPermissionNo())) {
 								addActionError(getText("mandatory.buildingPlanNo"));
 							}
 							if (null == property.getPropertyDetail().getBuildingPermissionDate()) {
 								addActionError(getText("mandatory.buildingPlanDate"));
 							}
-							if (isBlank(property.getPropertyDetail().getDeviationPercentage())) {
+							if (property.getPropertyDetail().getDeviationPercentage().equals("-1")) {
 								addActionError(getText("mandatory.deviationPercentage"));
 							}
 						}
@@ -275,7 +275,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 								addActionError(getText("mandatory.siteowner"));
 							}
 						}
-						if (property.getPropertyDetail().isAppurtenantLandChecked() && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
+						if (null != property.getPropertyDetail().isAppurtenantLandChecked() && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
 							addActionError(getText("mandatory.extentAppartnant"));
 						} else if (areaOfPlot == null || areaOfPlot.equals("")) {
 							addActionError(getText("mandatory.areaOfPlot"));
