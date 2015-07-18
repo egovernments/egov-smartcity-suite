@@ -1,35 +1,36 @@
 $(document).ready(function(){
 	tableContainer1 = $("#employee-table"); 
 	$("#searchbtn").click(function (){
-		var search = $("#searchText").val();
+		var search = new Array();
+		search.push($("#searchText").val());
 		if(null== search || ''==search){
 			$("#freeText").val(false);
 			if(null!=$("#name").val() && ''!=$("#name").val())
-				search = $("#name").val();
+				search.push($("#name").val());
 			if(null!=$("#code").val() && ''!=$("#code").val())
-				search = search+","+ $("#code").val();
+				search.push($("#code").val());
 			if(null!=$("#aadhaar").val() && ''!=$("#aadhaar").val())
-				search = search+","+ $("#aadhaar").val();
+				search.push($("#aadhaar").val());
 			if(null!=$("#pan").val() && ''!=$("#pan").val())
-				search = search+","+ $("#pan").val();
+				search.push($("#pan").val());
 			if(null!=$("#mobileNumber").val() && ''!=$("#mobileNumber").val())
-				search = search+","+ $("#mobileNumber").val();
-			if(null!=$("#email").val() && ''!=$("#emmail").val())
-				search = search+","+ $("#email").val();
+				search.push($("#mobileNumber").val());
+			if(null!=$("#email").val() && ''!=$("#email").val())
+				search.push($("#email").val());
 			if(null!=$("#department").val() && ''!=$("#department").val())
-				search = search+","+ $("#department").val();
+				search.push($("#department").val());
 			if(null!=$("#designation").val() && ''!=$("#designation").val())
-				search = search+","+ $("#designation").val();
+				search.push($("#designation").val());
 			if(null!=$("#position").val() && ''!=$("#position").val())
-				search = search+","+ $("#position").val();
+				search.push($("#position").val());
 			if(null!=$("#function").val() && ''!=$("#function").val())
-				search = search+","+ $("#function").val();
+				search.push($("#function").val());
 			if(null!=$("#functionary").val() && ''!=$("#functionary").val())
-				search = search+","+ $("#functionary").val();
+				search.push($("#functionary").val());
 			if(null!=$("#status").val() && ''!=$("#status").val())
-				search = search+","+ $("#status").val();
+				search.push($("#status").val());
 			if(null!=$("#employeeType").val() && ''!=$("#employeeType").val())
-				search = search+","+ $("#employeeType").val();
+				search.push($("#employeeType").val());
 		}
 		else
 			$("#freeText").val(true);

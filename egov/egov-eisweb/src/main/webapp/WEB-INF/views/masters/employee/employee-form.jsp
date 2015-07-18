@@ -167,7 +167,7 @@
 										
 										<div class="col-sm-3 add-margin">
 											<form:input id="DOB" path="dob" type="text" class="form-control datepicker" 
-											data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992" />
+											data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" />
 										</div>
 									</div>
 
@@ -175,7 +175,7 @@
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.DOA"/></label>
 										
 										<div class="col-sm-2 add-margin">
-											<form:input id="DOA" path="dateOfAppointment" type="text" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="24/01/1992"/>
+											<form:input id="DOA" path="dateOfAppointment" type="text" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY"/>
 										</div>
 										
 										<div class="col-sm-1">
@@ -290,14 +290,14 @@
 										
 										<div class="col-sm-3">
 											<input type="text" class="form-control datepicker" name="fromDate" id="fromDate"
-												data-inputmask="'mask': 'd/m/y'" placeholder="From Date"/>
+												data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY"/>
 							 				<div class="error-msg fromdateerror all-errors display-hide"></div>
 										</div>
 										
 										
 										<div class="col-sm-3">
 											<input type="text" class="form-control datepicker" name="toDate" id="toDate"
-												data-inputmask="'mask': 'd/m/y'" placeholder="From Date"/>
+												data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY"/>
 							 				<div class="error-msg todateerror all-errors display-hide"></div>
 										</div>
 										
@@ -468,8 +468,8 @@
 														<input type="hidden" id="assignments[${status.index}].fromDate"
 															name="assignments[${status.index}].fromDate"
 															value="${fromDate}"/>
-														<input type="hidden" id="assignments[${status.index}].fromDate"
-															name="assignments[${status.index}].fromDate"
+														<input type="hidden" id="assignments[${status.index}].toDate"
+															name="assignments[${status.index}].toDate"
 															value="${toDate}"/>			
 													</td>
 													<td>

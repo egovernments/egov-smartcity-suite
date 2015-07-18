@@ -58,10 +58,10 @@ public class EmployeeAdaptor implements JsonSerializer<Employee> {
         jsonObject.addProperty("slno", sl++);
         jsonObject.addProperty("name", employee.getName());
         jsonObject.addProperty("code", employee.getCode());
-        jsonObject.addProperty("department", employee.getAssignments().get(0).getDepartment().getName());
-        jsonObject.addProperty("designation", employee.getAssignments().get(0).getDesignation().getName());
-        jsonObject.addProperty("position", employee.getAssignments().get(0).getPosition().getName());
-        jsonObject.addProperty("daterange", formatter.format(employee.getAssignments().get(0).getFromDate()) + " - "
+        jsonObject.addProperty("department", employee.getAssignments().isEmpty()?"":employee.getAssignments().get(0).getDepartment().getName());
+        jsonObject.addProperty("designation", employee.getAssignments().isEmpty()?"":employee.getAssignments().get(0).getDesignation().getName());
+        jsonObject.addProperty("position", employee.getAssignments().isEmpty()?"":employee.getAssignments().get(0).getPosition().getName());
+        jsonObject.addProperty("daterange", employee.getAssignments().isEmpty()?"":formatter.format(employee.getAssignments().get(0).getFromDate()) + " - "
                 + formatter.format(employee.getAssignments().get(0).getToDate()));
         return jsonObject;
     }

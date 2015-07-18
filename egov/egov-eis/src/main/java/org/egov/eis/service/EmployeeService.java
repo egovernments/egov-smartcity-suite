@@ -84,7 +84,7 @@ public class EmployeeService {
     }
 
     private final EmployeeRepository employeeRepository;
-    
+
     @Autowired
     private AssignmentRepository assignmentRepository;
 
@@ -169,6 +169,7 @@ public class EmployeeService {
     @Transactional
     public List<Employee> searchEmployee(final Boolean freeText, final String[] searchText) {
 
+        List<Employee> employees = null;
         final FullTextEntityManager fullTextEntityManager = org.hibernate.search.jpa.Search
                 .getFullTextEntityManager(entityManager);
         // create native Lucene query using the query DSL
@@ -184,24 +185,31 @@ public class EmployeeService {
                 "assignments.functionary.name");
 
         org.apache.lucene.search.Query luceneQuery = null;
+        boolean matchAnything = true;
 
-        if (freeText)
+        if (freeText) {
             luceneQuery = onFields.matching(searchText[0]).createQuery();
-        else {
+            matchAnything = false;
+        } else {
             final BooleanJunction<BooleanJunction> bool = qb.bool();
             for (final String element : searchText) {
                 final String currentTerm = element;
-                if (!currentTerm.isEmpty() && !"".equals(currentTerm))
-                    bool.must(onFields.matching(currentTerm).createQuery());
+                if (!currentTerm.isEmpty() && !"".equals(currentTerm) && !",".equals(currentTerm)) {
+                    bool.should(onFields.matching(currentTerm).createQuery());
+                    matchAnything = false;
+                }
             }
-            luceneQuery = bool.createQuery();
+            if (!matchAnything)
+                luceneQuery = bool.createQuery();
         }
 
-        // wrap Lucene query in a javax.persistence.Query
-        final javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Employee.class);
-
-        // execute search
-        return jpaQuery.getResultList();
+        if (!matchAnything) {
+            final javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery,
+                    Employee.class);
+            employees = jpaQuery.getResultList();
+        } else
+            employees = employeeRepository.findAll();
+        return employees;
     }
 
     @Transactional
@@ -271,7 +279,7 @@ public class EmployeeService {
             final Long boundaryId) {
         return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, boundaryId);
     }
-    
+
     /**
      * Returns list of employee for a given position
      *
@@ -285,7 +293,7 @@ public class EmployeeService {
             employees.add(assign.getEmployee());
         return new ArrayList<Employee>(employees);
     }
-    
+
     /**
      * Returns primary assignment's employee for position
      *
@@ -295,7 +303,7 @@ public class EmployeeService {
     public Employee getPrimaryAssignmentEmployeeForPos(final Long posId) {
         return assignmentRepository.getPrimaryAssignmentForPosition(posId).getEmployee();
     }
-    
+
     /**
      * Returns employee object for position id and given date
      *
@@ -307,5 +315,8 @@ public class EmployeeService {
         return assignmentRepository.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
     }
 
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
 
 }

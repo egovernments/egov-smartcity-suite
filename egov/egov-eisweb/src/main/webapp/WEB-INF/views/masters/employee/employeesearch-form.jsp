@@ -177,7 +177,7 @@
 									<div class="form-group advanced-forms display-hide">
 										
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="status" name="status">
+											<select class="form-control" id="employeeType" name="employeeType">
 												<option value="">
 													<spring:message code="lbl.types" />
 												</option>
