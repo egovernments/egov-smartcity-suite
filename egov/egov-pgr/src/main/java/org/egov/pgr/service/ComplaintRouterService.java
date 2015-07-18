@@ -144,18 +144,13 @@ public class ComplaintRouterService {
     public Boolean validateRouter(final ComplaintRouter complaintRouter) {
         Boolean exist = false;
         ComplaintRouter queryResult = null;
-        if (null != complaintRouter.getComplaintType() && null != complaintRouter.getBoundary()
-                && null != complaintRouter.getPosition())
-            queryResult = complaintRouterRepository.findByComplaintTypeAndBoundaryAndPosition(
-                    complaintRouter.getComplaintType(), complaintRouter.getBoundary(), complaintRouter.getPosition());
-        if (null != complaintRouter.getPosition() && null != complaintRouter.getBoundary()
-                && null == complaintRouter.getComplaintType())
-            queryResult = complaintRouterRepository.findByBoundaryAndPosition(complaintRouter.getBoundary(),
-                    complaintRouter.getPosition());
-        if (null != complaintRouter.getComplaintType() && null != complaintRouter.getPosition()
-                && null == complaintRouter.getBoundary())
-            queryResult = complaintRouterRepository.findByComplaintTypeAndPosition(complaintRouter.getComplaintType(),
-                    complaintRouter.getPosition());
+        if (null != complaintRouter.getComplaintType() && null != complaintRouter.getBoundary())
+            queryResult = complaintRouterRepository.findByComplaintTypeAndBoundary(complaintRouter.getComplaintType(),
+                    complaintRouter.getBoundary());
+        if (null != complaintRouter.getBoundary() && null == complaintRouter.getComplaintType())
+            queryResult = complaintRouterRepository.findByOnlyBoundary(complaintRouter.getBoundary());
+        if (null != complaintRouter.getComplaintType() && null == complaintRouter.getBoundary())
+            queryResult = complaintRouterRepository.findByOnlyComplaintType(complaintRouter.getComplaintType());
         if (queryResult != null)
             exist = true;
         return exist;
