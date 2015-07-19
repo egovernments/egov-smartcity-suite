@@ -39,9 +39,18 @@
  */
 package org.egov.portal.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 
@@ -52,6 +61,10 @@ public class Citizen extends User {
     private static final long serialVersionUID = -521416613072970524L;
 
     private String activationCode;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid") , inverseJoinColumns = @JoinColumn(name = "deviceid") )
+    private Set<Device> devices = new HashSet<>();
 
     public Citizen() {
         setType(UserType.CITIZEN);
@@ -64,5 +77,13 @@ public class Citizen extends User {
     public void setActivationCode(final String activationCode) {
         this.activationCode = activationCode;
     }
+    public Set<Device> getDevices() {
+		return devices;
+	}
+
+	public void setDevices(Set<Device> devices) {
+		this.devices = devices;
+	}
+
 
 }

@@ -118,6 +118,10 @@
 		class="org.egov.api.oauth2.provider.CustomAuthenticationProvider">
 	</bean>
 
+    <bean id="customTokenEnhancer"
+        class="org.egov.api.oauth2.provider.CustomTokenEnhancer">
+    </bean>
+    
 	<!-- This is simple authentication manager, with a hardcoded user/password 
 		combination. We can replace this with a user defined service to get few users 
 		credentials from DB -->
@@ -147,6 +151,7 @@
 		 <property name="supportRefreshToken" value="true" />
 		<property name="accessTokenValiditySeconds" value="-1" />
 		<property name="clientDetailsService" ref="clientDetails" />
+		<property name="tokenEnhancer" ref="customTokenEnhancer"/>
 	</bean>
 
 	<!-- <bean id="userApprovalHandler" class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler"> 
