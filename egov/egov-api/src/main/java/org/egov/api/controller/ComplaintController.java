@@ -53,6 +53,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,7 +65,6 @@ import org.apache.commons.io.IOUtils;
 import org.egov.api.adapter.ComplaintAdapter;
 import org.egov.api.adapter.ComplaintStatusAdapter;
 import org.egov.api.adapter.ComplaintTypeAdapter;
-import org.egov.api.adapter.TestAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintSearchRequest;
@@ -120,7 +123,6 @@ public class ComplaintController extends ApiController {
 
 	@Autowired
 	protected ComplaintTypeService complaintTypeService;
-
 
 	// --------------------------------------------------------------------------------//
 	/**
@@ -207,7 +209,8 @@ public class ComplaintController extends ApiController {
 			}
 			if (complaint.getLocation() == null
 					&& (complaint.getLat() == 0 || complaint.getLng() == 0)) {
-				return getResponseHandler().error(this.getMessage("location.required"));
+				return getResponseHandler().error(
+						this.getMessage("location.required"));
 			}
 
 			complaint.setDetails(complaintRequest.get("details").toString());
@@ -255,7 +258,8 @@ public class ComplaintController extends ApiController {
 			complaint.getSupportDocs().add(uploadFile);
 			complaintService.update(complaint, null, null);
 
-			return getResponseHandler().success("", this.getMessage("msg.complaint.update.success"));
+			return getResponseHandler().success("",
+					this.getMessage("msg.complaint.update.success"));
 		} catch (Exception e) {
 			msg = e.getMessage();
 		}
@@ -315,16 +319,27 @@ public class ComplaintController extends ApiController {
 	 */
 
 	@RequestMapping(value = { ApiUrl.COMPLAINT_LATEST }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> getLatest(@PathVariable("page") int page,
+	public ResponseEntity<String> getLatest(
+			OAuth2Authentication authentication,
+			@PathVariable("page") int page,
 			@PathVariable("pageSize") int pageSize) {
 
 		if (page < 1) {
 			return getResponseHandler().error("Invalid Page Number");
 		}
 		try {
-			List<Complaint> list = entityManager
-					.createQuery("from Complaint order by createddate DESC",
-							Complaint.class)
+			SecureUser su = (SecureUser) authentication.getUserAuthentication()
+					.getPrincipal();
+			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+			CriteriaQuery<Complaint> query = cb.createQuery(Complaint.class);
+			Root<Complaint> complaint = query.from(Complaint.class);
+			query.select(complaint);
+			query.where(cb.notEqual(complaint.get("createdBy"), su.getUserId()));
+			query.orderBy(cb.desc(complaint.get("createdDate")));
+			TypedQuery<Complaint> finalQuery = entityManager.createQuery(query);
+
+			List<Complaint> list = finalQuery
 					.setFirstResult((page - 1) * pageSize)
 					.setMaxResults(pageSize + 1).getResultList();
 
@@ -436,6 +451,7 @@ public class ComplaintController extends ApiController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<String> getNearByComplaint(
+			OAuth2Authentication authentication,
 			@PathVariable("page") int page, @RequestParam("lat") float lat,
 			@RequestParam("lng") float lng,
 			@RequestParam("distance") int distance,
@@ -445,9 +461,13 @@ public class ComplaintController extends ApiController {
 			return getResponseHandler().error("Invalid Page Number");
 		}
 		try {
+			SecureUser su = (SecureUser) authentication.getUserAuthentication()
+					.getPrincipal();
 			List<Complaint> list = entityManager
 					.createNativeQuery(
-							"SELECT * FROM egpgr_complaint WHERE earth_box( ll_to_earth("
+							"SELECT * FROM egpgr_complaint WHERE createdBy!="
+									+ su.getUser().getId()
+									+ " AND earth_box( ll_to_earth("
 									+ lat
 									+ ", "
 									+ lng
@@ -465,7 +485,8 @@ public class ComplaintController extends ApiController {
 			}
 
 			return getResponseHandler()
-					.putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
+					.putStatusAttribute("hasNextPage",
+							String.valueOf(hasNextPage))
 					.setDataAdapter(new ComplaintAdapter()).success(list);
 		} catch (final Exception e) {
 			return getResponseHandler().error(e.getMessage());
@@ -475,9 +496,9 @@ public class ComplaintController extends ApiController {
 	// ------------------------------------------
 	@RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
 	public void getComplaintDoc(@PathVariable String complaintNo,
-			@RequestParam("fileNo") Long fileNo, HttpServletResponse response)
-			throws IOException {
-
+			@RequestParam(value = "fileNo", required = false) Long fileNo,
+			HttpServletResponse response) throws IOException {
+		
 		try {
 			Complaint complaint = complaintService
 					.getComplaintByCRN(complaintNo);
@@ -485,6 +506,8 @@ public class ComplaintController extends ApiController {
 
 			int i = 1;
 			Iterator<FileStoreMapper> it = files.iterator();
+			if (fileNo == null)
+				fileNo = (long) files.size();
 			File downloadFile = null;
 			while (it.hasNext()) {
 				FileStoreMapper fm = it.next();
@@ -527,7 +550,8 @@ public class ComplaintController extends ApiController {
 			complaintService.update(complaint, Long.valueOf(0),
 					jsonData.get("comment").toString());
 
-			return getResponseHandler().success("", this.getMessage("msg.complaint.status.update.success"));
+			return getResponseHandler().success("",
+					this.getMessage("msg.complaint.status.update.success"));
 		} catch (Exception e) {
 			msg = e.getMessage();
 		}

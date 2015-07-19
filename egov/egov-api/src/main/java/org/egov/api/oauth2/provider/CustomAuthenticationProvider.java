@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.BadClientCredentialsException;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,18 +32,22 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String userName = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		User user = null;
-		if(userName.contains("@") && userName.contains(".")){
+		if (userName.contains("@") && userName.contains(".")) {
 			user = userService.getUserByEmailId(userName);
 		} else {
 			user = userService.getUserByUsername(userName);
 		}
 		if (user == null) {
-			throw new BadClientCredentialsException();
+			throw new OAuth2Exception("Invalid login credentials");
 		}
 
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 
 		if (bcrypt.matches(password, user.getPassword())) {
+
+			if (!user.isActive()) {
+				throw new OAuth2Exception("Please activate your account");
+			}
 			/**
 			 * We assume that there will be only one type. If it is multimple
 			 * then we have change below code Seperate by comma or other and
