@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -220,6 +221,9 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		if (propTypeId == null || propTypeId.equals("-1")) {
 			addActionError(getText("mandatory.propType"));
 		}
+		if (isBlank(property.getPropertyDetail().getCategoryType())) {
+			addActionError(getText("mandatory.propcatType"));
+		}
 
 		if (propTypeId != null && !propTypeId.equals("-1")) {
 			PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -266,7 +270,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							if (null == property.getPropertyDetail().getBuildingPermissionDate()) {
 								addActionError(getText("mandatory.buildingPlanDate"));
 							}
-							if (property.getPropertyDetail().getDeviationPercentage().equals("-1")) {
+							if (isBlank(property.getPropertyDetail().getDeviationPercentage())) {
 								addActionError(getText("mandatory.deviationPercentage"));
 							}
 						}
@@ -277,8 +281,8 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 						}
 						if (null != property.getPropertyDetail().isAppurtenantLandChecked() && null == property.getPropertyDetail().getExtentAppartenauntLand()) {
 							addActionError(getText("mandatory.extentAppartnant"));
-						} else if (areaOfPlot == null || areaOfPlot.equals("")) {
-							addActionError(getText("mandatory.areaOfPlot"));
+						} else if (null == property.getPropertyDetail().isAppurtenantLandChecked() && isBlank(areaOfPlot)) {
+							addActionError(getText("mandatory.extentsite"));
 						}
 					}
 					if (floorTypeId == null || floorTypeId == -1) {
@@ -465,6 +469,17 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		property.transition().withSenderName(securityUtils.getCurrentUser().getName())
 				.withComments(workflowBean.getComments()).withDateInfo(currentDate.toDate())
 				.withStateValue(beanActionName[0]).withOwner(nextOwner.getPosition()).withNextAction(nextAction);
+	}
+	
+	public void validateApproverDetails(Long approverPositionId,String approverComments, String workFlowAction) {
+		if (WFLOW_ACTION_STEP_FORWARD.equals(workFlowAction) || WFLOW_ACTION_STEP_SAVE.equals(workFlowAction)) {
+			if (approverPositionId == -1) 
+			addActionError(getText("property.workflow.approver.errormessage"));
+		}
+		if (isBlank(approverComments)) {
+			addActionError(getText("property.workflow.remarks"));
+		}
+
 	}
 
 	public WorkflowBean getWorkflowBean() {

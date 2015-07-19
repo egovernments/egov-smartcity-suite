@@ -64,6 +64,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -356,7 +359,9 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyDetail propertyDetail = property.getPropertyDetail();
 		if (propertyDetail != null) {
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
+			propertyDetail.setCategoryType(propertyDetail.getCategoryType());
 			if (!propertyDetail.getPropertyType().equals(VACANT_PROPERTY)) {
+				propertyDetail.setCategoryType(propertyDetail.getCategoryType());
 				if (property.getPropertyDetail().getFloorType() != null) {
 					floorTypeId = property.getPropertyDetail().getFloorType().getId();
 				}
@@ -389,17 +394,23 @@ public class CreatePropertyAction extends WorkflowAction {
 
 			for (PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo()) {
 				for (Address corrAddress : ownerInfo.getOwner().getAddress()) {
-					setCorrAddress1(corrAddress.getLandmark());
-					setCorrAddress2(corrAddress.getAreaLocalitySector());
-					setCorrPinCode(corrAddress.getPinCode());
-					chkIsCorrIsDiff = true;
+					if (isNotBlank(corrAddress.getLandmark())) {
+						setCorrAddress1(corrAddress.getLandmark());
+						setCorrAddress2(corrAddress.getAreaLocalitySector());
+						setCorrPinCode(corrAddress.getPinCode());
+						chkIsCorrIsDiff = true;
+					}
 				}
 			}
 			if (null != basicProp.getPropertyID()) {
 				PropertyID propBoundary = basicProp.getPropertyID();
+				setNorthBoundary(propBoundary.getNorthBoundary());
+				setSouthBoundary(propBoundary.getSouthBoundary());
+				setEastBoundary(propBoundary.getEastBoundary());
+				setWestBoundary(propBoundary.getWestBoundary());
 				if (null != propBoundary.getLocality().getId()) {
-					setLocality(boundaryService.getBoundaryById(propBoundary.getLocality().getId())
-							.getId());
+					setLocality(boundaryService.getBoundaryById(
+							propBoundary.getLocality().getId()).getId());
 				}
 				if (null != propBoundary.getElectionBoundary()
 						&& null != propBoundary.getElectionBoundary().getId()) {
@@ -408,9 +419,10 @@ public class CreatePropertyAction extends WorkflowAction {
 				}
 				if (null != propBoundary.getWard().getId()) {
 					Boundary zone = propBoundary.getWard();
-					setZoneId(boundaryService.getBoundaryById(zone.getId()).getId());
+					setZoneId(boundaryService.getBoundaryById(zone.getId())
+							.getId());
 					setZoneName(zone.getName());
-				}
+	}
 				if (null != propBoundary.getWard().getId()) {
 					Boundary ward = propBoundary.getWard();
 					setWardId(boundaryService.getBoundaryById(ward.getId()).getId());
@@ -432,18 +444,20 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property
 				+ ", userDesgn: " + userDesgn);
 		String nextAction = property.getState().getNextAction();
+		populateFormData();
 		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)
 				&& !nextAction.equals(WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED)
 				&& (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN
 						.equalsIgnoreCase(userDesgn))) {
-			populateFormData();
+			//populateFormData();
 			mode = EDIT;
 			return RESULT_NEW;
 		} else {
 			mode = VIEW;
 			PropertyDetail propertyDetail = property.getPropertyDetail();
 			setAddressStr(basicProp.getAddress().toString());
-			corrAddress1 = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
+			//corrAddress1 = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo().getOwner());
+			corrAddress1 = basicProp.getAddress().toString();
 
 			if (propertyDetail.getFloorDetails().size() > 0) {
 				setFloorDetails(property);
@@ -466,28 +480,30 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-forward")
 	public String forward() {
-		if (mode.equalsIgnoreCase(EDIT) && !workFlowAction.equalsIgnoreCase("reject")
-				|| workFlowAction.equalsIgnoreCase("cancel")) {
-
+		if (mode.equalsIgnoreCase(EDIT)) {
 			this.validate();
 			if (hasErrors()) {
 				return RESULT_NEW;
 			}
 			updatePropertyDetails();
+		} else {
+			validateApproverDetails(approverPositionId,approverComments,workFlowAction);
+			if (hasErrors()) {
+				return RESULT_VIEW;
+			}
 		}
 		transitionWorkFlow(property);
 
-		if (workFlowAction.equalsIgnoreCase("approve")) {
+		if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
 			return approve();
-		} else if (workFlowAction.equalsIgnoreCase("reject")) {
+		} else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
 			return reject();
-		} else if (workFlowAction.equalsIgnoreCase("generate notice")) {
+		} else if (WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(workFlowAction)) {
 			return generateNotice();
 		}
 
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();
-
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
 		basicPropertyService.persist(basicProp);
@@ -524,7 +540,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				}
 			}
 		} else {
-			changePropertyDetail();
+			property.getPropertyDetail().getFloorDetails().clear();
 		}
 
 		int ownersCount = property.getBasicProperty().getPropertyOwnerInfo().size();
@@ -547,8 +563,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	private void updateBasicProperty(BasicProperty basicProperty) {
 		basicProperty.setRegdDocNo(getRegdDocNo());
 		basicProperty.setRegdDocDate(getRegdDocDate());
-		basicProperty.setVacantLandAssmtNo(getVacantLandNo());
 		PropertyID propertyId = basicProperty.getPropertyID();
+		//propertyId.set
 		// propertyId.setZone(zone);
 		// basicProperty.setPropertyID(createPropertyID(basicProperty));
 		// basicProperty.setAddress(createPropAddress());
@@ -560,14 +576,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("approve: Property approval started");
 		LOGGER.debug("approve: Property: " + property);
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
-		if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
-			this.validate();
-			if (hasErrors()) {
-				mode = EDIT;
-				return RESULT_NEW;
-			}
-			updatePropertyDetails();
-		}
 		property.setStatus(STATUS_ISACTIVE);
 		String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
 		basicProp.setUpicNo(assessmentNo);
@@ -583,7 +591,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		approved = true;
 		setWardId(basicProp.getPropertyID().getWard().getId());
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
-		transitionWorkFlow(property);
 		basicPropertyService.applyAuditing(property.getState());
 		basicPropertyService.update(basicProp);
 		setAckMessage("Property Approved Successfully by : "
@@ -598,7 +605,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Action(value = "/createProperty-reject")
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
-		updatePropertyDetails();
 		basicPropertyService.applyAuditing(property.getState());
 		if (property.getPropertyDetail().getApartment() != null
 				&& property.getPropertyDetail().getApartment().getId() != null) {
@@ -839,13 +845,17 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
 
+		if (property != null && !property.getDocuments().isEmpty()) {
+			propService.processAndStoreDocument(property.getDocuments());
+		}
+		
 		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
 				|| null != property.getPropertyDetail().isAppurtenantLandChecked()) {
 			property.setPropertyDetail(changePropertyDetail());
 		}
 
 		basicProperty.addProperty(property);
-		propService.createDemand(property, propCompletionDate);
+		//propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
@@ -1000,7 +1010,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
 				ownerAddr.setLandmark(addrStr1);
 				ownerAddr.setAreaLocalitySector(addrStr2);
-				if (getCorrPinCode() != null && !getCorrPinCode().isEmpty()) {
+				if (isNotBlank(getCorrPinCode())) {
 					ownerAddr.setPinCode(getCorrPinCode());
 				}
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
@@ -1040,7 +1050,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (getPinCode() != null && !getPinCode().isEmpty()) {
 			propAddr.setPinCode((getPinCode()));
 		}
-		if (!isChkIsCorrIsDiff()) {
+		if (isChkIsCorrIsDiff()) {
 			setCorrAddress1(addrStr1.toString());
 			setCorrAddress2(addrStr2.toString());
 			if (getPinCode() != null && !getPinCode().isEmpty()) {
@@ -1121,6 +1131,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				addActionError(getText("mandatory.corr.pincode.size"));
 			}
 		}
+		validateApproverDetails(approverPositionId,approverComments,workFlowAction);
 		super.validate();
 	}
 
@@ -1163,7 +1174,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		String designationName = userAssignment.getDesignation().getName();
 		Position pos = null;
 
-		if (workFlowAction.equalsIgnoreCase("reject")) {
+		if (workFlowAction.equalsIgnoreCase("Reject")) {
 			Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property
 					.getCreatedBy().getId());
 			property.transition(true).withSenderName(user.getName()).withComments(approverComments)
@@ -1171,11 +1182,12 @@ public class CreatePropertyAction extends WorkflowAction {
 					.withOwner(preOwner.getPosition()).withNextAction("Cancel");
 
 		} else {
-			if (null != approverPositionId) {
+			if (approverPositionId != -1 && null != approverPositionId) {
 				pos = (Position) persistenceService.find(
 						"from Position where id=?", approverPositionId);
 			} else if (COMMISSIONER_DESGN.equals(designationName)) {
-				pos = (Position) persistenceService.find("from Position where id=?", property.getCreatedBy().getId());
+				Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+				pos = preOwner.getPosition();
 			}
 			if (null == property.getState()) {
 				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(

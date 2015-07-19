@@ -64,15 +64,11 @@
 			jQuery('#appurtenantRow').hide();
 			}
 		var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
-		alert("buildingPlanDetailsChecked"+buildingPlanDetailsChecked)
-		if(buildingPlanDetailsChecked == null) {
-			alert("hide buildingPlanDetailsChecked");
+		if(buildingPlanDetailsChecked != 'true') {
 			jQuery('tr.bpddetails').hide();
 			}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
-		alert(structure);
 		if(structure == 'false') {
-			alert("hide site owner")
 			jQuery('td.siteowner').hide();
 			}
    		
@@ -127,12 +123,12 @@
 	<div align="left">
 		<s:actionerror />
 	</div>
-	<s:if test="%{hasActionMessages()}">
+	<%-- <s:if test="%{hasActionMessages()}">
 		<div id="actionMessages" class="messagestyle" align="center">
 			<s:actionmessage theme="simple" />
 		</div>
 		<div class="blankspace">&nbsp;</div>
-	</s:if>
+	</s:if> --%>
 	<!-- Area for error display -->
 	<div class="errorcss" id="jsValidationErrors" style="display: none;"></div>
 	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
@@ -141,7 +137,7 @@
 			theme="simple" validate="true">
 			<s:token />
 			<!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
-			<s:hidden name="mode" value="view" />
+			<s:hidden name="mode" id="mode" value="%{mode}" />
 			<s:push value="model">
 
 

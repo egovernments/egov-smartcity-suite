@@ -101,8 +101,7 @@ function validateWorkFlowApprover(name)
 
 function validateWorkFlowApprover(name,errorDivId)
 {
-	//alert(errorDivId);
- if(document.getElementById(errorDivId))
+	alert(errorDivId);
 	document.getElementById(errorDivId).style.display='none';
     document.getElementById('workFlowAction').value=name;
    // alert("inside validation for approve"+name);
@@ -117,10 +116,10 @@ function validateWorkFlowApprover(name,errorDivId)
     }
     </s:if> */
     
-      var propTypeMstr = document.getElementById("approverPositionId");
-      if(propTypeMstr)
+      var approverPosId = document.getElementById("approverPositionId");
+      if(approverPosId)
       {
-	  var  approver=	propTypeMstr.options[propTypeMstr.selectedIndex].text; 
+	  var  approver = approverPosId.options[approverPosId.selectedIndex].text; 
 	  //alert(approver);
       document.getElementById("approverName").value= approver.split('~')[0];
       //alert(document.getElementById("approverName").value);
@@ -193,7 +192,7 @@ function validateWorkFlowApprover(name,errorDivId)
          <tr>
            <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
            <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%">Approver Comments: </td>
+           <td class="${approverEvenCSS}" width="13%">Approver Remarks: </td>
            <td class="${approverEvenTextCSS}"> 
            	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
            </td>

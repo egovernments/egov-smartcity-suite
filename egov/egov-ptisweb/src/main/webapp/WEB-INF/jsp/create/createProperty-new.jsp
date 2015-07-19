@@ -65,9 +65,9 @@
   <div align="left">
   	<s:actionerror/>
   </div>
-    <div class="errorcss" id="jsValidationErrors" style="display:none;"></div>
+    <!-- <div class="errorcss" id="jsValidationErrors" style="display:none;"></div> -->
 
-  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" validate="true">
+  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple">
   
   <s:push value="model">
   <s:token />
@@ -121,6 +121,13 @@ function loadOnStartUp() {
 	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
+	var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
+	if (jQuery(appartunentLand).is(":checked")) {
+		enableAppartnaumtLandDetails();
+	alert("appartunentLand"+appartunentLand);
+	}
+	//var category = '<s:property value="%{propertyDetail.categoryType}"/>';
+	//document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].text = category;
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */

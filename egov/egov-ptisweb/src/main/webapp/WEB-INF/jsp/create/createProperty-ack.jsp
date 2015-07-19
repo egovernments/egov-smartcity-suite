@@ -74,8 +74,7 @@
 											value="%{basicProperty.applicationNo}" /></span></td>
 							</s:if>
 						</s:if>
-						<s:elseif test="%{(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction) ||
-						       @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED.equalsIgnoreCase(model.state.nextAction)) && approved == true}">
+						<s:elseif test="approved == true">
 							<span class="bold"><s:property value="%{ackMessage}" /> <s:property
 									value="%{basicProperty.upicNo}" /> </span>
 						</s:elseif>

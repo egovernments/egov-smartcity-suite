@@ -46,8 +46,8 @@
     <th class="bluebgheadtd"><s:text name="gender"/></th>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
 	<th class="bluebgheadtd"><s:text name="EmailAddress"/></th>
-	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 	<th class="bluebgheadtd"><s:text name="GuardianRelation"/></th>
+	<th class="bluebgheadtd"><s:text name="Guardian"/></th>
 	</tr>
    
     <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
