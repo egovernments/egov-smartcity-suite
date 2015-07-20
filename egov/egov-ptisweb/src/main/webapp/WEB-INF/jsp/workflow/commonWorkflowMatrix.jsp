@@ -101,8 +101,7 @@ function validateWorkFlowApprover(name)
 
 function validateWorkFlowApprover(name,errorDivId)
 {
-	//alert(errorDivId);
-	document.getElementById(errorDivId).style.display='none';
+	//document.getElementById(errorDivId).style.display='none';
     document.getElementById('workFlowAction').value=name;
    // alert("inside validation for approve"+name);
 	/* <s:if test="%{getNextAction()!='END'}">
