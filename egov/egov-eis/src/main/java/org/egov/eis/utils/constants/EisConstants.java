@@ -42,5 +42,6 @@ package org.egov.eis.utils.constants;
 public interface EisConstants {
 
 	public static final String ROLE_EMPLOYEE = "Employee";
+	public static final String ANONYMOUS_EMPLOYEE = "anonymous";
 	
 }

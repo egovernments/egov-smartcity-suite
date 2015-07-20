@@ -51,18 +51,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Employee findByCode(String code);
+    public Employee findByCode(String code);
 
-    List<Employee> findByEmployeeStatus(EmployeeStatus status);
+    public List<Employee> findByEmployeeStatus(EmployeeStatus status);
 
-    List<Employee> findByEmployeeType_Id(Long id);
+    public List<Employee> findByEmployeeType_Id(Long id);
 
-    Employee findByUsername(String userName);
+    public Employee findByUsername(String userName);
 
     @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
             + " and JRDN.boundary.id=:boundaryId")
     public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
+
+    public Employee findByName(String name);
 
 }

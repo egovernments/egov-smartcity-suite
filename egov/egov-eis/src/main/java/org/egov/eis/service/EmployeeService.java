@@ -209,6 +209,9 @@ public class EmployeeService {
             employees = jpaQuery.getResultList();
         } else
             employees = employeeRepository.findAll();
+        final Employee anonymousEmployee = employeeRepository.findByName(EisConstants.ANONYMOUS_EMPLOYEE);
+        employees.remove(anonymousEmployee);
+
         return employees;
     }
 
