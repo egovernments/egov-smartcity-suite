@@ -59,4 +59,9 @@
 	<definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
+	
+	<definition name="home" extends="base_layout">
+		<put-attribute name="page-title" value="title.dashboard" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dashboard/home.jsp"/>
+    </definition>
 </tiles-definitions>
