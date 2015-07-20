@@ -43,11 +43,11 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
@@ -61,12 +61,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,7 +93,6 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.demand.dao.EgDemandDao;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -111,16 +110,12 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.pims.commons.Position;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -151,7 +146,6 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.utils.OwnerNameComparator;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -232,7 +226,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String propTypeId;
 	private String propUsageId;
 	private String propOccId;
-	private String ackMessage;
 	private Map<Long, String> ZoneBndryMap;
 	private List<PropertyOwnerInfo> propOwnerProxy;
 	private Map<String, String> propTypeCategoryMap;
@@ -269,9 +262,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private List<DocumentType> documentTypes = new ArrayList<>();
 
 	@Autowired
-	private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
-
-	@Autowired
 	private UserService userService;
 
 	private AssignmentService assignmentService;
@@ -285,12 +275,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Autowired
 	private SecurityUtils securityUtils;
 	private List<String> validActions;
-
-	private String nextAction;
-	private String approverName;
-	private Long approverPositionId;
-	private String approverComments;
-	private String workFlowAction;
 
 	@Autowired
 	private EgDemandDao egDemandDAO;
@@ -419,10 +403,9 @@ public class CreatePropertyAction extends WorkflowAction {
 				}
 				if (null != propBoundary.getWard().getId()) {
 					Boundary zone = propBoundary.getWard();
-					setZoneId(boundaryService.getBoundaryById(zone.getId())
-							.getId());
+					setZoneId(boundaryService.getBoundaryById(zone.getId()).getId());
 					setZoneName(zone.getName());
-	}
+	             }
 				if (null != propBoundary.getWard().getId()) {
 					Boundary ward = propBoundary.getWard();
 					setWardId(boundaryService.getBoundaryById(ward.getId()).getId());
@@ -448,7 +431,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)
 				&& !nextAction.equals(WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED)
 				&& (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN
-						.equalsIgnoreCase(userDesgn))) {
+						.equalsIgnoreCase(userDesgn)) || WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(nextAction)) {
 			//populateFormData();
 			mode = EDIT;
 			return RESULT_NEW;
@@ -499,6 +482,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
 			return reject();
 		} else if (WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(workFlowAction)) {
+			///notice/propertyTaxNotice-generateNotice
 			return generateNotice();
 		}
 
@@ -551,6 +535,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
 			}
 		}
+		//propService.createDemand(property, propCompletionDate);
 		/*
 		 * for (EgDemand demand : property.getPtDemandSet()) {
 		 * egDemandDAO.delete(demand); }
@@ -854,7 +839,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		basicProperty.addProperty(property);
-		propService.createDemand(property, propCompletionDate);
+		//propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
@@ -1101,11 +1086,17 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (owner != null) {
+				if (StringUtils.isBlank(owner.getOwner().getAadhaarNumber())) {
+					addActionError(getText("mandatory.adharNo"));
+				}
+				if (StringUtils.isBlank(owner.getOwner().getSalutation())) {
+					addActionError(getText("mandatory.salutation"));
+				}
 				if (StringUtils.isBlank(owner.getOwner().getName())) {
 					addActionError(getText("mandatory.ownerName"));
 				}
-				if (StringUtils.isBlank(owner.getOwner().getAadhaarNumber())) {
-					addActionError(getText("mandatory.adharNo"));
+				if (null == owner.getOwner().getGender()) {
+					addActionError(getText("mandatory.gender"));
 				}
 				if (StringUtils.isBlank(owner.getOwner().getMobileNumber())) {
 					addActionError(getText("mandatory.mobilenumber"));
@@ -1166,66 +1157,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		return property;
 	}
 
-	public void transitionWorkFlow(PropertyImpl property) {
-		final DateTime currentDate = new DateTime();
-		User user = securityUtils.getCurrentUser();
-		Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-		String designationName = userAssignment.getDesignation().getName();
-		Position pos = null;
-
-		if (workFlowAction.equalsIgnoreCase("Reject")) {
-			Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property
-					.getCreatedBy().getId());
-			property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-					.withStateValue("Rejected").withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
-					.withOwner(preOwner.getPosition()).withNextAction("Cancel");
-
-		} else {
-			if (approverPositionId != -1 && null != approverPositionId) {
-				pos = (Position) persistenceService.find(
-						"from Position where id=?", approverPositionId);
-			} else if (COMMISSIONER_DESGN.equals(designationName)) {
-				Assignment preOwner = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-				pos = preOwner.getPosition();
-			}
-			if (null == property.getState()) {
-				WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(
-						property.getStateType(), null, null, null, null, null);
-				// WorkFlowMatrix wfmatrix2 =
-				// propertyWorkflowService.getWfMatrix(property.getStateType(),null,null,null,"New",null);
-				property.transition().start().withSenderName(user.getName())
-						.withComments(approverComments).withStateValue(wfmatrix.getNextState())
-						.withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
-						.withOwner(pos).withNextAction(wfmatrix.getNextAction());
-			} else {
-				if (property.getCurrentState().getNextAction().equalsIgnoreCase("END")
-						|| workFlowAction.equalsIgnoreCase("cancel")) {
-					property.transition(true).end().withSenderName(user.getName())
-							.withComments(approverComments).withDateInfo(currentDate.toDate());
-				} else {
-					WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property
-							.getStateType(), null, null, null, property.getCurrentState()
-							.getNextAction(), null);
-					property.transition(true).withSenderName(user.getName())
-							.withComments(approverComments)
-							.withStateValue(wfmatrix.getCurrentState())
-							.withDateInfo(currentDate.toDate())// .withStateValue(beanActionName[0])
-							.withOwner(pos).withNextAction(wfmatrix.getNextAction());
-				}
-			}
-		}
-		if (approverName != null && !approverName.isEmpty()
-				&& !approverName.equalsIgnoreCase("----Choose----")) {
-			String approvalmesg = " Succesfully Forwarded to " + approverName + ".";
-			ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
-		} else if (workflowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
-			String approvalmesg = " Succesfully Cancelled.";
-			ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
-		}
-
-		LOGGER.debug("Exiting method : transitionWorkFlow");
-	}
-
+	
 	private String generateNotice() {
 		transitionWorkFlow(property);
 		setAckMessage("Notice generated and property creation workflow completed ");
@@ -1911,51 +1843,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setWestBoundary(String westBoundary) {
 		this.westBoundary = westBoundary;
-	}
-
-	public void setNextAction(String nextAction) {
-		this.nextAction = nextAction;
-	}
-
-	public SimpleWorkflowService<PropertyImpl> getPropertyWorkflowService() {
-		return propertyWorkflowService;
-	}
-
-	public void setPropertyWorkflowService(
-			SimpleWorkflowService<PropertyImpl> propertyWorkflowService) {
-		this.propertyWorkflowService = propertyWorkflowService;
-	}
-
-	public String getApproverComments() {
-		return approverComments;
-	}
-
-	public void setApproverComments(String approverComments) {
-		this.approverComments = approverComments;
-	}
-
-	public Long getApproverPositionId() {
-		return approverPositionId;
-	}
-
-	public void setApproverPositionId(Long approverPositionId) {
-		this.approverPositionId = approverPositionId;
-	}
-
-	public String getWorkFlowAction() {
-		return workFlowAction;
-	}
-
-	public void setWorkFlowAction(String workFlowAction) {
-		this.workFlowAction = workFlowAction;
-	}
-
-	public String getApproverName() {
-		return approverName;
-	}
-
-	public void setApproverName(String approverName) {
-		this.approverName = approverName;
 	}
 
 	public Map<String, String> getDeviationPercentageMap() {
