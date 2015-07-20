@@ -88,7 +88,7 @@ public class IdentityRecoveryService {
     public boolean generateAndSendUserPasswordRecovery(final String identity, final String urlToSent) {
         final Optional<User> user = userService.checkUserWithIdentity(identity);
         if (user.isPresent()) {
-            final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(1).toDate());
+            final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate());
             return messagingUtils.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
                     identityRecovery.getToken(), System.getProperty("line.separator"));
         }
