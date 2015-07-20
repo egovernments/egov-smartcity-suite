@@ -26,7 +26,7 @@
                    <br/>
 					<div class="row text-center">
 						<div class="row">
-								<button type="submit" id="buttonCreate" class="btn btn-success">
+								<button type="button" id="buttonCreate" class="btn btn-success">
 									<spring:message code="lbl.create" />
 								</button>
 								<button type="button" id="buttonEdit" class="btn btn-success">

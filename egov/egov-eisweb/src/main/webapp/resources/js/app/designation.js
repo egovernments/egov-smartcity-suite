@@ -40,8 +40,10 @@
 $(document).ready(function(){
 	
 	$("#buttonCreate").click(function() {
+		var url = '/eis/designation/create';
 		$('#designationForm').attr('method', 'get');
-		$('#designationForm').attr('action', '/eis/designation/create');
+		$('#designationForm').attr('action', url);
+		window.location=url;
 	});
 	
 	$('#buttonEdit').click(function() {
