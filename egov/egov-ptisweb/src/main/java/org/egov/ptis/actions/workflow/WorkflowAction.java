@@ -51,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
@@ -72,7 +73,6 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	private String wfErrorMsg;
 	String actionName = "";
 	protected WorkflowDetails workflowAction;
-	private WorkflowService<PropertyImpl> propertyWorkflowService;
 
 	@SkipValidation
 	@Override
@@ -225,12 +225,6 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	public void setWorkFlowPropId(String workFlowPropId) {
 		this.workFlowPropId = workFlowPropId;
 	}
-
-	public WorkflowService<PropertyImpl> getPropertyWorkflowService() {
-		return propertyWorkflowService;
-	}
-
-	public void setPropertyWorkflowService(WorkflowService<PropertyImpl> propertyWorkflowService) {
-		this.propertyWorkflowService = propertyWorkflowService;
-	}
+	
+	
 }

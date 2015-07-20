@@ -571,6 +571,18 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		}
 
 	}
+	
+	public void populateWorkflowEntities() {
+		List approverDepartmentList = persistenceService.findAllBy("from Department order by name");
+		// PersonalInformation
+		// loggedInEmp=eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+		// List desgnationList =
+		// persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
+		addDropdownData("approverDepartmentList", approverDepartmentList);
+		addDropdownData("designationList", Collections.EMPTY_LIST);
+		addDropdownData("approverList", Collections.EMPTY_LIST);
+
+	}
 
 	public WorkflowBean getWorkflowBean() {
 		return workflowBean;
