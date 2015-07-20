@@ -854,7 +854,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		basicProperty.addProperty(property);
-		//propService.createDemand(property, propCompletionDate);
+		propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
