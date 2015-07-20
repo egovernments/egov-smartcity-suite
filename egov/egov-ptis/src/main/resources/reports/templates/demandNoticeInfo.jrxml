@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="demandNoticeInfo" language="groovy" pageWidth="695" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57716523-e607-4b0c-b551-0d2fb1c4222a">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="37"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/ptis/reports/templates/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="logoPath" class="java.lang.String"/>
 	<field name="wardNo" class="java.lang.String"/>
 	<field name="billNo" class="java.lang.String"/>
 	<field name="billDate" class="java.lang.String"/>
@@ -22,6 +21,8 @@
 	<field name="oldAssessmentNo" class="java.lang.String"/>
 	<field name="waterConnectionNo" class="java.lang.String"/>
 	<field name="demandNoticeDetailsInfo" class="java.util.List"/>
+	<field name="cityName" class="java.lang.String"/>
+	<field name="cityLogo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -39,11 +40,11 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cityName}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Middle">
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
 				<reportElement x="37" y="2" width="60" height="60" uuid="3a456ff4-6407-4cfe-941d-6106adaee580"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+				<imageExpression><![CDATA[$F{cityLogo}]]></imageExpression>
 			</image>
 		</band>
 	</title>

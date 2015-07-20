@@ -39,6 +39,8 @@
  */
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.repository.CityWebsiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +83,9 @@ public class CityWebsiteService {
     
     public CityWebsite getCityWebsiteByCode(String code) {
         return cityWebsiteRepository.findByCode(code);   
+    }
+    
+    public List<CityWebsite> findAll() {
+        return cityWebsiteRepository.findAll();   
     }
 }

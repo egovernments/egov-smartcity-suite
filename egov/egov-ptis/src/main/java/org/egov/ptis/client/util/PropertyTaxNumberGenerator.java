@@ -45,6 +45,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -68,6 +69,8 @@ public class PropertyTaxNumberGenerator {
 	private ModuleService moduleDao;
 	@Autowired
 	private InstallmentDao installmentDao;
+	@Autowired
+	private CityWebsiteService cityWebsiteService;
 
 	@Autowired
 	private ApplicationNumberGenerator applicationNumberGenerator;
@@ -108,7 +111,8 @@ public class PropertyTaxNumberGenerator {
 	public String generateManualBillNumber(PropertyID propertyID) {
 		StringBuffer billNo = new StringBuffer();
 		try {
-			String cityCode = EgovThreadLocals.getCityCode();
+		        // reading from service to support bulkbillgeneration through schedular
+			String cityCode = cityWebsiteService.findAll().get(0).getCode();
 			billNo.append(cityCode);
 			String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
 			billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));

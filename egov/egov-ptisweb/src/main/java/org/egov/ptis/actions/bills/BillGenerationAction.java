@@ -169,6 +169,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	@Autowired
         @Qualifier("fileStoreService")
         protected FileStoreService fileStoreService;
+	
+	@Autowired
+        private DemandNoticeInfo demandNoticeInfo;
 
 	@Override
 	public Object getModel() {
@@ -202,8 +205,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		if (egBill == null) {
 			reportOutput = getBillService().generateBill(basicProperty, 
 					EgovThreadLocals.getUserId().intValue());
-			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
-			basicProperty.setBillCrtError(STRING_EMPTY);
+			
 		} else {
 			String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
 					+ "WHERE bill.is_History = 'N' "
@@ -214,7 +216,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
 					NOTICE_TYPE_BILL, basicProperty);
 			reportOutput = new ReportOutput(); 
-			
+			 
 			//Reading from filestore by passing filestoremapper object
 			if (ptNotice!=null && ptNotice.getFileStore()!=null) {
 			        FileStoreMapper fsm=ptNotice.getFileStore();
@@ -224,13 +226,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 				reportOutput.setReportFormat(FileFormat.PDF);
 			} else {
         	                //To generate Notice having installment and reasonwise balance for a property
-        	                DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
         	                demandNoticeInfo.setBasicProperty(basicProperty);
         	                demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty));
         	                ReportRequest reportRequest = null;	   
-        	                Map reportParams = new HashMap<String, Object>();
-        	                reportParams.put("logoPath", propertyTaxUtil.logoBasePath());
-        	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,reportParams);
+        	                propertyTaxUtil.logoBasePath();
+        	                reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,new HashMap<String, Object>());
         	                reportOutput = getReportService().createReport(reportRequest); 
 			}
 	                

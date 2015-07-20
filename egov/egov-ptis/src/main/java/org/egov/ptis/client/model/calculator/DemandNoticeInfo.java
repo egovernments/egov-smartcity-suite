@@ -1,14 +1,26 @@
 package org.egov.ptis.client.model.calculator;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.jfree.util.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DemandNoticeInfo {
-
 	private BasicProperty basicProperty;
 	private String billNo;
 	private String oldAssessmentNo;
@@ -17,6 +29,32 @@ public class DemandNoticeInfo {
 	private String sewarageConnectionNo;
 	private String rentPaid;
 	private List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo;
+	private ReportUtil reportUtil;
+	
+	@Autowired
+	@Qualifier("cityWebsiteService")
+	private CityWebsiteService cityWebsiteService;
+	
+	// reading cityname and logo from citywebsiteservice to support bulkbillgeneration through schedular
+	public CityWebsite getcityWebsite(){
+	    CityWebsite cw= cityWebsiteService.findAll().get(0);
+            return cw;
+	}
+	
+	 public String getCityName() {
+	     CityWebsite cw= getcityWebsite();
+	     return cw!=null?cw.getCityName():null;
+	  }
+
+	 public  String getCityLogo() {
+	     String path=null;
+	     try{
+	         path=reportUtil.logoBasePath();
+	     }catch(final Exception e){
+	         Log.error(e.getMessage());
+	     }
+             return path;
+          }
 
 	public String getWardNo() {
 		return getBasicProperty().getPropertyID().getWard().getBoundaryNum().toString();
@@ -107,5 +145,13 @@ public class DemandNoticeInfo {
 	public void setDemandNoticeDetailsInfo(List<DemandNoticeDetailsInfo> demandNoticeDetailsInfo) {
 		this.demandNoticeDetailsInfo = demandNoticeDetailsInfo;
 	}
+
+    public ReportUtil getReportUtil() {
+        return reportUtil;
+    }
+
+    public void setReportUtil(ReportUtil reportUtil) {
+        this.reportUtil = reportUtil;
+    }
 
 }
