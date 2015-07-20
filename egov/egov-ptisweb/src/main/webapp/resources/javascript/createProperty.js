@@ -1041,7 +1041,7 @@ function enableOrDisableBPADetails(obj) {
 	}
 }
 
-function enableFieldsForPropTypeView(propType) {
+function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 	if (propType != "select") {
 		//onChangeOfPropertyTypeFromMixedToOthers(propType);
 		if (propType == "Vacant Land") {
@@ -1060,6 +1060,9 @@ function enableFieldsForPropTypeView(propType) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
+			if (appurtenantLandChecked == true) {
+				jQuery('tr.vacantlanddetaills').show();
+			}
 		}
 	}
 }

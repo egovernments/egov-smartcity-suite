@@ -58,19 +58,19 @@
 		//toggleFloorDetails();
    		//setCorrCheckBox();
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-		enableFieldsForPropTypeView(propType);
-		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
+   		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
+		enableFieldsForPropTypeView(propType,appurtenantLandChecked);
 		if(appurtenantLandChecked == null) {
 			jQuery('#appurtenantRow').hide();
-			}
+		}
 		var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
 		if(buildingPlanDetailsChecked != 'true') {
 			jQuery('tr.bpddetails').hide();
-			}
+		}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
 		if(structure == 'false') {
 			jQuery('td.siteowner').hide();
-			}
+		}
    		
 	}
  function setCorrCheckBox(){
@@ -87,18 +87,11 @@
 	   return true;
 	}
 	
- function onSubmit() {
-	 var department = jQuery('#approverDepartment').val();
-	 var designation = jQuery('#approverDesignation').val();
-	 var approver = jQuery('#approverPositionId').val();
-	 if(approverPositionId == -1) {
-		 alert("Please select approver details");
-		 return false;
-		 }
-	 	 document.forms[0].action = 'createProperty-forward.action';
-	     document.forms[0].submit;
-	 	   return true;
-	 	}  
+  function onSubmit() {
+		document.forms[0].action = 'createProperty-forward.action';
+		document.forms[0].submit;
+	    return true;
+	 } 
 	 	
  	function generateNotice6(){
 	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";

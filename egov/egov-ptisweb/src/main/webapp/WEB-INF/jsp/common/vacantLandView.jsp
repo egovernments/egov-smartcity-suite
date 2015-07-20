@@ -71,9 +71,7 @@
    <tr>
    <td colspan="5">
      <br/>
-      <table class="tablebottom" style="
-         width: 100%;
-         ">
+      <table class="tablebottom" style="width: 100%;">
          <tbody>
             <tr>
                <th class="bluebgheadtd"><s:text name="North" /></th>
@@ -81,7 +79,6 @@
                <th class="bluebgheadtd"><s:text name="West" /></th>
                <th class="bluebgheadtd"><s:text name="South" /></th>
             </tr>
- 
            <tr>
 		        <td class="blueborderfortd" align="center">
 				   <span class="bold"><s:property value="%{basicProperty.propertyID.northBoundary}" default="N/A"/></span>

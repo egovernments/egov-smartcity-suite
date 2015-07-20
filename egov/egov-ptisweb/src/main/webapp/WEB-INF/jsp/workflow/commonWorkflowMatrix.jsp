@@ -102,6 +102,7 @@ function validateWorkFlowApprover(name)
 function validateWorkFlowApprover(name,errorDivId)
 {
 	//document.getElementById(errorDivId).style.display='none';
+	alert(name+"name");
     document.getElementById('workFlowAction').value=name;
    // alert("inside validation for approve"+name);
 	/* <s:if test="%{getNextAction()!='END'}">
@@ -119,11 +120,11 @@ function validateWorkFlowApprover(name,errorDivId)
       if(approverPosId)
       {
 	  var  approver = approverPosId.options[approverPosId.selectedIndex].text; 
-	  //alert(approver);
+	  alert(approver);
       document.getElementById("approverName").value= approver.split('~')[0];
       //alert(document.getElementById("approverName").value);
       }     
-		
+      alert("Before submit calls");
     onSubmit();
 }
 	

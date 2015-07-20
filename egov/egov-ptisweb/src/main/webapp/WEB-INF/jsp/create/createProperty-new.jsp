@@ -196,12 +196,10 @@ function onSubmit(action,obj) {
 }
 
 function onSubmit() { 
-	//alert("On Submit called");
 	document.forms[0].action = 'createProperty-create.action';
 	<s:if test="mode=='edit'">
 	document.forms[0].action = 'createProperty-forward.action';
 	</s:if>
-//	alert("On Submit called with  "+document.forms[0].action );
 	document.forms[0].submit;
    return true;
 }

@@ -233,7 +233,7 @@
 			</div>
 		</td>
 	</tr>
-   <s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) || 
+    <s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) || 
 		@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
 		<%@ include file="../common/DocumentUploadView.jsp"%>
 	</s:if>
