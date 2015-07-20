@@ -1,0 +1,322 @@
+<!-- #-------------------------------------------------------------------------------
+# eGov suite of products aim to improve the internal efficiency,transparency, 
+#    accountability and the service delivery of the government  organizations.
+# 
+#     Copyright (C) <2015>  eGovernments Foundation
+# 
+#     The updated version of eGov suite of products as by eGovernments Foundation 
+#     is available at http://www.egovernments.org
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program. If not, see http://www.gnu.org/licenses/ or 
+#     http://www.gnu.org/licenses/gpl.html .
+# 
+#     In addition to the terms of the GPL license to be adhered to in using this
+#     program, the following additional terms are to be complied with:
+# 
+# 	1) All versions of this program, verbatim or modified must carry this 
+# 	   Legal Notice.
+# 
+# 	2) Any misrepresentation of the origin of the material is prohibited. It 
+# 	   is required that all modified versions of this material be marked in 
+# 	   reasonable ways as different from the original version.
+# 
+# 	3) This license does not grant any rights to any user of the program 
+# 	   with regards to rights under trademark law for use of the trade names 
+# 	   or trademarks of eGovernments Foundation.
+# 
+#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#------------------------------------------------------------------------------- -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	
+	<body class="page-body">
+		
+		<div class="page-container" id="page-container">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-md-10 col-xs-10">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
+								<div>
+									
+									<span class="title2">Drill Down Report</span>
+								</div>
+							</a>
+						</div>
+						
+						<div class="nav-right-menu col-md-2 col-xs-2">
+							<ul class="hr-menu text-right">
+								<li class="ico-menu">
+									<a href="javascript:void(0);">
+										<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+									</a>
+								</li>
+								
+							</ul>
+						</div>
+						
+					</div>
+				</nav>
+				
+			</header>
+			
+			<div class="main-content">
+				
+				<!-- <div class="main-before-footer"> -->
+				<div class="row">
+					<div class="col-md-12">
+						        <div class="panel-title text-center">
+									Zone Wise Report
+								</div>
+								<br/>
+                                <table id="region" class="table table-bordered datatable dt-responsive table-hover">
+                                    <thead>
+                                       <tr>
+                                        <th>Sr.No</th>
+                                        <th>Zone</th>
+                                        <th class="text-right">Registered/Forwarded&nbsp;</th>
+                                        <th class="text-right">Processing/Re-Opened&nbsp;</th>
+                                        <th class="text-right">Completed&nbsp;</th>
+                                        <th class="text-right">Rejected&nbsp;</th>
+                                        <th class="text-right">Total&nbsp;</th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                       <td>1</td>
+                                       <td><a href="javascript:void(0);">HQ</a></td>
+                                       <td class="text-right">201</td>
+                                       <td class="text-right">60</td>
+                                       <td class="text-right">50200</td>
+                                       <td class="text-right">730</td>
+                                       <td class="text-right">52598</td>
+                                      </tr>
+                                      <tr>
+                                       <td>2</td>
+                                       <td><a href="javascript:void(0);">Others</a></td>
+                                       <td class="text-right">363</td>
+                                       <td class="text-right">15</td>
+                                       <td class="text-right">58403</td>
+                                       <td class="text-right">2765</td>
+                                       <td class="text-right">62196</td>
+                                      </tr>
+                                      <tr>
+                                       <td>3</td>
+                                       <td><a href="javascript:void(0);">RC-Regional office - Central</a></td>
+                                       <td class="text-right">643</td>
+                                       <td class="text-right">235</td>
+                                       <td class="text-right">36107</td>
+                                       <td class="text-right">349</td>
+                                       <td class="text-right">37458</td>
+                                      </tr>
+                                      <tr>
+                                       <td>4</td>
+                                       <td><a href="javascript:void(0);">RN-Regional office - North</a></td>
+                                       <td class="text-right">306</td>
+                                       <td class="text-right">94</td>
+                                       <td class="text-right">13250</td>
+                                       <td class="text-right">118</td>
+                                       <td class="text-right">13815</td>
+                                      </tr>
+                                      <tr>
+                                       <td>5</td>
+                                       <td><a href="javascript:void(0);">RS-Regional office - South</a></td>
+                                       <td class="text-right">596</td>
+                                       <td class="text-right">109</td>
+                                       <td class="text-right">24785</td>
+                                       <td class="text-right">530</td>
+                                       <td class="text-right">26136</td>
+                                      </tr>
+                                     
+                                    </tbody>
+                                    <tfoot>
+									 <tr>
+									   <td colspan="2" class="text-right"><b>Total</b></td>
+                                       <td class="text-right"><b>2109</b></td>
+                                       <td class="text-right"><b>513</b></td>
+                                       <td class="text-right"><b>182745</b></td>
+                                       <td class="text-right"><b>4492</b></td>
+                                       <td class="text-right"><b>192203</b></td>
+									 </tr>
+									</tfoot>
+                                </table>
+                        
+                                <table id="department" class="table table-bordered datatable dt-responsive table-hover">
+                                    <thead>
+                                       <tr>
+                                        <th>Sr.No</th>
+                                        <th>Department</th>
+                                        <th class="text-right">Registered/Forwarded&nbsp;</th>
+                                        <th class="text-right">Processing/Re-Opened&nbsp;</th>
+                                        <th class="text-right">Completed&nbsp;</th>
+                                        <th class="text-right">Rejected&nbsp;</th>
+                                        <th class="text-right">Total&nbsp;</th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                       <td>1</td>
+                                       <td><a href="javascript:void(0);">B-Buildings</a></td>
+                                       <td class="text-right">201</td>
+                                       <td class="text-right">60</td>
+                                       <td class="text-right">50200</td>
+                                       <td class="text-right">730</td>
+                                       <td class="text-right">52598</td>
+                                      </tr>
+                                      <tr>
+                                       <td>2</td>
+                                       <td><a href="javascript:void(0);">BR-Bus Route Roads</a></td>
+                                       <td class="text-right">363</td>
+                                       <td class="text-right">15</td>
+                                       <td class="text-right">58403</td>
+                                       <td class="text-right">2765</td>
+                                       <td class="text-right">62196</td>
+                                      </tr>
+                                      <tr>
+                                       <td>3</td>
+                                       <td><a href="javascript:void(0);">C-Council</a></td>
+                                       <td class="text-right">643</td>
+                                       <td class="text-right">235</td>
+                                       <td class="text-right">36107</td>
+                                       <td class="text-right">349</td>
+                                       <td class="text-right">37458</td>
+                                      </tr>
+                                      <tr>
+                                       <td>4</td>
+                                       <td><a href="javascript:void(0);">D-Storm Water Drains</a></td>
+                                       <td class="text-right">306</td>
+                                       <td class="text-right">94</td>
+                                       <td class="text-right">13250</td>
+                                       <td class="text-right">118</td>
+                                       <td class="text-right">13815</td>
+                                      </tr>
+                                      <tr>
+                                       <td>5</td>
+                                       <td><a href="javascript:void(0);">E-Education</a></td>
+                                       <td class="text-right">596</td>
+                                       <td class="text-right">109</td>
+                                       <td class="text-right">24785</td>
+                                       <td class="text-right">530</td>
+                                       <td class="text-right">26136</td>
+                                      </tr>
+                                      
+                                    </tbody>
+                                    <tfoot>
+                                      <tr>
+                                       <td colspan="2" class="text-right"><b>Total</b></td>
+                                       <td class="text-right"><b>2109</b></td>
+                                       <td class="text-right"><b>513</b></td>
+                                       <td class="text-right"><b>182745</b></td>
+                                       <td class="text-right"><b>4492</b></td>
+                                       <td class="text-right"><b>192203</b></td>
+                                      </tr>
+                                    </tfoot>
+                                </table>
+				     </div>
+                </div>
+				
+				<br/>
+				<div class="row">
+					<div class="text-center">
+						<a href="javascript:void(0);" onclick="history.back();" id="com_submit" class="btn btn-default">Back</a> 
+					</div>
+				</div>
+				
+			</div>
+			
+			<footer class="main">
+				
+				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+				
+			</footer>
+			
+		</div>
+		
+		<!-- Modal 6 (Long Modal) -->
+		<div class="modal fade loader-class" data-backdrop="static">
+			<div class="modal-dialog">
+				
+				<div class="modal-body">
+					
+					<div class="row spinner-margin text-center">
+						
+						<div class="col-md-12 ">
+							<div class="spinner">
+								<div class="rect1"></div>
+								<div class="rect2"></div>
+								<div class="rect3"></div>
+								<div class="rect4"></div>
+								<div class="rect5"></div>
+							</div>
+						</div>
+						
+						<div class="col-md-12 spinner-text">
+							Processing your request. Please wait..
+						</div>
+						
+					</div>
+					
+				</div>
+				
+				
+			</div>
+		</div>
+		
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+			
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/TableTools.min.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js"></script>
+		
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
+		
+		<script src="../js/app/search-complaint.js"></script>
+		
+	</body>
+</html>

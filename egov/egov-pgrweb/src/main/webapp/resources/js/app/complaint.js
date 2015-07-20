@@ -225,3 +225,14 @@ function disableCRN() {
 	$("#crn").removeAttr('required');
 	$("#crn").attr('disabled',true);
 }
+
+/*demo code*/
+function showChangeDropdown(dropdown)
+{
+	$('.drophide').hide();
+	var showele = $(dropdown).find("option:selected").data('show');
+	if(showele)
+	{
+	  $(showele).show();	
+	}
+}

@@ -277,5 +277,181 @@ jQuery(document).ready(function ($) {
 		}
 	});
 	
+	$("#region").dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"oTableTools": {
+			"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons": ["xls", "pdf", "print"]
+		},
+		"footerCallback": function ( row, data, start, end, display ) {
+		    var api = this.api(), data;
+		    updateTotalFooter(2, api);
+		    updateTotalFooter(3, api);
+		    updateTotalFooter(4, api);
+		    updateTotalFooter(5, api);
+		    updateTotalFooter(6, api);
+		},
+                "aoColumnDefs": [ {
+		      "aTargets": [2,3,4,5,6],
+		      "mRender": function ( data, type, full ) {
+			return formatNumberInr(data);
+		      }
+		} ]
+	});
 	
-});						
+	
+	$("#department").dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"oTableTools": {
+			"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons": ["xls", "pdf", "print"]
+		},
+		"footerCallback": function ( row, data, start, end, display ) {
+		    var api = this.api(), data;
+		    updateTotalFooter(2, api);
+		    updateTotalFooter(3, api);
+		    updateTotalFooter(4, api);
+		    updateTotalFooter(5, api);
+		    updateTotalFooter(6, api);
+		},
+                "aoColumnDefs": [ {
+		      "aTargets": [2,3,4,5,6],
+		      "mRender": function ( data, type, full ) {
+			return formatNumberInr(data);
+		      }
+		} ]
+	});
+
+    $('#department_wrapper').hide();
+    
+    $('#region a').click(function(e){
+       $('#region_wrapper').hide();
+       $('#department_wrapper').show();
+       $('.panel-title').html('Department Wise Report');
+    });
+	
+    $("#agingtable").dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"oTableTools": {
+			"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons": ["xls", "pdf", "print"]
+		},
+		"footerCallback": function ( row, data, start, end, display ) {
+		    var api = this.api(), data;
+		    updateTotalFooter(2, api);
+		    updateTotalFooter(3, api);
+		    updateTotalFooter(4, api);
+		    updateTotalFooter(5, api);
+		    updateTotalFooter(6, api);
+		    updateTotalFooter(7, api);
+		},
+                "aoColumnDefs": [ {
+		      "aTargets": [2,3,4,5,6,7],
+		      "mRender": function ( data, type, full ) {
+			return formatNumberInr(data);
+		      }
+		} ]
+	});
+    
+    $("#complaintgrouptable").dataTable({
+		"sPaginationType": "bootstrap",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"oTableTools": {
+			"sSwfPath": "../../../../../../egov-egiweb/src/main/webapp/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons": [
+                                {
+				    "sExtends": "csv",
+				    "sFileName": "TableTools - *.csv"
+				},
+                                {
+				    "sExtends": "pdf",
+				    "sPdfMessage": "Your custom message would go here."
+				},
+                               "print"]
+		},
+		"footerCallback": function ( row, data, start, end, display ) {
+		    var api = this.api(), data;
+		    updateTotalFooter(1, api);
+		    updateTotalFooter(2, api);
+		    updateTotalFooter(3, api);
+		    updateTotalFooter(4, api);
+		    updateTotalFooter(5, api);
+		    updateTotalFooter(6, api);
+		},
+                "aoColumnDefs": [ {
+		      "aTargets": [1,2,3,4,5,6],
+		      "mRender": function ( data, type, full ) {
+			return formatNumberInr(data);
+		      }
+		} ]
+	});
+    
+    function updateTotalFooter(colidx, api)
+    {
+    	// Remove the formatting to get integer data for summation
+        var intVal = function ( i ) {
+            return typeof i === 'string' ?
+                i.replace(/[\$,]/g, '')*1 :
+                typeof i === 'number' ?
+                    i : 0;
+        };
+
+        // Total over all pages
+        total = api
+            .column(colidx)
+            .data()
+            .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+            } );
+
+        // Total over this page
+        pageTotal = api
+            .column( colidx, { page: 'current'} )
+            .data()
+            .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+            }, 0 );
+
+        // Update footer
+        $( api.column( colidx ).footer() ).html(
+            '<b>'+formatNumberInr(pageTotal) +' ('+ formatNumberInr(total) +')</b>'
+        );
+    }
+
+});
+
+//inr formatting number
+function formatNumberInr(x){
+	   if(x)
+	   {
+			x=x.toString();
+			var afterPoint = '';
+			if(x.indexOf('.') > 0)
+			   afterPoint = x.substring(x.indexOf('.'),x.length);
+			x = Math.floor(x);
+			x=x.toString();
+			var lastThree = x.substring(x.length-3);
+			var otherNumbers = x.substring(0,x.length-3);
+			if(otherNumbers != '')
+			    lastThree = ',' + lastThree;
+			var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+		    return res;
+	   }
+	   return x;
+}
+						
