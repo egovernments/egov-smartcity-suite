@@ -30,7 +30,6 @@ CREATE SEQUENCE seq_eg_device
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
-ALTER TABLE seq_eg_device
-  OWNER TO postgres;
+
 
 
