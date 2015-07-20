@@ -182,5 +182,10 @@
     	<put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-success.jsp"/>
     </definition>  
-    
+      
+     <definition name="ageing-search" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.ageingReport.heading.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/ageing-search.jsp"/>
+    </definition>
+     
 </tiles-definitions>
