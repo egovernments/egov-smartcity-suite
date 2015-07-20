@@ -699,7 +699,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
 		}
 
-		this.documentTypes = propService.getPropertyModificationDocumentTypes();
+		this.documentTypes = propService.getPropertyCreateDocumentTypes();
 		List<FloorType> floorTypeList = getPersistenceService().findAllBy(
 				"from FloorType order by name");
 		List<RoofType> roofTypeList = getPersistenceService().findAllBy(
@@ -849,8 +849,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			propService.processAndStoreDocument(property.getDocuments());
 		}
 		
-		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
-				|| null != property.getPropertyDetail().isAppurtenantLandChecked()) {
+		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))) {
 			property.setPropertyDetail(changePropertyDetail());
 		}
 

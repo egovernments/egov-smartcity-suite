@@ -1964,6 +1964,11 @@ public class PropertyService {
 		return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
 				TransactionType.MODIFY);
 	}
+	
+	public List<DocumentType> getPropertyCreateDocumentTypes() {
+		return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
+				TransactionType.CREATE);
+	}
 
 	public void processAndStoreDocument(List<Document> documents) {
 		documents.forEach(document -> {

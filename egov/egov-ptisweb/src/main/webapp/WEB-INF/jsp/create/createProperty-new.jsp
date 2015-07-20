@@ -124,7 +124,6 @@ function loadOnStartUp() {
 	var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
 	if (jQuery(appartunentLand).is(":checked")) {
 		enableAppartnaumtLandDetails();
-	alert("appartunentLand"+appartunentLand);
 	}
 	//var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	//document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].text = category;
