@@ -44,7 +44,7 @@
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
 
 		
-<div class="row">
+<div class="row"> 
 	<div class="col-md-12">
 
 		<div class="" data-collapsed="0">
@@ -52,7 +52,7 @@
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
 			<div class="panel-body">
-				<form:form id="ageingReportForm" method="post"
+				<form:form id="drillDownReportForm" method="post"
 					class="form-horizontal form-groups-bordered"
 					modelAttribute="reportHelper">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -60,13 +60,13 @@
 								<div class="panel-title">
 							
 						<c:choose>
-							<c:when test="${mode=='ByBoundary'}">
+							<c:when test="${mode=='ByBoundary'}"> 
 									<strong><spring:message
-										code="lbl.ageingReportByBndry.heading.search" /></strong>
+										code="lbl.drilldownReportByBndry.heading.search" /></strong>
 							</c:when>
 							<c:otherwise>
 									<strong><spring:message
-										code="lbl.ageingReportByDept.heading.search" /></strong>
+										code="lbl.drilldownReportByDept.heading.search" /></strong>
 							</c:otherwise>
 						</c:choose>
 							</div>
@@ -92,7 +92,7 @@
 						
 						 <div class="form-group drophide complaintdur" style="display:none;">
 							<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.ageingReport.complaintFromDate" /> 
+							<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintFromDate" /> 
 							</label>
 						<div class="col-sm-2 add-margin">
 									<input type="text" name="reportFromDate" class="form-control datepicker checkdate"
@@ -102,7 +102,7 @@
 						  </div>
 					
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.ageingReport.complaintToDate" /></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintToDate" /></label>
 							<div class="col-sm-2 add-margin">
 									<input type="text" name="reportToDate" class="form-control datepicker checkdate"
 								id="end_date" data-inputmask="'mask': 'd/m/y'"
@@ -110,20 +110,12 @@
 								</div>
 							</div>
 						</div>	
-					<div class="form-group"  id="recenter">
-										<label class="col-sm-3 control-label"><spring:message code="lbl.ageingReport.complaintStatus" /></label>
-					<div class="col-sm-2">		<form:select path="complaintStatus" data-first-option="false" id="status"
-										cssClass="form-control" cssErrorClass="form-control error">
-									<form:options items="${status}" />
-									</form:select>
-									<form:errors path="complaintStatus" cssClass="error-msg" />
-						</div>	</div>
-						
+										
 				<div class="row">
 					<div class="text-center">
-									<button type="button" id="ageingReportSearch"
+									<button type="button" id="drilldownReportSearch"
 										class="btn btn-success">
-										<spring:message code="lbl.ageingReport.button.search" />
+										<spring:message code="lbl.drilldownReport.button.search" />
 									</button>
 									<a href="javascript:void(0)" class="btn btn-default"
 										onclick="self.close()"> <spring:message code="lbl.close" /></a>
@@ -134,24 +126,26 @@
 					
 				</form:form>
 				<div class="row display-hide report-section">
-						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.ageingReport.resultHeader" /> </div>
+						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
 						<div class="col-md-12">
-							<table class="table table-bordered datatable nopointer" id="ageingReport-table">
+							<table class="table table-bordered datatable nopointer" id="drilldownReport-table">
 							<thead>
-												<c:choose>
+							<c:choose>
 							<c:when test="${mode=='ByBoundary'}">
-								<th>	<spring:message code="lbl.ageingReport.boundary" />	</th>
+								<th>	<spring:message code="lbl.drilldownReport.boundary" />	</th>
 							</c:when>
 							<c:otherwise>
-									<th>	<spring:message code="lbl.ageingReport.department" />	</th>
+									<th>	<spring:message code="lbl.drilldownReport.department" />	</th>
 							</c:otherwise>
 						</c:choose>
 								
 								
 							
-								<th>>90</th>
-								<th>45-90</th><th>15-45</th><th>0-15</th>
-								<th><b>Total</b></th>
+								<th><spring:message code="lbl.drilldownReport.registeredStatus" /></th>
+								<th><spring:message code="lbl.drilldownReport.inprocessStatus" /></th>
+								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
+								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
+								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>
 							</thead>
 							
 							<tfoot id="report-footer">

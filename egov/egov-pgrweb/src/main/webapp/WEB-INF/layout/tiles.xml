@@ -45,8 +45,10 @@
 
     <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
+         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
-    </definition>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+   </definition>
     
     <definition name="dashboard_layout" template="/WEB-INF/views/template/dashboard.jsp">
         <put-attribute name="title" value="Complaint Redressal Dashboard"/>
@@ -191,6 +193,11 @@
      <definition name="ageing-search" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.ageingReport.heading.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/ageing-search.jsp"/>
+    </definition>
+    
+     <definition name="drillDown-search" extends="base_layout"> 
+    	<put-attribute name="page-title" value="lbl.drilldownReport.heading.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/drillDown-search.jsp"/>
     </definition>
     
     <definition name="dashboard/*" extends="dashboard_layout">

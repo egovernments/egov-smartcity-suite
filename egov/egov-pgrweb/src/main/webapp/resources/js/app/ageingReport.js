@@ -42,12 +42,99 @@ jQuery(document)
 				function($) {
 
 					tableContainer1 = $("#ageingReport-table");
-
+					drillDowntableContainer= $("#drilldownReport-table");
 					$('#ageingReportSearch').click(function(e) {
 						console.log('calling inside ajax');
 						callajaxdatatable(e);
 					});
+					$('#drilldownReportSearch').click(function(e) {
+						console.log('calling inside ajax');
+						callajaxdatatableForDrilDownReport(e);
+					});
+					
+					function callajaxdatatableForDrilDownReport(e) {
 
+						var startDate = "";
+						var endDate = "";
+						var modeVal = "";
+						var when_dateVal="";
+						startDate = $('#start_date').val();
+						endDate = $('#end_date').val();
+						modeVal = $('#mode').val();
+						when_dateVal = $('#when_date').val();
+						
+						var groupByobj="";
+						groupByobj=$('input[name="groupBy"]:checked').val();
+						//alert($('input[name="groupBy"]:checked').val());
+						if ($('#start_date').val() == "")
+							startDate = "";
+						
+						if ($('#end_date').val() == "")
+							endDate = "";
+
+						$('.report-section').removeClass('display-hide');
+						$('#report-footer').show(); 
+						//$('.report-footer').removeClass('display-hide');
+						
+						drillDowntableContainer
+								.dataTable({
+									ajax : {
+										url : "/pgr/report/drillDown/resultList-update",
+										data : {
+											fromDate : startDate,
+											toDate : endDate,
+											mode:modeVal,
+											complaintDateType:when_dateVal
+										}
+									},
+									"sPaginationType" : "bootstrap",
+									"bPaginate" : false,
+									"autoWidth" : false,
+									"bInfo" : false,
+									"bDestroy" : true,
+									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+
+									columns : [ {
+										"data" : "name"
+
+									}, {
+										"data" : "registered"
+									}, {
+										"data" : "inprocess"
+									}, {
+										"data" : "completed"
+									}, {
+										"data" : "rejected",
+
+									}, {
+										"data" : "total",
+
+									} ],
+									"footerCallback" : function(nRow, aaData,
+											iStart, iEnd, aiDisplay) {
+
+										var api = this.api(), aaData;
+										
+										if(aaData.length==0)
+											{
+												$('#report-footer').hide();
+											}else
+												{$('#report-footer').show();} 
+										if (aaData.length > 0) {
+											updateTotalFooter(1, api);
+											updateTotalFooter(2, api);
+											updateTotalFooter(3, api);
+											updateTotalFooter(4, api);
+											updateTotalFooter(5, api);
+										}
+
+									}
+
+								});
+						e.stopPropagation();
+					
+					}
+					
 					function callajaxdatatable(e) {
 						var startDate = "";
 						var endDate = "";
