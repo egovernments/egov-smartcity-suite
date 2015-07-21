@@ -90,7 +90,7 @@ a:focus{
 	position:relative;
 	min-height:100%;
 	width: 100%;
-	background:#f4f5f6;
+	background:#fdfdfd;
 	/* display: table; */
 	table-layout: fixed;
 }
@@ -156,7 +156,6 @@ a:focus{
 	display:block;
 	vertical-align: top;
 	padding: 20px;
-	background: #f4f5f6;
 	width: 100%;
 	/* min-height: 100%; */
 	padding-bottom:70px;
@@ -859,7 +858,7 @@ footer.main{
 	position:absolute;
 	bottom:0;
 	left:0;
-	background: #fff;
+	background: #f3f4f5;
 	line-height:40px;
 	padding:0 20px;
 	font-size:13px;
@@ -1082,7 +1081,8 @@ table
 
 b, strong
 {
-  font-family:semibold;
+  font-family:regular;
+  font-weight:normal;
 }
 
 /******end of dinesh******/

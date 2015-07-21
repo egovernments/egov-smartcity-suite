@@ -118,7 +118,7 @@
 		
 		var addButton = document.createElement("input");
 		addButton.type = "button";
-		addButton.setAttribute("class", "btn btn-success");
+		addButton.setAttribute("class", "btn btn-primary");
 		addButton.setAttribute("onclick", "return deleteRow(this);");
 		addButton.setAttribute("value", "Delete");
 		cell3.appendChild(addButton);
@@ -132,7 +132,6 @@
 			<c:if test="${not empty message}">
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
-			<div class="panel-body">
 				<form:form id="searchEscalationTimeForm" method="post"
 					class="form-horizontal form-groups-bordered"
 					modelAttribute="escalationForm">
@@ -143,11 +142,10 @@
 										code="lbl.escalationTime.heading.search" /></strong>
 							</div>
 						</div>
-						<div class="panel-body custom-form">
+						<div class="panel-body">
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.escalationTime.complaintType" /> <small><i
-										class="entypo-star error-msg"></i></small> </label>
+										code="lbl.escalationTime.complaintType" /> <span class="mandatory"></span> </label>
 								<div class="col-sm-6">
 
 									<form:input id="com_type" path="complaintType.name" type="text"
@@ -164,7 +162,7 @@
 							<div class="form-group">
 								<div class="text-center">
 									<button type="submit" id="escalationTimeSearch"
-										class="btn btn-success">
+										class="btn btn-primary">
 										<spring:message code="lbl.escalationTime.button.search" />
 									</button>
 									<a href="javascript:void(0)" class="btn btn-default"
@@ -184,7 +182,7 @@
 									</div>
 									<br>
 									<button type="button" id="escalationnewEscalation"
-										class="btn btn-success">
+										class="btn btn-primary">
 										<spring:message
 											code="lbl.escalationTime.button.addnewEscalation" />
 									</button>
@@ -238,7 +236,7 @@
 
 										<td>
 											<button type="button" onclick="deleteRow(this)" id="Add"
-												class="btn btn-success">Delete</button>
+												class="btn btn-primary">Delete</button>
 										</td>
 									</tr>
 								</c:forEach>
@@ -247,11 +245,11 @@
 						</table>
 						<div class="form-group">
 							<div class="text-center">
-								<button type="button" id="addNewRow" class="btn btn-success">
+								<button type="button" id="addNewRow" class="btn btn-primary">
 									<spring:message code="lbl.escalationTime.button.add" />
 								</button>
 								<button type="submit" id="saveEscalationTime"
-									class="btn btn-success">
+									class="btn btn-primary">
 									<spring:message code="lbl.escalationTime.button.save" />
 								</button>
 							</div>
@@ -259,7 +257,6 @@
 
 					</div>
 				</form>
-			</div>
 		</div>
 	</div>
 </div>

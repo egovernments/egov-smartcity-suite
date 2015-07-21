@@ -98,12 +98,10 @@
 </script>		
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel " data-collapsed="0">
 			<c:if test="${not empty message}"> 
                 	<div class="alert alert-danger" role="alert">${message}</div>
            		</c:if>
            		
-           		<div class="panel-body">
 				<form:form id="viewEscalation" method="post" class="form-horizontal form-groups-bordered" modelAttribute="escalationForm">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading ">
@@ -113,8 +111,7 @@
 						</div> 
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.escalation.position" /><small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.escalation.position" /><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 								<form:input id="com_position" path="position.name" type="text"
 										class="form-control typeahead is_valid_alphabet"
@@ -132,7 +129,7 @@
 					    <div class="form-group">
 								<div class="text-center">
 									<button type="submit" id="escalationCreateSearch"
-										class="btn btn-success">
+										class="btn btn-primary">
 										<spring:message code="lbl.escalation.button.search" />
 									</button>
 												<a href="javascript:void(0)" class="btn btn-default"
@@ -151,7 +148,7 @@
 									</div>
 									<br>
 									<button type="button" id="escalationnewEscalation"
-										class="btn btn-success">
+										class="btn btn-primary">
 										<spring:message
 											code="lbl.escalation.button.addnewEscalation" />
 									</button>
@@ -302,7 +299,7 @@
 											</td>
 											<td>
 											<button type="button" onclick="deleteRow(this)" id="Add"
-												class="btn btn-success">Delete</button>
+												class="btn btn-primary">Delete</button>
 										</td>
 									</tr>
 								</c:forEach>
@@ -316,9 +313,9 @@
 								<br><br>
 																					
 									<button type="button" id="btn-add" 
-												class="btn btn-success btn-add">Add New Row</button>
+												class="btn btn-primary btn-add">Add New Row</button>
 										
-										<button type="submit" class="btn btn-success escalationBtn" onclick="return checkUniqueDesignationSelected();" id="escalationBtn">
+										<button type="submit" class="btn btn-primary escalationBtn" onclick="return checkUniqueDesignationSelected();" id="escalationBtn">
 										<spring:message code="lbl.update"/>
 										</button>
 										<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">Close</a>
@@ -326,8 +323,6 @@
 					</div>
 							</div>
 				</form:form>
-			</div>
-		</div>
 	</div>
 </div>
 		

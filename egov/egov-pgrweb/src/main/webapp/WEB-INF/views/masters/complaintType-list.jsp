@@ -44,8 +44,6 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <div class="panel" data-collapsed="0">
-            <div class="panel-body">
                 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
@@ -60,8 +58,7 @@
 						
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"></spring:message><small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"></spring:message><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="name"
 	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" >
@@ -76,14 +73,12 @@
 
                     <div class="form-group">
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>                           
+                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                             <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                         </div>
                     </div>
                     
                 </form:form>
-            </div>
-        </div>
     </div>
 </div>

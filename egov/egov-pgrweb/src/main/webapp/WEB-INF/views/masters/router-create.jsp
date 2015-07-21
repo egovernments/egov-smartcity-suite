@@ -44,8 +44,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel " data-collapsed="0">
-			<div class="panel-body">
 				<c:if test="${not empty warning}">
                 	<div class="alert alert-danger" role="alert">${warning}</div>
            		</c:if>
@@ -89,8 +87,7 @@
 								</div>
 			                 </div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><small><i
-									class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<input id="com_position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
 									<form:hidden path="position" id="positionId"/>
@@ -100,15 +97,13 @@
 							</div>
 							<div class="form-group">
 								<div class="text-center">
-									<button type="submit" class="btn btn-success" id="submitRouter">Submit</button>
+									<button type="submit" class="btn btn-primary" id="submitRouter">Submit</button>
 									<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">Close</a>
 								</div>
 							</div>
 						</div>
 					</div>
 				</form:form>
-			</div>
-		</div>
 	</div>
 </div>
 <script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouting.js'/>"></script>

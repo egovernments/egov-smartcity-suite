@@ -47,7 +47,6 @@
 		
 		<div class="" data-collapsed="0">
 			
-			<div class="panel-body">
 				<form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading ">
@@ -55,7 +54,7 @@
 								<strong><spring:message code="lbl.router.heading.search"/></strong>
 							</div>
 						</div> 
-					<div class="panel-body custom-form">
+					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
 							</label>
@@ -87,7 +86,7 @@
 			            </div>
 						<div class="form-group">
 							<div class="text-center">
-								<button type="button" id="routerSearch" class="btn btn-success">
+								<button type="button" id="routerSearch" class="btn btn-primary">
 									<spring:message code="lbl.router.search"/>
 								</button>
 								<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
@@ -97,7 +96,6 @@
 					</div>
 				</div>
 			</form:form>
-		</div>
 		<table class="table table-bordered datatable dt-responsive" id="com_routing_search">
 		</table>
 		</div>

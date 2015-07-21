@@ -60,7 +60,6 @@
 			<c:if test="${not empty message}">
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
-			<div class="panel-body">
 				<form:form id="searchEscalationTimeForm" method="post"
 					class="form-horizontal form-groups-bordered"
 					modelAttribute="escalation">
@@ -104,7 +103,7 @@
 							<div class="form-group">
 								<div class="text-center">
 									<button type="button" id="escalationTimeSearch"
-										class="btn btn-success">
+										class="btn btn-primary">
 										<spring:message code="lbl.escalationTime.button.search" />
 									</button>
 									<a href="javascript:void(0)" class="btn btn-default"
@@ -131,7 +130,6 @@
 						</table>
 						</div>
 				</div>
-			</div>
 		</div>
 	</div>
 </div>

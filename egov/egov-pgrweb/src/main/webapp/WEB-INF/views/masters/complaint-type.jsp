@@ -45,7 +45,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
 			<form:form id="addcomplaint" method="post" class="form-horizontal form-groups-bordered"	modelAttribute="complaintType">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
@@ -153,7 +152,6 @@
 					</div>
 				</div>
 			</form:form>
-		</div>
 	</div>
 </div>
 <script>
