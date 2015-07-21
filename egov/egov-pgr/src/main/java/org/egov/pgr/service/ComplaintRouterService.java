@@ -117,8 +117,11 @@ public class ComplaintRouterService {
                             break;
                     }
             }
-        } else if (null == complaintRouter)
+        } else {
             complaintRouter = complaintRouterRepository.findByOnlyComplaintType(complaint.getComplaintType());
+            if (null == complaintRouter)
+                complaintRouter = complaintRouterRepository.findCityAdminGrievanceOfficer("ADMINISTRATION");
+        }
         if (complaintRouter != null)
             position = complaintRouter.getPosition();
         else
