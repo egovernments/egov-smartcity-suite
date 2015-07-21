@@ -49,7 +49,7 @@
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
-		<form:form  id="updateuserRoleForm" action="${user.username}" method ="post"  modelAttribute="user" commandName="user" class="form-horizontal form-groups-bordered" >
+		<form:form  id="updateuserRoleForm" action="${user.id}" method ="post"  modelAttribute="user" commandName="user" class="form-horizontal form-groups-bordered" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

@@ -67,8 +67,8 @@ public class UpdateUserRoleController {
     }
 
     @ModelAttribute
-    public User user(@PathVariable final String name) {
-        return userService.getUserByUsername(name);
+    public User user(@PathVariable final Long name) {
+        return userService.getUserById(name);
     }
 
     @ModelAttribute("roles")
@@ -84,10 +84,10 @@ public class UpdateUserRoleController {
     @RequestMapping(method = RequestMethod.POST)
     public String updateUserRoles(@ModelAttribute final User user, final BindingResult errors, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return "/userrole/update/" + user.getUsername();
+            return "/userrole/update/" + user.getId();
         userService.updateUser(user);
         redirectAttrs.addFlashAttribute("message", "User Role successfully modified!");
-        return "redirect:/userrole/view/" + user.getUsername();
+        return "redirect:/userrole/view/" + user.getId();
 
     }
 

@@ -58,8 +58,8 @@ public class ViewUserRoleController {
     }
 
     @RequestMapping
-    public String updateuserRole(@PathVariable final String name, final Model model) {
-        final User user = userService.getUserByUsername(name);
+    public String updateuserRole(@PathVariable final Long name, final Model model) {
+        final User user = userService.getUserById(name);
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles());
         return "userrole-view";

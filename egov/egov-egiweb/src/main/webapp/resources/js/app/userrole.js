@@ -84,8 +84,8 @@ $(document).ready( function (){
 		}, {
 		displayKey: 'name',
 		source: userlist.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
-			$("#usernameId").val(data.name); 
+		}).on('typeahead:selected', function(event, data){     
+				$("#usernameId").val(data.value); 
 	    }).on('blur',function(event,data){
 	    	populateUserRoles(this);
     		if($('#user_name').val() == ''){

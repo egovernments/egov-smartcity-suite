@@ -71,7 +71,7 @@ public class SearchUserRoleController {
     }
 
     @RequestMapping(params = { "username" })
-    public String searchUserRole(@RequestParam final String username) {
+    public String searchUserRole(@RequestParam final Long username) {
         return "redirect:/userrole/update/" + username;
 
     }
