@@ -270,7 +270,7 @@
 			<artifactId>cglib</artifactId>
 		</dependency>
 		
-		<!-- Jasper Report Compiler Dep -->
+		<!-- Jasper Report Compiler Dep 
        	<dependency>
 			<groupId>com.alexnederlof</groupId>
 			<artifactId>jasperreports-plugin</artifactId>
@@ -280,7 +280,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-		</dependency>
+		</dependency>-->
 		
 		<!-- RESTFUL WEBSERVICE START -->
 		<dependency>
@@ -364,7 +364,7 @@
                 </executions>
             </plugin>
           
-            <plugin>
+            <!-- <plugin>
 	            <groupId>com.alexnederlof</groupId>
 	            <artifactId>jasperreports-plugin</artifactId>
 	            <version>1.6</version>
@@ -404,7 +404,7 @@
 					</dependency>
 				</dependencies>
 	            <configuration>
-	                <!-- These are the default configurations: -->
+	                These are the default configurations:
 	                <compiler>net.sf.jasperreports.engine.design.JRJdtCompiler</compiler>
 	                <sourceDirectory>src/main/resources/reports/templates</sourceDirectory>
 	                <outputDirectory>${project.build.directory}/classes/reports/templates</outputDirectory>
@@ -413,7 +413,7 @@
 	                <verbose>false</verbose>
 	                <numberOfThreads>4</numberOfThreads>
 	            </configuration>
-	        </plugin>
+	        </plugin> -->
         </plugins>
     </build>
 </project>
