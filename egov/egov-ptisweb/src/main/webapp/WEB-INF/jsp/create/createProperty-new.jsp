@@ -59,44 +59,52 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 
 </head>
- 
-  <body onload="loadOnStartUp();">
-  
-  <div align="left">
-  	<s:actionerror/>
-  </div>
-    <!-- <div class="errorcss" id="jsValidationErrors" style="display:none;"></div> -->
 
-  <s:form name="CreatePropertyForm" action="createProperty-create" theme="simple">
-  
-  <s:push value="model">
-  <s:token />
-  
-  <!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
-  <s:hidden name="mode" id="mode" value="%{mode}" />
-  <s:hidden name="modelId" id="modelId" value="%{modelId}" />
-  <div class="formmainbox">
-		<div class="headingbg"><s:text name="CreatePropertyHeader"/></div>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-        	<%@  include file="createPropertyForm.jsp"%>  
-        </tr>
-        	<% System.out.println("hellllo.111................"); %>
-        <tr>
-        	<%@ include file="../workflow/commonWorkflowMatrix.jsp"    %>    
-        </tr>
-        <tr>
-        	<font size="2"><div align="left" class="mandatory1">&nbsp;&nbsp;<s:text name="mandtryFlds"/></div></font>
-        </tr>
-		<tr>
-		<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
-		</tr>
-		
-		</table>
-	</div>
-  </s:push>
-  </s:form>
-  <script type="text/javascript">
+<body onload="loadOnStartUp();">
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle" id="property_error_area">
+			<div class="errortext">
+				<s:actionerror />
+			</div>
+		</div>
+	</s:if>
+
+	<s:form name="CreatePropertyForm" action="createProperty-create"
+		theme="simple">
+
+		<s:push value="model">
+			<s:token />
+
+			<!-- The mode value is used in floorform.jsp file to stop from remmoving the rent agreement header icon -->
+			<s:hidden name="mode" id="mode" value="%{mode}" />
+			<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+			<div class="formmainbox">
+				<div class="headingbg">
+					<s:text name="CreatePropertyHeader" />
+				</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<%@  include file="createPropertyForm.jsp"%>
+					</tr>
+					<% System.out.println("hellllo.111................"); %>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+					</tr>
+					<tr>
+						<font size="2"><div align="left" class="mandatory1">
+								&nbsp;&nbsp;
+								<s:text name="mandtryFlds" />
+							</div></font>
+					</tr>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
+
+				</table>
+			</div>
+		</s:push>
+	</s:form>
+	<script type="text/javascript">
 
 jQuery.noConflict();
 jQuery("#loadingMask").remove();
@@ -456,5 +464,5 @@ function populateApprover() {
 	getUsersByDesignationAndDept();
 }
 </script>
-  </body>
+</body>
 </html>

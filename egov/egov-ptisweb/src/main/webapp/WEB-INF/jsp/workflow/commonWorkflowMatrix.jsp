@@ -101,30 +101,13 @@ function validateWorkFlowApprover(name)
 
 function validateWorkFlowApprover(name,errorDivId)
 {
-	//document.getElementById(errorDivId).style.display='none';
-	alert(name+"name");
     document.getElementById('workFlowAction').value=name;
-   // alert("inside validation for approve"+name);
-	/* <s:if test="%{getNextAction()!='END'}">
-    if(  (name=="Save" || name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && 
-    		document.getElementById('approverPositionId').value=="-1")
-    {
-       // alert("inside validation for approver");
-        document.getElementById(errorDivId).style.display='';
-        document.getElementById(errorDivId).innerHTML = "Please Select the Approver";
-		return false;
-    }
-    </s:if> */
-    
       var approverPosId = document.getElementById("approverPositionId");
       if(approverPosId)
       {
 	  var  approver = approverPosId.options[approverPosId.selectedIndex].text; 
-	  alert(approver);
       document.getElementById("approverName").value= approver.split('~')[0];
-      //alert(document.getElementById("approverName").value);
       }     
-      alert("Before submit calls");
     onSubmit();
 }
 	

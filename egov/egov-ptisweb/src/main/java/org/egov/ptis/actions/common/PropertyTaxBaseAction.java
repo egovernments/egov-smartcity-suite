@@ -132,7 +132,9 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	protected String approverComments;
 	protected String workFlowAction;
 	protected String ackMessage;
-
+	protected String approverDepartment;
+	protected String approverDesignation;
+	
 	public List<File> getUpload() {
 		return this.uploads;
 	}
@@ -439,7 +441,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 					.withNextAction(WFLOW_ACTION_STEP_CANCEL);
 
 		} else {
-			if (approverPositionId != -1 && null != approverPositionId) {
+			if (null != approverPositionId && approverPositionId != -1) {
 				pos = (Position) persistenceService.find(
 						"from Position where id=?", approverPositionId);
 			} else if (COMMISSIONER_DESGN.equals(designationName)) {
@@ -467,7 +469,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							.withDateInfo(currentDate.toDate());
 				} else {
 					WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
-									null, property.getCurrentState().getNextAction(), null);
+								null, property.getCurrentState().getNextAction(), null);
 					property.transition(true).withSenderName(user.getName())
 							.withComments(approverComments)
 							.withStateValue(wfmatrix.getCurrentState())
@@ -571,18 +573,6 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		}
 
 	}
-	
-	public void populateWorkflowEntities() {
-		List approverDepartmentList = persistenceService.findAllBy("from Department order by name");
-		// PersonalInformation
-		// loggedInEmp=eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
-		// List desgnationList =
-		// persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
-		addDropdownData("approverDepartmentList", approverDepartmentList);
-		addDropdownData("designationList", Collections.EMPTY_LIST);
-		addDropdownData("approverList", Collections.EMPTY_LIST);
-
-	}
 
 	public WorkflowBean getWorkflowBean() {
 		return workflowBean;
@@ -677,5 +667,19 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		this.propertyWorkflowService = propertyWorkflowService;
 	}
 
+	public String getApproverDepartment() {
+		return approverDepartment;
+	}
 
+	public void setApproverDepartment(String approverDepartment) {
+		this.approverDepartment = approverDepartment;
+	}
+
+	public String getApproverDesignation() {
+		return approverDesignation;
+	}
+
+	public void setApproverDesignation(String approverDesignation) {
+		this.approverDesignation = approverDesignation;
+	}
 }

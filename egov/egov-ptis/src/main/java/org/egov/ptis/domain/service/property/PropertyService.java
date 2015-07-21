@@ -286,7 +286,7 @@ public class PropertyService {
 					}
 					if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() != null
 							&& floor.getTaxExemptedReason().getId() != -1) {
-						taxExemption = (TaxExeptionReason) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+						taxExemption = (TaxExeptionReason) getPropPerServ().find("from TaxExeptionReason where id = ?",
 								floor.getTaxExemptedReason().getId());
 					}
 					if (floor.getPropertyUsage() != null) {
@@ -329,10 +329,8 @@ public class PropertyService {
 					floor.setStructureClassification(structureClass);
                     floor.setTaxExemptedReason(taxExemption);
 					floor.setPropertyDetail(property.getPropertyDetail());
-					// basicPrpertyService.applyAuditing(floor);
 					floor.setCreatedDate(new Date());
 					floor.setModifiedDate(new Date());
-					// property.getPropertyDetail().addFloor(floor);
 					User user = userService.getUserById(EgovThreadLocals.getUserId());
 					floor.setCreatedBy(user);
 					floor.setModifiedBy(user);

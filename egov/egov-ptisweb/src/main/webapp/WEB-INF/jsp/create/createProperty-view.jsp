@@ -88,12 +88,18 @@
 	}
 	
   function onSubmit() {
+	  var actionName = document.getElementById('workFlowAction').value;
+	  if(actionName == 'Generate Notice') {
+		  generateNotice6();
+	   } else {
 		document.forms[0].action = 'createProperty-forward.action';
 		document.forms[0].submit;
 	    return true;
+	   }
 	 } 
 	 	
  	function generateNotice6(){
+ 	 	alert("Generate Notice method");
 	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
 		document.CreatePropertyForm.submit();
 	}

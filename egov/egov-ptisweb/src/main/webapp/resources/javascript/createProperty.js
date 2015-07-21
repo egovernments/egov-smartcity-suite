@@ -1060,8 +1060,9 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
-			if (appurtenantLandChecked == true) {
+			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
+				jQuery('#appurtenantRow').show();
 			}
 		}
 	}

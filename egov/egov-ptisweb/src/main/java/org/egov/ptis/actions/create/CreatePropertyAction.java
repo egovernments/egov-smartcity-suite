@@ -64,7 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
 
@@ -423,7 +422,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-view")
 	public String view() {
-		populateWorkflowEntities();
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property
 				+ ", userDesgn: " + userDesgn);
 		String nextAction = property.getState().getNextAction();
@@ -439,7 +437,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			mode = VIEW;
 			PropertyDetail propertyDetail = property.getPropertyDetail();
 			setAddressStr(basicProp.getAddress().toString());
-			//corrAddress1 = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo().getOwner());
 			corrAddress1 = basicProp.getAddress().toString();
 
 			if (propertyDetail.getFloorDetails().size() > 0) {
@@ -469,6 +466,10 @@ public class CreatePropertyAction extends WorkflowAction {
 				return RESULT_NEW;
 			}
 			updatePropertyDetails();
+			basicPropertyService.applyAuditing(property.getState());
+			basicProp.addProperty(property);
+			//propService.createDemand(property, basicProp.getPropOccupationDate());
+			basicPropertyService.persist(basicProp);
 		} else {
 			validateApproverDetails(approverPositionId,approverComments,workFlowAction);
 			if (hasErrors()) {
@@ -481,16 +482,10 @@ public class CreatePropertyAction extends WorkflowAction {
 			return approve();
 		} else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
 			return reject();
-		} else if (WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(workFlowAction)) {
-			///notice/propertyTaxNotice-generateNotice
-			return generateNotice();
 		}
 
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();
-		basicPropertyService.applyAuditing(property.getState());
-		basicProp.addProperty(property);
-		basicPropertyService.persist(basicProp);
 		setDocNumber(getDocNumber());
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 		LOGGER.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
@@ -498,12 +493,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
-	private void updatePropertyDetails() {
+	public void updatePropertyDetails() {
 		if (property.getPropertyDetail().getApartment() != null
 				&& property.getPropertyDetail().getApartment().getId() != null) {
 			Apartment apartment = (Apartment) basicPropertyService.find(
-					"From Apartment where id = ?", property.getPropertyDetail().getApartment()
-							.getId());
+					"From Apartment where id = ?", property.getPropertyDetail().getApartment().getId());
 			property.getPropertyDetail().setApartment(apartment);
 		} else {
 			property.getPropertyDetail().setApartment(null);
@@ -511,7 +505,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		updateBasicProperty(basicProp);
 		if (!property.getPropertyDetail().getPropertyType().equals(VACANT_PROPERTY)) {
 			for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
-				if(null == floor.getTaxExemptedReason().getId()) {
+				if (null != floor.getTaxExemptedReason() && null != floor.getTaxExemptedReason().getId()) {
+					TaxExeptionReason taxExemption = (TaxExeptionReason) (TaxExeptionReason) basicPropertyService
+							.find("from TaxExeptionReason where id = ?", floor.getTaxExemptedReason().getId());
+					floor.setTaxExemptedReason(taxExemption);
+				} else {
 					floor.setTaxExemptedReason(null);
 				}
 				User user = securityUtils.getCurrentUser();
@@ -530,12 +528,17 @@ public class CreatePropertyAction extends WorkflowAction {
 		int ownersCount = property.getBasicProperty().getPropertyOwnerInfo().size();
 		for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
 			if (ownerInfo.getId() == null) {
-				ownerInfo.setOrderNo(ownersCount++);
+				ownerInfo.setOwner(ownerInfo.getOwner());
+				ownerInfo.setOrderNo(ownersCount);
+				ownersCount++;
 				ownerInfo.getOwner().setPassword("NOT SET");
 				ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
+				ownerInfo.setBasicProperty(property.getBasicProperty());
 			}
 		}
-		//propService.createDemand(property, propCompletionDate);
+	
+		property.setBasicProperty(basicProp);
+		
 		/*
 		 * for (EgDemand demand : property.getPtDemandSet()) {
 		 * egDemandDAO.delete(demand); }
@@ -549,10 +552,17 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setRegdDocNo(getRegdDocNo());
 		basicProperty.setRegdDocDate(getRegdDocDate());
 		PropertyID propertyId = basicProperty.getPropertyID();
-		//propertyId.set
-		// propertyId.setZone(zone);
-		// basicProperty.setPropertyID(createPropertyID(basicProperty));
-		// basicProperty.setAddress(createPropAddress());
+		propertyId.setZone(boundaryService.getBoundaryById(getZoneId()));
+		propertyId.setWard(boundaryService.getBoundaryById(getWardId()));
+		propertyId.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
+		propertyId.setModifiedDate(new Date());
+		propertyId.setModifiedDate(new Date());
+		propertyId.setArea(boundaryService.getBoundaryById(getBlockId()));
+		propertyId.setLocality(boundaryService.getBoundaryById(getLocality()));
+		propertyId.setEastBoundary(getEastBoundary());
+		propertyId.setWestBoundary(getWestBoundary());
+		propertyId.setNorthBoundary(getNorthBoundary());
+		propertyId.setSouthBoundary(getSouthBoundary());
 	}
 
 	@SkipValidation
@@ -564,15 +574,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		property.setStatus(STATUS_ISACTIVE);
 		String assessmentNo = propertyTaxNumberGenerator.generateAssessmentNumber();
 		basicProp.setUpicNo(assessmentNo);
-		if (property.getPropertyDetail().getApartment() != null
-				&& property.getPropertyDetail().getApartment().getId() != null) {
-			Apartment apartment = (Apartment) basicPropertyService.find(
-					"From Apartment where id = ?", property.getPropertyDetail().getApartment()
-							.getId());
-			property.getPropertyDetail().setApartment(apartment);
-		} else {
-			property.getPropertyDetail().setApartment(null);
-		}
 		approved = true;
 		setWardId(basicProp.getPropertyID().getWard().getId());
 		processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
@@ -816,19 +817,14 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: "
 				+ property);
-		basicProperty.setExtraField1(isAuthProp);
 		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			propCompletionDate = propService.getLowestDtOfCompFloorWise(property
 					.getPropertyDetail().getFloorDetails());
 		} else {
-			propCompletionDate = propService.getPropOccupatedDate(getDateOfCompletion());
+			propCompletionDate = property.getPropertyDetail().getDateOfCompletion();
 		}
-		Date lowestInstDate = propertyTaxUtil.getStartDateOfLowestInstallment();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(lowestInstDate);
-
-		basicProperty.setPropOccupationDate(propService.getPropOccupatedDate(getDateOfCompletion()));
+		basicProperty.setPropOccupationDate(propCompletionDate);
 
 		if (property != null && !property.getDocuments().isEmpty()) {
 			propService.processAndStoreDocument(property.getDocuments());
@@ -837,9 +833,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))) {
 			property.setPropertyDetail(changePropertyDetail());
 		}
-
 		basicProperty.addProperty(property);
-		//propService.createDemand(property, propCompletionDate);
+		propService.createDemand(property, propCompletionDate);
 		LOGGER.debug("BasicProperty: " + basicProperty + "\nExiting from createBasicProp");
 		return basicProperty;
 	}
@@ -1155,28 +1150,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	@Override
 	public PropertyImpl getProperty() {
 		return property;
-	}
-
-	
-	private String generateNotice() {
-		transitionWorkFlow(property);
-		setAckMessage("Notice generated and property creation workflow completed ");
-		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
-		LOGGER.debug("approve: Property approval ended");
-		basicPropertyService.applyAuditing(property.getState());
-		basicPropertyService.update(basicProp);
-		return RESULT_ACK;
-	}
-
-	public String getNextAction() {
-		String nextActionTemp = "";
-		if ((null != property) && (null != property.getId())) {
-			nextActionTemp = (String) persistenceService.find(
-					"select nextAction from WorkFlowMatrix where objectType=? "
-							+ " and currentState=?", property.getStateType(), property
-							.getCurrentState().getValue());
-		}
-		return nextActionTemp;
 	}
 
 	@Override

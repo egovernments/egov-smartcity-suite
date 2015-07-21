@@ -120,7 +120,7 @@
 		</td>
 		<td class="greybox" width="20%"><s:text name="certificationNumber"/>:</td>
 		<td class="greybox" width="20%">
-			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{propertyDetail.occupancyCertificationNo}" default="N/A"/></span>
 		</td>
 		</tr>
 	<tr id="appurtenantRow">
