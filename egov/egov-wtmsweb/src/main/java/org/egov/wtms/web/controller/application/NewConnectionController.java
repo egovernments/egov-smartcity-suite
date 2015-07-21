@@ -55,6 +55,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,14 +75,16 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
     private final ConnectionDemandService connectionDemandService;
+    private final WaterTaxUtils waterTaxUtils;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
+            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,final WaterTaxUtils waterTaxUtils,
             final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
         this.connectionDemandService = connectionDemandService;
+        this.waterTaxUtils = waterTaxUtils;
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -151,7 +154,7 @@ public class NewConnectionController extends GenericConnectionController {
                     .findByApplicationNumber(request.getParameter("applicationNumber"));
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("cityName", waterConnectionDetailsService.getCityName());
+        model.addAttribute("cityName", waterTaxUtils.getCityName());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
 

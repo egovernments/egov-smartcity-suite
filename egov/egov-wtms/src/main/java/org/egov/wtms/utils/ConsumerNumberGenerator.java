@@ -49,7 +49,6 @@ import javax.transaction.Transactional;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +67,7 @@ public class ConsumerNumberGenerator {
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
+    private WaterTaxUtils waterTaxUtils;
 
     @Transactional
     public String generate() {
@@ -80,7 +79,7 @@ public class ConsumerNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s%06d", waterConnectionDetailsService.getCityCode(), sequenceNumber);
+            return String.format("%s%06d", waterTaxUtils.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
             throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
         }
