@@ -27,7 +27,7 @@ public class AgeingReportService {
                                                               // DEPARTMENTWISE
                                                               // OR ZONE WISE
         } else {
-            query.append("SELECT ctype.name as name, ");
+            query.append("SELECT dept.name as name, ");
         }
 
         if (typeofReport != null && !"".equals(typeofReport)
@@ -49,7 +49,9 @@ public class AgeingReportService {
 
         if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary")) {
             query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id ");
-        }
+        }else
+        {       query.append("  left JOIN eg_department dept on cd.department =dept.id ");
+            }
 
         buildWhereClause(fromDate, toDate, typeofReport, complaintDateType, query);
 
@@ -57,7 +59,7 @@ public class AgeingReportService {
             query.append("  group by bndryparent.name ");
 
         } else {
-            query.append("  group by ctype.name ");
+            query.append("  group by dept.name ");
         }
 
         return getAgeingData(query.toString(), typeofReport, fromDate, toDate, complaintDateType);
