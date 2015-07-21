@@ -44,12 +44,12 @@
 	<table border="0" width="100%" cellspacing="0">
 		<tr>
 		<s:if test="%{shouldShowHeaderField('fund')}">
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Fund</b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Fund</td>
 			<td width="25%"  class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('fund')}"/></td>
 			
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('scheme')}">
-			<td width="25%" class="<c:out value='${tdclass}' />"><b>Scheme &nbsp;</b></td>
+			<td width="25%" class="<c:out value='${tdclass}' />">Scheme &nbsp;</td>
 			<td width="25%" class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('scheme')}"/></td>
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('fund') && shouldShowHeaderField('scheme')}"/>
@@ -71,11 +71,11 @@
 		</tr>
 		<tr>
 		<s:if test="%{shouldShowHeaderField('subscheme')}">
-			<td width="25%" class="<c:out value='${tdclass}' />"><b>Sub Scheme &nbsp;</b></td>
+			<td width="25%" class="<c:out value='${tdclass}' />">Sub Scheme &nbsp;</td>
 			<td width="25%" class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('subscheme')}"/></td>
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('fundsource')}">
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Financing Source &nbsp; </b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Financing Source &nbsp; </td>
 			<td width="25%"  class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('fundsource')}"/></td>
 			
 		</s:if>
@@ -98,11 +98,11 @@
 		</tr>
 		<tr>
 		<s:if test="%{shouldShowHeaderField('department')}">
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Department</b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Department</td>
 			<td width="25%"   class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('department')}"/></td>
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('functionary')}">
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Functionary &nbsp; </b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Functionary &nbsp; </td>
 			<td width="25%" class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('functionary')}"/></td>
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('department') && shouldShowHeaderField('functionary')}"/>
@@ -125,7 +125,7 @@
 		
 		<tr>
 		<s:if test="%{shouldShowHeaderField('field')}">
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Field &nbsp;</b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Field &nbsp;</td>
 			<td width="25%"  class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('field')}"/></td>
 			<td width="25%"  class="<c:out value='${tdclass}' />"></td>
 			<td width="25%" class="<c:out value='${tdclass}' />"></td>
@@ -141,7 +141,7 @@
 		</tr>
 		
 		<tr>
-			<td width="25%"  class="<c:out value='${tdclass}' />"><b>Narration &nbsp;</b></td>
+			<td width="25%"  class="<c:out value='${tdclass}' />">Narration &nbsp;</td>
 			<td colspan="3"  class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('narration')}"/></td>
 			<c:choose>
 				<c:when test="${tdclass == 'bluebox'}">

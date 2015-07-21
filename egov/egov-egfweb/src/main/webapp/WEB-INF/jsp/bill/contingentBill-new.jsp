@@ -38,26 +38,13 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %>
-
-<%@ taglib prefix="EGF" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
 <title><s:text name="contingent.bill"/></title>
 <sx:head/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css" TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript" src="/EGF/resources/javascript/tabber2.js"></script>
@@ -83,7 +70,7 @@ width:560px;
 }
 </style>
 
-<script>
+<script type="text/javascript">
 var detailTypeId;
 mode='new';
 <s:iterator value="commonBean.checkListValuesMap" status="stat">
@@ -390,7 +377,7 @@ if(table_name.getRecordSet().getLength()>=1)
 if(obj.value!=0)
 {
 
-var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.value;
+var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.value;
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -460,7 +447,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 </jsp:include>
 <div class="formmaininbox"><div class="formheading"/><div class="subheadnew"><s:text name="contingent.bill"/></div></div>
 <center>
-<span class="mandatory">
+<span class="mandatory1">
 <div id="Errors"><s:actionerror/><s:fielderror/></div>
 <s:actionmessage/>
 </span>
@@ -469,10 +456,10 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 <tr> 
 <td class="bluebox"></td>
 <s:if test="%{!billNumberGenerationAuto}">
-<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory">*</span></td>
+<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory1">*</span></td>
 <td class="bluebox"><s:textfield name="commonBean.billNumber"/></td>
 </s:if>
-<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory">*</span></td>
+<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory1">*</span></td>
 <s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
 <td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
 	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
@@ -503,9 +490,9 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 <div align="center" class="error-block" id="lblError" style="font:bold;text-align:center"></div>
 <div align="center" class="error-block" id="Errors" style="font:bold;text-align:center"></div>
 </font>
-<s:if test='%{! "END".equalsIgnoreCase(nextLevel)}'>
+<%-- <s:if test='%{! "END".equalsIgnoreCase(nextLevel)}'>
 	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
-</s:if>
+</s:if> --%>
 <s:hidden name="nextLevel" id="nextLevel"/>
 <div align="center">
 		<table border="0" width="100%">
@@ -525,6 +512,8 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 		 			 <s:submit type="submit" cssClass="buttonsubmit" value="%{description}" id="%{name}" name="%{name}" method="create" onclick="document.getElementById('button').value='Save_New';return validate('%{name}','%{description}');"/>
 		  		</s:if>
 		</s:iterator>
+				<s:submit type="submit" cssClass="buttonsubmit" value="Save & Forward" id="%{aa_approve}" name="%{aa_approve}"  onclick="document.getElementById('button').value='Save_New';return validateAndSubmit('%{aa_approve}','%{Save & Forward}');"/>
+		</td>
 				<td>
 				<input type="reset" name="Cancel"  class="button" id="Cancel"  value="Cancel"  onclick="document.getElementById('button').value='';return true;" method="newform" />
 				</td>
@@ -539,7 +528,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 <s:token/>
 </s:form>
 
-<script>
+<script type="text/javascript">
 autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
@@ -612,5 +601,16 @@ loadDropDownCodesForAccountDetailType(null);
 }
 
 </script>
-
+<script type="text/javascript">
+function validateAndSubmit(name,value)
+{
+	if(validate(name,value)){
+			document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    		document.cbill.submit();
+			
+		}else{
+			return false;
+			}
+}
+</script>
 </body>

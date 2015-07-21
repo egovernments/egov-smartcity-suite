@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
+<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html" %>
 <style type="text/css">
 #container iframe {
 width: 100%;
@@ -72,7 +72,7 @@ display: none;
 
 <body>
 <div id="container">
-<iframe id="report" name="report" src='/EGF/bill/expenseBillPrint!ajaxPrint.action?id=<s:property value="id"/>' ></iframe>
+<iframe id="report" name="report" src='/EGF/bill/expenseBillPrint-ajaxPrint.action?id=<s:property value="id"/>' ></iframe>
 </div> 
 <s:form name="expenseBillPrint" action="expenseBillPrint" theme="simple" >
 	<input type="hidden" name="id" value='<s:property value="id"/>'/>

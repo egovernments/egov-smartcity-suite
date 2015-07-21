@@ -53,37 +53,34 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;
-import org.egov.services.bills.BillsService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author manoranjan
- *
- */
-@Transactional(readOnly=true)
+@ParentPackage("egov")
+@Results({@Result(name = JournalVoucherAction.NEW, location = "billVoucher-new.jsp")})
 public class BillVoucherAction extends BaseVoucherAction {
 
         
         private static final long serialVersionUID = 1L;
         private static final Logger     LOGGER  = Logger.getLogger(BillVoucherAction.class);
-        private static BillsService billsMgr ; 
         @Autowired
         private EgwStatusHibernateDAO egwStatusDAO;
         private EisCommonService eisCommonService;
@@ -94,6 +91,8 @@ public class BillVoucherAction extends BaseVoucherAction {
         private VoucherTypeBean voucherTypeBean;
         private EisUtilService eisUtilService;
         private VoucherHelper voucherHelper;
+    	@Autowired
+    	private ScriptService scriptService;
         public VoucherTypeBean getVoucherTypeBean() {
                 return voucherTypeBean;
         }
@@ -108,9 +107,9 @@ public class BillVoucherAction extends BaseVoucherAction {
                         addDropdownData("departmentList", voucherHelper.getAllAssgnDeptforUser());
                 }
         }
-@Action(value="/voucher/billVoucher-newform")
+@Action(value="/voucher/billVoucher-newForm")
         public String newform(){
-                if(getValidActions("designation").size()==0)
+                if(false/*getValidActions("designation").size()==0*/)//Phoenix
                 {
                         addActionError(getText("pjv.designation.notmatching"));
                         
@@ -118,7 +117,7 @@ public class BillVoucherAction extends BaseVoucherAction {
                         voucherHeader.getVouchermis().setDepartmentid(voucherService.getCurrentDepartment());
                 }
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("BillVoucherAction | newform | START");
-                List<String> listBillReg= billsMgr.getDistExpType();
+                List<String> listBillReg= VoucherHelper.EXPENDITURE_TYPES;
                 Map<String, String> expTypeList = new LinkedHashMap<String, String>();
                 for (String expType : listBillReg) {
                         expTypeList.put(expType, expType);
@@ -128,7 +127,7 @@ public class BillVoucherAction extends BaseVoucherAction {
                 return NEW;
         }
     @SuppressWarnings("unchecked")
-   
+    @Action(value="/voucher/billVoucher-lists")
         public String lists() throws ValidationException{
         StringBuffer query = new StringBuffer(300);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("Expenditure Type selected :="+ expType);
@@ -158,10 +157,9 @@ public class BillVoucherAction extends BaseVoucherAction {
         return newform();
     }
         public List<Action> getValidActions(String purpose) {
-                List<Action> validButtons = new ArrayList<Action>();
-                Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-                //script service 
-                List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EgovThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));*/
+        	List<Action> validButtons = new ArrayList<Action>();
+        	Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
+    		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EgovThreadLocals.getUserId().intValue(),"date",new Date(),"purpose",purpose));
                 for(Object s:list) 
                 {
                         if("invalid".equals(s))

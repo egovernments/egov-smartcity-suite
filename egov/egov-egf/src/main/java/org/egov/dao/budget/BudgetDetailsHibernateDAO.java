@@ -1720,19 +1720,19 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			int minorcodelength = Integer.valueOf(appList.get(0).getValue());
 			
 			//  check the budget group is defined at detailcode level or detailcode within the range
-			String query=" from BudgetGroup bg where bg.minCode.glcode<='"+coa.getGlcode()+"' and bg.maxCode.glcode>='"+coa.getGlcode()+"'  and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1";
+			String query=" from BudgetGroup bg where bg.minCode.glcode<='"+coa.getGlcode()+"' and bg.maxCode.glcode>='"+coa.getGlcode()+"'  and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("getBudgetHeadByGlcode detailcode query====="+query);
 			persistenceService.setType(BudgetGroup.class);
 			 List bgList = persistenceService.findAllBy(query);
 			if(bgList.isEmpty())
 			{
-				query=" from BudgetGroup bg where bg.minCode.glcode<='"+coa.getGlcode().substring(0, minorcodelength)+"' and bg.maxCode.glcode>='"+coa.getGlcode().substring(0, minorcodelength)+"' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1";
+				query=" from BudgetGroup bg where bg.minCode.glcode<='"+coa.getGlcode().substring(0, minorcodelength)+"' and bg.maxCode.glcode>='"+coa.getGlcode().substring(0, minorcodelength)+"' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("getBudgetHeadByGlcode minorcode query====="+query);
 				persistenceService.setType(BudgetGroup.class);
 				bgList =  persistenceService.findAllBy(query);
 				if(bgList.isEmpty())
 				{
-					query=" from BudgetGroup bg where bg.majorCode.glcode='"+coa.getGlcode().substring(0, majorcodelength)+"' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=1 ";
+					query=" from BudgetGroup bg where bg.majorCode.glcode='"+coa.getGlcode().substring(0, majorcodelength)+"' and bg in (select budgetGroup from BudgetDetail) and bg.isActive=true ";
 					persistenceService.setType(BudgetGroup.class);
 					bgList = persistenceService.findAllBy(query);
 					if(bgList.isEmpty())

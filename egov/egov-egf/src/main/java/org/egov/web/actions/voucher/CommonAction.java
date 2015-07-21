@@ -131,6 +131,9 @@ import com.exilant.eGov.src.domain.Bank;
 	@Result(name = "schemes", location = "common-schemes.jsp"),
 	@Result(name = Constants.SUBSCHEMES, location = "common-subSchemes.jsp"),
 	@Result(name = Constants.FUNDSOURCE, location = "common-fundsource.jsp"),
+	@Result(name = "accountcodes", location = "common-accountcodes.jsp"),
+	@Result(name = "searchResult", location = "common-searchResult.jsp"),
+	@Result(name = "entities", location = "common-entities.jsp"),
 	@Result(name = "result", location = "common-result.jsp")
 })
 @Transactional(readOnly=true)

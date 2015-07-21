@@ -1358,12 +1358,9 @@ public class EgovCommon {
         public List<CChartOfAccounts> getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(
                         Integer accountDetailTypeId) {
                 if (accountDetailTypeId == 0 || accountDetailTypeId == -1)
-                        return persistenceService
-                                        .findAllBy("from CChartOfAccounts  a LEFT JOIN  fetch a.chartOfAccountDetails  b where size(b) = 0 and a.isActiveForPosting=1 and a.classification=4 order by a.id");
+                        return persistenceService.findAllBy("from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0  order by a.id");
                 else
-                        return persistenceService
-                                        .findAllBy("from CChartOfAccounts  a LEFT JOIN  fetch a.chartOfAccountDetails  b where (size(b) = 0 or b.detailTypeId.id=?)and a.isActiveForPosting=1 and a.classification=4 order by a.id",
-                                                        accountDetailTypeId);
+                        return persistenceService.findAllBy("from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=?)and a.isActiveForPosting=true and a.classification=4 order by a.id",accountDetailTypeId);
         }
 
 /**

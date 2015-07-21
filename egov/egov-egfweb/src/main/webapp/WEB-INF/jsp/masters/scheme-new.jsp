@@ -91,7 +91,7 @@
   <body >
    <s:form name="schemeForm" action="scheme" theme="css_xhtml" validate="true">
     <div class="formmainbox"><div class="subheadnew"><s:text name="scheme.create.title"/></div>
-  		<s:token name="%{tokenName()}"/>  
+  		<s:token />  
   		<s:hidden name="mode" id="mode" value="%{mode}" />
   		<s:hidden id="id" name="id"/>                    
   		<div style="color: red">            

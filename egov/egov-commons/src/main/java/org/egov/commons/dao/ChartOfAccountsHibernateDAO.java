@@ -110,7 +110,6 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
     public CChartOfAccounts getCChartOfAccountsByGlCode(final String glCode) {
         final Query qry = HibernateUtil.getCurrentSession().createQuery("from CChartOfAccounts coa where coa.glcode =:glCode");
         qry.setString("glCode", glCode);
-        qry.setCacheable(true);
         return (CChartOfAccounts) qry.uniqueResult();
     }
     
@@ -222,22 +221,18 @@ public class ChartOfAccountsHibernateDAO extends GenericHibernateDAO implements 
             if (query.list().size() == 0) {
                 throw new EGOVException("Purpose ID provided is not defined in the system");
             }
-            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=1 ");
+            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
-            query.setCacheable(true);
-            accountCodeList.addAll(query.list());
-            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=1 ");
+            accountCodeList.addAll((List<CChartOfAccounts>)query.list());
+            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
-            query.setCacheable(true);
-            accountCodeList.addAll(query.list());
-            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=1 ");
+            accountCodeList.addAll((List<CChartOfAccounts>)query.list());
+            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
-            query.setCacheable(true);
-            accountCodeList.addAll(query.list());
-            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=1 ");
+            accountCodeList.addAll((List<CChartOfAccounts>)query.list());
+            query = HibernateUtil.getCurrentSession().createQuery(" FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
-            query.setCacheable(true);
-            accountCodeList.addAll(query.list());
+            accountCodeList.addAll((List<CChartOfAccounts>)query.list());
         } catch (final Exception e) {
             LOG.error(e);
             throw new EGOVRuntimeException("Error occurred while getting Account Code by purpose", e);

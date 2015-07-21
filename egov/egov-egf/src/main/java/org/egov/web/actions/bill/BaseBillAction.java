@@ -78,8 +78,6 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-@Transactional(readOnly=true)
 public class BaseBillAction extends BaseVoucherAction {
         protected static final long     serialVersionUID        = 6627521670678057404L;
         protected EisCommonService      eisCommonService;
@@ -103,15 +101,15 @@ public class BaseBillAction extends BaseVoucherAction {
         protected PersistenceService<EgBillregister, Long> billRegisterService;
         protected PersistenceService<Cbill, Long> cbillService;
         protected EgovCommon egovCommon;
-        @Autowired
-        protected AppConfigValueService appConfigValuesService;
+        protected @Autowired AppConfigValueService appConfigValuesService;
         protected CChartOfAccounts      defaultNetPayCode;
         protected Long billRegisterId;
         protected static final String   FALSE   = "false";
         protected static final String   TRUE    = "true";
         protected List<CChartOfAccounts>        netPayList;
         protected SequenceGenerator sequenceGenerator;
-        protected ScriptService scriptExecutionService;
+        @Autowired
+        protected ScriptService scriptService;
         protected CommonsService commonsService;
         protected String detailTypeIdandName="";
         protected BillsService billsManager;
@@ -333,12 +331,12 @@ public class BaseBillAction extends BaseVoucherAction {
         public String getButton() {
                 return button;
         }
-        public ScriptService getScriptExecutionService() {
-                return scriptExecutionService;
+        public ScriptService getScriptService() {
+                return scriptService;
         }
 
-        public void setScriptExecutionService(ScriptService scriptExecutionService) {
-                this.scriptExecutionService = scriptExecutionService;
+        public void setScriptService(ScriptService scriptService) {
+                this.scriptService = scriptService;
         }
 
         public void setButton(String button) {

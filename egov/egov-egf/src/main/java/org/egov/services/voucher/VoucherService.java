@@ -157,7 +157,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         private EmployeeServiceOld employeeService;
         @Autowired
         private ScriptService scriptService;
-        private PersistenceService<EgBillregister, Long> billRegisterSer;
+        private PersistenceService<EgBillregister, Long> billRegisterService;
         public Boundary getBoundaryForUser(CVoucherHeader rv)
         {
                 return new EgovCommon().getBoundaryForUser(rv.getCreatedBy());
@@ -915,9 +915,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                  Map<String , Object> map = new HashMap<String, Object>();
                  Designation designation=null;
                         Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,scriptName).get(0);
-                        List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",
-                                                                Integer.valueOf(EgovThreadLocals.getUserId().trim()),"DATE",new Date(),"type",type,
-                                                                "wfitem",wfitem,"deptId",deptId,"persistenceService",persistenceService));*/
+                        List<String> list = (List<String>)scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",
+                                EgovThreadLocals.getUserId().intValue(),"DATE",new Date(),"type",type,"wfitem",wfitem,"deptId",deptId,"persistenceService",persistenceService));
                         Map<String, Object> desgFuncryMap;
                         List< Map<String , Object>> designationList = new ArrayList<Map<String,Object>>();
                         for (String desgFuncryName : list) {
@@ -1070,8 +1069,8 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                 Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
             egBilldetailes = prepareBillDetails(egBillregister, billDetailslist,subLedgerlist,voucherHeader,egBilldetailes);
                  egBillregister.setEgBilldetailes(egBilldetailes);
-                 		billRegisterSer.applyAuditing(egBillregister);
-                        billRegisterSer.persist(egBillregister);	
+                 billRegisterService.applyAuditing(egBillregister);
+                 billRegisterService.persist(egBillregister);	
                         
                         voucherHeader.getVouchermis().setSourcePath("/EGF/voucher/journalVoucherModify-beforeModify.action?voucherHeader.id="+voucherHeader.getId());
                         update(voucherHeader);
@@ -1146,7 +1145,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
                         egBilldetailes.clear();
                         
                         prepareBillDetails(egBillregister, billDetailslist,subLedgerlist,voucherHeader,egBilldetailes);
-                        billRegisterSer.update(egBillregister);
+                        billRegisterService.update(egBillregister);
                                  
                 } catch (ValidationException e) {
                          List<ValidationError> errors=new ArrayList<ValidationError>();
@@ -1259,9 +1258,9 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
         public void setScriptService(ScriptService scriptService) {
                 this.scriptService = scriptService;
         }
-        public void setBillRegisterSer(
-                        PersistenceService<EgBillregister, Long> billRegisterSer) {
-                this.billRegisterSer = billRegisterSer;
+        public void setBillRegisterService(
+                        PersistenceService<EgBillregister, Long> billRegisterService) {
+                this.billRegisterService = billRegisterService;
         }
         public Integer getDefaultDepartment() {
                 Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.get.default.department").get(0);
@@ -1292,6 +1291,9 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
 		}
 		public void setVoucherHelper(VoucherHelper voucherHelper) {
 			this.voucherHelper = voucherHelper;
+		}
+		public PersistenceService<EgBillregister, Long> getBillRegisterService() {
+			return billRegisterService;
 		}
         
 }

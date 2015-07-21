@@ -37,15 +37,9 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 
@@ -77,11 +71,11 @@
 	
 	function printEJV(){
 		var id = '<s:property value="voucherHeader.id"/>';
-		window.open("${pageContext.request.contextPath}/report/expenseJournalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+		window.open("${pageContext.request.contextPath}/report/expenseJournalVoucherPrint-print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	function printJV(){
 		var id = '<s:property value="voucherHeader.id"/>';
-		window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint!print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
+		window.open("${pageContext.request.contextPath}/voucher/journalVoucherPrint-print.action?id="+id,'Print','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 function openSource(){
 	var url = '<s:property value='%{getSourcePath()}' />'
@@ -109,7 +103,7 @@ function validateApproverUser(name,value){
 <font  style='color: red ;'> 
 <p class="error-block" id="lblError" style="font:bold" ></p>
 </font>
-			<span class="mandatory">
+			<span class="mandatory1">
 				<s:actionerror/>  
 				<s:fielderror />
 				<s:actionmessage /> 
@@ -121,7 +115,7 @@ function validateApproverUser(name,value){
 	<div align="center">
 	<table border="0" width="100%" cellspacing="0">
 	<tr>
-	<td class="greybox" width="25%%"><s:text name="voucher.date"/><span class="mandatory">*</span></td>
+	<td class="greybox" width="25%%"><s:text name="voucher.date"/><span class="mandatory1">*</span></td>
 			<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy'/>
 			<td class="greybox" width="25%%">
 			<div name="daterow" >
@@ -182,7 +176,7 @@ function validateApproverUser(name,value){
 		</tr>
 		<s:iterator var="p" value="%{billDetails.payeeList}" status="s"> 
 				<tr>
-					<td width="17%"  class="bluebox"><s:property value="glcode"/></td>
+					<td width="17%"  class="bluebox setborder"><s:property value="glcode"/></td>
 					<td width="19%"  class="bluebox"><s:property value="detailtype"/></td>
 					<td width="17%"  class="bluebox"><s:property value="detailkey"/></td>
 					<td width="16%"  class="bluebox" style="text-align:right"><s:text name="format.number" ><s:param value="%{debitamount}"/></s:text></td>
@@ -211,10 +205,10 @@ function validateApproverUser(name,value){
 			</s:if>
 		</s:iterator>
 		<s:if test="%{egBillregister.expendituretype == finConstExpendTypeContingency}">
-			<input type="button" class="button" id="print" value="Print Preview" action="expenseJournalVoucherPrint" method="print" onclick="printEJV()"/>
+			<input type="button" class="button" id="print" value="Print Preview" onclick="printEJV()"/>
 		</s:if> 
 		<s:else>
-			<input type="button" class="button" id="print" value="Print Preview" action="journalVoucherPrint" method="print" onclick="printJV()"/>
+			<input type="button" class="button" id="print" value="Print Preview"  onclick="printJV()"/>
 		</s:else>
 		<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 	</div>

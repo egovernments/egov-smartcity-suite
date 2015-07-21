@@ -60,7 +60,7 @@
 	<bean class="org.egov.infra.admin.master.service.AppConfigService" id="appConfigService" scope="prototype" >
 	</bean>
 	<bean class="org.egov.commons.dao.FundHibernateDAO" id="fundHibernateDAO" scope="prototype" />
-	<bean id="appConfigValuesDAO"  class="org.egov.infstr.config.dao.AppConfigValuesDAO" >
+	<bean id="appConfigValuesService"  class="org.egov.infra.admin.master.service.AppConfigValueService" >
 	</bean>
 	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
        <constructor-arg index="0" value="org.egov.commons.CFinancialYear"/>
@@ -146,7 +146,7 @@
     </bean>
      <bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO">
         <property name="budgetService" ref="budgetService"/>
-        <property name="appConfigValuesDAO" ref="appConfigValuesDAO"/>
+        <property name="appConfigValuesService" ref="appConfigValuesService"/>
     </bean>
     <bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"  scope="prototype">
        <constructor-arg ref="budgetDetailConfig"/>
@@ -222,7 +222,7 @@
     <bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" scope="prototype">
 		<property name="vdPersitSer" ref="voucherDetailPersitService"/>
 	</bean>
-		<bean id="billRegisterSer" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+	<bean id="billRegisterService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.bills.EgBillregister" />
 	</bean>
     <bean id="voucherService" class="org.egov.services.voucher.VoucherService" scope="prototype">
@@ -231,10 +231,14 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
 		<property name="voucherHibDAO" ref="voucherHibDAO"/>
 		<property name="eisCommonService" ref="eisCommonService" />
-		<property name="billRegisterSer" ref="billRegisterSer"/>
+		<property name="billRegisterService" ref="billRegisterService"/>
 		<property name="financialYearDAO" ref="financialYearDAO"/>
 		<property name="voucherHelper" ref="voucherHelper"/>
 	</bean>
+	  <bean id="cbillService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+		<property name="type" value="org.egov.egf.bills.model.Cbill" />
+		</bean>
+	
 	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.recoveries.Recovery" />
 		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao"/>
@@ -272,6 +276,7 @@
     	 <constructor-arg ref="contraService"/>
          <constructor-arg value="org.egov.model.contra.ContraJournalVoucher"/>
     </bean> -->
+    <bean id="scriptService" class="org.egov.infra.script.service.ScriptService" scope="prototype" />
 	<bean id="contraBean" class="org.egov.model.contra.ContraBean" scope="prototype" />
 	<bean id="voucherTypeBean" class="org.egov.model.voucher.VoucherTypeBean" scope="prototype" />
 	<bean id="contraVoucher" class="org.egov.model.contra.ContraJournalVoucher" scope="prototype" />
@@ -300,6 +305,9 @@
    <bean id="commonMethodsImpl" class="com.exilant.eGov.src.transactions.CommonMethodsImpl" scope="prototype" />
 	<bean id="baseForm" class="org.egov.infra.web.struts.actions.BaseFormAction">
 		<property name="persistenceService"  ref="persistenceService" />
+	</bean>
+	<bean id="expenseBillPrint" class="org.egov.web.actions.bill.ExpenseBillPrintAction">
+	
 	</bean>
 	<bean id="common" class="org.egov.web.actions.voucher.CommonAction" parent="baseForm" scope="prototype" >
 		<property name="persistenceService"  ref="persistenceService" />

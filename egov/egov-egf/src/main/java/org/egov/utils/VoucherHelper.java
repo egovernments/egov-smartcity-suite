@@ -363,7 +363,7 @@ public class VoucherHelper {
 		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
 		HashMap<String,String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", employee.getCode());
-		List<EmployeeView> listEmployeeView =null;//Phoenix eisUtilService.getEmployeeInfoList(paramMap);
+		List<EmployeeView> listEmployeeView =new ArrayList<EmployeeView>();//Phoenix eisUtilService.getEmployeeInfoList(paramMap);
 		List<Department> departmentList = new ArrayList<Department> ();
 		for (EmployeeView employeeView : listEmployeeView) {
 			employeeView.getDepartment().getName();
@@ -381,6 +381,16 @@ public class VoucherHelper {
 			add(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 			add(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT);
 			add(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
+		}
+	};
+	public static final List<String> EXPENDITURE_TYPES = new ArrayList<String>() {
+		{
+			add(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+			add(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS);
+			add(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE);
+			add(FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY);
+			add(FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
+			
 		}
 	};
 	public static final List<String> CONTRAVOUCHER_NAMES = new ArrayList<String>() {

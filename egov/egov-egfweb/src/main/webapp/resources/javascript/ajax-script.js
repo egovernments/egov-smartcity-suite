@@ -46,7 +46,7 @@ function doLoadingMask() {
 }
 
 function undoLoadingMask() {
-	$('.loader-class').modal('hide');
+	jQuery('.loader-class').modal('hide');
 }
 
 jQuery(document).click(function() {

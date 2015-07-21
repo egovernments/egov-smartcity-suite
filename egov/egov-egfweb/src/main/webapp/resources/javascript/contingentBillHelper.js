@@ -37,6 +37,7 @@
 #   
 # In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+
 function validate(name,value)
 {
 
@@ -49,12 +50,12 @@ function validate(name,value)
 		return false;
 	}
 	
-	if(document.getElementById("nextLevel").value != "END"){
+	/*if(document.getElementById("nextLevel").value != "END"){
 		if(!validateUser(name,value)){
 			undoLoadingMask() ;
 			return false;
 		}
-	}
+	}*/
 
 	var len=billDetailsTableFinal.getRecordSet().getLength();
 	if( len!=undefined && len>=1)
@@ -761,7 +762,7 @@ function openSearchWindow(obj, type) {
 	var detailType=document.getElementById("commonBean.subledgerType").value;
 	//alert(detailType);
 	if(detailType != '' && detailType != null) {
-		var	url = "../voucher/common!searchEntites.action?accountDetailType="+detailType;
+		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailType;
 		window.open(url, 'Search','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
 		alert("Select the Subledger Type.");

@@ -38,17 +38,8 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
 <html>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %>
-
-<%@ taglib prefix="EGF" tagdir="/WEB-INF/tags"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
 <title><s:text name="contingent.bill"/></title>
 <sx:head/>
@@ -363,7 +354,7 @@ else if(button=="Save_New")
 
 {      	
 document.forms[0].button.value='';
-document.forms[0].action = "contingentBill!newform.action";
+document.forms[0].action = "contingentBill-newform.action";
 document.forms[0].submit();
 }
 }
@@ -396,7 +387,7 @@ if(table_name.getRecordSet().getLength()>=1)
 if(obj.value!=0)
 {
 
-var	url = path+"/voucher/common!ajaxLoadCheckList.action?billSubtypeId="+obj.value;
+var	url = path+"/voucher/common-ajaxLoadCheckList.action?billSubtypeId="+obj.value;
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -459,7 +450,7 @@ return true;
 
 
 function printPreview(){
-	document.forms[0].action='../bill/expenseBillPrint!print.action?id=<s:property value="billRegisterId"/>';
+	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
 
@@ -565,9 +556,9 @@ function printPreview(){
 </s:if>
 <s:else>
 	<div id="wfHistoryDiv">
-	  	<c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
+	  	<%-- <c:import url="/WEB-INF/jsp/workflow/workflowHistory.jsp" context="/egi">
 	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
-        </c:import>
+        </c:import> --%>
 	</div>
 	<table border="0" width="75%" cellspacing="0" align="center" ><tr></tr>
 		<tr>

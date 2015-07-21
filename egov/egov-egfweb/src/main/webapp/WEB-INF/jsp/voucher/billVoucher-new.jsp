@@ -37,28 +37,14 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------  -->
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<%@ include file="/includes/taglibs.jsp" %>
+
 <%@ page language="java"%>
-<%@ taglib uri="/tags/struts-bean" prefix="bean"%>
-<%@ taglib uri="/tags/struts-html" prefix="html"%>
-<%@ taglib uri="/tags/struts-logic" prefix="logic"%>
-<%@ taglib uri="/tags/struts-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
-<script type="text/javascript" src="/EGF/commonjs/ajaxCommonFunctions.js"></script>
-	
-		<script type="text/javascript" src="/EGF/exility/PageManager.js"></script>
-		<script type="text/javascript" src="/EGF/exility/PageValidator.js"></script>
-		<script type="text/javascript" src="/EGF/exility/data.js"></script>
-		<script type="text/javascript" src="/EGF/exility/ExilityParameters.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calender.js"></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/calendar.js" ></script>
-		<script type="text/javascript" src="/EGF/resources/javascript/dateValidation.js"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
 <title>Create Voucher</title>
 
 </head>
@@ -69,59 +55,69 @@
 			<jsp:include page="../budget/budgetHeader.jsp">
         		<jsp:param name="heading" value="Journal voucher search" />
 			</jsp:include>
-		<div class="formmainbox"><div class="formheading"/><div class="subheadnew">Create Voucher</div>
-		<div id="listid" style="display:block">
-		<br/>
-<div align="center">
-<font  style='color: red ;font-weight:bold'> 
-<p class="error-block" id="lblError" ></p>
-</font>
-<span class="mandatory">
+		<div class="formmainbox">
+			<div class="formheading">
+				<div class="subheadnew">Create Voucher</div>
+			</div>
+			<div id="listid" style="display:block">
+				<br/>
+				<div align="center">
+		<font  style='color: red ;font-weight:bold'> 
+				<p class="error-block" id="lblError" ></p>
+		</font>
+			<span class="mandatory1">
 
-<font  style='color: red ; font-weight:bold '> 
+			<font  style='color: red ; font-weight:bold '> 
 				<s:actionerror/>  
 				<s:fielderror />
-				<s:actionmessage /> </font>
+				<s:actionmessage /> 
+			</font>
 			</span>
 	<table border="0" width="100%">
-	<tr><td class="bluebox">Bill Type<span class="bluebox"><span class="mandatory">*</span></span></td><td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expTypeList"  headerKey="-1" headerValue="----Choose----"   /></td>
-	<td class="bluebox" id="deptLabel"><s:text name="voucher.department"/></td>
-	<td class="bluebox"><s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" value="voucherHeader.vouchermis.departmentid.id"/></td>
+		<tr>
+			<td class="bluebox">Bill Type<span class="bluebox"><span class="mandatory1">*</span></span></td>
+			<td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expTypeList"  headerKey="-1" headerValue="----Choose----"   /></td>
+			<td class="bluebox" id="deptLabel"><s:text name="voucher.department"/></td>
+			<td class="bluebox"><s:select name="vouchermis.departmentid" id="departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----" value="voucherHeader.vouchermis.departmentid.id"/></td>
 	
-</tr>
+		</tr>
 			
-			<tr>
+		<tr>
 				<td class="greybox">From Date</td>
 				<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 				<a href="javascript:show_calendar('billVoucher.voucherDateFrom');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				<td class="greybox">To Date</td>
 				<td class="greybox"><s:textfield name="voucherTypeBean.voucherDateTo" id="voucherDateTo" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 				<a href="javascript:show_calendar('billVoucher.voucherDateTo');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
-			</tr>
-			<tr>
+	   </tr>
+		<tr>
 					<td class="bluebox" ><s:text name="bill.Number"/> </td>
 					<td class="bluebox"><s:textfield name="billNumber" id="billNumber"  maxlength="50" value="%{billNumber}"/>
 					</td>
-			</tr>
+					<td class="bluebox" ></td>
+					<td class="bluebox" ></td>
+		</tr>
 		
 	</table>
-</div>
-	<br><br>
-     <div align="center">
-		
-		<table border="0" width="50%">
-		    <tr></tr>
-			<tr>
-				<td align="center">	
-					 <s:submit cssClass="buttonsubmit" value="Search" id="search" name="search"  method="lists" onclick="return validateSearch()"/></td>
-					<td align="center"> <s:reset id="Reset" value="Cancel" cssClass="buttonsubmit"/></td>
-					<td align="center"> <input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-				</td>
-			</tr>
-		</table>
+				</div>
+			<br><br>
+			</div>
 	</div>
+    	 <div align="center">
+		  <div class="buttonbottom" >
+			<table align="center">  
+				<tr>
+							
+						<td> <s:submit value="Search" onclick="return validateFormAndSubmit()" cssClass="buttonsubmit" />&nbsp;</td>
+						<td> <s:reset id="Reset" value="Cancel" cssClass="buttonsubmit"/>&nbsp;</td>
+						<td> <input type="button" value="Close" onclick="javascript:window.close()" class="button" />&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<s:if test="%{preApprovedVoucherList.size!=0 || preApprovedVoucherList!=null}">
 	<div id="listid" style="display:block">
-					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+					<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 			        <tr>  
 			        	<th class="bluebgheadtd">Sl. No.</th>
 			            <th class="bluebgheadtd">Bill Number</th>  
@@ -137,29 +133,31 @@
 				            <s:property value="#s.index+1" />  
 				        </td>
 						<td>  
-				            <a href="preApprovedVoucher!voucher.action?billid=<s:property value='%{id}'/>"><s:property value="%{billnumber}" /> </a> 
+				            <a href="preApprovedVoucher-voucher.action?billid=<s:property value='%{id}'/>"><s:property value="%{billnumber}" /> </a> 
 				        </td>
-				        <td>  
+				        <td style="text-align:center">  
 				            <s:date name="%{billdate}" format="dd/MM/yyyy"/>  
 				        </td>
 				        <td style="text-align:right">  
 				        	<s:text name="format.number" ><s:param value="%{billamount}"/></s:text>
 				        </td>
-				        <td  style="text-align:right">  
+				        <td  style="text-align:center">  
 				            <s:text name="format.number" ><s:param value="%{passedamount}"/></s:text>
 				        </td>
-				        <td>  
+				        <td style="text-align:center">  
 				            <s:property value="%{expendituretype}" />  
 				        </td>
-				         <td>  
-				            <s:property value="%{egBillregistermis.egDepartment.deptName}" />  
+				         <td style="text-align:center">  
+				            <s:property value="%{egBillregistermis.egDepartment.name}" />  
 				        </td>
 				    </tr>  
 				    </s:iterator>
 				</table>  
 			</div>
+		</s:if>
+		
 </s:form>
-<script>
+<script type="text/javascript">
 function onloadtask(){
 <s:iterator value="getActionErrors()" >
   document.getElementById("search").style.display="none";
@@ -171,6 +169,17 @@ function onloadtask(){
 </s:if>
 
 }
+function validateFormAndSubmit(){
+    if (validateSearch()) 
+        {
+        
+    	 document.billVoucher.action='${pageContext.request.contextPath}/voucher/billVoucher-lists.action';
+		 document.billVoucher.submit();
+		 
+        }else{
+			return false;
+		}
+}
 	function validateSearch(){
 	document.getElementById('lblError').innerHTML ="";
 	if((document.getElementById("expType").value) == -1 ){
@@ -178,7 +187,7 @@ function onloadtask(){
 		return false;
 	}
 	document.getElementById("departmentid").disabled=false;
-return true;;
+return true;
 }
 </script>
 </body>

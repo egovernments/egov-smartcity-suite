@@ -398,9 +398,9 @@ function loadCoa(id){
 	if(coaCode != 'undefined' && coaCode!=''){
 		var url;
 		if(isNaN(coaCode))
-			url = '/EGF/payment/advanceRequisitionPayment!ajaxLoadCoa.action?coaDescription='+coaCode;
+			url = '/EGF/payment/advanceRequisitionPayment-ajaxLoadCoa.action?coaDescription='+coaCode;
 		else
-			url = '/EGF/payment/advanceRequisitionPayment!ajaxLoadCoa.action?coaCode='+coaCode;
+			url = '/EGF/payment/advanceRequisitionPayment-ajaxLoadCoa.action?coaCode='+coaCode;
 	
 		var req2 = initiateRequest();
 		req2.onreadystatechange = function(){
@@ -547,7 +547,7 @@ function loadDropDownCodesForAccountDetailType(obj)
 	else
 		val=obj.value;
 		
-	var	url = path+"/voucher/common!ajaxLoadCodesOfDetailType.action?accountDetailType="+val;
+	var	url = path+"/voucher/common-ajaxLoadCodesOfDetailType.action?accountDetailType="+val;
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -583,7 +583,7 @@ function loadDropDownCodesForEntities(obj)
 	if(oAutoCompEntity)
 		oAutoCompEntity.destroy();
 	}	
-	var	url = path+"/voucher/common!ajaxLoadEntites.action?accountDetailType="+obj.value;
+	var	url = path+"/voucher/common-ajaxLoadEntites.action?accountDetailType="+obj.value;
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -608,7 +608,7 @@ function loadDropDownCodesForEntities(obj)
 function autocompleteEntitiesBy20()
 {
 		
-	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common!ajaxLoadEntitesBy20.action", [ "~^"]);
+	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	   var oAutoComp1 = new YAHOO.widget.AutoComplete('detailCode','codescontainer',oACDS);
@@ -703,7 +703,7 @@ var oAutoCompEntityForJV;
 function autocompleteEntities1By20(obj)
 {
   
-	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common!ajaxLoadEntitesBy20.action", [ "~^"]);
+	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadEntitesBy20.action", [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	 //alert(obj.name);
@@ -1029,7 +1029,7 @@ function fillNeibrAfterSplitFunction(obj)
 		if(functionValue=="" && functionId1==""){
 			alert("Invalid function selected .Please select code from auto complete.");
 			obj.value="";
-			document.getElementById("billDetailslist['+currRow+'].functionIdDetail").value="";
+			document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value="";
 		}else if(functionValue!="" && functionId1!="" && functionId2!="" && functionValue != temp[0] && functionId1==functionId2){
 			alert("Invalid function selected .Please select code from auto complete.");
 			obj.value="";
@@ -1225,7 +1225,7 @@ var onDropdownChange = function(index,obj) {
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById('subLedgerlist['+obj.value+'].subledgerCode').value =accountCode;
 		if(accountCode != '---Select---'){
-			var url = path+'/voucher/common!getDetailType.action?accountCode='+accountCode+'&index='+obj.value;
+			var url = path+'/voucher/common-getDetailType.action?accountCode='+accountCode+'&index='+obj.value;
 			var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 		}else{
 				var d = document.getElementById('subLedgerlist['+obj.value+'].detailType.id');
@@ -1402,7 +1402,7 @@ function validateDetailCode(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url = path+'/voucher/preApprovedVoucher!afillNeibrAfterSplitFunctionCommonjaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index;
+	var url = path+'/voucher/preApprovedVoucher-afillNeibrAfterSplitFunctionCommonjaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackPJV, null);
 }
 
@@ -1475,7 +1475,7 @@ function openSearchWindowFromJV(obj) {
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
 	if( detailtypeid != null && detailtypeid != 0) {
-		var	url = "../voucher/common!searchEntites.action?accountDetailType="+detailtypeid;
+		var	url = "../voucher/common-searchEntites.action?accountDetailType="+detailtypeid;
 		window.open(url, 'EntitySearch','resizable=no,scrollbars=yes,left=300,top=40, width=400, height=500');
 	} else {
 		alert("Select the Type.");
@@ -1506,7 +1506,7 @@ function validateDetailCodeForJV(obj)
 	var index = getRowIndex(obj);
 	var element = document.getElementById(SUBLEDGERLIST+'['+index+']'+'.detailType.id');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url = path+'/voucher/common!ajaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index;
+	var url = path+'/voucher/common-ajaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index='+index;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackPJV, null);
 }
 var callbackPJV = {
@@ -1535,7 +1535,7 @@ function validateDetailCodeCommon(obj)
 	//var index = getRowIndex(obj);
 	var element = document.getElementById('commonBean.subledgerType');
 	var detailtypeid = element.options[element.selectedIndex].value;
-	var url = path+'/voucher/common!ajaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index=0';
+	var url = path+'/voucher/common-ajaxValidateDetailCode.action?code='+obj.value+'&detailtypeid='+detailtypeid+'&index=0';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackCommon, null);
 }
 
@@ -2213,7 +2213,7 @@ success: function(o) {
 function autocompleteSchemeBy20()
 {
 		path="../..";
-	     oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common!ajaxLoadSchemeBy20.action", [ "~^"]);
+	     oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadSchemeBy20.action", [ "~^"]);
 	    // alert("helllpo");
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
@@ -2245,7 +2245,7 @@ function autocompleteSchemeBy20()
 function autocompleteSubSchemeBy20  ()
 {
 		path="../..";
-	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common!ajaxLoadSubSchemeBy20.action", [ "~^"]);
+	   oACDS = new YAHOO.widget.DS_XHR(path+"/voucher/common-ajaxLoadSubSchemeBy20.action", [ "~^"]);
 	   oACDS.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
 	   oACDS.scriptQueryParam = "startsWith";
 	   var oAutoComp1 = new YAHOO.widget.AutoComplete('subScheme.name','codescontainer',oACDS);
@@ -2278,7 +2278,7 @@ function loadProjectCodes()
 	var subSchemeId = document.getElementById('subSchemeId').value;
 	if(subSchemeId!=null && subSchemeId!="")
 	{
-	var url = path+'/voucher/common!ajaxLoadProjectCodesForSubScheme.action?subSchemeId='+subSchemeId;
+	var url = path+'/voucher/common-ajaxLoadProjectCodesForSubScheme.action?subSchemeId='+subSchemeId;
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackProjectCodes, null);
 	}
 }

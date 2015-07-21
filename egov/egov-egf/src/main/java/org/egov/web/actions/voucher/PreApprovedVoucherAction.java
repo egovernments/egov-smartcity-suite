@@ -108,16 +108,16 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results( {
         @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" }),
-        @Result(name = "view", location = "preApprovedVoucher-view.jsp")
+        @Result(name = "view", location = "preApprovedVoucher-view.jsp"),
+        @Result(name = PreApprovedVoucherAction.VOUCHEREDIT, location = "preApprovedVoucher-voucheredit.jsp"),
+        @Result(name = "billview", location = "preApprovedVoucher-billview.jsp")
         }
         )
-@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class PreApprovedVoucherAction extends BaseFormAction
 {
@@ -150,7 +150,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         private static final String ERROR="error";
 
         private static final String BILLID="billid";
-        private static final String VOUCHEREDIT="voucheredit";
+        protected static final String VOUCHEREDIT="voucheredit";
         private static final String VHID="vhid";
         private static final String CGN="cgn";
         private static final String VOUCHERQUERY=" from CVoucherHeader where id=?";
@@ -219,6 +219,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
         public String voucher()
         {
                 egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?", Long.valueOf(parameters.get(BILLID)[0]));
+                voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("egBillregister=="+egBillregister);
                 final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF","pjv_saveasworkingcopy_enabled");
                 final String pjv_wc_enabled = appList.get(0).getValue();
@@ -724,7 +725,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                 List<Map<String,Object>> tempList=new ArrayList<Map<String,Object>>();
                 List<Map<String,Object>> payeeList=new ArrayList<Map<String,Object>>();
 
-                List<EgBilldetails> egBillDetails = persistenceService.findAllBy("from EgBilldetails where  egBillregister.id=? order by  decode(debitamount,null,0, debitamount) desc ,decode(creditamount,null,0, creditamount) asc", egBillregister.getId());
+               List<EgBilldetails> egBillDetails = persistenceService.findAllBy("from EgBilldetails where  egBillregister.id=? ", egBillregister.getId());
 
                 for(EgBilldetails billdetails:egBillDetails)
                 {
