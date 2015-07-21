@@ -38,20 +38,28 @@
  */
 package org.egov.pgr.web.controller.complaint;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +70,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -81,9 +91,12 @@ public class ComplaintUpdationController {
     private SecurityUtils securityUtils;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    FileStoreService fileStoreService;
 
     @Autowired
-    public ComplaintUpdationController(final ComplaintService complaintService, final ComplaintTypeService complaintTypeService,
+    public ComplaintUpdationController(final ComplaintService complaintService,
+            final ComplaintTypeService complaintTypeService,
             final ComplaintStatusMappingService complaintStatusMappingService, final SmartValidator validator) {
         this.complaintService = complaintService;
         this.complaintTypeService = complaintTypeService;
@@ -112,16 +125,18 @@ public class ComplaintUpdationController {
             model.addAttribute("ward", Collections.EMPTY_LIST);
             model.addAttribute("zone",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
-            if (complaint.getComplaintType().isLocationRequired() && complaint.getLocation() != null)
-                model.addAttribute("ward",
-                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            if (complaint.getComplaintType().isLocationRequired() && null != complaint.getLocation()
+                    && null != complaint.getLocation().getParent())
+                model.addAttribute("ward", boundaryService
+                        .getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             return COMPLAINT_EDIT;
         }
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@ModelAttribute Complaint complaint, final BindingResult errors, final RedirectAttributes redirectAttrs,
-            final Model model, final HttpServletRequest request) {
+    public String update(@ModelAttribute Complaint complaint, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
+            @RequestParam("files") final MultipartFile[] files) {
         // this validation is common for citizen and official. Any more
         // specific
         // validation required for official then write different method
@@ -137,6 +152,8 @@ public class ComplaintUpdationController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+        if (files != null)
+            complaint.getSupportDocs().addAll(addToFileStore(files));
         if (!errors.hasErrors()) {
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
@@ -149,10 +166,10 @@ public class ComplaintUpdationController {
             model.addAttribute("zone",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired()
-                    && complaint.getLocation() != null)
-                model.addAttribute("ward",
-                        boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+            if (null != complaint.getComplaintType() && complaint.getComplaintType().isLocationRequired()
+                    && null != complaint.getLocation() && null != complaint.getLocation().getParent())
+                model.addAttribute("ward", boundaryService
+                        .getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else
@@ -166,7 +183,8 @@ public class ComplaintUpdationController {
         return new ModelAndView("complaint/reg-success", "complaint", complaint);
     }
 
-    private void validateUpdate(final Complaint complaint, final BindingResult errors, final HttpServletRequest request) {
+    private void validateUpdate(final Complaint complaint, final BindingResult errors,
+            final HttpServletRequest request) {
         if (complaint.getStatus() == null)
             errors.addError(new ObjectError("status", "Complaint Status is required"));
 
@@ -174,4 +192,17 @@ public class ComplaintUpdationController {
             errors.addError(new ObjectError("approvalComent", "Complaint coments Cannot be null"));
     }
 
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), PGRConstants.MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return null;
+    }
 }

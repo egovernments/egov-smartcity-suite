@@ -49,16 +49,14 @@
 		</div>
 	</div>
 	<div class="panel-body">
-
 		<form:form id="complaintUpdate" modelAttribute="complaint"
 			method="post" role="form"
-			class="form-horizontal form-groups-bordered">
+			class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="form-group">
 				<div class="col-md-3 col-xs-6 add-margin">
 					<spring:message code="lbl.change.status" />
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
-
 					<form:select path="status" data-first-option="false" id="status"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:options items="${status}" itemValue="id" itemLabel="name" />
@@ -78,7 +76,6 @@
 					<form:errors path="complaintType" cssClass="error-msg" />
 				</div>
 			</div>
-
 			<div class="form-group">
 				<div class="col-md-3 col-xs-12 add-margin">
 					<spring:message code="lbl.change.jurisdiction" />
@@ -108,7 +105,6 @@
 					<form:errors path="location" cssClass="error-msg" />
 				</div>
 			</div>
-
 			<div class="form-group">
 				<label class="col-md-3 col-xs-12">Forward Complaint To</label>
 				<div class="col-md-3 col-xs-12 add-margin">
@@ -153,18 +149,44 @@
 					<textarea class="form-control" id="inc_messge" placeholder="" required="required"
 						maxlength="400" name="approvalComent"></textarea>
 				</div>
+			</div>  
+			<div class="form-group">
+				<div class="col-sm-3 col-xs-12">
+					<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
+					<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
+					<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
+					<input type="file" id="file3" name="files" data-id="3" class="filechange inline btn" style="display:none;"/>
+				</div>
+				<div class="col-sm-6 col-xs-12">
+					<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+						<img id="preview1" src="#" alt="" class="display-hide "/>
+						<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="add-padding" id="filename1"></div>
+					</div>
+					<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
+						<img id="preview2" src="#" alt="" class="display-hide"/>
+						<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="add-padding" id="filename2"></div>
+					</div>
+					<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
+						<img id="preview3" src="#" alt="" class="display-hide"/>
+						<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="add-padding" id="filename3"></div>
+					</div>
+				</div>
 			</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type="submit" class="btn btn-success">
-				<spring:message code="lbl.submit" />
-			</button>
-			<button type="reset" class="btn btn-default">
-				<spring:message code="lbl.reset" />
-			</button>
-			<button type="button" class="btn btn-default" onclick="window.close();">Close</button>   
-		</div>
+			<div class="form-group">
+				<div class="text-center">
+					<button type="submit" class="btn btn-success">
+						<spring:message code="lbl.submit" />
+					</button>
+					<button type="reset" class="btn btn-default">
+						<spring:message code="lbl.reset" />
+					</button>
+					<button type="button" class="btn btn-default" onclick="window.close();">Close</button>   
+				</div>
+			</div>
+		</form:form>
 	</div>
-	</form:form>
 </div>
-</div>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
