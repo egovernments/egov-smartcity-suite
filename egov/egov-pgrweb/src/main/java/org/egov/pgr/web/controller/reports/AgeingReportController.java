@@ -78,7 +78,7 @@ public class AgeingReportController {
 //TODO: boundary.. they will add at complaint level.
   
         
-        SQLQuery ageingreportQuery = ageingReportService.getageingReport(fromDate, toDate, status,complaintDateType);
+        SQLQuery ageingreportQuery = ageingReportService.getageingReport(fromDate, toDate, status,complaintDateType,mode);
         ageingreportQuery.setResultTransformer(Transformers.aliasToBean(AgeingReportResult.class));
         List<AgeingReportResult> ageingresult=  ageingreportQuery.list();
         

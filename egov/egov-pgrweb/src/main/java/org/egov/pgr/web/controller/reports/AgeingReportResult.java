@@ -9,6 +9,8 @@ public class AgeingReportResult {
     private BigInteger btw15to45=BigInteger.ZERO;
     private BigInteger lsthn15=BigInteger.ZERO;
     private String complainttype;
+    private String name;
+    
     private BigInteger total=BigInteger.ZERO;
     public String getZoneName() {
         return zoneName;
@@ -51,6 +53,12 @@ public class AgeingReportResult {
     }
     public void setTotal(BigInteger total) {
         this.total = total;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

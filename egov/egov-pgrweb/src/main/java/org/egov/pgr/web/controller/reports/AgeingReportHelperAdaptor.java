@@ -14,8 +14,8 @@ public class AgeingReportHelperAdaptor implements JsonSerializer<AgeingReportRes
         JsonObject jsonObject = new JsonObject();
         if (ageingReportObject != null) {
             
-            jsonObject.addProperty("complainttype", null != ageingReportObject.getComplainttype() ? ageingReportObject
-                    .getComplainttype().toString(): "Not Available");
+            jsonObject.addProperty("complainttype", null != ageingReportObject.getName()? ageingReportObject
+                    .getName().toString(): "Not Available");
              jsonObject.addProperty("grtthn90", null != ageingReportObject.getGrtthn90() ? ageingReportObject
                     .getGrtthn90().toString(): "0");
              jsonObject.addProperty("btw45to90", null != ageingReportObject.getBtw45to90() ? ageingReportObject
