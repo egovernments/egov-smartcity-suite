@@ -60,14 +60,12 @@
 		</s:if>
 		<s:else><s:text name="masters.subscheme.search.title"/>	 </s:else>
 		</div>
-		</div>
-		<s:actionerror/>  
-		<s:fielderror />
+		
 		<s:form name="subSchemeForm" action="subScheme" theme="simple">
 		
 			<s:hidden name="showMode"  />
 			
-			<table align="center" width="99.5%" cellpadding="0" cellspacing="0" style="margin-left:10px;border:1px solid #F2851F;border-top:none;">
+			<table align="center" width="99.5%" cellpadding="0" cellspacing="0">
 			   <tr>
 					<td class="greybox">&nbsp</td>
 					<td class="greybox">&nbsp</td>
@@ -199,6 +197,11 @@
 			<br />
 
 		</s:form>
+		
+		</div>
+		<s:actionerror/>  
+		<s:fielderror />
+		
 
 		<script>
 		

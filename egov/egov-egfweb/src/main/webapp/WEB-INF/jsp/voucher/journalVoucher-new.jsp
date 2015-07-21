@@ -74,7 +74,6 @@
 	<div class="subheadnew">Journal Voucher
 	</div>
 		<div id="listid" style="display:block">
-		<br/>
 <div align="center">
 <font  style='color: red ; font-weight:bold '> 
 <p class="error-block" id="lblError" ></p></font>

@@ -540,10 +540,21 @@ td.bluebox.setborder, td.greybox.setborder{
 }
 
 .yui-skin-sam .yui-dt th {
+  color:#fff;
   background: #84B1AD;
   border-right: 1px solid #84B1AD;
 }
 
 .yui-skin-sam .yui-dt td {
   border-right: 1px solid #84B1AD;
+}
+
+div.subheadnew {
+  font-family: semibold;
+  font-size: 16px;
+  font-weight: bold;
+  color: #F5861F;
+  text-align: center;
+  padding: 15px 15px;
+  background:#fff;
 }

@@ -863,6 +863,7 @@ footer.main{
 	padding:0 20px;
 	font-size:13px;
 	color: rgb(116, 101, 101);
+	text-align:left;
 }
 
 footer.main a{
