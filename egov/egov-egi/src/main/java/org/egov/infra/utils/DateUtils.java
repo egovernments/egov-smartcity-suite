@@ -49,6 +49,10 @@ public class DateUtils {
         return new DateTime(date).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
     }
 
+    public static DateTime endOfToday() {
+        return new DateTime().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+    }
+    
     public static Date startOfDay(final Date date) {
         return new DateTime().withTimeAtStartOfDay().toDate();
     }

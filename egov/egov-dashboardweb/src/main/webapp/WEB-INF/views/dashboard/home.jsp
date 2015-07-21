@@ -69,17 +69,17 @@
 					</div>
 					<div class="row">
 	              		<div class="col-lg-4 col-md-4 col-sm-4">
-	              			<a href="revenuedashboard/home.do" class="xa">
+	              			<a href="/pgr/dashboard/home" class="xa">
 	              				<div id="newtimeLineCompTrend" class="chart-style" style="min-height: 300px;"></div>
 	                  		</a>
 	              		</div>
 	              		<div class="col-lg-4 col-md-4 col-sm-4">
-	            			<a href="pgrdashboard/home.do?isdefault=false" class="xa">
+	            			<a href="/pgr/dashboard/home" class="xa">
 	            				<div id="slaGraph" class="chart-style" style="min-height: 300px;" ></div>
 	                  		</a>
 	              		</div>
 	              		<div class="col-lg-4 col-md-4 col-sm-4">
-	              			<a href="expendashboard/home.do" class="xa">
+	              			<a href="/pgr/dashboard/home" class="xa">
 	                  			<div id="overviewGraph" class="chart-style" style="min-height: 300px;"></div>
 	                  		</a>
 	              		</div>
