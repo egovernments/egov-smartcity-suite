@@ -189,4 +189,10 @@
 		</form:form>
 	</div>
 </div>
+<script>
+var zoneId= '${complaint.location.parent.id}';
+if(zoneId !== ''){
+	$("#ct-sel-jurisd").val(zoneId);    
+}else $("#ct-sel-jurisd").val('');     
+</script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
