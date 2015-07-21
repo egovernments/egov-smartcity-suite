@@ -46,8 +46,6 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
@@ -70,7 +68,7 @@
 						
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.heirarchyType"/><small><i class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.heirarchyType"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:select path="hierarchyType"
 		                                         id="hierarchyTypes" cssClass="form-control" cssErrorClass="form-control error" required="required">
@@ -81,7 +79,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryType"/><small><i class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryType"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>
@@ -106,6 +104,4 @@
 				</form:form>
 				</c:if>
 			</div>
-        </div>
-    </div>
 </div>

@@ -46,8 +46,6 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
@@ -98,8 +96,6 @@
 			</div>
 		</form:form>
 			</div>
-        </div>
-    </div>
 </div>
 
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
