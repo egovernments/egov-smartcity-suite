@@ -33,61 +33,55 @@ public class AgeingReportController {
 
     @Autowired
     private AgeingReportService ageingReportService;
-    
-   
+
     @Autowired
     public AgeingReportController(final AgeingReportService ageingReportService) {
-        this.ageingReportService=ageingReportService;
+        this.ageingReportService = ageingReportService;
     }
+
     @ModelAttribute
-    public void getReportHelper( final Model model) {
-         ReportHelper reportHealperObj= new ReportHelper();
-       
-        Map<String,String> status = new LinkedHashMap<String,String>();
+    public void getReportHelper(final Model model) {
+        ReportHelper reportHealperObj = new ReportHelper();
+
+        Map<String, String> status = new LinkedHashMap<String, String>();
         status.put("Completed", "Completed");
         status.put("Pending", "Pending");
         model.addAttribute("status", status);
-        
-/*        Map<String,String>  groupBy= new LinkedHashMap<String,String>();   
-        groupBy.put("Department", "Department");
-        groupBy.put("Zone", "Zone");
-        model.addAttribute("groupByList", groupBy);
-        reportHealperObj.setGroupBy("Department");*/
         model.addAttribute("reportHelper", reportHealperObj);
-        
+
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByBoundary")
-    public String searchAgeingReportByBoundaryForm( final Model model) {
+    public String searchAgeingReportByBoundaryForm(final Model model) {
         model.addAttribute("mode", "ByBoundary");
-        return "ageing-search"; 
+        return "ageing-search";
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByDept")
-    public String searchAgeingReportByDepartmentForm( final Model model) {
+    public String searchAgeingReportByDepartmentForm(final Model model) {
         model.addAttribute("mode", "ByDepartment");
         return "ageing-search";
     }
-     
+
     @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/ageing/resultList-update", method = RequestMethod.GET) 
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam String mode,@RequestParam String complaintDateType,@RequestParam DateTime fromDate ,@RequestParam String status,@RequestParam DateTime toDate, final HttpServletRequest request,
- final HttpServletResponse response)
+    @RequestMapping(value = "/ageing/resultList-update", method = RequestMethod.GET)
+    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam String mode,
+            @RequestParam String complaintDateType, @RequestParam DateTime fromDate, @RequestParam String status,
+            @RequestParam DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
-        
-//TODO: IF COMPLETED STATUS, THEN USE EG_WF_state createddate.
-//TODO: if zone or department is null, then add it under not stated case.
-//TODO: boundary.. they will add at complaint level.
-  
-        
-        SQLQuery ageingreportQuery = ageingReportService.getageingReport(fromDate, toDate, status,complaintDateType,mode);
+
+        SQLQuery ageingreportQuery = ageingReportService.getageingReport(fromDate, toDate, status, complaintDateType,
+                mode);
         ageingreportQuery.setResultTransformer(Transformers.aliasToBean(AgeingReportResult.class));
-        List<AgeingReportResult> ageingresult=  ageingreportQuery.list();
-        
+        List<AgeingReportResult> ageingresult = ageingreportQuery.list();
+
         String result = new StringBuilder("{ \"data\":").append(toJSON(ageingresult)).append("}").toString();
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
 
     }
+
     private Object toJSON(final Object object) {
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -95,6 +89,6 @@ public class AgeingReportController {
                 .create();
         final String json = gson.toJson(object);
         return json;
-    
+
     }
 }
