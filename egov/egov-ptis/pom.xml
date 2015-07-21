@@ -276,11 +276,11 @@
 			<artifactId>jasperreports-plugin</artifactId>
 			<version>1.6</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-		</dependency>-->
+		</dependency>
 		
 		<!-- RESTFUL WEBSERVICE START -->
 		<dependency>
