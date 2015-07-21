@@ -9,7 +9,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title>${model.citiname} Smart City Dashboard</title>
+		<title>${sessionScope.cityname} Smart City Dashboard</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
 		<!-- link rel="stylesheet" href="resources/bootstrap/v3.3.1/css/bootstrap-theme.min.css">
@@ -32,10 +32,6 @@
 
 			var pgrRegdTrend = [0,0,0,0,0,0,0];
 			var pgrCompletionTrend = [0,0,0,0,0,0,0];
-			var revenueTrend = {"actual":[],"targeted":[]};
-			var paymentTrend = [{"amt":".003","name":"303202-Anti Mosquito Operation","y":0.05},{"amt":"5","name":"202500-Storm Water Drains","y":99.95}];		
-			var revenueTrendForWeek = [{"name":"Mon-13","y":0.0,"tooltipFormat":"Monday, 13 Jul 2015"},{"name":"Tue-14","y":0.0,"tooltipFormat":"Tuesday, 14 Jul 2015"},{"name":"Wed-15","y":0.0,"tooltipFormat":"Wednesday, 15 Jul 2015"},{"name":"Thu-16","y":0.0,"tooltipFormat":"Thursday, 16 Jul 2015"},{"name":"Fri-17","y":0.0,"tooltipFormat":"Friday, 17 Jul 2015"},{"name":"Sat-18","y":0.0,"tooltipFormat":"Saturday, 18 Jul 2015"},{"name":"Sun-19","y":0.0,"tooltipFormat":"Sunday, 19 Jul 2015"}];
-			var paymentTrendForWeek = [{"name":"Tue-14","y":0.0,"tooltipFormat":"Tuesday, 14 Jul 2015"},{"name":"Wed-15","y":0.0,"tooltipFormat":"Wednesday, 15 Jul 2015"},{"name":"Thu-16","y":0.0,"tooltipFormat":"Thursday, 16 Jul 2015"},{"name":"Fri-17","y":0.0,"tooltipFormat":"Friday, 17 Jul 2015"},{"name":"Sat-18","y":0.0,"tooltipFormat":"Saturday, 18 Jul 2015"},{"name":"Sun-19","y":0.0,"tooltipFormat":"Sunday, 19 Jul 2015"},{"name":"Mon-20","y":0.0,"tooltipFormat":"Monday, 20 Jul 2015"}];
 		</script>		
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -47,7 +43,7 @@
     <body id="page-top" data-spy="scroll" />
     	<div class="cover" id="cover"></div>
     	<div class="preloader-container" id="preloader-container">
-    		<div class="preloader-logo">eGov<img src="resources/img/mask.gif">Dashboard</div>
+    		<div class="preloader-logo">eGov<img src="resources/images/mask.gif">Dashboard</div>
     	</div>
     	
     	<header class="intro">
@@ -55,7 +51,7 @@
           		<div class="container-fluid">
           			 <div class="row">
 	            		<div class="col-xs-12">
-	            			<a href="pgrdashboard/home.do?isdefault=false" class="xa">
+	            			<a href="/pgr/dashboard/home" class="xa">
 	                  		  <div class="panel-footer-new">
 	                          	<font class="text-center" style="font-size: 18px;">COMPLAINTS</font>
 	                          </div>

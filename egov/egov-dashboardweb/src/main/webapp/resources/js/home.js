@@ -2,113 +2,242 @@ var today = Date.today();
 var aWeekBack = Date.today().add({ days: -6 });
 var aWeekBackFmt = aWeekBack.getDate()+"/"+Date.CultureInfo.abbreviatedMonthNames[aWeekBack.getMonth()];
 var todayFmt = today.getDate()+"/"+Date.CultureInfo.abbreviatedMonthNames[today.getMonth()];
-
-$('#newtimeLineCompTrend').highcharts({
-	chart : {
-		borderRadius:'5px'
-	},
-    title: {
-        text: ''
-    },
-    xAxis: {
-        type: 'datetime',
-        tickInterval: 24 * 3600 * 1000,
-        dateTimeLabelFormats: {
-            day: '%a-%e'
-        },
-        labels: {
-            rotation: -45,
-            style: {
-                fontSize: 'xx-small',
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    
-    },
-    yAxis: {
-        title: {
-        	text: 'No. of Complaints'
-        },
-        min:0,
-		allowDecimals:false
-    },
-    tooltip: {
-        crosshairs: true,
-        shared: true
-    },
-    legend: {
-        enabled: true,
-        layout: 'vertical',
-        align: 'left',
-        verticalAlign: 'top',
-        x: 50,
-        y: 10,
-        symbolHeight:7,
-        symbolWidth:7,
-        floating: true,
-        borderWidth: 1,
-        itemStyle: {
-            font: 'xx-small Verdana, sans-serif'
-        }
-    },credits: {
-        enabled: false
-    },
-    exporting: { enabled: false },
-    plotOptions: {
-        area: {
-            fillColor: {
-                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
-                stops: [
-                    [0, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                ]
-            },
-            marker: {
-                radius: 2
-            },
-            lineWidth: 1,
-            states: {
-                hover: {
-                    lineWidth: 1
-                }
-            },
-            threshold: null
-        },
-        line:{        	 
-             marker: {
-                 radius: 2
-             },
-        	lineWidth: 1.5,
-            states: {
-                hover: {
-                    lineWidth: 1.5
-                }
-            }
-        }
-    },
-    
-    series: [{
-        name: 'Registered',
-        type: 'area',
-        pointInterval: 24 * 3600 * 1000,
-        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
-        yAxis: 0,
-        data: pgrRegdTrend,
-	    pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
-
-    }, {
-        name: 'Resolved',
-        type: 'line',
-        color:"#3C6EA1",
-        pointInterval: 24 * 3600 * 1000,
-        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
-        data: pgrCompletionTrend,
-        pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
-    }]
-});
-
 var aDayBefore = Date.today().add({ days: -1 });;
 var sevenDaysBack = Date.today().add({ days: -7 });
+
+$.ajax({url:"/pgr/dashboard/xyz",
+	cache:false
+}).done(function(pgrTrendData) {
+	$('#newtimeLineCompTrend').highcharts({
+		chart : {
+			borderRadius:'5px'
+		},
+	    title: {
+	        text: ''
+	    },
+	    xAxis: {
+	        type: 'datetime',
+	        tickInterval: 24 * 3600 * 1000,
+	        dateTimeLabelFormats: {
+	            day: '%a-%e'
+	        },
+	        labels: {
+	            rotation: -45,
+	            style: {
+	                fontSize: 'xx-small',
+	                fontFamily: 'Verdana, sans-serif'
+	            }
+	        }
+	    
+	    },
+	    yAxis: {
+	        title: {
+	        	text: 'No. of Complaints'
+	        },
+	        min:0,
+			allowDecimals:false
+	    },
+	    tooltip: {
+	        crosshairs: true,
+	        shared: true
+	    },
+	    legend: {
+	        enabled: true,
+	        layout: 'vertical',
+	        align: 'left',
+	        verticalAlign: 'top',
+	        x: 50,
+	        y: 10,
+	        symbolHeight:7,
+	        symbolWidth:7,
+	        floating: true,
+	        borderWidth: 1,
+	        itemStyle: {
+	            font: 'xx-small Verdana, sans-serif'
+	        }
+	    },credits: {
+	        enabled: false
+	    },
+	    exporting: { enabled: false },
+	    plotOptions: {
+	        area: {
+	            fillColor: {
+	                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
+	                stops: [
+	                    [0, Highcharts.getOptions().colors[0]],
+	                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+	                ]
+	            },
+	            marker: {
+	                radius: 2
+	            },
+	            lineWidth: 1,
+	            states: {
+	                hover: {
+	                    lineWidth: 1
+	                }
+	            },
+	            threshold: null
+	        },
+	        line:{        	 
+	             marker: {
+	                 radius: 2
+	             },
+	        	lineWidth: 1.5,
+	            states: {
+	                hover: {
+	                    lineWidth: 1.5
+	                }
+	            }
+	        }
+	    },
+	    
+	    series: [{
+	        name: 'Registered',
+	        type: 'area',
+	        pointInterval: 24 * 3600 * 1000,
+	        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
+	        yAxis: 0,
+	        data: pgrTrendData[0],
+		    pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+
+	    }, {
+	        name: 'Resolved',
+	        type: 'line',
+	        color:"#3C6EA1",
+	        pointInterval: 24 * 3600 * 1000,
+	        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
+	        data: pgrTrendData[1],
+	        pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+	    }]
+	});
+});
+
+
+//PGR aggregate line chart
+$.ajax({url:"/pgr/dashboard/aggrCntMonthwiseLine",
+	cache:false
+}).done(function(linedata) {
+	$('#slaGraph').highcharts({
+        chart: {
+        	borderRadius:'5px'
+        },
+        title: {
+            text: ''
+        },
+        exporting:{
+        	enabled:false
+        },
+        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
+            return {
+                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                stops: [
+                        [0, color],
+                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                ]
+            };
+        }),
+        credits:{
+        	enabled:false
+        },
+        legend:{
+        	enabled:false
+        },
+        xAxis: [{
+            type : 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: 'xx-small',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        }],
+        yAxis: {
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            title: {
+            	text:'No.of Complaints',
+            	style:{
+                    fontSize: '15px'
+                },
+                verticalAlign:'bottom'
+            }
+        },
+        series: [{
+            name: 'Complaint Count',
+            type: 'line',
+            data: linedata,
+            tooltip: {
+                valueSuffix: ''
+            }
+        }]
+    });
+});
+
+$.ajax({url:"/pgr/dashboard/overviewPie",
+	cache:true
+}).done(function(piedata) {
+	$('#overviewGraph').highcharts({
+	    chart: {
+	    	borderRadius:'5px'
+	        },
+	        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
+	            return {
+	                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+	                stops: [
+	                        [0, color],
+	                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+	                ]
+	            };
+	        }),
+	        exporting: { enabled: false },
+	        credits: {
+	            enabled: false
+	        },
+	        title: {
+	            text: 'Complaint type Breakup',
+	            style:{
+	                   fontSize: '15px'
+	                }  
+	        },
+	        legend:{
+	            symbolHeight:7,
+	            symbolWidth:7,
+	            itemStyle: {
+	                font: 'smaller Verdana, sans-serif'
+	            }
+	        },
+	        tooltip: {
+	            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	        },
+	        plotOptions: {
+	            pie: {
+	            	showInLegend: false,
+		            allowPointSelect: true,
+		            cursor: 'pointer',
+		            dataLabels: {
+		                enabled: true,
+		                distance: -30,
+						color:'white',
+						style:{'fontSize':'xx-small'},
+		                formatter: function() {
+		                    return this.percentage.toFixed(1)+'%';
+		                }
+		            }
+	            }
+	        },
+	        series: [{
+	            type: 'pie',
+	            name: 'Complaint Type Share',
+	            data: piedata
+	        }]
+	    });
+});
+
 
 /*$('#newtimeLineRevenueTrend').highcharts({
 	chart : {
@@ -182,7 +311,7 @@ var sevenDaysBack = Date.today().add({ days: -7 });
         data: revenueTrend,
         pointEnd: Date.UTC(aDayBefore.getFullYear(), aDayBefore.getMonth(), aDayBefore.getDate())
     }]
-});*/
+});
 
 $('#newtimeLinePaymentTrend').highcharts({
 	chart : {
@@ -545,66 +674,6 @@ $('#timeLinePaymentTrend').highcharts({
 		        data: piedata
 		    }]
 		});
-	});*/
-	
-	$.ajax({url:"pgrdashboard/overviewPie.do",
-		cache:true
-	}).done(function(piedata) {
-		$('#overviewGraph').highcharts({
-		    chart: {
-		    	borderRadius:'5px'
-		        },
-		        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
-		            return {
-		                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-		                stops: [
-		                        [0, color],
-		                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-		                ]
-		            };
-		        }),
-		        exporting: { enabled: false },
-		        credits: {
-		            enabled: false
-		        },
-		        title: {
-		            text: 'Complaint type Breakup',
-		            style:{
-		                   fontSize: '15px'
-		                }  
-		        },
-		        legend:{
-		            symbolHeight:7,
-		            symbolWidth:7,
-		            itemStyle: {
-		                font: 'smaller Verdana, sans-serif'
-		            }
-		        },
-		        tooltip: {
-		            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-		        },
-		        plotOptions: {
-		            pie: {
-		            	showInLegend: false,
-			            allowPointSelect: true,
-			            cursor: 'pointer',
-			            dataLabels: {
-			                enabled: true,
-			                distance: -30,
-							color:'white',
-							style:{'fontSize':'xx-small'},
-			                formatter: function() {
-			                    return this.percentage.toFixed(1)+'%';
-			                }
-			            }
-		            }
-		        },
-		        series: [{
-		            type: 'pie',
-		            name: 'Complaint Type Share',
-		            data: piedata
-		        }]
-		    });
 	});
 	
 	
@@ -825,68 +894,6 @@ $('#timeLinePaymentTrend').highcharts({
 		        }]
 		    });
 	
+	*/
 	
-	//PGR aggregate line chart
-	$.ajax({url:"pgrdashboard/aggrCntMonthwiseLine.do",
-		cache:false
-	}).done(function(linedata) {
-		$('#slaGraph').highcharts({
-	        chart: {
-	        	borderRadius:'5px'
-	        },
-	        title: {
-	            text: ''
-	        },
-	        exporting:{
-	        	enabled:false
-	        },
-	        colors: Highcharts.map(Highcharts.getOptions().colors, function(color) {
-	            return {
-	                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-	                stops: [
-	                        [0, color],
-	                        [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-	                ]
-	            };
-	        }),
-	        credits:{
-	        	enabled:false
-	        },
-	        legend:{
-	        	enabled:false
-	        },
-	        xAxis: [{
-	            type : 'category',
-	            labels: {
-                    rotation: -45,
-                    style: {
-                        fontSize: 'xx-small',
-                        fontFamily: 'Verdana, sans-serif'
-                    }
-                }
-	        }],
-	        yAxis: {
-	            plotLines: [{
-	                value: 0,
-	                width: 1,
-	                color: '#808080'
-	            }],
-	            title: {
-	            	text:'No.of Complaints',
-	            	style:{
-	                    fontSize: '15px'
-	                },
-	                verticalAlign:'bottom'
-	            }
-	        },
-	        series: [{
-	            name: 'Complaint Count',
-	            type: 'line',
-	            data: linedata,
-	            tooltip: {
-	                valueSuffix: ''
-	            }
-	        }]
-	    });
-	});
   	
