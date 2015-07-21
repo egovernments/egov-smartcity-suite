@@ -103,7 +103,8 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
         // TODO Improve this code
-        boundaryService.getBoundaryByNameLike(locationName).stream().forEach(location -> {
+        String locationNameLike="%" + locationName + "%";
+        boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType("Ward","ADMINISTRATION",locationNameLike).stream().forEach(location -> {
             locationJSONData.append("{\"name\":\"");
             if (location.isRoot())
                 locationJSONData.append(location.getName());

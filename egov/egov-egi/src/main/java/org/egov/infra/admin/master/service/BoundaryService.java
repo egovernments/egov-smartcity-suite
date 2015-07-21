@@ -189,4 +189,8 @@ public class BoundaryService {
         else
             return false;
     }
+    
+    public List<Boundary> getBondariesByNameAndBndryTypeAndHierarchyType(final String boundaryTypeName, final String hierarchyTypeName, final String name) {
+        return boundaryRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName,name);
+    }
 }
