@@ -63,6 +63,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -150,8 +151,13 @@ public class Complaint extends StateAware {
     @Column(name = "escalation_date", nullable = false)
     private Date escalationDate;
 
+    @ManyToOne
+    @JoinColumn(name = "department", nullable = false)
+    private Department department;
+
     /*
-     * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
+     * For indexing the below fields are kept. These will not be added to the
+     * database. This will be available only in index.
      */
     @Searchable(group = Searchable.Group.CLAUSES)
     @Transient
@@ -313,8 +319,15 @@ public class Complaint extends StateAware {
     }
 
     public void setEscalationDate(final DateTime escalationDate) {
-        this.escalationDate = null == escalationDate ? null : escalationDate
-                .toDate();
+        this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(final Department department) {
+        this.department = department;
     }
 
     public void setUlb(final String ulb) {
@@ -379,13 +392,9 @@ public class Complaint extends StateAware {
 
     @Override
     public String getStateDetails() {
-        final DateTimeFormatter formatter = DateTimeFormat
-                .forPattern("dd-MM-yyyy hh:mm a");
-        return String
-                .format("Complaint Number %s for %s filed on %s. Date of resolution %s",
-                        getCrn(), getComplaintType().getName(),
-                        formatter.print(getCreatedDate()),
-                        formatter.print(getEscalationDate()));
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
+                getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
     }
 
 }

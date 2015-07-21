@@ -95,7 +95,7 @@
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDepartment" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
-						<c:out value="${complaint.complaintType.department.name}"></c:out>
+						<c:out value="${complaint.department.name}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-filedvia">

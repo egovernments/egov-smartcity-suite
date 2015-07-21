@@ -50,6 +50,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -143,6 +144,9 @@ public class ComplaintService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private AssignmentService assignmentService;
+
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) {
@@ -156,6 +160,13 @@ public class ComplaintService {
             complaint.getComplainant().setMobile(user.getMobileNumber());
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
+        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
+            final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+            if (bndryId != null && bndryId != 0L) {
+                final Boundary location = boundaryService.getBoundaryById(bndryId);
+                complaint.setLocation(location);
+            }
+        }
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
                 .withComments("Complaint registered with Complaint Number : " + complaint.getCrn())
@@ -164,14 +175,11 @@ public class ComplaintService {
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
         complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
-        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
-            final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-            if (bndryId != null && bndryId != 0L) {
-                final Boundary location = boundaryService.getBoundaryById(bndryId);
-                complaint.setLocation(location);
-            }
 
-        }
+        if (null != complaint.getComplaintType() && null != complaint.getComplaintType().getDepartment())
+            complaint.setDepartment(complaint.getComplaintType().getDepartment());
+        else if (null != assignee)
+            complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
         final CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
         complaint.setUlb(cityWebsite.getCityName());
@@ -203,6 +211,8 @@ public class ComplaintService {
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
+            complaint.setDepartment(
+                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
             LOG.debug("Terminating Complaint Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).end().withComments(approvalComent)
@@ -212,10 +222,11 @@ public class ComplaintService {
                 complaint.transition(true).end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date()).withOwner(complaint.getState().getOwnerPosition());
-
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
             final Position owner = positionMasterService.getPrimaryAssignmentPositionForEmp(approvalPosition);
             complaint.setAssignee(owner);
+            complaint.setDepartment(
+                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
@@ -226,10 +237,13 @@ public class ComplaintService {
             complaint.transition(true).withComments(approvalComent).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
 
-        else
+        else {
+            complaint.setDepartment(
+                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
             complaint.transition(true).withComments(approvalComent).withSenderName(userName)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                     .withOwner(complaint.getState().getOwnerPosition());
+        }
         final CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
         complaint.setUlb(cityWebsite.getCityName());
         complaint.setDistrict(cityWebsite.getDistrictName());
