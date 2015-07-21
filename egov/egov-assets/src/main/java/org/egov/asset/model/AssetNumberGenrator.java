@@ -43,7 +43,7 @@ import javax.script.ScriptContext;
 
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.infstr.services.ScriptService;
+import org.egov.infra.script.service.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AssetNumberGenrator {
