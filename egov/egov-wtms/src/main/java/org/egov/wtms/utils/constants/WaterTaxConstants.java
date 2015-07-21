@@ -57,6 +57,10 @@ public class WaterTaxConstants {
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
+    public static final String SMSEMAILTYPEADDITONALCONNCREATE="additionalconncreate";
+    public static final String SMSEMAILTYPEADDITONALCONNAPPROVE="additionalconnapprove";
+    public static final String SMSEMAILTYPENEWCONNAPPROVE="newconnapprove";
+    public static final String SMSEMAILTYPENEWCONNCREATE="newconncreate";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";

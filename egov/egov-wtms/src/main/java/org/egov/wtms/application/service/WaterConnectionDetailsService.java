@@ -56,6 +56,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.commons.EgModules;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.messaging.email.EmailService;
@@ -88,6 +89,7 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -103,7 +105,10 @@ public class WaterConnectionDetailsService {
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    
+    @Autowired
+    private   	ResourceBundleMessageSource messageSource;
+    
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
@@ -150,7 +155,7 @@ public class WaterConnectionDetailsService {
     private WaterTaxUtils waterTaxUtils;
 
     private String applicantName;
-
+    
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -187,7 +192,7 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent) {
-        if (waterConnectionDetails.getApplicationNumber() == null)
+    	if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
@@ -203,8 +208,26 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
         updateIndexes(savedWaterConnectionDetails);
-        sendSmsOnCreateAndApproval(waterConnectionDetails);
-        sendEmailOnCreateNewConnection(waterConnectionDetails);
+       if (waterConnectionDetails.getApplicationType() != null
+				&& waterConnectionDetails.getApplicationType().getCode() != null
+				&& waterConnectionDetails.getState() != null
+				&& waterConnectionDetails.getState().getValue() != null) {
+			if (waterConnectionDetails.getApplicationType().getCode()
+					.equals(WaterTaxConstants.ADDNLCONNECTION)
+					&& waterConnectionDetails.getState().getValue()
+							.equals(WaterTaxConstants.CREATEWORKFLOWSTATE)) {
+				buildSMS(waterConnectionDetails,WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE);
+				buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE);
+			}
+			if (waterConnectionDetails.getApplicationType().getCode()
+					.equals(WaterTaxConstants.NEWCONNECTION)
+					&& waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.CREATEWORKFLOWSTATE)) {
+				buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE);
+				buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE);
+			}
+
+		}
+
         return savedWaterConnectionDetails;
     }
 
@@ -319,7 +342,6 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails updateNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent) {
         final User user = securityUtils.getCurrentUser();
-
         if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
             final Position owner = eisCommonService.getPrimaryAssignmentPositionForEmp(approvalPosition);
             waterConnectionDetails.transition(true).withOwner(owner).withComments(approvalComent)
@@ -340,8 +362,27 @@ public class WaterConnectionDetailsService {
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        sendSmsOnCreateAndApproval(waterConnectionDetails);
-        sendEmailOnApprovalOfNewConnection(waterConnectionDetails);
+		if (waterConnectionDetails.getApplicationType() != null
+				&& waterConnectionDetails.getApplicationType().getCode() != null
+				&& waterConnectionDetails.getState() != null
+				&& waterConnectionDetails.getState().getValue() != null) {
+
+			if (waterConnectionDetails.getApplicationType().getCode()
+					.equals(WaterTaxConstants.ADDNLCONNECTION)
+					&& waterConnectionDetails.getState().getValue()
+							.equals(WaterTaxConstants.APPROVED)) {
+				buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE);
+				buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE);
+			} else if (waterConnectionDetails.getApplicationType().getCode()
+					.equals(WaterTaxConstants.NEWCONNECTION)
+					&& waterConnectionDetails.getState().getValue()
+							.equals(WaterTaxConstants.APPROVED)) {
+
+				buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE);
+				buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE);
+			}
+		}
+
         return updatedWaterConnectionDetails;
     }
 
@@ -386,112 +427,148 @@ public class WaterConnectionDetailsService {
         }
     }
 
-	private void sendSmsOnCreateAndApproval(final WaterConnectionDetails waterConnectionDetails) {
+    
+	public void buildSMS(final WaterConnectionDetails waterConnectionDetails,
+			final String type) {
+		String smsMsg = null;
+		Boolean flag = Boolean.FALSE;
+	
+		if (waterTaxUtils.isSmsEnabled()) {
 
-		if (waterConnectionDetails.getConnection().getMobileNumber() != null)
-			if (waterTaxUtils.isSmsEnabled()) {
-				  // TODO -- This is temporary sms message. This needs to be
-                // replaced
-                // with proper message once the requirements are clear
-               StringBuffer smsBody = new StringBuffer().append("Dear ")
-						.append(applicantName);
-				if (waterConnectionDetails != null && waterConnectionDetails.getState() == null || (waterConnectionDetails.getState() != null && waterConnectionDetails
-								.getState().getValue().equals(WaterTaxConstants.CREATEWORKFLOWSTATE))) {
-					if ( waterConnectionDetails.getApplicationType() != null
-							&& waterConnectionDetails.getApplicationType().getCode() != null
-							&& waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)) {
-						smsBody = smsBody
-								.append(", Your additional water tap connection application request accepted with Acknowledgement No.");
-					} else {
-						// TODO:for New Water Connection on Create
-						smsBody = smsBody
-								.append(", Your new water tap connection application request accepted with Acknowledgement No.");
-					}
-					smsBody = smsBody.append(waterConnectionDetails.getApplicationNumber())
-							.append(". Please use this number in all future communication.")
-							.append(" -- Thanks, ").append(getCityName());
-				} else {
-					if (waterConnectionDetails != null && waterConnectionDetails.getState() != null
-							&& waterConnectionDetails.getState().getValue() != null
-							&& waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
-						if ( waterConnectionDetails.getApplicationType() != null
-								&& waterConnectionDetails.getApplicationType().getCode() != null
-								&& waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)){
-							smsBody = smsBody
-									.append(", Your additional water tap connection application processed with Consumer No.");
-						} else {
-							// TODO:for New Water Connection Approval
-							smsBody = smsBody
-									.append(", Your new water tap connection application processed with Consumer No.");
-						}
-						smsBody = smsBody
-								.append(waterConnectionDetails.getConnection()
-										.getConsumerCode())
-								.append(". Monthly water tax will be generated after the tap execution.")
-								// .append("and the connection charges/security
-								// deposit/donation charges is fixed @
-								// Rs.xxxxx/-. ")
-								// .append(". You may collect the demand notice
-								// from the
-								// office ")
-								.append(" -- Thanks, ").append(getCityName());
-					}
-				}
+			if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)) {
+				flag = Boolean.TRUE;
+				smsMsg = messageSource.getMessage(
+						"msg.newconncetioncreate.sms",
+						new String[] { applicantName,
+								waterConnectionDetails.getApplicationNumber(),
+								getCityName() }, null);
+			} else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE)) {
+				flag = Boolean.TRUE;
+				smsMsg = messageSource.getMessage(
+						"msg.additionalconncetioncreate.sms",
+						new String[] { applicantName,
+								waterConnectionDetails.getApplicationNumber(),
+								getCityName() }, null);  
 
-				smsService.sendSMS(smsBody.toString(), "91" + waterConnectionDetails.getConnection().getMobileNumber());
+			} else if (type.equals(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)) {
+				smsMsg = messageSource.getMessage(
+						"msg.newconncetionapproval.sms",
+						new String[] { applicantName,
+								waterConnectionDetails.getApplicationNumber(),
+								getCityName() }, null);  
+
+			} else if (type.equals(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE)) {
+				smsMsg = messageSource.getMessage(
+						"msg.additionalconncetionapproval.sms",
+						new String[] { applicantName,
+								waterConnectionDetails.getApplicationNumber(),
+								getCityName() }, null);  
+
 			}
+		}
+		if (flag) {
+			sendSMS(waterConnectionDetails, smsMsg);
+		}
 	}
 
- 
-    private void sendEmailOnCreateNewConnection(final WaterConnectionDetails waterConnectionDetails) {
+	private void sendSMS(final WaterConnectionDetails waterConnectionDetails,
+			final String smsBody) {
+		smsService.sendSMS(smsBody, "91"+ waterConnectionDetails.getConnection().getMobileNumber());
+	}
 
-        if (waterConnectionDetails.getConnection().getEmail() != null)
-            if (waterTaxUtils.isEmailEnabled()) {
-                final StringBuffer emailBody = new StringBuffer().append("Dear ").append(applicantName)
-                        .append(",\n\nThe acknowledgement number for your water tap connection application is ")
-                        .append(waterConnectionDetails.getApplicationNumber())
-                        .append(".\nPlease keep this acknowledgement number to search application, pay donation fees/connection charges/security deposit and to generate estimation/work order notice. ")
-                        .append("\n \n \nThis is computer generated email and does not need any signature and also please do not reply to this e-mail.")
-                        .append("\n \nRegards, ").append("\n").append(getCityName());
-                final StringBuffer emailSubject = new StringBuffer()
-                        .append("Water tap connection application request accepted with acknowledgment No. ")
-                        .append(waterConnectionDetails.getApplicationNumber());
+	public void buildEmail(WaterConnectionDetails waterConnectionDetails,
+			String type) {
+		if (waterConnectionDetails.getConnection().getEmail() != null)
+			if (waterTaxUtils.isEmailEnabled()) {
+				try {
+					String body = "";
+					String subject = "";
+					Boolean flag = Boolean.FALSE;
+					if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE)) {
+						flag = Boolean.TRUE;
+						body = messageSource.getMessage(
+								"msg.newconncetioncreate.email.body",
+								new String[] {
+										applicantName,
+										waterConnectionDetails
+												.getApplicationNumber(),
+										getCityName() }, null); 
 
-                emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody.toString(),
-                        emailSubject.toString());
-            }
-    }
+						subject = messageSource.getMessage(
+								"msg.newconncetioncreate.email.subject",
+								new String[] { waterConnectionDetails
+										.getApplicationNumber() }, null);
+					}
+					if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNCREATE)) {
+						flag = Boolean.TRUE;
+						body = messageSource.getMessage(
+								"msg.additionalconnectioncreate.email.body",
+								new String[] {
+										applicantName,
+										waterConnectionDetails
+												.getApplicationNumber(),
+										getCityName() }, null); 
 
-    private void sendEmailOnApprovalOfNewConnection(final WaterConnectionDetails waterConnectionDetails) {
+						subject = messageSource.getMessage(
+								"msg.additionalconnectioncreate.email.subject",
+								new String[] { waterConnectionDetails
+										.getApplicationNumber() }, null);
+					}
+					if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNAPPROVE)) {
+						flag = Boolean.TRUE;
+						body = messageSource.getMessage(
+								"msg.newconncetionapproval.email.body",
+								new String[] {
+										applicantName,
+										waterConnectionDetails
+												.getApplicationNumber(),
+										waterConnectionDetails.getConnection()
+												.getConsumerCode(),
+										getCityName() }, null); 
+						subject = messageSource.getMessage(
+								"msg.newconncetionapprove.email.subject",
+								new String[] { waterConnectionDetails
+										.getApplicationNumber() }, null);
 
-        if (waterConnectionDetails.getConnection().getEmail() != null
-                && waterConnectionDetails.getConnection().getConsumerCode() != null)
-            if (waterTaxUtils.isEmailEnabled()) {
-                // TODO -- This is temporary email message. This needs to be
-                // replaced
-                // with proper message once the requirements are clear
-                final StringBuffer emailBody = new StringBuffer().append("Dear ").append(applicantName)
-                        .append(",\n \nThe water tap connection application with Acknowledgement No. ")
-                        .append(waterConnectionDetails.getApplicationNumber())
-                        // TODO - H.S.C. No: Consumer Number
-                        .append(" has been approved with Consumer No. ")
-                        .append(waterConnectionDetails.getConnection().getConsumerCode())
-                        // TODO - . Sending Work order Notice as part of
-                        // attachment.
-                        .append(". Monthly water tax will be generated after the tap execution.")
-                        // TODO - H.S.C. No: Consumer Number
-                        .append("\n \nPlease keep this Consumer Number for future transactions on your water tap.")
-                        .append(".\n \n \nThis is computer generated email and does not need any signature and also please do not reply to this e-mail.")
-                        .append("\n \nRegards, ").append("\n").append(getCityName());
-                final StringBuffer emailSubject = new StringBuffer()
-                        .append("Water tap connection application with acknowledgment No. ")
-                        .append(waterConnectionDetails.getApplicationNumber()).append(" is approved");
+					}
+					if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE)) {
+						flag = Boolean.TRUE;
+						body = messageSource.getMessage(
+								"msg.additionalconncetionapproval.email.body",
+								new String[] {
+										applicantName,
+										waterConnectionDetails
+												.getApplicationNumber(),
+										waterConnectionDetails.getConnection()
+												.getConsumerCode(),
+										getCityName() }, null); 
+						subject = messageSource.getMessage(
+										"msg.additionalconncetionapproval.email.subject",
+										new String[] { waterConnectionDetails
+												.getApplicationNumber() }, null);
 
-                emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody.toString(),
-                        emailSubject.toString());
-            }
-    }
-    
+					}
+
+					if (flag) {
+
+						sendEmail(waterConnectionDetails, body, subject);
+					}
+
+				} catch (EGOVRuntimeException egovExp) {
+					// emailMsg = messageSource.getMessage("email.failure.msg1");
+				}
+			} else {
+				// emailMsg= messageSource.getMessage("email.failure.msg1");
+			}
+
+	}
+	
+	private void sendEmail(final WaterConnectionDetails waterConnectionDetails,
+			final String emailBody, final String emailSubject) {
+		emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody,
+				emailSubject);
+	}
+	
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
             final Long approvalPosition, final String approvalComent) {
