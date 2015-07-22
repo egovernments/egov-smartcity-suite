@@ -65,7 +65,7 @@
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
         </td>
         <td class="blueborderfortd" align="center"><s:select id="basicProperty.propertyOwnerInfo[0].owner.gender" name="basicProperty.propertyOwnerInfo[0].owner.gender" value="%{basicProperty.propertyOwnerInfo[0].owner.gender}"
-				headerValue="Choose" headerKey="0" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()" cssClass="selectwk">
 		</s:select></td>
         <td class="blueborderfortd" align="center">
         	+91 <s:textfield name="basicProperty.propertyOwnerInfo[0].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfo[0].owner.mobileNumber}" 
@@ -77,7 +77,7 @@
         </td>
         <td class="blueborderfortd" align="center">
             <s:select id="basicProperty.propertyOwnerInfo[0].owner.guardianRelation" name="basicProperty.propertyOwnerInfo[0].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfo[0].owner.guardianRelation}"
-				 headerValue="Choose" headerKey="0" list="guardianRelationMap"/>
+				 headerValue="Choose" headerKey="" list="guardianRelationMap"/>
 		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfo[0].owner.guardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[0].owner.gardian}" 
@@ -106,7 +106,7 @@
         				onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="1" data-errormsg="Owner name is mandatory!"/>
         		</td>
         		<td class="blueborderfortd" align="center"><s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gender" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gender}"
-				headerValue="Choose" headerKey="0" list="@org.egov.infra.persistence.entity.enums.Gender@values()">
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()">
 		       </s:select></td>
         		<td class="blueborderfortd" align="center">
         			+91 <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" 
@@ -118,7 +118,7 @@
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <s:select id="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.guardianRelation" name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.guardianRelation}"
-				headerValue="Choose" headerKey="0" list="guardianRelationMap"/>
+				headerValue="Choose" headerKey="" list="guardianRelationMap"/>
         	    </td>
         		<td class="blueborderfortd" align="center">
         	        <s:textfield name="basicProperty.propertyOwnerInfo[%{#ownerStatus.index}].owner.gardian" maxlength="64" size="20" id="gardian"  value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.gardian}" 

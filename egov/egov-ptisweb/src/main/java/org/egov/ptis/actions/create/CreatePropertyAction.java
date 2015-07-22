@@ -188,7 +188,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String vacantLandNo;
 	private String extentAppartenauntLand = null;
 	private String houseNumber;
-	private String oldHouseNo;
 	private String addressStr;
 	private String pinCode;
 	private String parcelID;
@@ -342,7 +341,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyDetail propertyDetail = property.getPropertyDetail();
 		if (propertyDetail != null) {
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
-			propertyDetail.setCategoryType(propertyDetail.getCategoryType());
+			if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
+				propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+						"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+				if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+					setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+				} else {
+					setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+				}
+			} 
+			
 			if (!propertyDetail.getPropertyType().equals(VACANT_PROPERTY)) {
 				propertyDetail.setCategoryType(propertyDetail.getCategoryType());
 				if (property.getPropertyDetail().getFloorType() != null) {
@@ -466,12 +474,8 @@ public class CreatePropertyAction extends WorkflowAction {
 				return RESULT_NEW;
 			}
 			updatePropertyDetails();
-			basicPropertyService.applyAuditing(property.getState());
-			basicProp.addProperty(property);
-			//propService.createDemand(property, basicProp.getPropOccupationDate());
-			basicPropertyService.persist(basicProp);
 		} else {
-			validateApproverDetails(approverPositionId,approverComments,workFlowAction);
+			validateApproverDetails(approverPositionId, approverComments,workFlowAction);
 			if (hasErrors()) {
 				return RESULT_VIEW;
 			}
@@ -484,6 +488,11 @@ public class CreatePropertyAction extends WorkflowAction {
 			return reject();
 		}
 
+		basicPropertyService.applyAuditing(property.getState());
+		basicProp.addProperty(property);
+		// propService.createDemand(property,
+		// basicProp.getPropOccupationDate());
+		basicPropertyService.persist(basicProp);
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();
 		setDocNumber(getDocNumber());
@@ -741,7 +750,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		addDropdownData("electionWardList", electionWardList);
 		addDropdownData("enumerationBlockList", enumerationBlockList);
 		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
-
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
 			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
 					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
@@ -788,7 +796,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setActive(Boolean.TRUE);
 		basicProperty.setApplicationNo(applicationNumberGenerator.generate());
 		basicProperty.setAddress(createPropAddress());
-		basicProperty.setVacantLandAssmtNo(getVacantLandNo());
 		basicProperty.setPropertyID(createPropertyID(basicProperty));
 		basicProperty.setStatus(propStatus);
 		basicProperty.setRegdDocDate(getRegdDocDate());
@@ -1001,15 +1008,11 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	private PropertyAddress createPropAddress() {
-		/*
-		 * LOGGER.debug("Entered into createPropAddress, \nAreaId: " +
-		 * getBlockId() + ", House Number: " + getHouseNumber() +
-		 * ", OldHouseNo: " + getOldHouseNo() + ", AddressStr: " +
-		 * getAddressStr() + ", MobileNo: " + getMobileNo() + ", Email: " +
-		 * getEmail() + ", PinCode: " + getPinCode() + ", KhasraNumber: " +
-		 * getKhasraNumber() + ", Mauza:" + getMauza() + ", CitySurveyNumber: "
-		 * + getCitySurveyNumber() + ", SheetNumber:" + getSheetNumber());
-		 */
+
+		LOGGER.debug("Entered into createPropAddress, \nAreaId: "
+				+ getBlockId() + ", House Number: " + getHouseNumber()
+				+ ", OldHouseNo: " + ", AddressStr: " + getAddressStr()
+				+ ", PinCode: " + getPinCode());
 
 		Address propAddr = new PropertyAddress();
 		StringBuffer addrStr1 = new StringBuffer();
@@ -1187,14 +1190,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
-	}
-
-	public String getOldHouseNo() {
-		return oldHouseNo;
-	}
-
-	public void setOldHouseNo(String oldHouseNo) {
-		this.oldHouseNo = oldHouseNo;
 	}
 
 	public String getAddressStr() {

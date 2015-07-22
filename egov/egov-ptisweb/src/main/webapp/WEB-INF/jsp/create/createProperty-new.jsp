@@ -69,8 +69,7 @@
 		</div>
 	</s:if>
 
-	<s:form name="CreatePropertyForm" action="createProperty-create"
-		theme="simple">
+	<s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" enctype="multipart/form-data">
 
 		<s:push value="model">
 			<s:token />
@@ -133,8 +132,8 @@ function loadOnStartUp() {
 	if (jQuery(appartunentLand).is(":checked")) {
 		enableAppartnaumtLandDetails();
 	}
-	//var category = '<s:property value="%{propertyDetail.categoryType}"/>';
-	//document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].text = category;
+	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
+	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 	/* document.getElementById("plotArea").style.display = ""; */
 	/* document.getElementById("ownerShipRow").style.display = "none";
 	document.getElementById("vacantAreaRow").style.display = "none"; */

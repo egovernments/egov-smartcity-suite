@@ -99,7 +99,6 @@
 	 } 
 	 	
  	function generateNotice6(){
- 	 	alert("Generate Notice method");
 	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
 		document.CreatePropertyForm.submit();
 	}
@@ -119,18 +118,13 @@
 </head>
 
 <body onload="loadOnStartUp();">
-	<div align="left">
-		<s:actionerror />
-	</div>
-	<%-- <s:if test="%{hasActionMessages()}">
-		<div id="actionMessages" class="messagestyle" align="center">
-			<s:actionmessage theme="simple" />
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle" id="property_error_area">
+			<div class="errortext">
+				<s:actionerror />
+			</div>
 		</div>
-		<div class="blankspace">&nbsp;</div>
-	</s:if> --%>
-	<!-- Area for error display -->
-	<div class="errorcss" id="jsValidationErrors" style="display: none;"></div>
-	<div class="errorstyle" id="property_error_area" style="display: none;"></div>
+	</s:if>
 	<div class="formmainbox">
 		<s:form name="CreatePropertyForm" action="createProperty"
 			theme="simple" validate="true">

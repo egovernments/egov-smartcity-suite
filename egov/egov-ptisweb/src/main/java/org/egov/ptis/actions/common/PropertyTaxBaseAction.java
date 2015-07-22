@@ -469,14 +469,27 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 							.withDateInfo(currentDate.toDate());
 				} else {
 					WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
-								null, property.getCurrentState().getNextAction(), null);
-					property.transition(true).withSenderName(user.getName())
-							.withComments(approverComments)
-							.withStateValue(wfmatrix.getCurrentState())
-							.withDateInfo(currentDate.toDate())
-							// .withStateValue(beanActionName[0])
-							.withOwner(pos)
-							.withNextAction(wfmatrix.getNextAction());
+									null, property.getCurrentState().getNextAction(), null);
+					if (property.getCurrentState().getNextAction().equalsIgnoreCase(WFLOW_ACTION_STEP_CANCEL)) {
+						property.transition(true)
+								.withSenderName(user.getName())
+								.withComments(approverComments)
+								.withStateValue(wfmatrix.getNextState())
+								.withDateInfo(currentDate.toDate())
+								// .withStateValue(beanActionName[0])
+								.withOwner(pos)
+								.withNextAction(wfmatrix.getNextAction());
+
+					} else {
+						property.transition(true)
+								.withSenderName(user.getName())
+								.withComments(approverComments)
+								.withStateValue(wfmatrix.getCurrentState())
+								.withDateInfo(currentDate.toDate())
+								// .withStateValue(beanActionName[0])
+								.withOwner(pos)
+								.withNextAction(wfmatrix.getNextAction());
+					}
 				}
 			}
 		}
