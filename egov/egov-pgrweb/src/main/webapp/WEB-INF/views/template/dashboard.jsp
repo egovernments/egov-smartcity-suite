@@ -55,19 +55,22 @@
 		<title><tiles:insertAttribute name="title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
-        <link rel="stylesheet" href="../resources/jquery-ui/v1.11.2/jquery-ui.min.css" />
-		<link rel="stylesheet" href="../resources/bootstrap/v3.3.1/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../resources/fontawesome/v4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/css/global.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.css' context='/egi'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
+        
+        <!-- link rel="stylesheet" href="../resources/jquery-ui/v1.11.2/jquery-ui.min.css" />
 		<link rel="stylesheet" href="../resources/css/google-fonts-lora.css">
    		<link rel="stylesheet" href="../resources/css/google-fonts-montse.css">
 		<link rel="stylesheet" href="../resources/css/plugins/dataTables.bootstrap.css">
-		<link rel="stylesheet" href="../resources/jquery/datatable/v1.10.4/extensions/responsive/css/dataTables.responsive.css">
-		<link rel="stylesheet" href="../resources/css/jquery.loadmask.css">
-		<link rel="stylesheet" href="../resources/css/global.css">
-		<link rel="stylesheet" href="../resources/css/plugins/bootstrap-switch.min.css">				
+		<link rel="stylesheet" href="../resources/jquery/datatable/v1.10.4/extensions/responsive/css/dataTables.responsive.css"-->
 		
-		<script src="../resources/jquery/v2.1.3/jquery-2.1.3.min.js"></script>	
-        	
+		<link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>				
+		
+	    <script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+	    	
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     	<!--[if lt IE 9]>
@@ -84,7 +87,7 @@
     <body id="page-top" data-spy="scroll">
     	<div class="cover" id="cover"></div>
     	<div class="preloader-container" id="preloader-container">
-    		<div class="preloader-logo">eGov<img src="../resources/img/mask.gif">Dashboard</div>
+    		<div class="preloader-logo">eGov<img src="<c:url value='/resources/img/mask.gif' context='/dashboard'/>">Dashboard</div>
     	</div>
     	 <nav class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="container-fluid">
@@ -95,10 +98,17 @@
 		        <span class="icon-bar"></span> 
 		      </button>
 		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
-		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="../dashboard.do"><img src="../resources/img/egov_logo_tr.png" alt="EgovLogo" style="margin-top:-7px"></a>
-		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="../pgrdashboard/home.do?isdefault=true">Smart City: Complaints Redressal</a>
+		      <a class="navbar-brand visible-lg-block visible-md-block customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="../dashboard.do">
+		       <img src="<c:url value='/resources/global/images/${sessionScope.citylogo}' context='/egi'/>" height="55">
+		      </a>
+		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="../pgrdashboard/home.do?isdefault=true">Complaints Redressal</a>
 		    </div>
-		    <span class="navbar-brand visible-md-block visible-lg-block pull-right" style="color:#FFF"><span class="title"></span></span>		    
+		    <span class="navbar-brand visible-md-block visible-lg-block pull-right" style="color:#FFF">
+		    <!-- span class="title"></span-->
+		    <a href="http://www.egovernments.org" target="_blank">
+			   <img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+			</a>
+		    </span>		    
 		    <div class="collapse navbar-collapse" id="myNavbar">
 		      <ul class="nav navbar-nav">
 		        	<li class="visible-sm-block visible-xs-block">
@@ -125,21 +135,23 @@
 		</nav>
 		<tiles:insertAttribute name="body"/>
 	</body>
-	<script src="../resources/jquery-ui/v1.11.2/jquery-ui.min.js"></script>
-	<script src="../resources/bootstrap/v3.3.1/js/bootstrap.min.js"></script>
-	<script src="../resources/highstock/v2.0.4/js/highstock.js"></script>
-	<script src="../resources/highchart/v4.0.4/js/modules/exporting.js"></script>
-	<script src="../resources/highchart/v4.0.4/js/highcharts-more.js"></script>
-	<script src="../resources/highchart/v4.0.4/js/modules/data.js"></script>
-	<script src="../resources/highchart/v4.0.4/js/modules/drilldown.js"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/js/highchart/highstock.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/js/highchart/modules/exporting.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/js/highchart/highcharts-more.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
-	<script src='../resources/js/geoxml3.js' type="text/javascript"></script>
-	<script src='../resources/jquery/datatable/v1.10.4/js/jquery.dataTables.min.js'></script>
+	<script src="<c:url value='/resources/js/date.js' context='/dashboard'/>"></script>
+	<!-- script src='<c:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script-->
+	<script src="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
+	
+	<!-- script src='../resources/jquery/datatable/v1.10.4/js/jquery.dataTables.min.js'></script>
 	<script src='../resources/js/plugins/dataTables/dataTables.bootstrap.js'></script>
-	<script src='../resources/jquery/datatable/v1.10.4/extensions/responsive/js/dataTables.responsive.min.js'></script>
-	<script src='../resources/js/date.js'></script>
-	<script src='../resources/js/jquery.loadmask.min.js'></script>
-	<script src='../resources/js/plugins/bootstrap-switch.min.js'></script>
-	<script src='../resources/js/global.js'></script>
+	<script src='../resources/jquery/datatable/v1.10.4/extensions/responsive/js/dataTables.responsive.min.js'></script-->
+	
+	<script src='<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
+	<script src="<c:url value='/resources/js/global.js' context='/dashboard'/>"></script>
 	<script src='../resources/js/app/dashboard.js'></script>
 </html>
