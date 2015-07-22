@@ -1,6 +1,9 @@
 package org.egov.pgr.web.controller.reports;
 
 import java.math.BigInteger;
+import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public class DrillDownReportResult {
     private String zoneName;
@@ -10,7 +13,57 @@ public class DrillDownReportResult {
     private BigInteger Rejected=BigInteger.ZERO;
     private String complainttype;
     private String name;
+    private String crn;
+    private Date createddate;
+    private String complaintname;
+    private String details;
+    private String status;
+    private String boundaryname;
+    private BigInteger complaintid;
     
+    
+    public BigInteger getComplaintid() {
+        return complaintid;
+    }
+    public void setComplaintid(BigInteger complaintid) {
+        this.complaintid = complaintid;
+    }
+    public String getCrn() {
+        return crn;
+    }
+    public void setCrn(String crn) {
+        this.crn = crn;
+    }
+    public Date getCreateddate() {
+        return createddate;
+    }
+    public void setCreateddate(Date createddate) {
+        this.createddate = createddate;
+    }
+    public String getComplaintname() {
+        return complaintname;
+    }
+    public void setComplaintname(String complaintname) {
+        this.complaintname = complaintname;
+    }
+    public String getDetails() {
+        return details;
+    }
+    public void setDetails(String details) {
+        this.details = details;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getBoundaryname() {
+        return boundaryname;
+    }
+    public void setBoundaryname(String boundaryname) {
+        this.boundaryname = boundaryname;
+    }
     private BigInteger total=BigInteger.ZERO;
     public String getZoneName() {
         return zoneName;

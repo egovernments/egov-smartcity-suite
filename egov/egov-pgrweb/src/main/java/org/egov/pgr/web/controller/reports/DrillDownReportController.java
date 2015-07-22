@@ -60,19 +60,48 @@ public class DrillDownReportController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/drillDown/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam String mode,
-            @RequestParam String complaintDateType, @RequestParam DateTime fromDate, @RequestParam DateTime toDate,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam String groupBy,
+            @RequestParam String deptid, @RequestParam String complainttypeid, @RequestParam String selecteduserid,
+            @RequestParam String boundary, @RequestParam String type, @RequestParam String complaintDateType,
+            @RequestParam DateTime fromDate, @RequestParam DateTime toDate, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
 
-        SQLQuery drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate,
-                complaintDateType, mode);
-        drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-        List<AgeingReportResult> drillDownresult = drillDownreportQuery.list();
+        SQLQuery drillDownreportQuery = null;
+        String result = null;
+        if (deptid != null && complainttypeid != null && selecteduserid != null) {
+            String userName = selecteduserid.split("~")[0];
+            if (userName.equals(""))
+                userName = null;
+            drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
+                    deptid, boundary, complainttypeid, userName);
+            drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
-        String result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult)).append("}").toString();
+            List<AgeingReportResult> drillDownresult = drillDownreportQuery.list();
+            result = new StringBuilder("{ \"data\":").append(toJSONForComplaintType(drillDownresult)).append("}")
+                    .toString();
+
+        } else {
+            drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
+                    groupBy, deptid, boundary, complainttypeid, selecteduserid);
+            drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
+
+            List<AgeingReportResult> drillDownresult = drillDownreportQuery.list();
+            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult)).append("}").toString();
+
+        }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
+
+    }
+
+    private Object toJSONForComplaintType(final Object object) {
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
+                new DrillDownReportWithcompTypeAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
 
     }
 

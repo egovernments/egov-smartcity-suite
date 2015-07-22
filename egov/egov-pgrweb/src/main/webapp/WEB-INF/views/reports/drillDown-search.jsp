@@ -77,6 +77,12 @@
 										
 										<div class="col-sm-2 add-margin">
 										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
+										<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
+										<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
+										<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
+										<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
+										<input type="hidden" id="type" name="type" value="${type}"/> 
+											
 											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
 								                <option value="">Select</option>
 												<option value="all" selected>All</option>
@@ -129,7 +135,7 @@
 						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
 						<div class="col-md-12">
 							<table class="table table-bordered datatable nopointer" id="drilldownReport-table">
-							<thead>
+						<%-- 	<thead>
 							<c:choose>
 							<c:when test="${mode=='ByBoundary'}">
 								<th>	<spring:message code="lbl.drilldownReport.boundary" />	</th>
@@ -146,7 +152,7 @@
 								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
 								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>
-							</thead>
+							</thead> --%>
 							
 							<tfoot id="report-footer">
 							   <tr>
@@ -181,4 +187,4 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/ageingReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/drillDownReport.js'/>"></script>
