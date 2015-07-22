@@ -39,15 +39,45 @@
  */
 package org.egov.pgr.web.controller.dashboard;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.egov.pgr.service.dashboard.DashboardService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
 
+    @Autowired
+    private DashboardService dashboardService;
+
     @RequestMapping("/home")
     public String home() {
         return "dashboard/home";
+    }
+
+    @RequestMapping(value = "/reg-resolution-trend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Collection<Integer>> registrationResolutionTrend() {
+        final List<Collection<Integer>> regResTrendData = new ArrayList<>();
+        regResTrendData.add(dashboardService.getComplaintRegistrationTrend());
+        regResTrendData.add(dashboardService.getComplaintResolutionTrend());
+        return regResTrendData;
+    }
+    
+    @RequestMapping(value = "/monthly-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String,Object>> monthlyAggregate() {
+        return dashboardService.getMonthlyAggregate();
+    }
+    
+    @RequestMapping(value = "/complaint-typewise-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String,Object>> complaintTypewiseAggregate() {
+        return dashboardService.getCompTypewiseAggregate();
     }
 }

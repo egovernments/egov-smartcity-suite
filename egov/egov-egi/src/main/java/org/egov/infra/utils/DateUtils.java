@@ -53,6 +53,10 @@ public class DateUtils {
         return new DateTime().withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
     }
     
+    public static DateTime endOfGivenDate(DateTime dateTime) {
+        return dateTime.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+    }
+    
     public static Date startOfDay(final Date date) {
         return new DateTime().withTimeAtStartOfDay().toDate();
     }

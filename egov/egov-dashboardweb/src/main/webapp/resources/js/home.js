@@ -5,9 +5,9 @@ var todayFmt = today.getDate()+"/"+Date.CultureInfo.abbreviatedMonthNames[today.
 var aDayBefore = Date.today().add({ days: -1 });;
 var sevenDaysBack = Date.today().add({ days: -7 });
 
-$.ajax({url:"/pgr/dashboard/xyz",
+$.ajax({url:"/pgr/dashboard/reg-resolution-trend",
 	cache:false
-}).done(function(pgrTrendData) {
+}).done(function(pgrRegResTrendData) {
 	$('#newtimeLineCompTrend').highcharts({
 		chart : {
 			borderRadius:'5px'
@@ -98,7 +98,7 @@ $.ajax({url:"/pgr/dashboard/xyz",
 	        pointInterval: 24 * 3600 * 1000,
 	        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
 	        yAxis: 0,
-	        data: pgrTrendData[0],
+	        data: pgrRegResTrendData[0],
 		    pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
 
 	    }, {
@@ -107,7 +107,7 @@ $.ajax({url:"/pgr/dashboard/xyz",
 	        color:"#3C6EA1",
 	        pointInterval: 24 * 3600 * 1000,
 	        pointStart: Date.UTC(aWeekBack.getFullYear(), aWeekBack.getMonth(), aWeekBack.getDate()),
-	        data: pgrTrendData[1],
+	        data: pgrRegResTrendData[1],
 	        pointEnd: Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
 	    }]
 	});
@@ -115,7 +115,7 @@ $.ajax({url:"/pgr/dashboard/xyz",
 
 
 //PGR aggregate line chart
-$.ajax({url:"/pgr/dashboard/aggrCntMonthwiseLine",
+$.ajax({url:"/pgr/dashboard/monthly-aggregate",
 	cache:false
 }).done(function(linedata) {
 	$('#slaGraph').highcharts({
@@ -178,7 +178,7 @@ $.ajax({url:"/pgr/dashboard/aggrCntMonthwiseLine",
     });
 });
 
-$.ajax({url:"/pgr/dashboard/overviewPie",
+$.ajax({url:"/pgr/dashboard/complaint-typewise-aggregate",
 	cache:true
 }).done(function(piedata) {
 	$('#overviewGraph').highcharts({

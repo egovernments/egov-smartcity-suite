@@ -39,9 +39,99 @@
  */
 package org.egov.pgr.service.dashboard;
 
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.repository.dashboard.DashboardRepository;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
+@Service
 public class DashboardService {
 
+    @Autowired
+    private DashboardRepository dashboardRepository;
+
+    public Collection<Integer> getComplaintRegistrationTrend() {
+        final DateTime currentDate = new DateTime();
+        final Map<String, Integer> currentYearTillDays = constructDatePlaceHolder(currentDate.minusDays(6), currentDate, "MM-dd");
+        for (final Object[] compDtl : dashboardRepository
+                .fetchComplaintRegistrationTrendBetween(currentDate.minusDays(6).toDate(), endOfGivenDate(currentDate).toDate()))
+            currentYearTillDays.put(String.valueOf(compDtl[0]), Integer.valueOf(String.valueOf(compDtl[1])));
+        return currentYearTillDays.values();
+    }
+
+    public Collection<Integer> getComplaintResolutionTrend() {
+        final DateTime currentDate = new DateTime();
+        final Map<String, Integer> currentYearTillDays = constructDatePlaceHolder(currentDate.minusDays(6), currentDate, "MM-dd");
+        for (final Object[] compDtl : dashboardRepository.fetchComplaintResolutionTrendBetween(currentDate.minusDays(6).toDate(),
+                endOfGivenDate(currentDate).toDate()))
+            currentYearTillDays.put(String.valueOf(compDtl[0]), Integer.valueOf(String.valueOf(compDtl[1])));
+        return currentYearTillDays.values();
+    }
+
+    public List<Map<String, Object>> getMonthlyAggregate() {
+        final DateTime currentDate = new DateTime();
+        final List<Map<String, Object>> dataHolder = constructMonthPlaceHolder(currentDate.minusMonths(6), currentDate,
+                "MMM-yyyy");
+        for (final Object[] compCnt : dashboardRepository.fetchMonthlyAggregateBetween(
+                currentDate.minusMonths(6).withDayOfMonth(1).withHourOfDay(1).toDate(), endOfGivenDate(currentDate).toDate()))
+            for (final Map<String, Object> mapdata : dataHolder)
+                if (mapdata.containsValue(StringUtils.capitalize(String.valueOf(compCnt[0]).toLowerCase())))
+                    mapdata.put("y", Integer.valueOf(String.valueOf(compCnt[1])));
+        return dataHolder;
+    }
+
+    public List<Map<String, Object>> getCompTypewiseAggregate() {
+        final DateTime currentDate = new DateTime();
+        final List<Map<String, Object>> compTypeWiseData = new LinkedList<Map<String, Object>>();
+        int indexOfOthers = 0;
+        int count = 0;
+        for (final Object[] complaint : dashboardRepository.fetchComplaintTypeWiseBetween(
+                currentDate.minusMonths(6).withDayOfMonth(1).withHourOfDay(1).toDate(), endOfGivenDate(currentDate).toDate())) {
+            final Map<String, Object> compTypewiseCnt = new HashMap<String, Object>();
+            compTypewiseCnt.put("name", String.valueOf(complaint[0]));
+            compTypewiseCnt.put("ctId", complaint[1]);
+            compTypewiseCnt.put("y", complaint[2]);
+            compTypeWiseData.add(compTypewiseCnt);
+            //TODO Add logic to create Others list
+            if (String.valueOf(complaint[1]).equals("Others"))
+                indexOfOthers = count;
+            count++;
+        }
+        Collections.rotate(compTypeWiseData.subList(indexOfOthers, compTypeWiseData.size()), -1);
+        return compTypeWiseData;
+    }
+
+    private static Map<String, Integer> constructDatePlaceHolder(final DateTime startDate, final DateTime endDate,
+            final String pattern) {
+        final Map<String, Integer> currentYearTillDays = new LinkedHashMap<String, Integer>();
+        for (DateTime date = startDate; date.isBefore(endDate); date = date.plusDays(1))
+            currentYearTillDays.put(date.toString(pattern), Integer.valueOf(0));
+        currentYearTillDays.put(endDate.toString(pattern), Integer.valueOf(0));
+        return currentYearTillDays;
+    }
+
+    private static List<Map<String, Object>> constructMonthPlaceHolder(final DateTime startDate, final DateTime endDate,
+            final String pattern) {
+        final List<Map<String, Object>> dataHolder = new LinkedList<Map<String, Object>>();
+        for (DateTime date = startDate; date.isBefore(endDate) || date.isEqual(endDate); date = date.plusMonths(1)) {
+            final Map<String, Object> currentYearTillDays = new LinkedHashMap<String, Object>();
+            currentYearTillDays.put("name", date.toString(pattern));
+            currentYearTillDays.put("y", Double.valueOf(0));
+            dataHolder.add(currentYearTillDays);
+        }
+        return dataHolder;
+    }
 }

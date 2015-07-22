@@ -48,6 +48,15 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 
+	<bean id="dashboardSQLSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+      		<list>
+        		<value>classpath:dashboard/pgr-dashboard-sql</value>        
+      		</list>
+    	</property>
+     	<property name="cacheSeconds" value="1"/> 
+	</bean>
+	
     <context:component-scan base-package="org.egov.pgr" />
 
 	<aop:aspectj-autoproxy proxy-target-class="true"/>

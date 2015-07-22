@@ -39,15 +39,57 @@
  */
 package org.egov.pgr.repository.dashboard;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@SuppressWarnings("all")
 public class DashboardRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    @Qualifier("dashboardSQLSource")
+    private ReloadableResourceBundleMessageSource dashboardSQLSource;
+
+    public List<Object[]> fetchComplaintResolutionTrendBetween(final Date fromDate, final Date toDate) {
+        return fetchDateRangeData("pgr.comp.resolution.weekly.trend", fromDate, toDate);
+    }
+
+    public List<Object[]> fetchComplaintRegistrationTrendBetween(final Date fromDate, final Date toDate) {
+        return fetchDateRangeData("pgr.comp.reg.weekly.trend", fromDate, toDate);
+    }
+
+    public List<Object[]> fetchMonthlyAggregateBetween(final Date fromDate, final Date toDate) {
+        return fetchDateRangeData("pgr.comp.six.month.aggr", fromDate, toDate);
+    }
+
+    public List<Object[]> fetchComplaintTypeWiseBetween(final Date fromDate, final Date toDate) {
+        return fetchDateRangeData("pgr.comp.type.wise.perc", fromDate, toDate);
+    }
+
+    private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
+        final SQLQuery qry = getQuery(query);
+        qry.setParameter("fromDate", fromDate);
+        qry.setParameter("toDate", toDate);
+        return qry.list();
+    }
+
+    private SQLQuery getQuery(final String sqlKey) {
+        return entityManager.unwrap(Session.class)
+                .createSQLQuery(dashboardSQLSource.getMessage(sqlKey, null, Locale.getDefault()));
+    }
 
 }
