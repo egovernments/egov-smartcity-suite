@@ -347,10 +347,18 @@ $(document).ready(function(){
 	
 	$('.btn-save-location').click(function(){
 		var location = map.getCenter();
-		//console.log(location.lat()+"<=======>"+location.lng());
+		console.log(location.lat()+"<=======>"+location.lng());
 		lat = location.lat();
 		lng = location.lng();
-		$('#location').typeahead('val', address);
+		$.ajax({
+			type: "POST",
+			url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
+			dataType: 'json',
+			success : function(data){
+				 address = data.results[0].formatted_address;
+				 $('#location').typeahead('val', address);
+			}
+		});	
 		$('#lat').val(lat);
 		$('#lng').val(lng);
 	});
