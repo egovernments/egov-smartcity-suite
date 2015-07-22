@@ -142,9 +142,10 @@ $(document).ready(function()
 
 	var elements = document.querySelectorAll('input,select,textarea');
 
-	for (var i = elements.length; i--;) {
+	for(var i = 0; i<elements.length; i++){
 	    elements[i].addEventListener('invalid', function () {
-		this.scrollIntoView(false);
+    	off = (elements[0].offsetTop - 50 );
+    	$('html, body').animate({scrollTop: off }, 0);
 	    });
 	}
 
