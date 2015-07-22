@@ -241,7 +241,7 @@ public class ChartOfAccounts {
 
 			DataExtractor de=DataExtractor.getExtractor();
 
-			String sql="select ID as \"ID\",name as  \"name\",tableName as \"tableName\","+
+			String sql="select id as \"id\",name as  \"name\",tableName as \"tableName\","+
 			"description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\""+
 			",nbrOfLevels as  \"nbrOfLevels\" from AccountDetailType";
 			
@@ -249,7 +249,7 @@ public class ChartOfAccounts {
 			Session currentSession = HibernateUtil.getCurrentSession();
 			SQLQuery createSQLQuery = currentSession.createSQLQuery(sql);
 			createSQLQuery
-			.addScalar("ID",IntegerType.INSTANCE)
+			.addScalar("id",IntegerType.INSTANCE)
 			.addScalar("name")
 			.addScalar("tableName")
 			.addScalar("description")
