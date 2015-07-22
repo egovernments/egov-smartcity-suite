@@ -77,7 +77,6 @@
 				</tr>
 			</table>
 			</div>
-	<div class="mandatory1" align="left" id="mandatorymarkdiv">* Mandatory Fields</div>
 			<div  class="buttonbottom">
 				<input type="submit" class="buttonsubmit" value="Search" id="Search" name="button" onclick="return validateFormAndSubmit();" />
 				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
