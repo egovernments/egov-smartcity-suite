@@ -3,19 +3,21 @@ table.its{
 	}
 
 table.its th {
-   background-color: #999999;
-    background-image: url("/egi/resources/erp2/images/tablebg.gif");
-    background-repeat: repeat-x;
-    border-bottom: 1px solid #E9E9E9;
-    border-right: 1px solid #E9E9E9;
-    color: #FFFFFF;
-    font-family: Verdana,Arial,Helvetica,sans-serif;
-    font-size: 11px;
-    font-weight: bold;
-    height: 32px;
-    padding-left: 5px;
-    padding-right: 5px;
-    text-align: center;
+   height: 28px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-right-color: #84B1AD;
+  border-bottom-color: #84B1AD;
+  font-family: semibold;
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  padding: 4px;
+  background-color: #8CBBB7;
+  background-image:none;
+  text-align: center;
 }
 
 

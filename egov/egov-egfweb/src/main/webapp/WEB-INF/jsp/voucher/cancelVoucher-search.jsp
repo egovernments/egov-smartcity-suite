@@ -147,7 +147,7 @@ function loadNamesForSelectedType()
 			            <th class="bluebgheadtd">Department Name</th>
 			            <th class="bluebgheadtd">Type-Name</th>
 						<th class="bluebgheadtd">Narration</th>
-						<th class="bluebgheadtdnew">Select</th>
+						<th class="bluebgheadtd">Select</th>
 					</tr>  
 			        <c:set var="trclass" value="greybox"/>           
 			        
