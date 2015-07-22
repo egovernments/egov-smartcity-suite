@@ -40,9 +40,9 @@
 package org.egov.pgr.service.dashboard;
 
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -67,7 +67,8 @@ public class DashboardService {
         final DateTime currentDate = new DateTime();
         final Map<String, Integer> currentYearTillDays = constructDatePlaceHolder(currentDate.minusDays(6), currentDate, "MM-dd");
         for (final Object[] compDtl : dashboardRepository
-                .fetchComplaintRegistrationTrendBetween(currentDate.minusDays(6).toDate(), endOfGivenDate(currentDate).toDate()))
+                .fetchComplaintRegistrationTrendBetween(startOfGivenDate(currentDate.minusDays(6)).toDate(),
+                        endOfGivenDate(currentDate).toDate()))
             currentYearTillDays.put(String.valueOf(compDtl[0]), Integer.valueOf(String.valueOf(compDtl[1])));
         return currentYearTillDays.values();
     }
@@ -75,9 +76,10 @@ public class DashboardService {
     public Collection<Integer> getComplaintResolutionTrend() {
         final DateTime currentDate = new DateTime();
         final Map<String, Integer> currentYearTillDays = constructDatePlaceHolder(currentDate.minusDays(6), currentDate, "MM-dd");
-        for (final Object[] compDtl : dashboardRepository.fetchComplaintResolutionTrendBetween(currentDate.minusDays(6).toDate(),
+        for (final Object[] compDtl : dashboardRepository.fetchComplaintResolutionTrendBetween(
+                startOfGivenDate(currentDate.minusDays(6)).toDate(),
                 endOfGivenDate(currentDate).toDate()))
-            currentYearTillDays.put(String.valueOf(compDtl[0]), Integer.valueOf(String.valueOf(compDtl[1])));
+            currentYearTillDays.put(String.valueOf(compDtl[1]), Integer.valueOf(String.valueOf(compDtl[0])));
         return currentYearTillDays.values();
     }
 
@@ -86,7 +88,7 @@ public class DashboardService {
         final List<Map<String, Object>> dataHolder = constructMonthPlaceHolder(currentDate.minusMonths(6), currentDate,
                 "MMM-yyyy");
         for (final Object[] compCnt : dashboardRepository.fetchMonthlyAggregateBetween(
-                currentDate.minusMonths(6).withDayOfMonth(1).withHourOfDay(1).toDate(), endOfGivenDate(currentDate).toDate()))
+                startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate()))
             for (final Map<String, Object> mapdata : dataHolder)
                 if (mapdata.containsValue(StringUtils.capitalize(String.valueOf(compCnt[0]).toLowerCase())))
                     mapdata.put("y", Integer.valueOf(String.valueOf(compCnt[1])));
@@ -96,21 +98,27 @@ public class DashboardService {
     public List<Map<String, Object>> getCompTypewiseAggregate() {
         final DateTime currentDate = new DateTime();
         final List<Map<String, Object>> compTypeWiseData = new LinkedList<Map<String, Object>>();
-        int indexOfOthers = 0;
-        int count = 0;
+        long totalOthersCount = 0;
         for (final Object[] complaint : dashboardRepository.fetchComplaintTypeWiseBetween(
-                currentDate.minusMonths(6).withDayOfMonth(1).withHourOfDay(1).toDate(), endOfGivenDate(currentDate).toDate())) {
+                startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate())) {
             final Map<String, Object> compTypewiseCnt = new HashMap<String, Object>();
-            compTypewiseCnt.put("name", String.valueOf(complaint[0]));
-            compTypewiseCnt.put("ctId", complaint[1]);
-            compTypewiseCnt.put("y", complaint[2]);
-            compTypeWiseData.add(compTypewiseCnt);
-            //TODO Add logic to create Others list
-            if (String.valueOf(complaint[1]).equals("Others"))
-                indexOfOthers = count;
-            count++;
+            final Integer complaintCount = Integer.valueOf(String.valueOf(complaint[2]));
+            if (complaintCount > 9) {
+                compTypewiseCnt.put("name", String.valueOf(complaint[0]));
+                compTypewiseCnt.put("ctId", complaint[1]);
+                compTypewiseCnt.put("y", complaintCount);
+                compTypeWiseData.add(compTypewiseCnt);
+            } else
+                totalOthersCount += complaintCount;
         }
-        Collections.rotate(compTypeWiseData.subList(indexOfOthers, compTypeWiseData.size()), -1);
+
+        if (totalOthersCount > 0) {
+            final Map<String, Object> othersData = new HashMap<String, Object>();
+            othersData.put("name", "Others");
+            othersData.put("ctId", "");
+            othersData.put("y", totalOthersCount);
+            compTypeWiseData.add(othersData);
+        }
         return compTypeWiseData;
     }
 
