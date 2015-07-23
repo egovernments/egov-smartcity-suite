@@ -73,6 +73,7 @@
 						</div>
 						
 						<div class="panel-body custom-form">
+						<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">When </label>
 										
 										<div class="col-sm-2 add-margin">
@@ -92,6 +93,7 @@
 												<option value="custom" data-show=".complaintdur">Custom</option>
 											</select>
 										</div>
+										</div>
 									</div>
 									
 						
@@ -105,9 +107,7 @@
 								id="start_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
 							</div>
-						  </div>
-					
-							<div class="form-group">
+						  
 								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintToDate" /></label>
 							<div class="col-sm-2 add-margin">
 									<input type="text" name="reportToDate" class="form-control datepicker checkdate"
@@ -133,10 +133,10 @@
 				</form:form>
 				<div class="row display-hide report-section">
 						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
-						<div class="col-md-12">
-							<table class="table table-bordered datatable nopointer" id="drilldownReport-table">
-						<%-- 	<thead>
-							<c:choose>
+						<div class="col-md-12 form-group">
+							<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
+						 	<thead>
+							<%--<c:choose>
 							<c:when test="${mode=='ByBoundary'}">
 								<th>	<spring:message code="lbl.drilldownReport.boundary" />	</th>
 							</c:when>
@@ -151,9 +151,8 @@
 								<th><spring:message code="lbl.drilldownReport.inprocessStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
 								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
-								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>
-							</thead> --%>
-							
+								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>--%>
+							</thead> 
 							<tfoot id="report-footer">
 							   <tr>
 							    <td><b>Total</b></td>
@@ -164,9 +163,13 @@
 							    <td></td>
 								</tr>
 							</tfoot>
-							</div>
 						</table>
 						</div>
+						</div>
+				<div id="report-backbutton" class="col-xs-12 text-center">
+				<div class="form-group"> <buttton class="btn btn-primary" id="backButton" > Back</buttton>
+				  </div>
+				  
 				</div>
 			</div>
 		</div>
@@ -174,11 +177,14 @@
 
 
 
-<link rel="stylesheet" href="<c:url value='/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>

@@ -99,9 +99,7 @@
 								id="start_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
 							</div>
-						  </div>
-					
-							<div class="form-group">
+						
 								<label class="col-sm-3 control-label"><spring:message code="lbl.ageingReport.complaintToDate" /></label>
 							<div class="col-sm-2 add-margin">
 									<input type="text" name="reportToDate" class="form-control datepicker checkdate"
@@ -136,7 +134,7 @@
 				<div class="row display-hide report-section">
 						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.ageingReport.resultHeader" /> </div>
 						<div class="col-md-12">
-							<table class="table table-bordered datatable nopointer" id="ageingReport-table">
+							<table class="table table-bordered datatable dt-responsive table-hover" id="ageingReport-table">
 							<thead>
 												<c:choose>
 							<c:when test="${mode=='ByBoundary'}">
@@ -179,6 +177,9 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>

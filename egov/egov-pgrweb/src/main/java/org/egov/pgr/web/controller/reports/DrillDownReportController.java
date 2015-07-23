@@ -68,7 +68,7 @@ public class DrillDownReportController {
 
         SQLQuery drillDownreportQuery = null;
         String result = null;
-        if (deptid != null && complainttypeid != null && selecteduserid != null) {
+        if (deptid != null && complainttypeid != null && selecteduserid != null && !"".equals(deptid) && !"".equals(complainttypeid) && !"".equals(selecteduserid)) {
             String userName = selecteduserid.split("~")[0];
             if (userName.equals(""))
                 userName = null;

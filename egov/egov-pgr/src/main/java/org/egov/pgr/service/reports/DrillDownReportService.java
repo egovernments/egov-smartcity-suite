@@ -22,30 +22,30 @@ public class DrillDownReportService {
 
         StringBuffer query = new StringBuffer();
 
-        if(boundary!=null )
+        if(boundary!=null && !"".equals(boundary) )
         {
-            if(department!=null )
+            if(department!=null && !"".equals(department) )
             {
                 
-                if(complainttype!=null ){
+                if(complainttype!=null && !"".equals(complainttype) ){
                     query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");              // Next is userwise.
                 }else
                     query.append(" SELECT ctype.name as name, "); //mean user selected boundary and department. Next is complaint type.
              }else
                 query.append(" SELECT dept.name as name, ");  //Mean get department list .
         }
-        else if(department!=null )
+        else if(department!=null && !"".equals(department))
         {
-            if(complainttype!=null ){
+            if(complainttype!=null && !"".equals(complainttype)){
                 query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
             }else
                 query.append(" SELECT ctype.name as name, ");
         }
-        else if(complainttype!=null )
+        else if(complainttype!=null && !"".equals(complainttype) )
         {
             query.append(" SELECT ctype.name as name, ");
         }
-        else if(selecteduser!=null )
+        else if(selecteduser!=null  && !"".equals(selecteduser))
         {
             query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");  
         }
@@ -71,9 +71,9 @@ public class DrillDownReportService {
 
     private void buildGroupByClause(String groupBy, String department, String boundary, String complainttype,
             String selecteduser, StringBuffer query) {
-        if (boundary != null) {
-            if (department != null) {
-                if (complainttype != null) {
+        if (boundary != null && !"".equals(boundary)) {
+            if (department != null && !"".equals(department)) {
+                if (complainttype != null && !"".equals(complainttype)) {
                     query.append("  group by emp.name||'~'|| pos.name ");
                 } else
 
@@ -81,18 +81,16 @@ public class DrillDownReportService {
 
             } else
                 query.append("  group by dept.name ");
-        } else if (department != null) {
+        } else if (department != null && !"".equals(department)) {
 
-            if (complainttype != null) {
+            if (complainttype != null && !"".equals(complainttype)) {
                 query.append("  group by emp.name||'~'|| pos.name ");
             } else
                 query.append("  group by ctype.name ");
-        } else if (complainttype != null) {
+        } else if (complainttype != null && !"".equals(complainttype)) {
             query.append(" group by ctype.name  ");
 
-        } else if (selecteduser != null) {
-
-        } else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary")) {
+        }  else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary")) {
             query.append("  group by bndryparent.name ");
 
         } else {
@@ -124,7 +122,7 @@ public class DrillDownReportService {
             query.append(" and cd.createddate <=  :toDates ");
         }
 
-        if (boundary != null) {
+        if (boundary != null && !"".equals(boundary)) {
 
             if (boundary.equalsIgnoreCase("NOT AVAILABLE"))
                 query.append(" and  bndryparent.name is null ");
@@ -134,7 +132,7 @@ public class DrillDownReportService {
             }
 
         }
-        if (department != null) {
+        if (department != null && !"".equals(department)) {
             if (department.equalsIgnoreCase("NOT AVAILABLE"))
                 query.append(" and  dept.name is null ");
             else {
@@ -142,7 +140,7 @@ public class DrillDownReportService {
                 query.append(department.toUpperCase()).append("' ");
             }
         }
-        if (complainttype != null) {
+        if (complainttype != null && !"".equals(complainttype)) {
             query.append(" and upper(ctype.name)= '");
             query.append(complainttype.toUpperCase()).append("' ");
         }
@@ -191,7 +189,7 @@ public class DrillDownReportService {
 
         buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
         query.append(" and complainant.id=cd.complainant   ");
-        if (selecteduser != null) {
+        if (selecteduser != null && !"".equals(selecteduser)) {
             query.append(" and upper(emp.name)= '");
             query.append(selecteduser.toUpperCase()).append("' ");
         }

@@ -37,142 +37,229 @@
 	# 
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+var reportdatatable;
 jQuery(document)
 		.ready(
 				function($) {
 
 					tableContainer1 = $("#ageingReport-table");
 					drillDowntableContainer= $("#drilldownReport-table");
-				
-					$('#drilldownReportSearch').click(function(e) {
-						console.log('calling inside ajax');
-						
-						if($('#mode').val()=='ByBoundary')
-							callajaxdatatableForDrilDownReport(e);
-						else
-							callAjaxByDepartment();
+					$('#report-backbutton').hide(); 
 					
+					
+					
+					$('#backButton').click(function(e) {
+						
+						console.log('department ' +$('#deptid').val());
+						console.log('complainttypeid' +$('#complainttypeid').val());
+						console.log('selecteduserid' +$('#selecteduserid').val());
+						console.log('boundary' +$('#boundary').val());
+						console.log('type' +$('#type').val());
+						console.log('-----------------------------');
+						
+						if($('#selecteduserid').val())
+						{
+							console.log('true!')
+							$('#selecteduserid').val("");
+							callAjaxByUserNameType();
+						}else if($('#complainttypeid').val())
+						{
+							console.log('true!')
+							$('#complainttypeid').val("");
+							  callAjaxByComplaintType();  
+						}else if($('#deptid').val())
+						{
+							console.log('true!')
+							$('#deptid').val("");
+							callAjaxByDepartment();  
+							if($('#mode').val()!='ByBoundary'){
+								$('#report-backbutton').hide();
+							}
+						}else if($('#boundary').val())
+						{
+							console.log('true!')
+							$('#boundary').val("");
+							 callajaxdatatableForDrilDownReport();
+							
+						}
+						
 					});
 					
-					function callajaxdatatableForDrilDownReport(e) {
-
-						var startDate = "";
-						var endDate = "";
-						var modeVal = "";
-						var when_dateVal="";
-						startDate = $('#start_date').val();
-						endDate = $('#end_date').val();
-						modeVal = $('#mode').val();
-						when_dateVal = $('#when_date').val();
-						
-						var groupByobj="";
-						groupByobj=$('input[name="groupBy"]:checked').val();
-						if ($('#start_date').val() == "")
-							startDate = "";
-						
-						if ($('#end_date').val() == "")
-							endDate = "";
-
-						$('.report-section').removeClass('display-hide');
-						$('#report-footer').show(); 
-							
-						drillDowntableContainer
-								.dataTable({
-									ajax : {
-										url : "/pgr/report/drillDown/resultList-update",
-										data : {
-											fromDate : startDate,
-											toDate : endDate,
-											groupBy:modeVal,
-											deptid :$('#deptid').val(),
-											boundary:$('#boundary').val(),
-											complainttypeid :$('#complainttypeid').val(),
-											selecteduserid :$('#selecteduserid').val(),
-											type :$('#type').val(),
-											complaintDateType:when_dateVal
-										}
-									},
-									"sPaginationType" : "bootstrap",
-									"bPaginate" : false,
-									"autoWidth" : false,
-									"bInfo" : false,
-									"bDestroy" : true,
-									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-
-									columns : [ {
-										"data" : "name",
-										"render": function ( data, type, row ) {
-									           return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Boundarywise\');" data-hiddenele="boundary" data-eleval="'+ data +'">'+ data +'</a>';
-											                  },
-						                "sTitle": "Boundary Name"
-						            }, {
-							        	"mData" : "registered",
-										"sTitle" : "Registered"
-										
-									}, {
-										"data" : "inprocess",
-										"sTitle" : "Inprocess"
-									}, {
-										"data" : "completed",
-										"sTitle" : "Completed"
-									}, {
-										"data" : "rejected",
-										"sTitle" : "Rejected"
-
-									}, {
-										"data" : "total",
-										"sTitle" : "Total"
-
-									} ],
-									"footerCallback" : function(nRow, aaData,
-											iStart, iEnd, aiDisplay) {
-
-										var api = this.api(), aaData;
-										
-										if(aaData.length==0)
-											{
-												$('#report-footer').hide();
-											}else
-												{$('#report-footer').show();} 
-										if (aaData.length > 0) {
-											updateTotalFooter(1, api);
-											updateTotalFooter(2, api);
-											updateTotalFooter(3, api);
-											updateTotalFooter(4, api);
-											updateTotalFooter(5, api);
-										}
-
-									}
-
-								});
-						e.stopPropagation();
+					$('#drilldownReportSearch').click(function(e) {
+						console.log('calling inside ajax');
 					
-					}
-					
-	
-					
-			
+						$('#deptid').val("");
+						$('#complainttypeid').val("");
+						$('#selecteduserid').val("");
+						$('#boundary').val("");
+						$('#type').val("");
+						 
+						if($('#mode').val()=='ByBoundary'){
+							callajaxdatatableForDrilDownReport();
+						}
+						else
+							{
+							callAjaxByDepartment();
+							$('#report-backbutton').hide(); 
+							}
+					});
 				});
 
 
+function callajaxdatatableForDrilDownReport() {
 
-function updateTotalFooter(colidx, api) {
-	// Remove the formatting to get integer data for summation
-	var intVal = function(i) {
-		return typeof i === 'string' ? i.replace(/[\$,]/g,
-				'') * 1 : typeof i === 'number' ? i : 0;
-	};
+	var startDate = "";  
+	var endDate = "";
+	var modeVal = "";
+	var when_dateVal="";
+	startDate = $('#start_date').val();
+	endDate = $('#end_date').val();
+	modeVal = $('#mode').val();
+	when_dateVal = $('#when_date').val();
+	
+	var groupByobj="";
+	groupByobj=$('input[name="groupBy"]:checked').val();
+	if ($('#start_date').val() == "")
+		startDate = "";
+	
+	if ($('#end_date').val() == "")
+		endDate = "";
 
-	// Total over all pages
-	var total = api.column(colidx).data().reduce(
-			function(a, b) {
-				return intVal(a) + intVal(b);
+	$('.report-section').removeClass('display-hide');
+	$('#report-footer').show(); 
+	$('#report-backbutton').hide(); 	
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/pgr/report/drillDown/resultList-update",
+					data : {
+						fromDate : startDate,
+						toDate : endDate,
+						groupBy:modeVal,
+						deptid :$('#deptid').val(),
+						boundary:$('#boundary').val(),
+						complainttypeid :$('#complainttypeid').val(),
+						selecteduserid :$('#selecteduserid').val(),
+						type :$('#type').val(),
+						complaintDateType:when_dateVal
+					}
+				},
+				"sPaginationType" : "bootstrap",
+				"autoWidth" : false,
+				"bDestroy": true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["xls", "pdf", "print"]
+				},
+				columns : [ {
+					"data" : "name",
+					"render": function ( data, type, row ) {
+				           return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Boundarywise\');" data-hiddenele="boundary" data-eleval="'+ data +'">'+ data +'</a>';
+						                  },
+	                "sTitle": "Boundary Name"
+	            }, {
+		        	"mData" : "registered",
+					"sTitle" : "Registered"
+					
+				}, {
+					"data" : "inprocess",
+					"sTitle" : "Inprocess"
+				}, {
+					"data" : "completed",
+					"sTitle" : "Completed"
+				}, {
+					"data" : "rejected",
+					"sTitle" : "Rejected"
+
+				}, {
+					"data" : "total",
+					"sTitle" : "Total"
+
+				} ],
+				"footerCallback": function ( row, data, start, end, display ) {
+				    var api = this.api(), data;
+					if(data.length==0)
+					{
+						$('#report-footer').hide();
+					}else
+						{$('#report-footer').show();} 
+					if (data.length > 0) {
+				    updateTotalFooter(1, api);
+				    updateTotalFooter(2, api);
+				    updateTotalFooter(3, api);
+				    updateTotalFooter(4, api);
+				    updateTotalFooter(5, api);
+				    
+					}
+				},
+		                "aoColumnDefs": [ {
+				      "aTargets": [1,2,3,4,5],
+				      "mRender": function ( data, type, full ) {
+					return formatNumberInr(data);
+				      }
+				} ]
+
 			});
+	//e.stopPropagation();
 
-	// Update footer
-	$(api.column(colidx).footer()).html(
-			'<b>' + total + '</b>');
 }
+
+
+function updateTotalFooter(colidx, api)
+{
+	// Remove the formatting to get integer data for summation
+    var intVal = function ( i ) {
+        return typeof i === 'string' ?
+            i.replace(/[\$,]/g, '')*1 :
+            typeof i === 'number' ?
+                i : 0;
+    };
+
+    // Total over all pages
+    total = api
+        .column(colidx)
+        .data()
+        .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+        } );
+
+    // Total over this page
+    pageTotal = api
+        .column( colidx, { page: 'current'} )
+        .data()
+        .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+        }, 0 );
+
+    // Update footer
+    $( api.column( colidx ).footer() ).html(
+        '<b>'+formatNumberInr(pageTotal) +' ('+ formatNumberInr(total) +')</b>'
+    );
+}
+
+
+//inr formatting number
+function formatNumberInr(x){
+   if(x)
+   {
+		x=x.toString();
+		var afterPoint = '';
+		if(x.indexOf('.') > 0)
+		   afterPoint = x.substring(x.indexOf('.'),x.length);
+		x = Math.floor(x);
+		x=x.toString();
+		var lastThree = x.substring(x.length-3);
+		var otherNumbers = x.substring(0,x.length-3);
+		if(otherNumbers != '')
+		    lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+	    return res;
+   }
+   return x;
+}	
+
 function callAjaxByDepartment() {
 
 	var startDate = "";
@@ -194,8 +281,9 @@ function callAjaxByDepartment() {
 
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show(); 
+	$('#report-backbutton').show();
 		
-	drillDowntableContainer
+	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/pgr/report/drillDown/resultList-update",
@@ -212,12 +300,14 @@ function callAjaxByDepartment() {
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"bPaginate" : false,
 				"autoWidth" : false,
-				"bInfo" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-
+				"bDestroy": true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["xls", "pdf", "print"]
+				},
 				columns : [ {
 					"data" : "name",
 					"render": function ( data, type, row ) {
@@ -243,25 +333,28 @@ function callAjaxByDepartment() {
 					"sTitle" : "Total"
 
 				} ],
-				"footerCallback" : function(nRow, aaData,
-						iStart, iEnd, aiDisplay) {
-
-					var api = this.api(), aaData;
-					
-					if(aaData.length==0)
-						{
-							$('#report-footer').hide();
-						}else
-							{$('#report-footer').show();} 
-					if (aaData.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(3, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
+				"footerCallback": function ( row, data, start, end, display ) {
+				    var api = this.api(), data;
+					if(data.length==0)
+					{
+						$('#report-footer').hide();
+					}else
+						{$('#report-footer').show();} 
+					if (data.length > 0) {
+				    updateTotalFooter(1, api);
+				    updateTotalFooter(2, api);
+				    updateTotalFooter(3, api);
+				    updateTotalFooter(4, api);
+				    updateTotalFooter(5, api);
+				    
 					}
-
-				}
+				},
+		                "aoColumnDefs": [ {
+				      "aTargets": [1,2,3,4,5],
+				      "mRender": function ( data, type, full ) {
+					return formatNumberInr(data);
+				      }
+				} ]
 
 			});
 	//e.stopPropagation();
@@ -288,8 +381,8 @@ function callAjaxByComplaintType() {
 
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show(); 
-		
-	drillDowntableContainer
+	$('#report-backbutton').show();	
+	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/pgr/report/drillDown/resultList-update",
@@ -306,12 +399,14 @@ function callAjaxByComplaintType() {
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"bPaginate" : false,
 				"autoWidth" : false,
-				"bInfo" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-
+				"bDestroy": true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["xls", "pdf", "print"]
+				},
 				columns : [ {
 					"data" : "name",
 					"render": function ( data, type, row ) {
@@ -337,25 +432,28 @@ function callAjaxByComplaintType() {
 					"sTitle" : "Total"
 
 				} ],
-				"footerCallback" : function(nRow, aaData,
-						iStart, iEnd, aiDisplay) {
-
-					var api = this.api(), aaData;
-					
-					if(aaData.length==0)
-						{
-							$('#report-footer').hide();
-						}else
-							{$('#report-footer').show();} 
-					if (aaData.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(3, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
+				"footerCallback": function ( row, data, start, end, display ) {
+				    var api = this.api(), data;
+					if(data.length==0)
+					{
+						$('#report-footer').hide();
+					}else
+						{$('#report-footer').show();} 
+					if (data.length > 0) {
+				    updateTotalFooter(1, api);
+				    updateTotalFooter(2, api);
+				    updateTotalFooter(3, api);
+				    updateTotalFooter(4, api);
+				    updateTotalFooter(5, api);
+				    
 					}
-
-				}
+				},
+		                "aoColumnDefs": [ {
+				      "aTargets": [1,2,3,4,5],
+				      "mRender": function ( data, type, full ) {
+					return formatNumberInr(data);
+				      }
+				} ]
 
 			});
 }
@@ -381,7 +479,7 @@ function callAjaxByUserNameType() {
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show(); 
 		
-	drillDowntableContainer
+	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/pgr/report/drillDown/resultList-update",
@@ -398,12 +496,14 @@ function callAjaxByUserNameType() {
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"bPaginate" : false,
 				"autoWidth" : false,
-				"bInfo" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-
+				"bDestroy": true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["xls", "pdf", "print"]
+				},
 				columns : [ {
 					"data" : "name",
 					"render": function ( data, type, row ) {
@@ -429,25 +529,28 @@ function callAjaxByUserNameType() {
 					"sTitle" : "Total"
 
 				} ],
-				"footerCallback" : function(nRow, aaData,
-						iStart, iEnd, aiDisplay) {
-
-					var api = this.api(), aaData;
-					
-					if(aaData.length==0)
-						{
-							$('#report-footer').hide();
-						}else
-							{$('#report-footer').show();} 
-					if (aaData.length > 0) {
-						updateTotalFooter(1, api);
-						updateTotalFooter(2, api);
-						updateTotalFooter(3, api);
-						updateTotalFooter(4, api);
-						updateTotalFooter(5, api);
+				"footerCallback": function ( row, data, start, end, display ) {
+				    var api = this.api(), data;
+					if(data.length==0)
+					{
+						$('#report-footer').hide();
+					}else
+						{$('#report-footer').show();} 
+					if (data.length > 0) {
+				    updateTotalFooter(1, api);
+				    updateTotalFooter(2, api);
+				    updateTotalFooter(3, api);
+				    updateTotalFooter(4, api);
+				    updateTotalFooter(5, api);
+				    
 					}
-
-				}
+				},
+		                "aoColumnDefs": [ {
+				      "aTargets": [1,2,3,4,5],
+				      "mRender": function ( data, type, full ) {
+					return formatNumberInr(data);
+				      }
+				} ]
 
 			});
 }
@@ -473,7 +576,7 @@ function callAjaxByComplaintDetail() {
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').hide(); 
 		
-	drillDowntableContainer
+	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/pgr/report/drillDown/resultList-update",
@@ -490,15 +593,20 @@ function callAjaxByComplaintDetail() {
 					}
 				},
 				"sPaginationType" : "bootstrap",
-				"bPaginate" : false,
 				"autoWidth" : false,
-				"bInfo" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-
+				"bDestroy": true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"oTableTools": {
+					"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons": ["xls", "pdf", "print"]
+				},
 				columns : [ {
 					"data" : "crn",
-				    "sTitle": "Complaint Number"
+				    "sTitle": "Complaint Number" ,
+				    "render": function ( data, type, row ) {
+	                    return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'+ data +'\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'+ data +'">'+ data +'</a>';
+	                }, 
 	            }, {
 		        	"mData" : "createddate",
 					"sTitle" : "Complaint Date"
@@ -531,7 +639,12 @@ function showChangeDropdown(dropdown)
 	if(showele)
 	{
 	  $(showele).show();	   
-	}
+	}else
+		{
+		$('#start_date').val("");
+		$('#end_date').val("");
+		 
+		}
 }
 
 function setHiddenValueByLink(obj,paaram)
