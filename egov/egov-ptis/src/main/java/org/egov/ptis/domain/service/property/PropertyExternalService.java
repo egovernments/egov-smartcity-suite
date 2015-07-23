@@ -59,19 +59,21 @@ public class PropertyExternalService {
 		assessmentDetail.setFlag(flag);
 		validate();
 		initiateBasicProperty();
-		property = basicProperty.getProperty();
-		if (flag.equals(FLAG_MOBILE_EMAIL)) {
-			loadPrimaryMobileAndEmail();
-		}
-		if (property != null) {
-			PropertyDetails propertyDetails = new PropertyDetails();
-			assessmentDetail.setPropertyDetails(propertyDetails);
-			if (flag.equals(FLAG_FULL_DETAILS)) {
-				getAsssessmentDetails();
-				loadPropertyDues();
+		if (basicProperty != null) {
+			property = basicProperty.getProperty();
+			if (flag.equals(FLAG_MOBILE_EMAIL)) {
+				loadPrimaryMobileAndEmail();
 			}
-			if (flag.equals(FLAG_TAX_DETAILS)) {
-				loadPropertyDues();
+			if (property != null) {
+				PropertyDetails propertyDetails = new PropertyDetails();
+				assessmentDetail.setPropertyDetails(propertyDetails);
+				if (flag.equals(FLAG_FULL_DETAILS)) {
+					getAsssessmentDetails();
+					loadPropertyDues();
+				}
+				if (flag.equals(FLAG_TAX_DETAILS)) {
+					loadPropertyDues();
+				}
 			}
 		}
 		return assessmentDetail;
