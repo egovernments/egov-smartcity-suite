@@ -43,6 +43,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,8 +80,8 @@ public class NewConnectionController extends GenericConnectionController {
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,final WaterTaxUtils waterTaxUtils,
-            final SmartValidator validator) {
+            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
+            final WaterTaxUtils waterTaxUtils, final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
         this.connectionDemandService = connectionDemandService;
@@ -95,6 +96,7 @@ public class NewConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
+        waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         return "newconnection-form";
     }

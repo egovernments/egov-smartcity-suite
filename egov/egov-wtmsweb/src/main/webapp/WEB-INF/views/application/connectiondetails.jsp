@@ -141,7 +141,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="sumpCapacity" path="sumpCapacity" required="required" />
+		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="sumpCapacity" path="sumpCapacity" required="required" />
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 	</div>
 	<c:if test="${mode=='addconnection'}">

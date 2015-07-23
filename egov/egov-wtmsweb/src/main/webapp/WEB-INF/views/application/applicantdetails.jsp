@@ -41,18 +41,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.application.date" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:input id="applicationdate" path="applicationDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
-		<form:errors path="applicationDate" cssClass="add-margin error-msg" />
-	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.ptassesmentnumber" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<div class="input-group">
-			<form:input id="propertyIdentifier" path="connection.propertyIdentifier" class="form-control" min="3" maxlength="50" required="required" /> 
+			<form:input id="propertyIdentifier" path="connection.propertyIdentifier" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" min="3" maxlength="50" required="required" /> 
 			<span class="input-group-addon"> <i class="fa fa-search"></i></span>
 		</div>
 		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
@@ -60,7 +52,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.bpanumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control" id="bpaIdentifier" path="connection.bpaIdentifier" min="3" maxlength="50" />
+		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="bpaIdentifier" path="connection.bpaIdentifier" min="3" maxlength="50" />
 		<form:errors path="connection.bpaIdentifier" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -85,21 +77,27 @@
 		<form:errors path="connection.email" cssClass="add-margin error-msg"/>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.locality" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control" id="locality" disabled>  
+	</div>
+</div>
+<div class="form-group">	
+	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.address" /></label>
 	<div class="col-sm-3 add-margin">
 		<textarea class="form-control" id="propertyaddress" disabled></textarea>
 	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.zonewardblock" /></label>
 	<div class="col-sm-3 add-margin">
 		<textarea class="form-control" id="zonewardblock" disabled></textarea>
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.pt.due" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
-	</div>
-	
-</div>				
+	</div>	
+</div>					

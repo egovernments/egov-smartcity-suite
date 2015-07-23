@@ -60,6 +60,7 @@ $(document).ready(function(){
 						$('#mobileNumber').val('');
 						$('#email').val('');
 						$('#propertyaddress').val('');
+						$('#locality').val('');
 						$('#zonewardblock').val('');
 						$('#propertytaxdue').val('0.00');
 						alert(response.errorDetails.errorMessage);
@@ -94,6 +95,7 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
+						$("#locality").val(response.boundaryDetails.localityName);
 						$("#zonewardblock").val(boundaryData);
 						$("#propertytaxdue").val(response.propertyDetails.taxDue);
 					}					

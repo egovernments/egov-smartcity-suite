@@ -41,13 +41,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12"> 
+		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
 		<form:form role="form" action="newConnection-create"
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
+			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
