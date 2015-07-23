@@ -47,8 +47,6 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-		<div class="panel-body">
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" modelAttribute="designation" id="designationForm" action="" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -95,8 +93,6 @@
 			</div>
 		</form:form>
 			</div>
-        </div>
-    </div>
 </div>
 
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	

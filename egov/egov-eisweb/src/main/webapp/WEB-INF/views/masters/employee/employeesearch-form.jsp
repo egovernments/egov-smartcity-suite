@@ -62,39 +62,9 @@
 <script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 
-<div class="page-container" id="page-container">
-			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
-				
-				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-					<div class="container-fluid">
-						<div class="navbar-header col-md-10 col-xs-10">
-							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="<c:url value='/resources/global/images/rmclogo.jpg' context='/egi'/>" height="60">
-								<div>
-									
-									<span class="title2"><spring:message code="lbl.search.employee"/></span>
-								</div>
-							</a>
-						</div>
-						
-						<div class="nav-right-menu col-md-2 col-xs-2">
-							<ul class="hr-menu text-right">
-								<li class="ico-menu">
-									<a href="javascript:void(0);">
-										<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
-									</a>
-								</li>
-								
-							</ul>
-						</div>
-						
-					</div>
-				</nav>
-				
-			</header>
+
 		<form:form  class="form-horizontal form-groups-bordered" 
 					id="searchEmployeeForm" modelAttribute="employee" action="search">
-			<div class="main-content">
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -217,7 +187,6 @@
 							</div>
 						</div>					
 					</div>
-				</div>
 				</form:form>
 				<div class="row">
 					<div class="col-md-6 col-xs-6 table-header">List of Employee</div>
@@ -245,11 +214,9 @@
 					</div>
 				</div>
 
-			</div>
 
 
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>		
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/employeesearch.js'/>"></script>

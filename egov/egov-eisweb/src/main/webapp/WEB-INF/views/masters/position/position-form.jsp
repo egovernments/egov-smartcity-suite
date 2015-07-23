@@ -58,7 +58,6 @@
 	</script>	
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
 			<c:if test="${not empty warning}">
 				<div class="panel-heading">
 								<div class="panel-title view-content">
@@ -145,12 +144,11 @@
 				<div class="form-group">
 					<div class="text-center">
 					<c:if test="${mode != 'saved'}">
-						<button type="submit" class="btn btn-success"><spring:message code="lbl.position.submit"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="lbl.position.submit"/></button>
 						</c:if>
 						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
 	</form:form>
-		</div>
 	</div>
 </div>

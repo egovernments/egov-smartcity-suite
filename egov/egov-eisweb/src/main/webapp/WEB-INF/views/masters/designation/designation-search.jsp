@@ -44,8 +44,6 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <div class="panel" data-collapsed="0">
-            <div class="panel-body">
                 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
@@ -76,13 +74,11 @@
 
                     <div class="form-group">
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>                           
+                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
                             <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
                         </div>
                     </div>
                     
                 </form:form>
             </div>
-        </div>
-    </div>
 </div>

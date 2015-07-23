@@ -69,11 +69,9 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		
-<div class="row" id="page-content">
+<div class="row">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
 		<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" >
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                     <div class="alert alert-success" role="alert">${message}</div>
@@ -541,7 +539,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				
 				
 				
 				<div class="row">
@@ -553,8 +551,6 @@
                 
                 
                 
-             </div>
              </form:form>
-         </div>
     </div>
-
+</div>

@@ -107,7 +107,6 @@
 			<div class="main-content">
 				<div class="row">
 	<div class="col-md-12">
-			<div class="panel" data-collapsed="0">
 				<c:if test="${not empty warning}">
 					<div class="panel-heading">
 						<div class="panel-title view-content">
@@ -164,7 +163,7 @@
 					</div>
 					<div class="form-group">
 						<div class="text-center">
-							<button type="button"  id="positionSearch" class="btn btn-success">
+							<button type="button"  id="positionSearch" class="btn btn-primary">
 								<spring:message code="button.submit.position.search" />
 							</button>
 							<a href="javascript:void(0)" class="btn btn-default"
@@ -209,7 +208,6 @@
 					</div>
 		
 			</form:form>
-		</div>
 	</div>
 </div>
 			</div>
