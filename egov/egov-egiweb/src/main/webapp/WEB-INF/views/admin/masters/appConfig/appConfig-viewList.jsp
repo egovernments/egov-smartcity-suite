@@ -50,8 +50,6 @@
 <div class="row" id="page-content">
 
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
@@ -63,9 +61,8 @@
 					</div>
 				</div> 
 			<div class="panel-body custom-form11">
-				<div class="panel-body custom-form1">
 					<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">key Name<span class="mandatory"></span></label></label>
+								<label for="field-1" class="col-sm-3 control-label">key Name<span class="mandatory"></span></label>
 								
 								<div class="col-sm-6">
 							<form:input path="keyName" id="keyName" type="text" class="form-control low-width" placeholder="" autocomplete="off" readonly="true" />
@@ -83,8 +80,7 @@
 						</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-									class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
 							<div class="col-sm-6">
 							<form:input path="module.name" id="module" type="text" class="form-control low-width" placeholder="" autocomplete="off"  readonly="true"/>
 					        <form:errors path="module" cssClass="add-margin error-msg"/>
@@ -145,8 +141,6 @@
 					</div>
 					</form:form>
 				</div>
-				</div>
-			</div>
 		
 		
 		

@@ -44,8 +44,6 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed = "0">
-			<div class="panel-body">
 				<c:if test="${not empty message}">
 					<div class="success" id="message">${message}</div>
 				</c:if>
@@ -59,7 +57,7 @@
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">
-									<spring:message code="lbl.department"/><small><i class="entypo-star error-msg"></i></small>
+									<spring:message code="lbl.department"/><span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="name" id="dept" cssClass="form-control" cssErrorClass="form-control error" required="required">
@@ -80,6 +78,4 @@
 					</div>
 				</form:form>
 			</div>
-		</div>
-	</div>
 </div>

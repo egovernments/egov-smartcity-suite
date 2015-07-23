@@ -44,8 +44,6 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
@@ -59,14 +57,14 @@
 						
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.departmentName"/><small><i class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.departmentName"/><span class="mandatory"></span></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.departmentCode"/><small><i class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.departmentCode"/><span class="mandatory"></span></label>
 								<div class="col-sm-6" style="padding-top: 7px">
 									<form:input path="code" id="code" type="text" cssClass="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 									<form:errors path="code" cssClass="add-margin error-msg"/>
@@ -84,5 +82,3 @@
 				</form:form>
 			</div>
         </div>
-    </div>
-</div>

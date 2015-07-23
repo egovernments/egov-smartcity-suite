@@ -44,7 +44,6 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <div class="panel" data-collapsed="0">
             
                 
 
@@ -69,7 +68,5 @@
                     </div>
                     
                 </form:form>
-            </div>
         </div>
     </div>
-</div>

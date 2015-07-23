@@ -54,8 +54,6 @@
 	<div class="errorstyle"></div>
 
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				<c:if test="${not empty message}">
 					<div id="message" class="success">${message}</div>
 				</c:if>
@@ -70,8 +68,7 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 									<form:select path="module" id="appModuleName"
 										cssClass="form-control" cssErrorClass="form-control error"
@@ -88,8 +85,8 @@
 							</div>
 							<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label">Key
-									Name<small><i class="entypo-star error-msg"></i></small></span>
-								</label></label>
+									Name<span class="mandatory"></span>
+								</label>
 
 								<div class="col-sm-6">
 									<form:input path="keyName" id="keyName" type="text"
@@ -100,8 +97,7 @@
 
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Description<small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label">Description<span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:input path="description" id="description" type="text"
 										class="form-control low-width" placeholder=""
@@ -112,8 +108,8 @@
 							<div class="col-md-12">
 								<table class="table table-bordered" id="floorDetails">
 									<tr>
-										<th>Date<small><i class="entypo-star error-msg"></i></small></span></th>
-										<th>Values<small><i class="entypo-star error-msg"></i></small></span></th>
+										<th>Date<span class="mandatory"></span></th>
+										<th>Values<span class="mandatory"></span></th>
 										<th>Operation</th>
 									</tr>
 									<c:choose>
@@ -164,8 +160,6 @@
 					</div>
 				</form:form>
 			</div>
-		</div>
-	</div>
 </div>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>

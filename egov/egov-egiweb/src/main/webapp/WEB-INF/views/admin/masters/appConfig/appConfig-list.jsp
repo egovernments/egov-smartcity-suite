@@ -44,8 +44,6 @@
 <script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <div class="panel" data-collapsed="0">
-            <div class="panel-body">
                 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
@@ -61,8 +59,7 @@
 						<div class="panel-body custom-form">
 					
 						<div class="form-group">
-								<label class="col-sm-3 control-label">Module<small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label">Module<span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="module.name"
 	                                         id="appModuleName" cssClass="form-control" cssErrorClass="form-control error" required="required" >
@@ -76,8 +73,7 @@
 	                    <div class="panel-body custom-form">
 					
 						<div class="form-group">
-						<label class="col-sm-3 control-label">Key Name<small><i
-										class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label">Key Name<span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">		
 					<form:select path="keyName" data-first-option="false"
 						id="appKeyName" cssClass="form-control"
@@ -118,6 +114,4 @@
                     
                 </form:form>
             </div>
-        </div>
-    </div>
 </div>

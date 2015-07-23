@@ -44,8 +44,6 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
 				 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert">${message}</div>
                 </c:if>
@@ -59,7 +57,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.userName" />
-						<small><i class="entypo-star error-msg"></i></small> 
+						<span class="mandatory"></span> 
 						</label>
 						<div class="col-sm-6">
 							<input id="user_name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
@@ -88,8 +86,6 @@
 			</div>
 				</form:form>
 			</div>
-		</div>
-	</div>
 </div>
 
 <script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
