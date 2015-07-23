@@ -46,6 +46,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
@@ -396,6 +400,50 @@ public class ComplaintService {
 
     public List<ReceivingMode> getAllReceivingModes() {
         return Arrays.asList(ReceivingMode.values());
+    }
+
+    public List<Complaint> getLatest(int page, int pageSize) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Complaint> query = cb.createQuery(Complaint.class);
+        Root<Complaint> complaint = query.from(Complaint.class);
+        query.select(complaint);
+        query.where(cb.notEqual(complaint.get("createdBy"), securityUtils.getCurrentUser().getId()));
+        query.orderBy(cb.desc(complaint.get("createdDate")));
+        TypedQuery<Complaint> finalQuery = entityManager.createQuery(query);
+
+        List<Complaint> list = finalQuery
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize + 1).getResultList();
+        return list;
+    }
+
+    public List<Complaint> getMyComplaint(int page, int pageSize) {
+
+        List<Complaint> list = entityManager
+                .createQuery(
+                        "from Complaint where createdBy=:createdBy order by createddate DESC",
+                        Complaint.class)
+                .setParameter("createdBy", securityUtils.getCurrentUser())
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize + 1).getResultList();
+
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Complaint> getNearByComplaint(int page, float lat, float lng, int distance, int pageSize) {
+
+        List<Complaint> list = entityManager
+                .createNativeQuery(
+                        "SELECT * FROM egpgr_complaint WHERE createdBy!=" + securityUtils.getCurrentUser().getId()
+                                + " AND earth_box( ll_to_earth("
+                                + lat + ", " + lng + ")," + distance
+                                + ") @> ll_to_earth(egpgr_complaint.lat, egpgr_complaint.lng)", Complaint.class)
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize + 1).getResultList();
+
+        return list;
     }
 
 }

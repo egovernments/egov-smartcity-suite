@@ -51,10 +51,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -192,5 +188,38 @@ public class BoundaryService {
     
     public List<Boundary> getBondariesByNameAndBndryTypeAndHierarchyType(final String boundaryTypeName, final String hierarchyTypeName, final String name) {
         return boundaryRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName,name);
+    }
+    
+    public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {        
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        getBoundaryByNameLike(name).stream()
+                .forEach(
+                        location -> {
+                                Map<String, Object> res = new HashMap<String, Object>();
+                                res.put("id", location.getId());
+                                if (location.isRoot())
+                                        res.put("name", location.getName());
+                                else {
+                                        Boundary currentLocation = location;
+                                        StringBuilder loc = new StringBuilder();
+                                        String delim = "";
+                                        while (!currentLocation.isRoot()) {
+                                                loc.append(delim).append(
+                                                                currentLocation.getName());
+                                                delim = ",";
+                                                currentLocation = currentLocation
+                                                                .getParent();
+                                                if (currentLocation.isRoot()) {
+                                                        loc.append(delim).append(
+                                                                        currentLocation.getName());
+                                                        break;
+                                                }
+                                        }
+                                        res.put("name", loc.toString());
+                                        list.add(res);
+                                }
+                        });
+        return list;
+        
     }
 }
