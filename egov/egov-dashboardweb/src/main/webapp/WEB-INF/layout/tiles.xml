@@ -60,10 +60,8 @@
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
 	
-	<definition name="home" template="/WEB-INF/views/template/dashboard.jsp">
+	<definition name="home" extends="base_layout">
 		<put-attribute name="page-title" value="title.dashboard" cascade="true"/>
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/home.jsp"/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 </tiles-definitions>

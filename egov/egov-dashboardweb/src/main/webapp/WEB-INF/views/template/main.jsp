@@ -37,68 +37,62 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> 
+<html lang="en" class="no-js"> 
+<!--<![endif]-->
 	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	    <meta name="description" content="eGov System" />
-	    <meta name="author" content="eGovernments Foundation" />
-	
-	    <title><tiles:insertAttribute name="title"/></title>
-		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>${sessionScope.cityname} Smart City Dashboard</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+       
+       	<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-
+	    <link rel="stylesheet" href="resources/css/global.css">
+		<!-- link rel="stylesheet" href="resources/bootstrap/v3.3.1/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="resources/fontawesome/v4.2.0/css/font-awesome.min.css"-->
+		<link rel="stylesheet" href="resources/css/grayscale.css">
+		<!-- link rel="stylesheet" href="resources/css/plugins/social-buttons.css" -->
+		<link rel="stylesheet" href="resources/css/home.css">
+		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
-	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
-		
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	
-	</head>
-    <body class="page-body" oncontextmenu="return false;">
-        <div class="page-container">
+		<script>
+			$(window).load(function() {
+				$("#cover").delay(1000).slideUp(300);
+				$("#preloader-container").delay(1000).slideUp(300);
+			});
+		</script>		
+    	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    	<!--[if lt IE 9]>
+        <script src="resources/js/html5shiv.js"></script>
+        <script src="resources/js/respond.min.js"></script>
+    	<![endif]-->    		
+    </head>
+    <body id="page-top" data-spy="scroll" />
+    	<div class="cover" id="cover"></div>
+    	<div class="preloader-container" id="preloader-container">
+    		<div class="preloader-logo">eGov<img src="resources/images/mask.gif">Dashboard</div>
+    	</div>
+		<div class="page-container">
             <tiles:insertAttribute name="header"/>
                 <div class="main-content">
                     <tiles:insertAttribute name="body"/>
                 </div>
-				<tiles:insertAttribute name="footer"/>
+			<tiles:insertAttribute name="footer"/>
         </div>
-        <div class="modal fade loader-class" data-backdrop="static">
-			<div class="modal-dialog">
-					<div class="modal-body">
-						<div class="row spinner-margin text-center">
-							<div class="col-md-12 ">
-								<div class="spinner">
-									<div class="rect1"></div>
-									<div class="rect2"></div>
-									<div class="rect3"></div>
-									<div class="rect4"></div>
-									<div class="rect5"></div>
-								</div>
-							</div>
-							
-							<div class="col-md-12 spinner-text">
-								Processing your request. Please wait..
-							</div>
-						</div>
-					</div>
-			</div>
-		</div>
-    </body>
+	</body>
+	<!--script src="resources/jquery-ui/v1.11.2/jquery-ui.min.js"></script>
+	< script src="resources/bootstrap/v3.3.1/js/bootstrap.min.js"></script-->
+	<script src="resources/js/highchart/highstock.js"></script>
+	<script src='resources/js/date.js' type="text/javascript"></script>
+	<script src='resources/js/home.js' type="text/javascript"></script>
 </html>
