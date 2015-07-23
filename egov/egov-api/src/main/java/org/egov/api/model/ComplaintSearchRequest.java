@@ -28,11 +28,12 @@
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.web.contract;
+package org.egov.api.model;
 
 import static org.egov.search.domain.Filter.queryStringFilter;
 import static org.egov.search.domain.Filter.rangeFilter;
 import static org.egov.search.domain.Filter.termsStringFilter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
