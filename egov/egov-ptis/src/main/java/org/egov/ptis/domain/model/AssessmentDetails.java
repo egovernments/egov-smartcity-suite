@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -58,6 +59,10 @@ public class AssessmentDetails implements Serializable {
 	private String propertyAddress;
 	private PropertyDetails propertyDetails;
 	private ErrorDetails errorDetails;
+	private String primaryEmail;
+	private String primaryMobileNo;
+	private Integer flag;
+	
 	
 	public String getPropertyID() {
 		return propertyID;
@@ -94,6 +99,24 @@ public class AssessmentDetails implements Serializable {
 	}
 	public void setPropertyAddress(String propertyAddress) {
 		this.propertyAddress = propertyAddress;
+	}
+	public String getPrimaryEmail() {
+		return primaryEmail;
+	}
+	public void setPrimaryEmail(String primaryEmail) {
+		this.primaryEmail = primaryEmail;
+	}
+	public String getPrimaryMobileNo() {
+		return primaryMobileNo;
+	}
+	public void setPrimaryMobileNo(String primaryMobileNo) {
+		this.primaryMobileNo = primaryMobileNo;
+	}
+	public Integer getFlag() {
+		return flag;
+	}
+	public void setFlag(Integer flag) {
+		this.flag = flag;
 	}
 	@Override
 	public String toString() {

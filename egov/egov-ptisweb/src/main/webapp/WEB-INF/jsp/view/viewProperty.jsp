@@ -328,9 +328,6 @@
 				   <s:text name="superstructure"></s:text>
 		       	</th>
 		       	<th class="bluebgheadtd" width="11.1111111111%">
-				   <s:text name="drainage"></s:text>
-		       	</th>
-		       	<th class="bluebgheadtd" width="11.1111111111%">
 				   <s:text name="electricity"></s:text>
 		       	</th>
 		       	<th class="bluebgheadtd" width="11.1111111111%">
@@ -359,10 +356,6 @@
 		     </td>
 		     <td class="blueborderfortd">
 		     	<s:if test="%{model.propertyDetail.structure}">Yes</s:if>
-		     	<s:else>No</s:else>
-		     </td>
-		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.drainage}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
@@ -403,19 +396,16 @@
 				<table style="width:100%;" class="tablebottom">
 					
 					<tr>
-						<th class="bluebgheadtd"><s:text name="FloorNo" /><span	class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="ConstructionType" /><span class="mandatory1" id="constTypeMdtry">*</span></th>
-						<th class="bluebgheadtd"><s:text name="Usage" /><span class="mandatory1" id="usageMdtry">*</span></th>
-						<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
-						<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
-						<th class="bluebgheadtd"><s:text name="Bldgage" /><span	class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="Width" /></th>
-						<th class="bluebgheadtd"><s:text name="Length" /></th>
-						<th class="bluebgheadtd"><s:text name="PlinthArea" /><span class="mandatory1">*</span></th>
-						<th class="bluebgheadtd"><s:text name="capitalvalue"></s:text></th>
-						<th class="bluebgheadtd"><s:text name="planappr" /></th>
-						<th class="bluebgheadtd"><s:text name="exemption" /></th>
+						<th class="bluebgheadtd"><s:text name="FloorNo" /></th>
+						<th class="bluebgheadtd"><s:text name="ConstructionType" /></th>
+						<th class="bluebgheadtd"><s:text name="Usage" /></th>
+						<th class="bluebgheadtd"><s:text name="Occupancy" /></span></th>
+						<th class="bluebgheadtd"><s:text name="OccupierName" /></th>
+						<th class="bluebgheadtd"><s:text name="constrdate" /></th>
+						<th class="bluebgheadtd"><s:text name="PlinthArea" /></th>
+						<th class="bluebgheadtd"><s:text name="exemptioncategory" /></th>
+						<th class="bluebgheadtd"><s:text name="drainage" /></th>
+						<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 					</tr>
 					<s:iterator
 						value="model.propertyDetail.floorDetails" status="floorsstatus">
@@ -448,27 +438,12 @@
 						    </td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.depreciationMaster.depreciationName}" />
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:if test="%{#floor.createdDate != null}">
-										<s:date name="%{#floor.createdDate}" format="dd/MM/yyyy"/>
+									<s:if test="%{#floor.occupancyDate != null}">
+										<s:date name="%{#floor.occupancyDate}" format="dd/MM/yyyy"/>
 									</s:if>
 									<s:else>
 										N/A
 									</s:else>
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:property default="N/A" value="%{#floor.builtUpArea.breadth}" />
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="center">
-									<s:property default="N/A" value="%{#floor.propertyUsage.length}" />
 								</div>
 							</td>
 							<td class="blueborderfortd">
@@ -478,22 +453,17 @@
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{#floor.capitalValue}" />
+									<s:property default="N/A" value="%{#floor.builtUpArea.drainage}"/>
 								</div>
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:if test="%{floor.planApproved}">
-										Yes
-									</s:if>
-									<s:else>
-										No
-									</s:else>
+									<s:property default="N/A" value="%{#floor.builtUpArea.noOfSeats}"/>
 								</div>
 							</td>
 							<td class="blueborderfortd">
 								<div align="center">
-									<s:property default="N/A" value="%{}"/>
+									<s:property default="N/A" value="%{#floor.builtUpArea.taxExemptedReason}"/>
 								</div>
 							</td>
 						</tr>

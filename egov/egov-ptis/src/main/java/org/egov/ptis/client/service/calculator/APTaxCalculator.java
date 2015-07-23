@@ -67,6 +67,7 @@ import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
@@ -121,11 +122,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 							// specific
 							boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF
 									.getPropertyUsage().getId(), occupationDate);
-							APUnitTaxCalculationInfo unitTaxCalculationInfo = prepareUnitCalcInfo(floorIF,
+							APUnitTaxCalculationInfo unitTaxCalculationInfo = prepareUnitCalcInfo(property, floorIF,
 									boundaryCategory);
 							totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
 
-							calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment);
+							calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property
+									.getPropertyDetail().getPropertyTypeMaster().getCode());
 
 							totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
 							taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
@@ -141,7 +143,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		return taxCalculationMap;
 	}
 
-	private APUnitTaxCalculationInfo prepareUnitCalcInfo(Floor floor, BoundaryCategory boundaryCategory) {
+	private APUnitTaxCalculationInfo prepareUnitCalcInfo(Property property, Floor floor,
+			BoundaryCategory boundaryCategory) {
 		APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
 		BigDecimal builtUpArea = BigDecimal.ZERO;
 		BigDecimal floorMrv = BigDecimal.ZERO;
@@ -157,8 +160,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		floorSiteValue = calculateFloorSiteValue(floorMrv);
 		floorGrossArv = floorBuildingValue.multiply(new BigDecimal(12));
 		floorDepreciation = calculateFloorDepreciation(floorGrossArv, floor);
-		floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
-
+		if (property.getPropertyDetail().isStructure()) {
+			floorNetArv = floorGrossArv.subtract(floorDepreciation);
+		} else {
+			floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
+		}
 		unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
 		unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
 		unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
@@ -167,7 +173,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		unitTaxCalculationInfo.setSiteValue(floorSiteValue);
 		unitTaxCalculationInfo.setGrossARV(floorGrossArv);
 		unitTaxCalculationInfo.setDepreciation(floorDepreciation);
-		unitTaxCalculationInfo.setNetARV(floorNetArv);
+		unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
 		return unitTaxCalculationInfo;
 	}
 
@@ -191,7 +197,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	}
 
 	public APUnitTaxCalculationInfo calculateApplicableTaxes(List<String> applicableTaxes,
-			APUnitTaxCalculationInfo unitTaxCalculationInfo, Installment installment) {
+			APUnitTaxCalculationInfo unitTaxCalculationInfo, Installment installment, String propTypeCode) {
 
 		BigDecimal totalTaxPayable = BigDecimal.ZERO;
 		EgDemandReasonDetails reasonDetail = null;
@@ -221,6 +227,20 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 				calculatedTax = (generalTax.add(educationTax).multiply(reasonDetail.getPercentage().divide(
 						new BigDecimal("100")))).setScale(0, BigDecimal.ROUND_HALF_UP);
 			}
+			if (applicableTax.equals(DEMANDRSN_CODE_GENERAL_TAX)
+					|| applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)
+					|| applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
+				if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_335)) {
+					calculatedTax = calculatedTax.multiply(new BigDecimal(0.335));
+				}
+				if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50)) {
+					calculatedTax = calculatedTax.multiply(new BigDecimal(0.5));
+				}
+				if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_70)) {
+					calculatedTax = calculatedTax.multiply(new BigDecimal(0.7));
+				}
+			}
+			calculatedTax = roundOffToNearestEven(calculatedTax);
 			miscellaneousTax = new APMiscellaneousTax();
 			miscellaneousTax.setTaxName(applicableTax);
 			miscellaneousTax.setTotalCalculatedTax(calculatedTax);
@@ -316,11 +336,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 		return taxCalculationInfoXML;
 	}
 
-	public Boolean between(Date date, Date fromDate, Date toDate) {
+	private Boolean between(Date date, Date fromDate, Date toDate) {
 		return ((date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate));
 	}
 
-	public Boolean betweenOrBefore(Date date, Date fromDate, Date toDate) {
+	private Boolean betweenOrBefore(Date date, Date fromDate, Date toDate) {
 		Boolean result = between(date, fromDate, toDate) || date.before(fromDate);
 		return result;
 	}
@@ -338,9 +358,23 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 	}
 
 	private BigDecimal calculateFloorDepreciation(BigDecimal grossArv, Floor floor) {
-		/*return grossArv.multiply(BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct())).divide(
-				BigDecimal.valueOf(100));*/
-		return grossArv.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
+		return grossArv.multiply(BigDecimal.valueOf(floor.getDepreciationMaster().getDepreciationPct())).divide(
+				BigDecimal.valueOf(100));
 	}
 
+	public BigDecimal roundOffToNearestEven(BigDecimal amount) {
+		BigDecimal roundedAmt;
+		BigDecimal remainder = amount.remainder(new BigDecimal(2));
+		/*
+		 * if reminder is less than 1, subtract reminder amount from passed
+		 * amount else reminder is greater than 1, subtract reminder amount from
+		 * passed amount and add 5 to result amount
+		 */
+		if (remainder.compareTo(new BigDecimal("1")) == 1) {
+			roundedAmt = amount.subtract(remainder).add(new BigDecimal(2));
+		} else {
+			roundedAmt = amount.subtract(remainder);
+		}
+		return roundedAmt;
+	}
 }

@@ -67,4 +67,8 @@ public class DateUtils {
     public static Date[] getStartAndEndOfDay(final Date startDate, final Date endDate) {
         return new Date[] { startOfDay(startDate), endOfDay(endDate) };
     }
+    
+	public static int getNumberOfYearPassesed(final Date startDate,	final Date endDate) {
+		return (new DateTime(endDate).getYear()) - (new DateTime(startDate).getYear());
+	}
 }

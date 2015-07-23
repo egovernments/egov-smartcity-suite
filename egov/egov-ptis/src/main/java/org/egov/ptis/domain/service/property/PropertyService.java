@@ -306,14 +306,9 @@ public class PropertyService {
 								floor.getStructureClassification().getId());
 					}
 
-					DepreciationMaster depMaster = null;
-
-					if (floor.getDepreciationMaster() != null) {
-						depMaster = (DepreciationMaster) getPropPerServ().find(
-								"from DepreciationMaster dm where dm.id=?", floor.getDepreciationMaster().getId());
+					if (floor.getOccupancyDate() != null) {
+						floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getOccupancyDate()));
 					}
-
-					floor.setDepreciationMaster(depMaster);
 
 					LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
 							+ ", StructureClass: " + structureClass);

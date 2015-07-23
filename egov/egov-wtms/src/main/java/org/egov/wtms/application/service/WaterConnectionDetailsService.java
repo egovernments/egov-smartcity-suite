@@ -236,7 +236,8 @@ public class WaterConnectionDetailsService {
 
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
         String errorMessage = "";
-        final AssessmentDetails assessmentDetails = propertyExternalService.getPropertyDetails(asessmentNumber);
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,PropertyExternalService.FLAG_FULL_DETAILS);
+
         if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
             errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
         return errorMessage;
@@ -350,7 +351,7 @@ public class WaterConnectionDetailsService {
     private void updateIndexes(final WaterConnectionDetails waterConnectionDetails) {
 
         final AssessmentDetails assessmentDetails = propertyExternalService
-                .getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),PropertyExternalService.FLAG_FULL_DETAILS);
 
         final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         final StringBuilder consumerName = new StringBuilder();

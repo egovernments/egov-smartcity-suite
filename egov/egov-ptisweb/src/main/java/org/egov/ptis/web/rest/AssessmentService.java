@@ -91,7 +91,8 @@ public class AssessmentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAssessmentDetails(@PathParam("assessmentNumber") String assessmentNumber)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		AssessmentDetails assessmentDetail = propertyExternalService.getPropertyDetails(assessmentNumber);
+		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNumber,
+				PropertyExternalService.FLAG_FULL_DETAILS);
 
 		return getJSONResponse(assessmentDetail);
 	}

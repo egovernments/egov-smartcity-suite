@@ -276,7 +276,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@Autowired
 	private EgDemandDao egDemandDAO;
-
+	
 	private ApplicationNumberGenerator applicationNumberGenerator;
 	private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
 
@@ -408,8 +408,8 @@ public class CreatePropertyAction extends WorkflowAction {
 					setElectionWardId(boundaryService.getBoundaryById(
 							propBoundary.getElectionBoundary().getId()).getId());
 				}
-				if (null != propBoundary.getWard().getId()) {
-					Boundary zone = propBoundary.getWard();
+				if (null != propBoundary.getZone().getId()) {
+					Boundary zone = propBoundary.getZone();
 					setZoneId(boundaryService.getBoundaryById(zone.getId()).getId());
 					setZoneName(zone.getName());
 	             }
@@ -490,8 +490,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
-		// propService.createDemand(property,
-		// basicProp.getPropOccupationDate());
+		propService.createDemand(property, basicProp.getPropOccupationDate());
 		basicPropertyService.persist(basicProp);
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();

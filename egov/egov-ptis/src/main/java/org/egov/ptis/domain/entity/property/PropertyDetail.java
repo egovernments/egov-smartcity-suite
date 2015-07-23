@@ -47,10 +47,8 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.egov.commons.Area;
-import org.egov.commons.Installment;
 
 /**
  * This is Interface for the Property Detail which contains all the details;

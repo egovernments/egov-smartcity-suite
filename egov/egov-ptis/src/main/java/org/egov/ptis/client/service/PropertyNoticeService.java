@@ -680,7 +680,8 @@ public class PropertyNoticeService {
 
 				if (propertyType != null && propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_CENTRAL_GOVT_50)) {
 					calculatedActualTax = calculatedAnnualTax.setScale(0, ROUND_HALF_UP);
-					calculatedAnnualTax = propertyTaxUtil.calcGovtTaxOnAmenities(amenities, calculatedAnnualTax);
+					//TODO need write business logic to get a Govt prop tax.
+					calculatedAnnualTax = BigDecimal.ZERO;
 					miscTaxDetail.setCalculatedTaxValue(calculatedAnnualTax);
 					miscTaxDetail.setActualTaxValue(calculatedActualTax);
 				}

@@ -102,7 +102,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getBillAddress() {
         final AssessmentDetails assessmentDetails = propertyExternalService
-                .getPropertyDetails(getWaterConnectionDetails().getConnection().getPropertyIdentifier());
+                .loadAssessmentDetails(getWaterConnectionDetails().getConnection().getPropertyIdentifier(),PropertyExternalService.FLAG_FULL_DETAILS);
         return buildAddressDetails(assessmentDetails);
     }
 

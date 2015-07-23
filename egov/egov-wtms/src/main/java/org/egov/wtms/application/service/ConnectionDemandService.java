@@ -355,7 +355,8 @@ public class ConnectionDemandService {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         final AssessmentDetails assessmentDetails = propertyExternalService
-                .getPropertyDetails(waterConnectionDetails.getConnection().getPropertyIdentifier());
+                .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),
+        				PropertyExternalService.FLAG_FULL_DETAILS);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());

@@ -488,10 +488,6 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 		return sb.toString();
 	}
 
-	public String getEffectiveAssessment() {
-		return propertyTaxUtil.getEffectiveAssessmentPeriod(unitCalcDetail.getOccupancyDate());
-	}
-
 	public String getTotalTax() {
 		return totalTax;
 	}
