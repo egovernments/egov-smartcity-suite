@@ -87,7 +87,7 @@
     <body id="page-top" data-spy="scroll">
     	<div class="cover" id="cover"></div>
     	<div class="preloader-container" id="preloader-container">
-    		<div class="preloader-logo">eGov<img src="<c:url value='/resources/img/mask.gif' context='/dashboard'/>">Dashboard</div>
+    		<div class="preloader-logo">eGov<img src="<c:url value='/resources/images/mask.gif' context='/dashboard'/>">Dashboard</div>
     	</div>
     	 <nav class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="container-fluid">
@@ -98,10 +98,10 @@
 		        <span class="icon-bar"></span> 
 		      </button>
 		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
-		      <a class="navbar-brand visible-lg-block visible-md-block customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="../dashboard.do">
+		      <a class="navbar-brand visible-lg-block visible-md-block customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
 		       <img src="<c:url value='/resources/global/images/${sessionScope.citylogo}' context='/egi'/>" height="55">
 		      </a>
-		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="../pgrdashboard/home.do?isdefault=true">Complaints Redressal</a>
+		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="/pgr/dashboard/home?isdefault=true">Complaints Redressal</a>
 		    </div>
 		    <span class="navbar-brand visible-md-block visible-lg-block pull-right" style="color:#FFF">
 		    <!-- span class="title"></span-->
@@ -112,7 +112,7 @@
 		    <div class="collapse navbar-collapse" id="myNavbar">
 		      <ul class="nav navbar-nav">
 		        	<li class="visible-sm-block visible-xs-block">
-		        		<a data-toggle="tooltip" data-placement="bottom" title="Home" href="../dashboard.do"><i class="fa fa-home fa-lg fa-fw"></i> Smart City Home</a>
+		        		<a data-toggle="tooltip" data-placement="bottom" title="Home" href="/dashboard/home"><i class="fa fa-home fa-lg fa-fw"></i> Smart City Home</a>
 		        	</li>
 		        	<li id='deflt'>
 	              		<a  href="javascript:void(0)" class="menu-item" data-fn="redressalEfficiency" data-win="performanceWin" id="pgrPerf"><i class="fa fa-bar-chart fa-lg fa-fw"></i> Efficiency</a>

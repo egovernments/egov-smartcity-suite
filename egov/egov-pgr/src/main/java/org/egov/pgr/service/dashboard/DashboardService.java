@@ -99,15 +99,17 @@ public class DashboardService {
         final DateTime currentDate = new DateTime();
         final List<Map<String, Object>> compTypeWiseData = new LinkedList<Map<String, Object>>();
         long totalOthersCount = 0;
+        int topCount = 1;
         for (final Object[] complaint : dashboardRepository.fetchComplaintTypeWiseBetween(
                 startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate())) {
             final Map<String, Object> compTypewiseCnt = new HashMap<String, Object>();
             final Integer complaintCount = Integer.valueOf(String.valueOf(complaint[2]));
-            if (complaintCount > 9) {
+            if (topCount < 9) {
                 compTypewiseCnt.put("name", String.valueOf(complaint[0]));
                 compTypewiseCnt.put("ctId", complaint[1]);
                 compTypewiseCnt.put("y", complaintCount);
                 compTypeWiseData.add(compTypewiseCnt);
+                topCount++;
             } else
                 totalOthersCount += complaintCount;
         }

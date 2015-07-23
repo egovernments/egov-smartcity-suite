@@ -9,7 +9,7 @@ div.gm-style-iw{
   		#slaGIS{ height: 100%;margin-top:5px }
 		body{
 			padding-top: 67px;
-			background: url(../img/bg_white.jpg) no-repeat bottom center scroll;
+			background: url(/dashboard/resources/images/bg_white.jpg) no-repeat bottom center scroll;
 		  	-webkit-background-size: cover;
 			-moz-background-size: cover;
 			background-size: cover;

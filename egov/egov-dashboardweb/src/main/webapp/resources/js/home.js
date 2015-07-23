@@ -161,9 +161,6 @@ $.ajax({url:"/pgr/dashboard/monthly-aggregate",
             }],
             title: {
             	text:'No.of Complaints',
-            	style:{
-                    fontSize: '15px'
-                },
                 verticalAlign:'bottom'
             }
         },
@@ -199,10 +196,7 @@ $.ajax({url:"/pgr/dashboard/complaint-typewise-aggregate",
 	            enabled: false
 	        },
 	        title: {
-	            text: 'Complaint type Breakup',
-	            style:{
-	                   fontSize: '15px'
-	                }  
+	            text: 'Complaint type Breakup'
 	        },
 	        legend:{
 	            symbolHeight:7,
