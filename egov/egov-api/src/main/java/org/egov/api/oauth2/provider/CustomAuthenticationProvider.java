@@ -22,54 +22,49 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Override
-	public Authentication authenticate(Authentication authentication)
-			throws AuthenticationException {
+    @Override
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
 
-		String userName = authentication.getName();
-		String password = authentication.getCredentials().toString();
-		User user = null;
-		if (userName.contains("@") && userName.contains(".")) {
-			user = userService.getUserByEmailId(userName);
-		} else {
-			user = userService.getUserByUsername(userName);
-		}
-		if (user == null) {
-			throw new OAuth2Exception("Invalid login credentials");
-		}
+        String userName = authentication.getName();
+        String password = authentication.getCredentials().toString();
+        User user = null;
+        if (userName.contains("@") && userName.contains(".")) {
+            user = userService.getUserByEmailId(userName);
+        } else {
+            user = userService.getUserByUsername(userName);
+        }
+        if (user == null) {
+            throw new OAuth2Exception("Invalid login credentials");
+        }
 
-		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 
-		if (bcrypt.matches(password, user.getPassword())) {
+        if (bcrypt.matches(password, user.getPassword())) {
 
-			if (!user.isActive()) {
-				throw new OAuth2Exception("Please activate your account");
-			}
-			/**
-			 * We assume that there will be only one type. If it is multimple
-			 * then we have change below code Seperate by comma or other and
-			 * iterate
-			 */
-			List<GrantedAuthority> grantedAuths = new ArrayList<>();
-			grantedAuths.add(new SimpleGrantedAuthority("ROLE_"
-					+ user.getType()));
+            if (!user.isActive()) {
+                throw new OAuth2Exception("Please activate your account");
+            }
+            /**
+             * We assume that there will be only one type. If it is multimple then we have change below code Seperate by comma or
+             * other and iterate
+             */
+            List<GrantedAuthority> grantedAuths = new ArrayList<>();
+            grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
+            user.setLastModifiedDate(new DateTime());
+            Authentication auth = new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
+            return auth;
+        } else {
+            throw new BadClientCredentialsException();
+        }
+    }
 
-			user.setLastModifiedDate(new DateTime());
-
-			Authentication auth = new UsernamePasswordAuthenticationToken(
-					new SecureUser(user), password, grantedAuths);
-			return auth;
-		} else {
-			throw new BadClientCredentialsException();
-		}
-	}
-
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return authentication.equals(UsernamePasswordAuthenticationToken.class);
-	}
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
 
 }

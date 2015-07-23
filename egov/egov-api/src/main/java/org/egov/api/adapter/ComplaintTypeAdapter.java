@@ -15,7 +15,7 @@ public class ComplaintTypeAdapter extends DataAdapter<ComplaintType> {
 		JsonObject jo = new JsonObject();
 		jo.addProperty("name", compaintType.getName());
 		jo.addProperty("id", compaintType.getId());
-		jo.addProperty("typeImage", compaintType.getCode()+".png");		
+		jo.addProperty("typeImage", compaintType.getCode()+".jpg");		
 		jo.addProperty("description", null != compaintType.getDescription() ? compaintType.getDescription() : "N/A");
 		return jo;
 	}

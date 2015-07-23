@@ -10,33 +10,32 @@ import com.google.gson.reflect.TypeToken;
 
 public class DataAdapter<T> implements JsonSerializer<T> {
 
-	private T clazz = null;
+    private T clazz = null;
 
-	@SuppressWarnings("unchecked")
-	public DataAdapter() {
-		try {		
+    @SuppressWarnings("unchecked")
+    public DataAdapter() {
+        try {
 
-			this.clazz = (T) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            this.clazz = (T) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
+        return null;
+    }
 
-	@Override
-	public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    public Class<T> getBaseObject() {
+        return (Class<T>) this.clazz;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Class<T> getBaseObject() {
-		return (Class<T>) this.clazz;
-	}
+    public Type getTypeToken() {
 
-	public Type getTypeToken() {
-		//@formatter:off
-		return new TypeToken<T>(){}.getType();
-		//@formatter:off		
-	}
+        return new TypeToken<T>() {
+        }.getType();
+    }
 }
