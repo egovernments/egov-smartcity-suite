@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -55,17 +55,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/complainttype/update/{name}")
 public class UpdateComplaintTypeController {
 
-    private DepartmentService departmentService;
-    private ComplaintTypeService complaintTypeService;
+    private final DepartmentService departmentService;
+    private final ComplaintTypeService complaintTypeService;
+    private static final String COMPLAINTTYPE_UPDATE_SUCCESS = "/complaintType-success";
 
     @Autowired
-    public UpdateComplaintTypeController(DepartmentService departmentService, ComplaintTypeService complaintTypeService) {
+    public UpdateComplaintTypeController(final DepartmentService departmentService,
+            final ComplaintTypeService complaintTypeService) {
         this.departmentService = departmentService;
         this.complaintTypeService = complaintTypeService;
     }
@@ -76,28 +79,32 @@ public class UpdateComplaintTypeController {
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel(@PathVariable String name) {
+    public ComplaintType complaintTypeModel(@PathVariable final String name, final Model model) {
+        model.addAttribute("mode", "update");
         return complaintTypeService.findByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeFormForUpdate(Model model) {
-        model.addAttribute("mode", "update");
+    public String complaintTypeFormForUpdate() {
         return "complaint-type";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors,
-            RedirectAttributes redirectAttrs,Model model) {
-        if (errors.hasErrors()) {
+    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
             return "complaint-type";
-        }
-
-        complaintTypeService.updateComplaintType(complaintType);
-        String message = "Complaint Type updated Successfully";
+        complaintType = complaintTypeService.updateComplaintType(complaintType);
+        final String message = "Complaint Type updated Successfully";
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
         model.addAttribute("message", message);
+        return "redirect:" + complaintType.getName() + COMPLAINTTYPE_UPDATE_SUCCESS;
+    }
 
-        return "complaintType-success";
+    @RequestMapping(COMPLAINTTYPE_UPDATE_SUCCESS)
+    public ModelAndView successView(@PathVariable final String name,
+            @ModelAttribute final ComplaintType complaintType) {
+        return new ModelAndView("complaintType/complaintType-success", "complaintType",
+                complaintTypeService.findByName(name));
     }
 }

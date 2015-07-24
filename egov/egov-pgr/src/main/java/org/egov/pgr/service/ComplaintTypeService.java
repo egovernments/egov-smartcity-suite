@@ -91,8 +91,8 @@ public class ComplaintTypeService {
     }
 
     @Transactional
-    public void updateComplaintType(final ComplaintType complaintType) {
-        complaintTypeRepository.save(complaintType);
+    public ComplaintType updateComplaintType(final ComplaintType complaintType) {
+        return entityManager.merge(complaintType);
     }
 
     public List<ComplaintType> findAll() {

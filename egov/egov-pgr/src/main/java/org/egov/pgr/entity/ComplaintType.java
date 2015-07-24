@@ -49,7 +49,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -85,7 +84,7 @@ public class ComplaintType extends AbstractAuditable {
     @NotBlank
     @Length(max = 20)
     @SafeHtml
-    @Column(name = "code")
+    @Column(name = "code", updatable = false)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -103,10 +102,12 @@ public class ComplaintType extends AbstractAuditable {
     @SafeHtml
     private String description;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
