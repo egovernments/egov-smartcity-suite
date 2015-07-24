@@ -81,4 +81,14 @@ public interface BasicPropertyDAO {
 
 	public BasicProperty update(BasicProperty basicProperty);
 
+	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, 
+			String wardName, String blockName, String ownerName, String doorNo);
+	
+	public List<Long> getBoundaryIds(String boundaryName);
+	
+	public Boolean isBoundaryExist(String boundaryName);
+	
+	public Boolean isOwnerNameExist(String ownerName);
+	
+	public Boolean isDoorNoExist(String doorNo);
 }

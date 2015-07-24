@@ -183,6 +183,6 @@ public interface PtDemandDao {
 
 	public Ptdemand update(Ptdemand ptdemand);
 	
-	public List<Object> getPropertyTaxDetails(String applicationNo);
-	public Set<String> getDemandYears(String applicationNo);
+	public List<Object> getPropertyTaxDetails(String assessmentNo);
+	public Set<String> getDemandYears(String assessmentNo);
 }

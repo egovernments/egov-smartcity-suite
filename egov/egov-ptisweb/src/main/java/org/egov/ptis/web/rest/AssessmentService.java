@@ -40,6 +40,8 @@
 package org.egov.ptis.web.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -128,7 +130,31 @@ public class AssessmentService {
 		}
 		return getJSONResponse(propertyTaxDetails);
 	}
+	
+	@POST
+	@Path("/property/getPropertyTaxDetailsByBoundary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getPropertyTaxDetails(@FormParam("circleName") String circleName, @FormParam("zoneName") String zoneName, 
+			@FormParam("wardName") String wardName, @FormParam("blockName") String blockName,
+			@FormParam("ownerName") String ownerName, @FormParam("doorNo") String doorNo,
+			@FormParam("username") String username, @FormParam("password") String password)
+					throws JsonGenerationException, JsonMappingException, IOException {
 
+		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+		List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
+		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
+		if (isAuthenticatedUser) {
+			propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(circleName, zoneName, wardName, blockName, ownerName, doorNo);
+			return getJSONResponse(propertyTaxDetailsList);
+		} else {
+			ErrorDetails errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
+			propertyTaxDetails.setErrorDetails(errorDetails);
+			return getJSONResponse(propertyTaxDetails);
+		}
+	}
+	
 	/**
 	 * This method is used to prepare jSON response.
 	 * 

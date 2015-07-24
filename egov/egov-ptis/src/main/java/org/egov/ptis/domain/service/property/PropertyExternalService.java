@@ -5,6 +5,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -198,11 +199,177 @@ public class PropertyExternalService {
 		return ownerNames;
 	}
 
-	public PropertyTaxDetails getPropertyTaxDetails(String assessmentNo) {
-		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+	private String getPropertyAddress(Property property) {
+		StringBuffer propertAddr = new StringBuffer();
+		String houseNo = property.getBasicProperty().getAddress().getHouseNoBldgApt();
+		String landmark = property.getBasicProperty().getAddress().getLandmark();
+		String pinCode = property.getBasicProperty().getAddress().getPinCode();
+		if (houseNo != null && houseNo.trim().length() != 0) {
+			propertAddr.append(houseNo);
+		}
+		if (landmark != null && landmark.trim().length() != 0) {
+			if (propertAddr.toString().length() != 0) {
+				propertAddr.append(", ");
+			}
+			propertAddr.append(landmark);
+		}
+		if (pinCode != null && pinCode.trim().length() != 0) {
+			if (propertAddr.toString().length() != 0) {
+				propertAddr.append(", ");
+			}
+			propertAddr.append(pinCode);
+		}
+		return propertAddr.toString();
+	}
 
+	public PropertyTaxDetails getPropertyTaxDetails(String assessmentNo) {
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+		PropertyTaxDetails propertyTaxDetails = null;
 		ErrorDetails errorDetails = new ErrorDetails();
+		if (null != basicProperty) {
+			propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+		} else {
+			propertyTaxDetails = new PropertyTaxDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
+			errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX + assessmentNo
+					+ PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+			propertyTaxDetails.setErrorDetails(errorDetails);
+		}
+		return propertyTaxDetails;
+	}
+	
+	public List<PropertyTaxDetails> getPropertyTaxDetails(String circleName, String zoneName, 
+			String wardName, String blockName, String ownerName, String doorNo) {
+		List<PropertyTaxDetails> propTxDetailsList = null;
+		List<BasicProperty> basicPropertyList = basicPropertyDAO.getBasicPropertiesForTaxDetails(circleName, zoneName, wardName, blockName, ownerName, doorNo);
+		if (null != basicPropertyList) {
+			propTxDetailsList = new ArrayList<PropertyTaxDetails>();
+			for(BasicProperty basicProperty : basicPropertyList) {
+				PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+				propTxDetailsList.add(propertyTaxDetails);
+			}
+		}
+		return propTxDetailsList;
+	}
+	
+	// TODO: Needs to check whether this method is required or not. 
+	// Also existing authentication functionality can be used
+	public Boolean authenticateUser(String username, String password) {
+		Boolean isAuthenticated = false;
+		if (username.equals("ESEVATPT") && password.equals("ESEVA123")) {
+			isAuthenticated = true;
+		}
+		return isAuthenticated;
+	}
+
+	private Boolean getArrears(Map<String, BigDecimal> demandCollMap) {
+		Boolean hasArrear = false;
+		BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
+		if (null != arrDue && !arrDue.equals(BigDecimal.ZERO)) {
+			hasArrear = true;
+		}
+		return hasArrear;
+	}
+
+	private Map<String, BigDecimal> getDemandYearPenalty(String applicationNo) {
+		Map<String, BigDecimal> dmndYearPenaltyMap = new HashMap<String, BigDecimal>();
+		BigDecimal penalty = BigDecimal.ZERO;
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(applicationNo);
+		PropertyTaxBillable propTaxBill = (PropertyTaxBillable) beanProvider
+				.getBean(PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE);
+		propTaxBill.setBasicProperty(basicProperty);
+		propTaxBill.setLevyPenalty(true);
+		Map<Installment, PenaltyAndRebate> penalties = propTaxBill.getCalculatedPenalty();
+		Set<Installment> installments = penalties.keySet();
+		for (Installment installment : installments) {
+			PenaltyAndRebate penaltyAndRebate = penalties.get(installment);
+			penalty = penaltyAndRebate.getPenalty();
+			dmndYearPenaltyMap.put(installment.getDescription(), penalty);
+		}
+		return dmndYearPenaltyMap;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	private TaxDetails getCurrentTaxDetails(String applicationNo) {
+		TaxDetails taxDetails = null;
+		Set<String> demandYearSet = ptDemandDAO.getDemandYears(applicationNo);
+		Map<String, BigDecimal> demandYearPenaltyMap = null;
+		if (null != demandYearSet && !demandYearSet.isEmpty()) {
+			demandYearPenaltyMap =  getDemandYearPenalty(applicationNo);
+			List<Object> list = ptDemandDAO.getPropertyTaxDetails(applicationNo);
+			Object[] demandYearsArr = demandYearSet.toArray();
+			String currentDemandYear = (String) demandYearsArr[demandYearsArr.length - 1];
+			taxDetails = new TaxDetails();
+			taxDetails.setDemandYear(currentDemandYear);
+			taxDetails.setPenalty(demandYearPenaltyMap.get(currentDemandYear));
+			for (Object record : list) {
+				Object[] data = (Object[]) record;
+				String taxType = (String) data[0];
+				BigInteger actVal = (BigInteger) data[2];
+				BigDecimal taxVal = new BigDecimal(actVal);
+				if (currentDemandYear.equalsIgnoreCase((String) data[1])) {
+					taxDetails = getTaxDetailsByType(taxDetails, taxType, taxVal);
+				}
+			}
+		}
+		return taxDetails;
+	}
+
+	private Set<TaxDetails> getArrearsTaxDetails(String applicationNo) {
+		Set<TaxDetails> arrearsTaxDetails = new LinkedHashSet<TaxDetails>();
+		Set<String> demandYearSet = ptDemandDAO.getDemandYears(applicationNo);
+		Map<String, BigDecimal> demandYearPenaltyMap = getDemandYearPenalty(applicationNo);
+		if (null != demandYearSet && !demandYearSet.isEmpty()) {
+			List<Object> list = ptDemandDAO.getPropertyTaxDetails(applicationNo);
+			Object[] demandYearsArr = demandYearSet.toArray();
+			for (int i = 0; i < demandYearsArr.length - 1; i++) {
+				String demandYear = (String) demandYearsArr[i];
+				TaxDetails taxDetails = new TaxDetails();
+				taxDetails.setDemandYear(demandYear);
+				taxDetails.setPenalty(demandYearPenaltyMap.get(demandYear));
+				for (Object record : list) {
+					Object[] data = (Object[]) record;
+					String taxType = (String) data[0];
+					BigInteger actVal = (BigInteger) data[2];
+					BigDecimal taxVal = new BigDecimal(actVal);
+					if (demandYear.equalsIgnoreCase((String) data[1])) {
+						taxDetails = getTaxDetailsByType(taxDetails, taxType, taxVal);
+					}
+				}
+				arrearsTaxDetails.add(taxDetails);
+			}
+		}
+		return arrearsTaxDetails;
+	}
+	
+	private TaxDetails getTaxDetailsByType(TaxDetails taxDetails, String taxType, BigDecimal taxVal) {
+		if (taxType.equalsIgnoreCase(PropertyTaxConstants.LIB_CESS)) {
+			taxDetails.setLibCess(taxVal);
+		}
+		if (taxType.equalsIgnoreCase(PropertyTaxConstants.SEW_TAX)) {
+			taxDetails.setSewarageTax(taxVal);
+		}
+		if (taxType.equalsIgnoreCase(PropertyTaxConstants.GEN_TAX)) {
+			taxDetails.setGeneralTax(taxVal);
+		}
+		if (taxType.equalsIgnoreCase(PropertyTaxConstants.EDU_CESS)) {
+			taxDetails.setEduCess(taxVal);
+		}
+		return taxDetails;
+	}
+	
+	private PropertyTaxDetails getPropertyTaxDetails(BasicProperty basicProperty) {
+		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+		ErrorDetails errorDetails = new ErrorDetails();
+		String guardianName = "";
+		String assessmentNo = basicProperty.getUpicNo();
 		if (null != basicProperty) {
 			if (!basicProperty.isActive()) {
 				errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
@@ -220,8 +387,7 @@ public class PropertyExternalService {
 			}
 			Property property = basicProperty.getProperty();
 			Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-
-			String guardianName = "";
+	
 			List<PropertyOwnerInfo> propOwnerInfos = property.getBasicProperty().getPropertyOwnerInfo();
 			StringBuffer ownerNameStr = new StringBuffer();
 			for (int i = 0; i < propOwnerInfos.size(); i++) {
@@ -273,123 +439,7 @@ public class PropertyExternalService {
 			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
 			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
 			propertyTaxDetails.setErrorDetails(errorDetails);
-		} else {
-			errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
-			errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX + assessmentNo
-					+ PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
 		}
 		return propertyTaxDetails;
-	}
-
-	// TODO: Needs to check whether this method is required or not.
-	// Also existing authentication functionality can be used
-	public Boolean authenticateUser(String username, String password) {
-		Boolean isAuthenticated = false;
-		if (username.equals("ESEVATPT") && password.equals("ESEVA123")) {
-			isAuthenticated = true;
-		}
-		return isAuthenticated;
-	}
-
-	private Boolean getArrears(Map<String, BigDecimal> demandCollMap) {
-		Boolean hasArrear = false;
-		BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
-		if (null != arrDue && !arrDue.equals(BigDecimal.ZERO)) {
-			hasArrear = true;
-		}
-		return hasArrear;
-	}
-
-	private Map<String, BigDecimal> getDemandYearPenalty(String applicationNo) {
-		Map<String, BigDecimal> dmndYearPenaltyMap = new HashMap<String, BigDecimal>();
-		BigDecimal penalty = BigDecimal.ZERO;
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(applicationNo);
-		PropertyTaxBillable propTaxBill = (PropertyTaxBillable) beanProvider
-				.getBean(PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE);
-		propTaxBill.setBasicProperty(basicProperty);
-		propTaxBill.setLevyPenalty(true);
-		Map<Installment, PenaltyAndRebate> penalties = propTaxBill.getCalculatedPenalty();
-		Set<Installment> installments = penalties.keySet();
-		for (Installment installment : installments) {
-			PenaltyAndRebate penaltyAndRebate = penalties.get(installment);
-			penalty = penaltyAndRebate.getPenalty();
-			dmndYearPenaltyMap.put(installment.getDescription(), penalty);
-		}
-		return dmndYearPenaltyMap;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	private TaxDetails getCurrentTaxDetails(String applicationNo) {
-		TaxDetails taxDetails = null;
-		Set<String> demandYearSet = ptDemandDAO.getDemandYears(applicationNo);
-		Map<String, BigDecimal> demandYearPenaltyMap = getDemandYearPenalty(applicationNo);
-		if (null != demandYearSet && !demandYearSet.isEmpty()) {
-			List<Object> list = ptDemandDAO.getPropertyTaxDetails(applicationNo);
-			Object[] demandYearsArr = demandYearSet.toArray();
-			String currentDemandYear = (String) demandYearsArr[demandYearsArr.length - 1];
-			taxDetails = new TaxDetails();
-			taxDetails.setDemandYear(currentDemandYear);
-			taxDetails.setPenalty(demandYearPenaltyMap.get(currentDemandYear));
-			for (Object record : list) {
-				Object[] data = (Object[]) record;
-				String taxType = (String) data[0];
-				BigInteger actVal = (BigInteger) data[2];
-				BigDecimal taxVal = new BigDecimal(actVal);
-				if (currentDemandYear.equalsIgnoreCase((String) data[1])) {
-					taxDetails = getTaxDetailsByType(taxDetails, taxType, taxVal);
-				}
-			}
-		}
-		return taxDetails;
-	}
-
-	private Set<TaxDetails> getArrearsTaxDetails(String applicationNo) {
-		Set<TaxDetails> arrearsTaxDetails = new LinkedHashSet<TaxDetails>();
-		Set<String> demandYearSet = ptDemandDAO.getDemandYears(applicationNo);
-		Map<String, BigDecimal> demandYearPenaltyMap = getDemandYearPenalty(applicationNo);
-		if (null != demandYearSet && !demandYearSet.isEmpty()) {
-			List<Object> list = ptDemandDAO.getPropertyTaxDetails(applicationNo);
-			Object[] demandYearsArr = demandYearSet.toArray();
-			for (int i = 0; i < demandYearsArr.length - 1; i++) {
-				String demandYear = (String) demandYearsArr[i];
-				TaxDetails taxDetails = new TaxDetails();
-				taxDetails.setDemandYear(demandYear);
-				taxDetails.setPenalty(demandYearPenaltyMap.get(demandYear));
-				for (Object record : list) {
-					Object[] data = (Object[]) record;
-					String taxType = (String) data[0];
-					BigInteger actVal = (BigInteger) data[2];
-					BigDecimal taxVal = new BigDecimal(actVal);
-					if (demandYear.equalsIgnoreCase((String) data[1])) {
-						taxDetails = getTaxDetailsByType(taxDetails, taxType, taxVal);
-					}
-				}
-				arrearsTaxDetails.add(taxDetails);
-			}
-		}
-		return arrearsTaxDetails;
-	}
-
-	private TaxDetails getTaxDetailsByType(TaxDetails taxDetails, String taxType, BigDecimal taxVal) {
-		if (taxType.equalsIgnoreCase(PropertyTaxConstants.LIB_CESS)) {
-			taxDetails.setLibCess(taxVal);
-		}
-		if (taxType.equalsIgnoreCase(PropertyTaxConstants.SEW_TAX)) {
-			taxDetails.setSewarageTax(taxVal);
-		}
-		if (taxType.equalsIgnoreCase(PropertyTaxConstants.GEN_TAX)) {
-			taxDetails.setGeneralTax(taxVal);
-		}
-		if (taxType.equalsIgnoreCase(PropertyTaxConstants.EDU_CESS)) {
-			taxDetails.setEduCess(taxVal);
-		}
-		return taxDetails;
 	}
 }

@@ -49,9 +49,12 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -283,6 +286,44 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 		basicProperty = (BasicProperty) qry.uniqueResult();
 		return basicProperty;
 	}
+	
+	@Override
+	public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName, String wardName,
+			String blockName, String ownerName, String doorNo) {
+		
+		List<BasicProperty> basicProeprtyList = new ArrayList<BasicProperty>();
+		
+		BasicProperty basicProperty = null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from (select distinct bp.isactive is_active, bp.propertyid, "
+				+ "pd.zone_num, bdz.name z_name, pd.ward_adm_id, bdw.name w_name, pd.adm1, "
+				+ "bdb.name b_name, u.name wn, adr.id, adr.housenobldgapt d_no from egpt_basic_property bp "
+				+ "left join egpt_propertyid pd on bp.id = pd.id "
+				+ "left join egpt_property_owner_info info on pd.id = info.basicproperty "
+				+ "left join eg_user u on info.owner =u.id "
+				+ "left join eg_boundary bdz on pd.zone_num = bdz.id "
+				+ "left join eg_boundary bdw on pd.ward_adm_id = bdw.id "
+				+ "left join eg_boundary bdb on pd.adm1 = bdb.id "
+				+ "left join eg_address adr on bp.addressid = adr.id ) as prop_det "
+				+ "where prop_det.is_active = 'Y' "
+				+ "and prop_det.wn like '%"+(ownerName != null ? ownerName.trim() : "")+"%' "
+				+ "and prop_det.z_name like '%"+(zoneName != null ? zoneName.trim() : "")+"%' "
+				+ "and prop_det.w_name like '%"+(wardName != null ? wardName.trim() : "")+"%' "
+				+ "and prop_det.b_name like '%"+(blockName != null ? blockName.trim() : "")+"%' "
+				+ "and prop_det.d_no like '%"+ (doorNo != null ? doorNo.trim() : "")+"%'"); 
+
+		Query query = getCurrentSession().createSQLQuery(sb.toString());
+
+		List list = query.list();
+		if(null != list && !list.isEmpty()) {
+			for(Object record : list) {
+				Object[] data = (Object[]) record;
+				basicProperty = getBasicPropertyByPropertyID((String)data[1]);
+				basicProeprtyList.add(basicProperty);
+			}
+		}
+		return basicProeprtyList;
+	}
 
 	@Override
 	public BasicProperty findById(Integer id, boolean lock) {
@@ -314,4 +355,58 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 		return null;
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> getBoundaryIds(String boundaryName) {
+		List<Long> boundryIds = null;
+		Query bndryQuery = getCurrentSession().createQuery("from Boundary b where b.name like :boundaryName");
+		bndryQuery.setString("boundaryName", "%" + boundaryName.trim() + "%");
+		List<Boundary> boundaries = bndryQuery.list();
+		if (null != boundaries && !boundaries.isEmpty()) {
+			boundryIds = new ArrayList<Long>();
+			for (Boundary boundary : boundaries) {
+				boundryIds.add(boundary.getId());
+			}
+		}
+		return boundryIds;
+	}
+	
+	@Override
+	public Boolean isBoundaryExist(String boundaryName) {
+		Boolean isBoundaryExist = Boolean.FALSE;
+		if(null != boundaryName && !boundaryName.trim().equals("")) {
+			Query bndryQuery = getCurrentSession().createQuery("from Boundary b where b.name like :boundaryName");
+			bndryQuery.setString("boundaryName", "%" + boundaryName.trim() + "%");
+			if (null != bndryQuery.list() && !bndryQuery.list().isEmpty()) {
+				isBoundaryExist = Boolean.TRUE;
+			}
+		}
+		return isBoundaryExist;
+	}
+	
+	@Override
+	public Boolean isOwnerNameExist(String ownerName){
+		Boolean isOwnerNameExist = Boolean.FALSE;
+		if(null != ownerName && !ownerName.trim().equals("")) {
+			Query ownerNameQuery = getCurrentSession().createQuery("from PropertyOwnerInfo info where info.owner.name like :ownerName");
+			ownerNameQuery.setString("ownerName", "%" + ownerName.trim() + "%");
+			if (null != ownerNameQuery.list() && !ownerNameQuery.list().isEmpty()) {
+				isOwnerNameExist = Boolean.TRUE;
+			}
+		}
+		return isOwnerNameExist;
+	}
+	
+	@Override
+	public Boolean isDoorNoExist(String doorNo){
+		Boolean isDoorNoExist = Boolean.FALSE;
+		if(null != doorNo && !doorNo.trim().equals("")) {
+			Query doorNoQuery = getCurrentSession().createQuery("from BasicPropertyImpl bp where bp.address.houseNoBldgApt like :doorNo");
+			doorNoQuery.setString("doorNo", "%" + doorNo.trim() + "%");
+			if (null != doorNoQuery.list() && !doorNoQuery.list().isEmpty()) {
+				isDoorNoExist = Boolean.TRUE;
+			}
+		}
+		return isDoorNoExist;
+	}
 }
