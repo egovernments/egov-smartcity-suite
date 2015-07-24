@@ -62,7 +62,7 @@ public class NewConnectionService {
                         new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
             else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))
                 validationMessage = messageSource.getMessage("err.validate.newconnection.application.inprocess",
-                        new String[] { waterConnectionDetails.getApplicationNumber(), propertyID }, null);
+                        new String[] { propertyID, waterConnectionDetails.getApplicationNumber() }, null);
             else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
                 validationMessage = messageSource.getMessage("err.validate.newconnection.disconnected",
                         new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
