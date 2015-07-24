@@ -28,15 +28,26 @@
  *
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.masters.entity.enums;
+package org.egov.wtms.web.controller.application;
 
-import org.apache.commons.lang3.StringUtils;
+import org.egov.wtms.application.service.NewConnectionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-public enum ConnectionStatus {
-    INPROGRESS, ACTIVE, DISCONNECTED, HOLDING, CLOSED, INACTIVE;
+@Controller
+public class AjaxConnectionController {
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    @Autowired
+    private NewConnectionService newConnectionService;
+
+    @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
+        return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
+
 }

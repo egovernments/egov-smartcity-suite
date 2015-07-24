@@ -39,10 +39,40 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	$('#propertyIdentifier').blur(function(){
-		loadPropertyDetails();
+		validatePrimaryConnection();		
 	});
 	
 	loadPropertyDetails();
+	
+	function validatePrimaryConnection() {
+		propertyID=$('#propertyIdentifier').val()
+		if(propertyID != '') {
+			$.ajax({
+				url: "/wtms//ajaxconnection/check-primaryconnection-exists",      
+				type: "GET",
+				data: {
+					propertyID : propertyID  
+				},
+				dataType: "json",
+				success: function (response) { 
+					console.log("success"+response);
+					if(response != '') {
+						resetPropertyDetails();
+						alert(response);
+					}
+					else {
+						loadPropertyDetails();
+					}
+					
+				}, 
+				error: function (response) {
+					console.log("failed");
+					resetPropertyDetails();
+					alert("Primary connection validation failed");
+				}
+			});
+		}		
+	}
 	
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').val()
@@ -55,14 +85,7 @@ $(document).ready(function(){
 					console.log("success"+response);
 					
 					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-						$('#propertyIdentifier').val('');
-						$('#applicantname').val('');
-						$('#mobileNumber').val('');
-						$('#email').val('');
-						$('#propertyaddress').val('');
-						$('#locality').val('');
-						$('#zonewardblock').val('');
-						$('#propertytaxdue').val('0.00');
+						resetPropertyDetails();
 						alert(response.errorDetails.errorMessage);
 					}
 					else {	
@@ -105,6 +128,17 @@ $(document).ready(function(){
 				}
 			});
 		}		
+	}
+	
+	function resetPropertyDetails() {
+		$('#propertyIdentifier').val('');
+		$('#applicantname').val('');
+		$('#mobileNumber').val('');
+		$('#email').val('');
+		$('#propertyaddress').val('');
+		$('#locality').val('');
+		$('#zonewardblock').val('');
+		$('#propertytaxdue').val('0.00');
 	}
 	
 });
