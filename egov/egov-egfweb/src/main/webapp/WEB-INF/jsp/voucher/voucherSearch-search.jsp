@@ -73,18 +73,21 @@
 			</s:else>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
+					<td style="width:5%"></td>
 					<td class="greybox" ><s:text name="voucher.number"/> </td>
 					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="25" value="%{voucherNumber}"/></td>
 					<td class="greybox" ></td>
 					<td class="greybox" ></td>
 				</tr>
 				<tr>
+				<td style="width:5%"></td>
 				<td class="bluebox" ><s:text name="voucher.type"/> </td>
 				<td class="bluebox"><s:select name="type" id="type" list="dropdownData.typeList" headerKey="-1" headerValue="----Choose----" onchange="loadVoucherNames(this.value)" /></td>
 				<td class="bluebox" ><s:text name="voucher.name"/></td>
 				<td class="bluebox"><s:select name="name" id="name" list="%{nameList}" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 				<tr>
+					<td style="width:5%"></td>
 					<td class="greybox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate" maxlength="20" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)</td>
@@ -93,6 +96,7 @@
 				</tr>
 				<jsp:include page="voucher-filter.jsp"/>
 				<tr>
+				<td style="width:5%"></td>
 				<td class="greybox" ><s:text name="voucher.source"/> </td>
 				<td class="greybox"><s:select name="moduleId" id="moduleId" list="sourceMap"  headerKey="-1" headerValue="----Choose----"  /></td>
 				</tr>
