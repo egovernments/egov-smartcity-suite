@@ -70,9 +70,9 @@ public class SearchUserRoleController {
         return "userrole-search";
     }
 
-    @RequestMapping(params = { "username" })
-    public String searchUserRole(@RequestParam final Long username) {
-        return "redirect:/userrole/update/" + username;
+    @RequestMapping(params = { "userId" })
+    public String searchUserRole(@RequestParam final Long userId) {
+        return "redirect:/userrole/update/" + userId;
 
     }
 }

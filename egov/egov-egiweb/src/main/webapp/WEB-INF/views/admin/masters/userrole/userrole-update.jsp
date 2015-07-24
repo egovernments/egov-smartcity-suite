@@ -58,12 +58,12 @@
 				</div> 
 				<div class="panel-body">
 					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.userrole.selecteduserName" /></div>
-						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<c:out value="${user.username}"></c:out>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.userrole.selecteduserName" /> :
+						&nbsp;&nbsp;&nbsp;&nbsp;<b> <c:out value="${user.username}"></b>	</c:out>
 							<form:hidden path="id" id="id" value="${user.id}"/>
 							<form:hidden path="username" id="username" value="${user.username}"/>
 						</div>
+						
 					</div>
 						
 						   <div class="form-group">

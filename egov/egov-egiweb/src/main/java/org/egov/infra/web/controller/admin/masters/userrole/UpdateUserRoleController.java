@@ -55,7 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/userrole/update/{name}")
+@RequestMapping(value = "/userrole/update/{userId}")
 public class UpdateUserRoleController {
     private final UserService userService;
     private final RoleService roleService;
@@ -67,8 +67,8 @@ public class UpdateUserRoleController {
     }
 
     @ModelAttribute
-    public User user(@PathVariable final Long name) {
-        return userService.getUserById(name);
+    public User user(@PathVariable final Long userId) {
+        return userService.getUserById(userId);
     }
 
     @ModelAttribute("roles")
