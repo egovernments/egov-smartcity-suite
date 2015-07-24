@@ -40,6 +40,7 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
+			<td style="width:5%"></td>
 			<td class="bluebox">Voucher Sub-Type</td>
 			<td class="bluebox">
 				<select name="vType" id="vType" onchange="onChangeVSubType()">
@@ -53,20 +54,22 @@
 					<option value="Pension">Pension</option>
 				</select>
 			</td>
-			<td class="bluebox"><s:text name="jv.partyBillNum" /> </td>
-			<td class="bluebox"><s:textfield name="voucherTypeBean.partyBillNum" id="voucherTypeBean.partyBillNum" value="%{voucherTypeBean.partyBillNum}"/> 				</td>
+			<td class="greybox"><s:text name="jv.partyName" /><div id="partyNameDivId" style="display:none"><span class="mandatory1">*</span></div></td>	
+		 	<td class="greybox"><s:textfield name="voucherTypeBean.partyName" id="voucherTypeBean.partyName" onblur="isSpecialChar(this)" value="%{voucherTypeBean.partyName}"/></td>
 		</tr>
 	<tr>
-		 <td class="greybox"><s:text name="jv.partyName" /><div id="partyNameDivId" style="display:none"><span class="mandatory1">*</span></div></td>	
-		 <td class="greybox"><s:textfield name="voucherTypeBean.partyName" id="voucherTypeBean.partyName" onblur="isSpecialChar(this)" value="%{voucherTypeBean.partyName}"/></td>
-		 <td class="greybox"><s:text name="jv.partyBillDate" /></td>	
-		 <td class="greybox"><s:date name="voucherTypeBean.partyBillDate" id="partyBillDateId" format="dd/MM/yyyy"/>
-			<s:textfield name="voucherTypeBean.partyBillDate" id="partyBillDate" value="%{partyBillDateId}"  maxlength="10" size="15" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-			<a href="javascript:show_calendar('jvcreateform.partyBillDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td> 				
+		 <td style="width:5%"></td>
+		 <td class="bluebox"><s:text name="jv.partyBillNum" /> </td>
+	   	 <td class="bluebox"><s:textfield name="voucherTypeBean.partyBillNum" id="voucherTypeBean.partyBillNum" value="%{voucherTypeBean.partyBillNum}"/> 				</td>
+		 <td class="bluebox"><s:text name="jv.billNum" /></td>	
+		 <td class="bluebox"><s:textfield name="voucherTypeBean.billNum" id="voucherTypeBean.billNum" value="%{voucherTypeBean.billNum}"/></td>				
 	</tr>
        <tr>
-		 <td class="bluebox"><s:text name="jv.billNum" /></td>	
-		 <td class="bluebox"><s:textfield name="voucherTypeBean.billNum" id="voucherTypeBean.billNum" value="%{voucherTypeBean.billNum}"/></td>
+       	<td style="width:5%"></td>
+		<td class="greybox"><s:text name="jv.partyBillDate" /></td>
+		 <td class="greybox"><s:date name="voucherTypeBean.partyBillDate" id="partyBillDateId" format="dd/MM/yyyy"/>
+			<s:textfield name="voucherTypeBean.partyBillDate" id="partyBillDate" value="%{partyBillDateId}"  maxlength="10" size="15" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
+			<a href="javascript:show_calendar('jvcreateform.partyBillDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 		 <td class="bluebox"><s:text name="jv.billDate" /></td>	
 		<td class="bluebox"><s:date name="voucherTypeBean.billDate" id="billDateId" format="dd/MM/yyyy"/>
 			<s:textfield name="voucherTypeBean.billDate" id="billDate" value="%{billDateId}"  maxlength="10" size="15" onkeyup="DateFormat(this,this.value,event,false,'3')"/>

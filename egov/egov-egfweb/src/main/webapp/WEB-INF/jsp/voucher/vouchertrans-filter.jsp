@@ -40,26 +40,11 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
+	<td style="width:5%"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 	<td class="greybox"><s:text name="voucher.fund"/>
 	<s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 	<td class="greybox"><s:select name="fundId" id="fundId" list="dropdownData.fundList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange="populateSchemes(this);loadBank(this);"  value="%{fundId.id}"/></td>
-	</s:if>
-	<s:if test="%{shouldShowHeaderField('scheme')}">
-	<egov:ajaxdropdown id="scheme"fields="['Text','Value']" dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
-
-	<td class="greybox"><s:text name="voucher.scheme"/>
-	<s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory1">*</span></s:if></td>
-	<td class="greybox"><s:select list="dropdownData.schemeList" name="vouchermis.schemeid" id="schemeid" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange= "populatesubSchemes(this)"  value="voucherHeader.vouchermis.schemeid.id"/></td>
-	</s:if>
-	
-</tr>
-<tr>
-	<s:if test="%{shouldShowHeaderField('subscheme')}">
-	<egov:ajaxdropdown id="subscheme"fields="['Text','Value']" dropdownId="subschemeid" url="voucher/common-ajaxLoadSubSchemes.action" />
-	<td class="bluebox"><s:text name="voucher.subscheme"/>
-	<s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory1">*</span></s:if></td>
-	<td class="bluebox"><s:select name="vouchermis.subschemeid" id="subschemeid" list="dropdownData.subschemeList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="voucherHeader.vouchermis.subschemeid.id" onChange= "populateFundSource(this)"/></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
 	<egov:ajaxdropdown id="fundsource"fields="['Text','Value']" dropdownId="fundsourceId" url="voucher/common-ajaxLoadFundSource.action" />
@@ -69,7 +54,24 @@
 	</s:if>
 </tr>
 <tr>
+	<td style="width:5%"></td>
+	<s:if test="%{shouldShowHeaderField('scheme')}">
+	<egov:ajaxdropdown id="scheme"fields="['Text','Value']" dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
+
+	<td class="greybox"><s:text name="voucher.scheme"/>
+	<s:if test="%{isFieldMandatory('scheme')}"><span class="mandatory1">*</span></s:if></td>
+	<td class="greybox"><s:select list="dropdownData.schemeList" name="vouchermis.schemeid" id="schemeid" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----" onChange= "populatesubSchemes(this)"  value="voucherHeader.vouchermis.schemeid.id"/></td>
+	</s:if>
+	<s:if test="%{shouldShowHeaderField('subscheme')}">
+	<egov:ajaxdropdown id="subscheme"fields="['Text','Value']" dropdownId="subschemeid" url="voucher/common-ajaxLoadSubSchemes.action" />
+	<td class="bluebox"><s:text name="voucher.subscheme"/>
+	<s:if test="%{isFieldMandatory('subscheme')}"><span class="mandatory1">*</span></s:if></td>
+	<td class="bluebox"><s:select name="vouchermis.subschemeid" id="subschemeid" list="dropdownData.subschemeList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="voucherHeader.vouchermis.subschemeid.id" onChange= "populateFundSource(this)"/></td>
+	</s:if>
+</tr>
+<tr>
 <s:if test="%{shouldShowHeaderField('department')}">
+	<td style="width:5%"></td>
 	<td class="greybox" id="deptLabel"><s:text name="voucher.department"/>
 	<s:if test="%{isFieldMandatory('department')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 	<td class="greybox"><s:select name="vouchermis.departmentid" id="vouchermis.departmentid" list="dropdownData.departmentList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="voucherHeader.vouchermis.departmentid.id"/></td>
@@ -83,6 +85,7 @@
 </tr>
 <tr>
 <s:if test="%{shouldShowHeaderField('functionary')}">
+	<td style="width:5%"></td>
 	<td class="bluebox"><s:text name="voucher.functionary"/>
 	<s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 	<td class="bluebox"><s:select name="vouchermis.functionary" id="vouchermis.functionary" list="dropdownData.functionaryList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="voucherHeader.vouchermis.functionary.id"/></td>

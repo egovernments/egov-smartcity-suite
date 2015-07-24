@@ -80,6 +80,7 @@
 
 	<table border="0" width="100%">
 	<tr>
+		<td style="width:5%"></td>
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
 			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1">*</span></td>
 			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="30" /></td>
@@ -101,8 +102,9 @@
 	
 		
 		<tr>
+			<td style="width:5%"></td>
 			<td class="greybox"><s:text name="voucher.narration" /></td>
-			<td class="greybox" colspan="3"><s:textarea  id="narration" name="description" style="width:580px" onblur="checkVoucherNarrationLen(this)"/></td>
+			<td class="greybox" colspan="3"><s:textarea  id="narration" name="description" cols="100" rows="3" onblur="checkVoucherNarrationLen(this)"/></td>
 		</tr>	
 	</tr>
 	</table>
@@ -143,8 +145,9 @@
 	  	<div align="center">
 		<table border="0" width="100%">
 			<tr>
+				<td style="width:5%"></td>
 				<td  class="bluebox">Comments</td> 
-				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)"/></td>
+				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="110" rows="3" onblur="checkLength(this)"/></td>
 				<td>  
 			</tr>
 			<br/>
