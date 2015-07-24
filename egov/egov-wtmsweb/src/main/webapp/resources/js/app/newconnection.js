@@ -42,8 +42,6 @@ $(document).ready(function(){
 		validatePrimaryConnection();		
 	});
 	
-	loadPropertyDetails();
-	
 	function validatePrimaryConnection() {
 		propertyID=$('#propertyIdentifier').val()
 		if(propertyID != '') {
@@ -88,6 +86,11 @@ $(document).ready(function(){
 						resetPropertyDetails();
 						alert(response.errorDetails.errorMessage);
 					}
+					else if(response.propertyDetails.taxDue > 0) {
+						resetPropertyDetails();
+						errorMessage = "Property tax is due with Rs. "+response.propertyDetails.taxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new water tap connection"
+						alert(errorMessage);
+					}
 					else {	
 						$('#propertyIdentifierError').html('');
 						applicantName = '';
@@ -120,7 +123,7 @@ $(document).ready(function(){
 						}
 						$("#locality").val(response.boundaryDetails.localityName);
 						$("#zonewardblock").val(boundaryData);
-						$("#propertytaxdue").val(response.propertyDetails.taxDue);
+						$("#propertytax").val(response.propertyDetails.currentTax);
 					}					
 				}, 
 				error: function (response) {
@@ -138,7 +141,7 @@ $(document).ready(function(){
 		$('#propertyaddress').val('');
 		$('#locality').val('');
 		$('#zonewardblock').val('');
-		$('#propertytaxdue').val('0.00');
+		$('#propertytax').val('0.00');
 	}
 	
 });

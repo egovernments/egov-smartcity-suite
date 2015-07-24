@@ -30,6 +30,8 @@
  */
 package org.egov.wtms.application.service;
 
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,9 @@ public class NewConnectionService {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private PropertyExternalService propertyExternalService;
 
     public String checkConnectionPresentForProperty(final String propertyID) {
         String validationMessage = "";
@@ -65,5 +70,19 @@ public class NewConnectionService {
                 validationMessage = messageSource.getMessage("err.validate.newconnection.holding",
                         new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
         return validationMessage;
+    }
+
+    public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
+        String errorMessage = "";
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
+                PropertyExternalService.FLAG_FULL_DETAILS);
+
+        if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
+            errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
+        else if (assessmentDetails.getPropertyDetails() != null && assessmentDetails.getPropertyDetails().getTaxDue() != null
+                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
+            errorMessage = messageSource.getMessage("err.validate.property.taxdue",
+                    new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber }, null);
+        return errorMessage;
     }
 }

@@ -96,8 +96,8 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.pt.due" /></label>
+			code="lbl.properttax" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" id="propertytaxdue"  disabled value="0.00"> 
+		<input type="text" class="form-control text-right" id="propertytax"  disabled value="0.00"> 
 	</div>	
 </div>					
