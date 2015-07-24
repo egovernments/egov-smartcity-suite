@@ -18,7 +18,7 @@
     left: 0;
 }
 .loadmask-msg div {
-    background: transparent url('../img/mask.gif') no-repeat ;
+    background: transparent url('../images/mask.gif') no-repeat ;
     height: 50px;
     width:50px;
 	color:#222;

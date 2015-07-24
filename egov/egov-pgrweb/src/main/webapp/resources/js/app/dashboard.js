@@ -65,8 +65,8 @@ function redressalEfficiency() {
 	}
 	setTitle("Redressal Efficiency");
 	performanceGIS();
-	performanceTabular();
-	performanceBar();
+	//performanceTabular();
+	//performanceBar();
 }
 
 function openCompPendency() {
@@ -103,13 +103,14 @@ function performanceGIS() {
 	var map = new google.maps.Map(document.getElementById("performanceGIS"), gisOption);
 	var infoWin = new google.maps.InfoWindow();
 	var chartWin = new google.maps.InfoWindow();
-	$.ajax({url:"performanceGIS.do",
+	$.ajax({url:"wardwise-performance",
 		cache:false
 	}).done(function(data) {
 		var length = data.length;
 		$.each(data, function(index,data) {
 			setMarkers(data, length, index,map,infoWin,chartWin);
 		});
+		$("#page-top").unmask();
 	});
 	
 	var setMarkers = function(data, length, index,map,infoWin,chartWin) {

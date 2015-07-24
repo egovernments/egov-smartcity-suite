@@ -70,14 +70,19 @@ public class DashboardController {
         regResTrendData.add(dashboardService.getComplaintResolutionTrend());
         return regResTrendData;
     }
-    
+
     @RequestMapping(value = "/monthly-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String,Object>> monthlyAggregate() {
+    public @ResponseBody List<Map<String, Object>> monthlyAggregate() {
         return dashboardService.getMonthlyAggregate();
     }
-    
-    @RequestMapping(value = "/complaint-typewise-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String,Object>> complaintTypewiseAggregate() {
+
+    @RequestMapping(value = "/typewise-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String, Object>> complaintTypewiseAggregate() {
         return dashboardService.getCompTypewiseAggregate();
+    }
+
+    @RequestMapping(value = "/wardwise-performance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String, Object>> wardwisePerformance() {
+        return dashboardService.getWardwisePerformance();
     }
 }

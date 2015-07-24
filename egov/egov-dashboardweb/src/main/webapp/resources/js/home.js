@@ -175,7 +175,7 @@ $.ajax({url:"/pgr/dashboard/monthly-aggregate",
     });
 });
 
-$.ajax({url:"/pgr/dashboard/complaint-typewise-aggregate",
+$.ajax({url:"/pgr/dashboard/typewise-aggregate",
 	cache:true
 }).done(function(piedata) {
 	$('#overviewGraph').highcharts({

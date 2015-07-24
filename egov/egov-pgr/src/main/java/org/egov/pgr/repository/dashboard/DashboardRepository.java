@@ -39,6 +39,9 @@
  */
 package org.egov.pgr.repository.dashboard;
 
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +51,7 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -78,6 +82,14 @@ public class DashboardRepository {
 
     public List<Object[]> fetchComplaintTypeWiseBetween(final Date fromDate, final Date toDate) {
         return fetchDateRangeData("pgr.comp.type.wise.perc", fromDate, toDate);
+    }
+
+    public List<Object[]> fetchWardwisePerformanceTill(final DateTime toDate) {
+        final SQLQuery qry = getQuery("pgr.wardwiseperformance");
+        qry.setParameter("thirteenDaysBefore", endOfGivenDate(toDate.minusDays(13)).toDate());
+        qry.setParameter("fourteenDaysBefore", startOfGivenDate(toDate.minusDays(14)).toDate());
+        qry.setParameter("currentDate", endOfGivenDate(toDate).toDate());
+        return qry.list();
     }
 
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {

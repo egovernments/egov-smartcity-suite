@@ -144,7 +144,7 @@
 	<script src="<c:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
 	<script src="<c:url value='/resources/js/date.js' context='/dashboard'/>"></script>
-	<!-- script src='<c:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script-->
+	<script src='<c:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
 	<script src="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
 	
 	<!-- script src='../resources/jquery/datatable/v1.10.4/js/jquery.dataTables.min.js'></script>
