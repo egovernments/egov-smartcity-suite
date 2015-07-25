@@ -100,6 +100,7 @@ function loadNamesForSelectedType()
 		<s:form action="cancelVoucher" name="cancelVoucher" theme="simple" >
 		<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
+					<td class="greybox">&nbsp;</td>
 					<td class="greybox" ><s:text name="voucher.number"/> </td>
 					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" maxlength="25" value="%{voucherNumber}"/></td>
 					<td class="greybox" ></td>
@@ -110,12 +111,14 @@ function loadNamesForSelectedType()
 					                               
 				</tr>                                                                          
 				<tr>
+				<td class="greybox">&nbsp;</td>
 				<td class="greybox" ><s:text name="voucher.type"/><span class="mandatory1">*</span></td>                                    
 				<td class="greybox"><s:select name="type" id="type" list="dropdownData.typeList" headerKey="-1" headerValue="----Choose----" onchange="loadVoucherNames(this.value)" /></td>
 				<td class="greybox" ><s:text name="voucher.name"/><span class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="name" id="name" list="%{nameMap}" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>  
 				<tr>
+					<td class="greybox">&nbsp;</td>
 					<td class="bluebox" ><s:text name="voucher.fromdate"/><span class="mandatory1">*</span> </td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate"/>
 					<td class="bluebox"><s:textfield name="fromDate" id="fromDate" maxlength="20" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"/><a href="javascript:show_calendar('forms[0].fromDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a></td>
