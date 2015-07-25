@@ -83,7 +83,7 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     }
 
     @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
-            "router/complaintTypes", "escalationTime/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            "router/complaintTypes", "escalationTime/complaintTypes","pgrreport/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);
     }

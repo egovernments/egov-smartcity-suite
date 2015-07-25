@@ -40,15 +40,14 @@
 package org.egov.pgr.web.controller.reports;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.pgr.service.reports.AgeingReportService;
+import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.reports.ComplaintTypeWiseReportService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
@@ -68,53 +67,41 @@ import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/report")
-public class AgeingReportController {
+public class ComplaintTypeWiseReportController {
+
+    private final ComplaintTypeWiseReportService complaintTypeReportService;
 
     @Autowired
-    private final AgeingReportService ageingReportService;
-
-    @Autowired
-    public AgeingReportController(final AgeingReportService ageingReportService) {
-        this.ageingReportService = ageingReportService;
+    public ComplaintTypeWiseReportController(final ComplaintTypeWiseReportService complaintTypeReportService,
+            final ComplaintTypeService complaintTypeService) {
+        this.complaintTypeReportService = complaintTypeReportService;
     }
 
     @ModelAttribute
     public void getReportHelper(final Model model) {
-        final ReportHelper reportHealperObj = new ReportHelper();
-
-        final Map<String, String> status = new LinkedHashMap<String, String>();
-        status.put("Completed", "Completed");
-        status.put("Pending", "Pending");
-        model.addAttribute("status", status);
-        model.addAttribute("reportHelper", reportHealperObj);
+        model.addAttribute("reportHelper", new ReportHelper());
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByBoundary")
+    @RequestMapping(method = RequestMethod.GET, value = "/complaintTypeReport")
     public String searchAgeingReportByBoundaryForm(final Model model) {
-        model.addAttribute("mode", "ByBoundary");
-        return "ageing-search";
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/ageingReportByDept")
-    public String searchAgeingReportByDepartmentForm(final Model model) {
-        model.addAttribute("mode", "ByDepartment");
-        return "ageing-search";
+        return "complaintTypeReport-search";
     }
 
     @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/ageing/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String mode,
+    @RequestMapping(value = "/complaintTypeReport/resultList-update", method = RequestMethod.GET)
+    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String complaintType,
             @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate,
-            @RequestParam final String status, @RequestParam final DateTime toDate, final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+            @RequestParam final DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
+                    throws IOException {
 
-        final SQLQuery ageingreportQuery = ageingReportService.getageingReportQuery(fromDate, toDate, status,
-                complaintDateType, mode);
-        ageingreportQuery.setResultTransformer(Transformers.aliasToBean(AgeingReportResult.class));
-        final List<AgeingReportResult> ageingresult = ageingreportQuery.list();
+        final SQLQuery complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
+                toDate, complaintType, complaintDateType);
+        complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
+        final List<AgeingReportResult> complaintTypeReportResult = complaintTypeReportQuery.list();
 
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(ageingresult)).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult)).append("}")
+                .toString();
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
@@ -124,8 +111,8 @@ public class AgeingReportController {
     private Object toJSON(final Object object) {
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AgeingReportResult.class, new AgeingReportHelperAdaptor())
-                .create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
+                new DrillDownReportHelperAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
 

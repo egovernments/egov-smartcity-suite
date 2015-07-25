@@ -199,6 +199,10 @@
     	<put-attribute name="page-title" value="lbl.drilldownReport.heading.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/drillDown-search.jsp"/>
     </definition>
+     <definition name="complaintTypeReport-search" extends="base_layout"> 
+    	<put-attribute name="page-title" value="lbl.complaintTypeWiseReport.heading.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/complaintTypeReport-search.jsp"/>
+    </definition>
     
     <definition name="dashboard/*" extends="dashboard_layout">
     	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>

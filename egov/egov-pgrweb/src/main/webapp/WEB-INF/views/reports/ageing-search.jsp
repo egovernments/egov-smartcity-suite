@@ -79,12 +79,12 @@
 										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
 								                <option value="">Select</option>
-												<option value="all" selected>All</option>
-												<option value="lastsevendays">In Last 7 days</option>
+								                <option value="all" >All</option>
+												<option value="lastsevendays" selected>In Last 7 days</option>
 												<option value="lastthirtydays">In Last 30 days</option>
 												<option value="lastninetydays">In Last 90 days</option>
 												<option value="custom" data-show=".complaintdur">Custom</option>
-											</select>
+												</select>
 										</div>
 									</div>
 									

@@ -52,55 +52,49 @@
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
 			<div class="panel-body">
-				<form:form id="drillDownReportForm" method="post"
+				<form:form id="complaintTypewiseReportForm" method="post"
 					class="form-horizontal form-groups-bordered"
 					modelAttribute="reportHelper">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
-								<div class="panel-title">
-							
-						<c:choose>
-							<c:when test="${mode=='ByBoundary'}"> 
-									<strong><spring:message
-										code="lbl.drilldownReportByBndry.heading.search" /></strong>
-							</c:when>
-							<c:otherwise>
-									<strong><spring:message
-										code="lbl.drilldownReportByDept.heading.search" /></strong>
-							</c:otherwise>
-						</c:choose>
+							<div class="panel-title">
+								<spring:message code="lbl.complaintTypeWiseReport.heading.search" />
+								</strong>
+
 							</div>
 						</div>
 						
 						<div class="panel-body custom-form">
-						<div class="form-group">
+								<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">When </label>
 										
 										<div class="col-sm-2 add-margin">
-										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
-										<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
-										<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
-										<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
-										<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
-										<input type="hidden" id="type" name="type" value="${type}"/> 
-											
+									
 											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
-								                <option value="">Select</option>
-												<option value="all" >All</option>
-												<option value="lastsevendays" selected>In Last 7 days</option>
-												<option value="lastthirtydays">In Last 30 days</option>
-												<option value="lastninetydays">In Last 90 days</option>
-												<option value="custom" data-show=".complaintdur">Custom</option>
+										<option value="">Select</option>
+										<option value="all" >All</option>
+										<option value="lastsevendays" selected>In Last 7 days</option>
+										<option value="lastthirtydays">In Last 30 days</option>
+										<option value="lastninetydays">In Last 90 days</option>
+										<option value="custom" data-show=".complaintdur">Custom</option>
 											</select>
 										</div>
 										</div>
 									</div>
-									
+									<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
+								</label>
+								<div class="col-sm-6">
+									<input id="com_type" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+									<input type="hidden" id="complaintTypeId" name="complaintType" value="${complaintType}"/> 
+									<div class="error-msg eithererror all-errors display-hide"></div>
+								</div>
+							</div>
 						
 						
 						 <div class="form-group drophide complaintdur" style="display:none;">
 							<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintFromDate" /> 
+							<label class="col-sm-3 control-label"><spring:message code="lbl.complaintTypeWiseReport.complaintFromDate" /> 
 							</label>
 						<div class="col-sm-2 add-margin">
 									<input type="text" name="reportFromDate" class="form-control datepicker checkdate"
@@ -108,7 +102,7 @@
 								placeholder="<spring:message code='lbl.fromDate'/>" required="required"/>
 							</div>
 						  
-								<label class="col-sm-3 control-label"><spring:message code="lbl.drilldownReport.complaintToDate" /></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.complaintTypeWiseReport.complaintToDate" /></label>
 							<div class="col-sm-2 add-margin">
 									<input type="text" name="reportToDate" class="form-control datepicker checkdate"
 								id="end_date" data-inputmask="'mask': 'd/m/y'"
@@ -119,9 +113,9 @@
 										
 				<div class="row">
 					<div class="text-center">
-									<button type="button" id="drilldownReportSearch"
+									<button type="button" id="complaintTypeReportSearch"
 										class="btn btn-success">
-										<spring:message code="lbl.drilldownReport.button.search" />
+										<spring:message code="lbl.complaintTypeWiseReport.button.search" />
 									</button>
 									<a href="javascript:void(0)" class="btn btn-default"
 										onclick="self.close()"> <spring:message code="lbl.close" /></a>
@@ -132,26 +126,11 @@
 					
 				</form:form>
 				<div class="row display-hide report-section">
-						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.drilldownReport.resultHeader" /> </div>
+						<div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.complaintTypeWiseReport.resultHeader" /> </div>
 						<div class="col-md-12 form-group">
-							<table class="table table-bordered datatable dt-responsive table-hover" id="drilldownReport-table">
+							<table class="table table-bordered datatable dt-responsive table-hover" id="compTypeReport-table">
 						 	<thead>
-							<%--<c:choose>
-							<c:when test="${mode=='ByBoundary'}">
-								<th>	<spring:message code="lbl.drilldownReport.boundary" />	</th>
-							</c:when>
-							<c:otherwise>
-									<th>	<spring:message code="lbl.drilldownReport.department" />	</th>
-							</c:otherwise>
-						</c:choose>
-								
-								
 							
-								<th><spring:message code="lbl.drilldownReport.registeredStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.inprocessStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.completedStatus" /></th>
-								<th><spring:message code="lbl.drilldownReport.rejectedStatus" /></th>
-								<th><b><spring:message code="lbl.drilldownReport.total" /></b></th>--%>
 							</thead> 
 							<tfoot id="report-footer">
 							   <tr>
@@ -193,4 +172,4 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/drillDownReport.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/complaintTypeReport.js'/>"></script> 
