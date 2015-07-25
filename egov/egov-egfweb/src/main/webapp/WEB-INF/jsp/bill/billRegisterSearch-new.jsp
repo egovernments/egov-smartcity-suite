@@ -59,10 +59,12 @@
 			<div class="formmainbox"><div class="subheadnew"><s:text name="bill.search.heading"></s:text></div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
+				<td class="bluebox" >&nbsp;</td>
 				<td class="bluebox" ><s:text name="bill.search.expType"/> <span class="mandatory1">*</span></td>
 				<td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expType" headerKey="-1" headerValue="----Choose----" value="%{expType}"/></td>
 				</tr>
 				<tr>
+					<td class="bluebox" >&nbsp;</td>
 					<td class="greybox" ><s:text name="bill.search.dateFrom"/> <span class="mandatory1">*</span></td>
 					<td class="greybox"><s:textfield name="billDateFrom" id="billDateFrom" cssStyle="width:100px" value='%{billDateFrom}' onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('billRegisterForm.billDateFrom');" style="text-decoration:none"><img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 					<td class="greybox"><s:text name="bill.search.dateTo"/> <span class="mandatory1">*</span></td>
@@ -70,6 +72,7 @@
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp"/>
 				<tr>
+					<td class="bluebox" >&nbsp;</td>
 					<td class="greybox"><s:text name="bill.search.billnumber"/> </td>
 					<td class="greybox"><s:textfield name="billnumber" id="billnumber" maxlength="25" value="%{billnumber}" /></td>
 					<td class="greybox">
