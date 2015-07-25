@@ -558,3 +558,9 @@ div.subheadnew {
   padding: 15px 15px;
   background:#fff;
 }
+
+ul.actionMessage{
+	margin:0;
+	list-style-type:none;
+	background:#fff;
+}

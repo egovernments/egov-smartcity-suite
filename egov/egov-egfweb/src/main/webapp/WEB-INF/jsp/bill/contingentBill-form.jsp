@@ -54,7 +54,7 @@
 <tr>
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="voucher.narration"/></td>
-	<td class="bluebox" colspan="3"><s:textarea name="description" id="description"  cols="100"/><br/><span class="highlight2">Max. 1024 characters</span></td> 
+	<td class="bluebox" colspan="3"><s:textarea name="description" id="description"  cols="120"/><br/><span class="highlight2">Max. 1024 characters</span></td> 
 </tr>
 <tr id="budgetReappRow">
 <td class="greybox"></td>
@@ -69,26 +69,26 @@
 <td class="greybox" colspan="6" style="text-align:center"/>
 <div class="generatecheque">
 <a onclick="hideShow()" href="#">
-Show/Hide Details</a></div>
+Show/Hide Details</a></div></td>
 </tr>
 <table>
 <tr>
 <td colspan="6">
-<hr class="blankline"/>
+<!-- <hr class="blankline"/> -->
 </td>
 </tr>
 </table>
-<center>
+<center style="background:#fff;">
 <div>
-<table width="90%" cellspacing="0" cellpadding="0" border="0" class="tablebottom" align="center">
+<table width="90%" cellspacing="0" cellpadding="0" border="0" class="" align="center" >
 	<tr>
-	<td class="bluebox3" colspan="5">
-		<div class="billheadnew">
-			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+	<td class="bluebox3" colspan="5" style="border-right:1px solid #fff;">
+		<div class="">
+			<table width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:10px 0">
 				<tbody>
 				<tr>
 				<td class="bluebox"><s:text name="subledger.type"/></td>
-				<td  class="bluebox" align="left" ><s:select name="commonBean.subledgerType" id="commonBean.subledgerType"  list="dropdownData.accountDetailTypeList" listKey="id" listValue="description" headerKey="" onchange="load_COA_Entities(this)" headerValue="---Choose---"/> 
+				<td  class="bluebox" align="left" ><s:select name="commonBean.subledgerType" id="commonBean.subledgerType"  list="dropdownData.accountDetailTypeList" listKey="id" listValue="description" headerKey="" onchange="load_COA_Entities(this)" headerValue="---Choose---"/></td> 
 				<td class="bluebox"><s:text name="bill.subtype"/><span class="mandatory1">*</span></td>
 				<td  class="bluebox" ><s:select name="commonBean.billSubType" list="dropdownData.billSubTypeList"     listKey="id" listValue="name" headerKey="" headerValue="----Choose----"   onchange="loadCheckList(this)"/></td>
 				</tr>
@@ -97,7 +97,6 @@ Show/Hide Details</a></div>
 				<td valign="top" class="greybox">
 				<div  id="entitycode">Entity Code:</div> </td>
 							<td class="greybox" ><span class="greybox"> <input type="text" name="detailCode"  id="detailCode"  autocomplete='off' onblur="splitEntities(this)">
-							</span>
 							<span id="genricimage"><img src="/egi/resources/erp2/images/plus1.gif"   onclick="openSearchWindow(this, 'subledger');" ></span>&nbsp;&nbsp;
 							</td>
 							<td colspan="2" class="greybox"><input type="text"  id="detailName" name="detailName" size="45"  />

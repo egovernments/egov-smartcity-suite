@@ -120,9 +120,9 @@ text-align:center;
 }
 
 .tabbertab{
-border:1px solid #ccc;height:350px;overflow-y:scroll;overflow-x:scroll;margin-bottom:8px;
+border:1px solid #ccc;/* height:350px;overflow-y:scroll; */margin-bottom:8px;
 }
 
 .tabbertabnew{
-border:1px solid #ccc;height:350px;overflow-y:scroll;overflow-x:scroll;margin-bottom:8px;
+border:1px solid #ccc;/* height:350px;overflow-y:scroll; */ margin-bottom:8px;
 }
