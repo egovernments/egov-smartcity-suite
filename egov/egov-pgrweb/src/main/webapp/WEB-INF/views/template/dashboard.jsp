@@ -131,6 +131,9 @@
 		  </div>
 		</nav>
 		<tiles:insertAttribute name="body"/>
+		<footer>
+		   <div style="margin-top: 10px;padding: 5px 19px;font-size: 12px;background: #F1F2F3;">Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a></div>
+		</footer>
 	</body>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	<script src="<c:url value='/resources/js/highchart/highstock.js' context='/dashboard'/>"></script>

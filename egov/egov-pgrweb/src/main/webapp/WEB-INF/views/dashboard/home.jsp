@@ -34,7 +34,7 @@ var isdefault = true;
 		</div>
 	</div>
 </div>
-<div id="topFiveCompTypeWin" class="container-win" style="<c:if test='${param.isdefault}'>display:none;</c:if>">
+<div id="topFiveCompTypeWin" class="container-win" style="display:none;">
 	<div class="row" style="height:97%">
 		<div class="col-md-12 col-sm-12 col-ms-12 col-lg-12" style="height:97%;">
 			<div id="topFiveCompTypeGraph" style="width:100%;height:100%" class="gm-style"></div>

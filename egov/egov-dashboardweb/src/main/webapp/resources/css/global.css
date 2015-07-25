@@ -253,7 +253,7 @@ padding: 15px 7.5px;
 }
 .container-win {
 	width:97%;
-	height:95%;
+	min-height:95%;
 	margin:0 auto;
 	margin-top: 20px;
 }
