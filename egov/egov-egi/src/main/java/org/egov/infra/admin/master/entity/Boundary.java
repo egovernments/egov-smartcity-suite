@@ -142,7 +142,7 @@ public class Boundary extends AbstractAuditable {
     private Long boundaryTypeId;
 
     @Transient
-    private CityWebsite cityWebsite = new CityWebsite();
+    private City cityWebsite = new City();
 
     public Long getId() {
         return id;
@@ -309,11 +309,11 @@ public class Boundary extends AbstractAuditable {
         this.materializedPath = materializedPath;
     }
 
-    public CityWebsite getCityWebsite() {
+    public City getCityWebsite() {
         return cityWebsite;
     }
 
-    public void setCityWebsite(final CityWebsite cityWebsite) {
+    public void setCityWebsite(final City cityWebsite) {
         this.cityWebsite = cityWebsite;
     }
 

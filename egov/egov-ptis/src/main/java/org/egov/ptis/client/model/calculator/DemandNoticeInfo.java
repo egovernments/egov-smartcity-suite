@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.CityWebsite;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -33,17 +33,17 @@ public class DemandNoticeInfo {
 	
 	@Autowired
 	@Qualifier("cityWebsiteService")
-	private CityWebsiteService cityWebsiteService;
+	private CityService cityWebsiteService;
 	
 	// reading cityname and logo from citywebsiteservice to support bulkbillgeneration through schedular
-	public CityWebsite getcityWebsite(){
-	    CityWebsite cw= cityWebsiteService.findAll().get(0);
+	public City getcityWebsite(){
+	    City cw= cityWebsiteService.findAll().get(0);
             return cw;
 	}
 	
 	 public String getCityName() {
-	     CityWebsite cw= getcityWebsite();
-	     return cw!=null?cw.getCityName():null;
+	     City cw= getcityWebsite();
+	     return cw!=null?cw.getName():null;
 	  }
 
 	 public  String getCityLogo() {

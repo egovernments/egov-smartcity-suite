@@ -54,12 +54,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.messaging.email.EmailService;
 import org.egov.infra.messaging.sms.SMSService;
@@ -138,7 +138,7 @@ public class ComplaintService {
     private EscalationService escalationService;
 
     @Autowired
-    private CityWebsiteService cityWebsiteService;
+    private CityService cityWebsiteService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -183,8 +183,8 @@ public class ComplaintService {
         else if (null != assignee)
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
-        final CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getCityName());
+        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
+        complaint.setUlb(cityWebsite.getName());
         complaint.setDistrict(cityWebsite.getDistrictName());
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
@@ -246,8 +246,8 @@ public class ComplaintService {
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                     .withOwner(complaint.getState().getOwnerPosition());
         }
-        final CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
-        complaint.setUlb(cityWebsite.getCityName());
+        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
+        complaint.setUlb(cityWebsite.getName());
         complaint.setDistrict(cityWebsite.getDistrictName());
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);

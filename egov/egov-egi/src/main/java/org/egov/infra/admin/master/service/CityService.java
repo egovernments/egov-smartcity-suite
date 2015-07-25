@@ -1,4 +1,5 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+   eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -36,60 +37,45 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.search.elastic.service;
+package org.egov.infra.admin.master.service;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.repository.ApplicationIndexRepository;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for the Application Index
- *
- * @author rishi
- *
- */
 @Service
 @Transactional(readOnly = true)
-public class ApplicationIndexService {
+public class CityService {
 
-    private final ApplicationIndexRepository applicationIndexRepository;
-
-    @Autowired
-    private CityService cityService;
+    private final CityRepository cityRepository;
 
     @Autowired
-    public ApplicationIndexService(final ApplicationIndexRepository applicationIndexRepository) {
-        this.applicationIndexRepository = applicationIndexRepository;
+    public CityService(final CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
     }
 
     @Transactional
-    @Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
-    public ApplicationIndex createApplicationIndex(final ApplicationIndex applicationIndex) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        applicationIndex.setUlbName(cityWebsite.getName());
-        applicationIndex.setDistrictName(cityWebsite.getDistrictName());
-        applicationIndexRepository.save(applicationIndex);
-        return applicationIndex;
+    public City updateCity(final City city) {
+        return cityRepository.save(city);
     }
 
-    @Transactional
-    @Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
-    public ApplicationIndex updateApplicationIndex(final ApplicationIndex applicationIndex) {
-        applicationIndexRepository.save(applicationIndex);
-        return applicationIndex;
+    public City getCityByURL(final String url) {
+        return cityRepository.findByDomainURL(url);
     }
 
-    public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getName());
+    public City getCityByName(final String cityName) {
+        return cityRepository.findByName(cityName);
     }
 
+    public City getCityByCode(final String code) {
+        return cityRepository.findByCode(code);
+    }
+
+    public List<City> findAll() {
+        return cityRepository.findAll();
+    }
 }

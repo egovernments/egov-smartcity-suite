@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -54,8 +53,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.egov.infra.admin.master.entity.CityWebsite;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -77,7 +76,7 @@ public class SessionAttributeHandlerFilter implements Filter {
     private EntityManager entityManager;
 
     @Autowired
-    private CityWebsiteService cityWebsiteService;
+    private CityService cityService;
 
     @Override
     public void init(final FilterConfig config) {
@@ -90,12 +89,12 @@ public class SessionAttributeHandlerFilter implements Filter {
         final HttpSession httpSession = httpRequest.getSession();
 
         if (httpSession.getAttribute("cityBoundaryId") == null) {
-            final CityWebsite city = cityWebsiteService.getCityWebSiteByURL(WebUtils.extractRequestedDomainName(httpRequest));
+            final City city = cityService.getCityByURL(WebUtils.extractRequestedDomainName(httpRequest));
             httpSession.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
-            httpSession.setAttribute("cityurl", city.getCityBaseURL());
-            httpSession.setAttribute("cityname", city.getCityName());
+            httpSession.setAttribute("cityurl", city.getDomainURL());
+            httpSession.setAttribute("cityname", city.getName());
             httpSession.setAttribute("citylogo", city.getLogo());
-            httpSession.setAttribute("citynamelocal", city.getCityNameLocal());
+            httpSession.setAttribute("citynamelocal", city.getLocalName());
             httpSession.setAttribute("cityCode", city.getCode());
             httpSession.setAttribute("cityRecaptchaPK", city.getRecaptchaPK());
         }

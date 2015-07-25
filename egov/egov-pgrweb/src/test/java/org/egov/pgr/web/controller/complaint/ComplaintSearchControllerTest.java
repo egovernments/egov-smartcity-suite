@@ -64,7 +64,7 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
@@ -106,7 +106,7 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Mock
     private SecurityUtils securityUtils;
     @Mock
-    private CityWebsiteService cityWebsiteService; 
+    private CityService cityWebsiteService; 
     
     @Override
     protected ComplaintSearchController initController() {

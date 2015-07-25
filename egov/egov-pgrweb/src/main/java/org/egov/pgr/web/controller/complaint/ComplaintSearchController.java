@@ -37,11 +37,11 @@ import java.util.List;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -83,13 +83,13 @@ public class ComplaintSearchController {
     private static final Logger logger = LoggerFactory.getLogger(ComplaintSearchController.class);
 
     @Autowired
-    private final CityWebsiteService cityWebsiteService;
+    private final CityService cityWebsiteService;
 
     @Autowired
     public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
             final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService,
             final AssignmentService assignmentService, final SecurityUtils securityUtils,
-            final CityWebsiteService cityWebsiteService) {
+            final CityService cityWebsiteService) {
         this.searchService = searchService;
         this.complaintService = complaintService;
         this.complaintStatusService = complaintStatusService;
@@ -161,10 +161,10 @@ public class ComplaintSearchController {
     @ModelAttribute("currentUlb")
     public String getCurrentUlb() {
 
-        final CityWebsite cityWebsite = cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
         if (null != cityWebsite) {
-            logger.debug("logged in as " + cityWebsite.getCityName());
-            return cityWebsite.getCityName();
+            logger.debug("logged in as " + cityWebsite.getName());
+            return cityWebsite.getName();
         } else
             return "";
     }

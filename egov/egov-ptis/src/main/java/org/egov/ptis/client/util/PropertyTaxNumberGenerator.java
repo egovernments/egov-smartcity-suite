@@ -45,7 +45,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -70,7 +70,7 @@ public class PropertyTaxNumberGenerator {
 	@Autowired
 	private InstallmentDao installmentDao;
 	@Autowired
-	private CityWebsiteService cityWebsiteService;
+	private CityService cityWebsiteService;
 
 	@Autowired
 	private ApplicationNumberGenerator applicationNumberGenerator;

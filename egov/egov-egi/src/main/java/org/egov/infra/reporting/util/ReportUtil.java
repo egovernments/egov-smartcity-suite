@@ -133,7 +133,7 @@ public final class ReportUtil {
 	 */
 	public static InputStream getLogoImageAsStream(final Connection connection) {
 		try {
-			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'"));
+			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'"));
 		} catch (final SQLException e) {
 			throw new EGOVRuntimeException("Exception in getting logo image!", e);
 		}
@@ -152,12 +152,12 @@ public final class ReportUtil {
 	}
 
 	public static String fetchLogo() {
-		return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
+		return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
 	}
 	
 	public static String getCityName() {
 	    try {
-                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT CITYNAME FROM EG_CITY_WEBSITE WHERE CITYBASEURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
+                return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT NAME FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
         } catch (final HibernateException e) {
                 throw new EGOVRuntimeException("Exception in getting city name!", e);
         }

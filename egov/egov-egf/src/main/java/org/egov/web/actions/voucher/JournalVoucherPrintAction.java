@@ -69,7 +69,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
@@ -77,7 +77,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
@@ -106,7 +106,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	ReportHelper reportHelper;
 	Long id;
 	List <WorkFlowHistoryItem> inboxHistory = new ArrayList<WorkFlowHistoryItem>();
-	private CityWebsiteService cityWebsiteDAO;
+	private CityService cityService;
 	private BillsService billsManager;
 	private static final String ACCDETAILTYPEQUERY=" from Accountdetailtype where id=?";
 	private BudgetAppropriationService budgetAppropriationService;
@@ -114,8 +114,8 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	public void setBillsService(BillsService billsManager) {
 		this.billsManager = billsManager;
 	}
-	public void setCityWebsiteService(CityWebsiteService cityWebsiteDAO) {
-		this.cityWebsiteDAO = cityWebsiteDAO;
+	public void setCityService(CityService cityService) {
+		this.cityService = cityService;
 	}
 
 	public Long getId() {
@@ -238,7 +238,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		paramMap.put("workFlowJasper", reportHelper.getClass().getResourceAsStream("/org/egov/web/actions/voucher/workFlowHistoryReport.jasper"));
 		HttpServletRequest request = ServletActionContext.getRequest();
 		HttpSession session = request.getSession();
-		CityWebsite cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) session.getAttribute("cityurl"));
+		City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));
 		String billType = billsManager.getBillTypeforVoucher(voucher);
 		if(null == billType){
 			billType = "General";
@@ -255,7 +255,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		}
 		EgBillregistermis billRegistermis = (EgBillregistermis) persistenceService.find("from EgBillregistermis where voucherHeader.id=?",voucher.getId());
 		StringBuffer cityName = new StringBuffer(100);
-		cityName.append(cityWebsite.getCityName().toUpperCase());
+		cityName.append(cityWebsite.getName().toUpperCase());
 		paramMap.put("cityName", cityName.toString());
 		paramMap.put("voucherName", billType.toUpperCase().concat(" JOURNAL VOUCHER"));
 		paramMap.put("budgetAppropriationDetailJasper", reportHelper.getClass().getResourceAsStream("/reports/templates/budgetAppropriationDetail.jasper"));

@@ -68,7 +68,8 @@ psql \
     -v schema=${array[0]} \
     -v cityname="'${array[1]}'" \
     -v cityurl="'${array[2]}'" \
-    -v citycode="'${array[3]}'" \
+    -v citylogo="'${array[3]}'" \
+    -v citycode="'${array[4]}'" \
     -f ${STARTUP_SCRIPT_NAME} \
     --echo-all \
     --set AUTOCOMMIT=on \

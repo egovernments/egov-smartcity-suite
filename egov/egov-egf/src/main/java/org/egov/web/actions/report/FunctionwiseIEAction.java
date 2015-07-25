@@ -58,9 +58,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.services.report.FunctionwiseIEService;
@@ -85,8 +85,8 @@ public class FunctionwiseIEAction extends ReportAction
 	private ReportHelper reportHelper;
 	private FunctionwiseIEService functionwiseIEService;
 	private final FunctionwiseIE functionwiseIE = new FunctionwiseIE();
-	private CityWebsiteService cityWebsiteDAO;
-	private CityWebsite cityWebsite;
+	private CityService cityService;
+	private City cityWebsite;
 	private @Autowired AppConfigValueService appConfigValuesService;
 	private FinancialYearDAO financialYearDAO;
 	private String heading="";	
@@ -102,8 +102,8 @@ public class FunctionwiseIEAction extends ReportAction
 	private EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 	private static final Logger LOGGER = Logger.getLogger(FunctionwiseIEAction.class);
 	private List<CommonReportBean> ieWithBudgetList;
-	public void setCityWebsiteService(final CityWebsiteService cityWebsiteDAO) {
-		this.cityWebsiteDAO = cityWebsiteDAO;
+	public void setCityService(final CityService cityService) {
+		this.cityService = cityService;
 	}
 	
 	public void setFunctionwiseIEService(final FunctionwiseIEService functionwiseIEService) {
@@ -150,12 +150,12 @@ public class FunctionwiseIEAction extends ReportAction
 			removEmptyRows(reportSearch);
 			if(reportSearch.getExportType().equalsIgnoreCase("xls"))
 			{
-				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportMajorAndMinorCodewise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportMajorAndMinorCodewise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 				return "functionwiseIE-XLS";
 			}
 				else
 				{
-			  inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportMajorAndMinorCodewise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+			  inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportMajorAndMinorCodewise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 			  return "functionwiseIE-PDF";
 				}
 		} catch (JRException e) {
@@ -176,12 +176,12 @@ public class FunctionwiseIEAction extends ReportAction
 			removEmptyRows(reportSearch);
 			if(reportSearch.getExportType().equalsIgnoreCase("xls"))
 			{
-				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportDeptwise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportDeptwise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 				return "functionwiseIE-XLS";
 			}
 			else
 			{
-				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportDeptwise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportDeptwise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 				return "functionwiseIE-PDF";
 			}
 		} catch (JRException e) {
@@ -202,12 +202,12 @@ public class FunctionwiseIEAction extends ReportAction
 			removEmptyRows(reportSearch);
 			if(reportSearch.getExportType().equalsIgnoreCase("xls"))
 			{
-				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportDetailwise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportDetailwise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 				return "functionwiseIE-XLS";
 			}
 			else
 			{
-				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportDetailwise(ieWithBudgetList,cityWebsite.getCityName(),reportSearch,heading));
+				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportDetailwise(ieWithBudgetList,cityWebsite.getName(),reportSearch,heading));
 				return "functionwiseIE-PDF";
 			}
 		} catch (JRException e) {
@@ -422,27 +422,27 @@ public class FunctionwiseIEAction extends ReportAction
 	public String generateFunctionwiseIEHtml() throws Exception
 	{
 		populateDataSource(reportSearch);
-		inputStream = reportHelper.exportHtml(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getCityName(),getvalue(reportSearch.getIncExp())));
+		inputStream = reportHelper.exportHtml(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getName(),getvalue(reportSearch.getIncExp())));
 		return "functionwiseIE-HTML";
 	}
 	@Action(value="/report/functionwiseIE-generateFunctionwiseIEPdf")
 	public String generateFunctionwiseIEPdf() throws Exception{
 		populateDataSource(reportSearch);
-		inputStream = reportHelper.exportPdf(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getCityName(),getvalue(reportSearch.getIncExp())));
+		inputStream = reportHelper.exportPdf(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getName(),getvalue(reportSearch.getIncExp())));
 		return "functionwiseIE-PDF";
 	}
 	@Action(value="/report/functionwiseIE-generateFunctionwiseIEXls")
 	public String generateFunctionwiseIEXls() throws Exception{
 		populateDataSource(reportSearch);
-		inputStream = reportHelper.exportXls(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getCityName(),getvalue(reportSearch.getIncExp())));
+		inputStream = reportHelper.exportXls(inputStream, reportHelper.generateFunctionwiseIEJasperPrint(functionwiseIE,cityWebsite.getName(),getvalue(reportSearch.getIncExp())));
 		return "functionwiseIE-XLS";
 	}
 	public void populateDataSource(ReportSearch reportSearch)throws Exception
 	{
 		//functionwiseIEService.setReportSearch(reportSearch);
 		functionwiseIEService.populateData(functionwiseIE,reportSearch);
-		cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) getSession().get("cityurl"));
-		functionwiseIE.setCityName(cityWebsite.getCityName());
+		cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));
+		functionwiseIE.setCityName(cityWebsite.getName());
 	}
 	
 	public void populateDataSourceWithBudget(ReportSearch reportSearch)throws Exception
@@ -452,8 +452,8 @@ public class FunctionwiseIEAction extends ReportAction
 		else
 			ieWithBudgetList= functionwiseIEService.populateIncomeDataWithBudget(functionwiseIE,reportSearch);
 		
-		cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) getSession().get("cityurl"));
-		functionwiseIE.setCityName(cityWebsite.getCityName());
+		cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));
+		functionwiseIE.setCityName(cityWebsite.getName());
 	}
 	
 	public List<CommonReportBean> getIeWithBudgetList() {

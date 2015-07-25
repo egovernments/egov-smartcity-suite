@@ -56,20 +56,19 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Unique(id = "id", tableName = "eg_city_website", fields = { "cityBaseURL" }, columnName = {
-        "citybaseurl" }, enableDfltMsg = true)
-@Table(name = "eg_city_website")
-@NamedQuery(name = CityWebsite.QUERY_CITY_BY_URL, query = "Select cw FROM CityWebsite cw WHERE cw.cityBaseURL=:url")
-@SequenceGenerator(name = CityWebsite.SEQ_CITY_WEBSITE, sequenceName = CityWebsite.SEQ_CITY_WEBSITE, allocationSize = 1)
-public class CityWebsite extends AbstractAuditable {
+@Unique(id = "id", tableName = "eg_city", fields = { "domainURL" }, columnName = { "domainURL" }, enableDfltMsg = true)
+@Table(name = "eg_city")
+@NamedQuery(name = City.QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
+@SequenceGenerator(name = City.SEQ_CITY, sequenceName = City.SEQ_CITY, allocationSize = 1)
+public class City extends AbstractAuditable {
 
     private static final long serialVersionUID = -6267923687226233397L;
-    public static final String SEQ_CITY_WEBSITE = "SEQ_EG_CITY_WEBSITE";
+    public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
 
     @DocumentId
     @Id
-    @GeneratedValue(generator = SEQ_CITY_WEBSITE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
@@ -78,17 +77,17 @@ public class CityWebsite extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    private String cityName;
+    private String name;
 
     @SafeHtml
     @NotBlank
-    private String cityNameLocal;
+    private String localName;
 
     private boolean active;
 
     @SafeHtml
     @NotBlank
-    private String cityBaseURL;
+    private String domainURL;
 
     @SafeHtml
     @NotBlank
@@ -98,12 +97,21 @@ public class CityWebsite extends AbstractAuditable {
     @NotBlank
     private String recaptchaPK;
 
+    @SafeHtml
     @NotBlank
     private String code;
-    
+
+    @SafeHtml
+    @NotBlank
     private String districtCode;
-    
+
+    @SafeHtml
+    @NotBlank
     private String districtName;
+
+    private Float longitude;
+
+    private Float latitude;
 
     @Override
     public Long getId() {
@@ -123,20 +131,20 @@ public class CityWebsite extends AbstractAuditable {
         this.boundary = boundary;
     }
 
-    public String getCityName() {
-        return cityName;
+    public String getName() {
+        return name;
     }
 
-    public void setCityName(final String cityName) {
-        this.cityName = cityName;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public String getCityNameLocal() {
-        return cityNameLocal;
+    public String getLocalName() {
+        return localName;
     }
 
-    public void setCityNameLocal(final String cityNameLocal) {
-        this.cityNameLocal = cityNameLocal;
+    public void setLocalName(final String localName) {
+        this.localName = localName;
     }
 
     public boolean isActive() {
@@ -147,12 +155,12 @@ public class CityWebsite extends AbstractAuditable {
         this.active = active;
     }
 
-    public String getCityBaseURL() {
-        return cityBaseURL;
+    public String getDomainURL() {
+        return domainURL;
     }
 
-    public void setCityBaseURL(final String cityBaseURL) {
-        this.cityBaseURL = cityBaseURL;
+    public void setDomainURL(final String domainURL) {
+        this.domainURL = domainURL;
     }
 
     public String getLogo() {
@@ -179,27 +187,43 @@ public class CityWebsite extends AbstractAuditable {
         this.code = code;
     }
 
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(final Float longitude) {
+        this.longitude = longitude;
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(final Float latitude) {
+        this.latitude = latitude;
+    }
+
     public String getDistrictCode() {
-		return districtCode;
-	}
+        return districtCode;
+    }
 
-	public void setDistrictCode(String districtCode) {
-		this.districtCode = districtCode;
-	}
+    public void setDistrictCode(final String districtCode) {
+        this.districtCode = districtCode;
+    }
 
-	public String getDistrictName() {
-		return districtName;
-	}
+    public String getDistrictName() {
+        return districtName;
+    }
 
-	public void setDistrictName(String districtName) {
-		this.districtName = districtName;
-	}
+    public void setDistrictName(final String districtName) {
+        this.districtName = districtName;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (cityBaseURL == null ? 0 : cityBaseURL.hashCode());
+        result = prime * result + (domainURL == null ? 0 : domainURL.hashCode());
         result = prime * result + (id == null ? 0 : id.hashCode());
         return result;
     }
@@ -212,11 +236,11 @@ public class CityWebsite extends AbstractAuditable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final CityWebsite other = (CityWebsite) obj;
-        if (cityBaseURL == null) {
-            if (other.cityBaseURL != null)
+        final City other = (City) obj;
+        if (domainURL == null) {
+            if (other.domainURL != null)
                 return false;
-        } else if (!cityBaseURL.equals(other.cityBaseURL))
+        } else if (!domainURL.equals(other.domainURL))
             return false;
         if (id == null) {
             if (other.id != null)
@@ -225,5 +249,4 @@ public class CityWebsite extends AbstractAuditable {
             return false;
         return true;
     }
-
 }

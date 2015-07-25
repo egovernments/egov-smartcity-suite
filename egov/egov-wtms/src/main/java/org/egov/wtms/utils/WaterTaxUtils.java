@@ -32,7 +32,7 @@ package org.egov.wtms.utils;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.messaging.email.EmailService;
 import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -49,7 +49,7 @@ public class WaterTaxUtils {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private CityWebsiteService cityWebsiteService;
+    private CityService cityService;
 
     @Autowired
     private SMSService smsService;
@@ -85,11 +85,11 @@ public class WaterTaxUtils {
     }
 
     public String getCityName() {
-        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
+        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
     }
 
     public String getCityCode() {
-        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCode();
+        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
     }
 
     public String smsAndEmailBodyByCodeAndArgs(final String code, final WaterConnectionDetails waterConnectionDetails,

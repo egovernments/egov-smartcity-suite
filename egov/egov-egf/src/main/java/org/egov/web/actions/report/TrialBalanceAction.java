@@ -69,9 +69,9 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -110,8 +110,8 @@ public class TrialBalanceAction extends BaseFormAction {
 	private static final Logger LOGGER = Logger.getLogger(TrialBalanceAction.class);
 	private ReportBean rb=new ReportBean(); 
 	protected InputStream inputStream;
-	private CityWebsiteService cityWebsiteDAO;
-	private CityWebsite cityWebsite;
+	private CityService cityService;
+	private City cityWebsite;
 	private String heading="";
 	public String reqFundId[];
 	public String reqFundName[];
@@ -165,20 +165,20 @@ public class TrialBalanceAction extends BaseFormAction {
 	{
 		try {
 			heading=generateHeading();
-			cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) getSession().get("cityurl"));	
+			cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));	
 			if(rb.getExportType().equalsIgnoreCase("xls"))
 			{
-				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getCityName(),rb,heading,fundList,"xls"));
+				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getName(),rb,heading,fundList,"xls"));
 				return "trialBalance-XLS";
 			}
 			else if (rb.getExportType().equalsIgnoreCase("pdf"))
 			{
-				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getCityName(),rb,heading,fundList,null));
+				inputStream = reportHelper.exportPdf(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getName(),rb,heading,fundList,null));
 				return "trialBalance-PDF";
 			}
 			else                                           
 			{
-				inputStream = reportHelper.exportHtml(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getCityName(),rb,heading,fundList,null),"px");
+				inputStream = reportHelper.exportHtml(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getName(),rb,heading,fundList,null),"px");
 				return NEW;
 			}
 		} catch (JRException e) {
@@ -957,8 +957,8 @@ public class TrialBalanceAction extends BaseFormAction {
 	 	public ReportBean getRb() {
 			return rb;
 		}
-		public CityWebsiteService getCityWebsiteService() {
-			return cityWebsiteDAO;
+		public CityService getCityWebsiteService() {
+			return cityService;
 		}
 		public String getHeading() {
 			return heading;
@@ -975,8 +975,8 @@ public class TrialBalanceAction extends BaseFormAction {
 		public void setInputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 		}
-		public void setCityWebsiteService(CityWebsiteService cityWebsiteDAO) { 
-			this.cityWebsiteDAO = cityWebsiteDAO;
+		public void setCityService(CityService cityService) { 
+			this.cityService = cityService;
 		}
 		public void setHeading(String heading) {
 			this.heading = heading;
