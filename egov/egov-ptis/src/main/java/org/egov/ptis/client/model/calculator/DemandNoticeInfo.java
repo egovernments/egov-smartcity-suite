@@ -1,8 +1,5 @@
 package org.egov.ptis.client.model.calculator;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,9 +7,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +27,12 @@ public class DemandNoticeInfo {
 	private ReportUtil reportUtil;
 	
 	@Autowired
-	@Qualifier("cityWebsiteService")
-	private CityService cityWebsiteService;
+	@Qualifier("cityService")
+	private CityService cityService;
 	
 	// reading cityname and logo from citywebsiteservice to support bulkbillgeneration through schedular
 	public City getcityWebsite(){
-	    City cw= cityWebsiteService.findAll().get(0);
+	    City cw= cityService.findAll().get(0);
             return cw;
 	}
 	

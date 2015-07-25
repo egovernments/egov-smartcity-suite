@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/*eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
  * Copyright (C) <2015> eGovernments Foundation
@@ -83,20 +82,20 @@ public class ComplaintSearchController {
     private static final Logger logger = LoggerFactory.getLogger(ComplaintSearchController.class);
 
     @Autowired
-    private final CityService cityWebsiteService;
+    private final CityService cityService;
 
     @Autowired
     public ComplaintSearchController(final SearchService searchService, final ComplaintService complaintService,
             final ComplaintStatusService complaintStatusService, final ComplaintTypeService complaintTypeService,
             final AssignmentService assignmentService, final SecurityUtils securityUtils,
-            final CityService cityWebsiteService) {
+            final CityService cityService) {
         this.searchService = searchService;
         this.complaintService = complaintService;
         this.complaintStatusService = complaintStatusService;
         this.complaintTypeService = complaintTypeService;
         this.assignmentService = assignmentService;
         this.securityUtils = securityUtils;
-        this.cityWebsiteService = cityWebsiteService;
+        this.cityService = cityService;
     }
 
     @ModelAttribute("complaintTypeDepartments")
@@ -161,7 +160,7 @@ public class ComplaintSearchController {
     @ModelAttribute("currentUlb")
     public String getCurrentUlb() {
 
-        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         if (null != cityWebsite) {
             logger.debug("logged in as " + cityWebsite.getName());
             return cityWebsite.getName();

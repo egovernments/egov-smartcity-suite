@@ -70,7 +70,7 @@ public class PropertyTaxNumberGenerator {
 	@Autowired
 	private InstallmentDao installmentDao;
 	@Autowired
-	private CityService cityWebsiteService;
+	private CityService cityService;
 
 	@Autowired
 	private ApplicationNumberGenerator applicationNumberGenerator;
@@ -112,7 +112,7 @@ public class PropertyTaxNumberGenerator {
 		StringBuffer billNo = new StringBuffer();
 		try {
 		        // reading from service to support bulkbillgeneration through schedular
-			String cityCode = cityWebsiteService.findAll().get(0).getCode();
+			String cityCode = cityService.findAll().get(0).getCode();
 			billNo.append(cityCode);
 			String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
 			billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));

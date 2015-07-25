@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
  * Copyright (C) <2015> eGovernments Foundation
@@ -138,7 +137,7 @@ public class ComplaintService {
     private EscalationService escalationService;
 
     @Autowired
-    private CityService cityWebsiteService;
+    private CityService cityService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -183,7 +182,7 @@ public class ComplaintService {
         else if (null != assignee)
             complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
 
-        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         complaint.setUlb(cityWebsite.getName());
         complaint.setDistrict(cityWebsite.getDistrictName());
         final Complaint savedComplaint = complaintRepository.save(complaint);
@@ -246,7 +245,7 @@ public class ComplaintService {
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
                     .withOwner(complaint.getState().getOwnerPosition());
         }
-        final City cityWebsite = cityWebsiteService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         complaint.setUlb(cityWebsite.getName());
         complaint.setDistrict(cityWebsite.getDistrictName());
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);

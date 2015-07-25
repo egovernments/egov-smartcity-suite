@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -142,7 +141,7 @@ public class Boundary extends AbstractAuditable {
     private Long boundaryTypeId;
 
     @Transient
-    private City cityWebsite = new City();
+    private City city = new City();
 
     public Long getId() {
         return id;
@@ -309,12 +308,12 @@ public class Boundary extends AbstractAuditable {
         this.materializedPath = materializedPath;
     }
 
-    public City getCityWebsite() {
-        return cityWebsite;
+    public City getCity() {
+        return city;
     }
 
-    public void setCityWebsite(final City cityWebsite) {
-        this.cityWebsite = cityWebsite;
+    public void setCity(final City city) {
+        this.city = city;
     }
 
     @Override
