@@ -75,14 +75,13 @@ public class CitizenController extends ApiController {
     // --------------------------------------------------------------------------------//
 
     /**
+     * It will return user information belongs to identity Identity may be the user email or mobile number.
      * 
      * @param request
      * @return User
      * 
      * @since version 1.0
-     * 
-     * It will reaturn user information belongs to identity Identiy may be the user email or mobile number
-     * 
+     *  
      */
 
     @RequestMapping(value = ApiUrl.CITIZEN_GET_PROFILE, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -98,6 +97,8 @@ public class CitizenController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * Clear the session
+     * 
      * @param request
      * @return
      */
@@ -115,8 +116,11 @@ public class CitizenController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
-     * @param citizen
-     * @return
+     * This will update the profile of login user
+     * 
+     * 
+     * @param citizen - As json Object
+     * @return Citizen
      */
     @RequestMapping(value = ApiUrl.CITIZEN_UPDATE_PROFILE, method = RequestMethod.PUT, consumes = { "application/json" })
     public ResponseEntity<String> updateProfile(@RequestBody JSONObject citizen) {

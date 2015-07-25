@@ -46,10 +46,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
@@ -94,6 +90,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -402,48 +400,20 @@ public class ComplaintService {
         return Arrays.asList(ReceivingMode.values());
     }
 
-    public List<Complaint> getLatest(int page, int pageSize) {
-
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Complaint> query = cb.createQuery(Complaint.class);
-        Root<Complaint> complaint = query.from(Complaint.class);
-        query.select(complaint);
-        query.where(cb.notEqual(complaint.get("createdBy"), securityUtils.getCurrentUser().getId()));
-        query.orderBy(cb.desc(complaint.get("createdDate")));
-        TypedQuery<Complaint> finalQuery = entityManager.createQuery(query);
-
-        List<Complaint> list = finalQuery
-                .setFirstResult((page - 1) * pageSize)
-                .setMaxResults(pageSize + 1).getResultList();
-        return list;
+    public Page<Complaint> getLatest(int page, int pageSize) {
+        int offset = page - 1;        
+        return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
-    public List<Complaint> getMyComplaint(int page, int pageSize) {
-
-        List<Complaint> list = entityManager
-                .createQuery(
-                        "from Complaint where createdBy=:createdBy order by createddate DESC",
-                        Complaint.class)
-                .setParameter("createdBy", securityUtils.getCurrentUser())
-                .setFirstResult((page - 1) * pageSize)
-                .setMaxResults(pageSize + 1).getResultList();
-
-        return list;
+    public Page<Complaint> getMyComplaint(int page, int pageSize) {
+        int offset = page - 1;
+        return complaintRepository.findByMyComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
-    @SuppressWarnings("unchecked")
     public List<Complaint> getNearByComplaint(int page, float lat, float lng, int distance, int pageSize) {
-
-        List<Complaint> list = entityManager
-                .createNativeQuery(
-                        "SELECT * FROM egpgr_complaint WHERE createdBy!=" + securityUtils.getCurrentUser().getId()
-                                + " AND earth_box( ll_to_earth("
-                                + lat + ", " + lng + ")," + distance
-                                + ") @> ll_to_earth(egpgr_complaint.lat, egpgr_complaint.lng)", Complaint.class)
-                .setFirstResult((page - 1) * pageSize)
-                .setMaxResults(pageSize + 1).getResultList();
-
-        return list;
+        Long offset = new Long((page - 1) * pageSize);
+        Long limit = new Long(pageSize + 1);
+        return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), new Float(lat),
+                new Float(lng), new Long(distance), limit, offset);        
     }
-
 }

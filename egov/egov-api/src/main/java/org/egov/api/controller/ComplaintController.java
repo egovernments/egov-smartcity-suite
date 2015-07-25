@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
@@ -65,12 +64,12 @@ import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
-import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,8 +100,9 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will returns all complaint types
      * 
-     * @return
+     * @return ComplaintType
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_GET_TYPES }, method = GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     public ResponseEntity<String> getAllTypes() {
@@ -116,8 +116,9 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will returns complaint types which is frequently filed.
      * 
-     * @return
+     * @return ComplaintType
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_GET_FREQUENTLY_FILED_TYPES }, method = GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     public ResponseEntity<String> getFrequentTypes() {
@@ -131,6 +132,7 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * Searching complaint using any text.
      * 
      * @param searchRequest
      * @return
@@ -141,15 +143,16 @@ public class ComplaintController extends ApiController {
                 asList(Index.PGR.toString()),
                 asList(IndexType.COMPLAINT.toString()),
                 searchRequest.searchQuery(), searchRequest.searchFilters(),
-                Sort.NULL, Page.NULL);
+                Sort.NULL, org.egov.search.domain.Page.NULL);
         return getResponseHandler().success(searchResult.getDocuments());
     }
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will create a complaint
      * 
-     * @param complaint
-     * @return
+     * @param Complaint - As json Object
+     * @return Complaint
      */
     @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(@RequestBody JSONObject complaintRequest) {
@@ -192,6 +195,7 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will upload complaint support document
      * 
      * @param complaintNo
      * @param files
@@ -218,8 +222,10 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will display the detail of the complaint
+     * 
      * @param complaintNo
-     * @return
+     * @return Complaint
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_DETAIL }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getDetail(@PathVariable final String complaintNo) {
@@ -237,8 +243,10 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will display the status history of the complaint( status : REGISTERED, FORWARDED..).
+     * 
      * @param complaintNo
-     * @return
+     * @return Complaint
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_STATUS }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStatus(@PathVariable final String complaintNo) {
@@ -256,9 +264,11 @@ public class ComplaintController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will display the latest complaint except current user.
+     * 
      * @param page
      * @param pageSize
-     * @return
+     * @return Complaint
      */
 
     @RequestMapping(value = { ApiUrl.COMPLAINT_LATEST }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -268,14 +278,10 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().error("Invalid Page Number");
         }
         try {
-            List<Complaint> list = complaintService.getLatest(page, pageSize);
-            boolean hasNextPage = false;
-            if (list.size() > pageSize) {
-                hasNextPage = true;
-                list.remove(pageSize);
-            }
+            Page<Complaint> pagelist = complaintService.getLatest(page, pageSize);
+            boolean hasNextPage = (pagelist.getTotalElements() > (page * pageSize));
             return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
-                    .setDataAdapter(new ComplaintAdapter()).success(list);
+                    .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
         } catch (final Exception e) {
             return getResponseHandler().error(e.getMessage());
         }
@@ -285,14 +291,14 @@ public class ComplaintController extends ApiController {
     // --------------------------------------------------------------------------------//
 
     /**
+     * This will returns the location(name, address) based on given characters.
      * 
-     * @param request
+     * @param locationName
      * @return
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_GET_LOCATION }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getLocation(HttpServletRequest request) {
+    public ResponseEntity<String> getLocation(@RequestParam("locationName") String locationName) {
 
-        String locationName = request.getParameter("locationName");
         if (locationName == null || locationName.isEmpty() || locationName.length() < 3) {
             return getResponseHandler().error(getMessage("location.search.invalid"));
         }
@@ -301,6 +307,14 @@ public class ComplaintController extends ApiController {
     }
 
     // --------------------------------------------------------------------------------//
+    /**
+     * This will returns complaint list of current user.
+     * 
+     * @param page
+     * @param pageSize
+     * @return Complaint
+     */
+
     @RequestMapping(value = { ApiUrl.CITIZEN_GET_MY_COMPLAINT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") int page, @PathVariable("pageSize") int pageSize) {
 
@@ -308,14 +322,10 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().error("Invalid Page Number");
         }
         try {
-            List<Complaint> list = complaintService.getMyComplaint(page, pageSize);
-            boolean hasNextPage = false;
-            if (list.size() > pageSize) {
-                hasNextPage = true;
-                list.remove(pageSize);
-            }
+            Page<Complaint> pagelist = complaintService.getMyComplaint(page, pageSize);
+            boolean hasNextPage = (pagelist.getTotalElements() > (page * pageSize));
             return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
-                    .setDataAdapter(new ComplaintAdapter()).success(list);
+                    .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
         } catch (final Exception e) {
             return getResponseHandler().error(e.getMessage());
         }
@@ -323,6 +333,17 @@ public class ComplaintController extends ApiController {
     }
 
     // --------------------------------------------------------------------------------//
+
+    /**
+     * This will returns nearest user complaint list.
+     * 
+     * @param page
+     * @param pageSize
+     * @param lat
+     * @param lng
+     * @param distance
+     * @return Complaint
+     */
     @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getNearByComplaint(@PathVariable("page") int page, @RequestParam("lat") float lat,
             @RequestParam("lng") float lng, @RequestParam("distance") int distance,
@@ -346,6 +367,15 @@ public class ComplaintController extends ApiController {
     }
 
     // ------------------------------------------
+
+    /**
+     * This will download the support document of the complaint.
+     * 
+     * @param complaintNo
+     * @param fileNo
+     * @return file
+     */
+
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
     public void getComplaintDoc(@PathVariable String complaintNo, @RequestParam(value = "fileNo", required = false) Long fileNo,
             HttpServletResponse response) throws IOException {
@@ -378,6 +408,13 @@ public class ComplaintController extends ApiController {
     }
 
     // ---------------------------------------------------------------------//
+    /**
+     * This will update the status of the complaint.
+     * 
+     * @param complaintNo
+     * @param As a json object ( action, comment)
+     * @return Complaint
+     */
 
     @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintStatus(

@@ -114,7 +114,6 @@ public class ComplaintSearchRequest {
                     logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
             }
     }
 
@@ -125,7 +124,6 @@ public class ComplaintSearchRequest {
                     logger.debug("Date Range Till .. :" + ft.format(dtft.parse(toDate)));
                 this.toDate = ft.format(dtft.parse(toDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
             }
     }
 
