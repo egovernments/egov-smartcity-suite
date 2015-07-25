@@ -89,16 +89,17 @@ public class NewConnectionController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
-    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
+    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         return "newconnection-form";
     }
 
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request) {
+            final HttpServletRequest request, final Model model) {
 
         validatePropertyID(waterConnectionDetails, resultBinder);
 
@@ -118,8 +119,10 @@ public class NewConnectionController extends GenericConnectionController {
                 i++;
             }
 
-        if (resultBinder.hasErrors())
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             return "newconnection-form";
+        }
 
         waterConnectionDetails.getApplicationDocs().clear();
         waterConnectionDetails.setApplicationDocs(applicationDocs);

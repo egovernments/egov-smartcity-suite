@@ -72,6 +72,18 @@ public class WaterTaxUtils {
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
+    public Boolean isNewConnectionAllowedIfPTDuePresent() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "NEWCONNECTIONALLOWEDIFPTDUE").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
+
+    public Boolean isMultipleNewConnectionAllowedForPID() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "MULTIPLENEWCONNECTIONFORPID").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
+
     public String getCityName() {
         return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
     }
