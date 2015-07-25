@@ -80,7 +80,7 @@
 					</table>
 			</div>
 			<div class="buttonbottom" align="center">
-				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
+				<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN)}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />
 				</s:if>
 				<input type="button" name="button2" id="button2"

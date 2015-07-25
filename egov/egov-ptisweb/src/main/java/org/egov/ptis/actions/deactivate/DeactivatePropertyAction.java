@@ -147,10 +147,11 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	/**
 	 * @return propertyStatusValues the property status data
 	 */
-	@Override
+	//FIX ME
+	/*@Override
 	public Object getModel() {
 		return propStatusVal;
-	}
+	}*/
 
 	/**
 	 * Gets the Property on property id, from this the fields will be displayed

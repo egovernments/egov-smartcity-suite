@@ -1,4 +1,4 @@
-<!--  #-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -43,35 +43,29 @@
 
 <script>
 
-function getUsersByDesignationAndDept()
-{
+function getUsersByDesignationAndDept() {
 	populateapproverPositionId({approverDepartmentId:document.getElementById('approverDepartment').value,designationId:document.getElementById('approverDesignation').value});
 }
 
-function callAlertForDepartment()
-{
+function callAlertForDepartment() {
     var value=document.getElementById("approverDepartment").value;
-	if(value=="-1")
-	{
+	if(value=="-1") {
 		alert("Please select the Approver Department");
 		document.getElementById("approverDepartment").focus();
 		return false;
 	}
 }
 
-function callAlertForDesignation()
-{
+function callAlertForDesignation() {
 	var value=document.getElementById("approverDesignation").value;
-	if(value=="-1")
-	{
+	if(value=="-1") {
 		alert("Please select the approver designation");
 		document.getElementById("approverDesignation").focus();
 		return false;
 	}
 }
 	
-function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue)
-{
+function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue) {
 	  var designationObj =document.getElementById('approverDesignation');
 	  designationObj.options.length = 0;
 	  designationObj.options[0] = new Option("----Choose----","-1");
@@ -82,41 +76,28 @@ function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValu
 	  													currentState:currentStateValue,pendingAction:pendingActionsValue});
 }
 
-/**
- *   This method is to validate Approver
- */
-	
-function validateWorkFlowApprover(name)
-{
-    document.getElementById('workFlowAction').value=name;
-	<s:if test="%{getNextAction()!='END'}">
-    if((name=="Forward" || name=="Approve" || name=="approve" || name=="forward") && document.getElementById('approverPositionId').value=="-1")
-    {
-        alert("Please Select the Approver ");
-		return false;
-    }
-    </s:if>
-    return true;
+function loadDesignationFromMatrix() {
+	var e = dom.get('approverDepartment');
+	var dept = e.options[e.selectedIndex].text;
+	var currentState = dom.get('currentState').value;
+	var amountRule = dom.get('amountRule').value;
+	var additionalRule = dom.get('additionalRule').value;
+	var pendingAction=document.getElementById('pendingActions').value;
+	loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,additionalRule,pendingAction); 
 }
 
-function validateWorkFlowApprover(name,errorDivId)
-{
-    document.getElementById('workFlowAction').value=name;
-      var approverPosId = document.getElementById("approverPositionId");
-      if(approverPosId)
-      {
-	  var  approver = approverPosId.options[approverPosId.selectedIndex].text; 
-      document.getElementById("approverName").value= approver.split('~')[0];
-      }     
-    onSubmit();
+function populateApprover() {
+	getUsersByDesignationAndDept();
 }
-	
 	
 </script>
-<s:hidden id="workFlowAction" name="workFlowAction"/>
 <s:if test="%{getNextAction()!='END'}">
-
-<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
+<s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
+	<s:hidden id="currentState" name="currentState" value="%{state.value}"/>
+</s:if>
+<s:else>
+	<s:hidden id="currentState" name="currentState" value=""/>
+</s:else>
 <s:hidden id="currentDesignation" name="currentDesignation" value="%{currentDesignation}"/>
 <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
 <s:hidden id="amountRule" name="amountRule" value="%{amountRule}"/>
@@ -141,7 +122,6 @@ function validateWorkFlowApprover(name,errorDivId)
 			</div>
 		
 	</tr>
-        <% System.out.println("getNextAction()!='END'--"); %>
 	  	<tr>   
 	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
 			 <td class="${approverOddCSS}" id="deptLabel" width="14%">Approver Department:</td>
@@ -151,14 +131,14 @@ function validateWorkFlowApprover(name,errorDivId)
 					value="%{approverDepartment}"  onchange="loadDesignationFromMatrix();"
 					cssClass="dropDownCss" />
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
-					contextToBeUsed="/ptis"/>
+					contextToBeUsed="/eis"/>
 			</td>
 			<td class="${approverOddCSS}" width="14%">Approver Designation:</td>
 			<td class="${approverOddTextCss}" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
-					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/ptis" />
+					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" />
 			</td>
 			<td class="${approverOddCSS}" width="14%">Approver:</td>
 			<td class="${approverOddTextCss}" width="14%">

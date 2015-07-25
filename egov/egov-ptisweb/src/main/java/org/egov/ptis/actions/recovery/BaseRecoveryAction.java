@@ -70,6 +70,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.docmgmt.DocumentManagerService;
@@ -116,8 +117,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private EgBillDao egBillDAO;
 
 	@Override
-	public Object getModel() {
-
+	public StateAware getModel() {
 		return null;
 	}
 

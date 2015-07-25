@@ -42,7 +42,7 @@ package org.egov.ptis.client.workflow;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
@@ -251,7 +251,7 @@ public abstract class WorkflowDetails {
 	 * @return
 	 */
 	public boolean isNoticeGenerated() {
-		return WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(workflowBean.getActionName()
+		return WF_STATE_NOTICE_GENERATED.equalsIgnoreCase(workflowBean.getActionName()
 				.split(":")[1]);
 	}
 

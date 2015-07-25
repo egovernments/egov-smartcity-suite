@@ -315,7 +315,7 @@ public class Floor extends BaseModel implements Auditable {
 	}
 
 	/**
-	 * @return true if the given Object is equal to FloorImpl this will get
+	 * @return true if the given Object is equal to Floor this will get
 	 *         invoke when more than one object is adding to
 	 *         collection(ex:Set,Map.)
 	 */
@@ -359,7 +359,7 @@ public class Floor extends BaseModel implements Auditable {
 	public boolean validateFloor() {
 		if (getFloorNo() == null)
 			throw new EGOVRuntimeException(
-					"In FloorImpl Validate : FloorNumber is Not Set, Please Check !!");
+					"In Floor Validate : FloorNumber is Not Set, Please Check !!");
 
 		return true;
 	}
@@ -429,7 +429,7 @@ public class Floor extends BaseModel implements Auditable {
 	}
 
 	public String toString() {
-		return new StringBuilder(256).append("FloorImpl [Id: ").append(getId())
+		return new StringBuilder(256).append("Floor [Id: ").append(getId())
 				.append(", FloorNo=").append(getFloorNo()).append(", FloorArea=")
 				.append(getFloorArea() != null ? getFloorArea().getArea() : "null")
 				.append(", PropertyUsage=").append(getPropertyUsage()).append(", StructCl=")

@@ -54,8 +54,24 @@
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
 
-			function onSubmit(action, obj) {
-				document.getElementById('workflowBean.actionName').value = obj.id;
+			function onSubmit() {
+				var actionName = document.getElementById('workFlowAction').value;
+				var action = null;
+				var userDesg = '<s:property value="%{userDesgn}"/>';
+				var state = '<s:property value="%{model.state.value}"/>';
+				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
+					if (userDesg == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN}"/>' || state == 'Rejected') {
+						action = 'modifyProperty-forward.action';
+					} else {
+						action = 'modifyProperty-forwardView.action';
+					}
+				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_APPROVE}"/>') {
+					action = 'modifyProperty-approve.action';
+				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
+					action = 'modifyProperty-reject.action';
+				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'){
+					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify';
+				}
 				document.forms[0].action = action;
 				document.forms[0].submit;
 				return true;
@@ -115,8 +131,21 @@
 					alert("Please select Apartment/Complex Name");
 				}
 			}
+
+			function loadDesignationFromMatrix() {
+				var e = dom.get('approverDepartment');
+				var dept = e.options[e.selectedIndex].text;
+				var currentState = dom.get('currentState').value;
+				var amountRule="";
+				var pendingAction=document.getElementById('pendingActions').value;
+				loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
+			}
+
+			function populateApprover() {
+				getUsersByDesignationAndDept();
+			}
 			
-			function generateNotice6(){
+			function generateNotice(){
 			   	document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify";
 				document.ModifyPropertyForm.submit();
 			}
@@ -154,62 +183,47 @@
 						<s:text name="ModProp.title" />
 					</div>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
-						(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
-							&& !@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction))}">
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+							&& !@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.value))}">
 						<tr>
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
 						</tr>
 					</s:if>
 					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
-							(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
-							&& @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)) }">
+							@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
+							@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn) ||
+							(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+							&& @org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.value)) }">
 						<tr>
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
 						</tr>
 					</s:elseif>
-						<!--s:if test="%{userRole == @org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
-						<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
-						(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) 
-							&& @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)))}">
-							<tr>
-								<%@ include file="../workflow/property-workflow.jsp"%>
-							</tr>
-						</s:if>
-						<s:else>
-							<table width="100%" border="0" cellspacing="0" cellpadding="0">
-								<tr>
-									<td class="bluebox2" width="6%">
-										&nbsp;
-									</td>
-									<td class="bluebox" width="10%">
-										<s:text name='approver.comments' />
-									</td>
-									<td class="bluebox" width="8%">
-										<s:textarea name="workflowBean.comments" id="comments"
-											rows="3" cols="80" onblur="checkLength(this);" />
-									</td>
-									<td class="bluebox" width="15%" colspan="2"></td>
-								</tr>
-								<s:hidden name="workflowBean.actionName"
-									id="workflowBean.actionName" />
-							</table>
-						</s:else>
-						<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) 
+							&& @org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.value)))}">
 						<tr>
-							<font size="2"><div align="left" class="mandatory">
-									<s:text name="mandtryFlds" />
-								</div> </font>
+							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
-						<div class="buttonbottom" align="center">
-							<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)}">
+					</s:if>
+					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+					<tr>
+						<font size="2"><div align="left" class="mandatory">
+								<s:text name="mandtryFlds" />
+							</div> </font>
+					</tr>
+					<div class="buttonbottom" align="center">
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+					</div>
+					<%-- <div class="buttonbottom" align="center">
+							<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.value)}">
 								<s:if test="%{extra_field3!='Yes'}">
 									<td><input type="button" name="GenerateNotice6" id="GenerateNotice6"
 											value="Generate Notice" class="button" onclick="return generateNotice6();" />
 									</td>
 								</s:if>
 							</s:if>
-							<%--<s:else>
+							<s:else>
 								 <s:if test="modifyRsn=='AMALG'">
 									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 										<s:submit value="Approve" name="Approve"
@@ -239,20 +253,20 @@
 										<s:submit value="Reject" name="Reject"
 											id='Bifurcate:Reject' cssClass="buttonsubmit"
 											method="reject" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-								</s:if> --%>
+								</s:if>
 								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
 									<s:submit value="Approve" name="Approve" id="Modify:Approve"
 										cssClass="buttonsubmit"
 										onclick="return onSubmit('modifyProperty-approve.action', this);" />
 								</s:if>
 								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
-									@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction) 
-									|| @org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REVENUE_OFFICER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
+									@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction) 
+									|| @org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
 									<s:submit value="Forward" name="Forward" id="Modify:Forward"
 										cssClass="buttonsubmit"
 										onclick="return onSubmit('modifyProperty-forward.action', this);" />
 								</s:if>
-								<s:if test="!@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
+								<s:if test="!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(model.state.nextAction)">
 									<s:submit value="Reject" name="Reject"
 											id='Modify:Reject' cssClass="buttonsubmit" 
 											onclick="return onSubmit('modifyProperty-reject.action', this);" />
@@ -260,8 +274,8 @@
 								<input type="button" name="button2" id="button2" value="Close"
 									class="button" onclick="window.close();" />
 									
-							<%-- </s:else> --%>
-						</div>
+							</s:else>
+						</div> --%>
 					</table>
 				</div>
 			</s:push>

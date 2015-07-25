@@ -116,10 +116,11 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	public ChangePropertyAddressAction() {
 	}
 
-	@Override
+	//FIX ME
+	/*@Override
 	public Object getModel() {
 		return address;
-	}
+	}*/
 
 	/**
 	 * 

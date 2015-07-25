@@ -63,9 +63,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CANCEL;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,6 +109,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
@@ -299,7 +300,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@Override
-	public Object getModel() {
+	public StateAware getModel() {
 		return property;
 	}
 
@@ -434,8 +435,8 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ ", userDesgn: " + userDesgn);
 		String nextAction = property.getState().getNextAction();
 		populateFormData();
-		if (!nextAction.equals(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)
-				&& !nextAction.equals(WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED)
+		if (!nextAction.equals(WF_STATE_COMMISSIONER_APPROVED)
+				&& !nextAction.equals(WF_STATE_REVENUE_OFFICER_APPROVED)
 				&& (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_OFFICER_DESGN
 						.equalsIgnoreCase(userDesgn)) || WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(nextAction)) {
 			//populateFormData();
@@ -475,7 +476,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 			updatePropertyDetails();
 		} else {
-			validateApproverDetails(approverPositionId, approverComments,workFlowAction);
+			validateApproverDetails();
 			if (hasErrors()) {
 				return RESULT_VIEW;
 			}
@@ -1118,7 +1119,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				addActionError(getText("mandatory.corr.pincode.size"));
 			}
 		}
-		validateApproverDetails(approverPositionId,approverComments,workFlowAction);
+		validateApproverDetails();
 		super.validate();
 	}
 

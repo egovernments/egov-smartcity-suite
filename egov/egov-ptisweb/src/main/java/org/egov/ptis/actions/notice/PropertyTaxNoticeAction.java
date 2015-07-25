@@ -70,6 +70,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
@@ -112,7 +113,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	}
 
 	@Override
-	public Object getModel() {
+	public StateAware getModel() {
 		return null;
 	}
 
@@ -221,7 +222,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			floorInfo.setBuildingClassification(floor.getStructureClassification().getTypeName());
 			floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
 			floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
-			//floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
+			floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
 			floorInfo.setMonthlyRentalValue(BigDecimal.ZERO);
 			floorInfo.setYearlyRentalValue(BigDecimal.ZERO);
 			floorInfo.setTaxPayableForCurrYear(totalTax);

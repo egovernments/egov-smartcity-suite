@@ -1,4 +1,4 @@
-package org.egov.ptis.actions.workflow;
+package org.egov.eis.web.actions.workflow;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -17,18 +16,22 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * 
+ * @author subhash
+ *
+ */
 @ParentPackage("egov")
 @SuppressWarnings("serial")
 @ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = "designations", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-designations.jsp"),
-	 @Result(name = "approvers", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-approvers.jsp")
-	 })
+@Results({
+		@Result(name = "designations", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-designations.jsp"),
+		@Result(name = "approvers", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-approvers.jsp") })
 public class AjaxWorkFlowAction extends BaseFormAction {
 
 	private static final String WF_DESIGNATIONS = "designations";
@@ -37,9 +40,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	private List<Object> approverList;
 	private Long designationId;
 	private Long approverDepartmentId;
-	private EISServeable eisService;
 
-	// properties required to get workflow matrix
 	private CustomizedWorkFlowService customizedWorkFlowService;
 	private String type;
 	private BigDecimal amountRule;
@@ -51,40 +52,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	private List<String> roleList;
 	@Autowired
 	private AssignmentService assignmentService;
-	
-	/*
-	 * To get Position By Passing DepartmentId and DesignationId and Roles...
-	 * 
-	 * Mani comenting in phoenix as it is not required as of now
-	 */ 
-	/*public String getPositionByPassingDesigAndRoles() {
-		if (this.designationId != null && this.designationId != -1) {
 
-			final HashMap<String, Object> paramMap = new HashMap<String, Object>();
-			if (this.approverDepartmentId != null && this.approverDepartmentId != -1) {
-				paramMap.put("departmentId", this.approverDepartmentId.toString());
-			}
-			
-			 * Code Reviewed By Pradeep....
-			 * roleList: passing parameter roleList As String From Jsp and spliting and again Put into as ArrayList....
-			 
-			if(!roleList.isEmpty() && roleList.size()>0)
-			{
-				if(this.roleList.get(0)!=null && this.roleList.get(0)!="")
-					paramMap.put("roleList",Arrays.asList(this.roleList.get(0).split(",")));
-			}
-			paramMap.put("designationId", this.designationId.toString());
-			this.approverList = new ArrayList<Object>();
-			final List<? extends Object> empList = this.eisService.getEmployeeInfoListByParameterAsObject(paramMap);
-			if(empList!=null && !empList.isEmpty())
-			for (final Object emp : empList) {
-				this.approverList.add(emp);
-			}
-		}
-		return WF_APPROVERS;
-	}*/
-	
-	
 	@Action(value = "/workflow/ajaxWorkFlow-getPositionByPassingDesigId")
 	public String getPositionByPassingDesigId() {
 		if (this.designationId != null && this.designationId != -1) {
@@ -95,17 +63,22 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 			}
 			paramMap.put("designationId", this.designationId.toString());
 			this.approverList = new ArrayList<Object>();
-			List<Assignment> assignmentList = assignmentService.getPositionsByDepartmentAndDesignationForGivenRange( this.approverDepartmentId, this.designationId, new Date());
+			List<Assignment> assignmentList = assignmentService
+					.getPositionsByDepartmentAndDesignationForGivenRange(this.approverDepartmentId,
+							this.designationId, new Date());
 			for (final Assignment assignment : assignmentList) {
 				this.approverList.add(assignment);
 			}
 		}
 		return WF_APPROVERS;
 	}
+
+	@SuppressWarnings("unchecked")
 	@Action(value = "/workflow/ajaxWorkFlow-getDesignationsByObjectType")
 	public String getDesignationsByObjectType() {
-		this.designationList = this.customizedWorkFlowService.getNextDesignations(this.type, this.departmentRule,
-				this.amountRule, this.additionalRule, this.currentState, this.pendingAction,new Date());
+		this.designationList = this.customizedWorkFlowService.getNextDesignations(this.type,
+				this.departmentRule, this.amountRule, this.additionalRule, this.currentState,
+				this.pendingAction, new Date());
 		if (this.designationList.isEmpty()) {
 			this.designationList = this.persistenceService.findAllBy("from Designation");
 		}
@@ -113,7 +86,8 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	}
 
 	/**
-	 * For Struts 1.x This method is called to get valid actions(Approve,Reject) and nextaction(END)
+	 * For Struts 1.x This method is called to get valid actions(Approve,Reject)
+	 * and nextaction(END)
 	 * 
 	 * @throws IOException
 	 */
@@ -145,8 +119,8 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	}
 
 	private WorkFlowMatrix getWfMatrix() {
-		return this.customizedWorkFlowService.getWfMatrix(this.type, this.departmentRule, this.amountRule,
-				this.additionalRule, this.currentState, this.pendingAction);
+		return this.customizedWorkFlowService.getWfMatrix(this.type, this.departmentRule,
+				this.amountRule, this.additionalRule, this.currentState, this.pendingAction);
 	}
 
 	public List<Designation> getDesignationList() {
@@ -159,10 +133,6 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 
 	public void setDesignationId(final Long designationId) {
 		this.designationId = designationId;
-	}
-
-	public void setEisService(final EISServeable eisService) {
-		this.eisService = eisService;
 	}
 
 	public void setType(final String type) {
@@ -186,7 +156,8 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	}
 
 	/*
-	 * public void setDesignationRule(String designationRule) { this.designationRule = designationRule; }
+	 * public void setDesignationRule(String designationRule) {
+	 * this.designationRule = designationRule; }
 	 */
 	public void setDepartmentRule(final String departmentRule) {
 		this.departmentRule = departmentRule;
@@ -197,7 +168,8 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 		return null;
 	}
 
-	public void setCustomizedWorkFlowService(final CustomizedWorkFlowService customizedWorkFlowService) {
+	public void setCustomizedWorkFlowService(
+			final CustomizedWorkFlowService customizedWorkFlowService) {
 		this.customizedWorkFlowService = customizedWorkFlowService;
 	}
 
@@ -212,6 +184,5 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 	public void setRoleList(List<String> roleList) {
 		this.roleList = roleList;
 	}
-
 
 }

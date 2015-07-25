@@ -41,8 +41,9 @@ package org.egov.ptis.actions.modify;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
@@ -66,6 +67,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
@@ -73,7 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
@@ -119,6 +122,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -279,6 +283,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private String southBoundary;
 	private String eastBoundary;
 	private String westBoundary;
+	//private List<String> validActions;
 
 	public ModifyPropertyAction() {
 		super();
@@ -295,7 +300,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	@SkipValidation
 	@Override
-	public Object getModel() {
+	public StateAware getModel() {
 		return propertyModel;
 	}
 
@@ -392,7 +397,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 			LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
 		}
-		String currWfState = propertyModel.getState().getNextAction();
+		String currWfState = propertyModel.getState().getValue();
 		populateFormData(Boolean.TRUE);
 		corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty()
 				.getPropertyOwnerInfo());
@@ -400,7 +405,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (propertyModel.getPropertyDetail().getFloorDetails().size() > 0) {
 			setFloorDetails(propertyModel);
 		}
-		if (!currWfState.endsWith(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)) {
+		if (!currWfState.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
 			int i = 0;
 			for (PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
 				if (propstatval.getIsActive().equals("W")) {
@@ -420,7 +425,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 		}
 
-		if (currWfState.endsWith(WFLOW_ACTION_STEP_COMMISSIONER_APPROVED)) {
+		if (currWfState.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
 			setIsApprPageReq(Boolean.FALSE);
 			if (basicProp.getUpicNo() != null && !basicProp.getUpicNo().isEmpty()) {
 				setIndexNumber(basicProp.getUpicNo());
@@ -480,10 +485,12 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 		}
 		if (hasErrors()) {
-			if (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)) {
+			if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)
+					|| REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)) {
 				return NEW;
-			} else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)
-					|| COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)) {
+			} else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn)
+					|| COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
+					|| REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
 				return VIEW;
 			}
 		}
@@ -503,14 +510,26 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
-	@ValidationErrorPage(value = "view")
+	@SkipValidation
 	@Action(value = "/modifyProperty-forwardView")
 	public String forwardView() {
 		LOGGER.debug("Entered into forwardView");
+		validateApproverDetails();
+		if (hasErrors()) {
+			if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)
+					|| REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)) {
+				return NEW;
+			} else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn)
+					|| COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
+					|| REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn)) {
+				return VIEW;
+			}
+		}
 		propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(
 				QUERY_PROPERTYIMPL_BYID, Long.valueOf(getModelId()));
 		LOGGER.debug("forwardView: Workflow property: " + propertyModel);
 		transitionWorkFlow(propertyModel);
+		basicPropertyService.update(basicProp);
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		prepareAckMsg();
 		addActionMessage(getText("property.forward.success", new String[] { propertyModel
@@ -593,7 +612,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("reject: Property: " + propertyModel);
 		BasicProperty basicProperty = propertyModel.getBasicProperty();
 		setBasicProp(basicProperty);
-		if (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)) {
+		if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)) {
 			propertyModel.setStatus(STATUS_ISHISTORY);
 		}
 		LOGGER.debug("reject: BasicProperty: " + basicProperty);
@@ -660,7 +679,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 			setBasicProp((BasicProperty) getPersistenceService().findByNamedQuery(
 					QUERY_BASICPROPERTY_BY_UPICNO, indexNumber));
 		}
-		super.prepare();
+		//super.prepare();
+		populateWorkflowEntities();
 		this.documentTypes = propService.getPropertyModificationDocumentTypes();
 		List<FloorType> floorTypes = getPersistenceService().findAllBy(
 				"from FloorType order by name");
@@ -696,26 +716,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		addDropdownData("AgeFactorList", ageFacList);
 		addDropdownData("apartments", apartmentsList);
 		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
-		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
-			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
-			if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-				setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
-			} else {
-				setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
-			}
-		} else if (propertyModel != null && propertyModel.getPropertyDetail() != null
-				&& propertyModel.getPropertyDetail().getPropertyTypeMaster() != null
-				&& !propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().equals(-1)) {
-			propTypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
-			if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-				setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
-			} else {
-				setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
-			}
-		} else {
-			setPropTypeCategoryMap(Collections.EMPTY_MAP);
-		}
+		populatePropertyTypeCategory();
 		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 		if (getBasicProp() != null) {
 			setPropAddress(getBasicProp().getAddress().toString());
@@ -738,6 +739,29 @@ public class ModifyPropertyAction extends WorkflowAction {
 			}
 		}
 		LOGGER.debug("Exiting from preapre, ModelId: " + getModelId());
+	}
+
+	private void populatePropertyTypeCategory() {
+		if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
+			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+					"from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+		} else if (propertyModel != null && propertyModel.getPropertyDetail() != null
+				&& propertyModel.getPropertyDetail().getPropertyTypeMaster() != null
+				&& !propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().equals(-1)) {
+			propTypeMstr = propertyModel.getPropertyDetail().getPropertyTypeMaster();
+		} else if (basicProp != null) {
+			propTypeMstr = basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster();
+		}
+
+		if (propTypeMstr != null) {
+			if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+				setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+			} else {
+				setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+			}
+		} else {
+			setPropTypeCategoryMap(Collections.emptyMap());
+		}
 	}
 
 	private void modifyBasicProp(String docNumber) {
@@ -1129,7 +1153,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				taxExemptReason, propTypeId, propUsageId, propOccId, floorTypeId, roofTypeId,
 				wallTypeId, woodTypeId);
 
-		super.validate();
+		validateApproverDetails();
 
 		LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
 	}
@@ -1193,7 +1217,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private void prepareAckMsg() {
 		LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
-		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId());
+		User approverUser = eisCommonService.getUserForPosition(approverPositionId, new Date());
 
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
@@ -1488,6 +1512,40 @@ public class ModifyPropertyAction extends WorkflowAction {
 		return PRINTACK;
 	}
 
+	public void populateWorkflowEntities() {
+		List approverDepartmentList = persistenceService.findAllBy("from Department order by name");
+		addDropdownData("approverDepartmentList", approverDepartmentList);
+		addDropdownData("designationList", Collections.EMPTY_LIST);
+		addDropdownData("approverList", Collections.EMPTY_LIST);
+	}
+	
+	/*public List<String> getValidActions() {
+		List<String> validActionsList = Collections.emptyList();
+		String tempValidAction = null;
+		if ((null == getModel()) || (propertyModel.getId() == null)) {
+			validActions = Arrays.asList(WFLOW_ACTION_STEP_FORWARD);
+		} else {
+			String validAction = (String) persistenceService.find(
+					"select validActions from WorkFlowMatrix where objectType=? "
+							+ "and currentState =? and additionalRule = ?",
+					propertyModel.getStateType(), propertyModel.getCurrentState().getValue(),
+					ALTER_ASSESSMENT);
+			if (null != validAction) {
+				StringTokenizer strToken = new StringTokenizer(validAction, ",");
+				tempValidAction = null;
+				validActionsList = new ArrayList<String>();
+				while (strToken.hasMoreElements()) {
+					tempValidAction = (String) strToken.nextToken();
+					validActionsList.add(tempValidAction);
+				}
+			}
+			validActions = validActionsList;
+		}
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug(">>>>>>" + validActions);
+		return validActions;
+	}*/
+	
 	public BasicProperty getBasicProp() {
 		return basicProp;
 	}
@@ -2100,6 +2158,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	public void setSouthBoundary(String southBoundary) {
 		this.southBoundary = southBoundary;
+	}
+
+	@Override
+	public String getAdditionalRule() {
+		return ALTER_ASSESSMENT;
 	}
 
 }

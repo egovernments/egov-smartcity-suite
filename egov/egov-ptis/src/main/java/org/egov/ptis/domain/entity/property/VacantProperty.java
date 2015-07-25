@@ -664,15 +664,6 @@ public class VacantProperty extends AbstractProperty {
 		this.propertyOccupation = propertyOccupation;
 	}
 
-	/*
-	 * public List<FloorImpl> getFloorDetailsProxy() {
-	 * getFloorDetails().addAll(floorDetailsProxy); return floorDetailsProxy; }
-	 * 
-	 * public void setFloorDetailsProxy(List<FloorImpl> floorDetailsProxy) {
-	 * this.floorDetailsProxy = floorDetailsProxy;
-	 * getFloorDetails().addAll(floorDetailsProxy); }
-	 */
-
 	public VacantProperty() {
 		super();
 	}

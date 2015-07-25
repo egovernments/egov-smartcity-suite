@@ -68,8 +68,16 @@
 		});
 	});
 
-	function onSubmit(action, obj) {
-		document.getElementById('workflowBean.actionName').value = obj.id;
+	function onSubmit() {
+		var actionName = document.getElementById('workFlowAction').value;
+		var action = null;
+		if (actionName == 'Forward') {
+			action = 'modifyProperty-forward.action';
+		} else if (actionName == 'Approve') {
+			action = 'modifyProperty-approve.action';
+		} else if (actionName == 'Reject') {
+			action = 'modifyProperty-reject.action';
+		}
 		document.forms[0].action = action;
 		document.forms[0].submit;
 		return true;
@@ -83,18 +91,6 @@
 		toggleFloorDetails();
 	}
 
-	function loadDesignationFromMatrix() {
-		var e = dom.get('approverDepartment');
-		var dept = e.options[e.selectedIndex].text;
-			var currentState = dom.get('currentState').value;
-			var amountRule="";
-		var pendingAction=document.getElementById('pendingActions').value;
-		loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
-	}
-	
-	function populateApprover() {
-		getUsersByDesignationAndDept();
-	}
 </script>
 </head>
 
@@ -119,16 +115,11 @@
 				<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
 				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}" />
 
-				<%@ include file="../workflow/property-workflow.jsp"%>
+				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 				<div class="buttonbottom" align="center">
-					<s:submit value="Forward" name="Forward" id="Modify:Forward"
-						method="forwardModify" cssClass="buttonsubmit"
-						onclick="return onSubmit('modifyProperty-forward.action', this);" />
-					<input type="button" name="button2" id="button2" value="Close"
-						class="button" onclick="window.close();" />
+					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 				</div>
 			</div>
-
 		</s:push>
 	</s:form>
 </body>

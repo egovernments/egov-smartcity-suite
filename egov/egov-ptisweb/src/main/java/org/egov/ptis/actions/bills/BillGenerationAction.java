@@ -60,7 +60,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MOD
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
@@ -95,6 +95,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
@@ -174,7 +175,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         private DemandNoticeInfo demandNoticeInfo;
 
 	@Override
-	public Object getModel() {
+	public StateAware getModel() {
 		return null;
 	}
 
@@ -534,7 +535,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			// workflowBean.getComments());
 			property.transition(true).start().withStateValue(nextStateValue.toString())
 					.withOwner(nextPosition).withComments(workflowBean.getComments());
-		} else if (WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(wflowAction)) {
+		} else if (WF_STATE_NOTICE_GENERATED.equalsIgnoreCase(wflowAction)) {
 			endWorkFlow();
 		}
 

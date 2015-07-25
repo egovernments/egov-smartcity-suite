@@ -51,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.pims.commons.Position;
@@ -76,7 +77,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 
 	@SkipValidation
 	@Override
-	public Object getModel() {
+	public StateAware getModel() {
 		return propertyModel;
 	}
 

@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
@@ -122,8 +123,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	}
 
 	@Override
-	public Object getModel() {
-
+	public StateAware getModel() {
 		return recovery;
 	}
 

@@ -468,11 +468,6 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_STEP_SAVE = "Save";
 	public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
 	public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
-	public static final String WFLOW_ACTION_STEP_NOTICE_GENERATED = "Notice Generated";
-	public static final String WFLOW_ACTION_STEP_COMMISSIONER_APPROVED = "Commissioner Approved";
-	public static final String WFLOW_ACTION_STEP_COMMISSIONER_REJECTED = "Commissioner Rejected";
-	public static final String WFLOW_ACTION_STEP_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
-	public static final String WFLOW_ACTION_STEP_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
 	public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
 	public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel";
 	public static final String WFLOW_ACTION_STEP_NOTICE_GENERATE = "Generate Notice";
@@ -493,6 +488,11 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_NEW = "New";
 	public static final String WF_STATE_APPROVAL_PENDING = "Approval_Pending";
 	public static final String WF_STATE_NOTICE_GENERATION_PENDING = "Notice_Generation_Pending";
+	public static final String WF_STATE_NOTICE_GENERATED = "Notice Generated";
+	public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
+	public static final String WF_STATE_COMMISSIONER_REJECTED = "Commissioner Rejected";
+	public static final String WF_STATE_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
+	public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -572,9 +572,13 @@ public interface PropertyTaxConstants {
 	// Designations
 	public static final String ASSISTANT_DESGN = "Assistant";
 	public static final String REVENUE_OFFICER_DESGN = "Revenue officer";
+	public static final String REVENUE_INSPECTOR_DESGN = "Revenue Inspector";
+	public static final String REVENUE_CLERK_DESGN = "Revenue Clerk";
 	public static final String COMMISSIONER_DESGN = "Commissioner";
+	public static final String BILL_COLLECTOR_DESGN = "Bill Collector";
 	public static final String END_APPROVER_DESGN = "RO";
 
+	public static final String ALTER_ASSESSMENT = "ALTER ASSESSMENT";
 	public static final String WFSTATUS = "WFSTATUS";
 	public static final String WFOWNER = "WFOWNER";
 

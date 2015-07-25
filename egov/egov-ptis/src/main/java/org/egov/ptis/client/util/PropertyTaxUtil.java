@@ -120,6 +120,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -213,6 +214,8 @@ public class PropertyTaxUtil {
 	private EgBillDao egBillDAO;
 	@Autowired
 	private PropertyDAO propertyDAO;
+	@Autowired
+	private PositionMasterService positionMasterService;
 
 
 	public void setPersistenceService(PersistenceService persistenceService) {
@@ -584,7 +587,7 @@ public class PropertyTaxUtil {
 		Position position = null;
 		Designation designation = null;
 		if (userId != null && userId.intValue() != 0) {
-			position = eisCommonService.getPositionByUserId(userId);
+			position = positionMasterService.getPositionByUserId(userId);
 			designation = position.getDeptDesig().getDesignation();
 		}
 		return designation;

@@ -82,7 +82,7 @@
 	    </td>	
 
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-	    <s:date name="createdDate" var="cdFormat" format="dd/MM/yyyy"/>
+	    <s:date name="occupancyDate" var="cdFormat" format="dd/MM/yyyy"/>
 	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
 	    </td>
 	   

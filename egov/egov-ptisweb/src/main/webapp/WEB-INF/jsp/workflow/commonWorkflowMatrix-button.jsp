@@ -1,5 +1,28 @@
- <%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<script>
+	function validateWorkFlowApprover(name,errorDivId) {
+		document.getElementById("workFlowAction").value=name;
+	    var approverPosId = document.getElementById("approverPositionId");
+	    if(approverPosId) {
+			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
+			document.getElementById("approverName").value= approver.split('~')[0];
+		}     
+	    onSubmit();
+	}
+
+	function validateWorkFlowApprover(name) {
+	    document.getElementById("workFlowAction").value=name;
+		<s:if test="%{getNextAction()!='END'}">
+	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1") {
+	        alert("Please Select the Approver ");
+			return false;
+	    }
+	    </s:if>
+	    onSubmit();
+	}
+</script>
 <div class="buttonbottom" align="center">
+	<s:hidden id="workFlowAction" name="workFlowAction"/>
 	<table>
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
