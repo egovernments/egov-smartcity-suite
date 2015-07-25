@@ -60,13 +60,10 @@
         <link rel="stylesheet" href="<c:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
         <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.css' context='/egi'/>">
         <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
-        
-        <!-- link rel="stylesheet" href="../resources/jquery-ui/v1.11.2/jquery-ui.min.css" />
-		<link rel="stylesheet" href="../resources/css/google-fonts-lora.css">
-   		<link rel="stylesheet" href="../resources/css/google-fonts-montse.css">
-		<link rel="stylesheet" href="../resources/css/plugins/dataTables.bootstrap.css">
-		<link rel="stylesheet" href="../resources/jquery/datatable/v1.10.4/extensions/responsive/css/dataTables.responsive.css"-->
-		
+        <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/google/google-fonts-lora.css' context='/egi'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/google/google-fonts-montse.css' context='/egi'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css' context='/dashboard'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>				
 		
 	    <script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
@@ -146,11 +143,9 @@
 	<script src="<c:url value='/resources/js/date.js' context='/dashboard'/>"></script>
 	<script src='<c:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
 	<script src="<c:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
-	
-	<!-- script src='../resources/jquery/datatable/v1.10.4/js/jquery.dataTables.min.js'></script>
-	<script src='../resources/js/plugins/dataTables/dataTables.bootstrap.js'></script>
-	<script src='../resources/jquery/datatable/v1.10.4/extensions/responsive/js/dataTables.responsive.min.js'></script-->
-	
+	<script src="<c:url value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js' context='/dashboard'/>"></script>
+	<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>
 	<script src='<c:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
 	<script src="<c:url value='/resources/js/global.js' context='/dashboard'/>"></script>
 	<script src='../resources/js/app/dashboard.js'></script>

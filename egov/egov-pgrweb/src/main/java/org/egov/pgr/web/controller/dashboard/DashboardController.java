@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pgr.service.dashboard.DashboardService;
+import org.egov.pgr.web.contract.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -82,7 +83,12 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/wardwise-performance", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String, Object>> wardwisePerformance() {
-        return dashboardService.getWardwisePerformance();
+    public @ResponseBody List<Object> wardwisePerformance() {
+        final List<Object> wardwisePerformanceData = new ArrayList<>();
+        final List<Map<String, Object>> wardwisePerformance = dashboardService.getWardwisePerformance();
+        wardwisePerformanceData.add(wardwisePerformance);
+        final int size = wardwisePerformance.size();
+        wardwisePerformanceData.add(new DataTable(0, size, size, size, wardwisePerformance));
+        return wardwisePerformanceData;
     }
 }

@@ -65,7 +65,6 @@ function redressalEfficiency() {
 	}
 	setTitle("Redressal Efficiency");
 	performanceGIS();
-	//performanceTabular();
 	//performanceBar();
 }
 
@@ -80,13 +79,12 @@ function openCompPendency() {
 }
 
 //===============================PERFORMANCE GIS=======================================//
-
 function performanceGIS() {
 	var gisOption = {
 			zoom: 11,
 			mapTypeId : google.maps.MapTypeId.TERRAIN, 
 			streetViewControl: true,
-			center: new google.maps.LatLng(13.0589382, 80.209274),
+			center: new google.maps.LatLng(13.6500, 79.4200),
 			panControl: true,
 			zoomControl: true,
 			//disableDefaultUI: true,
@@ -105,9 +103,10 @@ function performanceGIS() {
 	var chartWin = new google.maps.InfoWindow();
 	$.ajax({url:"wardwise-performance",
 		cache:false
-	}).done(function(data) {
-		var length = data.length;
-		$.each(data, function(index,data) {
+	}).done(function(datas) {
+		var length = datas[0].length;
+		performanceTabular(datas[1]);
+		$.each(datas[0], function(index,data) {
 			setMarkers(data, length, index,map,infoWin,chartWin);
 		});
 		$("#page-top").unmask();
@@ -138,7 +137,7 @@ function performanceGIS() {
 		google.maps.event.addListener(marker, 'click', (function(marker, index) {
 	          return function() {
 	        	  marker.setAnimation(google.maps.Animation.BOUNCE);
-	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Zone : '+
+	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Ward : '+
 	        			  data.zone+'</div><div class="panel-body" style="white-space:nowrap;color:#000;text-align:left;line-height:2;">'+
 	        			  'Pending as on '+data.dateAsOn2WeekBack+':<b> '+data.noOfCompAsOnDate+'</b><br/>'+
 	        			  'Received between '+data.dateAsOnDayAfter+'-'+data.dateAsOn+' :<b> '+data.noOfCompReceivedBtw+'</b><br/>'+
@@ -184,19 +183,19 @@ function performanceGIS() {
 
 //===============================PERFORMANCE TABULAR=======================================//
 
-function performanceTabular() {
+function performanceTabular(datas) {
 	$("#performanceTable").empty();
 	$('#performanceTable').html( '<table width="100%" style="display:none" class="display responsive no-wrap table table-striped table-bordered table-hover dataTable no-footer" id="tabularPerformance" aria-describedby="dataTables-example_info">' );
 	 $('#tabularPerformance').dataTable( {
-    	processing: false,
-        serverSide: true,
+    	//processing: false,
+        //serverSide: false,
         sort:false,
         filter:false,
         responsive:true,
         paginate:false,
-        ajax: "performanceTabular.do?rnd="+Math.random(),
+        data: datas.data,
         columns: [
-            { "title": "Zone","data":"zone" },
+            { "title": "Ward","data":"zone" },
             { "title": "Pending as on "+twoWeeksBackFmt,"data":"noOfCompAsOnDate" },
             { "title": "Registered between "+twoWeeksAfter1DayFmt+" - "+todayFmt,"data":"noOfCompReceivedBtw" },
             { "title": "Pending as on "+todayFmt,"data":"noOfCompPenAsonDate",render: function (oObj){
