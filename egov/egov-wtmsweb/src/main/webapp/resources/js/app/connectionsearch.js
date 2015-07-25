@@ -38,96 +38,167 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 var tableContainer;
-jQuery(document).ready(function ($) {
-	$(":input").inputmask();
-	
-	    tableContainer = $("#aplicationSearchResults"); 
-	    
-	   	
-	    $('#searchapprvedapplication').click(function () {
-	    	$.post("/wtms/search/waterSearch/", $('#waterSearchRequestForm').serialize())
-			.done(function (searchResult) {
-				console.log(JSON.stringify(searchResult));
-				tableContainer.dataTable({
-					destroy:true,
-					"sPaginationType": "bootstrap",
-					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
-					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-					"autoWidth": false,
-					searchable:true,
-					data: searchResult,
-					columns:  [
-					{title: 'Applicant Name', data: 'resource.searchable.consumername'},
-					{title: 'Consumer No.',class:'row-detail',data: 'resource.clauses.consumercode' },
-					{title: 'Address', data: 'resource.searchable.locality'},
-					{title: 'apptype' ,data: 'resource.clauses.applicationcode',"bVisible": false},
-					{title: 'Usage Type',	data: 'resource.clauses.usage'},
-					{title: 'Total Due', data: 'resource.clauses.totaldue'},
-					{title: 'Actions' ,
-					render: function (data, type, full) {
-					
-						if(full!=null && full.resource!= undefined && full.resource.clauses.applicationcode!= undefined && full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
-							return 	('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>');
-						}
-						else 
-							return 	('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">Additional connection</option><option value="2">Closing connection</option><option value="6">Disconnection</option><option value="1">Change of use</option><option value="3">Reconnection</option><option value="4">Holding connection</option><option value="5">Regularization connection</option><option value="7">Collect Fees</option></select>');
-						
-			    	}
-					}
-					]
+jQuery(document)
+		.ready(
+				function($) {
+					$(":input").inputmask();
+
+					tableContainer = $("#aplicationSearchResults");
+					var userrole = $('#userRole').val();
+					$('#searchapprvedapplication').click(function() {
+										$.post("/wtms/search/waterSearch/",
+														$('#waterSearchRequestForm').serialize())
+												.done(function(searchResult) {
+															console.log(JSON.stringify(searchResult));
+															tableContainer.dataTable({
+																		destroy : true,
+																		"sPaginationType" : "bootstrap",
+																		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+																		"aLengthMenu" : [
+																				[10,25,50,-1 ],
+																				[10,25,50,"All" ] ],
+																		"autoWidth" : false,
+																		searchable : true,
+																		data : searchResult,
+																		columns : [
+																				{
+																					title : 'Applicant Name',
+																					data : 'resource.searchable.consumername'
+																				},
+																				{
+																					title : 'Consumer No.',
+																					class : 'row-detail',
+																					data : 'resource.clauses.consumercode'
+																				},
+																				{
+																					title : 'Address',
+																					data : 'resource.searchable.locality'
+																				},
+																				{
+																					title : 'apptype',
+																					data : 'resource.clauses.applicationcode',
+																					"bVisible" : false
+																				},
+																				{
+																					title : 'Usage Type',
+																					data : 'resource.clauses.usage'
+																				},
+																				{
+																					title : 'Total Due',
+																					data : 'resource.clauses.totaldue'
+																				},
+																				{
+																					title : 'Status',
+																					data : 'resource.clauses.status'
+																				},
+																				{title : 'Actions',
+																					render : function(data,type,full) {
+																						if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined
+																								&& full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
+																							if (full.resource.clauses.status == 'ACTIVE') {
+																								if (userrole == "CSC Operator") {
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+																								} else if (userrole == "ULB Operator") {
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+																								}
+																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator')
+																									&& full.resource.clauses.status == 'DISCONNECTED') {
+																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+																							}
+
+																						}
+																						if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
+																								&& full.resource.clauses.applicationcode == 'NEWCONNECTION') {
+																							if (full.resource.clauses.status == 'ACTIVE') {
+																								if (userrole == "CSC Operator") {
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+																								} else if (userrole == "ULB Operator") {
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+																								}
+																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator')
+																									&& full.resource.clauses.status == 'DISCONNECTED') {
+																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+																							}
+																						}
+																						if (full.resource.clauses.status == 'CLOSED'|| full.resource.clauses.status == 'HOLDING'|| userrole == "Property Verifier") { // Assistant
+																																		// Engineer,Commitioner
+																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+																						} else if (userrole == "Operator") { // Collection
+																																// Operator
+																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Fees</option></select>');
+																						} else if (userrole == "Tap Inspector") { // TAP
+																																	// inspector
+																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="7">Execution Date</option></select>');
+																						}
+
+																					}
+
+																				} ]
+																	});
+														})
+									});
+
+					$("#aplicationSearchResults").on('change','tbody tr td .dropchange',
+							function() {
+							var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
+										if (this.value == 0) {
+											var url = '/wtms/application/view/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} else if (this.value == 1) {
+											var url = '/wtms/application/addconnection/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+											// window.location.href="applyforadditionalconnection.html"
+										} else if (this.value == 2) {
+											if (consumerNumber != '') {
+												var url = '/wtms/application/changeOfUse/'+ consumerNumber;
+												$('#waterSearchRequestForm').attr('method', 'get');
+												$('#waterSearchRequestForm').attr('action', url);
+												window.location = url;
+											}
+											// window.location.href="changeofuse.html"
+										} else if (this.value == 3) {
+
+											// window.location.href="reconnection.html"
+										} else if (this.value == 4) {
+											// window.location.href="disconnectionotice.html"
+										} else if (this.value == 5) {
+											// window.location.href="disconnectionotice.html"
+										} else if (this.value == 6) {
+											var url = '/wtms/application/generatebill/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} else if (this.value == 7) {
+											// window.location.href="excecutiondate.html"
+										}
+
+									});
+
+					$('#aplicationSearchResults').on('click','tbody tr td.row-detail',
+									function() {
+										var consumerNumber = tableContainer.fnGetData(this);
+										var url = '/wtms/application/view/'+ consumerNumber;
+										$('#waterSearchRequestForm').attr('method', 'get');
+										$('#waterSearchRequestForm').attr('action', url);
+										window.open(url, 'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+									});
+
+					$('#aplicationSearchResults').on('click','tbody tr td.row-detail',
+									function() {
+										var consumerNumber = tableContainer.fnGetData(this);
+										var url = '/wtms/application/view/'+ consumerNumber;
+										$('#waterSearchRequestForm').attr('method', 'get');
+										$('#waterSearchRequestForm').attr('action', url);
+										window.open(url, 'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+
+									});
+
+					$('#searchwatertax').keyup(function() {
+						tableContainer.fnFilter(this.value);
+					});
+
 				});
-			})
-		});
-		
-	   
-	    $("#aplicationSearchResults").on('change','tbody tr td .dropchange',function() {
-	      // var applicationNumber = tableContainer.fnGetData($(this).parent().parent(),0);
-	       var consumerNumber= tableContainer.fnGetData($(this).parent().parent(),1);
-	       if( this.value == 0){
-				 var url = '/wtms/application/addconnection/'+consumerNumber; 
-					$('#waterSearchRequestForm').attr('method', 'get');
-					$('#waterSearchRequestForm').attr('action', url);
-					window.location=url;
-				//window.location.href="applyforadditionalconnection.html"
-			}else if( this.value == 2){
-				//window.location.href="closingwatertap.html"
-			}else if( this.value == 6){
-				//window.location.href="disconnectionotice.html"
-			}else if( this.value == 1){
-				if(consumerNumber != '') { 
-					 var url = '/wtms/application/changeOfUse/'+consumerNumber; 
-						$('#waterSearchRequestForm').attr('method', 'get');
-						$('#waterSearchRequestForm').attr('action', url);
-						window.location=url;
-				 }
-				//window.location.href="changeofuse.html"  
-			}else if( this.value == 3){
-				
-				//window.location.href="reconnection.html"
-			}else if( this.value == 7){
-				 var url = '/wtms/application/generatebill/'+consumerNumber; 
-					$('#waterSearchRequestForm').attr('method', 'get');
-					$('#waterSearchRequestForm').attr('action', url);
-					window.location=url;
-			}
-		}); 
-	    
-	   
-	    $('#aplicationSearchResults').on('click','tbody tr td.row-detail',function() {
-	    	var consumerNumber= tableContainer.fnGetData( this);
-	        var url = '/wtms/application/view/'+consumerNumber ;
-			$('#waterSearchRequestForm').attr('method', 'get');
-			$('#waterSearchRequestForm').attr('action', url);
-			
-			window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
-		
-			 
-		});
-	   
-	    
-	   $('#searchwatertax').keyup(function(){
-			tableContainer.fnFilter(this.value);
-		});
-		
-});

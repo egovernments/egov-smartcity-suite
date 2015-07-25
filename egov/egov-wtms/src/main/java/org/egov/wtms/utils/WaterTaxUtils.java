@@ -54,72 +54,68 @@ import org.springframework.stereotype.Service;
 @Service
 public class WaterTaxUtils {
 
-	@Autowired
-	private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
-	@Autowired
-	private CityWebsiteService cityWebsiteService;
+    @Autowired
+    private CityWebsiteService cityWebsiteService;
 
-	@Autowired
-	private SMSService smsService;
+    @Autowired
+    private SMSService smsService;
 
-	@Autowired
-	private EmailService emailService;
-	
-	 @Autowired
-	 private  ResourceBundleMessageSource messageSource;
+    @Autowired
+    private EmailService emailService;
 
-	public Boolean isSmsEnabled() {
-		final AppConfigValues appConfigValue = appConfigValuesService
-				.getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME,
-						"SENDSMSFORWATERTAX").get(0);
-		return "YES".equalsIgnoreCase(appConfigValue.getValue());
-	}
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
-	public Boolean isEmailEnabled() {
-		final AppConfigValues appConfigValue = appConfigValuesService
-				.getConfigValuesByModuleAndKey(WaterTaxConstants.MODULE_NAME,
-						"SENDEMAILFORWATERTAX").get(0);
-		return "YES".equalsIgnoreCase(appConfigValue.getValue());
-	}
+    public Boolean isSmsEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "SENDSMSFORWATERTAX").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
 
-	public String getCityName() {
-		return cityWebsiteService.getCityWebSiteByURL(
-				EgovThreadLocals.getDomainName()).getCityName();
-	}
+    public Boolean isEmailEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "SENDEMAILFORWATERTAX").get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
 
-	public String getCityCode() {
-		return cityWebsiteService.getCityWebSiteByURL(
-				EgovThreadLocals.getDomainName()).getCode();
-	}
+    public String getCityName() {
+        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCityName();
+    }
 
-	public String smsAndEmailBodyByCodeAndArgs(final String code,final WaterConnectionDetails waterConnectionDetails,final String applicantName) {
-		String smsMsg = messageSource.getMessage(code,
-				new String[] { applicantName,
-						waterConnectionDetails.getApplicationNumber(),
-						getCityName() }, null);
-		return smsMsg;
-	}
-	public String emailBodyforApprovalEmailByCodeAndArgs(final String code,final WaterConnectionDetails waterConnectionDetails,final String applicantName) {
-		String smsMsg = messageSource.getMessage(code,
-				new String[] { applicantName,
-						waterConnectionDetails.getApplicationNumber(),
-						waterConnectionDetails.getConnection().getConsumerCode(),
-						getCityName() }, null);
-		return smsMsg;
-	}
-	public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber )
-	{
-			String emailSubject = messageSource.getMessage(code,new String[] {applicationNumber},null);
-			return emailSubject;
-	}
-	public void sendSMSOnWaterConnection(final WaterConnectionDetails waterConnectionDetails,final String smsBody) {
-		smsService.sendSMS(smsBody, "91"+ waterConnectionDetails.getConnection().getMobileNumber());
-	}
+    public String getCityCode() {
+        return cityWebsiteService.getCityWebSiteByURL(EgovThreadLocals.getDomainName()).getCode();
+    }
 
-	public void sendEmailOnWaterConnection(final WaterConnectionDetails waterConnectionDetails,
-			final String emailBody, final String emailSubject) {
-		emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody,
-				emailSubject);
-	}
+    public String smsAndEmailBodyByCodeAndArgs(final String code, final WaterConnectionDetails waterConnectionDetails,
+            final String applicantName) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
+        return smsMsg;
+    }
+
+    public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
+            final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
+        return smsMsg;
+    }
+
+    public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
+        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, null);
+        return emailSubject;
+    }
+
+    public void sendSMSOnWaterConnection(final WaterConnectionDetails waterConnectionDetails, final String smsBody) {
+        smsService.sendSMS(smsBody, "91" + waterConnectionDetails.getConnection().getMobileNumber());
+    }
+
+    public void sendEmailOnWaterConnection(final WaterConnectionDetails waterConnectionDetails, final String emailBody,
+            final String emailSubject) {
+        emailService.sendMail(waterConnectionDetails.getConnection().getEmail(), emailBody, emailSubject);
+    }
+
 }

@@ -58,25 +58,24 @@ public class ConsumerIndexService {
     @Indexing(name = Index.WATERTAX, type = IndexType.CONNECTIONSEARCH)
     public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails) {
-        final ConsumerSearch consumerSearch = new ConsumerSearch(
-                waterConnectionDetails.getConnection().getConsumerCode(),
-                waterConnectionDetails.getConnection().getMobileNumber(),
-                waterConnectionDetails.getUsageType().getName(),waterConnectionDetails.getCreatedDate());
+        final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
+                .getConsumerCode(), waterConnectionDetails.getConnection().getMobileNumber(), waterConnectionDetails
+                .getUsageType().getName(), waterConnectionDetails.getCreatedDate());
 
         consumerSearch.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         consumerSearch.setWard(assessmentDetails.getBoundaryDetails().getWardName());
         consumerSearch.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue());
-        consumerSearch.setLocality(
-                assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
+        consumerSearch.setLocality(assessmentDetails.getPropertyAddress() != null ? assessmentDetails
+                .getPropertyAddress() : "");
         consumerSearch.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
         consumerSearch.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
-        
+        consumerSearch.setStatus(waterConnectionDetails.getConnectionStatus().name());
         final Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         if (ownerNameItr.hasNext()) {
             consumerSearch.setConsumerName(ownerNameItr.next().getOwnerName());
             while (ownerNameItr.hasNext())
-                consumerSearch.setConsumerName(
-                        consumerSearch.getConsumerName().concat(",".concat(ownerNameItr.next().getOwnerName())));
+                consumerSearch.setConsumerName(consumerSearch.getConsumerName().concat(
+                        ",".concat(ownerNameItr.next().getOwnerName())));
 
         }
         return consumerSearch;

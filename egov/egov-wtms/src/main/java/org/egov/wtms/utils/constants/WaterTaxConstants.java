@@ -57,11 +57,35 @@ public class WaterTaxConstants {
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
-    public static final String SMSEMAILTYPEADDITONALCONNCREATE="additionalconncreate";
-    public static final String SMSEMAILTYPEADDITONALCONNAPPROVE="additionalconnapprove";
-    public static final String SMSEMAILTYPENEWCONNAPPROVE="newconnapprove";
-    public static final String SMSEMAILTYPENEWCONNCREATE="newconncreate";
+    public static final String SMSEMAILTYPEADDITONALCONNCREATE = "additionalconncreate";
+    public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";
+    public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
+    public static final String SMSEMAILTYPENEWCONNCREATE = "newconncreate";
 
+    // User Roles
+    public static final String CSCOPERTAORROLE = "CSC Operator";
+    public static final String CLERKULB = "ULB Operator";
+    public static final String APPROVERROLE = "Water Tax Approver";
+
+    // ACtions for User
+
+    public static final String CHANGEOFUSEACTION = "Change of use";
+    public static final String ADDITIONALCONNECTION = "Additional connection";
+    public static final String DISCONNECTION = "Disconnection";
+    public static final String RECONNECTION = "Reconnection";
+    public static final String HOLDINGCONNECTION = "Holding connection";
+    public static final String COLLECTFEES = "Collect Fees";
+    public static final String EXECUTIONDATE = "Execution Date";
+    public static final String VIEWWATERCONNECTION = "View water tap connection";
+
+    // status
+
+    public static final String INPROGRESS = "INPROGRESS";
+    public static final String ACTIVE = "ACTIVE";
+    public static final String DISCONNECTED = "DISCONNECTED";
+    public static final String HOLDING = "HOLDING";
+    public static final String INACTIVE = "INACTIVE";
+    public static final String CLOSED = "CLOSED";
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
     public static final String ARR_DMD_STR = "ARR_DMD";
@@ -73,7 +97,7 @@ public class WaterTaxConstants {
     public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "WTAX101";
     public static final String WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Water Connection details with Consumer code ";
     public static final String WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
-   
+
     public static final String BILLTYPE_AUTO = "AUTO";
     public static final String BILLTYPE_MANUAL = "MANUAL";
     public static final String CITIZENUSER = "9999999999";
