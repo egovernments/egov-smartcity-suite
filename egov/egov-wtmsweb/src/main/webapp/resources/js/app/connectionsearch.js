@@ -101,9 +101,17 @@ jQuery(document)
 																								} else if (userrole == "ULB Operator") {
 																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
 																								}
-																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator')
+																								else if(userrole=='Super User'){
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+																									
+																								}
+																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator' )
 																									&& full.resource.clauses.status == 'DISCONNECTED') {
 																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+																							}
+																							else if(userrole=='Super User' & full.resource.clauses.status == 'DISCONNECTED') {
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
+																								
 																							}
 
 																						}
@@ -115,21 +123,30 @@ jQuery(document)
 																								} else if (userrole == "ULB Operator") {
 																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
 																								}
-																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator')
-																									&& full.resource.clauses.status == 'DISCONNECTED') {
+																								else if(userrole=='Super User'){
+																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+																								}
+																							} else if ((userrole == 'CSC Operator' )&& full.resource.clauses.status == 'DISCONNECTED') {
 																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
 																							}
+																							else if (((userrole == 'ULB Operator') || (userrole=='Super User')) && full.resource.clauses.status == 'DISCONNECTED') {
+																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
+																							}
+																							
 																						}
-																						if (full.resource.clauses.status == 'CLOSED'|| full.resource.clauses.status == 'HOLDING'|| userrole == "Property Verifier") { // Assistant
+																						
+																							
+																						if (full.resource.clauses.status == 'CLOSED'|| full.resource.clauses.status == 'HOLDING'|| userrole == "Water Tax Approver") { // Assistant
 																																		// Engineer,Commitioner
 																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 																						} else if (userrole == "Operator") { // Collection
 																																// Operator
 																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Fees</option></select>');
-																						} else if (userrole == "Tap Inspector") { // TAP
+																						} else if (userrole == "Tap Inspector") { // TAP need to change after adding role
 																																	// inspector
 																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="7">Execution Date</option></select>');
 																						}
+																						
 
 																					}
 

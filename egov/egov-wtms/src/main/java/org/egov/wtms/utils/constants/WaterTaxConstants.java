@@ -66,7 +66,7 @@ public class WaterTaxConstants {
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
     public static final String APPROVERROLE = "Water Tax Approver";
-
+    public static final String SUPERUSER = "Super User";
     // ACtions for User
 
     public static final String CHANGEOFUSEACTION = "Change of use";

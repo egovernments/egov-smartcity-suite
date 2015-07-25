@@ -97,6 +97,8 @@ public class WaterTaxSearchController {
                 userRole = WaterTaxConstants.CLERKULB;
             else if (userRole.contains(WaterTaxConstants.APPROVERROLE))
                 userRole = WaterTaxConstants.APPROVERROLE;
+            else if (userRole.contains(WaterTaxConstants.SUPERUSER))
+                userRole = WaterTaxConstants.SUPERUSER;
         }
         return userRole;
     }

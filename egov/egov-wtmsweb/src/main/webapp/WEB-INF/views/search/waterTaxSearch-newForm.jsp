@@ -60,7 +60,7 @@
 
 				<form:form  class="form-horizontal form-groups-bordered"
 					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" action="">
-<form:input id="userRole" value="${userRole}" path=""/>
+<form:hidden id="userRole" value="${userRole}" path=""/>
 			
 					<div class="form-group">
 				<label for="field-1" class="col-sm-4 control-label"> <spring:message
