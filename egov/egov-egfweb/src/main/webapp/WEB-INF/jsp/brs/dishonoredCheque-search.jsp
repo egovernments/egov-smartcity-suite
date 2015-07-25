@@ -154,6 +154,7 @@ function dishonorSelectedChq() {
         <div style="color: red">
 		    <div class="errorstyle" style="display:none" id="errorDiv" ></div>       
 	    </div>
+	    <div class="formmainbox">
 	    <div class="formheading">
 			<div class="subheadnew">
 			<s:text name="dishonoredCheq.title"/>
@@ -213,14 +214,8 @@ function dishonorSelectedChq() {
 							<a	href="javascript:show_calendar('forms[0].chqDDDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
 						</td>
 					</tr>
-					<tr>
-						<td colspan="5">
-							<div align="right" class="mandatory1" style="font-size: 11px; padding-right: 20px;">	*
-								<s:text name="default.message.mandatory" />
-							</div>
-						</td>
-					</tr>
 			</table>
+			</div>
 		<br/>
     	  <div class="buttonbottom" >
     	  <table align="center">  
