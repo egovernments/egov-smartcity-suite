@@ -94,7 +94,9 @@
 					<td class="greybox"><s:text name="voucher.todate"/><span class="mandatory1">*</span> </td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate" maxlength="20" value="%{toDate}"/><a href="javascript:show_calendar('forms[0].toDate');" style="text-decoration:none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)</td>
 				</tr>
-				<jsp:include page="voucher-filter.jsp"/>
+				<tr>
+				<jsp:include page="../voucher/voucher-filter.jsp"/>
+				</tr>
 				<tr>
 				<td style="width:5%"></td>
 				<td class="greybox" ><s:text name="voucher.source"/> </td>
