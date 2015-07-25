@@ -56,6 +56,7 @@
        	<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 	    <link rel="stylesheet" href="resources/css/global.css">
+	    <link rel="stylesheet" href="resources/css/dashboard.css">
 		<!-- link rel="stylesheet" href="resources/bootstrap/v3.3.1/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="resources/fontawesome/v4.2.0/css/font-awesome.min.css"-->
 		<link rel="stylesheet" href="resources/css/grayscale.css">
