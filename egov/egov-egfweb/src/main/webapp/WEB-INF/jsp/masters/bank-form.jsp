@@ -54,25 +54,26 @@
 	<s:hidden id="created" name="created"/>
    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
    		<tr>
-   			<td class="bluebox" width="30%"></td>
-		    <td class="bluebox"><s:text name="bank.create.name"/><span class="mandatory1">*</span></td>
-		    <td class="bluebox" colspan="2">
+   			<td class="bluebox">&nbsp;</td>
+		    <td class="bluebox"><s:text name="bank.create.name"/><span class="mandatory1"> *</span></td>
+		    <td class="bluebox">
 		    	<s:textfield id="name" name="name"   onblur="checkUniqueBankName(this);"/>
 	    	<span style="display:none;color:red" id="nameuniquename" >
        				<s:text name="bank.name.already.exists"/>
   				</span>
   			</td>
+  			
 	</tr>
 	<tr>
-	    <td class="greybox"></td>
-		<td class="greybox"><s:text name="bank.create.code"/><span class="mandatory1">*</span></td>
-	    <td class="greybox" colspan="2">
+		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"><s:text name="bank.create.code"/><span class="mandatory1"> *</span></td>
+	    <td class="bluebox">
 	    	<s:textfield id="code" name="code"  onblur="checkUniqueBankCode(this);"/>
 	    	<span style="display:none;color:red" id="codeuniquecode" >
        				<s:text name="bank.code.already.exists"/>
   				</span>
-	    </td>				    
-	 </tr>
+	    </td>
+	</tr>
 	 <tr>
 	 	 <td class="bluebox"></td>
 	 	<td class="bluebox"><s:text name="bank.create.isactive"/></td>

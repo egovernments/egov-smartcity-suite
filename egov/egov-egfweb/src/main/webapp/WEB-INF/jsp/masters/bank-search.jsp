@@ -81,7 +81,7 @@
 	    	</div>
 	    	<div class="buttonbottom" style="padding-bottom:10px;">
 	    		<s:hidden name="mode"></s:hidden> 
-		<input type="submit" class="button" value="Modify" id="modifyButton" name="Modify" onclick="validateAndSubmit();" />
+		<input type="submit" class="buttonsubmit" value="Modify" id="modifyButton" name="Modify" onclick="validateAndSubmit();" />
 		<input type="button" id="Close" value="Close" onclick="javascript:window.close()" class="button"/>
 			</div>
     </s:form>   
