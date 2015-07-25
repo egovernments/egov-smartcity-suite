@@ -65,16 +65,14 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.mobilenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" id="mobileNumber" path="connection.mobileNumber" min="10" maxlength="12" />
-		<form:errors path="connection.mobileNumber" cssClass="add-margin error-msg" /> 
+		<input type="text" class="form-control" id="mobileNumber" disabled>
 	</div>
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.email" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input  path="connection.email" class="form-control" id="email" type="email" maxlength="100"/>
-		<form:errors path="connection.email" cssClass="add-margin error-msg"/>
+		<input type="text" class="form-control" id="email" disabled>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.locality" /></label>

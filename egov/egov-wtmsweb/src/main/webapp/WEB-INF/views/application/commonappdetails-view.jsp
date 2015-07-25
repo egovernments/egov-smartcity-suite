@@ -89,9 +89,7 @@
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
 			<div class="col-xs-3 add-margin view-content" id="applicantname"></div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber"/></div>
-			<div class="col-xs-3 add-margin view-content" id="mobileNumber">
-				<c:out value="${waterConnectionDetails.connection.mobileNumber}" />
-			</div>
+			<div class="col-xs-3 add-margin view-content" id="mobileNumber"></div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.address" /></div>
