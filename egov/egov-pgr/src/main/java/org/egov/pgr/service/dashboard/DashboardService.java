@@ -42,6 +42,7 @@ package org.egov.pgr.service.dashboard;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -132,14 +133,46 @@ public class DashboardService {
         return compTypeWiseData;
     }
 
-    public List<Map<String, Object>> getWardwisePerformance() {
+    public List<List<Map<String, Object>>> getWardwisePerformance() {
         final DateTime currentDate = new DateTime();
+        final List<Object[]> wardwisePerformanceData = dashboardRepository.fetchWardwisePerformanceTill(currentDate);
+        final List<List<Map<String, Object>>> datas = new LinkedList<>();
+        datas.add(performanceAnalysis(wardwisePerformanceData, currentDate));
+        datas.add(performanceProjection(wardwisePerformanceData, currentDate));
+        return datas;
+    }
+
+    private List<Map<String, Object>> performanceProjection(final List<Object[]> wardwisePerformanceData,
+            final DateTime currentDate) {
+        final DecimalFormat df = new DecimalFormat("####0.00");
+        final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
+        for (final Object[] compData : wardwisePerformanceData) {
+            final Map<String, Object> complaintData = new HashMap<String, Object>();
+            complaintData.put("name", compData[0]);
+            final BigInteger compData1 = (BigInteger) compData[1];
+            final BigInteger compData3 = (BigInteger) compData[3];
+            final BigInteger compData4 = (BigInteger) compData[4];
+            final double noOfCompAsOnDate = compData1.doubleValue();
+            final double noOfCompReceivedBtw = compData3.doubleValue();
+            final double noOfCompPenAsonDate = compData4.doubleValue();
+            complaintData.put("y", new BigDecimal(df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
+                    / (noOfCompAsOnDate + noOfCompReceivedBtw))));
+            compAggrData.add(complaintData);
+        }
+
+        // SORT ZONEWISE PERFORMANCE BY REDRESSAL %
+        sortData(compAggrData, "y");
+        return compAggrData;
+    }
+
+    private List<Map<String, Object>> performanceAnalysis(final List<Object[]> wardwisePerformanceData,
+            final DateTime currentDate) {
         final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
         final String formattedFrm = endOfGivenDate(currentDate.minusDays(14)).toString(DFLT_DATE_FRMTR);
         final String formattedDayAfterFrm = startOfGivenDate(currentDate.minusDays(13)).toString(DFLT_DATE_FRMTR);
         final String formattedTo = currentDate.toString(DFLT_DATE_FRMTR);
         final DecimalFormat df = new DecimalFormat("####0.00");
-        for (final Object[] compData : dashboardRepository.fetchWardwisePerformanceTill(currentDate)) {
+        for (final Object[] compData : wardwisePerformanceData) {
             final Map<String, Object> complaintData = new HashMap<String, Object>();
             complaintData.put("zone", compData[0]);
             final BigInteger compData1 = (BigInteger) compData[1];
@@ -167,7 +200,6 @@ public class DashboardService {
 
         // ASSIGN A RANK BASED ON ORDER
         assignRank(compAggrData, "rank");
-
         return compAggrData;
     }
 

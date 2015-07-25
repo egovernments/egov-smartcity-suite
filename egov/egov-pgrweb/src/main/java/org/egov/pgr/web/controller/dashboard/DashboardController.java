@@ -41,6 +41,7 @@ package org.egov.pgr.web.controller.dashboard;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -84,11 +85,12 @@ public class DashboardController {
 
     @RequestMapping(value = "/wardwise-performance", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Object> wardwisePerformance() {
-        final List<Object> wardwisePerformanceData = new ArrayList<>();
-        final List<Map<String, Object>> wardwisePerformance = dashboardService.getWardwisePerformance();
-        wardwisePerformanceData.add(wardwisePerformance);
+        final List<List<Map<String, Object>>> wardwisePerformance = dashboardService.getWardwisePerformance();
+        final List<Object> performanceData = new LinkedList<>();
+        performanceData.add(wardwisePerformance.get(0));
         final int size = wardwisePerformance.size();
-        wardwisePerformanceData.add(new DataTable(0, size, size, size, wardwisePerformance));
-        return wardwisePerformanceData;
+        performanceData.add(new DataTable(0, size, size, size, wardwisePerformance.get(0)));
+        performanceData.add(wardwisePerformance.get(1));
+        return performanceData;
     }
 }

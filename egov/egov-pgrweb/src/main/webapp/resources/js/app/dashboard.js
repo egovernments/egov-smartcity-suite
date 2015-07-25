@@ -65,7 +65,6 @@ function redressalEfficiency() {
 	}
 	setTitle("Redressal Efficiency");
 	performanceGIS();
-	//performanceBar();
 }
 
 function openCompPendency() {
@@ -106,6 +105,7 @@ function performanceGIS() {
 	}).done(function(datas) {
 		var length = datas[0].length;
 		performanceTabular(datas[1]);
+		performanceBar(datas[2]);
 		$.each(datas[0], function(index,data) {
 			setMarkers(data, length, index,map,infoWin,chartWin);
 		});
@@ -699,10 +699,8 @@ function performanceBarDrilldown(zoneName) {
 	});	
 }
 
-function performanceBar() {
-	$.ajax({url:"performanceBar.do",
-		cache:false
-	}).done(function(bardata) {
+function performanceBar(data) {
+	var drawPerformanceBar = function (bardata) {
 		$('#performanceGraph').highcharts({
 		    chart: {
 		    		backgroundColor:null,
@@ -783,9 +781,19 @@ function performanceBar() {
 		            data: bardata
 		        }]
 		    });
-		$("#page-top").unmask();
-		
-	});
+	};
+	
+	if (data) {
+		drawPerformanceBar(data);
+	} else {
+		$.ajax({url:"wardwise-performance?ctype=bar",
+			cache:false
+		}).done(function(bardata) {
+			drawPerformanceBar(bardata);
+			$("#page-top").unmask();
+			
+		});
+	}
 }
 
 
