@@ -39,13 +39,29 @@
  */
 package org.egov.pgr.repository;
 
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
 import org.egov.pgr.entity.Complaint;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     
-    Complaint findByCrn(String crn);
+    Complaint findByCrn(String crn);     
+    
+    @Query("select complaint from Complaint complaint where createdBy =:createdBy order by createddate DESC")
+    Page<Complaint> findByMyComplaint(@Param("createdBy") User createdBy, Pageable pageable);
+    
+    @Query("select complaint from Complaint complaint where createdBy <>:createdBy order by createddate DESC")
+    Page<Complaint> findByLatestComplaint(@Param("createdBy") User createdBy, Pageable pageable);
+    
+    @Query(value = "select * FROM egpgr_complaint WHERE createdBy<> :createdBy AND earth_box( ll_to_earth( :lat, :lng), :distance) @> ll_to_earth(egpgr_complaint.lat, egpgr_complaint.lng) order by createddate DESC limit :limit offset :offset", nativeQuery = true)
+    List<Complaint> findByNearestComplaint(@Param("createdBy") Long createdBy, @Param("lat") Float lat, @Param("lng") Float lng, @Param("distance") Long distance, @Param("limit") Long limit, @Param("offset") Long offset);
 
 }

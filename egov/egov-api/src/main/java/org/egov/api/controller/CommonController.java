@@ -41,9 +41,10 @@ public class CommonController extends ApiController {
 
     // -----------------------------------------------------------------
     /**
+     * This will create a new citizen along with it will capture their device also.
      * 
-     * @param citizen
-     * @return
+     * @param Citizen - As a json object
+     * @return Citizen
      */
     @RequestMapping(value = ApiUrl.CITIZEN_REGISTER, method = RequestMethod.POST, consumes = { "application/json" })
     public @ResponseBody ResponseEntity<String> register(@RequestBody JSONObject citizen) {
@@ -77,6 +78,7 @@ public class CommonController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will activate the user account.
      * 
      * @param String userName
      * @param String activationCode
@@ -109,6 +111,7 @@ public class CommonController extends ApiController {
 
     // --------------------------------------------------------------------------------//
     /**
+     * This will send an email/sms to citizen with link. User can use that link and reset their password.
      * 
      * @param request
      * @return
@@ -119,15 +122,18 @@ public class CommonController extends ApiController {
         String identity = request.getParameter("identity");
 
         if (identity != null) {
+            String url = request.getRequestURL().toString();
+            url = url.substring(0, url.indexOf("/api"));
+            
             if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-                    identity, request.getRequestURL()
-                            + "/egi/login/password/reset?token=")) {
+                    identity, url + "/egi/login/password/reset?token=")) {
+
                 return res.success("", "Password has been sent to mail");
             } else {
                 return res.error("Password send failed");
             }
         } else {
-            return res.error("Invalid mobile number");
+            return res.error("Invalid mobile number/Email Id.");
         }
 
     }
