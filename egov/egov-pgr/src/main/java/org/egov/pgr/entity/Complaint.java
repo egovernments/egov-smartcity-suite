@@ -153,6 +153,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
+    @Searchable
     private Department department;
 
     /*
