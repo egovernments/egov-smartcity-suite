@@ -94,13 +94,14 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span> 
 		      </button>
-		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
-		      <a class="navbar-brand visible-lg-block visible-md-block customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
+		      
+		      <a class="navbar-brand customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
 		       <img src="<c:url value='/resources/global/images/${sessionScope.citylogo}' context='/egi'/>" height="55">
 		      </a>
 		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="/pgr/dashboard/home?isdefault=true">Complaints Redressal</a>
+		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
 		    </div>
-		    <span class="navbar-brand visible-md-block visible-lg-block pull-right" style="color:#FFF">
+		    <span class="navbar-brand pull-right egov-logo-right"  style="color:#FFF">
 		    <!-- span class="title"></span-->
 		    <a href="http://www.egovernments.org" target="_blank">
 			   <img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
