@@ -1185,19 +1185,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * 
 	 */
 	@Transactional
-	public List<ReceiptHeader> persistPendingReceipts(Set<ReceiptHeader> entity) {
-		List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
-		Iterator iterator = entity.iterator();
-		while (iterator.hasNext()) {
-			ReceiptHeader rpd = (ReceiptHeader) iterator.next();
-			//for (ReceiptHeader receiptHeader : rpd.getReceiptHeaders()) {
-				//if (receiptHeader.getReceiptnumber() == null) {
-				//	receiptHeader.setReceiptnumber(CollectionConstants.RECEIPTNUMBER_PENDING);
-				//}
-			//}	
-			saved.add(super.persist(rpd));
-		}
-		return saved;
+	public List<ReceiptHeader> persistPendingReceipts(ReceiptHeader receiptHeader) {
+	    List<ReceiptHeader> saved = new ArrayList<ReceiptHeader>();
+	    saved.add(super.persist(receiptHeader));
+	    return saved;
 	}
 	
 

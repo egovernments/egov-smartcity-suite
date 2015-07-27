@@ -284,7 +284,7 @@ function validateOnlineReceipt(){
 	}
 	else {
 			doLoadingMask('#loadingMask');
-			document.collDetails.action="onlineReceipt!saveNew.action";
+			document.collDetails.action="onlineReceipt-saveNew.action";
 			document.collDetails.submit();
   		}
 }
@@ -369,7 +369,7 @@ function onLoad(){
 
 <body onload="onLoad();">
 <div class="maincontainer">
-<s:form theme="simple" name="collDetails" action="onlineReceipt">
+<s:form theme="simple" name="collDetails" action="OnlineReceiptAction.action">
  <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
    <div class="formmainbox">
 
@@ -423,6 +423,7 @@ function onLoad(){
 <s:hidden label="chequeDDAllowed" id="chequeDDAllowed" value="%{chequeDDAllowed}" name="chequeDDAllowed"/>
 <s:hidden label="totalAmountToBeCollected" id="totalAmountToBeCollected" value="%{totalAmountToBeCollected}" name="totalAmountToBeCollected"/>
 <s:hidden label="callbackForApportioning" id="callbackForApportioning" value="%{callbackForApportioning}" name="callbackForApportioning"/>
+<s:hidden id="paymentServiceId" value="%{paymentServiceId}" name="paymentServiceId"/>
 <%int i=1;%>
 <%int rcptDtlCnt=0; %>
 
@@ -503,7 +504,7 @@ function onLoad(){
 		    <s:if test="%{ (#s.index+1)%2 ==1}"> 
 				<tr>
 			</s:if> 
-					<td width="30%" valign="top" ><input type="radio" onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'  name="radioButton1"/><span class="complaintmsg"> <s:property value="serviceName"/> </span>
+					<td width="30%" valign="top" ><input type="radio" onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'  name="radioButton1"/><span class="complaintmsg"> <s:property value="name"/> </span>
 						<br><s:text name="%{code}.transactionmessage"/>
 					</td>
 			<s:if test="%{ (#s.index+1)%2 ==0}"> 
@@ -514,14 +515,6 @@ function onLoad(){
             </div>
           </td>
           
-        </tr>
-        <tr>
-         <td class="blueborderfortd" colspan="2">
-          <div>
-           <s:checkbox name="terms" id="terms" fieldValue="false"/> <label for="terms"><s:text name="onlineReceipts.termsandconditions"/> </label>  <br/>
-           <s:text name="onlineReceipts.termshelptext" />
-          </div>
-         </td>
         </tr>
         <tr>
          <td class="blueborderfortd" colspan="2">

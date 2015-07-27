@@ -43,7 +43,7 @@
 <head>
 <title><s:text name="page.title"/></title>
 <script type="text/javascript"> 
-<%@ page import="org.egov.erpcollection.web.constants.CollectionConstants" %>
+<%@ page import="org.egov.collection.constants.CollectionConstants" %>
 function onBodyLoad(){
 
 	var form = document.createElement("form");

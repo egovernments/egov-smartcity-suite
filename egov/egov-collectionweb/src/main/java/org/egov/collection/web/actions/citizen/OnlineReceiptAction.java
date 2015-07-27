@@ -77,7 +77,8 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -90,11 +91,11 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ 
-    @Result(name = BaseFormAction.NEW, location = "onlineReceipt-new.jsp"),
+    @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
     @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp")
 })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware{
@@ -106,8 +107,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionCommon collectionCommon;
-    private CommonsServiceImpl commonsService;
-
     private List<ValidationError> errors = new ArrayList<ValidationError>();
     
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
@@ -141,6 +140,10 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private String receiptResponse = "";
     private ReceiptHeader receiptHeader;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>(0);
+    @Autowired
+    private EgwStatusHibernateDAO statusDAO;
+    @Autowired
+    private FundHibernateDAO fundDAO;
 	
 	@Override
     public Object getModel() {
@@ -202,7 +205,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 					// payment gateway then make transaction in pending state.
 					if (CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
 							.getAuthStatus())) {
-						EgwStatus paymentStatus = commonsService.getStatusByModuleAndCode(
+						EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
 								CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
 								CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
 						onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
@@ -268,7 +271,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         
      // if status code is 0002, ie Bill desk waiting for response from payment gateway then make transaction in pending state.
      		if(CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse.getAuthStatus())){
-     			EgwStatus paymentStatus = commonsService.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+     			EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
      					CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
      			onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
      			onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
@@ -324,14 +327,13 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * The reason for payment failure is displayed back to the user
      * 
      */
-    @Transactional
     private void processFailureMsg() {
 
         EgwStatus receiptStatus = collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
         onlinePaymentReceiptHeader.setStatus(receiptStatus);
 
-        EgwStatus paymentStatus = commonsService.getStatusByModuleAndCode(
+        EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
                 CollectionConstants.MODULE_NAME_ONLINEPAYMENT, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
         onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
 
@@ -369,7 +371,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * PENDING state ( and will be reconciled manually).
      * 
      */
-    @Transactional
     private void processSuccessMsg() {
         errors.clear();
         
@@ -461,7 +462,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      *            size of the array will be 1.
      * 
      */
-    @Transactional
     private void createSuccessPayment(ReceiptHeader receipt, Date transactionDate, String transactionId,
             BigDecimal transactionAmt, String authStatusCode, String remarks) {
         EgwStatus receiptStatus = collectionsUtil
@@ -507,7 +507,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
-    @Transactional
     public String reconcileOnlinePayment() {
 
         HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
@@ -656,7 +655,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXml);
                // modelPayeeList.clear();
 
-                Fund fund = commonsService.fundByCode(collDetails.getFundCode());
+                Fund fund = fundDAO.fundByCode(collDetails.getFundCode());
                 if (fund == null) {
                     addActionError(getText("billreceipt.improperbilldata.missingfund"));
                 }
@@ -752,7 +751,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     // created on successful online transaction
                     receiptHeader.setIsReconciled(Boolean.TRUE);
                     receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
-                    receiptHeader.setStatus(commonsService.getStatusByModuleAndCode(
+                    receiptHeader.setStatus(statusDAO.getStatusByModuleAndCode(
                             CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                             CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 
@@ -786,7 +785,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     // Add Online Payment Details
                     OnlinePayment onlinePayment = new OnlinePayment();
 
-                    onlinePayment.setStatus(commonsService.getStatusByModuleAndCode(
+                    onlinePayment.setStatus(statusDAO.getStatusByModuleAndCode(
                             CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                             CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
                     onlinePayment.setReceiptHeader(receiptHeader);
@@ -802,7 +801,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
          * the receipt headers
          */
 
-       // receiptPayeeDetailsService.persistPendingReceipts(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
+    receiptHeaderService.persistPendingReceipts(receiptHeader);
     
     receiptHeaderService.persist(receiptHeader);
     receiptHeaderService.getSession().flush();
@@ -812,12 +811,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
          * 
          */
 
-       /* for (ReceiptPayeeDetails payee : modelPayeeList) {
-            for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
-                setPaymentRequest(collectionCommon.createPaymentRequest(paymentService, receiptHeader));
-            }
-
-        }*/
+        setPaymentRequest(collectionCommon.createPaymentRequest(paymentService, receiptHeader));
 
     }// end of method
     
@@ -832,11 +826,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     public void setCollectionCommon(CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
-
-    public void setCommonsService(CommonsServiceImpl commonsService) {
-        this.commonsService = commonsService;
-    }
-
     private String[] transactionId;
     private Long[] selectedReceipts;
     private String[] transactionDate;

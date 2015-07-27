@@ -439,4 +439,7 @@ public final class CollectionConstants {
 	public static final String RCPT_CANCEL = "Receipt Cancellation";
 	
 	public static final String PGI_BILLINGSERVICE_CONFIGKEY  = "BILLINGSERVICEPAYMENTGATEWAY";
+	
+	public static final String ONLINE_PAYMENT_AXIS_MERCHANTID = "TESTEPAYCDMA"; 
+	public static final String MESSAGEKEY_AXIS_REV_HEAD_="axis.revenuehead.";
 }
