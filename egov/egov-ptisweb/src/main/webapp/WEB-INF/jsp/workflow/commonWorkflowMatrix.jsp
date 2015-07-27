@@ -82,8 +82,9 @@ function loadDesignationFromMatrix() {
 	var currentState = dom.get('currentState').value;
 	var amountRule = dom.get('amountRule').value;
 	var additionalRule = dom.get('additionalRule').value;
-	var pendingAction=document.getElementById('pendingActions').value;
-	loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,additionalRule,pendingAction); 
+	var pendingAction = document.getElementById('pendingActions').value;
+	var stateType = '<s:property value="%{stateType}"/>';
+	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction); 
 }
 
 function populateApprover() {

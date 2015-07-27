@@ -491,7 +491,7 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_APPROVAL_PENDING = "Approval_Pending";
 	public static final String WF_STATE_NOTICE_GENERATION_PENDING = "Notice_Generation_Pending";
 	public static final String WF_STATE_NOTICE_GENERATED = "Notice Generated";
-	public static final String WF_STATE_COMMISSIONER_APPROVED = "Alter:Commissioner Approved";
+	public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
 	public static final String WF_STATE_COMMISSIONER_REJECTED = "Commissioner Rejected";
 	public static final String WF_STATE_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
 	public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
