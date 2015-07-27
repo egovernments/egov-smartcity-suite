@@ -75,7 +75,7 @@
 						<div class="panel-body custom-form">
 										<label for="field-1" class="col-sm-3 control-label">When </label>
 										
-										<div class="col-sm-2 add-margin">
+										<div class="col-sm-4 add-margin">
 										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
 								                <option value="">Select</option>
