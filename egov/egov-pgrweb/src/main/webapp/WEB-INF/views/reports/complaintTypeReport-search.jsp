@@ -68,12 +68,12 @@
 								<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">When </label>
 										
-										<div class="col-sm-2 add-margin">
+										<div class="col-sm-6 add-margin">
 									
 											<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
 										<option value="">Select</option>
-										<option value="all" >All</option>
-										<option value="lastsevendays" selected>In Last 7 days</option>
+										<option value="all" selected>All</option>
+										<option value="lastsevendays" >In Last 7 days</option>
 										<option value="lastthirtydays">In Last 30 days</option>
 										<option value="lastninetydays">In Last 90 days</option>
 										<option value="custom" data-show=".complaintdur">Custom</option>
@@ -86,7 +86,9 @@
 								</label>
 								<div class="col-sm-6">
 									<input id="com_type" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
-									<input type="hidden" id="complaintTypeId" name="complaintType" value="${complaintType}"/> 
+									<input type="hidden" id="complaintType" name="complaintType" value="${complaintType}"/> 
+									<input type="hidden" id="status" name="status" value="${status}"/> 
+									<input type="hidden" id="complaintTypeWithStatus" name="complaintTypeWithStatus" value="${complaintTypeWithStatus}"/> 
 									<div class="error-msg eithererror all-errors display-hide"></div>
 								</div>
 							</div>
@@ -140,8 +142,14 @@
 							    <td></td>
 							    <td></td>
 							    <td></td>
+							     <td></td>
 								</tr>
 							</tfoot>
+						</table>
+						
+						
+						<table class="table table-bordered datatable dt-responsive table-hover" id="compReport-table">
+						 	
 						</table>
 						</div>
 						</div>

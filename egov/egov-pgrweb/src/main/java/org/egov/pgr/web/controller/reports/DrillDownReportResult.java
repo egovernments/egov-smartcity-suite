@@ -1,5 +1,6 @@
 package org.egov.pgr.web.controller.reports;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -19,6 +20,17 @@ public class DrillDownReportResult {
     private String status;
     private String boundaryname;
     private BigInteger complaintid;
+    private BigDecimal complainttypeid; 
+
+
+
+    public BigDecimal getComplainttypeid() {
+        return complainttypeid;
+    }
+
+    public void setComplainttypeid(BigDecimal complainttypeid) {
+        this.complainttypeid = complainttypeid;
+    }
 
     public BigInteger getComplaintid() {
         return complaintid;

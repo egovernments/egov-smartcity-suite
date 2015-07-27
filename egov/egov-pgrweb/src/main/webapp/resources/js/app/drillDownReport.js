@@ -45,14 +45,7 @@ jQuery(document).ready(function($) {
 	$('#report-backbutton').hide();
 
 	$('#backButton').click(function(e) {
-
-		console.log('department ' + $('#deptid').val());
-		console.log('complainttypeid' + $('#complainttypeid').val());
-		console.log('selecteduserid' + $('#selecteduserid').val());
-		console.log('boundary' + $('#boundary').val());
-		console.log('type' + $('#type').val());
-		console.log('-----------------------------');
-
+		
 		if ($('#selecteduserid').val()) {
 			console.log('true!')
 			$('#selecteduserid').val("");

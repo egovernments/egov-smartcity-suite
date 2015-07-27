@@ -43,16 +43,28 @@ jQuery(document)
 				function($) {
 
 					compTypereportContainer = $("#compTypeReport-table");
+					compreportContainer = $("#compReport-table") ;
 
 					$('#report-backbutton').hide(); 
 					
 					$('#backButton').click(function(e) {
-						//callajaxdatatableForCompTypeReport();
+						$('#report-backbutton').hide();
+						$('#status').val("");
+						$('#complaintTypeWithStatus').val("");
+						
+						$('#compTypeReport-table_wrapper').show();
+						$('#compReport-table_wrapper').hide();
+						
+						callajaxdatatableForCompTypeReport();
+						
 					});
 
 					$('#complaintTypeReportSearch').click(function(e) {
 						console.log('calling inside ajax');
 						callajaxdatatableForCompTypeReport();
+						
+						$('#compTypeReport-table_wrapper').show();
+						$('#compReport-table_wrapper').hide();
 					});
 
 					function callajaxdatatableForCompTypeReport() {
@@ -61,11 +73,14 @@ jQuery(document)
 						var endDate = "";
 						var complTyp = "";
 						var when_dateVal = "";
+						var compStatus="";
+						
+						compStatus=$('#complaintTypeWithStatus').val();
 						startDate = $('#start_date').val();
 						endDate = $('#end_date').val();
 
 						when_dateVal = $('#when_date').val();
-						complTyp = $('#complaintTypeId').val();
+						complTyp = $('#complaintType').val();
 						if ($('#start_date').val() == "")
 							startDate = "";
 
@@ -84,7 +99,9 @@ jQuery(document)
 											fromDate : startDate,
 											toDate : endDate,
 											complaintType : complTyp,
-											complaintDateType : when_dateVal
+											complaintTypeWithStatus: "",
+											complaintDateType : when_dateVal,
+											status: ""
 										}
 									},
 									"sPaginationType" : "bootstrap",
@@ -100,27 +117,44 @@ jQuery(document)
 									columns : [
 											{
 												"data" : "name",
-												"render" : function(data, type,
-														row) {
-													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Boundarywise\');" data-hiddenele="boundary" data-eleval="'
-															+ data
-															+ '">'
-															+ data + '</a>';
-												},
 												"sTitle" : "Complaint Type Name"
 											}, {
-												"mData" : "registered",
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Registered\');" data-hiddenele="boundary" data-eleval="'+ data.registered + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.registered + '</a>';
+												},
 												"sTitle" : "Registered"
 
 											}, {
-												"data" : "inprocess",
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Inprocess\');" data-hiddenele="boundary" data-eleval="'+ data.inprocess + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.inprocess + '</a>';
+												},
 												"sTitle" : "Inprocess"
 											}, {
-												"data" : "completed",
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Completed\');" data-hiddenele="boundary" data-eleval="'+ data.completed + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.completed + '</a>';
+												},
 												"sTitle" : "Completed"
 											}, {
-												"data" : "rejected",
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Rejected\');" data-hiddenele="boundary" data-eleval="'+ data.rejected + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.rejected + '</a>';
+												},
 												"sTitle" : "Rejected"
+
+											}, {
+												"mData" : getComplaintTypeIdWithDatakey,
+												"render" : function(data, type,row) {
+													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Rejected\');" data-hiddenele="boundary" data-eleval="'+ data.reopened + '" data-complaintname="'+ data.complaintTyeId + '">'
+															+ data.reopened + '</a>';
+												},
+												"sTitle" : "Reopened"
 
 											}, {
 												"data" : "total",
@@ -136,16 +170,17 @@ jQuery(document)
 											$('#report-footer').show();
 										}
 										if (data.length > 0) {
-											updateTotalFooter(1, api);
-											updateTotalFooter(2, api);
-											updateTotalFooter(3, api);
-											updateTotalFooter(4, api);
-											updateTotalFooter(5, api);
+											updateTotalFooter(1, api, 'registered');
+											updateTotalFooter(2, api, 'inprocess');
+											updateTotalFooter(3, api, 'completed');
+											updateTotalFooter(4, api, 'rejected');
+											updateTotalFooter(5, api, 'reopened');
+											updateTotalFooter(6, api, '');
 
 										}
 									},
 									"aoColumnDefs" : [ {
-										"aTargets" : [ 1, 2, 3, 4, 5 ],
+										"aTargets" : [ 1, 2, 3, 4, 5 , 6 ],
 										"mRender" : function(data, type, full) {
 											return formatNumberInr(data);
 										}
@@ -153,6 +188,28 @@ jQuery(document)
 
 								});
 					}
+					
+					function getComplaintTypeIdWithDatakey(row, type, set, meta)
+					{
+						//console.log(row);
+						var data;
+						if(meta!=undefined)
+						 {	
+						if(meta.col===1)
+						 data={'complaintTyeId':row.complaintTyeId, 'registered':row.registered}
+						else if(meta.col===2)
+							 data={'complaintTyeId':row.complaintTyeId, 'inprocess':row.inprocess}
+						else if(meta.col===3)
+							 data={'complaintTyeId':row.complaintTyeId, 'completed':row.completed}
+						else if(meta.col===4)
+							 data={'complaintTyeId':row.complaintTyeId, 'rejected':row.rejected}
+						else if(meta.col===5)
+							 data={'complaintTyeId':row.complaintTyeId, 'reopened':row.reopened}
+							
+						 }
+						return data;
+					}
+					
 					var complaintType = new Bloodhound(
 							{
 								datumTokenizer : function(datum) {
@@ -186,11 +243,88 @@ jQuery(document)
 						source : complaintType.ttAdapter()
 					});
 					typeaheadWithEventsHandling(com_type_typeahead,
-							'#complaintTypeId');
+							'#complaintType');
 
 				});
 
-function updateTotalFooter(colidx, api) {
+
+function callAjaxByComplaintDetail() {
+	console.log('calling inside callAjaxByComplaintDetail');
+	var startDate = "";
+	var endDate = "";
+	var complTyp = "";
+	var when_dateVal = "";
+	startDate = $('#start_date').val();
+	endDate = $('#end_date').val();
+
+	when_dateVal = $('#when_date').val();
+	complTyp = $('#complaintType').val();
+	if ($('#start_date').val() == "")
+		startDate = "";
+
+	if ($('#end_date').val() == "")
+		endDate = "";
+
+	$('.report-section').removeClass('display-hide');
+	$('#compTypeReport-table_wrapper').hide();
+	$('#compReport-table_wrapper').show();
+	$('#report-backbutton').show();
+
+
+	compreportContainer
+			.dataTable({
+				ajax : {
+					url : "/pgr/report/complaintTypeReport/resultList-update",
+					data : {
+						fromDate : startDate,
+						toDate : endDate,
+						complaintType : complTyp,
+						complaintDateType : when_dateVal,
+						complaintTypeWithStatus:  $('#complaintTypeWithStatus').val(),
+						status: $('#status').val()
+					}
+				},
+				"sPaginationType" : "bootstrap",
+				"autoWidth" : false,
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				columns : [
+						{
+							"data" : "crn",
+							"sTitle" : "Complaint Number",
+							"render" : function(data, type, row) {
+								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+										+ data
+										+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
+										+ data + '">' + data + '</a>';
+							},
+						}, {
+							"mData" : "createddate",
+							"sTitle" : "Complaint Date"
+
+						}, {
+							"data" : "complainantname",
+							"sTitle" : "Complainant Name"
+						}, {
+							"data" : "boundaryname",
+							"sTitle" : "Complaint Address"
+						}, {
+							"data" : "details",
+							"sTitle" : "Complaint Details"
+						}, {
+							"data" : "status",
+							"sTitle" : "Status"
+
+						} ]
+
+			});
+}
+function updateTotalFooter(colidx, api, key) {
 	// Remove the formatting to get integer data for summation
 	var intVal = function(i) {
 		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
@@ -199,20 +333,33 @@ function updateTotalFooter(colidx, api) {
 
 	// Total over all pages
 	total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
+		var a1 = (a !== null && typeof a === 'object'? a[key]:a);
+		var b1 = (b !== null && typeof b === 'object'? b[key]:b);
+		console.log('a1 ->'+ a1);
+		console.log('b1 ->'+ b1);
+		return intVal(a1) + intVal(b1);
 	});
-
+	
+	if(api.column(colidx).data().length === 1)
+    {
+		if(typeof api.column(colidx).data()[0] === 'object')
+		total = api.column(colidx).data()[0][key];
+    }
+	
 	// Total over this page
 	pageTotal = api.column(colidx, {
 		page : 'current'
 	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
+		//console.log(a +' + '+ b);
+		var a1 = (a !== null && typeof a === 'object'? a[key]:a);
+		var b1 = (b !== null && typeof b === 'object'? b[key]:b);
+		return intVal(a1) + intVal(b1);
 	}, 0);
 
+	
 	// Update footer
 	$(api.column(colidx).footer()).html(
-			'<b>' + formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
-					+ ')</b>');
+			'<b>' + formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')</b>');
 }
 
 //inr formatting number
@@ -247,5 +394,14 @@ function showChangeDropdown(dropdown) {
 	}
 }
 function setHiddenValueByLink(obj, paaram) {
+
+//alert(paaram +'  ' + $(obj).data('complaintname'));
+
+	if ($(obj).data('eleval')>0) {
+		$('input[name=status]').val(paaram);
+		$('input[name=complaintTypeWithStatus]').val($(obj).data('complaintname'));
+		callAjaxByComplaintDetail();
+	}
+
 
 }

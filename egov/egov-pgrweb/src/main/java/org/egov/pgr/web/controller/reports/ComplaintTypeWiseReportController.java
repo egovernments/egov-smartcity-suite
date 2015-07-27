@@ -91,20 +91,45 @@ public class ComplaintTypeWiseReportController {
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/complaintTypeReport/resultList-update", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String complaintType,
-            @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate,
+            @RequestParam final String complaintTypeWithStatus, @RequestParam final String status,
+            @RequestParam final String complaintDateType, @RequestParam final DateTime fromDate, 
             @RequestParam final DateTime toDate, final HttpServletRequest request, final HttpServletResponse response)
                     throws IOException {
+         SQLQuery complaintTypeReportQuery =null;
+         List<AgeingReportResult> complaintTypeReportResult =null;
+         String result =null;
+         if (complaintTypeWithStatus != null && status != null && !"".equals(complaintTypeWithStatus)
+                && !"".equals(status)) {
+            
+            complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
+                    toDate,  complaintDateType,complaintTypeWithStatus,status);
+            complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
+            complaintTypeReportResult = complaintTypeReportQuery.list();
+            result = new StringBuilder("{ \"data\":").append(toJSONForComplaintType(complaintTypeReportResult)).append("}")
+                    .toString();
 
-        final SQLQuery complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
+        }else {
+         complaintTypeReportQuery = complaintTypeReportService.getComplaintTypeWiseReportQuery(fromDate,
                 toDate, complaintType, complaintDateType);
         complaintTypeReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
-        final List<AgeingReportResult> complaintTypeReportResult = complaintTypeReportQuery.list();
-
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult)).append("}")
+        complaintTypeReportResult = complaintTypeReportQuery.list();
+        result = new StringBuilder("{ \"data\":").append(toJSON(complaintTypeReportResult)).append("}")
                 .toString();
+        }
+        
+      
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
+
+    }
+    private Object toJSONForComplaintType(final Object object) {
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
+                new DrillDownReportWithcompTypeAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
 
     }
 

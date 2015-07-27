@@ -61,12 +61,12 @@ public class ComplaintTypeWiseReportService {
 
         final StringBuffer query = new StringBuffer();
 
-        query.append("SELECT ctype.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess,  COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened,   COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected ");
+        query.append("SELECT ctype.id as  complainttypeid, ctype.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess,  COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened,   COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected ");
         query.append(" FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
 
         buildWhereClause(fromDate, toDate, complaintType, complaintDateType, query);
 
-        query.append(" group by ctype.name ");
+        query.append(" group by ctype.name,ctype.id ");
 
         return setParameterForComplaintTypeReportQuery(query.toString(), fromDate, toDate, complaintDateType);
 
@@ -129,6 +129,43 @@ public class ComplaintTypeWiseReportService {
 
     private DateTime getCurrentDateWithOutTime() {
         return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
+    }
+
+    public SQLQuery getComplaintTypeWiseReportQuery(DateTime fromDate, DateTime toDate, 
+            String complaintDateType, String complaintTypeWithStatus, String status) {
+
+        final StringBuffer query = new StringBuffer();
+
+        query.append(" SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name as boundaryname FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary bndryparent on  bndry.parent=bndryparent.id  left JOIN eg_department dept on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp on pos.id=emp.position ,"
+                + " egpgr_complainant complainant ");
+
+        buildWhereClause(fromDate, toDate, complaintTypeWithStatus, complaintDateType,query);
+        query.append(" and complainant.id=cd.complainant   ");
+        if (status != null && !"".equals(status)) {
+
+            if(status.equalsIgnoreCase("registered"))
+            {
+                query.append(" and cs.name in ('REGISTERED')");
+            }else  if(status.equalsIgnoreCase("inprocess"))
+            {
+                query.append(" and cs.name in ('FORWARDED','PROCESSING','NOTCOMPLETED')");
+            }else  if(status.equalsIgnoreCase("rejected"))
+            {
+                query.append(" and cs.name in ('WITHDRAWN','REJECTED')");
+            }else  if(status.equalsIgnoreCase("completed"))
+            {
+                query.append(" and cs.name in ('COMPLETED','CLOSED')");
+            }else  if(status.equalsIgnoreCase("reopened"))
+            {
+                query.append(" and cs.name in ('REOPENED')");
+            }
+          
+            
+        }
+    
+    
+        return setParameterForComplaintTypeReportQuery(query.toString(), fromDate, toDate, complaintDateType);
+    
     }
 
 }

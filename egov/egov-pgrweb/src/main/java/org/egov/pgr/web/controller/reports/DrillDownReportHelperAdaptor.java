@@ -25,6 +25,9 @@ public class DrillDownReportHelperAdaptor implements JsonSerializer<DrillDownRep
                     .getRegistered().toString() : "0");
             jsonObject.addProperty("rejected", null != drillDownReportObject.getRejected() ? drillDownReportObject
                     .getRejected().toString() : "0");
+            jsonObject.addProperty("complaintTyeId", null != drillDownReportObject.getComplainttypeid() ? drillDownReportObject
+                    .getComplainttypeid().toString() : "0");
+            
             jsonObject.addProperty("total", null != drillDownReportObject.getTotal() ? drillDownReportObject.getTotal()
                     .toString() : "0");
             jsonObject.addProperty("reopened", null != drillDownReportObject.getReopened() ? drillDownReportObject
