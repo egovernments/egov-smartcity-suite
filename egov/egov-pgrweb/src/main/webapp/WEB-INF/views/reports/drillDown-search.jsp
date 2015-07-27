@@ -76,7 +76,7 @@
 						<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">When </label>
 										
-										<div class="col-sm-2 add-margin">
+										<div class="col-sm-4 add-margin">
 										<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 										<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
 										<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
