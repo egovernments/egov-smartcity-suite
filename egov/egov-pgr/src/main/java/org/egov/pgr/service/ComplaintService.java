@@ -234,16 +234,17 @@ public class ComplaintService {
             else
                 complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName).withDateInfo(new Date()).withOwner(owner);
-        } else if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
-            complaint.transition(true).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-
-        else {
+        } else {
             complaint.setDepartment(
                     assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
-            complaint.transition(true).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
-                    .withOwner(complaint.getState().getOwnerPosition());
+            if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
+                complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+                        .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+
+            else
+                complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+                        .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date())
+                        .withOwner(complaint.getState().getOwnerPosition());
         }
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
         complaint.setUlb(cityWebsite.getName());
@@ -399,20 +400,22 @@ public class ComplaintService {
         return Arrays.asList(ReceivingMode.values());
     }
 
-    public Page<Complaint> getLatest(int page, int pageSize) {
-        int offset = page - 1;        
-        return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
+    public Page<Complaint> getLatest(final int page, final int pageSize) {
+        final int offset = page - 1;
+        return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(),
+                new PageRequest(offset, pageSize));
     }
 
-    public Page<Complaint> getMyComplaint(int page, int pageSize) {
-        int offset = page - 1;
+    public Page<Complaint> getMyComplaint(final int page, final int pageSize) {
+        final int offset = page - 1;
         return complaintRepository.findByMyComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
-    public List<Complaint> getNearByComplaint(int page, float lat, float lng, int distance, int pageSize) {
-        Long offset = new Long((page - 1) * pageSize);
-        Long limit = new Long(pageSize + 1);
+    public List<Complaint> getNearByComplaint(final int page, final float lat, final float lng, final int distance,
+            final int pageSize) {
+        final Long offset = new Long((page - 1) * pageSize);
+        final Long limit = new Long(pageSize + 1);
         return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), new Float(lat),
-                new Float(lng), new Long(distance), limit, offset);        
+                new Float(lng), new Long(distance), limit, offset);
     }
 }
