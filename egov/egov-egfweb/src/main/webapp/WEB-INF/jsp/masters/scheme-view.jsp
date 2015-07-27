@@ -87,6 +87,7 @@
 	    <s:hidden name="id" id="id" value="%{id}" />
      	<table width="100%" border="0" cellspacing="0" cellpadding="0">                   
     		<tr>
+    				<td class="greybox">&nbsp;</td>
 					<td class="greybox" width="10%" ><b><s:text name="scheme.code"/></b></td>
 				    <td class="greybox" width="30%" ><s:property value="%{scheme.code}" /></td>
 				                       
@@ -94,12 +95,14 @@
 				    <td class="greybox"  width="30%"><s:property value="%{scheme.name}" /></td>
 			</tr>
 			<tr>
+					<td class="greybox">&nbsp;</td>
 			        <td class="bluebox"><b><s:text name="scheme.fund"/></b></td>
 				    <td class="bluebox"><s:property value="%{scheme.fund.name}" /></td>
 					<td class="bluebox"><b>IsActive</b></td>
 					<td class="bluebox"><s:property value="%{scheme.isactive}" /></td>
 			</tr>
 			<tr>
+					<td class="greybox">&nbsp;</td>
 					<td class="greybox" > <b><s:text name="scheme.startDate" /></b></td>
 					<td  class="greybox" ><s:property value="%{scheme.validfrom}" /></td>
 					
@@ -107,6 +110,7 @@
 					<td  class="greybox"><s:property value="%{scheme.validto}" /></td>
 			</tr>
 			<tr>
+					<td class="greybox">&nbsp;</td>
 					<td class="bluebox" width="10%"><b><s:text name="scheme.description" /></b></td>
 					<td class="bluebox" colspan="3" ><s:property value="%{scheme.description}" /></td>				
 			</tr>          
