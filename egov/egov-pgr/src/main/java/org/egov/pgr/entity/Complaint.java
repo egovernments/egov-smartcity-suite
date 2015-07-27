@@ -141,11 +141,12 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid") , inverseJoinColumns = @JoinColumn(name = "complaintid") )
+    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
+    @Searchable(name = "longitude")
     private double lng;
-
+    @Searchable(name = "latitude")
     private double lat;
 
     @Column(name = "escalation_date", nullable = false)
