@@ -195,11 +195,9 @@ public class ComplaintService {
      * @param complaint
      * @param approvalPosition
      * @param approvalComent
-     * @return If the status is changed to completed/withdrawn then
-     *         terminate/end the workflow. Even if the poistion is selected no
-     *         need to consider position as it is end of workflow.else If
-     *         position is found then it is forwarding only. Else it is update
-     *         by official or citizen
+     * @return If the status is changed to completed/withdrawn then terminate/end the workflow. Even if the poistion is selected
+     * no need to consider position as it is end of workflow.else If position is found then it is forwarding only. Else it is
+     * update by official or citizen
      */
 
     @Transactional
@@ -402,8 +400,7 @@ public class ComplaintService {
 
     public Page<Complaint> getLatest(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(),
-                new PageRequest(offset, pageSize));
+        return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
     }
 
     public Page<Complaint> getMyComplaint(final int page, final int pageSize) {
