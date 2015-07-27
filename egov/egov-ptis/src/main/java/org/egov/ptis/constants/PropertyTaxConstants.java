@@ -479,6 +479,8 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_NAME_DEACTIVATE = "Deactivate";
 	public static final String WFLOW_ACTION_NAME_CHANGEADDRESS = "ChangeAddress";
 	public static final String WFLOW_ACTION_NAME_MODIFY = "Modify";
+	public static final String WFLOW_ACTION_NAME_ALTER = "Alter";
+	public static final String WFLOW_ACTION_NAME_NEW = "New";
 	public static final String WFLOW_ACTION_NAME_AMALGAMATE = "Amalgamate";
 	public static final String WFLOW_ACTION_NAME_BIFURCATE = "Bifurcate";
 	public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
@@ -489,10 +491,12 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_APPROVAL_PENDING = "Approval_Pending";
 	public static final String WF_STATE_NOTICE_GENERATION_PENDING = "Notice_Generation_Pending";
 	public static final String WF_STATE_NOTICE_GENERATED = "Notice Generated";
-	public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
+	public static final String WF_STATE_COMMISSIONER_APPROVED = "Alter:Commissioner Approved";
 	public static final String WF_STATE_COMMISSIONER_REJECTED = "Commissioner Rejected";
 	public static final String WF_STATE_REVENUE_OFFICER_APPROVED = "Revenue officer Approved";
 	public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
+	public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
+	public static final String WF_STATE_REJECTED = "Rejected";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 

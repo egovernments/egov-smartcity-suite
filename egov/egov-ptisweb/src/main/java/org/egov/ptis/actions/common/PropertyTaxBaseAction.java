@@ -41,13 +41,14 @@ package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -379,9 +380,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 				property.transition(true).end().withSenderName(user.getName())
 						.withComments(approverComments).withDateInfo(currentDate.toDate());
 			} else {
-				property.transition(true).withSenderName(user.getName()).withComments(approverComments)
-						.withStateValue("Rejected").withDateInfo(currentDate.toDate())
-						.withOwner(wfInitiator.getPosition()).withNextAction("Operator Approval Pending");
+				String stateValue = property.getCurrentState().getValue().split(":")[0] + ":"
+						+ WF_STATE_REJECTED;
+				property.transition(true).withSenderName(user.getName())
+						.withComments(approverComments).withStateValue(stateValue)
+						.withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+						.withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
 			}
 
 		} else {

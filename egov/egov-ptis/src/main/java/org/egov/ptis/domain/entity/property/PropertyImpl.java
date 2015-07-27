@@ -46,8 +46,8 @@ package org.egov.ptis.domain.entity.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_NEW;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -642,12 +642,12 @@ public class PropertyImpl extends StateAware implements Property {
 
 	@Override
 	public String myLinkId() {
-		String url = "/ptis/modify/modifyProperty-view.action" + "?modelId=" + getId();
+		String url = null;
 		if (getState() != null && getState().getValue() != null
-				&& getState().getValue().equals(WFLOW_ACTION_NAME_MODIFY)) {
+				&& getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER)) {
 			url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
 		} else if (getState() != null && getState().getValue() != null
-				&& getState().getValue().equals(WFLOW_ACTION_STEP_CREATE)) {
+				&& getState().getValue().equals(WFLOW_ACTION_NAME_NEW)) {
 			url = "/ptis/create/createProperty-view.action" + "?modelId=" + getId();
 		}
 		return url;
