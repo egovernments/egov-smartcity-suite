@@ -451,17 +451,6 @@ function finishAllChangesMsg(button) {
 }  */
 
 
-function loadDesignationFromMatrix() {
-	var e = dom.get('approverDepartment');
-	var dept = e.options[e.selectedIndex].text;
-		var currentState = dom.get('currentState').value;
-		var amountRule="";
-	var pendingAction=document.getElementById('pendingActions').value;
-	loadDesignationByDeptAndType('PropertyImpl',dept,currentState,amountRule,"",pendingAction); 
-}
-function populateApprover() {
-	getUsersByDesignationAndDept();
-}
 </script>
 </body>
 </html>

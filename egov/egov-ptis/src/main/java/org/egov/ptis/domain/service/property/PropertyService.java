@@ -336,19 +336,6 @@ public class PropertyService {
         } else {
             property.getPropertyDetail().setNo_of_floors(0);
             property.getPropertyDetail().getFloorDetails().clear();
-            PropertyOccupation occupancy = null;
-            PropertyUsage usage = null;
-            if (propOccId != null) {
-                occupancy = (PropertyOccupation) getPropPerServ().find("from PropertyOccupation po where po.id = ?",
-                        Long.valueOf(propOccId));
-            }
-            if (usage != null) {
-                usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
-                        Long.valueOf(propUsageId));
-            }
-            LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy);
-            property.getPropertyDetail().setPropertyOccupation(occupancy);
-            property.getPropertyDetail().setPropertyUsage(usage);
             totBltUpArea.setArea(totBltUpAreaVal);
             property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
         }

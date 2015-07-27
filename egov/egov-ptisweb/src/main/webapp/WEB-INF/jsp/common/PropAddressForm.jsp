@@ -121,7 +121,7 @@
 	     <s:select id="enumBlock" name="enumBlock" headerValue="%{getText('default.select')}" value="%{enumBlock}" listKey="id" listValue="name" headerKey="0" 
 	     list="dropdownData.enumerationBlockList"/>
 	    </td>
-	    <td class="greybox"><s:text name="PinCode"/> : </td>
+	    <td class="greybox"><s:text name="PinCode"/><span class="mandatory1">*</span> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>
 	</tr>
 	

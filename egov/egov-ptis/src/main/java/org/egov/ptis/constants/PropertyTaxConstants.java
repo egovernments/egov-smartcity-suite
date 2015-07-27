@@ -582,6 +582,7 @@ public interface PropertyTaxConstants {
 	public static final String BILL_COLLECTOR_DESGN = "Bill Collector";
 	public static final String END_APPROVER_DESGN = "RO";
 
+	public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
 	public static final String ALTER_ASSESSMENT = "ALTER ASSESSMENT";
 	public static final String WFSTATUS = "WFSTATUS";
 	public static final String WFOWNER = "WFOWNER";

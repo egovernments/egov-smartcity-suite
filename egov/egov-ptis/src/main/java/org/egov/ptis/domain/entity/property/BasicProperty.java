@@ -267,5 +267,7 @@ public interface BasicProperty {
 	String getFullOwnerName();
 	
 	String getMobileNumber();
+	
+	public Boolean getActive();
 
 }

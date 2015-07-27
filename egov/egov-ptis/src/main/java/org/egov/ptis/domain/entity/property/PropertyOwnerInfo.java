@@ -54,7 +54,7 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
     private UserType ownerType = UserType.CITIZEN;
 
     public PropertyOwnerInfo() {
-        owner = new User();
+    	
     }
 
     public PropertyOwnerInfo(final BasicProperty basicProperty, final PropertySource propSource, final User owner,

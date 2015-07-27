@@ -12,6 +12,11 @@
 
 	function validateWorkFlowApprover(name) {
 	    document.getElementById("workFlowAction").value=name;
+	    var approverPosId = document.getElementById("approverPositionId");
+	    if(approverPosId.value != -1) {
+			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
+			document.getElementById("approverName").value= approver.split('~')[0];
+		}   
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1") {
 	        alert("Please Select the Approver ");

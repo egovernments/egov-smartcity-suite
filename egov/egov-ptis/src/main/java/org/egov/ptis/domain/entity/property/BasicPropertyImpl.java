@@ -147,6 +147,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		this.propertyID = propertyID;
 	}
 
+	@Override
 	public Boolean getActive() {
 		return active;
 	}
