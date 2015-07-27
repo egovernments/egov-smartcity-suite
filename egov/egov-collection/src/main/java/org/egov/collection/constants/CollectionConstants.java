@@ -289,7 +289,7 @@ public final class CollectionConstants {
 	// Purpose names
 	public static final String PURPOSE_NAME_CASH_IN_HAND = "Cash In Hand";
 	public static final String PURPOSE_NAME_CHEQUE_IN_HAND = "Cheque In Hand";
-	public static final String PURPOSE_NAME_BANK_CODES = "Bank Codes";
+	public static final String PURPOSE_NAME_CASH_IN_TRANSIT = "Cash In Transit";
 	public static final String PURPOSE_NAME_CREDIT_CARD = "Credit Card";
 	public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
 	public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";

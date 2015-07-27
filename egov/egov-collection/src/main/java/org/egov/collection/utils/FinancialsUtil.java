@@ -302,7 +302,7 @@ public class FinancialsUtil {
 					String purposeName = purposeNames.get(0);
 					if (purposeName.equals(CollectionConstants.PURPOSE_NAME_CASH_IN_HAND)
 							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_CHEQUE_IN_HAND)
-							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_BANK_CODES)
+							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_CASH_IN_TRANSIT)
 							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_CREDIT_CARD)
 							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_ATM_ACCOUNTCODE)
 							|| purposeName.equals(CollectionConstants.PURPOSE_NAME_INTERUNITACCOUNT)) {
