@@ -451,9 +451,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		this.propertyArrearsMap = propertyArrearsMap;
 	}
 
-	public Boolean isCitizen() {
+	public Boolean getIsCitizen() {
 		return isCitizen;
-	}
+	} 
 
 	public void setCitizen(Boolean isCitizen) {
 		this.isCitizen = isCitizen;
