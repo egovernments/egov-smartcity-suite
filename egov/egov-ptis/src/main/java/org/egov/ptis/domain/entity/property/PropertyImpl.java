@@ -642,7 +642,7 @@ public class PropertyImpl extends StateAware implements Property {
 
 	@Override
 	public String myLinkId() {
-		String url = null;
+		String url = "";
 		if (getState() != null && getState().getValue() != null
 				&& getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER)) {
 			url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
