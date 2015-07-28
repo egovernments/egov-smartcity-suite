@@ -316,14 +316,11 @@
 			</div>
 		</td>
 	</tr>
-
-	<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) || 
-		@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
-		<%@ include file="../common/DocumentUploadView.jsp"%>
-	</s:if>
-	<s:else>
-		<%@ include file="../common/DocumentUploadForm.jsp"%>
-	</s:else>
+	<tr class="vacantlanddetaills">
+		<td colspan="5">
+			<%@ include file="../common/DocumentUploadForm.jsp"%>
+		</td>
+	</tr>
 </table>
 <script type="text/javascript">
 	function populatePropTypeCategory() {
