@@ -56,7 +56,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -74,7 +73,8 @@ public class NewConnectionController extends GenericConnectionController {
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
-            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService, final SmartValidator validator) {
+            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService,
+            final SmartValidator validator) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
         this.connectionDemandService = connectionDemandService;
@@ -89,7 +89,8 @@ public class NewConnectionController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
-    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
+    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final Model model) {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
@@ -138,8 +139,8 @@ public class NewConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent);
+        waterConnectionDetailsService
+        .createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent);
 
         return "redirect:/application/application-success?applicationNumber="
                 + waterConnectionDetails.getApplicationNumber();
@@ -149,10 +150,12 @@ public class NewConnectionController extends GenericConnectionController {
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
         if (request.getParameter("applicationNumber") != null)
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumber(request.getParameter("applicationNumber"));
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(request
+                    .getParameter("applicationNumber"));
+        model.addAttribute(
+                "connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(
+                        waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterTaxUtils.getCityName());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
@@ -163,35 +166,11 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
                 && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            final String errorMessage = newConnectionService
-                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(waterConnectionDetails
+                    .getConnection().getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
     }
 
-    @RequestMapping(value = "/generatebill/{consumerCode}", method = GET)
-    public String showCollectFeeForm(final Model model, @PathVariable final String consumerCode) {
-        return "redirect:/application/collecttax-view?consumerCode=" + consumerCode;
-    }
-
-    @RequestMapping(value = "/collecttax-view", method = GET)
-    public ModelAndView collectTaxView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final HttpServletRequest request, final Model model) {
-        if (request.getParameter("consumerCode") != null)
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCode(request.getParameter("consumerCode"));
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
-        model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
-    }
-
-    @RequestMapping(value = "/generatebill/{consumerCode}", method = POST)
-    public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String consumerCode, final Model model) {
-        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
-        model.addAttribute("collectxml", connectionDemandService.generateBill(consumerCode));
-        return "collecttax-redirection";
-    }
 }

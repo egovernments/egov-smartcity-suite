@@ -67,25 +67,7 @@ public class WaterTaxConstants {
     public static final String CLERKULB = "ULB Operator";
     public static final String APPROVERROLE = "Water Tax Approver";
     public static final String SUPERUSER = "Super User";
-    // ACtions for User
 
-    public static final String CHANGEOFUSEACTION = "Change of use";
-    public static final String ADDITIONALCONNECTION = "Additional connection";
-    public static final String DISCONNECTION = "Disconnection";
-    public static final String RECONNECTION = "Reconnection";
-    public static final String HOLDINGCONNECTION = "Holding connection";
-    public static final String COLLECTFEES = "Collect Fees";
-    public static final String EXECUTIONDATE = "Execution Date";
-    public static final String VIEWWATERCONNECTION = "View water tap connection";
-
-    // status
-
-    public static final String INPROGRESS = "INPROGRESS";
-    public static final String ACTIVE = "ACTIVE";
-    public static final String DISCONNECTED = "DISCONNECTED";
-    public static final String HOLDING = "HOLDING";
-    public static final String INACTIVE = "INACTIVE";
-    public static final String CLOSED = "CLOSED";
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
     public static final String ARR_DMD_STR = "ARR_DMD";
