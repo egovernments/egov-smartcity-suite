@@ -79,6 +79,8 @@
 				$("#cover").delay(1000).slideUp(300);
 				$("#preloader-container").delay(1000).slideUp(300);
 			});
+			var citylat = parseFloat("${sessionScope.citylat}");
+			var citylng = parseFloat("${sessionScope.citylng}");
 		</script>		
     </head>
     <body id="page-top" data-spy="scroll">
