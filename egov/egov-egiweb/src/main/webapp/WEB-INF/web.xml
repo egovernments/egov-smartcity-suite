@@ -127,6 +127,9 @@
 		<url-pattern>*.png</url-pattern>
 		<url-pattern>*.gif</url-pattern>
 		<url-pattern>*.ico</url-pattern>
+		<url-pattern>*.ttf</url-pattern>
+		<url-pattern>*.map</url-pattern>
+		<url-pattern>/downloadfile/logo</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>

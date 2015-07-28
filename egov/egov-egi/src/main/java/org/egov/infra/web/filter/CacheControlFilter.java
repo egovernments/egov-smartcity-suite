@@ -65,7 +65,7 @@ public class CacheControlFilter implements Filter {
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
 		final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-		httpServletResponse.setHeader(CACHE_CONTROL_HEADER, "private,max-age=" + this.expireInSeconds);
+		httpServletResponse.setHeader(CACHE_CONTROL_HEADER, "public,max-age=" + this.expireInSeconds);
 		httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + this.expireInSeconds * 1000L);
 		httpServletResponse.setHeader(PRAGMA_HEADER, null);
 		httpServletResponse.setHeader(ETAG_HEADER, null);
