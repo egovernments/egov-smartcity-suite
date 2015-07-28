@@ -86,7 +86,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	public void prepare() {
 		LOGGER.debug("prepare : Entered into method prepare");
 		LOGGER.debug("prepare : Workflow Property id : " + workFlowPropId);
-		setupWorkflowDetails();
+		//setupWorkflowDetails();
 		if (workFlowPropId != null && !workFlowPropId.isEmpty()) {
 			propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(
 					QUERY_PROPERTYIMPL_BYID, Long.valueOf(workFlowPropId));

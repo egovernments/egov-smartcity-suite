@@ -216,8 +216,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 } else {
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot);
                 }
-                validateFloor(propTypeMstr, property.getPropertyDetail()
-                        .getFloorDetails(), property);
+                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property);
             }
         }
 

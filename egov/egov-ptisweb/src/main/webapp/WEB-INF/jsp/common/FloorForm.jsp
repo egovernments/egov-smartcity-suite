@@ -54,14 +54,14 @@
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
 	</tr>
-	<s:if test="propertyDetail.floorDetails.size()==0">
+	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
 		<tr id="Floorinfo">
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey=""
 						headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[0].floorNo" listKey="key"	id="floorNo"
-						value="%{propertyDetail.floorDetails[0].floorNo}"
+						name="propertyDetail.floorDetailsProxy[0].floorNo" listKey="key"	id="floorNo"
+						value="%{propertyDetail.floorDetailsProxy[0].floorNo}"
 						listValue="value" list="floorNoMap" cssClass="selectnew" cssStyle="width:100%"
 						data-optional="0" data-errormsg="Floor Number is mandatory!" />
 				</div>
@@ -69,9 +69,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[0].structureClassification.id"
+						name="propertyDetail.floorDetailsProxy[0].structureClassification.id"
 						listKey="id" id="floorConstType"
-						value="%{propertyDetail.floorDetails[0].structureClassification.id}"
+						value="%{propertyDetail.floorDetailsProxy[0].structureClassification.id}"
 						listValue="typeName" list="dropdownData.StructureList"
 						cssClass="selectnew" cssStyle="width:100%" 
 						data-optional="0" data-errormsg="Classification of building is required!"/>
@@ -80,9 +80,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[0].propertyUsage.id"
+						name="propertyDetail.floorDetailsProxy[0].propertyUsage.id"
 						listKey="id" id="floorUsage"
-						value="%{propertyDetail.floorDetails[0].propertyUsage.id}"
+						value="%{propertyDetail.floorDetailsProxy[0].propertyUsage.id}"
 						listValue="usageName" list="dropdownData.UsageList"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
@@ -92,9 +92,9 @@
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[0].propertyOccupation.id"
+						name="propertyDetail.floorDetailsProxy[0].propertyOccupation.id"
 						listKey="id" id="floorOccupation"
-						value="%{propertyDetail.floorDetails[0].propertyOccupation.id}"
+						value="%{propertyDetail.floorDetailsProxy[0].propertyOccupation.id}"
 						listValue="occupation" list="dropdownData.OccupancyList"
 						cssClass="selectnew"
 						cssStyle="width:100%" 
@@ -103,9 +103,9 @@
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].occupantName"
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantName"
 						id="occupantName" size="20"
-						value="%{propertyDetail.floorDetails[0].occupantName}"
+						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
 						maxlength="64" cssStyle="width:100%" data-optional="0"
 						data-errormsg="Ocuupancy Name is required!" />
 				</div>
@@ -113,18 +113,18 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:date name="propertyDetail.floorDetails[0].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
+					<s:date name="propertyDetail.floorDetailsProxy[0].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
 					<s:textfield autocomplete="off"
-						name="propertyDetail.floorDetails[0].occupancyDate" data-optional="0" data-errormsg="Ocuupancy date is required!"
-						id="propertyDetail.floorDetails[0].occupancyDate" value="%{occDate}" size="10"
+						name="propertyDetail.floorDetailsProxy[0].occupancyDate" data-optional="0" data-errormsg="Ocuupancy date is required!"
+						id="propertyDetail.floorDetailsProxy[0].occupancyDate" value="%{occDate}" size="10"
 						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 				</div>
 			</td>
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield name="propertyDetail.floorDetails[0].builtUpArea.area" 
-						maxlength="15" size="10" id="propertyDetail.floorDetails[0].builtUpArea.area" value="%{propertyDetail.floorDetails[0].builtUpArea.area}"
+					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.area" 
+						maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[0].builtUpArea.area" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.area}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 						cssStyle="width:100%" />
 				</div>
@@ -132,8 +132,8 @@
 
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="propertyDetail.floorDetails[0].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
-							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetails[0].taxExemptedReason.id}" 
+					<s:select name="propertyDetail.floorDetailsProxy[0].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
+							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetailsProxy[0].taxExemptedReason.id}" 
 							listKey="id" listValue="name"
 							cssClass="selectnew" data-optional="1">
 						</s:select>
@@ -142,8 +142,8 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:select name="propertyDetail.floorDetails[0].drainage" id="propertyDetail.floorDetails[0].drainage" headerValue="select"
-							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[0].drainage}"
+					<s:select name="propertyDetail.floorDetailsProxy[0].drainage" id="propertyDetail.floorDetailsProxy[0].drainage" headerValue="select"
+							headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[0].drainage}"
 							cssClass="selectnew" data-optional="1">
 					</s:select>
 				</div>
@@ -151,8 +151,8 @@
 			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
-					<s:textfield autocomplete="off" name="propertyDetail.floorDetails[0].noOfSeats" 
-						id="propertyDetail.floorDetails[0].noOfSeats" value="%{propertyDetail.floorDetails[0].noOfSeats}" size="10"
+					<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[0].noOfSeats" 
+						id="propertyDetail.floorDetailsProxy[0].noOfSeats" value="%{propertyDetail.floorDetailsProxy[0].noOfSeats}" size="10"
 						maxlength="10" cssStyle="width:100%"></s:textfield>
 				</div>
 			</td>
@@ -169,16 +169,15 @@
 		</tr>
 	</s:if>
 	<s:else>
-		<s:iterator value="(propertyDetail.floorDetails.size).{#this}"
+		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}"
 			status="floorsstatus">
 			<tr id="Floorinfo">
-
 				<td class="blueborderfortd" style="padding: 2px 2px"><s:select
 						headerKey="" headerValue="%{getText('default.select')}"
-						name="propertyDetail.floorDetails[%{#floorsstatus.index}].floorNo"
+						name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].floorNo"
 						listKey="key" id="floorNo" listValue="value" list="floorNoMap"
 						cssClass="selectnew"
-						value="%{propertyDetail.floorDetails[#floorsstatus.index].floorNo}"
+						value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].floorNo}"
 						cssStyle="width:100%" /></td>
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
@@ -186,18 +185,18 @@
 						<s:if test="%{#floorsstatus.index == 0}">
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
+								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType"
-								value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
+								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
 								cssClass="selectnew" cssStyle="width:100%" />
 						</s:if>
 						<s:else>
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetails[%{#floorsstatus.index}].structureClassification.id"
+								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].structureClassification.id"
 								listKey="id" id="floorConstType%{#floorsstatus.index-1}"
-								value="%{propertyDetail.floorDetails[#floorsstatus.index].structureClassification.id}"
+								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].structureClassification.id}"
 								listValue="typeName" list="dropdownData.StructureList"
 								cssClass="selectnew" cssStyle="width:100%" />
 						</s:else>
@@ -208,20 +207,20 @@
 						<s:if test="%{#floorsstatus.index==0}">
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyUsage.id"
+								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage" listValue="usageName"
 								list="dropdownData.UsageList" cssClass="selectnew"
-								value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}"
+								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
 						</s:if>
 						<s:else>
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
-								name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyUsage.id"
+								name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
 								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
 								listValue="usageName" list="dropdownData.UsageList"
 								cssClass="selectnew"
-								value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyUsage.id}"
+								value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
 						</s:else>
 					</div>
@@ -231,18 +230,18 @@
 					<div align="center">
 						<s:select headerKey=""
 							headerValue="%{getText('default.select')}"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].propertyOccupation.id"
+							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyOccupation.id"
 							listKey="id" id="floorOccupation" listValue="occupation"
 							list="dropdownData.OccupancyList" cssClass="selectnew"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].propertyOccupation.id}"
+							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyOccupation.id}"
 							cssStyle="width:100%" />
 					</div>
 				</td>
 
                <td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:textfield name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetails[#floorsstatus.index].occupantName}"
+						<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupantName"
+							id="occupantname" size="25" maxlength="64" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%" />
 						
 					</div>
@@ -250,20 +249,20 @@
  
  				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:date name="propertyDetail.floorDetails[#floorsstatus.index].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
+						<s:date name="propertyDetail.floorDetailsProxy[#floorsstatus.index].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
 						<s:textfield autocomplete="off"
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].occupancyDate" 
+							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupancyDate" 
 							value="%{occDate}"
-							id="propertyDetail.floorDetails[%#floorsstatus.index].occupancyDate" size="10"
+							id="propertyDetail.floorDetailsProxy[%#floorsstatus.index].occupancyDate" size="10"
 							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
 					</div>
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield
-							name="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
-							maxlength="15" size="10" id="propertyDetail.floorDetails[%{#floorsstatus.index}].builtUpArea.area"
-							value="%{propertyDetail.floorDetails[#floorsstatus.index].builtUpArea.area}"
+							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							maxlength="15" size="10" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.area"
+							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.area}"
 							onblur="trim(this,this.value);checkForTwoDecimals(this,'Assessable Area');checkZero(this,'Assessable Area');"
 							cssStyle="width:100%" />
 					</div>
@@ -271,8 +270,8 @@
 
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
-							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetails[#floorsstatus.index].taxExemptedReason.id}" 
+						<s:select name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].taxExemptedReason.id" id="taxExemptedReason" headerValue="select"
+							headerKey="" list="dropdownData.taxExemptionReasonList" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].taxExemptedReason.id}" 
 							listKey="id" listValue="name"
 							cssClass="selectnew" data-optional="1">
 						</s:select>
@@ -281,8 +280,8 @@
 				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:select name="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" id="propertyDetail.floorDetails[%{#floorsstatus.index}].drainage" headerValue="select"
-								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetails[#floorsstatus.index].drainage}"
+						<s:select name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].drainage" headerValue="select"
+								headerKey="" list="#{'true':'Yes','false':'No' }" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].drainage}"
 								cssClass="selectnew" data-optional="1">
 						</s:select>
 					</div>
@@ -290,8 +289,8 @@
 				
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:textfield autocomplete="off" name="propertyDetail.floorDetails[%{#floorsstatus.index}].noOfSeats" 
-							id="propertyDetail.floorDetails[%{#floorsstatus.index}].noOfSeats" value="%{propertyDetail.floorDetails[#floorsstatus.index].noOfSeats}" size="10"
+						<s:textfield autocomplete="off" name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" 
+							id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].noOfSeats" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].noOfSeats}" size="10"
 							maxlength="10" cssStyle="width:100%"></s:textfield>
 					</div>
 				</td>

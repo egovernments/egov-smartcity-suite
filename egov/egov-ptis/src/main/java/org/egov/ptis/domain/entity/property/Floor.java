@@ -56,15 +56,10 @@ import org.egov.infstr.models.BaseModel;
 
 /**
  * <p>
- * This is an Interface which describes the Floor Details of a Property. A
- * Property might have one or more floors. The data for property tax might be
- * given for individual floors or at aggregate level.
+ * This is a class which describes the Floor Details of a Property. A Property might have one or more floors. The data for
+ * property tax might be given for individual floors or at aggregate level.
  * </p>
  *
- * @author Gayathri Joshi
- * @version 2.00
- * @see org.egov.ptis.domain.entity.property.Floor
- * @since 2.00
  */
 
 public class Floor extends BaseModel implements Auditable {

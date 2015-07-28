@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -51,352 +51,335 @@ import java.util.List;
 import org.egov.commons.Area;
 
 /**
- * This is Interface for the Property Detail which contains all the details;
- * like Area, , length, breadth, floor details etc which gives the complete
- * statistical information about the Individual Property and are required to
- * calculate the Property Tax for ny Property Each PropertyDetail is associated
- * with Property Class
+ * This is Interface for the Property Detail which contains all the details; like Area, , length, breadth, floor details etc which
+ * gives the complete statistical information about the Individual Property and are required to calculate the Property Tax for ny
+ * Property Each PropertyDetail is associated with Property Class
  * 
  * @author Neetu
  * @version 2.00
- * @see org.egov.ptis.property.model.BuitUpPropertyImpl
- *      org.egov.ptis.property.model.VacantPropertyImpl
- *      org.egov.ptis.property.model.Property
+ * @see org.egov.ptis.property.model.BuitUpPropertyImpl org.egov.ptis.property.model.VacantPropertyImpl
+ * org.egov.ptis.property.model.Property
  * 
  */
 public interface PropertyDetail extends Property {
 
-	public Property property = null;
+    public Property property = null;
 
-	public PropertyTypeMaster getPropertyTypeMaster();
+    public PropertyTypeMaster getPropertyTypeMaster();
 
-	public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster);
+    public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster);
 
-	public Date getDateOfCompletion();
+    public Date getDateOfCompletion();
 
-	public void setDateOfCompletion(Date dateOfCompletion);
+    public void setDateOfCompletion(Date dateOfCompletion);
 
-	public void addFloor(Floor floor);
+    public void addFloor(Floor floor);
 
-	/**
-	 * This method removes the Floor Object from the Set view of the Floor
-	 * 
-	 * @param floor
-	 *            The floor to set .
-	 */
-	public void removeFloor(Floor floor);
+    /**
+     * This method removes the Floor Object from the Set view of the Floor
+     * 
+     * @param floor The floor to set .
+     */
+    public void removeFloor(Floor floor);
 
-	public Integer getNo_of_floors();
+    public Integer getNo_of_floors();
 
-	/**
-	 * @param no_of_floors
-	 *            The no_of_floors to set.
-	 */
-	public void setNo_of_floors(Integer no_of_floors);
+    /**
+     * @param no_of_floors The no_of_floors to set.
+     */
+    public void setNo_of_floors(Integer no_of_floors);
 
-	/**
-	 * @return Returns the Water_Meter_Num
-	 */
-	public String getWater_Meter_Num();
+    /**
+     * @return Returns the Water_Meter_Num
+     */
+    public String getWater_Meter_Num();
 
-	/**
-	 * @param Water_Meter_Num
-	 *            The Water_Meter_Num to set.
-	 */
-	public void setWater_Meter_Num(String Water_Meter_Num);
+    /**
+     * @param Water_Meter_Num The Water_Meter_Num to set.
+     */
+    public void setWater_Meter_Num(String Water_Meter_Num);
 
-	/**
-	 * @return Returns the Elec_Meter_Num
-	 */
-	public String getElec_Meter_Num();
+    /**
+     * @return Returns the Elec_Meter_Num
+     */
+    public String getElec_Meter_Num();
 
-	/**
-	 * @param Water_Meter_Num
-	 *            The Water_Meter_Num to set.
-	 */
-	public void setElec_Meter_Num(String Elec_Meter_Num);
+    /**
+     * @param Water_Meter_Num The Water_Meter_Num to set.
+     */
+    public void setElec_Meter_Num(String Elec_Meter_Num);
 
-	/**
-	 * @return Returns the PropertyDetailsID
-	 */
-	public Integer getPropertyDetailsID();
+    /**
+     * @return Returns the PropertyDetailsID
+     */
+    public Integer getPropertyDetailsID();
 
-	/**
-	 * @param propertyDetailsID
-	 *            The propertyDetailsID to set.
-	 */
-	public void setPropertyDetailsID(Integer propertyDetailsID);
+    /**
+     * @param propertyDetailsID The propertyDetailsID to set.
+     */
+    public void setPropertyDetailsID(Integer propertyDetailsID);
 
-	/**
-	 * @return Returns the Property
-	 */
-	public Property getProperty();
+    /**
+     * @return Returns the Property
+     */
+    public Property getProperty();
 
-	/**
-	 * @param Property
-	 *            The Property
-	 */
-	public void setProperty(Property property);
+    /**
+     * @param Property The Property
+     */
+    public void setProperty(Property property);
 
-	/**
-	 * @return Returns the Set for FloorDetails.
-	 */
-	public List<Floor> getFloorDetails();
+    /**
+     * @return Returns the Set for FloorDetails.
+     */
+    public List<Floor> getFloorDetails();
 
-	/**
-	 * @param floorDetails
-	 *            The Set view of floorDetails to set.
-	 */
-	public void setFloorDetails(List<Floor> floorDetails);
+    /**
+     * @param floorDetails The Set view of floorDetails to set.
+     */
+    public void setFloorDetails(List<Floor> floorDetails);
 
-	
-	/**
-	 * @return Returns the Sital Area.
-	 */
-	public Area getSitalArea();
+    /**
+     * @return Returns the Sital Area.
+     */
+    public Area getSitalArea();
 
-	/**
-	 * @param sitalArea
-	 *            The SitalArea to set.
-	 */
-	public void setSitalArea(Area sitalArea);
+    /**
+     * @param sitalArea The SitalArea to set.
+     */
+    public void setSitalArea(Area sitalArea);
 
-	/**
-	 * @param area
-	 *            The PlinthArea to set.
-	 */
+    /**
+     * @param area The PlinthArea to set.
+     */
 
-	public void setPlinthArea(Area area);
+    public void setPlinthArea(Area area);
 
-	/**
-	 * @return Returns the Plinth Area.
-	 */
+    /**
+     * @return Returns the Plinth Area.
+     */
 
-	public Area getPlinthArea();
+    public Area getPlinthArea();
 
-	/**
-	 * @return Returns the Total Built Up Area.
-	 */
-	public Area getTotalBuiltupArea();
+    /**
+     * @return Returns the Total Built Up Area.
+     */
+    public Area getTotalBuiltupArea();
 
-	/**
-	 * @param area
-	 *            The TotalBuiltUpArea to set.
-	 */
-	public void setTotalBuiltupArea(Area area);
+    /**
+     * @param area The TotalBuiltUpArea to set.
+     */
+    public void setTotalBuiltupArea(Area area);
 
-	/**
-	 * @return Returns the CommBuiltUp Area.
-	 */
+    /**
+     * @return Returns the CommBuiltUp Area.
+     */
 
-	public Area getCommBuiltUpArea();
+    public Area getCommBuiltUpArea();
 
-	/**
-	 * @param area
-	 *            The CommBuiltUpArea to set.
-	 */
+    /**
+     * @param area The CommBuiltUpArea to set.
+     */
 
-	public void setCommBuiltUpArea(Area area);
+    public void setCommBuiltUpArea(Area area);
 
-	/**
-	 * @return Returns the CommVacantLand Area.
-	 */
+    /**
+     * @return Returns the CommVacantLand Area.
+     */
 
-	public Area getCommVacantLand();
+    public Area getCommVacantLand();
 
-	/**
-	 * @param area
-	 *            The CommVacantLand to set.
-	 */
+    /**
+     * @param area The CommVacantLand to set.
+     */
 
-	public void setCommVacantLand(Area area);
+    public void setCommVacantLand(Area area);
 
-	/**
-	 * @return Returns SurveyNumber
-	 */
-	public String getSurveyNumber();
+    /**
+     * @return Returns SurveyNumber
+     */
+    public String getSurveyNumber();
 
-	/**
-	 * @param surveyNumber
-	 *            The surveyNumber to set.
-	 */
-	public void setSurveyNumber(String surveyNumber);
+    /**
+     * @param surveyNumber The surveyNumber to set.
+     */
+    public void setSurveyNumber(String surveyNumber);
 
-	public Character getFieldVerified();
+    public Character getFieldVerified();
 
-	/**
-	 * @param fieldVerified
-	 *            The fieldVerified to set.
-	 */
-	public void setFieldVerified(Character fieldVerified);
+    /**
+     * @param fieldVerified The fieldVerified to set.
+     */
+    public void setFieldVerified(Character fieldVerified);
 
-	/**
-	 * @param Boolean
-	 *            fieldVerified The fieldVerified to set.
-	 */
+    /**
+     * @param Boolean fieldVerified The fieldVerified to set.
+     */
 
-	/**
-	 * @return Returns Date for FieldVerification
-	 */
-	public java.util.Date getFieldVerificationDate();
+    /**
+     * @return Returns Date for FieldVerification
+     */
+    public java.util.Date getFieldVerificationDate();
 
-	/**
-	 * @param fieldVerificationDate
-	 *            The fieldVerificationDate to set.
-	 */
-	public void setFieldVerificationDate(java.util.Date fieldVerificationDate);
+    /**
+     * @param fieldVerificationDate The fieldVerificationDate to set.
+     */
+    public void setFieldVerificationDate(java.util.Date fieldVerificationDate);
 
-	/**
-	 * @return Returns char FieldIrregular
-	 */
-	public char getFieldIrregular();
+    /**
+     * @return Returns char FieldIrregular
+     */
+    public char getFieldIrregular();
 
-	/**
-	 * @param char fieldIrregular The fieldIrregular to set.
-	 */
-	public void setFieldIrregular(char fieldIrregular);
+    /**
+     * @param char fieldIrregular The fieldIrregular to set.
+     */
+    public void setFieldIrregular(char fieldIrregular);
 
-	/**
-	 * @return Returns PropertyUsage
-	 */
-	public PropertyUsage getPropertyUsage();
+    /**
+     * @return Returns PropertyUsage
+     */
+    public PropertyUsage getPropertyUsage();
 
-	/**
-	 * @param Boolean
-	 *            propertyUsage The propertyUsage to set.
-	 */
-	public void setPropertyUsage(PropertyUsage propertyUsage);
+    /**
+     * @param Boolean propertyUsage The propertyUsage to set.
+     */
+    public void setPropertyUsage(PropertyUsage propertyUsage);
 
-	public void setUpdatedTime(Date updatedTime);
+    public void setUpdatedTime(Date updatedTime);
 
-	public Date getUpdatedTime();
+    public Date getUpdatedTime();
 
-	public void setPropertyType(String propertyType);
+    public void setPropertyType(String propertyType);
 
-	public String getPropertyType();
+    public String getPropertyType();
 
-	public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
+    public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster);
 
-	public PropertyMutationMaster getPropertyMutationMaster();
+    public PropertyMutationMaster getPropertyMutationMaster();
 
-	public Character getComZone();
+    public Character getComZone();
 
-	public void setComZone(Character comZone);
+    public void setComZone(Character comZone);
 
-	public Character getCornerPlot();
+    public Character getCornerPlot();
 
-	public void setCornerPlot(Character cornerPlot);
+    public void setCornerPlot(Character cornerPlot);
 
-	public PropertyOccupation getPropertyOccupation();
+    public PropertyOccupation getPropertyOccupation();
 
-	public void setPropertyOccupation(PropertyOccupation propertyOccupation);
-	
-	public Area getNonResPlotArea();
-	
-	public void setNonResPlotArea(Area nonResPlotArea);
-	
-	public boolean isLift();
-	
-	public void setLift(boolean lift);
-	
-	public boolean isToilets();
-	
-	public void setToilets(boolean toilets);
-	
-	public boolean isWaterTap();
-	
-	public void setWaterTap(boolean waterTap);
-	
-	public boolean isStructure();
-	
-	public void setStructure(boolean structure);
-	
-	public boolean isElectricity();
-	
-	public void setElectricity(boolean electricity);
-	
-	public boolean isAttachedBathRoom();
-	
-	public void setAttachedBathRoom(boolean attachedBathRoom);
-	
-	public boolean isWaterHarvesting();
-	
-	public void setWaterHarvesting(boolean waterHarvesting);
-	
-	public boolean isCable();
-	
-	public void setCable(boolean cable);
-	
-	public Double getExtentSite();
-	
-	public void setExtentSite(Double extentSite);
-	
-	public Double getExtentAppartenauntLand();
-	
-	public void setExtentAppartenauntLand(Double extentAppartenauntLand);
-	
-	public String getSiteOwner();
-	
-	public void setSiteOwner(String siteOwner);
-	
-	public FloorType getFloorType();
-	
-	public void setFloorType(FloorType floorType);
-	
-	public RoofType getRoofType();
-	
-	public void setRoofType(RoofType roofType);
-	
-	public WallType getWallType();
-	
-	public void setWallType(WallType wallType);
-	
-	public WoodType getWoodType();
-	
-	public void setWoodType(WoodType woodType);
-	
-	public Apartment getApartment();
-	
-	public void setApartment(Apartment apartment);
-	
-	public String getPattaNumber();
-	
-	public void setPattaNumber(String pattaNumber);
-	
-	public Double getCurrentCapitalValue();
-	
-	public void setCurrentCapitalValue(Double currentCapitalValue);
-	
-	public Double getMarketValue();
-	
-	public void setMarketValue(Double marketValue);
-	
-	public String getCategoryType();
-	
-	public void setCategoryType(String categoryType);
-	
-	public String getOccupancyCertificationNo();
-	
-	public void setOccupancyCertificationNo(String occupancyCertificationNo);
-	
-	public String getBuildingPermissionNo();
-	
-	public void setBuildingPermissionNo(String buildingPermissionNo);
-	
-	public Date getBuildingPermissionDate();
-	
-	public void setBuildingPermissionDate(Date buildingPermissionDate);
-	
-	public String getDeviationPercentage();
-	
-	public void setDeviationPercentage(String deviationPercentage);
-	
-	public Boolean isAppurtenantLandChecked();
+    public void setPropertyOccupation(PropertyOccupation propertyOccupation);
 
-	public void setAppurtenantLandChecked(Boolean appurtenantLandChecked);
+    public Area getNonResPlotArea();
 
-	public Boolean isBuildingPlanDetailsChecked();
+    public void setNonResPlotArea(Area nonResPlotArea);
 
-	public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked);
-	
+    public boolean isLift();
+
+    public void setLift(boolean lift);
+
+    public boolean isToilets();
+
+    public void setToilets(boolean toilets);
+
+    public boolean isWaterTap();
+
+    public void setWaterTap(boolean waterTap);
+
+    public boolean isStructure();
+
+    public void setStructure(boolean structure);
+
+    public boolean isElectricity();
+
+    public void setElectricity(boolean electricity);
+
+    public boolean isAttachedBathRoom();
+
+    public void setAttachedBathRoom(boolean attachedBathRoom);
+
+    public boolean isWaterHarvesting();
+
+    public void setWaterHarvesting(boolean waterHarvesting);
+
+    public boolean isCable();
+
+    public void setCable(boolean cable);
+
+    public Double getExtentSite();
+
+    public void setExtentSite(Double extentSite);
+
+    public Double getExtentAppartenauntLand();
+
+    public void setExtentAppartenauntLand(Double extentAppartenauntLand);
+
+    public String getSiteOwner();
+
+    public void setSiteOwner(String siteOwner);
+
+    public FloorType getFloorType();
+
+    public void setFloorType(FloorType floorType);
+
+    public RoofType getRoofType();
+
+    public void setRoofType(RoofType roofType);
+
+    public WallType getWallType();
+
+    public void setWallType(WallType wallType);
+
+    public WoodType getWoodType();
+
+    public void setWoodType(WoodType woodType);
+
+    public Apartment getApartment();
+
+    public void setApartment(Apartment apartment);
+
+    public String getPattaNumber();
+
+    public void setPattaNumber(String pattaNumber);
+
+    public Double getCurrentCapitalValue();
+
+    public void setCurrentCapitalValue(Double currentCapitalValue);
+
+    public Double getMarketValue();
+
+    public void setMarketValue(Double marketValue);
+
+    public String getCategoryType();
+
+    public void setCategoryType(String categoryType);
+
+    public String getOccupancyCertificationNo();
+
+    public void setOccupancyCertificationNo(String occupancyCertificationNo);
+
+    public String getBuildingPermissionNo();
+
+    public void setBuildingPermissionNo(String buildingPermissionNo);
+
+    public Date getBuildingPermissionDate();
+
+    public void setBuildingPermissionDate(Date buildingPermissionDate);
+
+    public String getDeviationPercentage();
+
+    public void setDeviationPercentage(String deviationPercentage);
+
+    public Boolean isAppurtenantLandChecked();
+
+    public void setAppurtenantLandChecked(Boolean appurtenantLandChecked);
+
+    public Boolean isBuildingPlanDetailsChecked();
+
+    public void setBuildingPlanDetailsChecked(Boolean buildingPlanDetailsChecked);
+
+    public List<Floor> getFloorDetailsProxy();
+
+    public void setFloorDetailsProxy(List<Floor> floorDetailsProxy);
+
 }

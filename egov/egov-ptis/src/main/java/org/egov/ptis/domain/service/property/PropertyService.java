@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
@@ -271,7 +271,8 @@ public class PropertyService {
         Area totBltUpArea = new Area();
         Float totBltUpAreaVal = new Float(0);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            for (Floor floor : property.getPropertyDetail().getFloorDetails()) {
+            property.getPropertyDetail().getFloorDetails().clear();
+            for (Floor floor : property.getPropertyDetail().getFloorDetailsProxy()) {
                 if (floor != null) {
                     totBltUpAreaVal = totBltUpAreaVal + floor.getBuiltUpArea().getArea();
                     PropertyTypeMaster unitType = null;
@@ -327,6 +328,7 @@ public class PropertyService {
                     User user = userService.getUserById(EgovThreadLocals.getUserId());
                     floor.setCreatedBy(user);
                     floor.setModifiedBy(user);
+                    property.getPropertyDetail().getFloorDetails().add(floor);
                     // setting total builtup area.
                     totBltUpArea.setArea(totBltUpAreaVal);
                     property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);

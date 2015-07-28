@@ -271,18 +271,18 @@ public class ModifyPropertyAction extends WorkflowAction {
     private String eastBoundary;
     private String westBoundary;
 
-    // private List<String> validActions;
-
     public ModifyPropertyAction() {
         super();
         propertyModel.setPropertyDetail(new BuiltUpProperty());
         this.addRelatedEntity("propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
-        this.addRelatedEntity("propertyDetail.floorDetails.unitType", PropertyTypeMaster.class);
+        /*this.addRelatedEntity("propertyDetail.floorDetails.unitType", PropertyTypeMaster.class);
         this.addRelatedEntity("propertyDetail.floorDetails.propertyUsage", PropertyUsage.class);
         this.addRelatedEntity("propertyDetail.floorDetails.propertyOccupation",
                 PropertyOccupation.class);
         this.addRelatedEntity("propertyDetail.floorDetails.structureClassification",
                 StructureClassification.class);
+        this.addRelatedEntity("propertyDetail.floorDetails.taxExemptedReason",
+                TaxExeptionReason.class);*/
         this.addRelatedEntity("propertyDetail.apartment", Apartment.class);
     }
 
@@ -601,6 +601,7 @@ public class ModifyPropertyAction extends WorkflowAction {
     @SuppressWarnings("unchecked")
     public void prepare() {
         LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
+        super.prepare();
         setUserInfo();
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().find(
@@ -889,9 +890,10 @@ public class ModifyPropertyAction extends WorkflowAction {
     private void setFloorDetails(final Property property) {
         LOGGER.debug("Entered into setFloorDetails, Property: " + property);
 
-        final List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
+        final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
+        property.getPropertyDetail().setFloorDetailsProxy(floors);
         int i = 0;
-        for (final Floor flr : flrDtSet) {
+        for (final Floor flr : floors) {
             floorNoStr[i] = propertyTaxUtil.getFloorStr(flr.getFloorNo());
             i++;
         }

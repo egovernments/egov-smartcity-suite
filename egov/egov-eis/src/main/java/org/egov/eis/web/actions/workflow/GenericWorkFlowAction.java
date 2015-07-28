@@ -51,226 +51,215 @@ import org.egov.infstr.workflow.CustomizedWorkFlowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 
 /**
- * Generic WorkFlow Action. Can be extended by any action class that intends to
- * provide Work flow functionality.
+ * Generic WorkFlow Action. Can be extended by any action class that intends to provide Work flow functionality.
  * 
  * @author subhash
  */
 public abstract class GenericWorkFlowAction extends BaseFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private final static String FORWARD = "Forward";
-	protected CustomizedWorkFlowService customizedWorkFlowService;
-	protected String workFlowAction;
-	protected String approverComments;
-	protected String currentState;
-	protected String currentDesignation;
-	protected String additionalRule;
-	protected BigDecimal amountRule;
-	protected String workFlowDepartment;
-	protected String pendingActions;
-	protected String approverName;
-	protected String approverDepartment;
-	protected String approverDesignation;
-	protected Long approverPositionId;
+    private static final long serialVersionUID = 1L;
+    private final static String FORWARD = "Forward";
+    protected CustomizedWorkFlowService customizedWorkFlowService;
+    protected String workFlowAction;
+    protected String approverComments;
+    protected String currentState;
+    protected String currentDesignation;
+    protected String additionalRule;
+    protected BigDecimal amountRule;
+    protected String workFlowDepartment;
+    protected String pendingActions;
+    protected String approverName;
+    protected String approverDepartment;
+    protected String approverDesignation;
+    protected Long approverPositionId;
 
-	@Override
-	public abstract StateAware getModel();
+    @Override
+    public abstract StateAware getModel();
 
-	@Override
-	public void prepare() {
-	    super.prepare();
-		addDropdownData("approverDepartmentList",
-				this.persistenceService.findAllBy("from Department order by name"));
-		addDropdownData("approverList", Collections.EMPTY_LIST);
-		addDropdownData("designationList", Collections.EMPTY_LIST);
-	}
+    @Override
+    public void prepare() {
+        super.prepare();
+        addDropdownData("approverDepartmentList",
+                this.persistenceService.findAllBy("from Department order by name"));
+        addDropdownData("approverList", Collections.EMPTY_LIST);
+        addDropdownData("designationList", Collections.EMPTY_LIST);
+    }
 
-	/**
-	 * Implementations must override this method based on their object's value
-	 * that needs to be used in workflow
-	 * 
-	 * @return the value that needs to be compared in the Amount rule table
-	 *         against FromAmount and ToAmount
-	 */
+    /**
+     * Implementations must override this method based on their object's value that needs to be used in workflow
+     * 
+     * @return the value that needs to be compared in the Amount rule table against FromAmount and ToAmount
+     */
 
-	protected BigDecimal getAmountRule() {
-		return null;
-	}
+    protected BigDecimal getAmountRule() {
+        return null;
+    }
 
-	/**
-	 * Implementations must override this method to get additional rule for
-	 * workflow.
-	 * 
-	 * @return the value that needs to be compared in the matrix table against
-	 *         Additional rule
-	 */
+    /**
+     * Implementations must override this method to get additional rule for workflow.
+     * 
+     * @return the value that needs to be compared in the matrix table against Additional rule
+     */
 
-	protected String getAdditionalRule() {
-		return null;
-	}
+    protected String getAdditionalRule() {
+        return null;
+    }
 
-	/**
-	 * Implementations must override this method to achieve department wise
-	 * workflow.
-	 * 
-	 * @return the value that needs to be compared in the matrix table against
-	 *         Department.
-	 */
+    /**
+     * Implementations must override this method to achieve department wise workflow.
+     * 
+     * @return the value that needs to be compared in the matrix table against Department.
+     */
 
-	protected String getWorkFlowDepartment() {
-		return null;
-	}
+    protected String getWorkFlowDepartment() {
+        return null;
+    }
 
-	/**
-	 * Used to get valid actions that needs to be performed Based on these value
-	 * workflow buttons will be rendered
-	 */
+    /**
+     * Used to get valid actions that needs to be performed Based on these value workflow buttons will be rendered
+     */
 
-	public List<String> getValidActions() {
-		List<String> validActions = Collections.emptyList();
-		if (null == getModel() || null == getModel().getId()) {
-			validActions = Arrays.asList(FORWARD);
-		} else {
-			if (getModel().getCurrentState() != null) {
-				validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
-						.getStateType(), getWorkFlowDepartment(), getAmountRule(),
-						getAdditionalRule(), getModel().getCurrentState().getValue(),
-						getPendingActions(), getModel().getCreatedDate().toDate());
-			} else {
-				// FIXME This May not work
-				validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
-						.getStateType(), getWorkFlowDepartment(), getAmountRule(),
-						getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED,
-						getPendingActions(), getModel().getCreatedDate().toDate());
-			}
-		}
-		return validActions;
-	}
+    public List<String> getValidActions() {
+        List<String> validActions = Collections.emptyList();
+        if (null == getModel() || null == getModel().getId()) {
+            validActions = Arrays.asList(FORWARD);
+        } else {
+            if (getModel().getCurrentState() != null) {
+                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        getAdditionalRule(), getModel().getCurrentState().getValue(),
+                        getPendingActions(), getModel().getCreatedDate().toDate());
+            } else {
+                // FIXME This May not work
+                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
+                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED,
+                        getPendingActions(), getModel().getCreatedDate().toDate());
+            }
+        }
+        return validActions;
+    }
 
-	/**
-	 * Used to get next action If the nextAction value is END then approval
-	 * Information won't be shown on the UI.
-	 */
-	public String getNextAction() {
-		WorkFlowMatrix wfMatrix = null;
-		if (getModel().getId() != null) {
-			if (getModel().getCurrentState() != null) {
-				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
-						getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel()
-								.getCurrentState().getValue(), getPendingActions(), getModel()
-								.getCreatedDate().toDate());
-			} else {
-				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
-						getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
-						State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel()
-								.getCreatedDate().toDate());
-			}
-		}
-		return wfMatrix == null ? "" : wfMatrix.getNextAction();
-	}
+    /**
+     * Used to get next action If the nextAction value is END then approval Information won't be shown on the UI.
+     */
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (getModel().getId() != null) {
+            if (getModel().getCurrentState() != null) {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel()
+                                .getCurrentState().getValue(), getPendingActions(), getModel()
+                                .getCreatedDate().toDate());
+            } else {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel()
+                                .getCreatedDate().toDate());
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
+    }
 
-	public void setCustomizedWorkFlowService(
-			final CustomizedWorkFlowService customizedWorkFlowService) {
-		this.customizedWorkFlowService = customizedWorkFlowService;
-	}
+    public void setCustomizedWorkFlowService(
+            final CustomizedWorkFlowService customizedWorkFlowService) {
+        this.customizedWorkFlowService = customizedWorkFlowService;
+    }
 
-	/**
-	 * Used to Set actionValue that will be used to call workflow script.
-	 * 
-	 * @param workFlowAction
-	 */
+    /**
+     * Used to Set actionValue that will be used to call workflow script.
+     * 
+     * @param workFlowAction
+     */
 
-	public void setWorkFlowAction(final String workFlowAction) {
-		this.workFlowAction = workFlowAction;
-	}
+    public void setWorkFlowAction(final String workFlowAction) {
+        this.workFlowAction = workFlowAction;
+    }
 
-	/**
-	 * This parameter is used to get matrix object Implementations must override
-	 * this method to get pendingActions
-	 * 
-	 * @return the value needs to be compared against matrix table
-	 *         pendingActions
-	 */
+    /**
+     * This parameter is used to get matrix object Implementations must override this method to get pendingActions
+     * 
+     * @return the value needs to be compared against matrix table pendingActions
+     */
 
-	protected String getPendingActions() {
-		return null;
-	}
+    protected String getPendingActions() {
+        return null;
+    }
 
-	public String getApproverComments() {
-		return this.approverComments;
-	}
+    public String getApproverComments() {
+        return this.approverComments;
+    }
 
-	public void setApproverComments(final String approverComments) {
-		this.approverComments = approverComments;
-	}
+    public void setApproverComments(final String approverComments) {
+        this.approverComments = approverComments;
+    }
 
-	public String getCurrentState() {
-		return currentState;
-	}
+    public String getCurrentState() {
+        return currentState;
+    }
 
-	public void setCurrentState(String currentState) {
-		this.currentState = currentState;
-	}
+    public void setCurrentState(String currentState) {
+        this.currentState = currentState;
+    }
 
-	public String getCurrentDesignation() {
-		return currentDesignation;
-	}
+    public String getCurrentDesignation() {
+        return currentDesignation;
+    }
 
-	public void setCurrentDesignation(String currentDesignation) {
-		this.currentDesignation = currentDesignation;
-	}
+    public void setCurrentDesignation(String currentDesignation) {
+        this.currentDesignation = currentDesignation;
+    }
 
-	public String getApproverName() {
-		return approverName;
-	}
+    public String getApproverName() {
+        return approverName;
+    }
 
-	public void setApproverName(String approverName) {
-		this.approverName = approverName;
-	}
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
+    }
 
-	public String getApproverDepartment() {
-		return approverDepartment;
-	}
+    public String getApproverDepartment() {
+        return approverDepartment;
+    }
 
-	public void setApproverDepartment(String approverDepartment) {
-		this.approverDepartment = approverDepartment;
-	}
+    public void setApproverDepartment(String approverDepartment) {
+        this.approverDepartment = approverDepartment;
+    }
 
-	public String getApproverDesignation() {
-		return approverDesignation;
-	}
+    public String getApproverDesignation() {
+        return approverDesignation;
+    }
 
-	public void setApproverDesignation(String approverDesignation) {
-		this.approverDesignation = approverDesignation;
-	}
+    public void setApproverDesignation(String approverDesignation) {
+        this.approverDesignation = approverDesignation;
+    }
 
-	public Long getApproverPositionId() {
-		return approverPositionId;
-	}
+    public Long getApproverPositionId() {
+        return approverPositionId;
+    }
 
-	public void setApproverPositionId(Long approverPositionId) {
-		this.approverPositionId = approverPositionId;
-	}
+    public void setApproverPositionId(Long approverPositionId) {
+        this.approverPositionId = approverPositionId;
+    }
 
-	public String getWorkFlowAction() {
-		return workFlowAction;
-	}
+    public String getWorkFlowAction() {
+        return workFlowAction;
+    }
 
-	public void setAdditionalRule(String additionalRule) {
-		this.additionalRule = additionalRule;
-	}
+    public void setAdditionalRule(String additionalRule) {
+        this.additionalRule = additionalRule;
+    }
 
-	public void setAmountRule(BigDecimal amountRule) {
-		this.amountRule = amountRule;
-	}
+    public void setAmountRule(BigDecimal amountRule) {
+        this.amountRule = amountRule;
+    }
 
-	public void setWorkFlowDepartment(String workFlowDepartment) {
-		this.workFlowDepartment = workFlowDepartment;
-	}
+    public void setWorkFlowDepartment(String workFlowDepartment) {
+        this.workFlowDepartment = workFlowDepartment;
+    }
 
-	public void setPendingActions(String pendingActions) {
-		this.pendingActions = pendingActions;
-	}
+    public void setPendingActions(String pendingActions) {
+        this.pendingActions = pendingActions;
+    }
 
 }
