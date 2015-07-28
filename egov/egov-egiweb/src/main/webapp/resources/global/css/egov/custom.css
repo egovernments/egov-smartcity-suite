@@ -1086,6 +1086,57 @@ b, strong
   font-weight:normal;
 }
 
+/*tabs styles*/
+
+.tab-header {
+  padding: 20px 15px 0px;
+  color: #fff;
+}
+
+.nav.nav-tabs > li > a:focus, .nav.nav-tabs > li > a:hover {
+  background: transparent;
+  outline: 0;
+}
+
+.nav-tabs > li.active > a:first-of-type, .nav-tabs>li.active>a:first-of-type:focus, .nav-tabs>li.active>a:first-of-type:hover, .nav-tabs>li.active>a:first-of-type:active {
+  background: transparent;
+  color: rgba(134, 78, 7, 1);
+  cursor: default;
+  border: 0;
+}
+
+.nav-tabs>li>a {
+  position: relative;
+  color: rgba(0, 0, 0, 0.5);
+  border: 0px;
+  font-weight: bold;
+  font-family:semibold;
+  text-transform:uppercase;
+  padding: 12px 15px 14px 15px;
+}
+
+.nav-tabs>li >a:hover {
+  color: #rgba(134, 78, 7, 1);
+  background: transparent;
+}
+
+ul.nav-tabs>li.active>a:after {
+  display: block;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #F67B00;
+}
+
+/* popover div */
+.input-group-btn .popover
+{
+	z-index:1010;
+	width:200px;
+}
 /******end of dinesh******/
 
 .table > thead > tr > th:hover{
@@ -1244,20 +1295,10 @@ b, strong
 .form-group .input-group .input-group-addon {
 	background:#6b4f2c;
 	border:1px solid #6b4f2c;
-	border-top-left-radius: 4px;
-	border-bottom-left-radius: 4px;
 }
 
 .theme-color{
 	color:#fff;
-} 
-
-.form-group .input-group .form-control {
-	border:1px solid #D0D2D7;
-	outline:none;
-	box-shadow:none;
-	border-top-right-radius: 4px;
-	border-bottom-right-radius: 4px;
 }
 
 .login-body .form-group .input-group .form-control:focus {
@@ -1731,8 +1772,6 @@ b, strong
 .form-group .input-group .input-group-addon.style-label {
 	background: #fff;
 	border: none;
-	border-top-left-radius: 0px;
-	border-bottom-left-radius: 0px;
 }
 
 .style-color{
