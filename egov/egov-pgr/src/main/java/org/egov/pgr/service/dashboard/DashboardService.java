@@ -142,6 +142,10 @@ public class DashboardService {
         return datas;
     }
 
+    public List<List<Object>> getAgeingByWard(final String wardName) {
+        return getAgeingData("pgr.wardwise.ageing", wardName);
+    }
+
     private List<Map<String, Object>> performanceProjection(final List<Object[]> wardwisePerformanceData,
             final DateTime currentDate) {
         final DecimalFormat df = new DecimalFormat("####0.00");
@@ -163,6 +167,29 @@ public class DashboardService {
         // SORT ZONEWISE PERFORMANCE BY REDRESSAL %
         sortData(compAggrData, "y");
         return compAggrData;
+    }
+
+    private List<List<Object>> getAgeingData(final String querykey, final String wardName) {
+        final Object[] compData = dashboardRepository.fetchComplaintAgeing(querykey, wardName);
+        final List<Object> cntabv90 = new LinkedList<Object>();
+        cntabv90.add("> 90 Days");
+        cntabv90.add(((BigInteger) compData[0]).intValue());
+        final List<Object> cntbtw45to90 = new LinkedList<Object>();
+        cntbtw45to90.add("90-45 Days");
+        cntbtw45to90.add(((BigInteger) compData[1]).intValue());
+        final List<Object> cntbtw15to45 = new LinkedList<Object>();
+        cntbtw15to45.add("44-15 Days");
+        cntbtw15to45.add(((BigInteger) compData[2]).intValue());
+        final List<Object> cntlsthn15 = new LinkedList<Object>();
+        cntlsthn15.add("< 15 Days");
+        cntlsthn15.add(((BigInteger) compData[3]).intValue());
+        final List<List<Object>> dataHolder = new LinkedList<List<Object>>();
+        dataHolder.add(cntabv90);
+        dataHolder.add(cntbtw45to90);
+        dataHolder.add(cntbtw15to45);
+        dataHolder.add(cntlsthn15);
+
+        return dataHolder;
     }
 
     private List<Map<String, Object>> performanceAnalysis(final List<Object[]> wardwisePerformanceData,

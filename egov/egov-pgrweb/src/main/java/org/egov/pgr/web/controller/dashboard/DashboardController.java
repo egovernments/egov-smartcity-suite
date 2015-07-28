@@ -50,6 +50,7 @@ import org.egov.pgr.web.contract.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -81,6 +82,11 @@ public class DashboardController {
     @RequestMapping(value = "/typewise-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Map<String, Object>> complaintTypewiseAggregate() {
         return dashboardService.getCompTypewiseAggregate();
+    }
+
+    @RequestMapping(value = "/ageing/{ward}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<List<Object>> wardwiseAgeing(@PathVariable final String ward) {
+        return dashboardService.getAgeingByWard(ward);
     }
 
     @RequestMapping(value = "/wardwise-performance", produces = MediaType.APPLICATION_JSON_VALUE)

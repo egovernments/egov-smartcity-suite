@@ -237,7 +237,7 @@ function breakupTabularDrill(link) {
 		clsBtn.addClass("fa-minus-circle");
 		$("<div id='"+zoneNo+"tabularDrillGraph"+"' style='height:200px;width:200px;margin:0 auto;'></div>").insertAfter($(link));
 		td.mask('');
-		$.ajax({url:"tabularDrill.do?zn="+zoneName,
+		$.ajax({url:"ageing/"+zoneName,
 			cache:false
 		}).done(function(data) {
 			$('#'+zoneNo+'tabularDrillGraph').highcharts({
@@ -611,7 +611,10 @@ function performanceGISRegBreakup(zoneId,chartWin,infoWin,map,marker) {
 }
 
 
-function performanceBarDrilldown(zoneName) {
+/*
+ * Performance Bar Wardwise drilldown, disabled since no zone
+ * 
+ * function performanceBarDrilldown(zoneName) {
 	$("#performanceGraph").parent().mask('');
 	$("#performanceGraph").empty();
 	if($("#performanceGraph").highcharts()) {
@@ -697,7 +700,7 @@ function performanceBarDrilldown(zoneName) {
 	    });
 		$("#performanceGraph").parent().unmask();
 	});	
-}
+}*/
 
 function performanceBar(data) {
 	var drawPerformanceBar = function (bardata) {
@@ -761,7 +764,9 @@ function performanceBar(data) {
                             color:'white'
                         },
                         stacking: 'normal',
-                        cursor: 'pointer',
+                        cursor: 'pointer'/*
+                        commenting since no drilldown from ward
+                        ,
                         point: {
                             events: {
                                 click: function () {
@@ -771,7 +776,7 @@ function performanceBar(data) {
                                 	
                                 }
                             }
-                        }
+                        }*/
                     }
 		        },
 		        series: [{

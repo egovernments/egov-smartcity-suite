@@ -92,6 +92,21 @@ public class DashboardRepository {
         return qry.list();
     }
 
+    public Object[] fetchComplaintAgeing(final String querykey, final String wardName) {
+        final SQLQuery qry = getQuery(querykey);
+        final DateTime currentDate = new DateTime();
+        qry.setParameter("grtthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
+        qry.setParameter("lsthn90", endOfGivenDate(currentDate.minusDays(90)).toDate());
+        qry.setParameter("grtthn45", endOfGivenDate(currentDate.minusDays(45)).toDate());
+        qry.setParameter("grtthn15", endOfGivenDate(currentDate.minusDays(15)).toDate());
+        qry.setParameter("lsthn45", endOfGivenDate(currentDate.minusDays(45)).toDate());
+        qry.setParameter("lsthn15", endOfGivenDate(currentDate.minusDays(15)).toDate());
+        qry.setParameter("currdate", endOfGivenDate(currentDate).toDate());
+        if (wardName != null)
+            qry.setParameter("wardName", wardName);
+        return (Object[]) qry.uniqueResult();
+    }
+
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
         final SQLQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);
