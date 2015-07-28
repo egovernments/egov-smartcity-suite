@@ -77,9 +77,8 @@
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 					<div class="container-fluid">
 						<div class="navbar-header col-md-10 col-xs-10">
-							<a class="navbar-brand" href="javascript:void(0);"> <img
-								src="/egi/resources/global/images/${sessionScope.citylogo}"
-								height="60">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
 								<div>
 									<span class="title2">${sessionScope.cityname}</span>
 								</div>
@@ -321,7 +320,7 @@
 								</div>
 								<div class="form-group">
 									<div class="input-group">
-										<div class="g-recaptcha" data-sitekey="6LfidggTAAAAADwfl4uOq1CSLhCkH8OE7QFinbVs"></div>
+										<div class="g-recaptcha" data-sitekey="${sessionScope.cityRecaptchaPub}"></div>
 									</div>
 									<div id="captchaValid" style="display: none">
 										<div class="text-left add-margin error-msg">Captcha verification failed</div>

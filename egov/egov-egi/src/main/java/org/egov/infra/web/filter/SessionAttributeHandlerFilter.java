@@ -68,7 +68,8 @@ import org.springframework.security.core.Authentication;
 public class SessionAttributeHandlerFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionAttributeHandlerFilter.class);
-
+    private static final String DEFAULT_LOGO = "/resources/global/images/logo@2x.png";
+    private static final String CITI_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -93,10 +94,12 @@ public class SessionAttributeHandlerFilter implements Filter {
             httpSession.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
             httpSession.setAttribute("cityurl", city.getDomainURL());
             httpSession.setAttribute("cityname", city.getName());
-            httpSession.setAttribute("citylogo", city.getLogo());
+            httpSession.setAttribute("citylogo", city.getPreferences() == null ? DEFAULT_LOGO
+                    : String.format(CITI_LOGO_URL, city.getPreferences().getLogo().getFileStoreId(), city.getCode()));
             httpSession.setAttribute("citynamelocal", city.getLocalName());
             httpSession.setAttribute("cityCode", city.getCode());
             httpSession.setAttribute("cityRecaptchaPK", city.getRecaptchaPK());
+            httpSession.setAttribute("cityRecaptchaPub", city.getRecaptchaPub());
         }
 
         final Principal principal = httpRequest.getUserPrincipal();

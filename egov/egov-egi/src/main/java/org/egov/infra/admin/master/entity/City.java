@@ -39,6 +39,7 @@
  */
 package org.egov.infra.admin.master.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,6 +52,9 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -60,6 +64,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "eg_city")
 @NamedQuery(name = City.QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
 @SequenceGenerator(name = City.SEQ_CITY, sequenceName = City.SEQ_CITY, allocationSize = 1)
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class City extends AbstractAuditable {
 
     private static final long serialVersionUID = -6267923687226233397L;
@@ -72,7 +77,8 @@ public class City extends AbstractAuditable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "boundary")
+    @JoinColumn(name = "boundary", updatable = false)
+    @NotAudited
     private Boundary boundary;
 
     @SafeHtml
@@ -91,11 +97,11 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    private String logo;
+    private String recaptchaPK;
 
     @SafeHtml
     @NotBlank
-    private String recaptchaPK;
+    private String recaptchaPub;
 
     @SafeHtml
     @NotBlank
@@ -112,6 +118,11 @@ public class City extends AbstractAuditable {
     private Float longitude;
 
     private Float latitude;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preferences")
+    @NotAudited
+    private CityPreferences preferences;
 
     @Override
     public Long getId() {
@@ -163,20 +174,20 @@ public class City extends AbstractAuditable {
         this.domainURL = domainURL;
     }
 
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(final String logo) {
-        this.logo = logo;
-    }
-
     public String getRecaptchaPK() {
         return recaptchaPK;
     }
 
     public void setRecaptchaPK(final String recaptchaPK) {
         this.recaptchaPK = recaptchaPK;
+    }
+
+    public String getRecaptchaPub() {
+        return recaptchaPub;
+    }
+
+    public void setRecaptchaPub(final String recaptchaPub) {
+        this.recaptchaPub = recaptchaPub;
     }
 
     public String getCode() {
@@ -217,6 +228,14 @@ public class City extends AbstractAuditable {
 
     public void setDistrictName(final String districtName) {
         this.districtName = districtName;
+    }
+
+    public CityPreferences getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(final CityPreferences preferences) {
+        this.preferences = preferences;
     }
 
     @Override

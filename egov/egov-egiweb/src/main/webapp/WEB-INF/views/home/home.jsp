@@ -95,12 +95,12 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="<c:url value='/resources/global/images/${cityLogo}'/>" height="60" class="homepage_logo">
+							<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60" class="homepage_logo">
 						</a>
 					</div>
 					
 					<div class="navbar-brand">
-						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${cityName}</h3>
+						<h3 class="horizontal-page-title homepage" id="hp-citizen-title">${sessionScope.cityname}</h3>
 					</div>
 					
 					<!-- notifications and other links -->

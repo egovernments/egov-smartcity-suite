@@ -160,8 +160,6 @@ public class HomeController {
 
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
-        modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
-        modelData.addAttribute("cityName", session.getAttribute("cityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         return "home";
     }

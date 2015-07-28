@@ -51,7 +51,7 @@
 					<div class="container-fluid">
 						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-3">
 							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="<c:url value='../egi/resources/global/images/${cityLogo}'/>" height="60">
+								<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
 								<div>
 									<span class="title2 hidden-sm hidden-xs citizen-title">Citizen Portal<br>${cityName}</span>
 								</div>

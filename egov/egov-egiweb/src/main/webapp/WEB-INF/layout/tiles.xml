@@ -218,4 +218,9 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-updateForm.jsp"/>
     </definition>
     
+     <definition name="city-setup" extends="base_layout">
+        <put-attribute name="page-title" value="title.city.setup" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/city/city-setup.jsp"/>
+    </definition>
+    
 </tiles-definitions>
