@@ -538,6 +538,10 @@ td.bluebox.setborder, td.greybox.setborder{
 	border-left:0;
 }
 
+table.setborder{
+	border:1px solid #84B1AD;
+}
+
 .yui-skin-sam .yui-dt th {
   color:#fff;
   background: #84B1AD;
@@ -556,4 +560,8 @@ div.subheadnew {
   text-align: center;
   padding: 15px 15px;
   background:#fff;
+}
+
+table.setborder tr{
+	border-bottom:1px solid #84B1AD;
 }

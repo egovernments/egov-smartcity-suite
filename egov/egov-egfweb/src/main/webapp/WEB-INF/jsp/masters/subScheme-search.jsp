@@ -110,14 +110,17 @@
 					<td class="greybox">&nbsp</td>
 				</tr>
 			</table>
-			<div class="buttonbottom">
+			
+		</div>
+		
+		<div class="buttonbottom">
 				<input type="submit" class="buttonsubmit" value="Search" id="saveButton" name="button" onclick="return submitForm();" />
 				<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 			</div>
-			<br />
-			<s:if test="%{subSchemeList.size!=0}">
+			
+		<s:if test="%{subSchemeList.size!=0}">
 				<table width="100%" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
+					cellspacing="0" class="setborder" style="border-collapse:inherit;">
 					<tr>
 						<th class="bluebgheadtd">
 							<s:text name="masters.subscheme.search.serial" />
@@ -190,15 +193,14 @@
 					</table>
 				</div>
 
-			</s:if>
-			<br />
-
-			<br />
-			<br />
-
+			</s:if>	
+			
 		</s:form>
 		
-		</div>
+		
+		
+		
+			
 		<s:actionerror/>  
 		<s:fielderror />
 		

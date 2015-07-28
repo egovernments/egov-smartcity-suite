@@ -90,8 +90,19 @@
     	</table>    
     	<br/>            
     	
-	  	<s:if test="%{schemeList.size!=0}">
-		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+	  	          
+		 
+		</div>  
+		<div class="buttonbottom" >
+    	<table align="center">  
+    	 <tr>  
+			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
+		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
+	  </table>
+	  </div>
+	  
+	  <s:if test="%{schemeList.size!=0}">
+		<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="setborder" style="border-collapse: inherit;">
 		<tr>   
      		<th class="bluebgheadtd"  style="width:2%;text-align:center" align="center">
 				Sl No.
@@ -131,16 +142,8 @@
 		</s:iterator>
 		
 		</table>
-		</s:if>              
-		 
-		</div>  
-		<div class="buttonbottom" >
-    	<table align="center">  
-    	 <tr>  
-			<td><input type="submit" class="buttonsubmit" value="Search" id="search" name="button" onclick="return validateFund();" />&nbsp;</td>
-		    <td><input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/></td>
-	  </table>
-	  </div>
+		</s:if>    
+		
 		<s:if test="%{schemeList.size==0}">
 			<div id="msgdiv" style="display: block">
 				<table align="center" class="tablebottom" width="80%">
@@ -164,6 +167,5 @@
 		window.open(url,'schemeView','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 	}
 	</script>
-</script>
   </body>
 </html>

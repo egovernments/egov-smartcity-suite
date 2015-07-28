@@ -108,7 +108,7 @@
 					<s:text name="subScheme.add" />
 				</s:else>
 			</div>
-		</div>
+		
 		<s:actionerror />
 		<s:fielderror />
 		<s:form name="subSchemeForm" action="subScheme"  theme="simple">
@@ -116,11 +116,14 @@
 			<s:hidden name="id" />
 		    <s:push value="model">
 				<%@include file="subScheme-form.jsp"%>
+				
+			</div>	
+				
 				<div class="buttonbottom" style="padding-bottom: 10px;">
 				
 				
 					<s:if test="%{showMode=='edit'}">
-					<input type="submit" class="button" value="Save" id="saveButton" name="button" onclick="return validate();" />
+					<input type="submit" class="buttonsubmit" value="Save" id="saveButton" name="button" onclick="return validate();" />
 					</s:if>
 					<input type="button" id="Close" value="Close"  onclick="javascript:window.close()" class="button"/>
 				</div>
