@@ -1366,7 +1366,7 @@ public class PropertyService {
      * @param objWfInitiator (This is the objection workflow initiator, who will be set as the initiator of modify property
      * initiator/owner)
      */
-    public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate,
+ /*   public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate,
             User objWfInitiator, String docNumber, String modifyRsn) {
         LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId + ", objectionNum: "
                 + objectionNum + ", objectionDate: " + objectionDate + ", objWfInitiator: " + objWfInitiator);
@@ -1426,7 +1426,7 @@ public class PropertyService {
         basicProperty = basicPropertyService.update(basicProperty);
         LOGGER.debug("Exiting from initiateModifyWfForObjection");
     }
-
+*/
     public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProperty2, String objectionNum,
             Date objectionDate, User objWfInitiator, String docNumber, String modifyRsn) {
 
@@ -1448,6 +1448,8 @@ public class PropertyService {
 
         for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
             if (floor != null) {
+                basicPropertyService.applyAuditing(floor);
+                floor.setPropertyDetail(newProperty.getPropertyDetail());
                 floorProxy.add(floor);
             }
         }
@@ -1460,9 +1462,11 @@ public class PropertyService {
         if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
             propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
         }
-        newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-                .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, null,
-                null, null, null);
+      /*  newProperty = createProperty(newProperty, newProperty
+                .getPropertyDetail().getSitalArea() != null
+                && newProperty.getPropertyDetail().getSitalArea().getArea() != null ? newProperty.getPropertyDetail().getSitalArea().getArea().toString() : "", modifyRsn, newProperty.getPropertyDetail()
+                .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW,null, null, null,
+                null, null, null);*/
 
         // TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
 

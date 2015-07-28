@@ -118,9 +118,6 @@
 						<s:text name="objection.remarks" />
 					</th>
 					<th class="bluebgheadtd">
-						<s:text name="objection.document" />
-					</th>
-					<th class="bluebgheadtd">
 						<s:text name="objection.details.heading" />
 					</th>
 					<th class="bluebgheadtd">
@@ -149,18 +146,7 @@
 							<s:property default="N/A" value="%{remarks}" />
 						</div>
 					</td>
-					<td class="greybox">
-						<div align="center">
-							<s:if test="docNumberObjection!=null">
-								<a
-									href='#'
-									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${docNumberObjection}&moduleName=ptis'
-									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${docNumberObjection}</a>
-							</s:if>
-							<s:else>N/A</s:else>
-						</div>
-					</td>
+					
 					<td class="greybox">
 						<div align="center">
 							<s:property default="N/A" value="%{details}" />
@@ -203,9 +189,7 @@
 						<th class="bluebgheadtd">
 							<s:text name="hearing.inspection.required" />
 						</th>
-						<th class="bluebgheadtd">
-							<s:text name="objection.document" />
-						</th>
+					
 						<th class="bluebgheadtd">
 							<s:text name="objection.hearingDet.header"  />
 						</th>
@@ -235,17 +219,7 @@
 									
 								</div>
 							</td>
-							<td class="greybox">
-							<div align="center">
-								<s:if test="documentNumber!=null">
-									<a
-									href='#'
-									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${documentNumber}&moduleName=ptis'
-									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${documentNumber}</a>
-							</s:if>
-							<s:else>N/A</s:else></div>
-							</td>
+							
 							<td class="greybox">
 								<div align="center">
 									<s:property default="N/A" value="%{hearingDetails}" />
@@ -285,9 +259,7 @@
 						<th class="bluebgheadtd">
 							<s:text name="inspection.remarks" />
 						</th>
-						<th class="bluebgheadtd">
-							<s:text name="objection.document" />
-						</th>
+						
 						<th class="bluebgheadtd">
 							<s:text name="objection.status" />
 						</th>
@@ -299,17 +271,7 @@
 									<s:property default="N/A" value="%{inspectionRemarks}" />
 								</div>
 							</td>
-							<td class="greybox">
-							<div align="center">
-								<s:if test="documentNumber!=null">
-								<a
-									href='#'
-									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager!viewDocument.action?docNumber=${documentNumber}&moduleName=ptis'
-									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${documentNumber}</a>
-							</s:if>
-							<s:else>N/A</s:else></div>
-							</td>
+							
 							<td class="greybox">
 								<div align="center">
 									<s:property default="N/A" value="%{egwStatus.description}" />
@@ -348,9 +310,7 @@
 						<th class="bluebgheadtd">
 							<s:text name="outcome.rejected" />
 						</th>
-						<th class="bluebgheadtd">
-							<s:text name="objection.document" />
-						</th>
+						
 						<th class="bluebgheadtd">
 							
 						</th>
@@ -376,23 +336,7 @@
 								</div>
 							</td>	
 							
-							<td class="greybox">
-							<div align="center">
-								<s:if test="docNumberOutcome!=null">
-									<a
-									href='#'
-									target="_parent" 
-									onclick="window.open('/egi/docmgmt/documentManager-viewDocument.action?docNumber=${docNumberOutcome}&moduleName=ptis'
-									,'dataitem','resizable=yes,scrollbars=yes,height=700,width=800,status=yes');">${docNumberOutcome}</a>
-							</s:if>
-							<s:else>N/A</s:else></div>
-							</td>
-							<td>
-							<div align="center">
-							<a href='../objection/rejectionLetter-print.action?model.id =<s:property value="objection.id"/>'>										
-									<s:text name="rejection.memo"></s:text> </a>			
-									</div>			
-					</td>
+						
 						</tr>
 					
 				</table>

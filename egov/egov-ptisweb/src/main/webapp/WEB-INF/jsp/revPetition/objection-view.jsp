@@ -88,7 +88,16 @@
             <div id="property_header">
          		
          		 <s:if test="referenceProperty!=null" >
-         			 <jsp:include page="modifyPropertyForObjectionForm.jsp"/>
+         		 <s:if test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
+							">
+							
+         			  <jsp:include page="modifyPropertyViewForRevPetition.jsp"/>
+         			
+         			  </s:if> <s:else> <jsp:include page="modifyPropertyForObjectionForm.jsp"/>
+         			  </s:else> 
+         			 
          		 </s:if>
          		 <s:else>
           			<jsp:include page="../view/viewProperty.jsp"/>

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionEndorsement" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="docNumberObjection" class="java.lang.String"/>
 	<parameter name="receivedOn" class="java.lang.String"/>
@@ -28,7 +28,7 @@
 				</textElement>
 				<text><![CDATA[Revision Petition Endorsement]]></text>
 			</staticText>
-			<image hAlign="Center" vAlign="Middle">
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
 				<reportElement x="32" y="3" width="60" height="57" uuid="c5473d80-13d2-44c8-8350-92be64567d8c"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
@@ -68,7 +68,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Taxes "+ $P{cityName}+" - Revision petition endoresement" ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Taxes "+ $P{cityName}+" - Revision petition endoresement"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="14" y="75" width="57" height="24" uuid="e40c0ee2-fd11-4214-8aab-70f173d25e5b"/>
@@ -80,7 +80,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Revision Petition dated on  "+ $P{receivedOn} ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Revision Petition dated on  "+ $P{receivedOn}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

@@ -43,12 +43,15 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
@@ -105,8 +108,10 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -122,6 +127,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -143,19 +149,23 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private Objection objection = new Objection();
 	private String propertyId;
 	private Map<String, Object> viewMap;
-	private PersistenceService<Objection, Long> objectionService;
+	private RevisionPetitionService revisionPetitionService; 
 	protected WorkflowService<Objection> objectionWorkflowService;
 	private String ownerName;
 	private String propertyAddress;
 	private PersistenceService<Property, Long> propertyImplService;
 	private String propTypeId;
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
+	private String[] floorNoStr = new String[100];
+	
 	private PropertyService propService;
 	private PropertyStatusValues propStatVal;
 	private String reasonForModify;
 	private TreeMap<Integer, String> floorNoMap;
+	private Map<String, String> deviationPercentageMap;
+       
 
+        private Map<String, String> propTypeCategoryMap;
 	private Integer reportId = -1;
 	@Autowired
 	private PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -189,19 +199,20 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
 		addRelatedEntity("referenceProperty.propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
 		addRelatedEntity("referenceProperty", PropertyImpl.class);
-
 		addRelatedEntity("referenceProperty.propertyDetail.floorType", FloorType.class);
 		addRelatedEntity("referenceProperty.propertyDetail.roofType", RoofType.class);
 		addRelatedEntity("referenceProperty.propertyDetail.wallType", WallType.class);
 		addRelatedEntity("referenceProperty.propertyDetail.woodType", WoodType.class);
 
+		/*
 		this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.unitType", PropertyTypeMaster.class);
 		this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.propertyUsage", PropertyUsage.class);
 		this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.propertyOccupation",
 				PropertyOccupation.class);
 		this.addRelatedEntity("referenceProperty.propertyDetail.floorDetails.structureClassification",
 				StructureClassification.class);
-		this.addRelatedEntity("structureClassification", StructureClassification.class);
+*/		this.addRelatedEntity("structureClassification", StructureClassification.class);
+                this.addRelatedEntity("referenceProperty.propertyDetail.apartment", Apartment.class);
 	}
 
 	@Override
@@ -215,7 +226,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	public void prepare() {
 		// to merge the new values from jsp with existing
 		if (objection.getId() != null) {
-			objection = objectionService.findById(objection.getId(), false);
+			objection = revisionPetitionService.findById(objection.getId(), false);
 
 		}
 		super.prepare();
@@ -235,6 +246,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		setFloorNoMap(CommonServices.floorMap());
 		addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
 		addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
+		     final List<String> apartmentsList = getPersistenceService().findAllBy(
+		                "from Apartment order by name");
+		        final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
+		                "from TaxExeptionReason order by name");
+		         
 		addDropdownData("wallType", wallTypes);
 		addDropdownData("woodType", woodTypes);
 		addDropdownData("PropTypeMaster", propTypeList);
@@ -243,8 +259,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		addDropdownData("MutationList", propMutList);
 		addDropdownData("StructureList", StructureList);
 		addDropdownData("AgeFactorList", ageFacList);
-		addDropdownData("Appartments", Collections.EMPTY_LIST);
-
+                addDropdownData("apartments", apartmentsList);
+                addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
+                
+                populatePropertyTypeCategory();
+                setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 	}
 
 	@SkipValidation
@@ -287,8 +306,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		}
 
 		addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-		objectionService.applyAuditing(objection.getState());
-		objectionService.persist(objection);
+		revisionPetitionService.applyAuditing(objection.getState());
+		revisionPetitionService.createRevisionPetition(objection);
+		//objectionService.persist(objection);
 		LOGGER.debug("ObjectionAction | Create | End " + objection);
 		return STRUTS_RESULT_MESSAGE;
 	}
@@ -331,7 +351,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             noticeService.saveNotice(objection.getObjectionNumber(),
                     PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(),
                     hearingNoticePdf);// Save Notice
-            objectionService.update(objection);
+            //objectionService.update(objection);
+            revisionPetitionService.updateRevisionPetition(objection);
             LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
             return STRUTS_RESULT_MESSAGE;
         }
@@ -393,7 +414,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
 		propertyImplService.getSession().flush();
 		objection.setReferenceProperty(refNewProperty);
-		objectionService.update(objection);
+		//objectionService.update(objection);
+		revisionPetitionService.updateRevisionPetition(objection);
 		// return STRUTS_RESULT_MESSAGE;
 	return STRUTS_RESULT_MESSAGE;
 
@@ -404,8 +426,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition/revPetition-printHearingNotice")
     public String printHearingNotice() {
 
-	 objection = objectionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
-	      
+	 objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
+	  
         ReportOutput reportOutput = new ReportOutput();
         if (objection != null && objection.getObjectionNumber() != null) {
             PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection.getObjectionNumber(),
@@ -470,7 +492,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 		modifyBasicProp();
 		propertyImplService.merge(objection.getReferenceProperty());
-		objectionService.update(objection);
+		//objectionService.update(objection);
+		  revisionPetitionService.updateRevisionPetition(objection);   
 		LOGGER.debug("ObjectionAction | recordHearingDetails | End "
 				+ objection.getHearings().get(objection.getHearings().size() - 1));
 		return STRUTS_RESULT_MESSAGE;
@@ -502,7 +525,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				+ objection.getInspections().get(objection.getInspections().size() - 1));
 		modifyBasicProp();
 		propertyImplService.merge(objection.getReferenceProperty());
-		objectionService.update(objection);
+		//objectionService.update(objection);
+		  revisionPetitionService.updateRevisionPetition(objection);   
 		return STRUTS_RESULT_MESSAGE;
 	}
 
@@ -568,7 +592,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         endoresementPdf);
         
                 propertyImplService.merge(objection.getReferenceProperty());
-                objectionService.update(objection);
+               // objectionService.update(objection);
+                revisionPetitionService.updateRevisionPetition(objection);   
                 addActionMessage(getText("objection.outcome.success"));
                 LOGGER.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
                 return STRUTS_RESULT_MESSAGE;
@@ -612,8 +637,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Action(value = "/revPetition/revPetition-printEnodresementNotice")
         public String printEnodresementNotice() {
     
-            objection = objectionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
-    
+            objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
+            
             ReportOutput reportOutput = new ReportOutput();
             if (objection != null && objection.getObjectionNumber() != null) {
                 PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection.getObjectionNumber()
@@ -667,7 +692,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
                     objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
                     objection.getReferenceProperty().setStatus(STATUS_ISACTIVE);
-                    objectionService.update(objection);
+                   // objectionService.update(objection);
+                    revisionPetitionService.updateRevisionPetition(objection);   
+                    
                     addActionMessage(getText("objection.endoresementNotice.success"));
                     LOGGER.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
                     /* return STRUTS_RESULT_MESSAGE; */
@@ -693,18 +720,38 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     }
                     return NOTICE;
                 }
-	                
+	 private void setFloorDetails(final Property property) {
+	        LOGGER.debug("Entered into setFloorDetails, Property: " + property);
+
+	        final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
+	        property.getPropertyDetail().setFloorDetailsProxy(floors);
+	        
+	        int i = 0;
+	        for (final Floor flr : floors) {
+	            floorNoStr[i] = propertyTaxUtil.getFloorStr(flr.getFloorNo());
+	            i++;
+	        }
+
+	        LOGGER.debug("Exiting from setFloorDetails: ");
+	    }                
 
 	@Action(value = "/revPetition/revPetition-view")
                 public String view() {
                     LOGGER.debug("ObjectionAction | view | Start");
-                    objection = objectionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
+                    objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
                     getPropertyView(objection.getBasicProperty().getUpicNo());
+                    
+                    populatePropertyTypeCategory();
+                    
                     if (objection != null && objection.getReferenceProperty() != null) {
                         setReasonForModify(objection.getReferenceProperty().getPropertyDetail().getPropertyMutationMaster()
                                 .getCode());
+                        if (objection.getReferenceProperty().getPropertyDetail().getFloorDetails().size() > 0)
+                            setFloorDetails(objection.getReferenceProperty());
                     }
             
+                    
+                    
                     setOwnerName(objection.getBasicProperty().getProperty());
                     setPropertyAddress(objection.getBasicProperty().getAddress());
             
@@ -722,7 +769,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	public String viewObjectionDetails() {
 		LOGGER.debug("ObjectionAction | viewObjectionDetails | Start");
-		objection = objectionService
+		objection = revisionPetitionService
 				.find("from Objection where objectionNumber like ?", objection.getObjectionNumber());
 		setOwnerName(objection.getBasicProperty().getProperty());
 		setPropertyAddress(objection.getBasicProperty().getAddress());
@@ -732,7 +779,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	public String updateRecordObjection() {
 
-		objectionService.update(objection);
+	//	objectionService.update(objection);
+		revisionPetitionService.updateRevisionPetition(objection);   
+	         
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
 			// FIX ME
@@ -851,6 +900,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				}
 
 			}
+			propService.modifyDemand(objection.getReferenceProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
 		/*	PropertyImpl newProperty = (PropertyImpl) propService.createDemand(createdNewProperty, propCompletionDate);
 			
 			
@@ -906,8 +956,37 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				objection.getReferenceProperty().getPropertyDetail().getWoodType().getId());
 
 	}
+	 private void populatePropertyTypeCategory() {
+	      PropertyTypeMaster propTypeMstr=null;
+	        if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
+	            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+	                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+	        else if (objection!=null && objection.getReferenceProperty()!=null &&  objection.getReferenceProperty().getPropertyDetail() != null
+	                && objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster() != null
+	                && !objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster().getId().equals(-1))
+	            propTypeMstr = objection.getReferenceProperty().getPropertyDetail().getPropertyTypeMaster();
+	        else if (objection.getBasicProperty() != null)
+	            propTypeMstr = objection.getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster();
 
-	public Objection getObjection() {
+	        if (propTypeMstr != null) {
+	            if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+	                setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
+	            else
+	                setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
+	        } else
+	            setPropTypeCategoryMap(Collections.emptyMap());
+	    }
+	 
+	 
+	public Map<String, String> getPropTypeCategoryMap() {
+        return propTypeCategoryMap;
+    }
+
+    public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
+        this.propTypeCategoryMap = propTypeCategoryMap;
+    }
+
+    public Objection getObjection() {
 		return objection;
 	}
 
@@ -927,9 +1006,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		return viewMap;
 	}
 
-	public void setObjectionService(PersistenceService<Objection, Long> objectionService) {
-		this.objectionService = objectionService;
-	}
+	public RevisionPetitionService getRevisionPetitionService() {
+        return revisionPetitionService;
+    }
+
+    public void setRevisionPetitionService(RevisionPetitionService revisionPetitionService) {
+        this.revisionPetitionService = revisionPetitionService;
+    }
+
 
 	public PersistenceService<Property, Long> getPropertyImplService() {
 		return propertyImplService;
@@ -1024,4 +1108,20 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	public void setReportId(Integer reportId) {
 		this.reportId = reportId;
 	}
+	 public Map<String, String> getDeviationPercentageMap() {
+	        return deviationPercentageMap;
+	    }
+
+	    public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
+	        this.deviationPercentageMap = deviationPercentageMap;
+	    }
+
+        public String[] getFloorNoStr() {
+            return floorNoStr;
+        }
+
+        public void setFloorNoStr(String[] floorNoStr) {
+            this.floorNoStr = floorNoStr;
+        }
+	    
 }

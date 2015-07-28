@@ -109,5 +109,9 @@
 	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
     </bean>
+    
+    <bean id="revisionPetitionService" class="org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
+    </bean>
       
 </beans>
