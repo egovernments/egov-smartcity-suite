@@ -467,6 +467,12 @@
                 <version>2.8.1</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+		      	<groupId>org.jasypt</groupId>
+		      	<artifactId>jasypt</artifactId>
+		      	<version>1.9.2</version>
+		      	<scope>compile</scope>
+		    </dependency>
             <!-- SECURITY END -->
 			
             <!-- QUARTZ START -->
@@ -949,6 +955,10 @@
         <dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.spi</artifactId>
+		</dependency>
+		<dependency>
+	      	<groupId>org.jasypt</groupId>
+	      	<artifactId>jasypt</artifactId>
 		</dependency>
 		<!-- MISC ENDS -->
 		
