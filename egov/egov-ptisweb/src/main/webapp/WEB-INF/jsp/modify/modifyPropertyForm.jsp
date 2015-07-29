@@ -142,21 +142,6 @@
 	</tr>
 
 	<tr>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<td class="bluebox" width=""><s:select headerKey="-1"
-				headerValue="%{getText('default.select')}" name="reasonForModify"
-				id="reasonForModify" listKey="code" listValue="mutationName"
-				list="dropdownData.MutationList" value="%{reasonForModify}"
-				cssClass="selectnew"/>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-	</tr>
-	
-	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
@@ -174,6 +159,7 @@
 				cssClass="selectnew"/>
 		</td>
 	</tr>
+	
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>

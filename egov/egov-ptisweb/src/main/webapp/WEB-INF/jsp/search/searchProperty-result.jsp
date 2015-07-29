@@ -73,8 +73,8 @@
 			else if(selectedValue=='Bifurcation') {
 				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 			}
-			else if(selectedValue=='Addition/Alteration of Assessment') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=MODIFY&indexNumber="+assessmentNum;
+			else if(selectedValue=='ADD_OR_ALTER') {
+				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber="+assessmentNum;
 			}
 			else if(selectedValue=='Objection') {
 				window.location="../objection/objection-newForm.action?propertyId="+assessmentNum;
@@ -167,7 +167,7 @@ document.viewform.submit();
 										<option value="ViewProperty">
 											<s:text name="viewProp"></s:text>
 										</option>
-										<option value="Addition/Alteration of Assessment">
+										<option value="ADD_OR_ALTER">
 											<s:text name="viewprop.option.alter"></s:text>
 										</option>
 										<s:if test="isDemandActive == true">

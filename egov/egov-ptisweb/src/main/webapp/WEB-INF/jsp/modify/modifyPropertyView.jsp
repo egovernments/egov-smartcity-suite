@@ -172,16 +172,6 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
-		<td class="bluebox" width="">
-			<span class="bold"><s:property value="%{propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
-	</tr>
-	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> :</td>
 		<td class="greybox" width="">

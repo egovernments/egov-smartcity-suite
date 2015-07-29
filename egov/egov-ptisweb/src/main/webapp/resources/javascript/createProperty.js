@@ -43,48 +43,44 @@ var lasttd;
 function hideAddRmvBtnForResidFlats() {
 	var catType = document.getElementById("propTypeCategoryId").options[document
 			.getElementById("propTypeCategoryId").selectedIndex].text;
-	var modifyReason = document.getElementById("rsnForModification");
 	var subtractAmountHd = 0;
 	var subtractAmountTd = 0;
+	if (catType != null && catType == "Residential Flats") {
 
-	if (modifyReason != "DATA_UPDATE") {
-		if (catType != null && catType == "Residential Flats") {
+		document.getElementById("plotArea").style.display = "none";
+		document.getElementById("undivArea").style.display = "";
 
-			document.getElementById("plotArea").style.display = "none";
-			document.getElementById("undivArea").style.display = "";
+		var tab = document.getElementById("floorDetails");
 
-			var tab = document.getElementById("floorDetails");
-
-			if (tab.rows.length > 2) {
-				resetFloorsDetails();
-			}
-
-			row1 = tab.rows[0];
-			row2 = tab.rows[1];
-
-			// if there is add/delete icon is present
-			if (row1.cells.length == 20) {
-				// remove add/delete for residential flats
-				subtractAmountHd = 1;
-				subtractAmountTd = 4;
-			} else if (row1.cells.length == 21) { // if there is add/delete
-													// and rent agreement icon
-													// is present
-				subtractAmountHd = 2;
-				subtractAmountTd = 5;
-			}
-
-			lasthd = row1.cells[row1.cells.length - subtractAmountHd];
-			lasttd = row2.cells[row2.cells.length - subtractAmountTd];
-
-			jQuery(lasthd).hide();
-			jQuery(lasttd).hide();
-
-		} else {
-			document.getElementById("plotArea").style.display = "";
-			document.getElementById("undivArea").style.display = "none";
-			appendAddRemoveBtn();
+		if (tab.rows.length > 2) {
+			resetFloorsDetails();
 		}
+
+		row1 = tab.rows[0];
+		row2 = tab.rows[1];
+
+		// if there is add/delete icon is present
+		if (row1.cells.length == 20) {
+			// remove add/delete for residential flats
+			subtractAmountHd = 1;
+			subtractAmountTd = 4;
+		} else if (row1.cells.length == 21) { // if there is add/delete
+												// and rent agreement icon
+												// is present
+			subtractAmountHd = 2;
+			subtractAmountTd = 5;
+		}
+
+		lasthd = row1.cells[row1.cells.length - subtractAmountHd];
+		lasttd = row2.cells[row2.cells.length - subtractAmountTd];
+
+		jQuery(lasthd).hide();
+		jQuery(lasttd).hide();
+
+	} else {
+		document.getElementById("plotArea").style.display = "";
+		document.getElementById("undivArea").style.display = "none";
+		appendAddRemoveBtn();
 	}
 }
 

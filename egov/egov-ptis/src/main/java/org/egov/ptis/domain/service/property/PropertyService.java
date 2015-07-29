@@ -53,10 +53,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
@@ -354,7 +354,7 @@ public class PropertyService {
         PropertyStatusValues propStatVal = new PropertyStatusValues();
         PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
                 "from PropertyStatus where statusCode=?", statusCode);
-        if (PROPERTY_MODIFY_REASON_MODIFY.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
                 || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode)) {
             propStatVal.setIsActive("W");
         } else {
@@ -1366,67 +1366,36 @@ public class PropertyService {
      * @param objWfInitiator (This is the objection workflow initiator, who will be set as the initiator of modify property
      * initiator/owner)
      */
- /*   public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate,
-            User objWfInitiator, String docNumber, String modifyRsn) {
-        LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId + ", objectionNum: "
-                + objectionNum + ", objectionDate: " + objectionDate + ", objWfInitiator: " + objWfInitiator);
-        // Retrieve BasicProperty by basicPropId bcoz, upicno will be generated
-        // during final approval for create property and this
-        // api is used to initiate modify workflow before upicno is generated
-        BasicProperty basicProperty = ((BasicProperty) getPropPerServ().findByNamedQuery(
-                PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
-
-        basicProperty.setAllChangesCompleted(FALSE);
-
-        LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
-        PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty());
-        PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
-        LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty + ", newProperty: " + newProperty);
-        List floorProxy = new ArrayList();
-        String propUsageId = null;
-        String propOccId = null;
-
-        Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty);
-
-        for (Floor floor : newProperty.getPropertyDetail().getFloorDetails()) {
-            if (floor != null) {
-                floorProxy.add(floor);
-            }
-        }
-        newProperty.getPropertyDetail().setFloorDetails(floorProxy);
-        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
-                propCompletionDate, objectionNum, objectionDate, null, null));
-        if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
-            propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
-        }
-        if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
-            propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
-        }
-        newProperty = createProperty(newProperty, null, modifyRsn, newProperty.getPropertyDetail()
-                .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW, null, null, null,
-                null, null, null);
-
-        newProperty.setStatus(STATUS_WORKFLOW);
-        // Setting the property state to the objection workflow initiator
-        Position owner = eisCommonsService.getPositionByUserId(objWfInitiator.getId());
-        String desigName = owner.getDeptDesig().getDesignation().getName();
-        String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
-
-        newProperty.transition(true).start().withSenderName(objWfInitiator.getName())
-                .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue(value).withOwner(owner)
-                .withDateInfo(new Date());
-
-        newProperty.setBasicProperty(basicProperty);
-
-        newProperty.getPtDemandSet().clear();
-        createDemand(newProperty, propCompletionDate);
-        createArrearsDemand(oldProperty, propCompletionDate, newProperty);
-        basicProperty.addProperty(newProperty);
-
-        basicProperty = basicPropertyService.update(basicProperty);
-        LOGGER.debug("Exiting from initiateModifyWfForObjection");
-    }
-*/
+    /*
+     * public void initiateModifyWfForObjection(Long basicPropId, String objectionNum, Date objectionDate, User objWfInitiator,
+     * String docNumber, String modifyRsn) { LOGGER.debug("Entered into initiateModifyWfForObjection, basicPropId: " + basicPropId
+     * + ", objectionNum: " + objectionNum + ", objectionDate: " + objectionDate + ", objWfInitiator: " + objWfInitiator); //
+     * Retrieve BasicProperty by basicPropId bcoz, upicno will be generated // during final approval for create property and this
+     * // api is used to initiate modify workflow before upicno is generated BasicProperty basicProperty = ((BasicProperty)
+     * getPropPerServ().findByNamedQuery( PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
+     * basicProperty.setAllChangesCompleted(FALSE); LOGGER.debug("initiateModifyWfForObjection: basicProperty: " + basicProperty);
+     * PropertyImpl oldProperty = ((PropertyImpl) basicProperty.getProperty()); PropertyImpl newProperty = (PropertyImpl)
+     * oldProperty.createPropertyclone(); LOGGER.debug("initiateModifyWfForObjection: oldProperty: " + oldProperty +
+     * ", newProperty: " + newProperty); List floorProxy = new ArrayList(); String propUsageId = null; String propOccId = null;
+     * Date propCompletionDate = getPropertyCompletionDate(basicProperty, newProperty); for (Floor floor :
+     * newProperty.getPropertyDetail().getFloorDetails()) { if (floor != null) { floorProxy.add(floor); } }
+     * newProperty.getPropertyDetail().setFloorDetails(floorProxy);
+     * basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate,
+     * objectionNum, objectionDate, null, null)); if (newProperty.getPropertyDetail().getPropertyOccupation() != null) { propOccId
+     * = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString(); } if
+     * (newProperty.getPropertyDetail().getPropertyUsage() != null) { propUsageId =
+     * newProperty.getPropertyDetail().getPropertyUsage().getId().toString(); } newProperty = createProperty(newProperty, null,
+     * modifyRsn, newProperty.getPropertyDetail() .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId,
+     * STATUS_WORKFLOW, null, null, null, null, null, null); newProperty.setStatus(STATUS_WORKFLOW); // Setting the property state
+     * to the objection workflow initiator Position owner = eisCommonsService.getPositionByUserId(objWfInitiator.getId()); String
+     * desigName = owner.getDeptDesig().getDesignation().getName(); String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName +
+     * "_" + WF_STATE_APPROVAL_PENDING; newProperty.transition(true).start().withSenderName(objWfInitiator.getName())
+     * .withComments(PROPERTY_WORKFLOW_STARTED).withStateValue(value).withOwner(owner) .withDateInfo(new Date());
+     * newProperty.setBasicProperty(basicProperty); newProperty.getPtDemandSet().clear(); createDemand(newProperty,
+     * propCompletionDate); createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+     * basicProperty.addProperty(newProperty); basicProperty = basicPropertyService.update(basicProperty);
+     * LOGGER.debug("Exiting from initiateModifyWfForObjection"); }
+     */
     public PropertyImpl creteNewPropertyForObjectionWorkflow(BasicProperty basicProperty2, String objectionNum,
             Date objectionDate, User objWfInitiator, String docNumber, String modifyRsn) {
 
@@ -1454,7 +1423,7 @@ public class PropertyService {
             }
         }
         newProperty.getPropertyDetail().setFloorDetails(floorProxy);
-        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
+        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_ADD_OR_ALTER,
                 propCompletionDate, objectionNum, objectionDate, null, null));
         if (newProperty.getPropertyDetail().getPropertyOccupation() != null) {
             propOccId = newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
@@ -1462,11 +1431,13 @@ public class PropertyService {
         if (newProperty.getPropertyDetail().getPropertyUsage() != null) {
             propUsageId = newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
         }
-      /*  newProperty = createProperty(newProperty, newProperty
-                .getPropertyDetail().getSitalArea() != null
-                && newProperty.getPropertyDetail().getSitalArea().getArea() != null ? newProperty.getPropertyDetail().getSitalArea().getArea().toString() : "", modifyRsn, newProperty.getPropertyDetail()
-                .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW,null, null, null,
-                null, null, null);*/
+        /*
+         * newProperty = createProperty(newProperty, newProperty .getPropertyDetail().getSitalArea() != null &&
+         * newProperty.getPropertyDetail().getSitalArea().getArea() != null ?
+         * newProperty.getPropertyDetail().getSitalArea().getArea().toString() : "", modifyRsn, newProperty.getPropertyDetail()
+         * .getPropertyTypeMaster().getId().toString(), propUsageId, propOccId, STATUS_WORKFLOW,null, null, null, null, null,
+         * null);
+         */
 
         // TODO: COPYING EXISTING OWNER AS SET.CLONE OWNER COMMENTED.
 
@@ -1520,29 +1491,6 @@ public class PropertyService {
         return propCompletionDate;
     }
 
-    /**
-     * Copies the owners from old property to new property
-     *
-     * @param newProp
-     * @param oldProp
-     * @return @PropertyImpl
-     */
-    /*
-     * public Property createOwnersForNew(Property newProp, Property oldProp) {
-     * LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; " + oldProp); Address oldOwnAddr = null;
-     * for (PropertyOwner owner : oldProp.getPropertyOwnerSet()) { PropertyOwner newOwner = new PropertyOwner(); String ownerName
-     * = owner.getName(); ownerName = propertyTaxUtil.antisamyHackReplace(ownerName); newOwner.setName(ownerName);
-     * newOwner.setOrderNo(owner.getOrderNo()); for (Object address : owner.getAddress()) { oldOwnAddr = (Address) address;
-     * Address ownerAddr = new PropertyAddress(); String addrStr1 = oldOwnAddr.getLandmark(); String addrStr2 =
-     * oldOwnAddr.getAreaLocalitySector(); if (addrStr1 != null && !addrStr1.isEmpty()) { addrStr1 =
-     * propertyTaxUtil.antisamyHackReplace(addrStr1); } if (addrStr2 != null && !addrStr2.isEmpty()) { addrStr2 =
-     * propertyTaxUtil.antisamyHackReplace(addrStr2); } ownerAddr.setType(oldOwnAddr.getType()); ownerAddr.setLandmark(addrStr1);
-     * ownerAddr.setAreaLocalitySector(addrStr2); ownerAddr.setHouseNoBldgApt(oldOwnAddr.getHouseNoBldgApt()); if
-     * (oldOwnAddr.getPinCode() != null && !oldOwnAddr.getPinCode().toString().isEmpty()) {
-     * ownerAddr.setPinCode(oldOwnAddr.getPinCode()); } newOwner.addAddress(ownerAddr); } newProp.addPropertyOwners(newOwner); }
-     * LOGGER.debug("Exiting from createOwnersForNew"); return newProp; }
-     */
-
     public PersistenceService getPropPerServ() {
         return propPerServ;
     }
@@ -1575,17 +1523,17 @@ public class PropertyService {
     public void setWFPropStatValActive(BasicProperty basicProperty) {
         LOGGER.debug("Entered into setWFPropStatValActive, basicProperty: " + basicProperty);
         for (PropertyStatusValues psv : basicProperty.getPropertyStatusValuesSet()) {
-            if (PROPERTY_MODIFY_REASON_MODIFY.equals(psv.getPropertyStatus().getStatusCode())
+            if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(psv.getPropertyStatus().getStatusCode())
                     && psv.getIsActive().equals("W")) {
                 PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
+                        PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
                 if (activePropStatVal != null) {
                     activePropStatVal.setIsActive("N");
                 }
                 PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
+                        PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
                 if (wfPropStatVal != null) {
                     wfPropStatVal.setIsActive("Y");
                 }
@@ -1594,13 +1542,13 @@ public class PropertyService {
                     && psv.getIsActive().equals("W")) {
                 PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
+                        PROPERTY_MODIFY_REASON_AMALG);
                 if (activePropStatVal != null) {
                     activePropStatVal.setIsActive("N");
                 }
                 PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
+                        PROPERTY_MODIFY_REASON_AMALG);
                 if (wfPropStatVal != null) {
                     wfPropStatVal.setIsActive("Y");
                 }
@@ -1609,13 +1557,13 @@ public class PropertyService {
                     && psv.getIsActive().equals("W")) {
                 PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "Y",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+                        PROPERTY_MODIFY_REASON_BIFURCATE);
                 if (activePropStatVal != null) {
                     activePropStatVal.setIsActive("N");
                 }
                 PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ.findByNamedQuery(
                         QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, basicProperty.getUpicNo(), "W",
-                        PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+                        PROPERTY_MODIFY_REASON_BIFURCATE);
                 LOGGER.debug("setWFPropStatValActive: wfPropStatVal: " + wfPropStatVal);
                 if (wfPropStatVal != null) {
                     wfPropStatVal.setIsActive("Y");
@@ -1969,7 +1917,7 @@ public class PropertyService {
         newProperty.setStatus(PropertyTaxConstants.STATUS_WORKFLOW);
         basicProperty.addProperty(newProperty);
 
-        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_MODIFY,
+        basicProperty.addPropertyStatusValues(createPropStatVal(basicProperty, PROPERTY_MODIFY_REASON_ADD_OR_ALTER,
                 getPropertyCompletionDate(basicProperty, newProperty), null, null, null, null));
 
         basicProperty = basicPropertyService.update(basicProperty);

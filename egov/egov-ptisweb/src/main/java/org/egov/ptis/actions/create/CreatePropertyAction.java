@@ -42,7 +42,6 @@ package org.egov.ptis.actions.create;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
-import static org.egov.ptis.constants.PropertyTaxConstants.ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
@@ -51,6 +50,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
@@ -68,7 +68,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CAN
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

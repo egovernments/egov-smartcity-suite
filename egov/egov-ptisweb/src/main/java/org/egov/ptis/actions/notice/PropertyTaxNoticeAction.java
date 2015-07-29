@@ -56,10 +56,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.persistence.entity.Address;
@@ -67,7 +65,6 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -88,7 +85,6 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Results({ @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp") })
@@ -136,7 +132,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		if (PropertyTaxConstants.NOTICE6.equals(noticeType)) {
 			HttpServletRequest request = ServletActionContext.getRequest();
 			String url = WebUtils.extractRequestDomainURL(request, false);
-			String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+			String imagePath= url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo"));
 			reportParams.put("logoPath", imagePath);
 			if (noticeMode.equalsIgnoreCase("create")) {
 				reportParams.put("mode", "create");

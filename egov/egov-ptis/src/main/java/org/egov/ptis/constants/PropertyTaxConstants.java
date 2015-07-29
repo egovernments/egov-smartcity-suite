@@ -536,7 +536,7 @@ public interface PropertyTaxConstants {
 	public static final String PROPERTY_MODIFY_REASON_DATA_ENTRY = "DATA_ENTRY";
 	public static final String PROPERTY_MODIFY_REASON_DATA_UPDATE = "DATA_UPDATE";
 	public static final String PROPERTY_MODIFY_REASON_EDIT_OWNER = "EDIT_OWNER";
-	public static final String PROPERTY_MODIFY_REASON_ADD_OR_ALTER = "ADD OR ALTER";
+	public static final String PROPERTY_MODIFY_REASON_ADD_OR_ALTER = "ADD_OR_ALTER";
 	public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
 			PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
 			PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
@@ -586,7 +586,7 @@ public interface PropertyTaxConstants {
 	public static final String END_APPROVER_DESGN = "RO";
 
 	public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
-	public static final String ALTER_ASSESSMENT = "ALTER ASSESSMENT";
+	public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
 	public static final String WFSTATUS = "WFSTATUS";
 	public static final String WFOWNER = "WFOWNER";
 
@@ -911,6 +911,7 @@ public interface PropertyTaxConstants {
 	public static final String NOTICE6 = "Notice6";
 	public static final String REPORT_TEMPLATENAME_NOTICE6 = "specialNotice";
 	public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
+	public static final String IMAGE_CONTEXT_PATH = "/egi";
 	public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";
 	public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "revPetitionHearingNotice";
 	public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";

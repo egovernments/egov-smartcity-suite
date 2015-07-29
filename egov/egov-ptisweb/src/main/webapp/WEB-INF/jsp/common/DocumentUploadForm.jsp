@@ -60,7 +60,7 @@
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
 							<td class="blueborderfortd" align="center">
-								<span class="bold"><s:property value="#status.index"/></span>
+								<span class="bold"><s:property value="#status.index + 1"/></span>
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>

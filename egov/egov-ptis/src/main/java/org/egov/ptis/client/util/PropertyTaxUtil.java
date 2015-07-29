@@ -63,7 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILBY_DEMANDREASONID;
@@ -981,7 +981,7 @@ public class PropertyTaxUtil {
         public static boolean isPropertyModified(Property property) {
 
                 for (PropertyStatusValues psv : property.getBasicProperty().getPropertyStatusValuesSet()) {
-                        if (PROPERTY_MODIFY_REASON_MODIFY.equalsIgnoreCase(psv.getPropertyStatus().getStatusCode())) {
+                        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equalsIgnoreCase(psv.getPropertyStatus().getStatusCode())) {
                                 return true;
                         }
                 }

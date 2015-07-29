@@ -444,6 +444,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
     }
 
+    @Deprecated
     @SuppressWarnings("unchecked")
     public void populateWorkflowEntities() {
         final List<Department> approverDepartmentList = persistenceService.findAllBy("from Department order by name");
