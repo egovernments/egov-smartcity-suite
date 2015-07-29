@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ed5507fc-764e-4240-83ab-9cb88ac17281">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="444"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
@@ -19,7 +19,7 @@
 	</background>
 	<title>
 		<band height="526" splitType="Stretch">
-			<image>
+			<image onErrorType="Blank">
 				<reportElement x="37" y="20" width="60" height="60" uuid="4c34cccc-b922-4122-845d-f74cbb2a53a8"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>

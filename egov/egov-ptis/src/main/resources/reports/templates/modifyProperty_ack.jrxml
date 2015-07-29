@@ -51,7 +51,7 @@
 				<reportElement x="29" y="192" width="500" height="27" uuid="d34b284c-8f40-42ad-8692-da9ec9cf0f20"/>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<image>
+			<image onErrorType="Blank">
 				<reportElement x="31" y="38" width="65" height="67" uuid="d0f2e83e-3e6c-49c5-9a5a-0f1ad6a64fdc"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
