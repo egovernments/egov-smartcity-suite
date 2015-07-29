@@ -229,10 +229,11 @@
    </tr>	
 	<!-- Amenities section -->
 	
-	<tr>
+	<tr id="amenitiesHeaderRow" class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"> <s:text name="amenities"></s:text> </span>
+				<span class="bold"> <s:text name="amenities"></s:text>
+				</span>
 			</div>
 		</td>
 	</tr>
@@ -246,7 +247,7 @@
 	</tr>
 			<!-- Floor type details -->
 	
-	<tr>
+	<tr id="constructionHeaderRow" class="construction">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.constructiontypes"/></span>
@@ -257,12 +258,20 @@
 	<tr class="construction">
 		<td colspan="5">
 			<div id="AmenitiesDiv">
-				<%@ include file="../common/constructionViewForRevPetition.jsp"%>
+				<%@include file="../common/constructionViewForRevPetition.jsp"%>
 			</div>
 		</td>
 	</tr>
 
-	<tr>
+	<tr id="floorHeaderRow" class="floordetails">
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="FloorDetailsHeader" /> </span>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorViewForRevPetition.jsp"%>
@@ -280,10 +289,28 @@
 		<tr class="vacantlanddetaills">
 		<td colspan="5">
 			<div align="center">
-				<%@ include file="../common/vacantLandFormForRevisionPetition.jsp"%>
+				<%@ include file="../common/vacantLandViewForRevPetition.jsp"%>
 			</div>
 		</td>
 	</tr>
+	<tr>
+		<td colspan="5">
+			<%@ include file="../common/DocumentUploadView.jsp"%>
+		</td>
+	</tr>
+	
+	<s:if test="%{referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
+		|| referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && referenceProperty.propertyDetail.floorDetails.isEmpty())}">
+		<tr>
+			<td class="greybox" width="5%">&nbsp;</td>
+			<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
+			<td class="greybox">
+				<s:date name="basicProp.propCreateDate"
+					var="docFormat" format="dd/MM/yyyy" /> <span class="bold"><s:property
+					default="N/A" value="%{docFormat}" /> </span>
+			</td>
+		</tr>
+	</s:if>
 	
 </table>
 <script type="text/javascript">
@@ -292,6 +319,61 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
+	function loadOnStartUp() {
+		enableFieldsForPropTypeView();
+		enableAppartnaumtLandDetailsView();
+		enableOrDisableSiteOwnerDetails(jQuery('input[name="referenceProperty.propertyDetail.structure"]'));
+		enableOrDisableBPADetails(jQuery('input[name="referenceProperty.propertyDetail.buildingPlanDetailsChecked"]'));
+		toggleFloorDetailsView();
+	}
+
+	function enableAppartnaumtLandDetailsView() {
+		if (document.forms[0].appurtenantLandChecked.checked == true) {
+			jQuery('tr.vacantlanddetaills').show();
+			jQuery('#appurtenantRow').show();
+			jQuery('tr.floordetails').show();
+			jQuery('tr.extentSite').hide();
+		} else {
+			enableFieldsForPropTypeView();
+		}
+	}
+
+	function enableFieldsForPropTypeView() {
+		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+			if (propType != "select") {
+			//onChangeOfPropertyTypeFromMixedToOthers(propType);
+			if (propType == "Vacant Land") {
+				jQuery('tr.floordetails').hide();
+				jQuery('tr.vacantlanddetaills').show();
+				jQuery('tr.construction').hide();
+				jQuery('tr.amenities').hide();
+				jQuery('#appurtenantRow').hide();
+				jQuery('tr.extentSite').hide();
+				jQuery('tr.appurtenant').hide();
+			} else {
+				jQuery('tr.floordetails').show();
+				jQuery('tr.vacantlanddetaills').hide();
+				jQuery('tr.construction').show();
+				jQuery('tr.amenities').show();
+				jQuery('#appurtenantRow').hide();
+				jQuery('tr.extentSite').show();
+				jQuery('tr.appurtenant').show();
+			}
+		}
+	}
+
+	function toggleFloorDetailsView() {
+		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		if (propType == "Vacant Land") {
+			jQuery('tr.floordetails').hide();
+		} else {
+			jQuery('tr.floordetails').show();
+		}
+		if (propType == "Apartments") {
+			alert("Please select Apartment/Complex Name");
+		}
+	}
+
 	//hide rows and columns of fields
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();

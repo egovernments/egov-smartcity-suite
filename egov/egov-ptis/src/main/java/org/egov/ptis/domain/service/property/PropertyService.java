@@ -187,19 +187,19 @@ public class PropertyService {
                 new Date(), new Date());
         PropertySource propertySource = (PropertySource) getPropPerServ().find(
                 "from PropertySource where propSrcCode = ?", PROP_SOURCE);
-        if (floorTypeId != -1 && floorTypeId != null) {
+        if (floorTypeId != null && floorTypeId != -1 ) {
             FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
             property.getPropertyDetail().setFloorType(floorType);
         }
-        if (roofTypeId != -1 && roofTypeId != null) {
+        if (roofTypeId != null && roofTypeId != -1 ) {
             RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
             property.getPropertyDetail().setRoofType(roofType);
         }
-        if (wallTypeId != -1 && wallTypeId != null) {
+        if (woodTypeId != null && woodTypeId != -1 ) {
             WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
             property.getPropertyDetail().setWallType(wallType);
         }
-        if (woodTypeId != -1 && woodTypeId != null) {
+        if (woodTypeId != null && woodTypeId != -1) {
             WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
             property.getPropertyDetail().setWoodType(woodType);
         }

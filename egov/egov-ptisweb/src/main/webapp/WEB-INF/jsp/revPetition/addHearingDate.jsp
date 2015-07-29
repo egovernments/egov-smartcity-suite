@@ -54,11 +54,9 @@
 				<s:elseif test="%{state.text1.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARINGDATE_SAVED)}">  <s:set var="hearingIdx" value="%{hearings.size()-1}"/> </s:elseif>
 				<s:else>  <s:set var="hearingIdx" value="%{hearings.size()}"/>  </s:else>
 				<tr>
-					<td class="bluebox" width="10%">
-						<s:text name="objection.planned.hearingDate" />
-						<span class="mandatory1">*</span>
-					</td>
-					<td class="bluebox" width="25%">
+				
+					<td class="bluebox" width="25%"> <s:text name="objection.planned.hearingDate" />
+						<span class="mandatory1">*</span> &nbsp;
 						<s:date name="objection.hearings[%{hearingIdx}].plannedHearingDt"
 							id="plannedHearingDtId" format="dd/MM/yyyy" />
 						<s:textfield name="objection.hearings[%{hearingIdx}].plannedHearingDt"
@@ -71,7 +69,24 @@
 								src="/egi/resources/erp2/images/calendaricon.gif"
 								border="0" /> </a>(dd/mm/yyyy)
 					</td>
-					<td class="bluebox" width="25%" colspan="3"></td>
+				
+					<td class="bluebox" width="25%" colspan="1">&nbsp;&nbsp;<s:text name="objection.planned.hearingTime" />
+						<span class="mandatory1">*</span>&nbsp;
+						<s:select headerKey="" headerValue="%{getText('default.select')}"
+						name="objection.hearings[%{hearingIdx}].hearingTime"
+						listKey="key" listValue="value" list="hearingTimingMap"  id="hearingTime"
+						value="%{objection.hearings[%{hearingIdx}].hearingTime}"
+						 cssClass="selectnew" cssStyle="width:20%" 
+						data-optional="0" data-errormsg="Hearing time is required!"/>
+						
+					</td>
+					<td class="bluebox" width="10%">
+						<s:text name="objection.planned.hearingVenue" />
+						<span class="mandatory1">*</span>&nbsp;
+						<s:textfield name="objection.hearings[%{hearingIdx}].hearingVenue"
+							id="hearingVenue" value="%{objection.hearings[%{hearingIdx}].hearingVenue}" maxlength="125"
+							size="30" />
+					</td>
 				</tr>
 			</table>
 		</td>

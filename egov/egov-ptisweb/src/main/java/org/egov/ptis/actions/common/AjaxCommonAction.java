@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -264,15 +265,18 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_CREATED)) {
 				designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
 			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
-					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED)) {
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_FIXED)) { 
+				designationMasterList.add(designationService.getDesignationByName(REVENUE_INSPECTOR_DESGN)); 
+			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED)) {//
 				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
 			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
-					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED)) {
+					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED)) { 
 				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
 			} else if (currentStatusCode != null && !"".equals(currentStatusCode)
-					&& currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED)) {
-				designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
-			} else if (designation.getName().equals(ASSISTANT_DESGN)) {
+                                && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY)) { 
+                            designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
+			}else if (designation.getName().equals(ASSISTANT_DESGN)) {
 				designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
 			} else if (designation.getName().equals(REVENUE_OFFICER_DESGN)) {
 				designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));

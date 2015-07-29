@@ -71,6 +71,26 @@ public class Hearing extends BaseModel {
     protected String hearingNumber;
     
     protected Boolean inspectionRequired;
+    
+    private String hearingTime;
+    private String hearingVenue;
+    
+
+    public String getHearingTime() {
+        return hearingTime;
+    }
+
+    public void setHearingTime(String hearingTime) {
+        this.hearingTime = hearingTime;
+    }
+
+    public String getHearingVenue() {
+        return hearingVenue;
+    }
+
+    public void setHearingVenue(String hearingVenue) {
+        this.hearingVenue = hearingVenue;
+    }
 
     public Objection getObjection() {
         return objection;

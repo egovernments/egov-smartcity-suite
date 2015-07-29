@@ -63,6 +63,15 @@
         <property name="hearingDetails" type="java.lang.String">
             <column name="HEARING_DETAILS" length="1024" />
         </property>
+        
+         <property name="hearingVenue" type="java.lang.String">
+            <column name="HEARINGVENUE" length="128" />
+        </property>
+         <property name="hearingTime" type="java.lang.String">
+            <column name="HEARINGTIME" length="25" />
+        </property>
+        
+        
         <property name="documentNumber" type="java.lang.String">
             <column name="DOCUMENT_NUMBER" length="50" />
         </property>

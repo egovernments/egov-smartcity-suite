@@ -167,6 +167,7 @@
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{referenceProperty.propertyDetail.propertyTypeMaster.id}"
 				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
+			<s:hidden id="referenceProperty.propertyDetail.propertyTypeMaster.type" name="referenceProperty.propertyDetail.propertyTypeMaster.type" value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}" />
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -252,14 +253,16 @@
 	
 	<!-- Amenities section -->
 	
-	<tr>
+	
+	<tr id="amenitiesHeaderRow" class="amenities">
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<span class="bold"> <s:text name="amenities"></s:text> </span>
+				<span class="bold"> <s:text name="amenities"></s:text>
+				</span>
 			</div>
 		</td>
 	</tr>
-	
+
 	<tr class="amenities">
 		<td colspan="5">
 			<div id="AmenitiesDiv">
@@ -269,7 +272,7 @@
 	</tr>
 			<!-- Floor type details -->
 	
-	<tr>
+	<tr id="constructionHeaderRow" class="construction">
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="title.constructiontypes"/></span>
@@ -285,7 +288,7 @@
 		</td>
 	</tr>
 
-	<tr>
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorFormForRevisionPetition.jsp"%>
@@ -307,7 +310,11 @@
 			</div>
 		</td>
 	</tr>
-	
+	 <tr class="vacantlanddetaills">
+		<td colspan="5">
+			<%@ include file="../common/DocumentUploadForm.jsp"%>
+		</td>
+	</tr>
 </table>
 <script type="text/javascript">
 	function populatePropTypeCategory() {
@@ -315,6 +322,56 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
+	function enableAppartnaumtLandDetailsView() {
+		if (document.forms[0].appurtenantLandChecked.checked == true) {
+			jQuery('tr.vacantlanddetaills').show();
+			jQuery('#appurtenantRow').show();
+			jQuery('tr.floordetails').show();
+			jQuery('tr.extentSite').hide();
+		} else {
+			enableFieldsForPropTypeView();
+		}
+	}
+
+	function enableFieldsForPropTypeView() {
+		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		if (propType != "select") {
+			//onChangeOfPropertyTypeFromMixedToOthers(propType);
+			if (propType == "Vacant Land") {
+				
+				jQuery('tr.floordetails').hide();
+				jQuery('tr.vacantlanddetaills').show();
+				jQuery('tr.construction').hide();
+				jQuery('tr.amenities').hide();
+				jQuery('#appurtenantRow').hide();
+				jQuery('tr.extentSite').hide();
+				jQuery('tr.appurtenant').hide();
+			} else {
+				
+				jQuery('tr.floordetails').show();
+				jQuery('tr.vacantlanddetaills').hide();
+				jQuery('tr.construction').show();
+				jQuery('tr.amenities').show();
+				jQuery('#appurtenantRow').hide();
+				jQuery('tr.extentSite').show();
+				jQuery('tr.appurtenant').show();
+			}
+		}
+	}
+
+	function toggleFloorDetailsView() {
+		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		
+		if (propType == "Vacant Land") {
+			jQuery('tr.floordetails').hide();
+		} else {
+			jQuery('tr.floordetails').show();
+		}
+		if (propType == "Apartments") {
+			alert("Please select Apartment/Complex Name");
+		}
+	}
+	
 	//hide rows and columns of fields
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();

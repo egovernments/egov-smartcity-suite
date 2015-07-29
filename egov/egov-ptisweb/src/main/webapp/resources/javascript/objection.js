@@ -124,7 +124,15 @@ function validateHearingDate(obj){
 	
 	if( dom.get('plannedHearingDt').value == ""){
 		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Planned Hearing Date';
+		document.getElementById("lblError").innerHTML ='Please enter Hearing Date';
+		return false;
+	}else if( dom.get('hearingTime').value == ""){
+		document.getElementById("lblError").style.display='block';
+		document.getElementById("lblError").innerHTML ='Please enter Hearing Time';
+		return false;
+	}else if( dom.get('hearingVenue').value == ""){
+		document.getElementById("lblError").style.display='block';
+		document.getElementById("lblError").innerHTML ='Please enter Venue';
 		return false;
 	}else{
 		
@@ -200,7 +208,17 @@ function validateRecordHearing(obj){
 	}
 }
 
-
+function validateInspectionDetails(obj)
+{
+	document.getElementById("lblError").style.display='none';
+	document.getElementById("workflowBean.actionName").value=obj.value;
+	if(validateApproval(obj))
+	{	
+		onSubmit('revPetition-validateInspectionDetails.action');  
+	}
+		else
+		return false;
+	}
 function validateRecordInspection(obj){
 	
 	document.getElementById("lblError").style.display='none';

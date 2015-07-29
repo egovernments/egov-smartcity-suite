@@ -183,7 +183,7 @@
 							<s:text name="hearing.number" />
 						</th>
 						<th class="bluebgheadtd">
-							<s:text name="objection.planned.hearingDate" />
+							<s:text name="objection.planned.hearingDate" />-<s:text name="objection.planned.hearingTime" />-<s:text name="objection.planned.hearingVenue" />
 						</th>
 						
 						<th class="bluebgheadtd">
@@ -207,7 +207,9 @@
 							<s:date name="plannedHearingDt" var="plannedHearingDtId" format="dd/MM/yyyy" />
 							<td class="greybox">
 								<div align="center">
-									<s:property default="N/A" value="%{plannedHearingDtId}" />
+									<s:property default="N/A" value="%{plannedHearingDtId}" />-
+										<s:property default=" " value="%{hearingTime}" />-
+											<s:property default=" " value="%{hearingVenue}" />
 								</div>
 							</td>
 							

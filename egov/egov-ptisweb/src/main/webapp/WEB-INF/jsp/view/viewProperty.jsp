@@ -174,7 +174,7 @@
 		<td class="bluebox"><s:text name="ownership.type"></s:text> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{model.propertyDetail.propertyTypeMaster.type}" /> 
+				<s:property	default="N/A" value="%{basicProperty.property.propertyDetail.propertyTypeMaster.type}" /> 
 			</span>
 		</td>
 	</tr>
@@ -186,7 +186,7 @@
 		</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:property	default="N/A" value="%{model.propertyDetail.apartment.name}" /> 
+				<s:property	default="N/A" value="%{basicProperty.property.propertyDetail.apartment.name}" /> 
 			</span>
 		</td>
 	</tr>
@@ -206,8 +206,8 @@
 		<td class="bluebox"><s:text name="effectivedt" /> :</td>
 		<td class="bluebox">
 			<span class="bold">
-				<s:if test="%{model.propertyDetail.effective_date != null}">
-					<s:date name="%{model.propertyDetail.effective_date}" format="dd/MM/yyyy"/>
+				<s:if test="%{basicProperty.property.propertyDetail.effective_date != null}">
+					<s:date name="%{basicProperty.property.propertyDetail.effective_date}" format="dd/MM/yyyy"/>
 				</s:if>
 				<s:else>
 					N/A
@@ -271,13 +271,13 @@
 		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{model.propertyDetail.floorType.name}"/> </span>
+					value="%{basicProperty.property.propertyDetail.floorType.name}"/> </span>
 		</td>
 
 		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{model.propertyDetail.roofType.name}"/> </span>
+					value="%{basicProperty.property.propertyDetail.roofType.name}"/> </span>
 		</td>
 		
 	</tr>
@@ -287,13 +287,13 @@
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{model.propertyDetail.wallType.name}" /> </span>
+					value="%{basicProperty.property.propertyDetail.wallType.name}" /> </span>
 		</td>
 
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
 		<td class="greybox">
 			<span class="bold"> <s:property default="N/A"
-					value="%{model.propertyDetail.woodType.name}" /> </span>
+					value="%{basicProperty.property.propertyDetail.woodType.name}" /> </span>
 		</td>
 		
 	</tr>
@@ -343,35 +343,35 @@
 		    
 		    <tr>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.lift}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.lift}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.toilets}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.toilets}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.waterTap}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.waterTap}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.structure}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.structure}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.electricity}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.electricity}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.attachedBathRoom}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.attachedBathRoom}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.waterHarvesting}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.waterHarvesting}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		     <td class="blueborderfortd">
-		     	<s:if test="%{model.propertyDetail.cable}">Yes</s:if>
+		     	<s:if test="%{basicProperty.property.propertyDetail.cable}">Yes</s:if>
 		     	<s:else>No</s:else>
 		     </td>
 		    </tr>
@@ -408,9 +408,9 @@
 						<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
 					</tr>
 					<s:iterator
-						value="model.propertyDetail.floorDetails" status="floorsstatus">
+						value="basicProperty.property.propertyDetail.floorDetails" status="floorsstatus">
 						<tr>
-							<s:set value="model.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
+							<s:set value="basicProperty.property.propertyDetail.floorDetails[#floorsstatus.index]" var="floor" />
 							<td class="blueborderfortd">
 								<div align="center">
 									<s:property default="N/A" value="%{floorNoStr[#floor.floorNo]}" />

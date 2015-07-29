@@ -64,7 +64,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on "+ $P{receivedOn}+" is considered, and the hearing date is fixed on date " +$P{hearingNoticeDate}+ " and Time ----- Hrs. "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["It is here by noted that revision petition submitted by you dated on "+ $P{receivedOn}+" is considered, and the hearing date is fixed on date " +$P{hearingNoticeDate}+ " and Time "+$P{hearingTime}+ " Hrs. "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="5" y="64" width="566" height="39" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>
