@@ -262,4 +262,12 @@ public class DashboardService {
         for (final Map<String, Object> map : dataList)
             map.put(key, counter++);
     }
+    
+    public List<List<Object>> openCompCount() {
+        return dashboardRepository.getAgeingData("pgr.comp.count.sla.breakup", null);
+    }
+
+    public List<Map<String, Object>> getOpenComplaintAggregate() {
+        return dashboardRepository.getOpenComplaintAggregate();
+    }
 }

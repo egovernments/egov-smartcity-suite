@@ -99,4 +99,14 @@ public class DashboardController {
         performanceData.add(wardwisePerformance.get(1));
         return performanceData;
     }
+    
+    @RequestMapping(value = "/slaPie.do", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<List<Object>> slaPie() {
+        return dashboardService.openCompCount();
+    }
+
+    @RequestMapping(value = "/slaGIS.do", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String, Object>> slaGIS() throws Exception {
+        return dashboardService.getOpenComplaintAggregate();
+    }
 }
