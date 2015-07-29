@@ -51,6 +51,9 @@ import static java.util.Calendar.MAY;
 import static java.util.Calendar.NOVEMBER;
 import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
+import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
+import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
+import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -951,5 +954,14 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED = "Payment update fail due other issues";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_UPDATE_FAILED_WITH_INPUT = "106";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED_WITH_INPUT = "Payment update fail due to input data issues";
+    
+    // Collection modes List
+    public static final Map<Character, String> COLL_MODES_MAP = new HashMap<Character, String>() {
+            {
+                    put(COLLECTION_TYPE_COUNTER, "Counter");
+                    put(COLLECTION_TYPE_FIELDCOLLECTION, "Field");
+                    put(COLLECTION_TYPE_ONLINECOLLECTION, "Online");
+            }
+    };
     
 }
