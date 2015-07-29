@@ -88,4 +88,6 @@ public class ReportConstants {
 
 	// HTTP Headers
 	public static final String HTTP_HEADER_CONTENT_DISPOSITION = "Content-disposition";
+	
+	public static final String IMAGE_CONTEXT_PATH = "/egi";
 }

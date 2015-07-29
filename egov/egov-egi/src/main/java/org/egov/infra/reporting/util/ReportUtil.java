@@ -312,7 +312,7 @@ public final class ReportUtil {
 	public static String logoBasePath(){
             HttpServletRequest request = ServletActionContext.getRequest();
             String url= WebUtils.extractRequestDomainURL(request, false);
-            String imagePath = url.concat(ReportConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
+            String imagePath= url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo"));
             return imagePath;
         }
 	
