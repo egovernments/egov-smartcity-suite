@@ -127,11 +127,12 @@
 						<span class="inline-elem">Search</span>
 						<span class="inline-elem"><input type="text" id="searchwatertax" class="form-control input-sm"></span>
 					</div>
+	<div class="col-md-12">
 	<table class="table table-bordered datatable dt-responsive"
 		id="aplicationSearchResults">
 
 	</table>
-
+	</div>
 </div>
 
 <link rel="stylesheet"
