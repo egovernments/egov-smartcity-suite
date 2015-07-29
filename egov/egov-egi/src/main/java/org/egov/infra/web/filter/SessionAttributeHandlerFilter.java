@@ -94,8 +94,9 @@ public class SessionAttributeHandlerFilter implements Filter {
             httpSession.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
             httpSession.setAttribute("cityurl", city.getDomainURL());
             httpSession.setAttribute("cityname", city.getName());
-            httpSession.setAttribute("citylogo", city.getPreferences() == null ? DEFAULT_LOGO
-                    : String.format(CITI_LOGO_URL, city.getPreferences().getLogo().getFileStoreId(), city.getCode()));
+            httpSession.setAttribute("citylogo",
+                    city.getPreferences() == null || city.getPreferences().getLogo() == null ? DEFAULT_LOGO
+                            : String.format(CITI_LOGO_URL, city.getPreferences().getLogo().getFileStoreId(), city.getCode()));
             httpSession.setAttribute("citynamelocal", city.getLocalName());
             httpSession.setAttribute("cityCode", city.getCode());
             httpSession.setAttribute("cityRecaptchaPK", city.getRecaptchaPK());
