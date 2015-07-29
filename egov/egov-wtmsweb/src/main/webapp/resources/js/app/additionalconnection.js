@@ -1,6 +1,9 @@
 $(document).ready(function(){
 	loadPropertyDetails();
 	
+	if($('#validationMessage').val()!='')
+		alert($('#validationMessage').val());
+	
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').html()
 		if(propertyID != '') {
@@ -37,7 +40,7 @@ $(document).ready(function(){
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
 						$("#zonewardblock").html(boundaryData);
-						$("#propertytaxdue").html(response.propertyDetails.taxDue);
+						$("#propertytaxdue").html(response.propertyDetails.currentTax);
 										
 				}, 
 				error: function (response) {

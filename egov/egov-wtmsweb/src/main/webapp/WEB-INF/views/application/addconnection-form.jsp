@@ -48,6 +48,7 @@
 			modelAttribute="addConnection" id="addWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}"> 
 			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -58,20 +59,28 @@
 				<div class="panel-body custom-form ">
 				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
+				<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
+				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
+				<c:if test="${validationMessage==''}">	
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
+				</c:if>
 				</div>
 			</div>			
-			<jsp:include page="../common/workflow.jsp"></jsp:include>	
+			<c:if test="${validationMessage==''}">
+				<jsp:include page="../common/workflow.jsp"></jsp:include>	
+			</c:if>
 			<div class="row">
 				<div class="text-center">
+				<c:if test="${validationMessage==''}">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
 					<button type="reset" class="btn btn-primary" id="reset">
 						<spring:message code="lbl.clear" />
 					</button>
 					<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message
 							code='lbl.close' /></a>
+				</c:if>	
 				</div>
 			</div>
 		</form:form>

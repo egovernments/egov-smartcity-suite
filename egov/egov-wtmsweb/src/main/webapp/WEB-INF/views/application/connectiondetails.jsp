@@ -45,16 +45,6 @@
 		<spring:message code="lbl.connection.details" />
 	</div>
 </div>
-<c:if test="${mode=='addconnection'}">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.application.date" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" required="" path="applicationDate"/>
-			<form:errors path="applicationDate" cssClass="add-margin error-msg" />
-		</div>
-		</div>
-	</c:if>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.connectiontype" /><span class="mandatory"></span></label>
@@ -144,16 +134,14 @@
 		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="sumpCapacity" path="sumpCapacity" required="required" />
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
 	</div>
-	<c:if test="${mode=='addconnection'}">
-		<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.plotarea.assessment" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="plotSize" path="plotSize" required="required" />
-			<form:errors path="plotSize" cssClass="add-margin error-msg" />		
-		</div>
-	</c:if>
 </div>
 <c:if test="${mode=='addconnection'}">
-	<jsp:include page="addconnectiondetails.jsp"></jsp:include>	
-</c:if>
-					
+<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.addconnection.reason" /><span class="mandatory"></span></label> 
+		<div class="col-sm-8 add-margin">
+			<form:textarea class="form-control patternvalidation" data-pattern="string" maxlength="1024" id="connectionReason" path="connectionReason" required="required" />
+			<form:errors path="connectionReason" cssClass="add-margin error-msg" />		
+		</div>
+</div>	
+</c:if>				

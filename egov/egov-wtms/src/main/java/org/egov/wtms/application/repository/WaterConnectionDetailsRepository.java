@@ -76,10 +76,21 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConsumerCodeAndInstallment(@Param("installment") Installment installment,
             @Param("consumerCode") String consumerCode);
 
-    // TODO - Need to re-check this query once closure of connection is implemented. I.e. Whether we allow to close additional
+    // TODO - Need to re-check this query once closure of connection is
+    // implemented. I.e. Whether we allow to close additional
     // TODO - .. connections also when closure of Primary connection happens.
-    // Fixme Later : We are assuming that there will be only one primary connection for given property ID other than INACTIVE and CLOSED status
+    // Fixme Later : We are assuming that there will be only one primary
+    // connection for given property ID other than INACTIVE and CLOSED status
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE', 'CLOSED') and wcd.connection.propertyIdentifier =:propertyIdentifier")
-    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(@Param("propertyIdentifier") String propertyIdentifier);
+    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
+            @Param("propertyIdentifier") String propertyIdentifier);
+
+    @Query(" from WaterConnectionDetails WCD where WCD.connection.parentConnection is not null and WCD.connectionStatus in(:status)"
+            + " and WCD.connection.propertyIdentifier =:propertyIdentifier")
+    WaterConnectionDetails getAdditionalConnectionDetailsInWorkflow(
+            @Param("propertyIdentifier") String propertyIdentifier, @Param("status") ConnectionStatus Status);
+
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNull(
+            String consumerCode, ConnectionStatus connectionStatus);
 
 }

@@ -140,8 +140,8 @@ public class WaterConnectionDetailsService {
     }
 
     public List<WaterConnectionDetails> findAll() {
-        return waterConnectionDetailsRepository
-                .findAll(new Sort(Sort.Direction.ASC, WaterTaxConstants.APPLICATION_NUMBER));
+        return waterConnectionDetailsRepository.findAll(new Sort(Sort.Direction.ASC,
+                WaterTaxConstants.APPLICATION_NUMBER));
     }
 
     public WaterConnectionDetails findByApplicationNumber(final String applicationNumber) {
@@ -156,8 +156,7 @@ public class WaterConnectionDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber,
-            final Integer pageSize) {
+    public Page<WaterConnectionDetails> getListWaterConnectionDetails(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,
                 WaterTaxConstants.APPLICATION_NUMBER);
         return waterConnectionDetailsRepository.findAll(pageable);
@@ -188,9 +187,9 @@ public class WaterConnectionDetailsService {
     }
 
     private void sendSmsAndEmail(final WaterConnectionDetails waterConnectionDetails) {
-        final AssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_MOBILE_EMAIL);
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_MOBILE_EMAIL);
         final String email = assessmentDetails.getPrimaryEmail();
         final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
         if (waterConnectionDetails != null && waterConnectionDetails.getApplicationType() != null
@@ -267,13 +266,13 @@ public class WaterConnectionDetailsService {
             user = state.getOwnerUser();
             if (null != user) {
                 map.put("user", user.getUsername());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 map.put("user", null != user.getUsername() ? user.getUsername() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
-                        ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
             if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
@@ -288,13 +287,14 @@ public class WaterConnectionDetailsService {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     HistoryMap.put("user", user.getUsername());
-                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                    HistoryMap.put("department",
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
-                            ? owner.getDeptDesig().getDepartment().getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
                 }
                 historyTable.add(HistoryMap);
             }
@@ -341,9 +341,9 @@ public class WaterConnectionDetailsService {
 
     private void updateIndexes(final WaterConnectionDetails waterConnectionDetails) {
 
-        final AssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS);
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS);
 
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
         final StringBuilder consumerName = new StringBuilder();
@@ -382,7 +382,8 @@ public class WaterConnectionDetailsService {
         }
     }
 
-    public void buildSMS(final WaterConnectionDetails waterConnectionDetails, final String type, final String mobileNumber) {
+    public void buildSMS(final WaterConnectionDetails waterConnectionDetails, final String type,
+            final String mobileNumber) {
         if (mobileNumber != null) {
             String smsMsg = null;
             Boolean flag = Boolean.FALSE;
@@ -434,9 +435,9 @@ public class WaterConnectionDetailsService {
                         flag = Boolean.TRUE;
                         body = waterTaxUtils.emailBodyforApprovalEmailByCodeAndArgs(
                                 "msg.newconncetionapproval.email.body", waterConnectionDetails, applicantName);
-                        subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs(
-                                "msg.newconncetionapprove.email.subject",
-                                waterConnectionDetails.getApplicationNumber());
+                        subject = waterTaxUtils
+                                .emailSubjectforEmailByCodeAndArgs("msg.newconncetionapprove.email.subject",
+                                        waterConnectionDetails.getApplicationNumber());
                     } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE)) {
                         flag = Boolean.TRUE;
                         body = waterTaxUtils.emailBodyforApprovalEmailByCodeAndArgs(
@@ -464,8 +465,8 @@ public class WaterConnectionDetailsService {
         if (changeOfUse.getApplicationNumber() == null)
             changeOfUse.setApplicationNumber(applicationNumberGenerator.generate());
 
-        final Integer appProcessTime = applicationProcessTimeService
-                .getApplicationProcessTime(changeOfUse.getApplicationType(), changeOfUse.getCategory());
+        final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                changeOfUse.getApplicationType(), changeOfUse.getCategory());
         if (appProcessTime != null) {
             final Calendar c = Calendar.getInstance();
             c.setTime(changeOfUse.getApplicationDate());
@@ -478,6 +479,13 @@ public class WaterConnectionDetailsService {
 
     public void setApplicantName(final String applicantName) {
         this.applicantName = applicantName;
+    }
+
+    public WaterConnectionDetails getParentConnectionDetails(final String consumerCode,
+            final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository
+                .findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNull(consumerCode,
+                        connectionStatus);
     }
 
 }

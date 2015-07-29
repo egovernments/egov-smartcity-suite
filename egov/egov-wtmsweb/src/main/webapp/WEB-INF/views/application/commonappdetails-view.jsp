@@ -110,7 +110,7 @@
 		<div class="row">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
-				<c:when test="${null!=mode && mode=='search' && waterConnectionDetails.demand.baseDemand>0}">
+				<c:when test="${null!=mode && (mode=='search' || mode=='addconnection') && waterConnectionDetails.demand.baseDemand>0}">
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
 				</c:when>	
 				<c:otherwise>

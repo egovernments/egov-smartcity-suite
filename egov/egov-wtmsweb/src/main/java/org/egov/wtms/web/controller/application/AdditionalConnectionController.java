@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ import javax.validation.Valid;
 
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.AdditionalConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -73,6 +75,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private ApplicationTypeService applicationTypeService;
     @Autowired
     private WaterConnectionService waterConnectionService;
+    @Autowired
+    private AdditionalConnectionService additionalConnectionService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
@@ -84,7 +88,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     public String showAdditionalApplicationForm(@ModelAttribute final WaterConnectionDetails addConnection,
             final Model model, @PathVariable final String consumerCode) {
         final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+                .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails);
         return "addconnection-form";
     }
@@ -92,10 +96,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private void loadBasicDetails(final WaterConnectionDetails addConnection, final Model model,
             final WaterConnectionDetails parentConnectionDetails) {
         addConnection.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        addConnection.setConnection(parentConnectionDetails.getConnection());
-        addConnection.getConnection().setParentConnection(parentConnectionDetails.getConnection());
-        model.addAttribute("parentConnection", waterConnectionService.findParentWaterConnection(parentConnectionDetails
-                .getConnection().getPropertyIdentifier()));
+        model.addAttribute("parentConnection", parentConnectionDetails.getConnection());
         model.addAttribute("waterConnectionDetails", parentConnectionDetails);
         model.addAttribute(
                 "connectionType",
@@ -103,12 +104,21 @@ public class AdditionalConnectionController extends GenericConnectionController 
                         parentConnectionDetails.getConnectionType().name()));
         model.addAttribute("addConnection", addConnection);
         model.addAttribute("mode", "addconnection");
+        model.addAttribute("validationMessage",
+                additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request) {
+
+        final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
+                .getConnection().getParentConnection());
+        final String message = additionalConnectionService.validateAdditionalConnection(parent);
+        if (!message.isEmpty() && !"".equals(message))
+            return "redirect:/application/addconnection/"
+                    + addConnection.getConnection().getParentConnection().getConsumerCode();
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -132,6 +142,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
             loadBasicDetails(addConnection, model, parentConnectionDetails);
             return "addconnection-form";
         }
+        addConnection.setApplicationDate(new Date());
         addConnection.getApplicationDocs().clear();
         addConnection.setApplicationDocs(applicationDocs);
 

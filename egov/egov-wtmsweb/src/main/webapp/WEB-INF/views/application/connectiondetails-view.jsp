@@ -78,29 +78,9 @@
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.securitycharge"/></div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXSECURITY}" /></div>
-					<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
-						<div class="col-xs-3 add-margin"><spring:message code="lbl.plotarea.assessment" /></div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${waterConnectionDetails.plotSize}"/>
-						</div>
-					</c:if>
 				</div>
 				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.plintarea.assessment" /></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.plinthArea}"/>
-					</div>
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.numberOfPerson}"/>
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.connection.order" /></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.connectionOrder}"/>
-					</div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out value="${waterConnectionDetails.connectionReason}"/>
