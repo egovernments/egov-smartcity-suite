@@ -131,6 +131,8 @@ public final class ReportUtil {
 	 * This method can be used to fetch the logo image to be printed in those reports that use SQL query (JDBC) as data source.
 	 * @return The logo images for currently logged in city as an input stream
 	 */
+	//These values should be passed as report parameters to the jrxml not to fetch from the database since it is already in session
+        @Deprecated
 	public static InputStream getLogoImageAsStream(final Connection connection) {
 		try {
 			return getImageAsStream((String) fetchFromDBSql(connection, "SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'"));
@@ -143,6 +145,8 @@ public final class ReportUtil {
 	 * This method can be used to fetch the logo image to be printed in those reports that use Java Bean array/collection as data source.
 	 * @return The logo images for currently logged in city as an input stream
 	 */
+        //These values should be passed as report parameters to the jrxml not to fetch from the database since it is already in session
+        @Deprecated
 	public static InputStream getLogoImageAsStream() {
 		try {
 			return getImageAsStream(fetchLogo());
@@ -151,10 +155,15 @@ public final class ReportUtil {
 		}
 	}
 
+        //These values should be passed as report parameters to the jrxml not to fetch from the database since it is already in session
+        @Deprecated
 	public static String fetchLogo() {
 		return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
 	}
 	
+	
+        //These values should be passed as report parameters to the jrxml not to fetch from the database since it is already in session
+	@Deprecated
 	public static String getCityName() {
 	    try {
                 return (String) HibernateUtil.getCurrentSession().createSQLQuery("SELECT NAME FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'").list().get(0);
