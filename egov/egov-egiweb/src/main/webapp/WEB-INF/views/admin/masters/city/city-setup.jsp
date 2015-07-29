@@ -51,10 +51,13 @@
 			id="cityForm" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<ul class="nav nav-tabs">
-						<li class="active"><a data-toggle="tab" href="#citysetup"><spring:message
-									code="title.city.setup" /></a></li>
-						<li><a data-toggle="tab" href="#preferences">Preferences</a></li>
+					<ul class="nav nav-tabs" id="settingstab">
+						<li class="active">
+						  <a data-toggle="tab" href="#citysetup" data-tabidx=0>
+						    <spring:message code="title.city.setup" />
+						   </a>
+						</li>
+						<li><a data-toggle="tab" href="#preferences" data-tabidx=1>Preferences</a></li>
 					</ul>
 				</div>
 
