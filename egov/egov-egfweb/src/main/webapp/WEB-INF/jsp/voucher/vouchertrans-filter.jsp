@@ -84,17 +84,17 @@
 	</s:if>
 </tr>
 <tr>
+<td style="width:5%"></td>
 <s:if test="%{shouldShowHeaderField('functionary')}">
-	<td style="width:5%"></td>
 	<td class="bluebox"><s:text name="voucher.functionary"/>
 	<s:if test="%{isFieldMandatory('functionary')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 	<td class="bluebox"><s:select name="vouchermis.functionary" id="vouchermis.functionary" list="dropdownData.functionaryList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="voucherHeader.vouchermis.functionary.id"/></td>
-	</s:if>
-	<s:if test="%{shouldShowHeaderField('function')}">
+</s:if>
+<s:if test="%{shouldShowHeaderField('function')}">
 	<td id="functionnametext" class="bluebox"><s:text name="voucher.function"/>
 	<s:if test="%{isFieldMandatory('function')}"><span class="bluebox"><span class="mandatory1">*</span></span></s:if></td>
 	<td class="bluebox"><s:select name="vouchermis.function" id="vouchermis.function" list="dropdownData.functionList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="%{vouchermis.function.id}"/></td>     
-	</s:if>   
+</s:if>   
 
 </tr>
 <script type="text/javascript" >
