@@ -42,14 +42,9 @@ package org.egov.pgr.repository.dashboard;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -57,10 +52,6 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -116,112 +107,15 @@ public class DashboardRepository {
         return (Object[]) qry.uniqueResult();
     }
 
+    public List<Object[]> fetchOpenComplaintAggregateBetween(final DateTime fromDate, final DateTime toDate) {
+        return fetchDateRangeData("pgr.open.comp.aggr", fromDate.toDate(), toDate.toDate());
+    }
+
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
         final SQLQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);
         qry.setParameter("toDate", toDate);
         return qry.list();
-    }
-
-    public List<List<Object>> getAgeingData(final String querykey, final String zoneName) {
-        final SQLQuery qry = getQuery(querykey);
-        qry.setParameter("grtthn90", endOfDay().minusDays(90).toDate());
-        qry.setParameter("lsthn90", endOfDay().minusDays(90).toDate());
-        qry.setParameter("grtthn45", endOfDay().minusDays(45).toDate());
-        qry.setParameter("grtthn15", endOfDay().minusDays(15).toDate());
-        qry.setParameter("lsthn45", endOfDay().minusDays(45).toDate());
-        qry.setParameter("lsthn15", endOfDay().minusDays(15).toDate());
-        qry.setParameter("currdate", endOfDay().toDate());
-        if (zoneName != null)
-            qry.setParameter("zoneName", zoneName);
-        final Object[] compData = (Object[]) qry.uniqueResult();
-
-        final List<Object> cntabv90 = new LinkedList<Object>();
-        cntabv90.add("> 90 Days");
-        cntabv90.add(compData[0]);
-        final List<Object> cntbtw45to90 = new LinkedList<Object>();
-        cntbtw45to90.add("90-45 Days");
-        cntbtw45to90.add(compData[1]);
-        final List<Object> cntbtw15to45 = new LinkedList<Object>();
-        cntbtw15to45.add("44-15 Days");
-        cntbtw15to45.add(compData[2]);
-        final List<Object> cntlsthn15 = new LinkedList<Object>();
-        cntlsthn15.add("< 15 Days");
-        cntlsthn15.add(compData[3]);
-        final List<List<Object>> dataHolder = new LinkedList<List<Object>>();
-        dataHolder.add(cntabv90);
-        dataHolder.add(cntbtw45to90);
-        dataHolder.add(cntbtw15to45);
-        dataHolder.add(cntlsthn15);
-
-        return dataHolder;
-    }
-
-    public List<Map<String, Object>> getOpenComplaintAggregate() {
-        final SQLQuery qry = getQuery("pgr.open.comp.aggr");
-        final DateTime startOfTheYear = new LocalDate().minusYears(1).toDateTimeAtStartOfDay();
-        final DateTime tillDate = LocalTime.MIDNIGHT.toDateTimeToday();
-        qry.setParameter("startOfYear", startOfTheYear.toDate());
-        qry.setParameter("tillDate", endOfDay().toDate());
-        final List<Object[]> complaints = qry.list();
-        final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
-        final Map<String, Object> complaintData = new HashMap<String, Object>();
-        String lastZone = null;
-        double regComplaint = 0;
-        double openFrm90Days = 0;
-        double totalOpen = 0;
-        double pecentage = 0;
-        final Date dateBefore90Days = new LocalDate().minusDays(90).toDateTimeAtStartOfDay().toDate();
-        final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-        final String formattedFrm = startOfTheYear.toString(dtf);
-        final String formattedTo = tillDate.toString(dtf);
-        for (final Object[] compData : complaints) {
-            final String currentZone = String.valueOf(compData[0]);
-            if (lastZone != null && !currentZone.equals(lastZone)) {
-                pecentage = Math.round(100 * (openFrm90Days / regComplaint));
-                complaintData.put("pecentage", pecentage);
-                complaintData.put("regComp", regComplaint);
-                complaintData.put("open90Comp", openFrm90Days);
-                complaintData.put("openComp", totalOpen);
-                complaintData.put("zone", lastZone);
-                compAggrData.add(new HashMap<String, Object>(complaintData));
-                pecentage = 0;
-                regComplaint = 0;
-                totalOpen = 0;
-                openFrm90Days = 0;
-            }
-            lastZone = currentZone;
-            final String statusName = String.valueOf(compData[4]);
-            final long count = Long.valueOf(String.valueOf(compData[5]));
-            if ("REGISTERED FORWARDED PROCESSING REOPENED".contains(statusName)) {
-                if (((Date) compData[6]).before(dateBefore90Days))
-                    openFrm90Days += count;
-                totalOpen += count;
-            }
-            regComplaint += count;
-            complaintData.put("lat", compData[3]);
-            complaintData.put("lng", compData[2]);
-            complaintData.put("startDt", formattedFrm);
-            complaintData.put("endDt", formattedTo);
-            complaintData.put("zoneID", compData[1]);
-        }
-
-        // SORT BASED ON TOTAL NO. OF OPEN COMP > 90
-        sortData(compAggrData, "open90Comp");
-
-        return compAggrData;
-    }
-
-    public static DateTime endOfDay() {
-        return new DateTime().withTime(23, 59, 59, 999).toDateTime();
-    }
-
-    public static void sortData(final List<Map<String, Object>> dataList, final String key) {
-        Collections.sort(dataList, (map1, map2) -> {
-            final double firstElem = Double.valueOf(map1.get(key).toString());
-            final double secondElem = Double.valueOf(map2.get(key).toString());
-            return firstElem <= secondElem ? 1 : -1;
-        });
     }
 
     private SQLQuery getQuery(final String sqlKey) {

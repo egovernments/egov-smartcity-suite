@@ -41,6 +41,7 @@ package org.egov.pgr.web.controller.dashboard;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -99,14 +100,13 @@ public class DashboardController {
         performanceData.add(wardwisePerformance.get(1));
         return performanceData;
     }
-    
-    @RequestMapping(value = "/slaPie.do", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<List<Object>> slaPie() {
-        return dashboardService.openCompCount();
-    }
 
-    @RequestMapping(value = "/slaGIS.do", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String, Object>> slaGIS() throws Exception {
-        return dashboardService.getOpenComplaintAggregate();
+    @RequestMapping(value = "/sla/{charttype}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<?> complaintSLA(@PathVariable final String charttype) {
+        if ("pie".equals(charttype))
+            return dashboardService.getComplaintSLA();
+        else if ("gis".equals(charttype))
+            return dashboardService.getOpenComplaintSLA();
+        return Collections.emptyList();
     }
 }

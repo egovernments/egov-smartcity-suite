@@ -816,7 +816,7 @@ $(".slaBtn").on("click", function(){
 });
 
 function slaPie() {
-	$.ajax({url:"slaPie.do",
+	$.ajax({url:"sla/pie",
 		cache:false
 	}).done(function(piedata) {
 		$('#slaGraph').highcharts({
@@ -902,7 +902,7 @@ function slaGIS() {
 	var chartWin = new google.maps.InfoWindow();
 	var contentDiv = '<div id="slaPerformance" style="height:350px;width:500px;white-space: nowrap;"></div>';
 	chartWin.setContent(contentDiv);	
-	$.ajax({url:"slaGIS.do?rn="+Math.random(),
+	$.ajax({url:"sla/gis?rn="+Math.random(),
 		cache:false
 	}).done(function(data) {
 		var length = data.length;
@@ -937,7 +937,7 @@ function slaGIS() {
 		google.maps.event.addListener(marker, 'click', (function(marker, index) {
 	          return function() {
 	        	  marker.setAnimation(google.maps.Animation.BOUNCE);
-	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Zone : '+
+	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Ward : '+
 	        			  data.zone+'</div><div class="panel-body" style="white-space:nowrap;color:#000;text-align:left;line-height:2;">Total Complaints : '+
 	        			  data.regComp+'<br/>Total Open : '+data.openComp+'<br/>Open From 90 Days: '+data.open90Comp+'<br/>Open : '+data.pecentage+'%<br/>'+
 	        			  '<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
