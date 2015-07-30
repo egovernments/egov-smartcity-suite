@@ -96,10 +96,12 @@ import org.egov.demand.dao.EgDemandDao;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -379,8 +381,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		if (basicProp != null) {
-			setApplicationNo(basicProp.getApplicationNo());
-			setVacantLandNo(basicProp.getVacantLandAssmtNo());
+		        basicProp.setPropertyOwnerInfoProxy(basicProp.getPropertyOwnerInfo());
 			setRegdDocDate(basicProp.getRegdDocDate());
 			setRegdDocNo(basicProp.getRegdDocNo());
 			setMutationId(basicProp.getPropertyMutationMaster().getId());
@@ -507,6 +508,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		//updateOwnerDetails(basicProp);
 		final Character status = STATUS_WORKFLOW;
 		//basicPropertyService.createUserIfNotExist(basicProp);
+		basicPropertyService.createOwners(property,basicProp,corrAddress1,corrAddress2,corrPinCode);
 		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
                         .find("from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?",PROP_CREATE_RSN, mutationId);
                 basicProp.setPropertyMutationMaster(propertyMutationMaster);
@@ -748,7 +750,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				"CREATE", null, null, null, null, getParentIndex()));
 		basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
 		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
-		createOwners(basicProperty);
+		basicPropertyService.createOwners(property,basicProperty,corrAddress1,corrAddress2,corrPinCode);
 		property.setBasicProperty(basicProperty);
 
 		/*
@@ -825,7 +827,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		basicProp.setPropOccupationDate(propCompletionDate);
-		createOwners(basicProp);
+		//createOwners(basicProp);
 		newProperty.setBasicProperty(basicProp);
 
 		if ((propTypeMstr != null) && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -915,38 +917,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 	
 
-	private void createOwners(BasicProperty basicProperty) {
-		LOGGER.debug("Entered into createOwners, Property: " + property);
-
-		LOGGER.debug("createOwners:  CorrAddress1: " + getCorrAddress1() + ", CorrAddress2: "
-				+ getCorrAddress2() + ", CorrPinCode: " + getCorrPinCode());
-		String addrStr1;
-		String addrStr2;
-		int orderNo = 0;
-		for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
-			orderNo++;
-			if (ownerInfo != null) {
-				ownerInfo.setOrderNo(orderNo);
-				ownerInfo.getOwner().setPassword("NOT SET");
-				ownerInfo.getOwner().setUsername(ownerInfo.getOwner().getMobileNumber());
-				Address ownerAddr = new CorrespondenceAddress();
-				addrStr1 = getCorrAddress1();
-				addrStr2 = getCorrAddress2();
-				addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
-				addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
-				ownerAddr.setLandmark(addrStr1);
-				ownerAddr.setAreaLocalitySector(addrStr2);
-				if (isNotBlank(getCorrPinCode())) {
-					ownerAddr.setPinCode(getCorrPinCode());
-				}
-				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
-				ownerInfo.getOwner().addAddress(ownerAddr);
-				ownerInfo.setBasicProperty(basicProperty);
-			}
-			basicProperty.addPropertyOwners(ownerInfo);
-		}
-	}
-
+	
 	private PropertyAddress createPropAddress() {
 
 		LOGGER.debug("Entered into createPropAddress, \nAreaId: "

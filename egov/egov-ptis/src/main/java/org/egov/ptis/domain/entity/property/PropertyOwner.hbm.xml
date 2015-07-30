@@ -46,7 +46,7 @@
 				<param name="sequence">SEQ_EGPT_PROPERTY_OWNER_INFO</param>
 			</generator>
 		</id>
-		<many-to-one name="owner" class="org.egov.infra.admin.master.entity.User" column="OWNER" cascade="save-update"/>
+		<many-to-one name="owner" class="org.egov.infra.admin.master.entity.User" column="OWNER" cascade="none"/>
 		<many-to-one name="basicProperty" column="BASICPROPERTY"
 			not-null="true" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false" update="false" fetch="select" />
 		<many-to-one name="source"

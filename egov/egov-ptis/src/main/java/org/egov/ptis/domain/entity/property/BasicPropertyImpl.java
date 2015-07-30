@@ -95,6 +95,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private String vacantLandAssmtNo;
 	private String source;
 	private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
+	private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<PropertyOwnerInfo>();
 	private boolean underWorkflow;
 
 	@Override
@@ -703,6 +704,16 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	}
 	
 	@Override
+	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
+               return propertyOwnerInfoProxy;
+        }
+
+	@Override
+        public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy) {
+              this.propertyOwnerInfoProxy = propertyOwnerInfoProxy;
+        }
+
+        @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
