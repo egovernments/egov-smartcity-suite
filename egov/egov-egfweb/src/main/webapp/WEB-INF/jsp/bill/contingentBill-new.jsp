@@ -180,7 +180,7 @@ billDetailsTableNet = new YAHOO.widget.DataTable("billDetailTableNet",voucherDet
 var makeVoucherDetailTableFinal = function() {
  var voucherDetailColumns = [ 
 {key:"glcode",label:'Account Code', formatter:glcodeFormatterCbillModify("billDetailsTableFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',formatter:accountheadFormatter("billDetailsTableFinal",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:600, formatter:accountheadFormatter("billDetailsTableFinal",".accounthead","text")},				
 {key:"amount",label:'Debit', formatter:amountFormatterForGrid("billDetailsTableFinal",".debitAmountDetail","text")}, 
 {key:'Add',label:'Add',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableFinal',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableFinal',this)")}
@@ -213,7 +213,7 @@ var totaldbamt=0,totalcramt=0;
 var makeVoucherDetailTableCreditFinal = function() {
  var voucherDetailColumnsCredit = [ 
 {key:"glcode",label:'Account Code', formatter:glcodeFormatterCbillModify("billDetailsTableCreditFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',formatter:accountheadFormatter("billDetailsTableCreditFinal",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:600, formatter:accountheadFormatter("billDetailsTableCreditFinal",".accounthead","text")},				
 {key:"amount",label:'Credit', formatter:amountFormatterForGrid("billDetailsTableCreditFinal",".creditAmountDetail","text")},
 {key:'Add',label:'Add',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableCreditFinal',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableCreditFinal',this)")}
@@ -244,7 +244,7 @@ billDetailsTableCreditFinal = new YAHOO.widget.DataTable("billDetailTableCreditF
 var makeVoucherDetailTableNetFinal = function() {
  var voucherDetailColumnsNet = [ 
 {key:"glcode",label:'Account Code', formatter:glcodeFormatter("billDetailsTableNetFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:600, formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
 {key:"amount",label:'Net',formatter:amountFormatter("billDetailsTableNetFinal",".creditAmountDetail","text")},
 {key:'Add',label:'Add'},
 {key:'Delete',label:'Delete'}
@@ -274,7 +274,7 @@ var makeVoucherDetailTableSubledger = function() {
 {key:"subledgerCode",label:'Subledger Code',  formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
 {key:"detailCode",label:'Entity Code', formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
 {key:"detailName",label:'Entity Name', formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
-{key:"accounthead", label:'Account Head',formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:600,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
 {key:"amount",label:'Amount',formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
 {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
