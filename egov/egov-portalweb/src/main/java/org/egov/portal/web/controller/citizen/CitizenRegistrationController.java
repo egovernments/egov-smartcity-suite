@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -42,7 +41,6 @@ package org.egov.portal.web.controller.citizen;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -67,7 +65,7 @@ public class CitizenRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = POST)
-    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
+    public String registerCitizen(@ModelAttribute final Citizen citizen, final BindingResult errors,
             final HttpServletRequest request) {
         //TODO Rework this
         String SUCCESS = "redirect:/../egi/login/secure";

@@ -70,7 +70,6 @@ import javax.validation.constraints.Pattern;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
@@ -356,12 +355,12 @@ public class User extends AbstractAuditable {
         this.guardian = guardian;
     }
 
-	public String getGuardianRelation() {
-		return guardianRelation;
-	}
+    public String getGuardianRelation() {
+        return guardianRelation;
+    }
 
-	public void setGuardianRelation(String guardianRelation) {
-		this.guardianRelation = guardianRelation;
-	}
+    public void setGuardianRelation(final String guardianRelation) {
+        this.guardianRelation = guardianRelation;
+    }
 
 }
