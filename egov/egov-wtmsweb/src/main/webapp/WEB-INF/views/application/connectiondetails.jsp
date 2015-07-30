@@ -60,7 +60,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.usagetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="usageType" data-first-option="false"
+		<form:select path="usageType" id="usagetype" data-first-option="false" id="usageType"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />

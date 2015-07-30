@@ -41,7 +41,9 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
+import org.egov.wtms.masters.entity.ConnectionUsage;
 import org.egov.wtms.masters.entity.UsageType;
+
 import org.egov.wtms.masters.repository.UsageTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,10 +58,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsageTypeService {
 
     private final UsageTypeRepository usageTypeRepository;
-
+    
     @Autowired
     public UsageTypeService(final UsageTypeRepository usageTypeRepository) {
         this.usageTypeRepository = usageTypeRepository;
+       
     }
 
     public UsageType findBy(final Long usageTypeId) {
@@ -105,4 +108,7 @@ public class UsageTypeService {
         return usageTypeRepository.findByActiveTrueOrderByNameAsc();
     }
 
+    public List<ConnectionUsage> getAllUsageTypesByConnectionType(String connectionType) {
+	return usageTypeRepository.findAllUsageTypes(connectionType);	  
+    }
  }

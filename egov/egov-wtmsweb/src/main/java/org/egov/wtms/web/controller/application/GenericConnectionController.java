@@ -105,9 +105,9 @@ public abstract class GenericConnectionController {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+    /*public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
         return usageTypeService.getActiveUsageTypes();
-    }
+    }*/
 
     public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
