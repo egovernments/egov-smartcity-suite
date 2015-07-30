@@ -80,7 +80,7 @@
 				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="greybox"><s:textfield maxlength="64" name="certificationNumber" id="certificationNumber"></s:textfield></td>
+		<td class="greybox"><s:textfield maxlength="64" name="propertyDetail.occupancyCertificationNo" id="propertyDetail.occupancyCertificationNo" value="%{propertyDetail.occupancyCertificationNo}"></s:textfield></td>
 	</tr>
 
 	<tr id="appurtenantRow">
