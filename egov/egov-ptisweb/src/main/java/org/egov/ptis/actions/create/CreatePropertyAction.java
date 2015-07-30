@@ -42,7 +42,6 @@ package org.egov.ptis.actions.create;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.removeStart;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
@@ -57,9 +56,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPRO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
@@ -71,14 +72,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFI
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -313,7 +312,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SkipValidation
 	@Action(value = "/createProperty-newForm")
 	public String newForm() {
-		populateWorkflowEntities();
 		return RESULT_NEW;
 	}
 
@@ -346,6 +344,9 @@ public class CreatePropertyAction extends WorkflowAction {
 	private void populateFormData() {
 		PropertyDetail propertyDetail = property.getPropertyDetail();
 		if (propertyDetail != null) {
+		        if (propertyDetail.getFloorDetails().size() > 0) {
+                              setFloorDetails(property);
+                        }
 			setPropTypeId(propertyDetail.getPropertyTypeMaster().getId().toString());
 			if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
 				propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -442,19 +443,15 @@ public class CreatePropertyAction extends WorkflowAction {
 		populateFormData();
 		if (!nextAction.equals(WF_STATE_COMMISSIONER_APPROVED)
 				&& !nextAction.equals(WF_STATE_REVENUE_OFFICER_APPROVED)
-				&& (ASSISTANT_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN
+				&& (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN
 						.equalsIgnoreCase(userDesgn)) || WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(nextAction)) {
 			//populateFormData();
 			mode = EDIT;
 			return RESULT_NEW;
 		} else {
 			mode = VIEW;
-			PropertyDetail propertyDetail = property.getPropertyDetail();
 			setAddressStr(basicProp.getAddress().toString());
 			corrAddress1 = basicProp.getAddress().toString();
-			if (propertyDetail.getFloorDetails().size() > 0) {
-				setFloorDetails(property);
-			}
 			setDocNumber(property.getDocNumber());
 			LOGGER.debug("IndexNumber: "
 					+ indexNumber
@@ -495,7 +492,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProp.setUnderWorkflow(true);
 		basicPropertyService.applyAuditing(property.getState());
 		basicProp.addProperty(property);
-		propService.createDemand(property, basicProp.getPropOccupationDate());
 		basicPropertyService.persist(basicProp);
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();
@@ -509,14 +505,17 @@ public class CreatePropertyAction extends WorkflowAction {
 	public void updatePropertyDetails() {
 		updatePropertyId(basicProp);
 		//updateOwnerDetails(basicProp);
-		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
-				.find("from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?",PROP_CREATE_RSN, mutationId);
-		basicProp.setPropertyMutationMaster(propertyMutationMaster);
-		
-		property = basicPropertyService.updateProperty(property, getAreaOfPlot(),
-				propertyMutationMaster.getCode(), propTypeId,getFloorTypeId(), getRoofTypeId(),
-				getWallTypeId(), getWoodTypeId());
+		final Character status = STATUS_WORKFLOW;
 		//basicPropertyService.createUserIfNotExist(basicProp);
+		PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService()
+                        .find("from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?",PROP_CREATE_RSN, mutationId);
+                basicProp.setPropertyMutationMaster(propertyMutationMaster);
+		property = propService.createProperty(property, getAreaOfPlot(),
+                        propertyMutationMaster.getCode(), propTypeId, propUsageId, propOccId, status,
+                        getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
+                        getWallTypeId(), getWoodTypeId());
+		//createOwners(basicProp);
+		//createUserIfNotExist(basicProp);
 		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			propCompletionDate = propService.getLowestDtOfCompFloorWise(property
@@ -531,9 +530,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		
 		if ((propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))) {
-			property.setPropertyDetail(basicPropertyService.updatePropertyDetail(property,property.getPropertyDetail()));
+			property.setPropertyDetail(propService.changePropertyDetail(property,property.getPropertyDetail(),0).getPropertyDetail());
 		}
 		property.setBasicProperty(basicProp);
+		propService.createDemand(property, basicProp.getPropOccupationDate());
 		
 	}
 	
@@ -592,6 +592,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		} else {
 			property.getPropertyDetail().setApartment(null);
 		}
+		basicProp.setUnderWorkflow(true);
 		basicPropertyService.persist(basicProp);
 		setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator "
 				+ property.getCreatedBy().getUsername() + " with application No :");
@@ -601,23 +602,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		return RESULT_ACK;
 	}
 
-	public void populateWorkflowEntities() {
-		List approverDepartmentList = persistenceService.findAllBy("from Department order by name");
-		// PersonalInformation
-		// loggedInEmp=eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
-		// List desgnationList =
-		// persistenceService.findAllBy("from Designation where name=?","ACCOUNTS OFFICER");
-		addDropdownData("approverDepartmentList", approverDepartmentList);
-		addDropdownData("designationList", Collections.EMPTY_LIST);
-		addDropdownData("approverList", Collections.EMPTY_LIST);
-
-	}
-
 	private void setFloorDetails(Property property) {
 		LOGGER.debug("Entered into setFloorDetails, Property: " + property);
-		List<Floor> flrDtSet = property.getPropertyDetail().getFloorDetails();
+		List<Floor> floorList = property.getPropertyDetail().getFloorDetails();
+		property.getPropertyDetail().setFloorDetailsProxy(floorList);
 		int i = 0;
-		for (Floor flr : flrDtSet) {
+		for (Floor flr : floorList) {
 			floorNoStr[i] = (propertyTaxUtil.getFloorStr(flr.getFloorNo()));
 			LOGGER.debug("setFloorDetails: floorNoStr[" + i + "]->" + floorNoStr[i]);
 			i++;
@@ -627,32 +617,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	public List<Floor> getFloorDetails() {
 		return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
-	}
-
-	public List<String> getValidActions() {
-		List<String> validActionsList = Collections.emptyList();
-		String tempValidAction = null;
-		if ((null == getModel()) || (property.getId() == null)) {
-			validActions = Arrays.asList("Save");
-		} else {
-			String validAction = (String) persistenceService.find(
-					"select validActions from WorkFlowMatrix where objectType=? "
-							+ "and currentState =?", property.getStateType(), property
-							.getCurrentState().getValue());
-			if (null != validAction) {
-				StringTokenizer strToken = new StringTokenizer(validAction, ",");
-				tempValidAction = null;
-				validActionsList = new ArrayList<String>();
-				while (strToken.hasMoreElements()) {
-					tempValidAction = (String) strToken.nextToken();
-					validActionsList.add(tempValidAction);
-				}
-			}
-			validActions = validActionsList;
-		}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug(">>>>>>" + validActions);
-		return validActions;
 	}
 
 	@Override
@@ -672,7 +636,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: Property by ModelId: " + property);
 			LOGGER.debug("prepare: BasicProperty on property: " + basicProp);
 		}
-
 		this.documentTypes = propService.getPropertyCreateDocumentTypes();
 		List<FloorType> floorTypeList = getPersistenceService().findAllBy(
 				"from FloorType order by name");
@@ -742,7 +705,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		// tax exempted properties
 		addDropdownData("taxExemptedList", CommonServices.getTaxExemptedList());
-		populateWorkflowEntities();
 
 		super.prepare();
 		LOGGER.debug("prepare: PropTypeList: "
@@ -951,6 +913,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from changePropertyDetail");
 		return vacantProperty;
 	}
+	
 
 	private void createOwners(BasicProperty basicProperty) {
 		LOGGER.debug("Entered into createOwners, Property: " + property);

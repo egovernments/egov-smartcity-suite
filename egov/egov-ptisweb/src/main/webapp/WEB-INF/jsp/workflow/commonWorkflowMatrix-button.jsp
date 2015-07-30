@@ -17,7 +17,7 @@
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
-		<s:if test="%{getNextAction()!='END'}">
+		<s:if test="%{getNextAction()!='END' && name != 'Reject'}">
 	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1") {
 	        alert("Please Select the Approver ");
 			return false;
