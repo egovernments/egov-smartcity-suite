@@ -83,34 +83,30 @@
 
 	<table border="0" width="100%">
 	<tr>
+	<td  class="greybox">&nbsp;</td>
 		<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-			<td class="greybox" width="22%"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
-			<td class="greybox" width="22%">
-			<table width="100%">
-			<tr>
-			<td style="width:25%"><input type="text" name="voucherNumberPrefix" id="voucherNumberPrefix" readonly="true"  style="width:100%"/></td> 
-			<td style="width:75%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
-			</tr>
-			</table>
-			</td>
+			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
+			<td class="greybox"><input type="text" name="voucherNumberPrefix" id="voucherNumberPrefix" readonly="true"  style="width:100%"/></td> 
+			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
 		</s:if>
 		<s:else>
 			<td class="greybox"><s:text name="voucher.number"/><span class="mandatory1"> *</span></td>
 			<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" readonly="true" /></td>
 		</s:else>
 		</tr>
+		<tr>
+		<td  class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="voucher.date"/><span class="mandatory1"> *</span></td>
 			<td class="greybox"><s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 			<s:textfield  name="voucherDate" id="voucherDate" value="%{voucherDateId}"  maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 			<a href="javascript:show_calendar('jvmodifyform.voucherDate');" style="text-decoration:none">&nbsp;<img tabIndex=-1 src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 		</td>
-			
-			
 	</tr>
 	<jsp:include page="voucherSubType.jsp"/>
 	<jsp:include page="vouchertrans-filter.jsp"/>
 	<jsp:include page="loadYIDataTable.jsp"/>
 	<tr>
+			<td  class="greybox">&nbsp;</td>
 			<td class="greybox"><s:text name="voucher.narration" /></td>
 			<td class="greybox" colspan="3"><s:textarea  id="narration" name="description" style="width:580px" onblur="checkVoucherNarrationLen(this)"/></td>
 		</tr>	
@@ -157,6 +153,7 @@
 	    <div align="center">
 		<table border="0" width="100%">
 			<tr>
+				<td  class="bluebox">&nbsp;</td>
 				<td  class="bluebox">Comments</td> 
 				<td  class="bluebox" ><s:textarea name="comments" id="comments" cols="150" rows="3" onblur="checkLength(this)"/></td>
 				<td><s:hidden id="methodName" name="methodName" value="save"/></td>
