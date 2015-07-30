@@ -58,7 +58,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             Authentication auth = new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
             return auth;
         } else {
-            throw new BadClientCredentialsException();
+            throw new OAuth2Exception("Invalid login credentials");
         }
     }
 
