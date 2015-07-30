@@ -108,7 +108,7 @@ public class UsageTypeService {
         return usageTypeRepository.findByActiveTrueOrderByNameAsc();
     }
 
-    public List<ConnectionUsage> getAllUsageTypesByConnectionType(String connectionType) {
+    /*public List<ConnectionUsage> getAllUsageTypesByConnectionType(String connectionType) {
 	return usageTypeRepository.findAllUsageTypes(connectionType);	  
-    }
+    }*/
  }

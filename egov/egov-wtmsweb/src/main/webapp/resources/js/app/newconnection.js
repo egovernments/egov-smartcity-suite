@@ -40,7 +40,7 @@
 $(document).ready(function(){
 	
 	
-	$('#connectionType').change(function(){
+	/*$('#connectionType').change(function(){
 		$.ajax({
 			url: "/wtms/ajax-connectionTypes",     
 			type: "GET",
@@ -61,7 +61,7 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
-	});
+	});*/
 	
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		

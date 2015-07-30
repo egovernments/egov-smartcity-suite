@@ -51,7 +51,6 @@ import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
-import org.egov.wtms.masters.entity.ConnectionUsage;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -88,14 +87,14 @@ public class AjaxController {
         return designations;
     }
 
-	@RequestMapping(value = "/ajax-connectionTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@RequestMapping(value = "/ajax-connectionTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<ConnectionUsage> getUsageTypesByConnectionType(
 			@RequestParam final String connectionType) {
 		List<ConnectionUsage> usageTypes = new ArrayList<ConnectionUsage>(0);
 		usageTypes = usageTypeService.getAllUsageTypesByConnectionType(connectionType);
 
 		return usageTypes;
-	}
+	}*/
    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
