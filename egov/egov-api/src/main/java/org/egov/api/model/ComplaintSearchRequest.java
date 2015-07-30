@@ -34,16 +34,15 @@ import static org.egov.search.domain.Filter.queryStringFilter;
 import static org.egov.search.domain.Filter.rangeFilter;
 import static org.egov.search.domain.Filter.termsStringFilter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class ComplaintSearchRequest {
     private String searchText;
@@ -62,9 +61,9 @@ public class ComplaintSearchRequest {
     private String location;
     private String currentUlb;
 
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-
+    DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
+    DateTimeFormatter dtft = DateTimeFormat.forPattern("dd/MM/yyyy");
+    
     private static final Logger logger = Logger.getLogger(ComplaintSearchRequest.class);
 
     public void setSearchText(final String searchText) {
@@ -111,9 +110,10 @@ public class ComplaintSearchRequest {
         if (null != fromDate)
             try {
                 if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
-                this.fromDate = ft.format(dtft.parse(fromDate));
-            } catch (final ParseException e) {
+                    logger.debug("Date Range From start.. :" + ft.print(dtft.parseDateTime(fromDate)));
+                this.fromDate = ft.print(dtft.parseDateTime(fromDate));
+                
+            } catch (final Exception e) {
             }
     }
 
@@ -121,9 +121,9 @@ public class ComplaintSearchRequest {
         if (null != toDate)
             try {
                 if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(dtft.parse(toDate)));
-                this.toDate = ft.format(dtft.parse(toDate));
-            } catch (final ParseException e) {
+                    logger.debug("Date Range Till .. :" + ft.print(dtft.parseDateTime(toDate)));
+                this.toDate = ft.print(dtft.parseDateTime(toDate));
+            } catch (final Exception e) {
             }
     }
 
@@ -133,11 +133,10 @@ public class ComplaintSearchRequest {
 
     public void setComplaintDate(final String complaintDate) {
         if (null != complaintDate) {
-            final Date today = new Date();
             final Calendar cal = Calendar.getInstance();
             if (logger.isDebugEnabled())
-                logger.debug("String today date... " + ft.format(today));
-            complaintDateTo = ft.format(today);
+                logger.debug("String today date... " + ft.print(cal.getTimeInMillis()));
+            complaintDateTo = ft.print(cal.getTimeInMillis());
 
             if (complaintDate.equalsIgnoreCase("today")) {
                 if (logger.isDebugEnabled())
@@ -148,13 +147,13 @@ public class ComplaintSearchRequest {
                 complaintDateTo = null;
             } else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
                 cal.add(Calendar.DATE, -6);
-                complaintDateFrom = ft.format(cal.getTime());
+                complaintDateFrom = ft.print(cal.getTimeInMillis());
             } else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
                 cal.add(Calendar.DATE, -29);
-                complaintDateFrom = ft.format(cal.getTime());
+                complaintDateFrom = ft.print(cal.getTimeInMillis());
             } else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
                 cal.add(Calendar.DATE, -89);
-                complaintDateFrom = ft.format(cal.getTime());
+                complaintDateFrom = ft.print(cal.getTimeInMillis());
             } else {
                 if (logger.isDebugEnabled())
                     logger.debug("Else section in date range");

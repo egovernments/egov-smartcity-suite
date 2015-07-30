@@ -121,20 +121,24 @@ public class CommonController extends ApiController {
         ApiResponse res = ApiResponse.newInstance();
         String identity = request.getParameter("identity");
 
-        if (identity != null) {
-            String url = request.getRequestURL().toString();
-            url = url.substring(0, url.indexOf("/api"));
-            
-            if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-                    identity, url + "/egi/login/password/reset?token=")) {
+        if (identity == null || !identity.matches("\\d{10}")) {
+            return res.error("Invalid mobile number");
+        } 
 
-                return res.success("", "Password has been sent to mail");
-            } else {
-                return res.error("Password send failed");
-            }
-        } else {
-            return res.error("Invalid mobile number/Email Id.");
+        Citizen citizen = citizenService.getCitizenByUserName(identity);
+        if (citizen == null) {
+            return res.error(getMessage("user.not.found"));
         }
+
+        String url = request.getRequestURL().toString();
+        url = url.substring(0, url.indexOf("/api"));
+
+        if (identityRecoveryService.generateAndSendUserPasswordRecovery(
+                identity, url + "/egi/login/password/reset?token=")) {
+            return res.success("", "Password has been sent to mail");
+        }
+
+        return res.error("Password send failed");
 
     }
 

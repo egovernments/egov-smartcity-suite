@@ -30,7 +30,6 @@
  */
 package org.egov.api.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +44,8 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -111,7 +112,7 @@ public class CitizenController extends ApiController {
         }
 
         tokenStore.removeAccessToken(token);
-        return ApiResponse.newInstance().success(getMessage("msg.logout.success"));
+        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));
     }
 
     // --------------------------------------------------------------------------------//
@@ -134,8 +135,8 @@ public class CitizenController extends ApiController {
             citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenUpdate.setEmailId(citizen.get("emailId").toString());
             citizenUpdate.setAltContactNumber(citizen.get("altContactNumber").toString());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date dt = sdf.parse(citizen.get("dob").toString());
+            DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
+            Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();            
             citizenUpdate.setDob(dt);
             citizenUpdate.setPan(citizen.get("pan").toString());
             citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());
