@@ -47,7 +47,7 @@ import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.messaging.MessagingUtils;
+import org.egov.infra.messaging.MessagingService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,7 +66,7 @@ public class IdentityRecoveryService {
     private UserService userService;
 
     @Autowired
-    private MessagingUtils messagingUtils;
+    private MessagingService messagingService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -89,10 +89,10 @@ public class IdentityRecoveryService {
         final Optional<User> user = userService.checkUserWithIdentity(identity);
         if (user.isPresent()) {
             final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate());
-            return messagingUtils.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
+            messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
                     identityRecovery.getToken(), System.getProperty("line.separator"));
         }
-        return false;
+        return true;
     }
 
     @Transactional

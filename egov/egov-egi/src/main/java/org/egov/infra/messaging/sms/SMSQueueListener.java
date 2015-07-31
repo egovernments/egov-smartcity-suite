@@ -1,4 +1,4 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
@@ -37,43 +37,36 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging;
+package org.egov.infra.messaging.sms;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.admin.common.service.MessageTemplateService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.email.EmailService;
-import org.egov.infra.messaging.sms.SMSService;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class MessagingUtils {
-
-    @Autowired
-    private SMSService httpSMS;
-
-    @Autowired
-    private EmailService emailUtils;
+@Component("smsQueueListener")
+public class SMSQueueListener implements MessageListener {
+    private static final Logger LOG = LoggerFactory.getLogger(SMSQueueListener.class);
+    private final SMSService smsService;
 
     @Autowired
-    private MessageTemplateService messageTemplateService;
-
-    public boolean sendEmailAndSMS(final User user, final String subject, final String templateName,
-            final Object... messageValues) {
-        return sendEmail(user, subject, templateName, messageValues) || sendSMS(user, templateName, messageValues);
+    public SMSQueueListener(final SMSService smsService) {
+        this.smsService = smsService;
     }
 
-    public boolean sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
-        return StringUtils.isNotBlank(user.getEmailId()) && emailUtils.sendMail(user.getEmailId(),
-                messageTemplateService.realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues),
-                subject);
-    }
-
-    public boolean sendSMS(final User user, final String templateName, final Object... messageValues) {
-        return StringUtils.isNotBlank(user.getMobileNumber()) && httpSMS.sendSMS(
-                messageTemplateService.realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues),
-                "91" + user.getMobileNumber());
+    @Override
+    public void onMessage(final Message message) {
+        try {
+            final MapMessage emailMessage = (MapMessage) message;
+            smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
+        } catch (final JMSException e) {
+            LOG.error("SMS sending failed for reason {}", e);
+        }
     }
 
 }
