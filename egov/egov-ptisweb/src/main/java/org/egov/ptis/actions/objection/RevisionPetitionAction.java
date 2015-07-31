@@ -56,6 +56,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -595,7 +596,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 if (hasErrors()) {
                     return "view";
                 }
-                if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)) {
+                if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
                     // updateStateAndStatus("END", "END");
         
                     if (objection.getObjectionRejected()) {

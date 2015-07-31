@@ -49,7 +49,7 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
-			document.getElementById('approval_header').style.display='';
+		//	document.getElementById('approval_header').style.display='';
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
 				enableAppartnaumtLandDetailsView();
@@ -78,7 +78,6 @@
 								return false;
 							}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED}"/>')
 							{		
-							alert('inside loop')	;
 								action = 'revPetition-generateHearingNotice.action';
 							
 							}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE}"/>')
@@ -142,6 +141,10 @@
 							{	
 								if(validateObjectionOutcome())
 								{
+									 if(document.getElementById('approverPositionId').value=="-1") {
+									        alert("Please Select the Approver ");
+											return false;
+									    }
 									action = 'revPetition-recordObjectionOutcome.action';
 								}else
 									return false;
@@ -149,8 +152,6 @@
 				    		}
 						}
 				 
-				
-				    	alert(action);
 					document.forms[0].action = action;
 					document.forms[0].submit;
 					return true;

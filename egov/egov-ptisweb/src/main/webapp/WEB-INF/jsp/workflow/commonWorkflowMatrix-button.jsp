@@ -7,7 +7,7 @@
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}     
-	    onSubmit();
+	   return  onSubmit();
 	}
 
 	function validateWorkFlowApprover(name) {
