@@ -49,7 +49,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.FunctionDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.bills.model.Cbill;
@@ -126,7 +126,7 @@ public class BaseBillAction extends BaseVoucherAction {
         @Autowired
         protected ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
         @Autowired
-        protected FunctionDAO functionDAO;
+        protected FunctionHibernateDAO functionHibernateDAO;
         @Autowired
         protected FinancialYearDAO financialYearDAO;
         
@@ -406,6 +406,14 @@ public class BaseBillAction extends BaseVoucherAction {
 		
 
 
+		public FunctionHibernateDAO getFunctionHibernateDAO() {
+			return functionHibernateDAO;
+		}
+
+		public void setFunctionHibernateDAO(FunctionHibernateDAO functionHibernateDAO) {
+			this.functionHibernateDAO = functionHibernateDAO;
+		}
+
 		public AppConfigValueService getAppConfigValuesService() {
 			return appConfigValuesService;
 		}
@@ -424,13 +432,6 @@ public class BaseBillAction extends BaseVoucherAction {
 			this.chartOfAccountsHibernateDAO = chartOfAccountsHibernateDAO;
 		}
 
-		public FunctionDAO getFunctionDAO() {
-			return functionDAO;
-		}
-
-		public void setFunctionDAO(FunctionDAO functionDAO) {
-			this.functionDAO = functionDAO;
-		}
 
 		public FinancialYearDAO getFinancialYearDAO() {
 			return financialYearDAO;
