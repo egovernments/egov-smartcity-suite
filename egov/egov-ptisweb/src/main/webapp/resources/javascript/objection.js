@@ -43,25 +43,28 @@ function onSubmit(obj) {
 	document.forms[0].submit;
    return true;
 }
+
+
+
 function showPropertyHeaderTab(){
 		document.getElementById('property_header').style.display='';
 		setCSSClasses('propertyHeaderTab','First Active');
 		setCSSClasses('objectionDetailTab','');
-		setCSSClasses('approvalTab','Last');
+		//setCSSClasses('approvalTab','Last');
 		hideObjectionHeaderTab();
-		hideApprovalHeaderTab();
+		//hideApprovalHeaderTab();
 		
 	}
 	function showObjectionHeaderTab(){
 		document.getElementById('objection_header').style.display='';
 		setCSSClasses('propertyHeaderTab','First BeforeActive');
-		setCSSClasses('objectionDetailTab','Active');
-		setCSSClasses('approvalTab','Last');
+		setCSSClasses('objectionDetailTab','Last Active ActiveLast');
+	//	setCSSClasses('approvalTab','Last');
 		hidepropertyHeaderTab();
-		hideApprovalHeaderTab();
+	//	hideApprovalHeaderTab();
 		
 	}
-	
+	/*
 	function showApprovalTab(){
 		document.getElementById('approval_header').style.display='';
 		setCSSClasses('propertyHeaderTab','First');
@@ -70,7 +73,7 @@ function showPropertyHeaderTab(){
 		hidepropertyHeaderTab();
 		hideObjectionHeaderTab();
   		
-	} 
+	} */
 	
 	function setCSSClasses(id,classes){
     		 document.getElementById(id).setAttribute('class',classes);
@@ -94,7 +97,8 @@ function checkLength(obj){
 	}
 }
 
-function validateRecordObjection(obj){
+
+/*function validateRecordObjection(obj){
 	document.getElementById("workflowBean.actionName").value=obj.value;
 	document.getElementById("lblError").style.display='none';
 	if(dom.get('recievedOn').value==''){
@@ -116,36 +120,31 @@ function validateRecordObjection(obj){
 		return validateApproval(obj);
 	}
 	
-}
+}*/
 
-function validateHearingDate(obj){
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+function validateHearingDate(){
+//	document.getElementById("lblError").style.display='none';
+	//document.getElementById("workflowBean.actionName").value=obj.value;
 	
 	if( dom.get('plannedHearingDt').value == ""){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Hearing Date';
+		//document.getElementById("lblError").style.display='block';
+		//document.getElementById("lblError").innerHTML ='Please enter Hearing Date';
+		alert('Please enter Hearing Date');
 		return false;
 	}else if( dom.get('hearingTime').value == ""){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Hearing Time';
+	//	document.getElementById("lblError").style.display='block';
+		//document.getElementById("lblError").innerHTML ='Please enter Hearing Time';
+		alert('Please enter Hearing time');
 		return false;
 	}else if( dom.get('hearingVenue').value == ""){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Venue';
+		//document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please enter Venue';
+		alert('Please enter Hearing venue');
 		return false;
-	}else{
-		
-		if(validateApproval(obj))
-		{	
-			onSubmit('revPetition-addHearingDate.action');  
-		}
-			else
-			return false;
 	}
-	
+	return true;
 }
-function validateIsHearningNoticeGenerated(obj)
+/*function validateIsHearningNoticeGenerated(obj)
 {  
 	document.getElementById("lblError").style.display='none';
 	document.getElementById("workflowBean.actionName").value=obj.value;
@@ -154,15 +153,15 @@ function validateIsHearningNoticeGenerated(obj)
 		onSubmit('revPetition-generateHearingNotice.action');  
 	else
 		return false;
-}
-function printHearingNotice(obj)
+}*/
+function printHearingNotice()
 {
 	var url;
 	//alert(document.getElementById("model.id").value);
 	url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
 		+ document.getElementById("model.id").value ;
 	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+	//document.getElementById("workflowBean.actionName").value=obj.value;
 
 	window.open(url, 'printHearingNotice', 'width=1000,height=400');   
 	
@@ -181,34 +180,37 @@ function printEnodresementNotice(obj)
 	
 }
 
-function validateRecordHearing(obj){
+function validateRecordHearing(){
 	
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+	//document.getElementById("lblError").style.display='none';
+	//document.getElementById("workflowBean.actionName").value=obj.value;
 	
 	if( dom.get('hearingDetails').value == ""){
 		
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Hearing Details';
+	//	document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please enter Hearing Details';
+		alert('Please enter Hearing Details');
 		return false;
 	}
 	else if(dom.get('inspectionRequiredtrue').checked == false && dom.get('inspectionRequiredfalse').checked == false ){
 		
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please choose if Inspection Required or not';
+	//	document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please choose if Inspection Required or not';
+		alert('Please choose if Inspection Required or not');
 		return false;
 	}
-	else { 
+	/*else { 
 		if(validateApproval(obj))
 		{	
 			onSubmit('revPetition-recordHearingDetails.action');  
 		}
 			else 
 			return false;
-	}
+	}*/
+	return true;
 }
 
-function validateInspectionDetails(obj)
+/*function validateInspectionDetails(obj)
 {
 	document.getElementById("lblError").style.display='none';
 	document.getElementById("workflowBean.actionName").value=obj.value;
@@ -218,17 +220,18 @@ function validateInspectionDetails(obj)
 	}
 		else
 		return false;
-	}
-function validateRecordInspection(obj){
+	}*/
+function validateRecordInspection(){
 	
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+	//document.getElementById("lblError").style.display='none';
+	//document.getElementById("workflowBean.actionName").value=obj.value;
 	
 	if( dom.get('inspectionRemarks').value == ""){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Inspection Remark';
+		//document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please enter Inspection Remark';
+		alert('Please enter Inspection Remark');
 		return false;
-	}else{ 
+	}/*else{ 
 		
 		if(validateApproval(obj))
 		{	
@@ -236,10 +239,10 @@ function validateRecordInspection(obj){
 		}
 			else
 			return false;
-	}
+	}*/return true;
 }
 
-function validateEndoresementNoticeGenerated(obj)
+/*function validateEndoresementNoticeGenerated(obj)
 {	document.getElementById("lblError").style.display='none';
 document.getElementById("workflowBean.actionName").value=obj.value;
 if(validateApproval(obj))
@@ -248,35 +251,37 @@ if(validateApproval(obj))
 }
 	else
 	return false;  
-	}
+	}*/
 function validateObjectionOutcome(obj){
-	document.getElementById("lblError").style.display='none';
-	document.getElementById("workflowBean.actionName").value=obj.value;
+	//document.getElementById("lblError").style.display='none';
+	//document.getElementById("workflowBean.actionName").value=obj.value;
 	
 	if(dom.get('objectionRejectedtrue').checked == false && dom.get('objectionRejectedfalse').checked == false ){
 		
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please choose if Objection Accepted or Rejected';
+	//	document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please choose if Objection Accepted or Rejected';
+		alert('Please choose if Revision Petition Accepted or Rejected');
 		return false;
 	}
 	else if(dom.get('dateOfOutcome').value == ''){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Outcome Date';
-		return false;
+	//	document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please enter Outcome Date';
+		alert('Please enter Outcome Date'); return false;
 	}
 	else if(dom.get('outcomeRemarks').value == ''){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML ='Please enter Outcome Remarks';
-		return false;
+		//document.getElementById("lblError").style.display='block';
+	//	document.getElementById("lblError").innerHTML ='Please enter Outcome Remarks';
+		alert('Please enter Outcome Remarks'); return false;
 	} 
-	else { 
+	/*else { 
 		if(validateApproval(obj))
 		{	
 			onSubmit('revPetition-recordObjectionOutcome.action');  
 		}
 			else
 			return false;  
-	}
+	}*/
+	return true;
 }
 
 function validateApproval(obj){

@@ -49,7 +49,7 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
-
+			document.getElementById('approval_header').style.display='';
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
 				enableAppartnaumtLandDetailsView();
@@ -58,6 +58,105 @@
 				toggleFloorDetailsView();
 			}
 
+			function onSubmit() {
+				
+				var actionName = document.getElementById('workFlowAction').value;
+				var action = null;
+				var userDesg = '<s:property value="%{userDesgn}"/>';
+				var statusModuleType= '<s:property value="%{model.egwStatus.moduletype}"/>';
+				var statusCode= '<s:property value="%{model.egwStatus.code}"/>';
+				var state = '<s:property value="%{model.state.value}"/>';
+				
+				if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
+
+						if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>')
+							{	
+								if(validateHearingDate())
+									{
+									action = 'revPetition-addHearingDate.action';
+									}else
+								return false;
+							}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED}"/>')
+							{		
+							alert('inside loop')	;
+								action = 'revPetition-generateHearingNotice.action';
+							
+							}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE}"/>')
+							{	if(validateRecordHearing())
+								{
+									action = 'revPetition-recordHearingDetails.action';
+								}else
+									return false;
+							}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED}"/>')
+							{	if(validateRecordInspection())
+								{
+									action = 'revPetition-recordInspectionDetails.action';
+								}else
+									return false;
+						    }else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED}"/>')
+							{	
+									action = 'revPetition-validateInspectionDetails.action';
+							
+					    	}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>')
+							{	
+								if(validateObjectionOutcome())
+								{
+									action = 'revPetition-recordObjectionOutcome.action';
+								}else
+									return false;
+						
+				    		}
+					}else if (actionName=='Print HearingNotice')
+						{
+						url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
+							+ document.getElementById("model.id").value ;
+								window.open(url, 'printHearingNotice', 'width=1000,height=400');   
+								return false;
+						}	
+					else if (actionName=='Save')
+						{
+								if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE}"/>')
+								{	if(validateRecordHearing())
+									{
+										action = 'revPetition-recordHearingDetails.action';
+									}else
+										return false;
+								}else if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED}"/>')
+									{	if(validateRecordInspection())
+										{
+											action = 'revPetition-recordInspectionDetails.action';
+										}else
+											return false;
+								    }
+				    	}else if (actionName=='Print Endoresement')
+						{
+				    		action = 'revPetition-generateEnodresementNotice.action';
+						}
+				    	else if (actionName=='Reject')
+						{
+				    		action = 'revPetition-rejectInspectionDetails.action';
+						}
+				    	else if (actionName=='Approve')
+						{
+				    		if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>')
+							{	
+								if(validateObjectionOutcome())
+								{
+									action = 'revPetition-recordObjectionOutcome.action';
+								}else
+									return false;
+						
+				    		}
+						}
+				 
+				
+				    	alert(action);
+					document.forms[0].action = action;
+					document.forms[0].submit;
+					return true;
+
+				return true;
+			}
 			
   
 		</script>
@@ -74,8 +173,8 @@
 				<ul id="Tabs">
 					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="#" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
 					<li id="objectionDetailTab" class=""><a id="header_2" href="#" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
-					<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
-				</ul>
+	<%-- 				<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
+ --%>				</ul>
             </div></td>
           </tr>
 
@@ -146,25 +245,27 @@
           </tr>
           <tr>
             <td>
-            <div id="approval_header" style="display:none;"> 
+            <div id="approval_header" > 
          		<div id="wfHistoryDiv">
-	  		       <jsp:include page="../workflow/workflowHistory.jsp"/>
-	  		
+	  		    <%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
+	  		 --%>
 	  		       
        			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) || 
        			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
        			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY)  ||    
        					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
-       			 	<jsp:include page="../workflow/revisionPetition-workflow.jsp"/>
+       			 	<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
+       			 	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
        			 </s:if>
        			 <s:elseif test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							&& hearings[hearings.size()-1].inspectionRequired == true">
-       			 		<jsp:include page="../workflow/revisionPetition-workflow.jsp"/>
+       			 		<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
+       			 		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
        			 </s:elseif> 
 
        			 <s:else>
        			 <div align="center" ><br>
-	 			  <table width="100%" border="0" cellspacing="0" cellpadding="0" >
+	 			 <%--  <table width="100%" border="0" cellspacing="0" cellpadding="0" >
        			 	<tr>
 						<td class="bluebox" width="6%">&nbsp;</td>
 				    	<td class="bluebox" width="10%"><s:text name='approver.comments'/></td>
@@ -174,7 +275,7 @@
        			 		
        			 		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName"/>
        			 		</table>
-       			 	</div>
+       			 --%> 	</div>
        			 </s:else>
 				</div>
             </div>
@@ -183,19 +284,22 @@
 	  </table> 
 	  <div id="loadingMask" style="display:none"><p align="center"><img src="/egi/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 	  <div class="buttonbottom" align="center">
-	  	<table>
+	
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+					
+	  <%-- 	<table>
 		<tr>
 			<s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
         		state.text1.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_SAVED)">
         				<td><s:submit value="Forward" name="forward" id="forward"  method="updateRecordObjection" cssClass="buttonsubmit" onClick="return validateRecordObjection(this)"/></td>
-		  <%--   			<td><s:submit value="Save" name="save" id="save"  method="updateRecordObjection" cssClass="buttonsubmit" onClick="return validateRecordObjection(this)"/></td>
-	 --%>
+		    			<td><s:submit value="Save" name="save" id="save"  method="updateRecordObjection" cssClass="buttonsubmit" onClick="return validateRecordObjection(this)"/></td>
+	
         		</s:if>
 				<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) && 
 						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)">
 		   				<td><s:submit value="Forward" name="forward" id="forward"  method="addHearingDate" cssClass="buttonsubmit" onClick="return validateHearingDate(this)"/></td>
-		    		<%-- 	<td><s:submit value="Save" name="save" id="save"  method="addHearingDate" cssClass="buttonsubmit" onClick="return validateHearingDate(this);"/></td>
- --%>		   		</s:elseif>
+		    			<td><s:submit value="Save" name="save" id="save"  method="addHearingDate" cssClass="buttonsubmit" onClick="return validateHearingDate(this);"/></td>
+		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
 		   				<td><s:submit value="Forward" name="forward" id="forward"  method="generateHearingNotice" cssClass="buttonsubmit" onClick="return validateIsHearningNoticeGenerated(this)"/></td>
@@ -208,7 +312,7 @@
 		   		</s:elseif>
 		   		<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_GENERATEHEARINGNOTICE)">
-		   				<%-- <td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td> --%>
+		   				<td><s:submit value="Forward" name="forward" id="forward"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this)"/></td>
 		    			<td><s:submit value="Save" name="save" id="save"  method="recordHearingDetails" cssClass="buttonsubmit" onClick="return validateRecordHearing(this);"/></td>
 		   	<!-- 					<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printEnodresementNotice(this);" >Print Enodresement Notice</button> </td>
 		<td><button type="button" class="btn btn-default" data-dismiss="modal" onclick="return printHearingNotice(this);" >Print HearingNotice</button> </td>
@@ -243,7 +347,7 @@
 		    	</s:elseif>
 		    	<td><input type="button" name="closeButton" id="closeButton" value="Close" class="button" onclick="window.close();"/></td>
 		</tr>             
-		</table></div>      
+		</table> --%></div>      
 		<s:hidden name="model.id" id="model.id"/>
 			<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 	<%-- 	<s:hidden name="model.referenceProperty" id="model.referenceProperty"/>

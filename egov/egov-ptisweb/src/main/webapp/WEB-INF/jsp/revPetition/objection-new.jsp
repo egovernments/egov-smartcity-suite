@@ -49,6 +49,46 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
+
+			function validateRecordObjection(){
+				document.getElementById("lblError").style.display='none';
+			//	alert(dom.get('recievedOn').value);
+				if(dom.get('recievedOn').value==''){
+					//document.getElementById("lblError").style.display='block';
+					//document.getElementById("lblError").innerHTML  = "Please enter Objection Received Date";
+					alert('Please enter Revision Petition Received Date');
+					return false;
+				}
+				else if(dom.get('recievedBy').value==''){
+					//document.getElementById("lblError").style.display='block';
+					//document.getElementById("lblError").innerHTML  = "Please enter Objection Received By";
+					alert('Please enter Revision Petition Received By');
+					return false;
+				}
+				else if(dom.get('details').value==''){
+					//document.getElementById("lblError").style.display='block';
+					//document.getElementById("lblError").innerHTML  = "Please enter Objection Details";
+					alert('Please enter Revision Petition Details');
+					return false;
+				}
+				return true;
+			}
+			function onSubmit() {
+				var actionName = document.getElementById('workFlowAction').value;
+				var action = null;
+
+				if(validateRecordObjection()){
+					action = 'revPetition.action';
+					document.forms[0].action = action;
+					document.forms[0].submit;
+					return true;
+					}
+				else
+					return false;
+			
+				return true;
+			}
+			
 		</script>
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
@@ -65,8 +105,8 @@
 				<ul id="Tabs">
 					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="javascript:void(0);" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
 					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
-					<li id="approvalTab" class="Last"><a id="header_3" href="javascript:void(0);" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
-				</ul>
+		<%-- 			<li id="approvalTab" class="Last"><a id="header_3" href="javascript:void(0);" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
+ --%>				</ul>
             </div></td>
           </tr>
      
@@ -91,8 +131,8 @@
           </tr>
           <tr>
             <td>
-            <div id="approval_header" style="display:none;"> 
-         		<jsp:include page="../workflow/revisionPetition-workflow.jsp"/>
+            <div > 
+         		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
              <%-- 		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>  --%>
          		<br/>
             </div>
@@ -101,13 +141,15 @@
 	  </table> 
 	  <div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 	  <div class="buttonbottom" align="center">
-	  	<table>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+			
+	  <%-- 	<table>
 		<tr>
 		    	<td><s:submit value="Forward" name="forward" id="forward"  method="create" cssClass="buttonsubmit" onClick="return validateRecordObjection(this);doLoadingMask();"/></td>
-		    	<%-- <td><s:submit value="Save" name="save" id="save"  method="create" cssClass="buttonsubmit"  onClick="return validateRecordObjection(this);doLoadingMask();"/></td> --%>
+		    	<td><s:submit value="Save" name="save" id="save"  method="create" cssClass="buttonsubmit"  onClick="return validateRecordObjection(this);doLoadingMask();"/></td>
 		    	<td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
 		</tr>             
-		</table></div>
+		</table> --%></div>
 		<s:hidden name="model.id" id="model.id"/>    
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
 		

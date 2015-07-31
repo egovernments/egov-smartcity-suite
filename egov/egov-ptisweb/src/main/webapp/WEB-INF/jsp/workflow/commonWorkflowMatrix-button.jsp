@@ -23,7 +23,7 @@
 			return false;
 	    }
 	    </s:if>
-	    onSubmit();
+	    return  onSubmit();
 	}
 </script>
 <div class="buttonbottom" align="center">

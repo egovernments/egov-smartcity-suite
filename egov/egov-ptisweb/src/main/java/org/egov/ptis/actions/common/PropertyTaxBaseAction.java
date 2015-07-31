@@ -106,7 +106,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     String wflowAction = "";
     protected String userRole;
     @Autowired
-    private AssignmentService assignmentService;
+    protected AssignmentService assignmentService;
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
     @Autowired
