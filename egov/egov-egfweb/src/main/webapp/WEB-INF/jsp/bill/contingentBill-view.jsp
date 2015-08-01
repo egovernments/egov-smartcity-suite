@@ -93,11 +93,11 @@ path="${pageContext.request.contextPath}";
 var totaldbamt=0,totalcramt=0;
 var makeVoucherDetailTable = function() {
  var voucherDetailColumns = [ 
-{key:"glcode",label:'Account Code',width:'15%', formatter:glcodeFormatter("billDetailsTable",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'60%',formatter:accountheadFormatter("billDetailsTable",".accounthead","text")},				
-{key:"amount",label:'Debit',width:'15%', formatter:amountFormatter("billDetailsTable",".debitAmountDetail","text")}, 
-{key:'Add',label:'Add',width:'5%',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTable',this)")},
-{key:'Delete',label:'Delete',width:'5%',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTable',this)")}
+{key:"glcode",label:'Account Code',formatter:glcodeFormatter("billDetailsTable",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head', width:600, formatter:accountheadFormatter("billDetailsTable",".accounthead","text")},				
+{key:"amount",label:'Debit', formatter:amountFormatter("billDetailsTable",".debitAmountDetail","text")}, 
+{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTable',this)")},
+{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTable',this)")}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTable = new YAHOO.widget.DataTable("billDetailTable",voucherDetailColumns, voucherDetailDS);
@@ -126,11 +126,11 @@ billDetailsTable = new YAHOO.widget.DataTable("billDetailTable",voucherDetailCol
 var totaldbamt=0,totalcramt=0;
 var makeVoucherDetailTableCredit = function() {
  var voucherDetailColumnsCredit = [ 
-{key:"glcode",label:'Account Code',width:'15%', disable:true, formatter:glcodeFormatter("billDetailsTableCredit",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'50%',disable:true,formatter:accountheadFormatter("billDetailsTableCredit",".accounthead","text")},				
-{key:"amount",label:'Credit',width:'15%', formatter:amountFormatter("billDetailsTableCredit",".debitAmountDetail","text")}, 
-{key:'Add',label:'Add',width:'5%',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableCredit',this)")},
-{key:'Delete',label:'Delete',width:'5%',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableCredit',this)")}
+{key:"glcode",label:'Account Code', disable:true, formatter:glcodeFormatter("billDetailsTableCredit",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head', width:600,disable:true,formatter:accountheadFormatter("billDetailsTableCredit",".accounthead","text")},				
+{key:"amount",label:'Credit', formatter:amountFormatter("billDetailsTableCredit",".debitAmountDetail","text")}, 
+{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableCredit',this)")},
+{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableCredit',this)")}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableCredit = new YAHOO.widget.DataTable("billDetailTableCredit",voucherDetailColumnsCredit, voucherDetailDS);
@@ -154,11 +154,11 @@ billDetailsTableCredit = new YAHOO.widget.DataTable("billDetailTableCredit",vouc
 }
 var makeVoucherDetailTableNet = function() {
  var voucherDetailColumnsNet = [ 
-{key:"glcode",label:'Account Code',width:'15%', formatter:netglcodeFormatter("billDetailsTableNet",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'60%',formatter:accountheadFormatter("billDetailsTableNet",".accounthead","text")},				
-{key:"amount",label:'Net',width:'15%',formatter:amountFormatter("billDetailsTableNet",".debitAmountDetail","text")},
-{key:'Add',label:'Add',width:'5%'},
-{key:'Delete',label:'Delete',width:'5%'}
+{key:"glcode",label:'Account Code', formatter:netglcodeFormatter("billDetailsTableNet",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head',width:600,formatter:accountheadFormatter("billDetailsTableNet",".accounthead","text")},				
+{key:"amount",label:'Net',formatter:amountFormatter("billDetailsTableNet",".debitAmountDetail","text")},
+{key:'Add',label:'Add'},
+{key:'Delete',label:'Delete'}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableNet = new YAHOO.widget.DataTable("billDetailTableNet",voucherDetailColumnsNet, voucherDetailDS);
@@ -182,11 +182,11 @@ billDetailsTableNet = new YAHOO.widget.DataTable("billDetailTableNet",voucherDet
 
 var makeVoucherDetailTableFinal = function() {
  var voucherDetailColumns = [ 
-{key:"glcode",label:'Account Code',width:'15%', formatter:glcodeFormatterCbillModify("billDetailsTableFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'60%',formatter:accountheadFormatter("billDetailsTableFinal",".accounthead","text")},				
-{key:"amount",label:'Debit',width:'15%', formatter:amountFormatterForGrid("billDetailsTableFinal",".debitAmountDetail","text")}, 
-{key:'Add',label:'Add',width:'5%',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableFinal',this)")},
-{key:'Delete',label:'Delete',width:'5%',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableFinal',this)")}
+{key:"glcode",label:'Account Code', formatter:glcodeFormatterCbillModify("billDetailsTableFinal",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head',width:600,formatter:accountheadFormatter("billDetailsTableFinal",".accounthead","text")},				
+{key:"amount",label:'Debit', formatter:amountFormatterForGrid("billDetailsTableFinal",".debitAmountDetail","text")}, 
+{key:'Add',label:'Add',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableFinal',this)")},
+{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableFinal',this)")}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableFinal = new YAHOO.widget.DataTable("billDetailTableFinal",voucherDetailColumns, voucherDetailDS);
@@ -215,11 +215,11 @@ billDetailsTableFinal = new YAHOO.widget.DataTable("billDetailTableFinal",vouche
 var totaldbamt=0,totalcramt=0;
 var makeVoucherDetailTableCreditFinal = function() {
  var voucherDetailColumnsCredit = [ 
-{key:"glcode",label:'Account Code',width:'15%', formatter:glcodeFormatterCbillModify("billDetailsTableCreditFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'50%',formatter:accountheadFormatter("billDetailsTableCreditFinal",".accounthead","text")},				
-{key:"amount",label:'Credit',width:'15%', formatter:amountFormatterForGrid("billDetailsTableCreditFinal",".creditAmountDetail","text")},
-{key:'Add',label:'Add',width:'5%',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableCreditFinal',this)")},
-{key:'Delete',label:'Delete',width:'5%',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableCreditFinal',this)")}
+{key:"glcode",label:'Account Code', formatter:glcodeFormatterCbillModify("billDetailsTableCreditFinal",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head',width:600,formatter:accountheadFormatter("billDetailsTableCreditFinal",".accounthead","text")},				
+{key:"amount",label:'Credit', formatter:amountFormatterForGrid("billDetailsTableCreditFinal",".creditAmountDetail","text")},
+{key:'Add',label:'Add',formatter:createAddImageFormatterEmpty("${pageContext.request.contextPath}","addYUIRow('billDetailsTableCreditFinal',this)")},
+{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow1('billDetailsTableCreditFinal',this)")}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableCreditFinal = new YAHOO.widget.DataTable("billDetailTableCreditFinal",voucherDetailColumnsCredit, voucherDetailDS);
@@ -246,11 +246,11 @@ billDetailsTableCreditFinal = new YAHOO.widget.DataTable("billDetailTableCreditF
 }
 var makeVoucherDetailTableNetFinal = function() {
  var voucherDetailColumnsNet = [ 
-{key:"glcode",label:'Account Code',width:'15%', formatter:glcodeFormatter("billDetailsTableNetFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:'60%',formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
-{key:"amount",label:'Net',width:'15%',formatter:amountFormatter("billDetailsTableNetFinal",".creditAmountDetail","text")},
-{key:'Add',label:'Add',width:'5%'},
-{key:'Delete',label:'Delete',width:'5%'}
+{key:"glcode",label:'Account Code', formatter:glcodeFormatter("billDetailsTableNetFinal",".glcodeDetail","text")},
+{key:"accounthead", label:'Account Head',width:600,formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
+{key:"amount",label:'Net',formatter:amountFormatter("billDetailsTableNetFinal",".creditAmountDetail","text")},
+{key:'Add',label:'Add'},
+{key:'Delete',label:'Delete'}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableNetFinal = new YAHOO.widget.DataTable("billDetailTableNetFinal",voucherDetailColumnsNet, voucherDetailDS);
@@ -274,13 +274,13 @@ billDetailsTableNetFinal = new YAHOO.widget.DataTable("billDetailTableNetFinal",
 
 var makeVoucherDetailTableSubledger = function() {
  var voucherDetailColumnsSubledger = [ 
-{key:"subledgerCode",label:'Subledger Code',width:'10%',  formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
-{key:"detailCode",label:'Entity Code',width:'10%', formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
-{key:"detailName",label:'Entity Name',width:'15%', formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
-{key:"accounthead", label:'Account Head',width:'20%',formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
-{key:"amount",label:'Amount',width:'15%',formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
-{key:'Add',label:'Add',width:'5%',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
-{key:'Delete',label:'Delete',width:'5%',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
+{key:"subledgerCode",label:'Subledger Code', width:150, formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
+{key:"detailCode",label:'Entity Code', width:120,formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
+{key:"detailName",label:'Entity Name', width:300,formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
+{key:"accounthead", label:'Account Head',width:300,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
+{key:"amount",label:'Amount',width:150,formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
+{key:'Add',label:'Add',width:30,formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
+{key:'Delete',label:'Delete',width:30,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
 ];
 var voucherDetailDS = new YAHOO.util.DataSource(); 
 billDetailsTableSubledger = new YAHOO.widget.DataTable("billDetailTableSubledger",voucherDetailColumnsSubledger, voucherDetailDS);
@@ -461,7 +461,7 @@ function printPreview(){
 <s:token/>     
 <s:push value="model">
 <div class="tabber" id="main" align="left">
-<div class="tabbertab" id=maintab style="height:420px;overflow:false" >
+<div class="tabbertab" id=maintab >
 <h2>Header</h2>
 <jsp:include page="../budget/budgetHeader.jsp">
 <jsp:param value="Contingent Bill" name="heading"/>
@@ -476,9 +476,9 @@ function printPreview(){
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr> 
 <td class="bluebox"></td>
-<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory">*</span></td>
+<td class="bluebox"><s:text name="bill.Number"/><span class="mandatory1"> *</span></td>
 <td class="bluebox"><s:textfield name="commonBean.billNumber"/></td>
-<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory">*</span></td>
+<td class="bluebox"><s:text name="bill.Date"/><span class="mandatory1"> *</span></td>
 <s:date name='commonBean.billDate' id="commonBean.billDateId" format='dd/MM/yyyy'/>
 <td class="bluebox"><s:textfield name="commonBean.billDate"  id="billDate" onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{commonBean.billDateId}"/>
 	<a tabindex="-1" href="javascript:show_calendar('cbill.billDate');"	style="text-decoration: none">&nbsp;<img 
@@ -538,7 +538,7 @@ function printPreview(){
 	<s:hidden name="billRegisterId" id="billRegisterId"></s:hidden>
 	<div class="buttonbottom" >
 	
-<table border="0" width="75%" cellspacing="0" align="center" ><tr></tr>
+<table border="0" cellspacing="0" align="center" ><tr></tr>
 	<tr >
 	  	
 			<s:iterator value="%{validButtons}" var="p"><td>
@@ -560,7 +560,7 @@ function printPreview(){
 	        <c:param name="stateId" value="${commonBean.stateId}"></c:param>
         </c:import> --%>
 	</div>
-	<table border="0" width="75%" cellspacing="0" align="center" ><tr></tr>
+	<table border="0" cellspacing="0" align="center" ><tr></tr>
 		<tr>
 			<td><input type="button" id="print" value="Print Preview" onclick="printPreview()" class="button"/>
 			<input type="button" id="closeButton" value="Close" onclick="javascript:window.close()" class="button"/></td>
