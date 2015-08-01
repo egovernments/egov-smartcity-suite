@@ -62,8 +62,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_M
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILBY_DEMANDREASONID;
@@ -92,6 +92,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -471,79 +472,76 @@ public class PropertyTaxUtil {
         public HashMap<String, Integer> generateOrderForDemandDetails(Set<EgDemandDetails> demandDetails,
                         PropertyTaxBillable billable) {
 
-                HashMap<Integer, String> instReasonMap = new HashMap<Integer, String>();
+                Map<Date, String> instReasonMap = new TreeMap<Date, String>();
                 HashMap<String, Integer> orderMap = new HashMap<String, Integer>();
                 BigDecimal balance = BigDecimal.ZERO;
-                String key = "";
+                Date key = null;
                 String reasonMasterCode = null;
 
                 for (EgDemandDetails demandDetail : demandDetails) {
-                        balance = BigDecimal.ZERO;
-                        balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-
-                        if (balance.compareTo(BigDecimal.ZERO) == 1) {
-
-                                EgDemandReason reason = demandDetail.getEgDemandReason();
-                                Installment installment = reason.getEgInstallmentMaster();
-
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(installment.getInstallmentYear());
-
-                                reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
-
-                                if (reasonMasterCode.equals(DEMANDRSN_CODE_GENERAL_TAX)) {
-
-                                        key = String
-                                                        .valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE)));
-                                        instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + DEMANDRSN_CODE_REBATE);
-
-                                        key = String.valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(reasonMasterCode)
-                                                        .intValue()));
-                                        instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + reasonMasterCode);
-
-                                } else {
-                                        LOGGER.info(reasonMasterCode);
-                                        key = String.valueOf(getOrder(cal.get(Calendar.YEAR), DEMAND_REASON_ORDER_MAP.get(reasonMasterCode)
-                                                        .intValue()));
-                                        instReasonMap.put(new Integer(key), cal.get(Calendar.YEAR) + "-" + reasonMasterCode);
-                                }
+                    balance = BigDecimal.ZERO;
+                    balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+        
+                    if (balance.compareTo(BigDecimal.ZERO) == 1) {
+                        EgDemandReason reason = demandDetail.getEgDemandReason();
+                        Installment installment = reason.getEgInstallmentMaster();
+                        DateTime dateTime = new DateTime(installment.getInstallmentYear());
+                        reasonMasterCode = reason.getEgDemandReasonMaster().getCode();
+        
+                        if (reasonMasterCode.equals(DEMANDRSN_CODE_GENERAL_TAX)) {
+        
+                            key = getOrder(installment.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
+                            instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
+                                    + DEMANDRSN_CODE_REBATE);
+        
+                            key = getOrder(installment.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(reasonMasterCode)
+                                    .intValue());
+                            instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
+                                    + reasonMasterCode);
+        
+                        } else {
+                            LOGGER.info(reasonMasterCode);
+                            key = getOrder(installment.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(reasonMasterCode)
+                                    .intValue());
+                            instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
+                                    + reasonMasterCode);
                         }
+                    }
                 }
 
                 DateTime dateTime = null;
                 BigDecimal penaltyAmount = BigDecimal.ZERO;
 
                 for (Map.Entry<Installment, PenaltyAndRebate> mapEntry : billable.getInstTaxBean().entrySet()) {
-
-                        penaltyAmount = mapEntry.getValue().getPenalty();
-                        boolean thereIsPenalty = (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0);
-
-                        if (thereIsPenalty) {
-
-                            dateTime = new DateTime(mapEntry.getKey().getInstallmentYear());
-
-                                key = Integer.valueOf(
-                                                getOrder(dateTime.getYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_PENALTY_FINES)))
-                                                .toString();
-                                instReasonMap.put(new Integer(key), dateTime.getYear() + "-" + DEMANDRSN_CODE_PENALTY_FINES);
-                        }
+        
+                    penaltyAmount = mapEntry.getValue().getPenalty();
+                    boolean thereIsPenalty = (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0);
+        
+                    if (thereIsPenalty) {
+        
+                        dateTime = new DateTime(mapEntry.getKey().getInstallmentYear());
+        
+                        key = getOrder(mapEntry.getKey().getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_PENALTY_FINES));
+                        instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
+                                + DEMANDRSN_CODE_PENALTY_FINES);
+                    }
                 }
 
                 int order = 1;
-                Map<Integer, Map<String, String>> installmentAndReason = new TreeMap<Integer, Map<String, String>>();
+                Map<String, Map<String, String>> installmentAndReason = new LinkedHashMap<String, Map<String, String>>();
 
-                for (Map.Entry<Integer, String> entry : instReasonMap.entrySet()) {
+                for (Map.Entry<Date, String> entry : instReasonMap.entrySet()) {
                         String[] split = entry.getValue().split("-");
-                        if (installmentAndReason.get(Integer.valueOf(split[0])) == null) {
+                        if (installmentAndReason.get(split[0]) == null) {
                                 Map<String, String> reason = new HashMap<String, String>();
                                 reason.put(split[1], entry.getValue());
-                                installmentAndReason.put(Integer.valueOf(split[0]), reason);
+                                installmentAndReason.put(split[0], reason);
                         } else {
-                                installmentAndReason.get(Integer.valueOf(split[0])).put(split[1], entry.getValue());
+                                installmentAndReason.get(split[0]).put(split[1], entry.getValue());
                         }
                 }
 
-                for (Integer installmentYear : installmentAndReason.keySet()) {
+                for (String installmentYear : installmentAndReason.keySet()) {
                         if (installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY) != null) {
                                 orderMap.put(installmentAndReason.get(installmentYear).get(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY), order++);
                         }
@@ -553,7 +551,7 @@ public class PropertyTaxUtil {
                         }
                 }
 
-                for (Integer installmentYear : installmentAndReason.keySet()) {
+                for (String installmentYear : installmentAndReason.keySet()) {
                         for (String reasonCode : PropertyTaxConstants.ORDERED_DEMAND_RSNS_LIST) {
 
                                 if (reasonCode.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
@@ -599,10 +597,11 @@ public class PropertyTaxUtil {
                 return billType;
         }
 
-        public int getOrder(int year, int reasonOrder) {
-                // Reason Order is zero for Cheque Bounce Penalty
-                return (reasonOrder == 0) ? (year + (year - 2005) * 20 + reasonOrder)
-                                : (year + (year - 1990) * 20 + reasonOrder);
+        public Date getOrder(Date date, int reasonOrder) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.DATE, reasonOrder);
+            return calendar.getTime();
         }
 
         /**
