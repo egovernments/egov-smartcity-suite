@@ -61,6 +61,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";
     public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
     public static final String SMSEMAILTYPENEWCONNCREATE = "newconncreate";
+    public static final String CATEGORY_BPL = "BPL";
 
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";

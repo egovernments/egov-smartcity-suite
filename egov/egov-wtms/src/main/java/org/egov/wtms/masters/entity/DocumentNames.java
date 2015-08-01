@@ -72,7 +72,7 @@ public class DocumentNames extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(min = 3, max = 50)
+    @Length(min = 3, max = 100)
     private String documentName;
 
     @SafeHtml

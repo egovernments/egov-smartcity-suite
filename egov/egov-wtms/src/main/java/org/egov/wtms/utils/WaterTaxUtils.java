@@ -30,6 +30,8 @@
  */
 package org.egov.wtms.utils;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
@@ -82,6 +84,15 @@ public class WaterTaxUtils {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, "MULTIPLENEWCONNECTIONFORPID").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
+
+    public String documentRequiredForBPLCategory() {
+        String documentName = null;
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "DOCUMENTREQUIREDFORBPL");
+        if (appConfigValue != null && !appConfigValue.isEmpty())
+            documentName = appConfigValue.get(0).getValue();
+        return documentName;
     }
 
     public String getCityName() {
