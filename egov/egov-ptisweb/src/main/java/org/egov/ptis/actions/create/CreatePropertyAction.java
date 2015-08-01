@@ -56,7 +56,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPRO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_CLERK_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -65,10 +64,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRAT
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,12 +93,9 @@ import org.egov.demand.dao.EgDemandDao;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.CorrespondenceAddress;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -261,7 +255,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private Map<String, String> deviationPercentageMap;
 	private Map<String, String> guardianRelationMap;
 	private List<DocumentType> documentTypes = new ArrayList<>();
-	private List<Floor> floorDetails = new ArrayList<Floor>();
 
 	@Autowired
 	private UserService userService;
@@ -276,7 +269,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@Autowired
 	private SecurityUtils securityUtils;
-	private List<String> validActions;
 
 	@Autowired
 	private EgDemandDao egDemandDAO;
@@ -440,12 +432,9 @@ public class CreatePropertyAction extends WorkflowAction {
 	public String view() {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property
 				+ ", userDesgn: " + userDesgn);
-		String nextAction = property.getState().getNextAction();
+		String currState = property.getState().getValue();
 		populateFormData();
-		if (!nextAction.equals(WF_STATE_COMMISSIONER_APPROVED)
-				&& !nextAction.equals(WF_STATE_REVENUE_OFFICER_APPROVED)
-				&& (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn) || REVENUE_INSPECTOR_DESGN
-						.equalsIgnoreCase(userDesgn)) || WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(nextAction)) {
+		if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)) {
 			//populateFormData();
 			mode = EDIT;
 			return RESULT_NEW;
@@ -992,7 +981,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			addActionError(getText("mandatory.doorNo"));
 		}
 
-		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfo()) {
+		for (PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
 			if (owner != null) {
 				if (StringUtils.isBlank(owner.getOwner().getAadhaarNumber())) {
 					addActionError(getText("mandatory.adharNo"));
@@ -1750,7 +1739,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.documentTypes = documentTypes;
 	}
 	
-	@Override
+        @Override
         public String getAdditionalRule() {
                 return NEW_ASSESSMENT;
         }
