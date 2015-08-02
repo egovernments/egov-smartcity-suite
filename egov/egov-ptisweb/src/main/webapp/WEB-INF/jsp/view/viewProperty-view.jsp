@@ -71,8 +71,6 @@
 			<div class="headingbg"><s:text name="PropertyDetail" /></div>
 			<br/>
 			<jsp:include page="viewProperty.jsp"/>
-			<%-- <jsp:include page="viewObjection.jsp"/>
-			<jsp:include page="../recovery/viewRecovery.jsp"/> --%>
 			<div class="buttonbottom" align="center">
 			<s:if test="%{isUserOperator}">
 				<div align="center">
@@ -112,9 +110,6 @@
 					id="btnModifyProperty" value="Bifurcation"
 					onclick="window.location='../modify/modifyProperty!modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
 
-				<input type="button" class="buttonsubmit" name="btnCancelBill"
-					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
-				
 				<input type="button" class="buttonsubmit" name="btnChAddrProperty"
 					id="btnDeactivate" value="Change Property Address" onclick="window.location='../modify/changePropertyAddress!newForm.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 				
@@ -136,9 +131,6 @@
 					<input type="button" class="buttonsubmit" name="objection" id="objection"
 						value="Create Revision Petition"
 						onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
-		
-						<input type="button" class="buttonsubmit" name="btnCancelBill"
-					id="btnCancelBill" value="Cancel Bill" onclick="window.location='../bills/billGeneration!cancelBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 			</s:if>
 			<c:if test="${fn:contains(roleName,'PTADMINISTRATOR') && basicProperty.isDemandActive == true}">
 				<input type="button" name="editDemand" id="editDemand"
