@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -207,6 +208,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 
 		// Create the report and add to session
 		final ReportOutput reportOutput = this.reportService.createReport(reportInput);
+		getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
 		this.reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 		return REPORT;
 	}

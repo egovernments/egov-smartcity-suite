@@ -10,19 +10,21 @@ import java.util.Map;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for the cash collection summary report
  */
 @ParentPackage("egov")	
-@Transactional(readOnly=true)
+@Results({
+    @Result(name=CollectionSummaryAction.INDEX,location="collectionSummary-index.jsp"),
+    @Result(name=CollectionSummaryAction.REPORT,location="collectionSummary-report.jsp") })
 public class CollectionSummaryAction extends ReportFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -136,23 +138,29 @@ public class CollectionSummaryAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/collectionSummary-criteria",results = { @Result(name = INDEX,type="redirect")})
+	@Action(value="/reports/collectionSummary-criteria")
 	public String criteria() {
 		// Setup drop down data for department list
-		addRelatedEntity("department", Department.class, "deptName");
+		addRelatedEntity("department", Department.class, "name");
 		setupDropdownDataExcluding();
 		
 		// Set default values of criteria fields
 		setReportParam(EGOV_FROM_DATE, new Date());
 		setReportParam(EGOV_TO_DATE, new Date());
 		
-		Department dept = collectionsUtil.getDepartmentOfLoggedInUser(getSession());
+		Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
 		if(dept != null) {
 			setReportParam(EGOV_DEPT_ID, dept.getId());
 		}
 
 		return INDEX;
 	}
+	
+	@Override
+	@Action(value="/reports/collectionSummary-report")
+	    public String report() {
+	        return super.report();
+	    }
 
 	@Override
 	protected String getReportTemplateName() {
