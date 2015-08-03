@@ -89,7 +89,6 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1137,7 +1136,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 					challan.getChallanDate(), validUpto, DATE_ORDER.AFTER));*/
 		
 			if(challan.getCreatedDate()==null)
-				challan.setCreatedDate(new DateTime());
+				challan.setCreatedDate(new Date());
 			
 			if (challan.getChallanNumber() == null) {
 				setChallanNumber(challan);

@@ -127,16 +127,16 @@
                 <version>1.1.0.Final</version>
                 <scope>provided</scope>
             </dependency>
-           <dependency>
+           <!-- <dependency>
 				<groupId>org.jadira.usertype</groupId>
 				<artifactId>usertype.core</artifactId>
-				<version>3.2.0.GA</version>
+				<version>4.0.0.GA</version>
 			</dependency>
            <dependency>
 				<groupId>org.jadira.usertype</groupId>
 				<artifactId>usertype.spi</artifactId>
-				<version>3.2.0.GA</version>
-			</dependency>
+				<version>4.0.0.GA</version>
+			</dependency> -->
             <!-- HIBERNATE DEPENDENCIES END -->
 
             <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
@@ -948,14 +948,14 @@
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
 		</dependency>
-	 	<dependency>
+	 	<!-- <dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
 		</dependency>
         <dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.spi</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 	      	<groupId>org.jasypt</groupId>
 	      	<artifactId>jasypt</artifactId>

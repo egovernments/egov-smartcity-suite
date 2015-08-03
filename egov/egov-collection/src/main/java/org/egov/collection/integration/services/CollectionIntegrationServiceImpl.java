@@ -5,6 +5,7 @@ package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,7 +212,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 		}
 		ReceiptHeader receiptHeader =collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
-		receiptHeader.setCreatedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
 		receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
 		receiptHeader.setIsModifiable(Boolean.TRUE);
 		receiptHeader.setIsReconciled(Boolean.FALSE);
@@ -376,7 +377,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
 		ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
-		receiptHeader.setCreatedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
 		receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
 		receiptHeader.setIsModifiable(Boolean.TRUE);
 		receiptHeader.setIsReconciled(Boolean.TRUE);

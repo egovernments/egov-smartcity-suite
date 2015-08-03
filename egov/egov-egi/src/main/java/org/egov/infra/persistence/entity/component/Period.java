@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,44 +38,43 @@
  */
 package org.egov.infra.persistence.entity.component;
 
+import java.util.Date;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 @Embeddable
 public class Period {
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime startDate;
+    private Date startDate;
    
     @Temporal(TemporalType.TIMESTAMP)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime endDate;
+    private Date endDate;
 
     public DateTime getEndDate() {
-        return endDate;
+        return null == endDate ? null : new DateTime(endDate);
     }
 
-    public void setEndDate(final DateTime endDate) {
+    public void setEndDate(final Date endDate) {
         this.endDate = endDate;
     }
 
     public DateTime getStartDate() {
-        return startDate;
+        return null == startDate ? null : new DateTime(startDate);
     }
 
-    public void setStartDate(final DateTime startDate) {
+    public void setStartDate(final Date startDate) {
         this.startDate = startDate;
     }
 
     public Period() {
     }
 
-    public Period(final DateTime startDate, final DateTime endDate) {
+    public Period(final Date startDate, final Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }

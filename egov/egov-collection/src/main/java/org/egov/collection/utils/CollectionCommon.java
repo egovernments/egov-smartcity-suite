@@ -49,8 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
@@ -101,7 +99,6 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
@@ -332,7 +329,7 @@ public class CollectionCommon {
                 ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
 
-                receiptHeader = new ReceiptHeader(billDetail.getRefNo(), new DateTime(billDetail.getBilldate()),
+                receiptHeader = new ReceiptHeader(billDetail.getRefNo(), billDetail.getBilldate(),
                         billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
                         billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(), collDetails
                                 .getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),

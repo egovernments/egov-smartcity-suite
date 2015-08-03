@@ -76,7 +76,7 @@ public interface Property extends Auditable {
 
 	public DateTime getCreatedDate();
 
-	public void setCreatedDate(DateTime createdDate);
+	public void setCreatedDate(Date createdDate);
 
 	public BasicProperty getBasicProperty();
 

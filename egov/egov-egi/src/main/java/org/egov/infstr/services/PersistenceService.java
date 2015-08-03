@@ -74,7 +74,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,7 +364,7 @@ public class PersistenceService<T, ID extends Serializable> {
      * entities, this will be removed in future once modules are migrated to JPA annotation.
      **/
     public void applyAuditing(AbstractAuditable auditable) {
-        DateTime currentDate = new DateTime();
+        Date currentDate = new Date();
         if (auditable.isNew()) {
             auditable.setCreatedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
             auditable.setCreatedDate(currentDate);

@@ -90,7 +90,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -742,7 +741,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 // data.
                 // The cancelled receipt can be excluded from this processing.
                 if (receiptHeader.getStatus() == null) {
-                    receiptHeader.setReceiptdate(new DateTime());;
+                    receiptHeader.setReceiptdate(new Date());
 
                     receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
                     receiptHeader.setIsModifiable(Boolean.FALSE);

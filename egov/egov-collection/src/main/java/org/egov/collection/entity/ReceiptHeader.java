@@ -42,6 +42,7 @@ package org.egov.collection.entity;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -80,15 +81,15 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	private Set<ReceiptHeader> receiptHeaders = new HashSet<ReceiptHeader>(0);
 
 	private String referencenumber;
-	private DateTime referencedate;
+	private Date referencedate;
 	private String consumerCode;
 	/* The details of associated bill that billing application has sent */
 	private String referenceDesc;
 	private char receipttype;
 	private String receiptnumber;
-	private DateTime receiptdate;
+	private Date receiptdate;
 	private String manualreceiptnumber;
-	private DateTime manualreceiptdate;
+	private Date manualreceiptdate;
 	private Boolean isModifiable;
 
 	private ServiceDetails service;
@@ -113,7 +114,7 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	private BigDecimal totalAmount;
 	private BigDecimal minimumAmount;
 	private BigDecimal totalAmountToBeCollected;
-	private DateTime voucherDate;
+	private Date voucherDate;
 	private String voucherNum;
 	private OnlinePayment onlinePayment;
 	private Challan challan;
@@ -128,7 +129,7 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	public ReceiptHeader() {
 	}
 
-	public ReceiptHeader(String referencenumber, DateTime referencedate,
+	public ReceiptHeader(String referencenumber, Date referencedate,
 			String consumerCode, String referenceDesc, BigDecimal totalAmount,
 			BigDecimal minimumAmount, Boolean partPaymentAllowed,
 			Boolean overrideAccountHeadsAllowed, Boolean callbackForApportioning,
@@ -173,10 +174,10 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	}
 
 	public DateTime getReferencedate() {
-		return this.referencedate;
+		return null == this.referencedate ? null : new DateTime(this.referencedate);
 	}
 
-	public void setReferencedate(DateTime referencedate) {
+	public void setReferencedate(Date referencedate) {
 		this.referencedate = referencedate;
 	}
 
@@ -214,10 +215,10 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	}
 
 	public DateTime getManualreceiptdate() {
-		return this.manualreceiptdate;
+		return null == this.manualreceiptdate ? null : new DateTime(this.manualreceiptdate);
 	}
 
-	public void setManualreceiptdate(DateTime manualreceiptdate) {
+	public void setManualreceiptdate(Date manualreceiptdate) {
 		this.manualreceiptdate = manualreceiptdate;
 	}
 
@@ -541,14 +542,14 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	 * @return the voucherDate
 	 */
 	public DateTime getVoucherDate() {
-		return voucherDate;
+		return null == voucherDate ? null : new DateTime(voucherDate);
 	}
 
 	/**
 	 * @param voucherDate
 	 *            the voucherDate to set
 	 */
-	public void setVoucherDate(DateTime voucherDate) {
+	public void setVoucherDate(Date voucherDate) {
 		this.voucherDate = voucherDate;
 	}
 
@@ -698,10 +699,10 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	}
 
 	public DateTime getReceiptdate() {
-		return receiptdate;
+		return null == receiptdate ? null : new DateTime(receiptdate);
 	}
 
-	public void setReceiptdate(DateTime receiptdate) {
+	public void setReceiptdate(Date receiptdate) {
 		this.receiptdate = receiptdate;
 	}
 	

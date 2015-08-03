@@ -91,7 +91,7 @@ public class Script extends AbstractAuditable {
         this.name = name;
         this.type = type;
         this.script = script;
-        period = new Period(startDate, endDate);
+        period = new Period(startDate.toDate(), endDate.toDate());
     }
 
     @Override

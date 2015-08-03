@@ -39,12 +39,10 @@
  */
 package org.egov.builder.entities;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
-import org.joda.time.DateTime;
 
 public class BoundaryTypeBuilder {
 
@@ -59,7 +57,7 @@ public class BoundaryTypeBuilder {
     }
 
     public BoundaryTypeBuilder withUpdatedTime(final Date updatedTime) {
-        boundaryTypeImpl.setLastModifiedDate(new DateTime(updatedTime));;
+        boundaryTypeImpl.setLastModifiedDate(updatedTime);
         return this;
     }
 

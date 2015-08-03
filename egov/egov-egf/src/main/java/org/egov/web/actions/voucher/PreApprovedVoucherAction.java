@@ -104,7 +104,6 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -474,7 +473,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
                                 vhid =billsAccountingService.createPreApprovedVoucherFromBill(Integer.parseInt(parameters.get(BILLID)[0]), voucherNumber, preApprovedVoucher.getVoucherDate());
                                 if(LOGGER.isDebugEnabled())     LOGGER.debug("voucher id======="+vhid);
                         voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-                        voucherHeader.setLastModifiedDate(new DateTime());
+                        voucherHeader.setLastModifiedDate(new Date());
                         voucherHeader.start().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
                         sendForApproval();
                         addActionMessage(getText(egBillregister.getExpendituretype()+".voucher.created",new String[]{voucherHeader.getVoucherNumber(),voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));

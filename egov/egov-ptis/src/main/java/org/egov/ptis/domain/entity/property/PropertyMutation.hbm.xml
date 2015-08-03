@@ -64,8 +64,8 @@
 		<property name="feePayable" column="FEEPAYABLE" />
 		<property name="documentNumber" column="DOCNUMBER"/>
 		<property name="saleDetail" column="SALEDETAIL"/>
-		<property name="createdDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime" column="CREATEDDATE"/>
-		<property name="lastModifiedDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime" column="LASTMODIFIEDDATE"/>
+		<property name="createdDate" type="timestamp" column="CREATEDDATE"/>
+		<property name="lastModifiedDate" type="timestamp" column="LASTMODIFIEDDATE"/>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
 		<many-to-one name="mutationReason" column="MUTATIONREASON" class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />

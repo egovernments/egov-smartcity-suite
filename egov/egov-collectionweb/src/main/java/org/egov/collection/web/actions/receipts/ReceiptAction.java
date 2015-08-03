@@ -861,7 +861,7 @@ public class ReceiptAction extends BaseFormAction {
 					// Set created by Date as this required to generate receipt
 					// number before persist
 					if (manualReceiptDate == null) {
-						receiptHeader.setReceiptdate(new DateTime());
+						receiptHeader.setReceiptdate(new Date());
 
 					} else {
 						// If the receipt has been manually created, the receipt
@@ -871,20 +871,20 @@ public class ReceiptAction extends BaseFormAction {
 						// currentDate.
 						// Thus overridding the manualReceiptDate set above
 						//receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-						receiptHeader.setManualreceiptdate(manualReceiptDate);
-						receiptHeader.setReceiptdate(manualReceiptDate);
-						receiptHeader.setVoucherDate(manualReceiptDate);
+						receiptHeader.setManualreceiptdate(manualReceiptDate.toDate());
+						receiptHeader.setReceiptdate(manualReceiptDate.toDate());
+						receiptHeader.setVoucherDate(manualReceiptDate.toDate());
 					}
 					if (manualReceiptNumber != null) {
 						receiptHeader.setManualreceiptnumber(manualReceiptNumber);
 					}
 					if (isBillSourcemisc()) {
 						receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
-						receiptHeader.setVoucherDate(voucherDate);
+						receiptHeader.setVoucherDate(voucherDate.toDate());
 						receiptHeader.setVoucherNum(voucherNum);
 						receiptHeader.setIsReconciled(Boolean.TRUE);
-						receiptHeader.setReceiptdate(manualReceiptDate);
-						receiptHeader.setManualreceiptdate(manualReceiptDate);
+						receiptHeader.setReceiptdate(manualReceiptDate.toDate());
+						receiptHeader.setManualreceiptdate(manualReceiptDate.toDate());
 
 					} else {
 						receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
@@ -1157,7 +1157,7 @@ public class ReceiptAction extends BaseFormAction {
 		totalAmountToBeCollected = BigDecimal.valueOf(0);
 		
 		ReceiptHeader receiptHeader = new ReceiptHeader(oldReceiptHeader.getReferencenumber(),
-				oldReceiptHeader.getReferencedate(), oldReceiptHeader.getConsumerCode(),
+				oldReceiptHeader.getReferencedate().toDate(), oldReceiptHeader.getConsumerCode(),
 				oldReceiptHeader.getReferenceDesc(), oldReceiptHeader.getTotalAmount(),
 				oldReceiptHeader.getMinimumAmount(), oldReceiptHeader.getPartPaymentAllowed(),
 				oldReceiptHeader.getOverrideAccountHeads(), oldReceiptHeader.getCallbackForApportioning(),

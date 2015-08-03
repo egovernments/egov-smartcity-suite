@@ -392,7 +392,7 @@ public class ChallanAction extends BaseFormAction {
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
 		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-		receiptHeader.setCreatedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
 		
 		if(setInstrument){
 			receiptInstrList=populateInstrumentDetails();

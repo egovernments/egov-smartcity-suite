@@ -120,7 +120,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
             final User usr = (User) session.load(User.class, EgovThreadLocals.getUserId());
             final AbstractAuditable entity = (AbstractAuditable) session.getPersistenceContext().unproxyAndReassociate(object);
             if (entity.getCreatedBy() == null) {
-                final DateTime currentDate = new DateTime();
+                final Date currentDate = new Date();
                 entity.setCreatedDate(currentDate);
                 entity.setCreatedBy(usr);
                 entity.setLastModifiedBy(usr);

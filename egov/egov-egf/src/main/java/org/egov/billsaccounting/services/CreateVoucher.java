@@ -136,7 +136,6 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -2214,7 +2213,7 @@ public class CreateVoucher {
                  if(null != EgovThreadLocals.getUserId()){
                          billregister.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals.getUserId())));
                  }
-                 billregister.setCreatedDate(new DateTime());
+                 billregister.setCreatedDate(new Date());
                  SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
                  String date = df.format((Date)supplierBillDetails.get("billdate"));
                  billregister.setBillnumber(cmImpl.getTxnNumber("WBILL",date ));

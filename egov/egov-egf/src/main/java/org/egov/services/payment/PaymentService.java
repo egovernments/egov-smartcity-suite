@@ -106,7 +106,6 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.GLEngine.ChartOfAccounts;
@@ -596,7 +595,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
                 existingVH.setDescription(voucherHeader.getDescription());
                 existingVH.setVoucherDate(voucherHeader.getVoucherDate());
                 existingVH.setCgvn(vType+eg_voucher);
-                existingVH.setLastModifiedDate(new DateTime());
+                existingVH.setLastModifiedDate(new Date());
                 existingVH.setLastModifiedBy(user);
                 persistenceService.setType(CVoucherHeader.class);
                 persistenceService.update(existingVH);

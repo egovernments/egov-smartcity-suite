@@ -42,7 +42,6 @@ package org.egov.builder.entities;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.HierarchyType;
-import org.joda.time.DateTime;
 
 public class HeirarchyTypeBuilder {
 
@@ -67,7 +66,7 @@ public class HeirarchyTypeBuilder {
     }
 
     public HeirarchyTypeBuilder withUpdatedTime(final Date updatedTime) {
-        heirarchyTypeImpl.setLastModifiedDate(new DateTime(updatedTime));
+        heirarchyTypeImpl.setLastModifiedDate(updatedTime);
         return this;
     }
 

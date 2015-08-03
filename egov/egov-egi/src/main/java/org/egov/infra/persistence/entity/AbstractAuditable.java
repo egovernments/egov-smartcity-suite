@@ -39,6 +39,8 @@
  */
 package org.egov.infra.persistence.entity;
 
+import java.util.Date;
+
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -49,7 +51,6 @@ import javax.persistence.TemporalType;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.search.domain.Searchable;
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -72,8 +73,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate    
     @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDate;
+    private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
@@ -82,8 +82,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime lastModifiedDate;
+    private Date lastModifiedDate;
     
     public User getCreatedBy() {
         return createdBy;
@@ -97,7 +96,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
         return null == createdDate ? null : new DateTime(createdDate);
     }
 
-    public void setCreatedDate(final DateTime createdDate) {
+    public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -113,7 +112,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
         return null == lastModifiedDate ? null : new DateTime(lastModifiedDate);
     }
 
-    public void setLastModifiedDate(final DateTime lastModifiedDate) {
+    public void setLastModifiedDate(final Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 }

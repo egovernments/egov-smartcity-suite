@@ -62,7 +62,7 @@
 		<property name="referencenumber" type="string">
 			<column name="REFERENCENUMBER" length="50" />
 		</property>
-		<property name="referencedate"  type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+		<property name="referencedate"  type="timestamp">
 			<column name="REFERENCEDATE" length="7" />
 		</property>
 		<property name="referenceDesc" type="string">
@@ -74,13 +74,13 @@
 		<property name="receiptnumber" type="string">
 			<column name="RECEIPTNUMBER" length="50" />
 		</property>
-		<property name="receiptdate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+		<property name="receiptdate" type="timestamp">
 			<column name="RECEIPTDATE" length="50" />
 		</property>
 		<property name="manualreceiptnumber" type="string">
 			<column name="MANUALRECEIPTNUMBER" length="50" />
 		</property>
-		<property name="manualreceiptdate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+		<property name="manualreceiptdate" type="timestamp">
 			<column name="MANUALRECEIPTDATE" length="7" />
 		</property>
 		<property name="isModifiable" type="java.lang.Boolean">
@@ -96,8 +96,8 @@
 		<property name="reasonForCancellation" type="string">
 			<column name="REASONFORCANCELLATION" length="50" />
 		</property>
-		<property name="createdDate" column="CREATEDDATE" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"/>
-		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 			cascade="all">
 			<column name="STATE_ID" />
