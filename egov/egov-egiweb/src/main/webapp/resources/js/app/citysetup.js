@@ -55,7 +55,7 @@ $(document).ready(function(){
 	$('.btnpopover').click(function(e) {
 		var clickedbtn = $(this);
 		$('[data-toggle="popover"]').popover('hide');
-		$(this).popover();
+		$(this).popover({ html : true });
 		setTimeout(function(s) {
 			return function() {
 				if ($(s).next('div.popover:visible').length)
@@ -65,7 +65,7 @@ $(document).ready(function(){
 	});
 
 	//popup initialize
-	$('[data-toggle="popover"]').popover();
+	$('[data-toggle="popover"]').popover({ html : true });
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 		  currenttabidx=$(this).data('tabidx');
