@@ -273,5 +273,7 @@ public interface BasicProperty {
 	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
 	
 	public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy);
+	
+	public User getPrimaryOwner();
 
 }

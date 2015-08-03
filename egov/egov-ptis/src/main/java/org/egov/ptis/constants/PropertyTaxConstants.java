@@ -501,6 +501,7 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
 	public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
 	public static final String WF_STATE_REJECTED = "Rejected";
+	public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
