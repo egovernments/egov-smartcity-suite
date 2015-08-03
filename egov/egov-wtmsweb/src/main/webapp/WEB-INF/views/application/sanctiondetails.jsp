@@ -39,6 +39,7 @@
 -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -62,6 +63,10 @@
 						<div class="col-md-3 col-xs-6 add-margin">
 							<form:input id="approvalDate" path="approvalDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
 							<form:errors path="approvalDate" cssClass="add-margin error-msg" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.disposal.date" /></div>
+						<div class="col-xs-3 col-xs-6 add-margin add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.disposalDate}" />
 						</div>
 					</div>
 				</div>
