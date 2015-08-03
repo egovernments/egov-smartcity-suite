@@ -46,24 +46,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.egov.pgr.service.dashboard.DashboardService;
 import org.egov.pgr.web.contract.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
-
+    private static final String CITI_GIS_URL = "/egi/downloadfile/gis?fileStoreId=%s&moduleName=%s";
+    
     @Autowired
     private DashboardService dashboardService;
 
     @RequestMapping("/home")
-    public String home() {
+    public String home(HttpSession session, Model model) {
+        if (session.getAttribute("cityCode") != null) {
+            model.addAttribute("kmlURL", String.format(CITI_GIS_URL, session.getAttribute("cityKmlFileStoreId"), session.getAttribute("cityCode")));
+            model.addAttribute("shapeURL", String.format(CITI_GIS_URL, session.getAttribute("cityShapeFileStoreId"), session.getAttribute("cityCode")));
+        }
         return "dashboard/home";
     }
 
@@ -109,4 +118,10 @@ public class DashboardController {
             return dashboardService.getOpenComplaintSLA();
         return Collections.emptyList();
     }
+    
+    @RequestMapping(value = "/wardwise-complaint-by-type/{typeid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<String, Object>> wardwiseComplaintByComplaintType(@PathVariable final Long typeid, @RequestParam String color) {
+        return dashboardService.getWardwiseComplaintByComplaintType(typeid, color );
+    }
+
 }

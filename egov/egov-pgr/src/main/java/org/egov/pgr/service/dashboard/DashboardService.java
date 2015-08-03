@@ -72,6 +72,18 @@ public class DashboardService {
 
     private static final DateTimeFormatter DFLT_DATE_FRMTR = DateTimeFormat.forPattern("dd/MM/yyyy");
 
+    public static final Map<String, String[]> COLOR_GRADIENTS = new HashMap<String, String[]>();
+
+    static {
+        COLOR_GRADIENTS.put("#5B94CB", new String[] { "#00285F", "#1D568D", "#4B84BB", "#79B2E9", "#A7E0FF" });
+        COLOR_GRADIENTS.put("#938250", new String[] { "#584e30", "#665b38", "#756840", "#847548", "#9d8e61" });
+        COLOR_GRADIENTS.put("#f9f107", new String[] { "#BBB300", "#E9E100", "#FFFF25", "#FFFF53", "#FFFF79" });
+        COLOR_GRADIENTS.put("#6AC657", new String[] { "#005A00", "#0E6A00", "#2C8819", "#5AB647", "#88E475" });
+        COLOR_GRADIENTS.put("#4F54B8", new String[] { "#00004C", "#11167A", "#3F44A8", "#6D72D6", "#9BA0FF" });
+        COLOR_GRADIENTS.put("#B15D16", new String[] { "#450000", "#731F00", "#A14D06", "#CF7B34", "#FDA962" });
+        COLOR_GRADIENTS.put("#C00000", new String[] { "#540000", "#B00000", "#DE1E1E", "#FF4C4C", "#FF5454" });
+    }
+
     @Autowired
     private DashboardRepository dashboardRepository;
 
@@ -175,16 +187,16 @@ public class DashboardService {
     private List<List<Object>> getAgeingData(final String querykey, final String wardName) {
         final Object[] compData = dashboardRepository.fetchComplaintAgeing(querykey, wardName);
         final List<Object> cntabv90 = new LinkedList<Object>();
-        cntabv90.add("Less than 90 Days");
+        cntabv90.add("&gt; 90 Days");
         cntabv90.add(((BigInteger) compData[0]).intValue());
         final List<Object> cntbtw45to90 = new LinkedList<Object>();
-        cntbtw45to90.add("90 to 45 Days");
+        cntbtw45to90.add("90-45 Days");
         cntbtw45to90.add(((BigInteger) compData[1]).intValue());
         final List<Object> cntbtw15to45 = new LinkedList<Object>();
-        cntbtw15to45.add("44 to 15 Days");
+        cntbtw15to45.add("44-15 Days");
         cntbtw15to45.add(((BigInteger) compData[2]).intValue());
         final List<Object> cntlsthn15 = new LinkedList<Object>();
-        cntlsthn15.add("Less than 15 Days");
+        cntlsthn15.add("&lt; 15 Days");
         cntlsthn15.add(((BigInteger) compData[3]).intValue());
         final List<List<Object>> dataHolder = new LinkedList<List<Object>>();
         dataHolder.add(cntabv90);
@@ -288,6 +300,39 @@ public class DashboardService {
         sortData(compAggrData, "open90Comp");
 
         return compAggrData;
+    }
+
+    public List<Map<String, Object>> getWardwiseComplaintByComplaintType(final Long complaintTypeId,
+            final String currentChartColor) {
+        final DateTime currentDate = new DateTime();
+        final List<Map<String, Object>> wardWiseData = new LinkedList<Map<String, Object>>();
+        double topCount = -1;
+        for (final Object[] complaint : dashboardRepository.fetchComplaintsByComplaintTypeGroupByWard(complaintTypeId,
+                startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1).withTimeAtStartOfDay()),
+                endOfGivenDate(currentDate))) {
+            final Map<String, Object> wardwiseCnt = new HashMap<String, Object>();
+            wardwiseCnt.put("wardName", String.valueOf(complaint[0]));
+            wardwiseCnt.put("wardId", ((BigInteger) complaint[1]).intValue());
+            final double count = ((BigInteger) complaint[2]).doubleValue();
+            wardwiseCnt.put("count", count);
+            if (topCount == -1)
+                topCount = count;
+            final double perc = count * 100 / topCount;
+            final String[] colors = COLOR_GRADIENTS.get(currentChartColor);
+            if (perc <= 20)
+                wardwiseCnt.put("color", colors[4]);
+            else if (perc > 20.0 && perc <= 40.0)
+                wardwiseCnt.put("color", colors[3]);
+            else if (perc > 40.0 && perc <= 60.0)
+                wardwiseCnt.put("color", colors[2]);
+            else if (perc > 60.0 && perc <= 80.0)
+                wardwiseCnt.put("color", colors[1]);
+            else
+                wardwiseCnt.put("color", colors[0]);
+
+            wardWiseData.add(wardwiseCnt);
+        }
+        return wardWiseData;
     }
 
     private static Map<String, Integer> constructDatePlaceHolder(final DateTime startDate, final DateTime endDate,

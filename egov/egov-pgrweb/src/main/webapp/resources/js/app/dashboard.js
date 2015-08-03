@@ -1139,14 +1139,14 @@ function compTypeDistribution() {
 var gisPieData = null;
 var lastSelSlice = '';
 function overviewPie() {
-	$.ajax({url:"overviewPie.do",
+	$.ajax({url:"typewise-aggregate",
 		cache:true
 	}).done(function(piedata) {
 		gisPieData = piedata;
 		lastSelSlice = piedata[0].name;
-		$.ajax({url:"overviewGis.do",
+		$.ajax({url:"wardwise-complaint-by-type/"+piedata[0].ctId,
 			cache:true,
-			data: { ctId: piedata[0].ctId, color: "#5B94CB" }
+			data: {color: "#5B94CB" }
 		}).done(function(gisData) {
 			overviewGis(gisData);
 		});
@@ -1177,7 +1177,7 @@ function overviewGis(gisData){
 	var infoWin = new google.maps.InfoWindow();
 	var wardArray = new Array();
 	$.each(gisData, function(index,data) {
-		wardArray[data.wardId.toString()] = {"color":data.color,"name":data.wardName,"value":data.count}; 
+		wardArray[data.wardName.toString()] = {"color":data.color,"name":data.wardName,"value":data.count}; 
 	});
 	var bounds = new google.maps.LatLngBounds();
 	var drawPolygonColor = function (doc){
@@ -1208,7 +1208,7 @@ function overviewGis(gisData){
 	};
 
 	var geoXml=new geoXML3.parser({map: map, singleInfoWindow: true,suppressInfoWindows: true,afterParse:drawPolygonColor});
-	geoXml.parse('../resources/kml/coc_wards.kml');	 
+	geoXml.parse(kmlURL);	 
 }
 
 function createPieInGmap() {

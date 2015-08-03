@@ -111,6 +111,15 @@ public class DashboardRepository {
         return fetchDateRangeData("pgr.open.comp.aggr", fromDate.toDate(), toDate.toDate());
     }
 
+    public List<Object[]> fetchComplaintsByComplaintTypeGroupByWard(final Long complaintTypeId, final DateTime fromDate,
+            final DateTime toDate) {
+        final SQLQuery qry = getQuery("pgr.bndry.wise.perc");
+        qry.setParameter("fromDate", fromDate.toDate());
+        qry.setParameter("toDate", toDate.toDate());
+        qry.setParameter("compTypeId", complaintTypeId);
+        return qry.list();
+    }
+
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
         final SQLQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);

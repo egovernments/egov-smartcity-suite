@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <script>
 var isdefault = true;
+var kmlURL = '${kmlURL}';
 </script>
 <div id="performanceWin" class="container-win"  style="">
 	<div class="row">

@@ -79,6 +79,12 @@ public class FileDownloadController {
             fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
 
     }
+    
+    @RequestMapping("/gis")
+    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
+            final HttpServletResponse response) throws IOException {
+            fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+    }
 
     private void fetchFileAndWriteToStream(final String fileStoreId, final String moduleName, final boolean toSave,
             final HttpServletResponse response) throws IOException {
