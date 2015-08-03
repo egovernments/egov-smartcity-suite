@@ -113,9 +113,9 @@
 		<property name="authRuleService" ref="authRuleService" />
 	</bean>
 
-	<bean id="sessionAttributeHandlerFilter" class="org.egov.infra.web.filter.SessionAttributeHandlerFilter"/>
+	<bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
 	
-	<bean id="threadLocalsHandlerFilter" class="org.egov.infra.web.filter.ThreadLocalsHandlerFilter"/>
+	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
 	
 	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype">
 		<constructor-arg ref="sessionFactory" />

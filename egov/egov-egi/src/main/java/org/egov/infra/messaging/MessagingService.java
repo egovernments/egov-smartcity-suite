@@ -62,7 +62,7 @@ public class MessagingService {
     private Destination smsQueue;
 
     @Autowired
-    private MessageTemplateService messsageTemplateService;
+    private MessageTemplateService messageTemplateService;
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -73,24 +73,32 @@ public class MessagingService {
     }
 
     public void sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
+        sendEmail(user.getEmailId(), subject, messageTemplateService
+                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
+    }
+
+    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
+        sendSMS(user.getMobileNumber(), messageTemplateService
+                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
+    }
+
+    public void sendEmail(final String email, final String subject, final String message) {
         if (applicationProperties.emailEnabled())
             jmsTemplate.send(emailQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("email", user.getEmailId());
-                mapMessage.setString("message", messsageTemplateService
-                        .realizeMessage(messsageTemplateService.getByTemplateName(templateName), messageValues));
+                mapMessage.setString("email", email);
+                mapMessage.setString("message", message);
                 mapMessage.setString("subject", subject);
                 return mapMessage;
             });
     }
 
-    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
+    public void sendSMS(final String mobileNo, final String message) {
         if (applicationProperties.smsEnabled())
             jmsTemplate.send(smsQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("mobile", "91" + user.getMobileNumber());
-                mapMessage.setString("message", messsageTemplateService
-                        .realizeMessage(messsageTemplateService.getByTemplateName(templateName), messageValues));
+                mapMessage.setString("mobile", "91" + mobileNo);
+                mapMessage.setString("message", message);
                 return mapMessage;
             });
     }

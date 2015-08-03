@@ -94,6 +94,7 @@ public class EgovThreadLocals {
         setUserId(null);
         setTenantID(null);
         setCityCode(null);
+        setServletContext(null);
     }
 
 }

@@ -50,7 +50,6 @@ public interface SecurityConstants {
 	public static final String PWD_FIELD = "j_password";
 	public static final String USERNAME_FIELD = "j_username";
 	public static final String LOGIN_LOG_ID = "loginLogId";
-	public static final String SSO_COMPLEATED = "sso_done";
 	public static final String LOGIN_URI = "/login";
 	public static final String PUBLIC_URI = "/public";
 	
