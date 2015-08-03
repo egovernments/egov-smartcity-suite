@@ -778,7 +778,7 @@ public class ReceiptAction extends BaseFormAction {
 			setServiceName(service.getName());
 		}
 
-		Department dept = collectionsUtil.getDepartmentOfLoggedInUser(getSession());
+		Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
 		if (getDeptId() == null) {
 			setDeptId(dept.getId().toString());
 		}

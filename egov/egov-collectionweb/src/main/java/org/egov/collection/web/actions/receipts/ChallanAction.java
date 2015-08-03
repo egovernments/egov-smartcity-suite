@@ -1037,7 +1037,7 @@ public class ChallanAction extends BaseFormAction {
 			}	
 		}
 		
-		Department loginUserDepartment=collectionsUtil.getDepartmentOfLoggedInUser(getSession());
+		Department loginUserDepartment=collectionsUtil.getDepartmentOfLoggedInUser();
 		
 		addDropdownData("designationMasterList", new ArrayList());
 		addDropdownData("postionUserList", new ArrayList());
