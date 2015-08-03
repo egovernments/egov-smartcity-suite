@@ -1,4 +1,4 @@
-<!-- #-------------------------------------------------------------------------------
+<!---------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -38,67 +38,29 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------   -->
 <%@ include file="/includes/taglibs.jsp"%>
-
 <html>
 	<head>
 		<script type="text/javascript">
-		
-		function viewPropDetails(assessmentNum)
-		{
-				window.location="../view/viewProperty-viewForm.action?propertyId="+assessmentNum;
-		}
 			
-		function getPropdetails(obj,assessmentNum)
-		{
-			var selectedValue = obj.options[obj.selectedIndex].value;
-	       if(selectedValue=="ViewProperty")
-			{
-				window.location="../view/viewProperty-viewForm.action?propertyId="+assessmentNum;
+			function getPropdetails(obj, assessmentNum) {
+				var selectedValue = obj.options[obj.selectedIndex].value;
+				if (selectedValue == "ViewProperty") {
+					window.location = "../view/viewProperty-viewForm.action?propertyId=" + assessmentNum;
+				} else if (selectedValue == "TransferProperty") {
+					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
+				} else if (selectedValue == 'ADD_OR_ALTER') {
+					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
+				} else if (selectedValue == 'RevisionPetition') {
+					window.location = "../revPetition/revPetition-newForm.action?indexNumber=" + assessmentNum;
+				}
 			}
-			else if(selectedValue=="TransferProperty")
-			{
-			window.location="../property/transfer/new.action?assessmentNo="+assessmentNum;
-			}
-			else if(selectedValue=="ChangeAddress")
-			{
-			window.location="../modify/changePropertyAddress-newForm.action?indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=="DeactivateProperty")
-			{
-			window.location="../deactivate/deactivateProperty-newForm.action?indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=='Amalgamation') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=AMALG&indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=='Bifurcation') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=='ADD_OR_ALTER') {
-				window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=='Objection') {
-				window.location="../objection/objection-newForm.action?propertyId="+assessmentNum;
-			}
-			else if(selectedValue=='Notice 125') {
-				window.location="../notice/propertyTaxNotice-generateNotice.action?noticeType=Notice125&indexNumber="+assessmentNum;
-			}
-			else if(selectedValue=='Recovery') {
-				window.location="../recovery/recovery-newform.action?propertyId="+assessmentNum;
-			} else if (selectedValue == 'Assessment Data update') {				
-				window.location="../modify/modifyProperty-modifyOrDataUpdateForm.action?modifyRsn=DATA_UPDATE&indexNumber="+assessmentNum;
-			} else if (selectedValue == 'Edit Demand') {				
-				window.location="../edit/editDemand-newEditForm.action?propertyId="+assessmentNum;
-			} else if (selectedValue == 'Edit Property Data') {				
-				window.location="../modify/modifyProperty-editOwnerForm.action?modifyRsn=EDIT_OWNER&indexNumber="+assessmentNum;
-			}
-	    }
 
-function gotoSearchForm(){
-document.viewform.action='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';
-document.viewform.submit(); 
-}
+			function gotoSearchForm(){
+				document.viewform.action='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';
+				document.viewform.submit(); 
+			}
 
-	</script>
+		</script>
 		<title><s:text name="searchResults.title" /></title>
 	</head>
 	<body>
@@ -108,19 +70,19 @@ document.viewform.submit();
 				<s:form name="viewform" theme="simple">
 					<div class="headingsmallbgnew">
 						<s:text name="scrhCriteria"></s:text>
-						<span class="mandatory"><s:property
-								value="%{searchCreteria}" /> </span> /
-						<s:text name="totProp"></s:text>
-						<span class="mandatory"><s:property
-								value="%{searchResultList.size}" /> <s:text
-								name="matchRecFound" /> </span>
+						<span class="mandatory">
+							<s:property	value="%{searchCreteria}" />
+						</span> / <s:text name="totProp"></s:text>
+						<span class="mandatory">
+							<s:property value="%{searchResultList.size}" /> 
+							<s:text name="matchRecFound" /> 
+						</span>
 						<div class="searchvalue1">
 							<s:text name="scrhVal"></s:text>
 							<s:property value="%{searchValue}" />
 						</div>
 					</div>
-					<s:if
-						test="%{searchResultList != null && searchResultList.size >0}">
+					<s:if test="%{searchResultList != null && searchResultList.size >0}">
 						<tr>
 							<display:table name="searchResultList" id="linksTables"
 								pagesize="10" export="true" requestURI="" class="tablebottom"
@@ -161,71 +123,26 @@ document.viewform.submit();
 										style="align: center"
 										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">
 										<option value="">
-											<br>
 											----Choose----
 										</option>
 										<option value="ViewProperty">
 											<s:text name="viewProp"></s:text>
 										</option>
-										<option value="ADD_OR_ALTER">
-											<s:text name="viewprop.option.alter"></s:text>
-										</option>
-										<s:if test="isDemandActive == true">
-											<c:if test="${fn:contains(roleName,'OPERATOR') && markedForDeactive == 'N'}">
+										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+											<s:if test="%{isDemandActive}">
+												<option value="ADD_OR_ALTER">
+													<s:text name="viewprop.option.alter"></s:text>
+												</option>
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
 												</option>
-											</c:if>
-											<c:if test="${fn:contains(roleName,'ASSISTANT')}">
-												<c:if test="${markedForDeactive == 'N'}">	
-												<s:property value="%{markedForDeactive}" />
-													<option value="ChangeAddress">
-														<s:text name="chPropAdd"></s:text>
-													</option>
-													<option value="DeactivateProperty">
-														<s:text name="deactivate.prop"></s:text>
-													</option>
-													<option value="Amalgamation">
-														<s:text name="Amalgamation"></s:text>
-													</option>
-													<option value="Bifurcation">
-														<s:text name="Bifurcation"></s:text>
-													</option>
-													<option value="Modification">
-														<s:text name="Modification"></s:text>
-													</option>
-													<option value="Objection">
-														<s:text name="Objection"></s:text>
-													</option>
-													<option value="Notice 125">
-														<s:text name="Notice125"></s:text>
-													</option>
-													<option value="Recovery">
-														<s:text name="recovery"></s:text>
-													</option>
-													<option value="Assessment Data update">
-														<s:text name="assessmentDataUpdate"></s:text>
-													</option>
-													<option value="Edit Property Data">
-														<s:text name="edit.propertyData"></s:text>
-													</option>
-												</c:if>
-											</c:if>
-											<c:if test="${fn:contains(roleName,'PTADMINISTRATOR')}">
-												<c:if test="${markedForDeactive == 'N'}">												
-													<option value="Edit Demand">
-														<s:text name="editDemand" />
-													</option>
-												</c:if>
-											</c:if>
-										</s:if>
-										<s:else>
-											<c:if test="${fn:contains(roleName,'ASSISTANT') && markedForDeactive == 'N'}">
-												<option value="Objection">
-													<s:text name="Objection"></s:text>
+											</s:if>
+											<s:else>
+												<option value="RevisionPetition">
+													<s:text name="revisionPetition"></s:text>
 												</option>
-											</c:if>
-										</s:else>
+											</s:else>
+										</s:if>
 									</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />
