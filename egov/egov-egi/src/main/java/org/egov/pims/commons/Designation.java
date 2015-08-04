@@ -79,7 +79,6 @@ public class Designation extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
-    @Field
     private String name;
 
     @SafeHtml

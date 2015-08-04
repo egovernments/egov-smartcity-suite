@@ -77,7 +77,6 @@ public class Department extends AbstractAuditable {
     @Length(min = 1, max = 128)
     @Searchable(name = "name")
     @SafeHtml
-    @Field
     private String name;
 
     @NotBlank

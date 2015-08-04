@@ -85,34 +85,28 @@ public class Assignment extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
-    @IndexedEmbedded
     private Position position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "functionary")
-    @IndexedEmbedded
     private Functionary functionary;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fund")
-    @IndexedEmbedded
     private Fund fund;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "function")
-    @IndexedEmbedded
     private CFunction function;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
-    @IndexedEmbedded
     private Designation designation;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
-    @IndexedEmbedded
     private Department department;
 
     @Column(name = "isprimary")

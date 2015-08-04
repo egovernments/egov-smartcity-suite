@@ -51,18 +51,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeAdaptor;
+import org.egov.eis.entity.EmployeeSearchDTO;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -96,11 +97,13 @@ public class SearchEmployeeController {
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public String searchForm(final Model model) {
         setDropDownValues(model);
+        model.addAttribute("employee", new EmployeeSearchDTO());
         return "employeesearch-form";
     }
 
     public String toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY);
         final Gson gson = gsonBuilder.registerTypeAdapter(Employee.class, new EmployeeAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
@@ -108,9 +111,8 @@ public class SearchEmployeeController {
 
     @RequestMapping(value = "ajax/employees", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
-            @RequestParam final String[] searchText, final HttpServletResponse response,
-            @RequestParam final Boolean freeText) throws IOException {
-        final List<Employee> employees = employeeService.searchEmployee(freeText, searchText);
+            final HttpServletResponse response, final EmployeeSearchDTO employee) throws IOException {
+        final List<Employee> employees = employeeService.searchEmployees(employee);
         final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(employeeJSONData, response.getWriter());

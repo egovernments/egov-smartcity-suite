@@ -43,25 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-
-
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
-
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-
-
 		<form:form  class="form-horizontal form-groups-bordered" 
 					id="searchEmployeeForm" modelAttribute="employee" action="search">
 				<div class="row">
@@ -73,107 +54,101 @@
 								</div>
 							</div>
 							<div class="panel-body custom-form">
-									<div class="form-group">
-									<input type="hidden" id="freeText"/>
-										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.search"/><span class="mandatory"></span></label>
-										
-										<div class="col-sm-6 add-margin">
-											<input id="searchText" name="searchText" type="text" class="form-control" placeholder="Search name, mobile number etc.." />
-										</div>
-									</div>
-									
-									<div class="form-group">
-										<div class="col-sm-3 col-xs-12 add-margin">
-											<button type="button" class="btn btn-secondary adv-button" data-advanced=false><spring:message code="lbl.advanced"/></button>
-										</div>
-									</div>
-
-									<div class="form-group advanced-forms display-hide">
+									<div class="form-group advanced-forms">
 										
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="name" id="name" class="form-control" placeholder="Name">
+											<form:input path="name" id="name" cssClass="form-control" placeholder="Name"/>
 										</div>
-										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="department" name="department" >
-												<option value="">
+										 <div class="col-sm-4 add-margin">
+											<form:select cssClass="form-control" id="department" name="department" path="department">
+												<form:option value="">
 													<spring:message code="lbl.departments" />
-												</option>
+												</form:option>
 												  <c:forEach items="${department}" var="dept">
-										            <option value="${dept.name}">${dept.name} </option>
+										            <form:option value="${dept.name}">${dept.name} </form:option>
 										         </c:forEach>
-											</select>
+											</form:select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="designation" name="designation">
-												<option value="">
+											<form:select cssClass="form-control" id="designation" name="designation" path="designation">
+												<form:option value="">
 													<spring:message code="lbl.designations" />
-												</option>
+												</form:option>
 												  <c:forEach items="${desigList}" var="desig">
-										            <option value="${desig.name}">${desig.name} </option>
+										            <form:option value="${desig.name}">${desig.name} </form:option>
 										         </c:forEach>
-											</select>
+											</form:select>
 										</div>
 										
 									</div>
 
-									<div class="form-group advanced-forms display-hide">
+									<div class="form-group advanced-forms">
 										
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="function" name="function">
-												<option value="">
+											<form:select cssClass="form-control" id="function" name="function" path="function">
+												<form:option value="">
 													<spring:message code="lbl.functions" />
-												</option>
+												</form:option>
 												  <c:forEach items="${functionList}" var="function">
-										            <option value="${function.name}">${function.name} </option>
+										            <form:option value="${function.name}">${function.name} </form:option>
 										         </c:forEach>
-											</select>
+											</form:select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="functionary" name="functionary">
-												<option value="">
+											<form:select cssClass="form-control" id="functionary" name="functionary" path="functionary">
+												<form:option value="">
 													<spring:message code="lbl.functionaries" />
-												</option>
+												</form:option>
 												  <c:forEach items="${functionaryList}" var="functionary">
-										            <option value="${functionary.name}">${functionary.name} </option>
+										            <form:option value="${functionary.name}">${functionary.name} </form:option>
 										         </c:forEach>
-											</select>
+											</form:select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="code" id="code" class="form-control" placeholder="Code">
+											<form:select cssClass="form-control" id="status" name="status" path="status">
+												<form:option value="">
+													<spring:message code="lbl.status" />
+												</form:option>
+												  <c:forEach items="${employeeStatus}" var="status">
+										            <form:option value="${status}">${status} </form:option>
+										         </c:forEach>
+											</form:select>
 										</div>
 									</div>
 
-									<div class="form-group advanced-forms display-hide">
+									<div class="form-group advanced-forms">
 										
 										<div class="col-sm-4 add-margin">
-											<select class="form-control" id="employeeType" name="employeeType">
-												<option value="">
+											<form:select cssClass="form-control" id="employeeType" name="employeeType" path="employeeType">
+												<form:option value="">
 													<spring:message code="lbl.types" />
-												</option>
+												</form:option>
 												  <c:forEach items="${employeeTypes}" var="type">
-										            <option value="${type.name}">${type.name} </option>
+										            <form:option value="${type.name}">${type.name} </form:option>
 										         </c:forEach>
-											</select>
+											</form:select>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="pan" id="pan" class="form-control" placeholder="PAN">
+											<form:input type="text" name="pan" id="pan" cssClass="form-control" path="pan" placeholder="PAN"/>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="aadhaar" id="aadhaar" class="form-control" placeholder="Aadhaar">
+											<form:input type="text" name="aadhaar" id="aadhaar" cssClass="form-control" path="aadhaar" placeholder="Aadhaar"/>
 										</div>
 										
 									</div>
 
-									<div class="form-group advanced-forms display-hide">
+									<div class="form-group advanced-forms">
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="mobileNumber" id="mobileNumber" class="form-control" placeholder="Mobile Number">
+											<form:input type="text" name="mobileNumber" id="mobileNumber" cssClass="form-control" path="mobileNumber" placeholder="Mobile Number"/>
 										</div>
 										<div class="col-sm-4 add-margin">
-											<input type="text" name="email" id="email" class="form-control" placeholder="Email">
+											<form:input type="text" name="email" id="email" cssClass="form-control" path="email" placeholder="Email"/>
+										</div>
+										<div class="col-sm-4 add-margin">
+											<form:input type="text" name="code" id="code" cssClass="form-control" path="code" placeholder="Code"/>
 										</div>
 										
-										
-									</div>
+									</div> 
 
 										<div class="text-center">
 											<button type="button"  class="btn btn-primary" id="searchbtn">Search Employee</button>
@@ -214,7 +189,7 @@
 				</div>
 
 
-
+<script src="<c:url value='/resources/js/app/employeesearch.js'/>"></script>
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>		
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

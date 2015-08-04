@@ -75,7 +75,6 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
-@Indexed
 @Entity
 @Table(name = "egeis_employee")
 @Unique(id = "id", tableName = "egeis_employee", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
@@ -87,7 +86,6 @@ public class Employee extends User {
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String code;
 
     @Temporal(value = TemporalType.DATE)
@@ -103,11 +101,9 @@ public class Employee extends User {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
-    @IndexedEmbedded
     private EmployeeType employeeType;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @IndexedEmbedded
     @OrderBy(" primary,id DESC ")
     private final List<Assignment> assignments = new ArrayList<Assignment>(0);
 

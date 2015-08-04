@@ -54,6 +54,7 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.EmployeeSearchDTO;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.AssignmentRepository;
@@ -61,7 +62,12 @@ import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -158,61 +164,51 @@ public class EmployeeService {
         employeeRepository.saveAndFlush(employee);
     }
 
-    /**
-     * This search API is used for EIS internal search. Not intended for general
-     * search by other modules
-     *
-     * @param freeText
-     * @param searchText
-     * @return
-     */
-    @Transactional
-    public List<Employee> searchEmployee(final Boolean freeText, final String[] searchText) {
-
-        List<Employee> employees = null;
-        final FullTextEntityManager fullTextEntityManager = org.hibernate.search.jpa.Search
-                .getFullTextEntityManager(entityManager);
-        // create native Lucene query using the query DSL
-        // alternatively you can write the Lucene query using the Lucene query
-        // parser
-        // or the Lucene programmatic API. The Hibernate Search DSL is
-        // recommended though
-        final QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Employee.class)
-                .get();
-        final TermMatchingContext onFields = qb.keyword().onFields("code", "name", "mobileNumber", "aadhaarNumber",
-                "emailId", "employeeType.name", "pan", "assignments.department.name", "assignments.designation.name",
-                "assignments.position.name", "assignments.fund.name", "assignments.function.name",
-                "assignments.functionary.name");
-
-        org.apache.lucene.search.Query luceneQuery = null;
-        boolean matchAnything = true;
-
-        if (freeText) {
-            luceneQuery = onFields.matching(searchText[0]).createQuery();
-            matchAnything = false;
-        } else {
-            final BooleanJunction<BooleanJunction> bool = qb.bool();
-            for (final String element : searchText) {
-                final String currentTerm = element;
-                if (!currentTerm.isEmpty() && !"".equals(currentTerm) && !",".equals(currentTerm)) {
-                    bool.should(onFields.matching(currentTerm).createQuery());
-                    matchAnything = false;
-                }
-            }
-            if (!matchAnything)
-                luceneQuery = bool.createQuery();
+    public List<Employee> searchEmployees(EmployeeSearchDTO searchParams) {
+        
+        Criteria criteria  = getCurrentSession().createCriteria(Assignment.class,"assignment").
+                createAlias("assignment.employee", "employee");
+        if(null!=searchParams.getCode() && !searchParams.getCode().isEmpty())
+            criteria.add(Restrictions.eq("employee.code",searchParams.getCode()));
+        if(null!=searchParams.getName() && !searchParams.getName().isEmpty())
+            criteria.add(Restrictions.eq("employee.name",searchParams.getName()));
+        if(null!=searchParams.getAadhaar() && !searchParams.getAadhaar().isEmpty())
+            criteria.add(Restrictions.eq("employee.aadhaar",searchParams.getAadhaar()));
+        if(null!=searchParams.getMobileNumber() && !searchParams.getMobileNumber().isEmpty())
+            criteria.add(Restrictions.eq("employee.mobileNumber",searchParams.getMobileNumber()));
+        if(null!=searchParams.getPan() && !searchParams.getPan().isEmpty())
+            criteria.add(Restrictions.eq("employee.pan",searchParams.getPan()));
+        if(null!=searchParams.getEmail() && !searchParams.getEmail().isEmpty())
+            criteria.add(Restrictions.eq("employee.emailId",searchParams.getEmail()));
+        if(null!=searchParams.getStatus() && !searchParams.getStatus().isEmpty())
+            criteria.add(Restrictions.eq("employee.employeeStatus",EmployeeStatus.valueOf(searchParams.getStatus())));
+        if(null!=searchParams.getEmployeeType() && !searchParams.getEmployeeType().isEmpty()){
+            criteria.createAlias("employee.employeeType", "employeeType");
+            criteria.add(Restrictions.eq("employeeType.name",searchParams.getEmployeeType()));
         }
+        if(null!=searchParams.getDepartment() && !searchParams.getDepartment().isEmpty()){
+            criteria.createAlias("assignment.department", "department");
+            criteria.add(Restrictions.eq("department.name",searchParams.getDepartment()));
+        }
+        if(null!=searchParams.getDesignation() && !searchParams.getDesignation().isEmpty()) {
+            criteria.createAlias("assignment.designation", "designation");
+            criteria.add(Restrictions.eq("designation.name",searchParams.getDesignation()));
+        }
+        if(null!=searchParams.getFunctionary() && !searchParams.getFunctionary().isEmpty()) {
+            criteria.createAlias("assignment.functionary", "functionary");
+            criteria.add(Restrictions.eq("functionary.name",searchParams.getFunctionary()));
+        }
+        if(null!=searchParams.getFunction() && !searchParams.getFunction().isEmpty()) {
+            criteria.createAlias("assignment.function", "function");
+            criteria.add(Restrictions.eq("function.name",searchParams.getFunction()));
+        }
+        
+        final ProjectionList projections = Projections.projectionList().add(Projections.property("assignment.employee"));
+        criteria.setProjection(projections);
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-        if (!matchAnything) {
-            final javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery,
-                    Employee.class);
-            employees = jpaQuery.getResultList();
-        } else
-            employees = employeeRepository.findAll();
-        final Employee anonymousEmployee = employeeRepository.findByName(EisConstants.ANONYMOUS_EMPLOYEE);
-        employees.remove(anonymousEmployee);
-
-        return employees;
+        return (List<Employee>)criteria.list();
+        
     }
 
     @Transactional

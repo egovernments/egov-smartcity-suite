@@ -51,7 +51,6 @@ public class Functionary implements java.io.Serializable {
 	private Integer id;
 
 	private BigDecimal code;
-	@Field
 	private String name;
 
 	private Date createtimestamp;

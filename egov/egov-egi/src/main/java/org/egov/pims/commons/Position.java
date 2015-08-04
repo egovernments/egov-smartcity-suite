@@ -72,7 +72,6 @@ public class Position extends AbstractAuditable {
     private Long id;
 
     @Column(name = "name", unique = true)
-    @Field
     @Searchable
     private String name;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
