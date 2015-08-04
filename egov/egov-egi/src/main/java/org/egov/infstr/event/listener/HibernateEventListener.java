@@ -54,7 +54,6 @@ import org.hibernate.event.spi.PreUpdateEvent;
 import org.hibernate.event.spi.PreUpdateEventListener;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
 import org.hibernate.event.spi.SaveOrUpdateEventListener;
-import org.joda.time.DateTime;
 
 /**
  * This Event listener class sets the audit properties createdBy, createdDate
@@ -166,7 +165,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
         int i = 0;
         for (final String propName : event.getPersister().getPropertyNames()) {
             if ("lastModifiedDate".equals(propName))
-                event.getState()[i] = new DateTime();
+                event.getState()[i] = new Date();
             if ("lastModifiedBy".equals(propName))
                 event.getState()[i] = getUserObjectFromWithinEventListener(event.getSession());
             i++;
