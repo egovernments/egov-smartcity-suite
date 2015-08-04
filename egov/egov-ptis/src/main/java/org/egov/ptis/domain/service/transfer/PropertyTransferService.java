@@ -251,7 +251,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         ackBean.setMunicipalityName(cityName);
         ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
-        ackBean.setApplicationDate(propertyMutation.getMutationDate());
+        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
         ackBean.setOwnerName(basicProperty.getFullOwnerName());
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());

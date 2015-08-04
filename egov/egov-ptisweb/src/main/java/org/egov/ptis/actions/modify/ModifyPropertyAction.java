@@ -1122,9 +1122,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ackBean.setOwnerName(basicProp.getFullOwnerName());
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
-        ackBean.setApplicationDate(basicProp.getCreatedDate());
+        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
         ackBean.setApplicationNo(basicProp.getApplicationNo());
-        ackBean.setApprovedDate(propWF.getState().getCreatedDate());
+        ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(),
                 Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(noticeDueDate);

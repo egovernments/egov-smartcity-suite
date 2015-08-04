@@ -9,9 +9,9 @@
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="ownerAddress" class="java.lang.String"/>
-	<field name="approvedDate" class="java.util.Date"/>
+	<field name="approvedDate" class="java.lang.String"/>
 	<field name="noticeDueDate" class="java.util.Date"/>
-	<field name="applicationDate" class="java.util.Date"/>
+	<field name="applicationDate" class="java.lang.String"/>
 	<field name="applicationNo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -30,7 +30,7 @@
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date: "+DateUtils.getDefaultFormattedDate($F{applicationDate})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="220" width="495" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
@@ -38,7 +38,7 @@
 					<font size="12" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	This is to acknowledge that an application for addition/alteration has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{approvedDate})+"</style>. This will be resolved within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style>."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	This is to acknowledge that an application for addition/alteration has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>. This will be resolved within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style>."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="96" y="38" width="430" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
