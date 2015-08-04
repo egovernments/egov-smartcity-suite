@@ -90,7 +90,7 @@
   function onSubmit() {
 	  var actionName = document.getElementById('workFlowAction').value;
 	  if(actionName == 'Generate Notice') {
-		  generateNotice6();
+		  generateNotice();
 	   } else {
 		document.forms[0].action = 'createProperty-forward.action';
 		document.forms[0].submit;
@@ -98,8 +98,9 @@
 	   }
 	 } 
 	 	
- 	function generateNotice6(){
-	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
+ 	function generateNotice(){
+ 	 	var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=create";
 		document.CreatePropertyForm.submit();
 	}
 	

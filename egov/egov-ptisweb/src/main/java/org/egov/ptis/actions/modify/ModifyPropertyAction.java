@@ -683,8 +683,8 @@ public class ModifyPropertyAction extends WorkflowAction {
         Date propCompletionDate = null;
         String mutationCode = null;
         final Character status = STATUS_WORKFLOW;
-        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
-                .valueOf(propTypeId));
+        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer
+                .valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel
                     .getPropertyDetail().getFloorDetailsProxy());
@@ -1029,8 +1029,8 @@ public class ModifyPropertyAction extends WorkflowAction {
                 + ", statusModifyRsn: " + modifyRsn);
 
         Date propCompletionDate = null;
-        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
-                .valueOf(propTypeId));
+        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer
+                .valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel
                     .getPropertyDetail().getFloorDetails());

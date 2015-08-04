@@ -821,6 +821,7 @@ public interface PropertyTaxConstants {
 	};
 
 	public static final String NOTICE_TYPE_BILL = "Bill";
+	public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
 
 	public static final String CREATE_AUDIT_ACTION = "Create Property";
 	public static final String MODIFY_AUDIT_ACTION = "Modify Property";
@@ -910,8 +911,7 @@ public interface PropertyTaxConstants {
 	public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
 	public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
-	public static final String NOTICE6 = "Notice6";
-	public static final String REPORT_TEMPLATENAME_NOTICE6 = "specialNotice";
+	public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "specialNotice";
 	public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
 	public static final String IMAGE_CONTEXT_PATH = "/egi";
 	public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";

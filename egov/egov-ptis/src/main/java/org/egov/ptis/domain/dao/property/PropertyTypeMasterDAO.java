@@ -47,8 +47,6 @@ public interface PropertyTypeMasterDAO {
 	
 	public PropertyTypeMaster getPropertyTypeMasterByName(String type);
 
-	public PropertyTypeMaster getPropertyTypeMasterById(Integer id);
-
 	public PropertyTypeMaster getPropertyTypeMasterByCode(String code);
 
 	public PropertyTypeMaster findById(Integer id, boolean lock);

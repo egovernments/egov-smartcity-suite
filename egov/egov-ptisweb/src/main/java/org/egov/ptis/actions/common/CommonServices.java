@@ -39,6 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.actions.common;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_FULL;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_NIL;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_PARTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -152,23 +158,16 @@ public class CommonServices {
 
 	public static Map<String, String> getNoticeTypeMstr() {
 		Map<String, String> noticeTypeMap = new HashMap<String, String>();
-		noticeTypeMap.put("Prativrutta", "Prativrutta");
-		noticeTypeMap.put("Notice 127", "Notice 127");
-		noticeTypeMap.put("Notice 134", "Notice 134");
-		noticeTypeMap.put("Notice 155", "Notice 155");
-		noticeTypeMap.put("Warrant-application", "Warrant-application");
-		noticeTypeMap.put("Notice 156", "Notice 156");
-		noticeTypeMap.put("Notice 159", "Notice 159");
-		noticeTypeMap.put("Bill", "Bill");
-		noticeTypeMap.put("MutationCertificate", "MutationCertificate");
+		noticeTypeMap.put(NOTICE_TYPE_BILL, NOTICE_TYPE_BILL);
+		noticeTypeMap.put(NOTICE_TYPE_SPECIAL_NOTICE, NOTICE_TYPE_SPECIAL_NOTICE);
 		return noticeTypeMap;
 	}
 
 	public static Map<String, String> getAmenities() {
 		Map<String, String> amenitiesMap = new HashMap<String, String>();
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL, PropertyTaxConstants.AMENITY_TYPE_FULL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL, PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL, PropertyTaxConstants.AMENITY_TYPE_NIL);
+		amenitiesMap.put(AMENITY_TYPE_FULL, AMENITY_TYPE_FULL);
+		amenitiesMap.put(AMENITY_TYPE_PARTIAL, AMENITY_TYPE_PARTIAL);
+		amenitiesMap.put(AMENITY_TYPE_NIL, AMENITY_TYPE_NIL);
 
 		return amenitiesMap;
 	}
