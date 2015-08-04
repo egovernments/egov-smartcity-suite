@@ -39,9 +39,9 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
-	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
-	   http://www.springframework.org/schema/security/spring-security-3.2.xsd" default-lazy-init="true">
+	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="false">
 
 	<security:global-method-security secured-annotations="disabled" access-decision-manager-ref="accessDecisionManager" />
 	
@@ -65,7 +65,7 @@
 	
 	<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
 	
-	<bean id="concurrentSessionControlStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+	<bean id="concurrentSessionControlStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
 		<constructor-arg index="0" ref="sessionRegistry" />
 		<property name="exceptionIfMaximumExceeded" value="false" />
 		<property name="maximumSessions" value="-1" />
@@ -116,13 +116,12 @@
 	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />
 	
 	<bean id="rememberMeAuthenticationFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="rememberMeServices" ref="rememberMeServices" />
+		<constructor-arg name="authenticationManager" ref="authenticationManager"/>
+		<constructor-arg name="rememberMeServices" ref="rememberMeServices"/>
 	</bean>
 	
 	<bean id="anonymousAuthenticationFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
-		<property name="key" value="anonymous" />
-		<property name="userAttribute" value="anonymous,ROLE_ANONYMOUS" />
+		<constructor-arg name="key" value="anonymous"/>
 	</bean>
 	
 	<bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
@@ -147,14 +146,14 @@
 	</bean>
 	
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions" value="false" />
-		<property name="decisionVoters">
+		<constructor-arg index="0">
 			<list>
 				<bean class="org.springframework.security.access.vote.RoleVoter">
 					<property name="rolePrefix" value="" />
 				</bean>
 			</list>
-		</property>
+		</constructor-arg>
+		<property name="allowIfAllAbstainDecisions" value="false" />
 	</bean>
 	
 	<bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
@@ -180,7 +179,7 @@
 	</bean>
 	
 	<bean id="anonymousAuthenticationProvider" class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
-		<property name="key" value="anonymous" />
+		<constructor-arg index="0" value="anonymous"/>
 	</bean>
 	
 	<bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">

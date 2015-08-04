@@ -401,7 +401,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
-                <version>4.1.4.RELEASE</version>
+                <version>4.2.0.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -419,7 +419,7 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>1.7.1.RELEASE</version>
+                <version>1.8.2.RELEASE</version>
             </dependency>
             
             <dependency>
@@ -430,20 +430,25 @@
             <!-- SPRING END -->
 			
 			<!-- SECURITY START -->
+			<dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>4.0.2.RELEASE</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
-                <version>3.2.5.RELEASE</version>
+                <version>4.0.2.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>3.2.5.RELEASE</version>
+                <version>4.0.2.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
-                <version>3.2.5.RELEASE</version>
+                <version>4.0.2.RELEASE</version>
             </dependency>
             <dependency>
 				<groupId>org.springframework.security.oauth</groupId>
