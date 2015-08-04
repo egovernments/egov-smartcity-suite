@@ -93,7 +93,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.demand.dao.EgDemandDao;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -101,6 +100,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -149,7 +149,6 @@ import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
-import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -191,13 +190,9 @@ public class CreatePropertyAction extends WorkflowAction {
     private Long wallTypeId;
     private Long woodTypeId;
     private Long ownershipType;
-    private Double extentSite = null;
-    private String vacantLandNo;
-    private String extentAppartenauntLand = null;
     private String houseNumber;
     private String addressStr;
     private String pinCode;
-    private String parcelID;
     private String areaOfPlot;
     private String applicationDate;
     private String dateOfCompletion;
@@ -209,44 +204,30 @@ public class CreatePropertyAction extends WorkflowAction {
     private String corrAddress1;
     private String corrAddress2;
     private String corrPinCode;
-    private boolean generalTax;
-    private boolean sewerageTax;
-    private boolean lightingTax;
-    private boolean fireServTax;
-    private boolean bigResdBldgTax;
-    private boolean educationCess;
-    private boolean empGuaCess;
     private String genWaterRate;
     private BasicProperty basicProp;
-    private Map<String, String> waterMeterMap;
 
     @Autowired
     private PropertyService propService;
     private Long mutationId;
     private String parentIndex;
-    private String isAuthProp;
     Date propCompletionDate = null;
     private String amenities;
     private String[] floorNoStr = new String[20];
     private String propTypeId;
     private String propUsageId;
     private String propOccId;
-    private Map<Long, String> ZoneBndryMap;
-    private List<PropertyOwnerInfo> propOwnerProxy;
     private Map<String, String> propTypeCategoryMap;
     private String propTypeCategoryId;
-    private String method;
     FinancialUtil financialUtil = new FinancialUtil();
     private PropertyTypeMaster propTypeMstr;
 
     private String docNumber;
-    private String partNo;
     private String nonResPlotArea;
     private Category propertyCategory;
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 
-    private List<PropertyOwnerInfo> propertyOwnerProxy = new ArrayList<PropertyOwnerInfo>();
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private PropertyImpl newProperty = new PropertyImpl();
     private Date currDate;
@@ -261,6 +242,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
+    private Address ownerAddress;
     private Map<String, String> deviationPercentageMap;
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
@@ -268,22 +250,14 @@ public class CreatePropertyAction extends WorkflowAction {
     @Autowired
     private UserService userService;
 
-    private AssignmentService assignmentService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
-
     @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
     private SecurityUtils securityUtils;
 
-    @Autowired
-    private EgDemandDao egDemandDAO;
-
     private SMSEmailService sMSEmailService;
-    
+
     @Autowired
     private PtDemandDao ptDemandDAO;
 
@@ -327,8 +301,8 @@ public class CreatePropertyAction extends WorkflowAction {
         LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
                 + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
                 + dateOfCompletion + ", chkIsTaxExempted: " + chkIsTaxExempted + ", taxExemptReason: "
-                + taxExemptReason + ", isAuthProp: " + isAuthProp + ", propTypeId: " + propTypeId + ", propUsageId: "
-                + propUsageId + ", propOccId: " + propOccId);
+                + taxExemptReason + ", propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
+                + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(STATUS_ISACTIVE);
         LOGGER.debug("create: BasicProperty after creatation: " + basicProperty);
@@ -384,16 +358,17 @@ public class CreatePropertyAction extends WorkflowAction {
             setMutationId(basicProp.getPropertyMutationMaster().getId());
             if (null != basicProp.getAddress()) {
                 setHouseNumber(basicProp.getAddress().getHouseNoBldgApt());
-                setAddressStr(basicProp.getAddress().getLandmark());
                 setPinCode(basicProp.getAddress().getPinCode());
             }
 
             for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo())
-                for (final Address corrAddress : ownerInfo.getOwner().getAddress())
-                    if (isNotBlank(corrAddress.getLandmark())) {
-                        setCorrAddress1(corrAddress.getLandmark());
-                        setCorrAddress2(corrAddress.getAreaLocalitySector());
-                        setCorrPinCode(corrAddress.getPinCode());
+                for (final Address ownerAddress : ownerInfo.getOwner().getAddress())
+                    if (null != ownerAddress) {
+                        final String corrAddress = ownerAddress.getHouseNoBldgApt() + ","
+                                + ownerAddress.getAreaLocalitySector();
+                        setCorrAddress1(corrAddress);
+                        setCorrAddress2(ownerAddress.getStreetRoadLine());
+                        setCorrPinCode(ownerAddress.getPinCode());
                         chkIsCorrIsDiff = true;
                     }
             if (null != basicProp.getPropertyID()) {
@@ -442,8 +417,7 @@ public class CreatePropertyAction extends WorkflowAction {
             setAddressStr(basicProp.getAddress().toString());
             corrAddress1 = basicProp.getAddress().toString();
             setDocNumber(property.getDocNumber());
-            LOGGER.debug("IndexNumber: " + indexNumber + ", GenWaterRate: " + genWaterRate + ", Amenities: "
-                    + amenities + "NoOfFloors: "
+            LOGGER.debug("IndexNumber: " + indexNumber + " Amenities: " + amenities + "NoOfFloors: "
                     + (getFloorDetails() != null ? getFloorDetails().size() : "Floor list is NULL")
                     + " Exiting from view");
             return RESULT_VIEW;
@@ -485,18 +459,15 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void updatePropertyDetails() {
         updatePropertyId(basicProp);
-        // updateOwnerDetails(basicProp);
         final Character status = STATUS_WORKFLOW;
-        // basicPropertyService.createUserIfNotExist(basicProp);
-        basicPropertyService.createOwners(property, basicProp, corrAddress1, corrAddress2, corrPinCode);
+        updatePropAddress(basicProp);
+        basicPropertyService.createOwners(property, basicProp, ownerAddress);
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProp.setPropertyMutationMaster(propertyMutationMaster);
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
                 getWallTypeId(), getWoodTypeId());
-        // createOwners(basicProp);
-        // createUserIfNotExist(basicProp);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -684,8 +655,8 @@ public class CreatePropertyAction extends WorkflowAction {
     }
 
     private BasicProperty createBasicProp(final Character status) {
-        LOGGER.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", ParcelId: "
-                + parcelID + ", wardId: " + wardId);
+        LOGGER.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", wardId: "
+                + wardId);
 
         final BasicProperty basicProperty = new BasicPropertyImpl();
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
@@ -705,7 +676,7 @@ public class CreatePropertyAction extends WorkflowAction {
                 null, getParentIndex()));
         basicProperty.setBoundary(boundaryService.getBoundaryById(getWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
-        basicPropertyService.createOwners(property, basicProperty, corrAddress1, corrAddress2, corrPinCode);
+        basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
 
         /*
@@ -739,7 +710,7 @@ public class CreatePropertyAction extends WorkflowAction {
     /**
      * Changes the property details from {@link BuiltUpProperty} to
      * {@link VacantProperty}
-     * 
+     *
      * @return vacant property details
      * @see org.egov.ptis.domain.entity.property.VacantProperty
      */
@@ -781,6 +752,40 @@ public class CreatePropertyAction extends WorkflowAction {
         return vacantProperty;
     }
 
+    private void updatePropAddress(final BasicProperty basicProperty) {
+
+        LOGGER.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
+                + getHouseNumber() + ", OldHouseNo: " + ", AddressStr: " + getAddressStr() + ", PinCode: "
+                + getPinCode());
+
+        final Address propAddr = basicProperty.getAddress();
+        propAddr.setHouseNoBldgApt(getHouseNumber());
+        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getBlockId()).getName());
+        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
+        if (getPinCode() != null && !getPinCode().isEmpty())
+            propAddr.setPinCode(getPinCode());
+        for (final PropertyOwnerInfo owner : basicProperty.getPropertyOwnerInfo())
+            for (final Address address : owner.getOwner().getAddress())
+                if (null != address)
+                    ownerAddress = address;
+        if (!isChkIsCorrIsDiff()) {
+            ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
+            ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
+            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
+            ownerAddress.setPinCode(propAddr.getPinCode());
+
+        } else {
+            final String[] corrAddr = getCorrAddress1().split(",");
+            if (corrAddr.length == 1)
+                ownerAddress.setAreaLocalitySector(getCorrAddress1());
+            else
+                ownerAddress.setAreaLocalitySector(corrAddr[1]);
+            ownerAddress.setHouseNoBldgApt(getHouseNumber());
+            ownerAddress.setStreetRoadLine(getCorrAddress2());
+            ownerAddress.setPinCode(getCorrPinCode());
+        }
+    }
+
     private PropertyAddress createPropAddress() {
 
         LOGGER.debug("Entered into createPropAddress, \nAreaId: " + getBlockId() + ", House Number: "
@@ -788,27 +793,23 @@ public class CreatePropertyAction extends WorkflowAction {
                 + getPinCode());
 
         final Address propAddr = new PropertyAddress();
-        final StringBuffer addrStr1 = new StringBuffer();
-        final StringBuffer addrStr2 = new StringBuffer();
         propAddr.setHouseNoBldgApt(getHouseNumber());
-        addrStr1.append(getHouseNumber());
-
-        if (getAddressStr() != null && !getAddressStr().isEmpty()) {
-            String addressStr = getAddressStr();
-            addressStr = propertyTaxUtil.antisamyHackReplace(addressStr);
-            propAddr.setLandmark(addressStr);
-            addrStr1.append(", " + addressStr);
-        }
-
-        addrStr2.append(boundaryService.getBoundaryById(getBlockId()).getName());
+        propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getBlockId()).getName());
+        propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getLocality()).getName());
         if (getPinCode() != null && !getPinCode().isEmpty())
             propAddr.setPinCode(getPinCode());
-        if (isChkIsCorrIsDiff()) {
-            setCorrAddress1(addrStr1.toString());
-            setCorrAddress2(addrStr2.toString());
-            if (getPinCode() != null && !getPinCode().isEmpty())
-                setCorrPinCode(getPinCode());
-
+        if (!isChkIsCorrIsDiff()) {
+            ownerAddress = new CorrespondenceAddress();
+            ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
+            ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
+            ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
+            ownerAddress.setPinCode(propAddr.getPinCode());
+        } else {
+            ownerAddress = new CorrespondenceAddress();
+            ownerAddress.setHouseNoBldgApt(getHouseNumber());
+            ownerAddress.setAreaLocalitySector(getCorrAddress1());
+            ownerAddress.setStreetRoadLine(getCorrAddress2());
+            ownerAddress.setPinCode(getCorrPinCode());
         }
         LOGGER.debug("PropertyAddress: " + propAddr + "\nExiting from createPropAddress");
         return (PropertyAddress) propAddr;
@@ -836,8 +837,7 @@ public class CreatePropertyAction extends WorkflowAction {
     @Override
     public void validate() {
         LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + blockId
-                + ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", ParcelID:" + parcelID
-                + ", MutationId: " + mutationId + ", PartNo: " + partNo);
+                + ", HouseNumber: " + houseNumber + ", PinCode: " + pinCode + ", MutationId: " + mutationId);
 
         if (locality == null || locality == -1)
             addActionError(getText("mandatory.localityId"));
@@ -915,7 +915,7 @@ public class CreatePropertyAction extends WorkflowAction {
         final List<String> args = new ArrayList<String>();
         args.add(applicantName);
         String smsMsg = "";
-        Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
+        final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
         if (null != property && null != property.getState()) {
             final State propertyState = property.getState();
             if (propertyState.getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
@@ -997,14 +997,6 @@ public class CreatePropertyAction extends WorkflowAction {
         this.pinCode = pinCode;
     }
 
-    public String getParcelID() {
-        return parcelID;
-    }
-
-    public void setParcelID(final String parcelID) {
-        this.parcelID = parcelID;
-    }
-
     public String getAreaOfPlot() {
         return areaOfPlot;
     }
@@ -1077,62 +1069,6 @@ public class CreatePropertyAction extends WorkflowAction {
         this.corrPinCode = corrPinCode;
     }
 
-    public boolean isGeneralTax() {
-        return generalTax;
-    }
-
-    public void setGeneralTax(final boolean generalTax) {
-        this.generalTax = generalTax;
-    }
-
-    public boolean isSewerageTax() {
-        return sewerageTax;
-    }
-
-    public void setSewerageTax(final boolean sewerageTax) {
-        this.sewerageTax = sewerageTax;
-    }
-
-    public boolean isLightingTax() {
-        return lightingTax;
-    }
-
-    public void setLightingTax(final boolean lightingTax) {
-        this.lightingTax = lightingTax;
-    }
-
-    public boolean isFireServTax() {
-        return fireServTax;
-    }
-
-    public void setFireServTax(final boolean fireServTax) {
-        this.fireServTax = fireServTax;
-    }
-
-    public boolean isBigResdBldgTax() {
-        return bigResdBldgTax;
-    }
-
-    public void setBigResdBldgTax(final boolean bigResdBldgTax) {
-        this.bigResdBldgTax = bigResdBldgTax;
-    }
-
-    public boolean isEducationCess() {
-        return educationCess;
-    }
-
-    public void setEducationCess(final boolean educationCess) {
-        this.educationCess = educationCess;
-    }
-
-    public boolean isEmpGuaCess() {
-        return empGuaCess;
-    }
-
-    public void setEmpGuaCess(final boolean empGuaCess) {
-        this.empGuaCess = empGuaCess;
-    }
-
     @Override
     public String getGenWaterRate() {
         return genWaterRate;
@@ -1149,14 +1085,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setBasicProp(final BasicProperty basicProp) {
         this.basicProp = basicProp;
-    }
-
-    public Map<String, String> getWaterMeterMap() {
-        return waterMeterMap;
-    }
-
-    public void setWaterMeterMap(final Map<String, String> waterMeterMap) {
-        this.waterMeterMap = waterMeterMap;
     }
 
     /**
@@ -1189,14 +1117,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setParentIndex(final String parentIndex) {
         this.parentIndex = parentIndex;
-    }
-
-    public String getIsAuthProp() {
-        return isAuthProp;
-    }
-
-    public void setIsAuthProp(final String isAuthProp) {
-        this.isAuthProp = isAuthProp;
     }
 
     public String getAmenities() {
@@ -1247,24 +1167,6 @@ public class CreatePropertyAction extends WorkflowAction {
         this.ackMessage = ackMessage;
     }
 
-    public Map<Long, String> getZoneBndryMap() {
-        return ZoneBndryMap;
-    }
-
-    public void setZoneBndryMap(final Map<Long, String> ZoneBndryMap) {
-        this.ZoneBndryMap = ZoneBndryMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<PropertyOwnerInfo> getPropOwnerProxy() {
-        Collections.sort(propOwnerProxy, new OwnerNameComparator());
-        return propOwnerProxy;
-    }
-
-    public void setPropOwnerProxy(final List<PropertyOwnerInfo> propOwnerProxy) {
-        this.propOwnerProxy = propOwnerProxy;
-    }
-
     public Map<String, String> getPropTypeCategoryMap() {
         return propTypeCategoryMap;
     }
@@ -1279,14 +1181,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setPropTypeCategoryId(final String propTypeCategoryId) {
         this.propTypeCategoryId = propTypeCategoryId;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(final String method) {
-        this.method = method;
     }
 
     public PropertyTypeMaster getPropTypeMstr() {
@@ -1313,14 +1207,6 @@ public class CreatePropertyAction extends WorkflowAction {
         this.propertyCategory = propertyCategory;
     }
 
-    public String getPartNo() {
-        return partNo;
-    }
-
-    public void setPartNo(final String partNo) {
-        this.partNo = partNo;
-    }
-
     public String getNonResPlotArea() {
         return nonResPlotArea;
     }
@@ -1331,14 +1217,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setPropertyTaxNumberGenerator(final PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
         this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
-    }
-
-    public List<PropertyOwnerInfo> getPropertyOwnerProxy() {
-        return propertyOwnerProxy;
-    }
-
-    public void setPropertyOwnerProxy(final List<PropertyOwnerInfo> propertyOwnerProxy) {
-        this.propertyOwnerProxy = propertyOwnerProxy;
     }
 
     public PropertyImpl getNewProperty() {
@@ -1355,30 +1233,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setCurrDate(final Date currDate) {
         this.currDate = currDate;
-    }
-
-    public Double getExtentSite() {
-        return extentSite;
-    }
-
-    public void setExtentSite(final Double extentSite) {
-        this.extentSite = extentSite;
-    }
-
-    public String getVacantLandNo() {
-        return vacantLandNo;
-    }
-
-    public void setVacantLandNo(final String vacantLandNo) {
-        this.vacantLandNo = vacantLandNo;
-    }
-
-    public String getExtentAppartenauntLand() {
-        return extentAppartenauntLand;
-    }
-
-    public void setExtentAppartenauntLand(final String extentAppartenauntLand) {
-        this.extentAppartenauntLand = extentAppartenauntLand;
     }
 
     public Long getLocality() {
@@ -1633,6 +1487,14 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setsMSEmailService(final SMSEmailService sMSEmailService) {
         this.sMSEmailService = sMSEmailService;
+    }
+
+    public Address getOwnerAddress() {
+        return ownerAddress;
+    }
+
+    public void setOwnerAddress(final Address ownerAddress) {
+        this.ownerAddress = ownerAddress;
     }
 
     @Override
