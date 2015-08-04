@@ -287,7 +287,7 @@ public class BudgetDetail extends StateAware {
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     && !entry.getStatus().getDescription().equalsIgnoreCase("Cancelled")
-                    && entry.getState().getCreatedDate().isBefore(Long.parseLong(asOnDate.toString())))
+                    && entry.getState().getCreatedDate().before(asOnDate))
                 if (entry.getAdditionAmount() != null && !BigDecimal.ZERO.equals(entry.getAdditionAmount()))
                     total = total.add(entry.getAdditionAmount());
                 else

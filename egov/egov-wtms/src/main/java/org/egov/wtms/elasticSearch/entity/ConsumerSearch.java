@@ -1,10 +1,10 @@
 package org.egov.wtms.elasticSearch.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.egov.infra.search.elastic.Indexable;
 import org.egov.search.domain.Searchable;
-import org.joda.time.DateTime;
 
 public class ConsumerSearch implements Indexable {
 
@@ -29,14 +29,14 @@ public class ConsumerSearch implements Indexable {
     @Searchable(name = "totaldue", group = Searchable.Group.CLAUSES)
     private BigDecimal totalDue;
     @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
-    private final DateTime createdDate;
+    private final Date createdDate;
     @Searchable(name = "applicationcode", group = Searchable.Group.CLAUSES)
     private String applicationCode;
     @Searchable(group = Searchable.Group.CLAUSES)
     private String status;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType,
-            final DateTime createdDate) {
+            final Date createdDate) {
         this.consumerCode = consumerCode;
         this.mobileNumber = mobileNumber;
         this.usageType = usageType;
@@ -190,7 +190,7 @@ public class ConsumerSearch implements Indexable {
     /**
      * @return the createdDate
      */
-    public DateTime getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 

@@ -198,8 +198,8 @@ public class CitizenInbox extends AbstractAuditable {
         return new DateTime(messageDate);
     }
 
-    public void setMessageDate(final DateTime messageDate) {
-        this.messageDate = messageDate.toDate();
+    public void setMessageDate(final Date messageDate) {
+        this.messageDate = messageDate;
     }
 
     public State getState() {

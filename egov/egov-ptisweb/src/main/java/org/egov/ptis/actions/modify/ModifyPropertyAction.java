@@ -1124,8 +1124,8 @@ public class ModifyPropertyAction extends WorkflowAction {
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
         ackBean.setApplicationDate(basicProp.getCreatedDate());
         ackBean.setApplicationNo(basicProp.getApplicationNo());
-        ackBean.setApprovedDate(propWF.getState().getCreatedDate().toDate());
-        final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate().toDate(),
+        ackBean.setApprovedDate(propWF.getState().getCreatedDate());
+        final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(),
                 Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(noticeDueDate);
         reportParams.put("logoPath", imagePath);

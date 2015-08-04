@@ -29,7 +29,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
             jo.addProperty("complaintTypeName", complaint.getComplaintType().getName());
         if (complaint.getLandmarkDetails() != null)
             jo.addProperty("landmarkDetails", complaint.getLandmarkDetails());
-        jo.addProperty("createdDate", complaint.getCreatedDate().toDateTime().toString());
+        jo.addProperty("createdDate", complaint.getCreatedDate().toString());
         jo.addProperty("supportDocsSize", complaint.getSupportDocs().size());
 
         return jo;

@@ -370,7 +370,7 @@ public class ComplaintService {
     public void sendEmailandSms(final Complaint complaint) {
 
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                .format(complaint.getCreatedDate().toDate());
+                .format(complaint.getCreatedDate());
 
         final StringBuffer emailBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
                 .append(",\n \n \tThank you for registering a complaint (").append(complaint.getCrn())

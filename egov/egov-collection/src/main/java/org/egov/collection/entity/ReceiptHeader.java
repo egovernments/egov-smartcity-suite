@@ -259,7 +259,7 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	}
 
 	
-	public DateTime getReceiptDate() {
+	public Date getReceiptDate() {
 		return this.getCreatedDate();
 	}
 	

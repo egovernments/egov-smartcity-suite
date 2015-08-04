@@ -396,7 +396,7 @@ public class Complaint extends StateAware {
     public String getStateDetails() {
         final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
-                getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
+                getComplaintType().getName(), formatter.print(new DateTime(getCreatedDate())), formatter.print(getEscalationDate()));
     }
 
 }

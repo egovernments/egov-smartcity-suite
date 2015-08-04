@@ -178,7 +178,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *         reference numbers for each instrument type for the given receipt
 	 */
 	public List<String> generateInternalReferenceNo(ReceiptHeader entity) {
-		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate().toDate());
+		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate());
 		CFinancialYear currentFinancialYear = collectionsUtil.getFinancialYearforDate(new Date());
 
 		return collectionsNumberGenerator.generateInternalReferenceNumber(entity, financialYear, currentFinancialYear);
@@ -1198,7 +1198,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	
 	private void setChallanNumber(Challan challan) {
 		CFinancialYear financialYear = collectionsUtil.
-			getFinancialYearforDate(challan.getCreatedDate().toDate());
+			getFinancialYearforDate(challan.getCreatedDate());
 		challan.setChallanNumber(collectionsNumberGenerator
 			.generateChallanNumber(challan, financialYear));
 	}

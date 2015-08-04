@@ -894,8 +894,8 @@ public class CreatePropertyAction extends WorkflowAction {
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
         ackBean.setApplicationDate(basicProp.getCreatedDate());
         ackBean.setApplicationNo(basicProp.getApplicationNo());
-        ackBean.setApprovedDate(property.getState().getCreatedDate().toDate());
-        final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate().toDate(), Calendar.DAY_OF_MONTH,
+        ackBean.setApprovedDate(property.getState().getCreatedDate());
+        final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH,
                 15);
         ackBean.setNoticeDueDate(tempNoticeDate);
         reportParams.put("logoPath", imagePath);

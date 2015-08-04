@@ -1115,9 +1115,9 @@ public class PropertyTaxUtil {
                 for (Property property : basicProperty.getPropertySet()) {
 
                         if (status == null) {
-                                propertiesByCreatedDate.put(property.getCreatedDate().toDate(), property);
+                                propertiesByCreatedDate.put(property.getCreatedDate(), property);
                         } else if (property.getStatus().equals(status)) {
-                                propertiesByCreatedDate.put(property.getCreatedDate().toDate(), property);
+                                propertiesByCreatedDate.put(property.getCreatedDate(), property);
                         }
                 }
 
@@ -1258,7 +1258,7 @@ public class PropertyTaxUtil {
                         if (isConsiderMigrated
                                         || (property.getRemarks() == null || !property.getRemarks().startsWith(
                                                         PropertyTaxConstants.STR_MIGRATED))) {
-                                propertyByCreatedDate.put(property.getCreatedDate().toDate(), property);
+                                propertyByCreatedDate.put(property.getCreatedDate(), property);
 
                                 if (property.getRemarks() != null
                                                 && property.getRemarks().startsWith(PropertyTaxConstants.STR_MIGRATED)) {
@@ -1618,7 +1618,7 @@ public class PropertyTaxUtil {
 
                 for (Property property : basicProperty.getPropertySet()) {
                         if (inConsider(property)) {
-                                propertyByCreatedDate.put(property.getCreatedDate().toDate(), property);
+                                propertyByCreatedDate.put(property.getCreatedDate(), property);
                         }
                 }
 
