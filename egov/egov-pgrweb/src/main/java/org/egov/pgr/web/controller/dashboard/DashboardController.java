@@ -124,4 +124,8 @@ public class DashboardController {
         return dashboardService.getWardwiseComplaintByComplaintType(typeid, color );
     }
 
+    @RequestMapping(value="/top-complaints")
+    public @ResponseBody Map<String, Object>  topComplaints() {
+        return dashboardService.topComplaints( );
+    }
 }

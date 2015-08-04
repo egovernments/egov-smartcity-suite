@@ -120,6 +120,10 @@ public class DashboardRepository {
         return qry.list();
     }
 
+    public List<Object[]> fetchTopComplaintsBetween(Date fromDate,  Date toDate) {
+        return fetchDateRangeData("pgr.top.comp.types", fromDate, toDate);
+    }
+    
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
         final SQLQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);

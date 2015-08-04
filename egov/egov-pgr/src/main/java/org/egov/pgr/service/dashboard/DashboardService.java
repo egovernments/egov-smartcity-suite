@@ -184,6 +184,37 @@ public class DashboardService {
         return compAggrData;
     }
 
+    public Map<String, Object> topComplaints() {
+        final DateTime currentDate = new DateTime();
+
+        final List<Object> dataHolder5 = constructListOfMonthPlaceHolder(currentDate.minusMonths(6), currentDate, "MMM");
+        List<Object[]> topFiveCompTypeData = dashboardRepository.fetchTopComplaintsBetween(
+                startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
+        List<Object> dataHolder = new LinkedList<Object>();
+        int index = 1;
+        Map<String, Object> data = new HashMap<String, Object>();
+        List<Integer> compCount = new ArrayList<Integer>();
+        for (final Object[] top5CompType : topFiveCompTypeData) {
+                if (index < topFiveCompTypeData.size()) {
+                        compCount.add(((BigInteger) top5CompType[1]).intValue());
+                        index++;
+                } else {
+                        compCount.add(((BigInteger) top5CompType[1]).intValue());
+                        data.put("name", String.valueOf(top5CompType[2]));
+                        data.put("data", new LinkedList<Integer>(compCount));
+                        dataHolder.add(new LinkedHashMap<String, Object>(data));
+                        index = 0;
+                        compCount.clear();
+                        data.clear();
+                }
+        }
+        Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<String, Object>();
+        topFiveCompDataHolder.put("year", dataHolder5);
+        topFiveCompDataHolder.put("series", dataHolder);
+
+        return topFiveCompDataHolder;
+}
+    
     private List<List<Object>> getAgeingData(final String querykey, final String wardName) {
         final Object[] compData = dashboardRepository.fetchComplaintAgeing(querykey, wardName);
         final List<Object> cntabv90 = new LinkedList<Object>();
@@ -352,6 +383,14 @@ public class DashboardService {
             currentYearTillDays.put("name", date.toString(pattern));
             currentYearTillDays.put("y", Double.valueOf(0));
             dataHolder.add(currentYearTillDays);
+        }
+        return dataHolder;
+    }
+    
+    public static List<Object> constructListOfMonthPlaceHolder(final DateTime startDate, final DateTime endDate, final String pattern) {
+        final List<Object> dataHolder = new LinkedList<Object>();
+                for (DateTime date = startDate; date.isBefore(endDate); date = date.plusMonths(1)) {
+                        dataHolder.add(date.toString(pattern));
         }
         return dataHolder;
     }

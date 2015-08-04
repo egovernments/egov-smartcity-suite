@@ -1428,7 +1428,7 @@ $(".ovrviewBkBtn").on("click",function(){
 
 
 function topFiveCompType() {
-		$.ajax({url:"topFiveComplaints.do",
+		$.ajax({url:"top-complaints",
 			cache:false
 		}).done(function(piedata) {
 	$("#page-top").mask('');
