@@ -47,7 +47,7 @@
 <!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
 <!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> 
-<html lang="en" class="no-js"> 
+<html lang="en" class="no-js" id="page-top" > 
 <!--<![endif]-->
 	<head>
 		<meta charset="UTF-8">
@@ -83,7 +83,7 @@
 			var citylng = parseFloat("${sessionScope.citylng}");
 		</script>		
     </head>
-    <body id="page-top" data-spy="scroll">
+    <body data-spy="scroll">
     	<div class="cover" id="cover"></div>
     	<div class="preloader-container" id="preloader-container">
     		<div class="preloader-logo">eGov<img src="<c:url value='/resources/images/mask.gif' context='/dashboard'/>">Dashboard</div>
@@ -135,7 +135,7 @@
 		</nav>
 		<tiles:insertAttribute name="body"/>
 		<footer class="footer">
-		   <div style="margin-top: 10px;padding: 5px 19px;font-size: 12px;background: #F1F2F3;">Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a></div>
+		   <div style="margin-top: 20px;padding: 5px 19px;font-size: 12px;background: #F1F2F3;">Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a></div>
 		</footer>
 	</body>
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
