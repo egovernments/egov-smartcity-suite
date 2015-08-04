@@ -39,6 +39,11 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
+	try { 
+		$('.scroll-pane').jScrollPane();
+	}catch(e){
+		console.warn("No Scroll");
+	}
 	// jQuery plugin to prevent double submission of forms
 	jQuery.fn.preventDoubleSubmission = function() {
 	  $(this).on('submit',function(e){
