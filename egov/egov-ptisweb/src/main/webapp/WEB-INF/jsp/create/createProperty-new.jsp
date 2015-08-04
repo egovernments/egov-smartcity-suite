@@ -125,6 +125,7 @@ jQuery(function ($) {
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
+	makeMandatory();
 	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
@@ -158,7 +159,6 @@ function loadOnStartUp() {
 	//hideAddRmvBtnForResidFlats();
 	//enableCorresAddr();
 	//enableTaxExemptReason();
-	//makeMandatory();
 	//enableRentBox();
 			
 	/* var complDateStr = document.getElementById("dateOfCompletion").value;
