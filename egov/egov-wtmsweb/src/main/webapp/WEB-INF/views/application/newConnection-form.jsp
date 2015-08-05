@@ -76,6 +76,10 @@
 							code='lbl.close' /></a>
 				</div>
 			</div>
+		<%-- 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+				</div> --%>
 		</form:form>
 	</div>
 </div>

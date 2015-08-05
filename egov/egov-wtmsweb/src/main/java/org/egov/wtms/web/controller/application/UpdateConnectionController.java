@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -43,9 +43,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.web.controller.workflow.GenericWorkFlowController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,12 +61,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class UpdateConnectionController {
+public class UpdateConnectionController extends GenericWorkFlowController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
 
     private final DepartmentService departmentService;
-    
+
+    private WaterConnectionDetails waterConnectionDetails;
+
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
@@ -78,13 +82,28 @@ public class UpdateConnectionController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationNumber) {
-        return waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        return waterConnectionDetails;
     }
 
+    @Override
+    @ModelAttribute
+    public StateAware getModel() {
+        return waterConnectionDetails;
+
+    }
+
+    /*
+     * @ModelAttribute(value="stateType") public String getStateType() {
+     * if(waterConnectionDetails!=null){ return
+     * waterConnectionDetails.getClass().getSimpleName(); } else return ""; }
+     */
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
-    public String view(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request) {
-        final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationNumber);
+    public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
+        // model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+       // model.addAttribute("additionalRule", getAdditionalRule());
+        //model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -92,8 +111,10 @@ public class UpdateConnectionController {
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
-                .get(waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute(
+                "connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(
+                        waterConnectionDetails.getConnectionType().name()));
 
         if (null == request.getAttribute("mode")) {
             model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
@@ -110,6 +131,7 @@ public class UpdateConnectionController {
 
         Long approvalPosition = 0l;
         String approvalComent = "";
+        String workFlowAction = "";
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
@@ -121,25 +143,30 @@ public class UpdateConnectionController {
             // inbox. Need to replace with proper condition once requirement is
             // clear i.e., when to capture sanction details
             validateSanctionDetails(waterConnectionDetails, resultBinder);
-
+        if (request.getParameter("workflowAction") != null)
+            workFlowAction = request.getParameter("workflowAction");
         if (!resultBinder.hasErrors()) {
             waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent);
+                    approvalComent, getAdditionalRule(), workFlowAction);
+
             return "redirect:/application/application-success?applicationNumber="
-                    + waterConnectionDetails.getApplicationNumber();
+            + waterConnectionDetails.getApplicationNumber();
         } else
             return loadViewData(model, request, waterConnectionDetails);
 
     }
 
-    private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult errors) {
+    private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
 
         if (waterConnectionDetails.getApprovalNumber() == null)
             errors.rejectValue("approvalNumber", "approvalNumber.required");
 
         if (waterConnectionDetails.getApprovalDate() == null)
             errors.rejectValue("approvalDate", "approvalDate.required");
+    }
+
+    public String getAdditionalRule() {
+        return "NEW CONNECTION";
     }
 
 }

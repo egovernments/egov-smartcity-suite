@@ -85,4 +85,8 @@ public class WaterTaxConstants {
     public static final String BILLTYPE_MANUAL = "MANUAL";
     public static final String CITIZENUSER = "9999999999";
     public static final String BILLTYPE_ONLINE = "ONLINE";
+    
+    public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
+    public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
 }

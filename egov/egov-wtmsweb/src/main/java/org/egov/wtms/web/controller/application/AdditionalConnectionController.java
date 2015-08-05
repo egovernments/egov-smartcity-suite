@@ -46,6 +46,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;
@@ -78,6 +79,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
 
+   private  WaterConnectionDetails parentConnectionDetails;
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
         addConnection.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
@@ -87,7 +89,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
     public String showAdditionalApplicationForm(@ModelAttribute final WaterConnectionDetails addConnection,
             final Model model, @PathVariable final String consumerCode) {
-        final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+        parentConnectionDetails = waterConnectionDetailsService
                 .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails);
         return "addconnection-form";
@@ -159,5 +161,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent);
         return "redirect:/application/application-success?applicationNumber=" + addConnection.getApplicationNumber();
+    }
+    
+    @ModelAttribute
+    public StateAware getModel() {
+      return parentConnectionDetails;
+        
+    }
+    public String getAdditionalRule() {
+        return "NEW CONNECTION";
     }
 }

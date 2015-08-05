@@ -46,6 +46,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -71,6 +72,8 @@ public class ChangeOfUseController extends GenericConnectionController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    
+    private  WaterConnectionDetails parentConnectionDetails;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -78,10 +81,15 @@ public class ChangeOfUseController extends GenericConnectionController {
         return waterConnectionDetailsService.getAllActiveDocumentNames(changeOfUse.getApplicationType());
     }
 
+    @ModelAttribute
+    public StateAware getModel() {
+      return parentConnectionDetails;
+        
+    } 
     @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
     public String showForm(@ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode) {
-        final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
+        parentConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (parentConnectionDetails == null) {
             // TODO - error handling
