@@ -302,7 +302,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr class="vacantlanddetaills">
+	<tr>
 		<td colspan="5">
 			<%@ include file="../common/DocumentUploadForm.jsp"%>
 		</td>
