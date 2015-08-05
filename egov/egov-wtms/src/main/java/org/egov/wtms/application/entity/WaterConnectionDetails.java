@@ -155,6 +155,8 @@ public class WaterConnectionDetails extends StateAware {
     private String connectionReason;
     
     private String connectionOrder;
+    
+    private String bplCardHolderName;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -372,4 +374,12 @@ public class WaterConnectionDetails extends StateAware {
         return String.format("Application Number %s for %s with application date %s.", applicationNumber,
                 applicationType.getName(), formatter.format(applicationDate));
     }
+
+	public String getBplCardHolderName() {
+		return bplCardHolderName;
+	}
+
+	public void setBplCardHolderName(String bplCardHolderName) {
+		this.bplCardHolderName = bplCardHolderName;
+	}
 }

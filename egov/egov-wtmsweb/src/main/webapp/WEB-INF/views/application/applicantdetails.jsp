@@ -49,12 +49,7 @@
 		</div>
 		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.bpanumber" /></label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="bpaIdentifier" path="connection.bpaIdentifier" min="3" maxlength="50" />
-		<form:errors path="connection.bpaIdentifier" cssClass="add-margin error-msg" />
-	</div>
+	
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message

@@ -40,7 +40,7 @@
 $(document).ready(function(){
 	
 	
-	
+	loadConnectionCategories();
 	
 	 
 	$('#connectionType').change(function(){
@@ -67,6 +67,26 @@ $(document).ready(function(){
 		});
 	});
 	
+	$('#connectionCategorie').change(function () {
+			
+		
+		loadConnectionCategories();
+    });
+	
+	function loadConnectionCategories(){
+		var connectionCategory = $('#connectionCategorie').val();
+		
+	    var toAppend = '';
+	    if (connectionCategory == 1) {
+	    	    	
+	    	$("#cardHolderDiv").show();
+	    	$("#bplCardHolderName").attr('required', 'required');
+	    }
+	    else{
+	    	$("#cardHolderDiv").hide();
+	    	$("#bplCardHolderName").removeAttr('required');
+	    }
+	}
 	
 	
 	

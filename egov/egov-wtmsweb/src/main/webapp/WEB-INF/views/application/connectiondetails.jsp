@@ -75,7 +75,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.category" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="category" data-first-option="false"
+		<form:select path="category" data-first-option="false" id="connectionCategorie"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -129,7 +129,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.sumpcapacity.litres" /><span class="mandatory"></span></label> 
+			code="lbl.sumpcapacity.litres" /><!-- <span class="mandatory"></span> --></label> 
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="sumpCapacity" path="sumpCapacity" required="required" />
 		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
@@ -140,6 +140,15 @@
 			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="15" id="numberOfPerson" path="numberOfPerson" required="required" />
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
 		</div>
+</div>
+
+<div class="form-group" id ="cardHolderDiv">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" data-pattern="string" maxlength="16" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
+		<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
+	</div>
 </div>
 <c:if test="${mode=='addconnection'}">
 <div class="form-group">
