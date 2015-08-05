@@ -73,9 +73,6 @@
 		
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/jscrollpane/jquery.jscrollpane.css'/>">
-		<script src="<c:url value='/resources/global/js/jscrollpane/jquery.jscrollpane.min.js'/>"></script>
-		<script src="<c:url value='/resources/global/js/jscrollpane/jquery.mousewheel.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/homepage.js'/>"></script>
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -88,7 +85,7 @@
 		
 		
 	</head>
-	<body class="page-body scroll-pane">
+	<body class="page-body">
 		
 		<div class="page-container horizontal-menu">
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
