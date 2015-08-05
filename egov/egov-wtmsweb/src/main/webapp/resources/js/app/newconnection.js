@@ -40,7 +40,10 @@
 $(document).ready(function(){
 	
 	
-	/*$('#connectionType').change(function(){
+	
+	
+	 
+	$('#connectionType').change(function(){
 		$.ajax({
 			url: "/wtms/ajax-connectionTypes",     
 			type: "GET",
@@ -49,11 +52,12 @@ $(document).ready(function(){
 			},
 			dataType: "json",
 			success: function (response) {
+				
 				console.log("success"+response);
 				$('#usageType').empty();
 				$('#usageType').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
-					$('#usageType').append($('<option>').text(value.usagetype.code).attr('value', value.usagetype.id));
+					$('#usageType').append($('<option>').text(value.code).attr('value', value.id))
 				});
 				
 			}, 
@@ -61,8 +65,12 @@ $(document).ready(function(){
 				console.log("failed");
 			}
 		});
-	});*/
+	});
 	
+	
+	
+	
+
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});

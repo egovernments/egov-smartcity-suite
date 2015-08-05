@@ -59,6 +59,6 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
     
     List<UsageType> findByActiveTrueOrderByNameAsc();
    
-   /* @Query("from ConnectionUsage CU where CU.connectionType=:connectionType ")
-   	List<ConnectionUsage> findAllUsageTypes(@Param("connectionType") String connectionType);*/
+    @Query("select CU.usagetype from ConnectionUsage CU where CU.connectionType=:connectionType ")
+   	List<UsageType> findAllUsageTypes(@Param("connectionType") String connectionType);
 }
