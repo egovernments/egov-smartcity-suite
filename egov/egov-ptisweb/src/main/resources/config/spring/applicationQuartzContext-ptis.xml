@@ -45,9 +45,6 @@
 	<bean name="ptisSchedular" id="ptisSchedular" parent="egovSchedular" lazy-init="false">
      	<property name="overwriteExistingJobs" value="true"/>
         <property name="autoStartup" value="true" />
-        <property name="jobFactory" ref="jobFactory"/>
-        <property name="taskExecutor" ref="taskExecutor" />
-        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
 		<property name="schedulerName" value="ptis-scheduler"/>
 		<property name="triggers">
 	    	<list>
