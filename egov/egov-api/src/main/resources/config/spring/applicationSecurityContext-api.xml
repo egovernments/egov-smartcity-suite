@@ -39,15 +39,15 @@
 	<http pattern="/oauth/token" create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager"
 		xmlns="http://www.springframework.org/schema/security">
-		<intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
-
+		
 		<anonymous enabled="false" />
 		<http-basic entry-point-ref="clientAuthenticationEntryPoint" />
 		<!-- include this only if you need to authenticate clients via request 
 			parameters -->
 		<custom-filter ref="clientCredentialsTokenEndpointFilter"
 			after="BASIC_AUTH_FILTER" />
-		<access-denied-handler ref="oauthAccessDeniedHandler" />
+		<access-denied-handler ref="oauthAccessDeniedHandler" />	
+		<csrf disabled="true"/>	
 	</http>
 
 	<!-- This is where we tells spring security what URL should be protected 
@@ -65,7 +65,8 @@
 		<intercept-url pattern="/v*/citizen/**" access="hasRole('ROLE_CITIZEN')" />
 		<intercept-url pattern="/v*/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
-		<access-denied-handler ref="oauthAccessDeniedHandler" />
+		<access-denied-handler ref="oauthAccessDeniedHandler" />	
+		<csrf disabled="true"/>	
 	</http>
 
 
