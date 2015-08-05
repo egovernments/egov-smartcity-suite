@@ -285,13 +285,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<s:text name="docsectiontitle" /> 
-			</div>
-		</td>
-	</tr>
+	
 	<tr>
 		<%@ include file="../common/DocumentUploadView.jsp"%>
 	</tr>
