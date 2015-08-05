@@ -40,6 +40,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -69,6 +70,7 @@ public class NewConnectionController extends GenericConnectionController {
     private final ConnectionDemandService connectionDemandService;
     private final WaterTaxUtils waterTaxUtils;
     private final NewConnectionService newConnectionService;
+    private WaterConnectionDetails waterconnection;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -94,6 +96,8 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+       // model.addAttribute("additionalRule", getAdditionalRule());
+       // model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         return "newconnection-form";
     }
 
@@ -102,7 +106,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
 
-        validatePropertyID(waterConnectionDetails, resultBinder);
+        //validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -132,26 +136,30 @@ public class NewConnectionController extends GenericConnectionController {
 
         Long approvalPosition = 0l;
         String approvalComent = "";
-
+       // String workFlowAction = "";
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-
+        /*if (request.getParameter("workflowAction") != null)
+            workFlowAction = request.getParameter("workflowAction");*/
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService
-        .createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent);
-
+        waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
+                approvalComent);// getAdditionalRule(), workFlowAction
         return "redirect:/application/application-success?applicationNumber="
-                + waterConnectionDetails.getApplicationNumber();
+        + waterConnectionDetails.getApplicationNumber();
     }
 
     @RequestMapping(value = "/application-success", method = GET)
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
+        Long approvalPosition = 0l;
         if (request.getParameter("applicationNumber") != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(request
                     .getParameter("applicationNumber"));
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        model.addAttribute("approvalUser", waterConnectionDetailsService.getApprovalMessage(approvalPosition));
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
@@ -171,6 +179,16 @@ public class NewConnectionController extends GenericConnectionController {
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
+    }
+    
+    @ModelAttribute
+    @Override
+    public StateAware getModel() {
+       return waterconnection;
+    }
+    
+    public String getAdditionalRule() {
+        return "NEW CONNECTION";
     }
 
 }

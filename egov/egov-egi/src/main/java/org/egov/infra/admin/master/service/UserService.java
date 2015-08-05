@@ -61,6 +61,11 @@ public class UserService {
     public User updateUser(final User user) {
         return userRepository.saveAndFlush(user);
     }
+    
+    @Transactional
+    public User createUser(final User user) {
+        return userRepository.save(user);
+    }
 
     public Set<User> getUsersByUsernameLike(final String userName) {
         return userRepository.findByUsernameContainingIgnoreCase(userName);

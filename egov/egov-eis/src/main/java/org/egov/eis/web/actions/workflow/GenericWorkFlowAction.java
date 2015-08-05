@@ -128,13 +128,13 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
                         .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
-                        getPendingActions(), getModel().getCreatedDate().toDate());
+                        getPendingActions(), getModel().getCreatedDate());
             } else {
                 // FIXME This May not work
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
                         .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED,
-                        getPendingActions(), getModel().getCreatedDate().toDate());
+                        getPendingActions(), getModel().getCreatedDate());
             }
         }
         return validActions;
@@ -150,12 +150,12 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
                 wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
                         getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel()
                                 .getCurrentState().getValue(), getPendingActions(), getModel()
-                                .getCreatedDate().toDate());
+                                .getCreatedDate());
             } else {
                 wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
                         getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
                         State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel()
-                                .getCreatedDate().toDate());
+                                .getCreatedDate());
             }
         }
         return wfMatrix == null ? "" : wfMatrix.getNextAction();

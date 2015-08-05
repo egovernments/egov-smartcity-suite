@@ -41,7 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:if test="${not empty message}">
 	<div class="alert alert-success" role="alert">${message}</div>
@@ -87,8 +86,7 @@
 						<spring:message code="lbl.complaintDate" />
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-						<joda:format value="${complaint.createdDate}" var="complaintDate"
-							pattern="dd-MM-yyyy" />
+						<fmt:formatDate value="${complaint.createdDate}" var="complaintDate" pattern="dd-MM-yyyy"/>
 						<c:out value="${complaintDate}"></c:out>
 					</div>
 				</div>

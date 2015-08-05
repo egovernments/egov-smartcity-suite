@@ -409,17 +409,6 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 		return RESULT_STRUCTURAL;
 	}
 
-	public String partNumbersByWard() {
-		LOGGER.debug("Entered into areaByWard, wardId: " + wardId);
-		partNumbers = new ArrayList<String>();
-		partNumbers = getPersistenceService().findAllBy(
-				"SELECT distinct pmv.partNo FROM PropertyMaterlizeView pmv "
-						+ "WHERE pmv.ward.id = ? order by pmv.partNo asc", getWardId());
-
-		LOGGER.debug("Exiting from partNumbersByWard");
-		return RESULT_PART_NUMBER;
-	}
-
 	public Long getZoneId() {
 		return zoneId;
 	}

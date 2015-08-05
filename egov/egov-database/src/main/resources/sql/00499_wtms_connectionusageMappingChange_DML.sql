@@ -1,0 +1,1 @@
+INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'ULB OPERATOR') ,(select id FROM eg_action  WHERE name = 'connectiontypesajax'));

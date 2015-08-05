@@ -129,7 +129,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
 		propertyNotice = new PropertyNoticeInfo(property, noticeNo);
 
-		if (PropertyTaxConstants.NOTICE6.equals(noticeType)) {
+		if (PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
 			HttpServletRequest request = ServletActionContext.getRequest();
 			String url = WebUtils.extractRequestDomainURL(request, false);
 			String imagePath= url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo"));
@@ -143,7 +143,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice(propertyNotice.getOwnerInfo()
 					.getTotalTax());
 			propertyNotice.setFloorDetailsForNotice(floorDetails);
-			reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_NOTICE6, propertyNotice,
+			reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_SPECIAL_NOTICE, propertyNotice,
 					reportParams);
 		}
 		reportInput.setPrintDialogOnOpenReport(true);

@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -66,7 +65,7 @@ import org.hibernate.annotations.Immutable;
 public class StateHistory implements Serializable {
     private static final long serialVersionUID = -2286621991905578107L;
     public static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)
     private Long id;
@@ -113,9 +112,9 @@ public class StateHistory implements Serializable {
     public StateHistory(final State state) {
         this.state = state;
         createdBy = state.getCreatedBy();
-        createdDate = (state.getCreatedDate()!=null?state.getCreatedDate().toDate():null);
+        createdDate = state.getCreatedDate() != null ? state.getCreatedDate() : null;
         lastModifiedBy = state.getLastModifiedBy();
-        lastModifiedDate = (state.getLastModifiedDate()!=null?state.getLastModifiedDate().toDate():null); 
+        lastModifiedDate = state.getLastModifiedDate() != null ? state.getLastModifiedDate() : null;
         value = state.getValue();
         ownerPosition = state.getOwnerPosition();
         ownerUser = state.getOwnerUser();

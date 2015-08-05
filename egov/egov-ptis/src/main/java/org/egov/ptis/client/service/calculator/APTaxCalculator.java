@@ -115,6 +115,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 					APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateVacantLandTax(property, occupationDate);
 					totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
 					taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
+					calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property
+							.getPropertyDetail().getPropertyTypeMaster().getCode());
+					totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
 				} else {
 					for (Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
 						if (floorIF != null) {

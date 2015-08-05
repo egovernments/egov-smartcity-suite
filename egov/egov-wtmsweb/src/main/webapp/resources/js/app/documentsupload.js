@@ -39,16 +39,38 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	var fileformatsexclude = ['exe'];	
-	$('#file0id, #file1id, #file2id, #file3id, #file4id, #file5id, #file6id, #file7id, #file8id, #file9id').on('change.bs.fileinput',function(e) {
+	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt',]; 
+	
+	$('.upload-file').change(function(e){		
 		/*validation for file upload*/
 		myfile= $( this ).val();
 		var ext = myfile.split('.').pop();
-		if($.inArray(ext, fileformatsexclude) > -1) {
-			alert(ext+" file format is not allowed");
+		if($.inArray(ext, fileformatsinclude) > -1){
+			//do something    
+		}
+		else{
+			alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, and .txt format documents only");
 			$( this ).val('');
-			return;    
-		}		
-	});	
+			return false;
+		}	
+		
+		var fileInput = $(this);
+   		var maxSize = 2097152; //file size  in bytes(2MB)
+		var inMB = maxSize/1024/1024;
+		if(fileInput.get(0).files.length){
+			var fileSize = this.files[0].size; // in bytes
+			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
+			if(charlen > 50){
+				alert('File length should not exceed 50 characters!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;			
+			} 
+			else if(fileSize > maxSize){
+				alert('File size should not exceed '+inMB+' MB!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;
+			}			
+		}
+	});
 	
 });

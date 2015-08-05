@@ -125,5 +125,7 @@
 		<property name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
 	</bean>	
 	
+	<bean id="sMSEmailService" class="org.egov.ptis.domain.service.property.SMSEmailService" scope="prototype" >
+	</bean>
 	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
 </beans>

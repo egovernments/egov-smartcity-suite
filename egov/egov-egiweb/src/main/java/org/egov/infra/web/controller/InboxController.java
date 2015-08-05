@@ -102,7 +102,7 @@ public class InboxController {
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
             final Inbox inboxItem = new Inbox();
             inboxItem.setId(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId() + "#" + workflowTypes.getId());
-            inboxItem.setDate(DATE_FORMATTER.print(state.getCreatedDate()));
+            inboxItem.setDate(DATE_FORMATTER.print(new DateTime(state.getCreatedDate())));
             inboxItem.setSender(state.getSenderName());
             inboxItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
@@ -141,8 +141,8 @@ public class InboxController {
             else if (stateAware_2 == null)
                 returnVal = 1;
             else {
-                final Date first_date = stateAware_1.getState().getCreatedDate().toDate();
-                final Date second_date = stateAware_2.getState().getCreatedDate().toDate();
+                final Date first_date = stateAware_1.getState().getCreatedDate();
+                final Date second_date = stateAware_2.getState().getCreatedDate();
                 if (first_date.after(second_date))
                     returnVal = -1;
                 else if (first_date.equals(second_date))

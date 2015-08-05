@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <script>
 var isdefault = true;
+var kmlURL = '${kmlURL}';
 </script>
 <div id="performanceWin" class="container-win"  style="">
 	<div class="row">
@@ -28,11 +29,7 @@ var isdefault = true;
 	</div>
 </div>
 <div id="overviewWin" class="container-win" style="display:none;">
-	<div class="row" style="height:97%">
-		<div class="col-md-12 col-sm-12 col-ms-12 col-lg-12" style="height:97%;">
-			<div id="overviewGIS" style="width:100%;height:100%" class="gm-style"></div>
-		</div>
-	</div>
+	<div id="overviewGIS" style="position:absolute;width:100%;min-height:100%;margin:0 auto;border:1px solid #41311d;" class="gm-style"></div>
 </div>
 <div id="topFiveCompTypeWin" class="container-win" style="display:none;">
 	<div class="row" style="height:97%">

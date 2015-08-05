@@ -39,41 +39,68 @@
  */
 package org.egov.infra.messaging;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.jms.Destination;
+import javax.jms.MapMessage;
+
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.email.EmailService;
-import org.egov.infra.messaging.sms.SMSService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessagingUtils {
+public class MessagingService {
 
     @Autowired
-    private SMSService httpSMS;
+    private JmsTemplate jmsTemplate;
 
     @Autowired
-    private EmailService emailUtils;
+    private Destination emailQueue;
+
+    @Autowired
+    private Destination smsQueue;
 
     @Autowired
     private MessageTemplateService messageTemplateService;
 
-    public boolean sendEmailAndSMS(final User user, final String subject, final String templateName,
-            final Object... messageValues) {
-        return sendEmail(user, subject, templateName, messageValues) || sendSMS(user, templateName, messageValues);
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
+    public void sendEmailAndSMS(final User user, final String subject, final String templateName, final Object... messageValues) {
+        sendEmail(user, subject, templateName, messageValues);
+        sendSMS(user, templateName, messageValues);
     }
 
-    public boolean sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
-        return StringUtils.isNotBlank(user.getEmailId()) && emailUtils.sendMail(user.getEmailId(),
-                messageTemplateService.realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues),
-                subject);
+    public void sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
+        sendEmail(user.getEmailId(), subject, messageTemplateService
+                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
     }
 
-    public boolean sendSMS(final User user, final String templateName, final Object... messageValues) {
-        return StringUtils.isNotBlank(user.getMobileNumber()) && httpSMS.sendSMS(
-                messageTemplateService.realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues),
-                "91" + user.getMobileNumber());
+    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
+        sendSMS(user.getMobileNumber(), messageTemplateService
+                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
+    }
+
+    public void sendEmail(final String email, final String subject, final String message) {
+        if (applicationProperties.emailEnabled())
+            jmsTemplate.send(emailQueue, session -> {
+                final MapMessage mapMessage = session.createMapMessage();
+                mapMessage.setString("email", email);
+                mapMessage.setString("message", message);
+                mapMessage.setString("subject", subject);
+                return mapMessage;
+            });
+    }
+
+    public void sendSMS(final String mobileNo, final String message) {
+        if (applicationProperties.smsEnabled())
+            jmsTemplate.send(smsQueue, session -> {
+                final MapMessage mapMessage = session.createMapMessage();
+                mapMessage.setString("mobile", "91" + mobileNo);
+                mapMessage.setString("message", message);
+                return mapMessage;
+            });
     }
 
 }

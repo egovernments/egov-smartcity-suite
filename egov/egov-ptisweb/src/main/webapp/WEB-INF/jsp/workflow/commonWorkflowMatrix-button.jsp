@@ -7,7 +7,7 @@
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}     
-	    onSubmit();
+	   return  onSubmit();
 	}
 
 	function validateWorkFlowApprover(name) {
@@ -17,13 +17,13 @@
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
-		<s:if test="%{getNextAction()!='END' && name != 'Reject'}">
+		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1") {
 	        alert("Please Select the Approver ");
 			return false;
 	    }
 	    </s:if>
-	    onSubmit();
+	    return  onSubmit();
 	}
 </script>
 <div class="buttonbottom" align="center">

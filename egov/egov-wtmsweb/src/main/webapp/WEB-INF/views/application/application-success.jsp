@@ -61,9 +61,11 @@
 						<c:choose>
 							<c:when test="${waterConnectionDetails.connectionStatus == 'ACTIVE' }">
 								<spring:message code="msg.newconnection.approved.success" />
+								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
 							<c:otherwise>
-								<spring:message code="msg.newconnection.ack.success" />
+								<div><spring:message code="msg.newconnection.ack.success" /></div>
+								<%-- <div ><spring:message code="msg.sussess.forward" />${approvalUser}</div> --%>
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>

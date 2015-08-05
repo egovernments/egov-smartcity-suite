@@ -99,7 +99,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
 		setupDropdownDataExcluding();
 		
 		// Set default values of criteria fields
-		Department dept = collectionsUtil.getDepartmentOfLoggedInUser(getSession());
+		Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
 		if(dept != null) {
 			setReportParam(EGOV_DEPT_ID, dept.getId());
 		}

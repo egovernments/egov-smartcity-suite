@@ -414,8 +414,8 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setTaxExemptReason(getTaxExemptReason());
 		newProp.setDocNumber(getDocNumber());
 		newProp.setState(getState());
-		newProp.setCreatedDate(new DateTime());
-		newProp.setLastModifiedDate(new DateTime());
+		newProp.setCreatedDate(new Date());
+		newProp.setLastModifiedDate(new Date());
 		newProp.addAllUnitCalculationDetails(cloneUnitCalculationDetails());
 		return newProp;
 	}

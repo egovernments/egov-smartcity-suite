@@ -76,7 +76,7 @@ public class Challan extends StateAware {
 	/**
 	 *  <code>Date</code> indicating when the challan is effective from
 	 */
-	private DateTime challanDate;
+	private Date challanDate;
 	
 	/**
 	 * A <code>Date</code> indicating till when the challan is valid
@@ -133,11 +133,11 @@ public class Challan extends StateAware {
 	
 	@Search(searchOp = Search.Operator.between)
 	public DateTime getChallanDate() {
-		return challanDate;
+		return null == challanDate ? null : new DateTime(challanDate);
 	}
 
 
-	public void setChallanDate(DateTime challanDate) {
+	public void setChallanDate(Date challanDate) {
 		this.challanDate = challanDate;
 	}
 	

@@ -38,6 +38,39 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
+	
+	
+	
+	
+	 
+	$('#connectionType').change(function(){
+		$.ajax({
+			url: "/wtms/ajax-connectionTypes",     
+			type: "GET",
+			data: {
+				connectionType: $('#connectionType').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				
+				console.log("success"+response);
+				$('#usageType').empty();
+				$('#usageType').append($("<option value=''>Select</option>"));
+				$.each(response, function(index, value) {
+					$('#usageType').append($('<option>').text(value.code).attr('value', value.id))
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	});
+	
+	
+	
+	
+
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});

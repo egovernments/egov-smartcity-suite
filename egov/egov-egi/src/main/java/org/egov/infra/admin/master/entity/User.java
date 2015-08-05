@@ -125,7 +125,6 @@ public class User extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
-    @Field
     private String name;
 
     @Enumerated(EnumType.ORDINAL)
@@ -134,13 +133,11 @@ public class User extends AbstractAuditable {
     @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
     @Length(max = 15)
-    @Field
     private String mobileNumber;
 
     @Email(regexp = Constants.EMAIL)
     @SafeHtml
     @Length(max = 128)
-    @Field
     private String emailId;
 
     @SafeHtml
@@ -148,12 +145,10 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 10)
-    @Field
     private String pan;
 
     @SafeHtml
     @Length(max = 20)
-    @Field
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

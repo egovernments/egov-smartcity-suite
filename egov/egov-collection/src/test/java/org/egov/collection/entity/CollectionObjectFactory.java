@@ -53,7 +53,6 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -205,8 +204,8 @@ public class CollectionObjectFactory {
 		receiptHeader.setReferencenumber(refNum);
 		receiptHeader.setConsumerCode("10-10-111-20");
 		receiptHeader.setService(createServiceDetails());
-		receiptHeader.setCreatedDate(new DateTime());
-		receiptHeader.setLastModifiedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
+		receiptHeader.setLastModifiedDate(new Date());
 		receiptHeader.setCreatedBy(user);
 		receiptHeader.setLastModifiedBy(user);
 		receiptHeader.setIsReconciled(false);
@@ -433,7 +432,7 @@ public class CollectionObjectFactory {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReceipttype('A');
 		receiptHeader.setService(createServiceDetails());
-		receiptHeader.setCreatedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
 		receiptHeader.setIsReconciled(false);
 		receiptHeader.setStatus(createEgwStatus(
 				("testCodeRH" + getRandomNumber()).substring(0, 10),
@@ -455,7 +454,7 @@ public class CollectionObjectFactory {
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReceipttype('A');
 		receiptHeader.setService(createServiceDetails());
-		receiptHeader.setCreatedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
 		receiptHeader.setIsReconciled(false);
 		receiptHeader.setStatus(createEgwStatus(
 				("testCodeRH" + getRandomNumber()).substring(0, 10),
@@ -1038,7 +1037,7 @@ public class CollectionObjectFactory {
 		BoundaryType boundaryTypeImpl = new BoundaryType();
 		boundaryTypeImpl.setHierarchy(Long.valueOf(1));
 		boundaryTypeImpl.setName("karnataka");
-		boundaryTypeImpl.setLastModifiedDate(new DateTime());
+		boundaryTypeImpl.setLastModifiedDate(new Date());
 		/*boundaryTypeImpl.setHeirarchyType(createHierarchy("testHierarchyName",
 				"testHierarchyCode"));*/
 		session.saveOrUpdate(boundaryTypeImpl);
@@ -1057,7 +1056,7 @@ public class CollectionObjectFactory {
 	public Department createDept(String deptName, String deptCode) {
 		Department empDept = new Department();
 		empDept.setName(deptName + getRandomNumber());
-		empDept.setLastModifiedDate(new DateTime());
+		empDept.setLastModifiedDate(new Date());
 		//empDept.setBillingLocation("0");
 		empDept.setCode(deptCode + getRandomNumber());
 		session.saveOrUpdate(empDept);
@@ -1068,7 +1067,7 @@ public class CollectionObjectFactory {
 		Department empDept = new Department();
 		empDept.setName(deptCode);
 		empDept.setCode(deptCode);
-		empDept.setLastModifiedDate(new DateTime());
+		empDept.setLastModifiedDate(new Date());
 		//empDept.setBillingLocation("0");
 		session.saveOrUpdate(empDept);
 		return empDept;
@@ -1740,7 +1739,7 @@ public class CollectionObjectFactory {
 		Challan challan = new Challan();
 		User user = createUser("testUser");
 		
-		DateTime date = new DateTime();
+		Date date = new Date();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE,2);
@@ -1775,7 +1774,7 @@ public class CollectionObjectFactory {
 	public Challan createUnsavedChallan() throws NumberFormatException, RepositoryException {
 		Challan challan = new Challan();
 		User user = createUser("testUser");
-		DateTime date = new DateTime();
+		Date date = new Date();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE,3);
@@ -1896,8 +1895,8 @@ public class CollectionObjectFactory {
 		receiptHeader.setReferencenumber("12");
 		receiptHeader.setConsumerCode("10-10-111-20");
 		receiptHeader.setService(createServiceDetails());
-		receiptHeader.setCreatedDate(new DateTime());
-		receiptHeader.setLastModifiedDate(new DateTime());
+		receiptHeader.setCreatedDate(new Date());
+		receiptHeader.setLastModifiedDate(new Date());
 		User user=createUser("egovernments");
 		receiptHeader.setCreatedBy(user);
 		receiptHeader.setLastModifiedBy(user);

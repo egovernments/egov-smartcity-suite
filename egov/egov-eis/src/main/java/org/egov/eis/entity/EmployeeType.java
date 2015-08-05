@@ -74,7 +74,6 @@ public class EmployeeType extends AbstractAuditable {
     @SafeHtml
     @Column(name="name",unique=true)
     @Pattern(regexp = Constants.ALPHABETS)
-    @Field
     public String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")

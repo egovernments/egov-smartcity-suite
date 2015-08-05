@@ -66,14 +66,15 @@
 		</c:choose> 
 		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
 		<form:hidden id="applicationDocs${status.index}documentNames.required" path="applicationDocs[${status.index}].documentNames.required" value="${docs.required}" /> 
+		<form:hidden id="applicationDocs${status.index}documentNames.documentName" path="applicationDocs[${status.index}].documentNames.documentName" value="${docs.documentName}" /> 
 	</div>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required"/>
 			</c:when>
 			<c:otherwise>
-				<form:input class="form-control" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" />
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" />
 			</c:otherwise>		
 		</c:choose> 
 		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
@@ -98,6 +99,7 @@
 				<input type="file" id="file${status.index}id" name="applicationDocs[${status.index}].files" class="file-ellipsis upload-file">
 			</c:otherwise>		
 		</c:choose> 
+		<form:errors path="applicationDocs[${status.index}].files" cssClass="add-margin error-msg" />
 	</div> 
 </div>
 </c:forEach> 

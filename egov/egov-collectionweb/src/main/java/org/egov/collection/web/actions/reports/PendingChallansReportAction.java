@@ -86,7 +86,7 @@ public class PendingChallansReportAction extends ReportFormAction {
 
 		// Set default values of criteria fields
 		Department dept = collectionsUtil
-				.getDepartmentOfLoggedInUser(getSession());
+				.getDepartmentOfLoggedInUser();
 		if (dept != null) {
 			setReportParam(EGOV_DEPT_ID, dept.getId());
 		}

@@ -721,7 +721,7 @@ public class ContingentBillAction extends BaseBillAction {
                                 vd.setCreditAmountDetail(detail.getCreditamount());
                                 if(detail.getFunctionid()!=null)
                                 {
-                                CFunction functionById = (CFunction) functionDAO.findById(detail.getFunctionid().longValue(),false);
+                                CFunction functionById = (CFunction) functionHibernateDAO.findById(detail.getFunctionid().longValue(),false);
                                 commonBean.setFunctionName(functionById.getName());
                                 commonBean.setFunctionId(functionById.getId().intValue());
                                 }

@@ -180,7 +180,7 @@ public class CollectionsUtil {
 	 *            map of session variables
 	 * @return department of currently logged in user
 	 */
-	public Department getDepartmentOfLoggedInUser(Map<String, Object> sessionMap) {
+	public Department getDepartmentOfLoggedInUser() {
 		final User user = securityUtils.getCurrentUser();
 		return getDepartmentOfUser(user);
 	}

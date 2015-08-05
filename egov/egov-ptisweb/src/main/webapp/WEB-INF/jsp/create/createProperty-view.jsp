@@ -90,7 +90,7 @@
   function onSubmit() {
 	  var actionName = document.getElementById('workFlowAction').value;
 	  if(actionName == 'Generate Notice') {
-		  generateNotice6();
+		  generateNotice();
 	   } else {
 		document.forms[0].action = 'createProperty-forward.action';
 		document.forms[0].submit;
@@ -98,8 +98,9 @@
 	   }
 	 } 
 	 	
- 	function generateNotice6(){
-	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=create";
+ 	function generateNotice(){
+ 	 	var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+	   	document.CreatePropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=create";
 		document.CreatePropertyForm.submit();
 	}
 	
@@ -141,19 +142,41 @@
 					<tr>
 						<%@ include file="../create/createPropertyView.jsp"%>
 					</tr>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-					</tr>
-					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
-					<tr>
-						<font size="2"><div align="left" class="mandatory">
-								<s:text name="mandtryFlds" />
-							</div> </font>
-					</tr>
+					<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+						</tr>
+					</s:if>
+				</table>
+				<br/>
+				<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+					<div id="workflowCommentsDiv" align="center">
+						<table width="100%">
+							<tr>
+								<%-- <td width="10%" class="${approverEvenCSS}">&nbsp;</td> --%>
+								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
+								<td class="${approverEvenCSS}" width="13%">Approver
+									Remarks:</td>
+								<td class="${approverEvenTextCSS}"><textarea
+										id="approverComments" name="approverComments" rows="2"
+										value="#approverComments" cols="35"></textarea></td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+							</tr>
+						</table>
+					</div>
+				</s:if>
+				<s:hidden name="modelId" id="modelId" value="%{modelId}" />
+				<tr>
+					<font size="2"><div align="left" class="mandatory">
+							<s:text name="mandtryFlds" />
+						</div> </font>
+				</tr>
 
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
+				<tr>
+					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+				</tr>
 
 				</table>
 			</s:push>

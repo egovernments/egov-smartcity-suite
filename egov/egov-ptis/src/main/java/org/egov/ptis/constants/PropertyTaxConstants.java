@@ -501,6 +501,7 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_REVENUE_OFFICER_REJECTED = "Revenue officer Rejected";
 	public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
 	public static final String WF_STATE_REJECTED = "Rejected";
+	public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -820,6 +821,7 @@ public interface PropertyTaxConstants {
 	};
 
 	public static final String NOTICE_TYPE_BILL = "Bill";
+	public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
 
 	public static final String CREATE_AUDIT_ACTION = "Create Property";
 	public static final String MODIFY_AUDIT_ACTION = "Modify Property";
@@ -837,8 +839,8 @@ public interface PropertyTaxConstants {
 	public static final Integer QUARTZ_BULKBILL_JOBS = 5;
 
 	public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
-			DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
-			DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
+            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
+            DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
 	public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
 	public static final String APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN = "WardNo";
@@ -909,8 +911,7 @@ public interface PropertyTaxConstants {
 	public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
 	public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
-	public static final String NOTICE6 = "Notice6";
-	public static final String REPORT_TEMPLATENAME_NOTICE6 = "specialNotice";
+	public static final String REPORT_TEMPLATENAME_SPECIAL_NOTICE = "specialNotice";
 	public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
 	public static final String IMAGE_CONTEXT_PATH = "/egi";
 	public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "demandNoticeInfo";

@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -54,7 +54,7 @@
 						<spring:message code="lbl.complaintDate"/>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-						<joda:format value="${complaint.createdDate}" var="complaintDate" pattern="dd-MM-yyyy hh:mm:ss"/>
+						<fmt:formatDate value="${complaint.createdDate}" pattern="dd-MM-yyyy hh:mm:ss" var="complaintDate"/>
 						${complaintDate}
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">

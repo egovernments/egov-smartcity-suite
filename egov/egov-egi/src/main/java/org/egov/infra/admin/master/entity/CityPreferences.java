@@ -99,6 +99,10 @@ public class CityPreferences extends AbstractAuditable {
         this.gisKML = gisKML;
     }
 
+    public boolean kmlExist() {
+        return this.gisKML != null;
+    }
+    
     public FileStoreMapper getGisShape() {
         return gisShape;
     }
@@ -107,11 +111,19 @@ public class CityPreferences extends AbstractAuditable {
         this.gisShape = gisShape;
     }
 
+    public boolean shapeExist() {
+        return this.gisShape != null;
+    }
+    
     public FileStoreMapper getLogo() {
         return logo;
     }
 
     public void setLogo(final FileStoreMapper logo) {
         this.logo = logo;
+    }
+    
+    public boolean logoExist() {
+        return this.logo != null;
     }
 }

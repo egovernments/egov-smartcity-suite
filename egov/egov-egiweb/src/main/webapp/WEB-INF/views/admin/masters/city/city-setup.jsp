@@ -75,7 +75,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.name"/>">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -94,7 +94,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.local.name" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -114,7 +114,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.code" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -134,7 +134,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.domain.url" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -154,7 +154,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.district.name" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -175,7 +175,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.district.code" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -206,10 +206,10 @@
 								<label class="col-sm-3 control-label"><spring:message
 										code="lbl.city.logo" /></label>
 								<div class="col-sm-6" style="padding-top: 7px">
-									<img id="imglogo"
+									<img id="imglogo" height="60" width="60"
 										src="/egi/downloadfile?fileStoreId=${city.preferences.logo.fileStoreId}&moduleName=${sessionScope.cityCode}">
 									<input type="file" name="logo" id="logo"
-										data-accept="jpg,jpeg,png"
+										data-accept="jpg,jpeg,png,gif,PNG,JPG,JPEG"
 										data-errormsg="Please select valid image file!"
 										class="form-control" placeholder=""
 										autocomplete="off" />
@@ -228,7 +228,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.coord.lat" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -248,7 +248,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.coord.lng" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -297,7 +297,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.recaptcha.pvt.key" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -317,7 +317,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-default btnpopover" type="button"
 												data-toggle="popover" data-placement="right" title=""
-												data-content="Buttons in input groups are a bit different and require one extra level of nesting. Instead of">
+												data-content="<spring:message code="help.city.recaptcha.pub.key" />">
 												<i class="entypo-help"></i>
 											</button>
 										</span>
@@ -330,6 +330,11 @@
 							</div>
 						</div>
 
+					</div>
+					<div>
+						<div class="col-sm-12" style="padding-top: 7px">
+							<label class="col-sm-12 error-msg"><spring:message code="imp.notice" /></label>
+						</div>
 					</div>
 				</div>
 			</div>

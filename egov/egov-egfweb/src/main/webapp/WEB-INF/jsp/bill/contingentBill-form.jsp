@@ -89,7 +89,7 @@ Show/Hide Details</a></div></td>
 				<tr>
 				<td class="bluebox"><s:text name="subledger.type"/></td>
 				<td  class="bluebox" align="left" ><s:select name="commonBean.subledgerType" id="commonBean.subledgerType"  list="dropdownData.accountDetailTypeList" listKey="id" listValue="description" headerKey="" onchange="load_COA_Entities(this)" headerValue="---Choose---"/></td> 
-				<td class="bluebox"><s:text name="bill.subtype"/><span class="mandatory1">*</span></td>
+				<td class="bluebox"><s:text name="bill.subtype"/><span class="mandatory1"> *</span></td>
 				<td  class="bluebox" ><s:select name="commonBean.billSubType" list="dropdownData.billSubTypeList"     listKey="id" listValue="name" headerKey="" headerValue="----Choose----"   onchange="loadCheckList(this)"/></td>
 				</tr>
 				<tr>

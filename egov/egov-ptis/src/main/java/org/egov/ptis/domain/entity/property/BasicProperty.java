@@ -269,5 +269,11 @@ public interface BasicProperty {
 	String getMobileNumber();
 	
 	public Boolean getActive();
+	
+	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy();
+	
+	public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy);
+	
+	public User getPrimaryOwner();
 
 }

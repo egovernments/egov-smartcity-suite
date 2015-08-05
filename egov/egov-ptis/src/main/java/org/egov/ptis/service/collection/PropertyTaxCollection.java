@@ -42,11 +42,7 @@ package org.egov.ptis.service.collection;
 import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
@@ -54,7 +50,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREART
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
@@ -87,12 +82,10 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -290,7 +283,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
 
                     if (rcptAccInfo.getGlCode().equalsIgnoreCase(
-                            GLCODEMAP_FOR_CURRENTTAX.get(PropertyTaxConstants.GLCODE_FOR_PENALTY))) {
+                            /*GLCODEMAP_FOR_CURRENTTAX.get(*/PropertyTaxConstants.GLCODE_FOR_PENALTY/*)*/)) {
 
                         if (demandDetail == null) {
 

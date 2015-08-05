@@ -43,7 +43,6 @@ import java.util.Date;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.joda.time.DateTime;
 
 public class BoundaryBuilder {
 
@@ -58,7 +57,7 @@ public class BoundaryBuilder {
     }
 
     public BoundaryBuilder withUpdatedTime(final Date updatedTime) {
-        boundary.setLastModifiedDate(new DateTime(updatedTime));
+        boundary.setLastModifiedDate(updatedTime);
         return this;
     }
 

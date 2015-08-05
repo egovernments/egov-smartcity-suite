@@ -93,7 +93,9 @@
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.address" /></div>
-			<div class="col-xs-9 add-margin view-content" id="propertyaddress" ></div>
+			<div class="col-xs-3 add-margin view-content" id="propertyaddress" ></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.locality" /></div>
+			<div class="col-xs-3 add-margin view-content" id="locality"></div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiontype"/></div>

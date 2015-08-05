@@ -76,7 +76,11 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 		<button type="submit" id="submitBtn" class="btn btn-primary"><spring:message code="lbl.approve"/></button>	
 		<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message code='lbl.close' /></a>
 	</div>
-</div>	 		
+</div>	 	
+<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+				</div>	 --%>
 </form:form>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>

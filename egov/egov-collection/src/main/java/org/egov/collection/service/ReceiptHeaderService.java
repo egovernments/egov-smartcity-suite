@@ -89,7 +89,6 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -179,7 +178,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *         reference numbers for each instrument type for the given receipt
 	 */
 	public List<String> generateInternalReferenceNo(ReceiptHeader entity) {
-		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate().toDate());
+		CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate());
 		CFinancialYear currentFinancialYear = collectionsUtil.getFinancialYearforDate(new Date());
 
 		return collectionsNumberGenerator.generateInternalReferenceNumber(entity, financialYear, currentFinancialYear);
@@ -1137,7 +1136,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 					challan.getChallanDate(), validUpto, DATE_ORDER.AFTER));*/
 		
 			if(challan.getCreatedDate()==null)
-				challan.setCreatedDate(new DateTime());
+				challan.setCreatedDate(new Date());
 			
 			if (challan.getChallanNumber() == null) {
 				setChallanNumber(challan);
@@ -1199,7 +1198,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	
 	private void setChallanNumber(Challan challan) {
 		CFinancialYear financialYear = collectionsUtil.
-			getFinancialYearforDate(challan.getCreatedDate().toDate());
+			getFinancialYearforDate(challan.getCreatedDate());
 		challan.setChallanNumber(collectionsNumberGenerator
 			.generateChallanNumber(challan, financialYear));
 	}

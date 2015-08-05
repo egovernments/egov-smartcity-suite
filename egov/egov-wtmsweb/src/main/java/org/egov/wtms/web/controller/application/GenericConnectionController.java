@@ -66,12 +66,13 @@ import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterSourceService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.web.controller.workflow.GenericWorkFlowController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-public abstract class GenericConnectionController {
+public abstract class GenericConnectionController extends GenericWorkFlowController{
 
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;

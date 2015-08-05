@@ -30,7 +30,13 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.wtms.application.service.NewConnectionService;
+import org.egov.wtms.masters.entity.ConnectionUsage;
+import org.egov.wtms.masters.entity.UsageType;
+import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -44,10 +50,21 @@ public class AjaxConnectionController {
 
     @Autowired
     private NewConnectionService newConnectionService;
-
+    
+    @Autowired
+    private UsageTypeService usageTypeService;
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
+    
+    @RequestMapping(value = "/ajax-connectionTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<UsageType> getUsageTypesByConnectionType(
+			@RequestParam final String connectionType) {
+		List<UsageType> usageTypes = new ArrayList<UsageType>(0);
+		usageTypes = usageTypeService.getAllUsageTypesByConnectionType(connectionType);
+		usageTypes.forEach(usageType -> usageType.toString());
+		return usageTypes;
+	}
 
 }

@@ -47,7 +47,7 @@
     <tr>
     <td class="bluebox2" width="5%">&nbsp;</td>
     <td class="greybox" width="10%">Correspondence Address:</td>
-    <td class="greybox" width="8%"><span class="bold"><s:property default="N/A" value="%{corrAddress1}" /> </span></td>
+    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{corrAddress1}" /> </span></td>
     
     </tr>
    <%--  <tr>

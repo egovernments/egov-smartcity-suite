@@ -99,9 +99,7 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
-import org.egov.services.receipt.ReceiptService;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
   
   
@@ -920,7 +918,7 @@ public class FileUploadAction extends BaseFormAction{
 				CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 		
 		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-		receiptHeader.setCreatedDate(receiptHeader.getManualreceiptdate());
+		receiptHeader.setCreatedDate(receiptHeader.getManualreceiptdate().toDate());
 		if(setInstrument){
 			receiptInstrList=populateInstrumentDetails(input,nextRecords);
 			setInstrument=false;
@@ -1245,8 +1243,8 @@ public class FileUploadAction extends BaseFormAction{
 		} catch (ParseException e) {
 			LOGGER.debug("Exception in parsing date : " +  input[14] + " - " + e.getMessage());
 		}
-		receiptHeader.setManualreceiptdate(new DateTime(date));
-		receiptHeader.setVoucherDate(new DateTime(date));
+		receiptHeader.setManualreceiptdate(date);
+		receiptHeader.setVoucherDate(date);
 		return receiptHeader;
 	}
 	
@@ -1278,11 +1276,11 @@ public class FileUploadAction extends BaseFormAction{
 		} catch (ParseException e) {
 			LOGGER.debug("Exception in parsing challan date : " + inputArray[1] + " - " + e.getMessage());
 		}
-		challan.setChallanDate( new DateTime(date));
+		challan.setChallanDate( date);
 		challan.setChallanNumber(inputArray[0]);
 		challan.setReceiptHeader(header);
 		challan.setLastModifiedBy(collectionsUtil.getLoggedInUser());
-		challan.setLastModifiedDate(new DateTime());
+		challan.setLastModifiedDate(date);
 		
 		return challan;
 	}

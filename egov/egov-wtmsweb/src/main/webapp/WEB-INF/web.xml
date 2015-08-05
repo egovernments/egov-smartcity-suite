@@ -62,7 +62,7 @@
     </listener>
 	
 	<filter>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-name>applicationTenantResolverFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
@@ -74,7 +74,7 @@
 	</filter>
 	
 	<filter>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
+		<filter-name>applicationCoreFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
@@ -94,7 +94,7 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-name>applicationTenantResolverFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
@@ -109,7 +109,7 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
+		<filter-name>applicationCoreFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

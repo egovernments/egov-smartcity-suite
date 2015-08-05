@@ -53,12 +53,6 @@
 			});			
 		}
 		
-		function populatePartNumbers() {
-			populatepartNumbers({
-				wardId : document.getElementById("reportWards").value
-			});			
-		}
-	
 	</script>
 </head>
 <body>
@@ -101,31 +95,12 @@
 						<s:select id="reportWards" headerKey="-1"
 							headerValue="%{getText('default.select')}"
 							list="dropdownData.Wards" cssClass="selectnew" name="wardId" listKey="id" listValue="name"
-							value="%{wardId}" onchange="return populatePartNumbers();" style="width: 100px"/> 
+							value="%{wardId}" style="width: 100px"/> 
 					</td>
 					<td class="bluebox" width="25%">
 							&nbsp; &nbsp;
 					</td>
 				</tr>		
-				<tr>
-					<td class="greybox" width="20%">
-							&nbsp; &nbsp;
-					</td>					
-					<td class="greybox" width="25%" style="text-align: left">
-						<s:text name="block" /> : 
-					</td>
-					<td class="greybox" width="25%" style="text-align: left">
-						<egov:ajaxdropdown id="partNoAjaxDropdown" fields="['Text','Value']"
-							dropdownId="partNumbers" url="common/ajaxCommon!partNumbersByWard.action" />
-						<s:select id="partNumbers" headerKey="-1"
-							headerValue="%{getText('default.select')}"
-							list="dropdownData.partNumbers" cssClass="selectnew" name="partNo"
-							value="%{partNo}" style="width: 100px"/> 
-					</td>
-					<td class="greybox" width="25%">
-							&nbsp; &nbsp;
-					</td>
-				</tr>			
 				<tr>
 					<td class="bluebox" width="20%">
 							&nbsp; &nbsp;

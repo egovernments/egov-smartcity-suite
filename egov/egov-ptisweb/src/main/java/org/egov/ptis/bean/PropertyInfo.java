@@ -504,7 +504,7 @@ public class PropertyInfo {
 
 			if (STATUS_ISHISTORY.equals(historyProperty.getStatus())
 					&& propertyTaxUtil.between(effectiveDate, installment.getFromDate(), installment.getToDate())) {
-				historyProperties.put(historyProperty.getCreatedDate().toDate(), historyProperty);
+				historyProperties.put(historyProperty.getCreatedDate(), historyProperty);
 			}
 		}
 
@@ -870,7 +870,7 @@ public class PropertyInfo {
 		// so date of approval of transfer will be the date this property was
 		// created.
 		if (!property.getBasicProperty().getPropertyMutations().isEmpty())
-			return property.getCreatedDate().toDate();
+			return property.getCreatedDate();
 
 		return null;
 	}
@@ -933,7 +933,7 @@ public class PropertyInfo {
 
 		SortedSet<Date> mutationDates = new TreeSet<Date>();
 		for (PropertyMutation propertyMutation : propMutSet) {
-			mutationDates.add(propertyMutation.getCreatedDate().toDate());
+			mutationDates.add(propertyMutation.getCreatedDate());
 		}
 
 		return mutationDates.last();

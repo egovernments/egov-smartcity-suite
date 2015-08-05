@@ -106,7 +106,6 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -612,9 +611,9 @@ public class DishonoredChequeAction extends DispatchAction {
                                 getNextAction(dishonorChq,req)  ;
                                 User logginUser=(User)persistenceService.find("from User where id=?", EgovThreadLocals.getUserId());
                                 dishonorChq.setCreatedBy(nextUser);   
-                                dishonorChq.setCreatedDate(new DateTime());
+                                dishonorChq.setCreatedDate(new Date());
                                 dishonorChq.setLastModifiedBy(logginUser);
-                                dishonorChq.setLastModifiedDate(new DateTime());
+                                dishonorChq.setLastModifiedDate(new Date());
                                 //dishonourChqDetails.setHeader(dishonorChq);
                                 //dishonorChq.addDishonorChqDetails(dishonourChqDetails);
                                 dishonorChqService.approve(dishonorChq, null,null); 

@@ -353,7 +353,7 @@ public class PropertyNoticeService {
 
 		for (Property property : basicProperty.getPropertySet()) {
 			if (property.getRemarks() == null || !property.getRemarks().startsWith(STR_MIGRATED)) {
-				propertyByCreatedDate.put(property.getCreatedDate().toDate(), property);
+				propertyByCreatedDate.put(property.getCreatedDate() , property);
 			}
 		}
 

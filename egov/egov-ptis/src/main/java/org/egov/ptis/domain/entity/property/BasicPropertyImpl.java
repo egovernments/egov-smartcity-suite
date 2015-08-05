@@ -51,6 +51,7 @@ import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -95,6 +96,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private String vacantLandAssmtNo;
 	private String source;
 	private List<PropertyOwnerInfo> propertyOwnerInfo = new ArrayList<PropertyOwnerInfo>();
+	private List<PropertyOwnerInfo> propertyOwnerInfoProxy = new ArrayList<PropertyOwnerInfo>();
 	private boolean underWorkflow;
 
 	@Override
@@ -697,12 +699,31 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 		ownerName.deleteCharAt(ownerName.length() - 2);
 		return ownerName.toString();
 	}
+	
+	public User getPrimaryOwner() {
+	    User user = new User();
+	    for (final PropertyOwnerInfo ownerInfo : this.getPropertyOwnerInfo()) {
+	         user =  ownerInfo.getOwner();
+	         break;
+             }
+	    return user;
+	}
 
 	public String getMobileNumber() {
 		return this.getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
 	}
 	
 	@Override
+	public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
+               return propertyOwnerInfoProxy;
+        }
+
+	@Override
+        public void setPropertyOwnerInfoProxy(List<PropertyOwnerInfo> propertyOwnerInfoProxy) {
+              this.propertyOwnerInfoProxy = propertyOwnerInfoProxy;
+        }
+
+        @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

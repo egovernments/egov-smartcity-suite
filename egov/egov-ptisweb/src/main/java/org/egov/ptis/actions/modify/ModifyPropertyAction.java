@@ -137,7 +137,6 @@ import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
@@ -684,8 +683,8 @@ public class ModifyPropertyAction extends WorkflowAction {
         Date propCompletionDate = null;
         String mutationCode = null;
         final Character status = STATUS_WORKFLOW;
-        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
-                .valueOf(propTypeId));
+        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer
+                .valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel
                     .getPropertyDetail().getFloorDetailsProxy());
@@ -1030,8 +1029,8 @@ public class ModifyPropertyAction extends WorkflowAction {
                 + ", statusModifyRsn: " + modifyRsn);
 
         Date propCompletionDate = null;
-        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
-                .valueOf(propTypeId));
+        final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer
+                .valueOf(propTypeId), false);
         if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel
                     .getPropertyDetail().getFloorDetails());
@@ -1123,10 +1122,10 @@ public class ModifyPropertyAction extends WorkflowAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ackBean.setOwnerName(basicProp.getFullOwnerName());
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
-        ackBean.setApplicationDate(basicProp.getCreatedDate());
+        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
         ackBean.setApplicationNo(basicProp.getApplicationNo());
-        ackBean.setApprovedDate(propWF.getState().getCreatedDate().toDate());
-        final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate().toDate(),
+        ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
+        final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(),
                 Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(noticeDueDate);
         reportParams.put("logoPath", imagePath);

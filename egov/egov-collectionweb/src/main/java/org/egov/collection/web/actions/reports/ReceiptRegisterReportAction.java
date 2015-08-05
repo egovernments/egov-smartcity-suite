@@ -202,7 +202,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 		setReportParam(EGOV_FROM_DATE, new Date());
 		setReportParam(EGOV_TO_DATE, new Date());
 		
-		Department dept = collectionsUtil.getDepartmentOfLoggedInUser(getSession());
+		Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
 		if(dept != null) {
 			setReportParam(EGOV_DEPT_ID, dept.getId());
 		}

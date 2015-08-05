@@ -81,6 +81,7 @@ function validate()
 }
 </script>
 </head>
+<body>
 <span align="center" style="display: none" id="mandatoryfromdate">
 <li><font size="2" color="red"><b> <s:text
 	name="common.datemandatory.fromdate" /> </b></font></li>
@@ -97,9 +98,8 @@ function validate()
 <li><font size="2" color="red"><b> <s:text
 	name="common.comparedate.errormessage" /> </b></font></li>
 </span>
-<body>
 <s:form theme="simple" name="collectionSummaryForm"
-	action="collectionSummary!report.action">
+	action="collectionSummary-report.action">
 	<div class="formmainbox">
 	<div class="subheadnew"><s:text name="collectionSummaryReport.title" /></div>
 	<div class="subheadsmallnew"><span class="subheadnew"><s:text
@@ -117,7 +117,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].fromDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="${pageContext.request.contextPath}/images/calendaricon.gif"
+				src="/egi/resources/erp2/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
@@ -131,7 +131,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].toDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="${pageContext.request.contextPath}/images/calendaricon.gif"
+				src="/egi/resources/erp2/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
@@ -143,7 +143,7 @@ function validate()
 			<td width="24%" class="bluebox2"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.dept.all')}"
 				name="deptId" id="dept" cssClass="selectwk"
-				list="dropdownData.departmentList" listKey="id" listValue="deptName"
+				list="dropdownData.departmentList" listKey="id" listValue="name"
 				value="%{deptId}" /></td>
 			<td width="21%" class="bluebox2">
 				<s:text name="collectionReport.criteria.payment.mode"/></td>

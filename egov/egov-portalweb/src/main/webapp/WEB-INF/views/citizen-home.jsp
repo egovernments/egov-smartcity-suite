@@ -37,8 +37,8 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 
 		<link rel="icon" href="../egi/resources/global/images/favicon.ico" sizes="32x32">
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/entypo/css/entypo.css">
@@ -117,7 +117,7 @@
 										
 										<div class="msg-info">
 											<a href="${inboxMsg.link}" target="_blank"><u>${inboxMsg.identifier}</u></a> <span class="dot">&bull;</span> 
-											<joda:format value="${inboxMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
+											<fmt:formatDate value="${inboxMsg.messageDate}" pattern="dd-MM-yyyy hh:mm:ss" var="messageDate"/>
 											<span class="msg-date">${messageDate}</span>
 										</div>
 									</header>
@@ -170,8 +170,11 @@
 											<a href="${myAccountMsg.link}" target="_blank"><i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Grievance"></i></a>
 										</div>
 										<div class="msg-info">
-											<a href="${myAccountMsg.link}" target="_blank"><u>${myAccountMsg.identifier}</u></a> <span class="dot">&bull;</span> <span class="msg-date"><joda:format value="${myAccountMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
-						<span class="msg-date">${messageDate}</span>
+											<a href="${myAccountMsg.link}" target="_blank"><u>${myAccountMsg.identifier}</u></a> <span class="dot">&bull;</span> 
+											<span class="msg-date">
+											<fmt:formatDate value="${myAccountMsg.messageDate}" pattern="dd-MM-yyyy hh:mm:ss" var="messageDate"/>
+											</span>
+											<span class="msg-date">${messageDate}</span>
 										</div>
 									</header>
 								</div> 

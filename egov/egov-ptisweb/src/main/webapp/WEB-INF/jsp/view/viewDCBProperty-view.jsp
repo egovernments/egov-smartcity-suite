@@ -82,11 +82,6 @@
 				
 			}
 			
-			/* function setLevyPenalyBeforeSubmit() {
-				var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
-				window.location='../collection/collectPropertyTax!showPenalty.action?propertyId='+propertyId;
-			} */
-
 			jQuery(document).ready( function () {
 				jQuery('#operatorPayBill').click( function () {
 					var propertyId = '<s:property value="%{basicProperty.upicNo}"/>';
@@ -195,7 +190,7 @@
 							<s:text name="CurrentTax" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"> <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
@@ -205,7 +200,7 @@
 							<s:text name="CurrentTaxDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"> <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>
@@ -215,7 +210,7 @@
 							<s:text name="ArrearsDue" /> :
 						</td>
 						<td class="greybox">
-							<span class="bold"> <s:property value="%{currTaxAmount}" />
+							<span class="bold">Rs. <s:property value="%{currTaxAmount}" />
 							</span>
 						</td>
 					</tr>

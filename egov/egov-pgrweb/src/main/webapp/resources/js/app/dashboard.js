@@ -816,7 +816,7 @@ $(".slaBtn").on("click", function(){
 });
 
 function slaPie() {
-	$.ajax({url:"slaPie.do",
+	$.ajax({url:"sla/pie",
 		cache:false
 	}).done(function(piedata) {
 		$('#slaGraph').highcharts({
@@ -902,7 +902,7 @@ function slaGIS() {
 	var chartWin = new google.maps.InfoWindow();
 	var contentDiv = '<div id="slaPerformance" style="height:350px;width:500px;white-space: nowrap;"></div>';
 	chartWin.setContent(contentDiv);	
-	$.ajax({url:"slaGIS.do?rn="+Math.random(),
+	$.ajax({url:"sla/gis?rn="+Math.random(),
 		cache:false
 	}).done(function(data) {
 		var length = data.length;
@@ -937,7 +937,7 @@ function slaGIS() {
 		google.maps.event.addListener(marker, 'click', (function(marker, index) {
 	          return function() {
 	        	  marker.setAnimation(google.maps.Animation.BOUNCE);
-	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Zone : '+
+	        	  infoWin.setContent('<div class="panel '+infoClass+'"><div class="panel-heading" style="font-weight:bold">Ward : '+
 	        			  data.zone+'</div><div class="panel-body" style="white-space:nowrap;color:#000;text-align:left;line-height:2;">Total Complaints : '+
 	        			  data.regComp+'<br/>Total Open : '+data.openComp+'<br/>Open From 90 Days: '+data.open90Comp+'<br/>Open : '+data.pecentage+'%<br/>'+
 	        			  '<a href="#" id="slapgraph'+data.zoneID+'"><i class="fa fa-line-chart fa-fw"></i>Track Performance</a><br/>'+
@@ -1139,14 +1139,14 @@ function compTypeDistribution() {
 var gisPieData = null;
 var lastSelSlice = '';
 function overviewPie() {
-	$.ajax({url:"overviewPie.do",
+	$.ajax({url:"typewise-aggregate",
 		cache:true
 	}).done(function(piedata) {
 		gisPieData = piedata;
 		lastSelSlice = piedata[0].name;
-		$.ajax({url:"overviewGis.do",
+		$.ajax({url:"wardwise-complaint-by-type/"+piedata[0].ctId,
 			cache:true,
-			data: { ctId: piedata[0].ctId, color: "#5B94CB" }
+			data: {color: "#5B94CB" }
 		}).done(function(gisData) {
 			overviewGis(gisData);
 		});
@@ -1177,7 +1177,7 @@ function overviewGis(gisData){
 	var infoWin = new google.maps.InfoWindow();
 	var wardArray = new Array();
 	$.each(gisData, function(index,data) {
-		wardArray[data.wardId.toString()] = {"color":data.color,"name":data.wardName,"value":data.count}; 
+		wardArray[data.wardName.toString()] = {"color":data.color,"name":data.wardName,"value":data.count}; 
 	});
 	var bounds = new google.maps.LatLngBounds();
 	var drawPolygonColor = function (doc){
@@ -1208,7 +1208,7 @@ function overviewGis(gisData){
 	};
 
 	var geoXml=new geoXML3.parser({map: map, singleInfoWindow: true,suppressInfoWindows: true,afterParse:drawPolygonColor});
-	geoXml.parse('../resources/kml/coc_wards.kml');	 
+	geoXml.parse(kmlURL);	 
 }
 
 function createPieInGmap() {
@@ -1428,7 +1428,7 @@ $(".ovrviewBkBtn").on("click",function(){
 
 
 function topFiveCompType() {
-		$.ajax({url:"topFiveComplaints.do",
+		$.ajax({url:"top-complaints",
 			cache:false
 		}).done(function(piedata) {
 	$("#page-top").mask('');

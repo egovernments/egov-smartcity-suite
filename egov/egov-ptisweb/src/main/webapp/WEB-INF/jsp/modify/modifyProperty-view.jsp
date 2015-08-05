@@ -70,7 +70,8 @@
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_REJECT}"/>') {
 					action = 'modifyProperty-reject.action';
 				} else if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_NOTICE_GENERATE}"/>'){
-					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify';
+					var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+					action = '../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType='+noticeType+'&noticeMode=modify';
 				}
 				document.forms[0].action = action;
 				document.forms[0].submit;
@@ -146,7 +147,8 @@
 			}
 			
 			function generateNotice(){
-			   	document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType=Notice6&noticeMode=modify";
+				var noticeType = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_TYPE_SPECIAL_NOTICE}"/>';
+			   	document.ModifyPropertyForm.action="../notice/propertyTaxNotice-generateNotice.action?basicPropId=<s:property value='%{basicProp.id}'/>&noticeType="+noticeType+"&noticeMode=modify";
 				document.ModifyPropertyForm.submit();
 			}
 			  
@@ -215,67 +217,6 @@
 					<div class="buttonbottom" align="center">
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 					</div>
-					<%-- <div class="buttonbottom" align="center">
-							<s:if test="%{model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
-								<s:if test="%{extra_field3!='Yes'}">
-									<td><input type="button" name="GenerateNotice6" id="GenerateNotice6"
-											value="Generate Notice" class="button" onclick="return generateNotice6();" />
-									</td>
-								</s:if>
-							</s:if>
-							<s:else>
-								 <s:if test="modifyRsn=='AMALG'">
-									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
-										<s:submit value="Approve" name="Approve"
-											id='Amalgamate:Approve' cssClass="buttonsubmit"
-											method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-									<!--/s:if-->
-										<td>
-											<s:submit value="Forward" name="Forward"
-												id='Amalgamate:Forward' cssClass="buttonsubmit"
-												method="forwardView" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-									<!--/s:if-->
-										<s:submit value="Reject" name="Reject"
-											id='Amalgamate:Reject' cssClass="buttonsubmit"
-											method="reject" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-								</s:if>
-								<s:if test="modifyRsn=='BIFURCATE'">
-									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
-										<s:submit value="Approve" name="Approve"
-											id='Bifurcate:Approve' cssClass="buttonsubmit"
-											method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-									<!--/s:if-->
-									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
-											<s:submit value="Forward" name="Forward"
-												id='Bifurcate:Forward' cssClass="buttonsubmit"
-												method="forwardView" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-									<!--/s:if-->
-										<s:submit value="Reject" name="Reject"
-											id='Bifurcate:Reject' cssClass="buttonsubmit"
-											method="reject" onclick="setWorkFlowInfo(this);doLoadingMask();" />
-								</s:if>
-								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
-									<s:submit value="Approve" name="Approve" id="Modify:Approve"
-										cssClass="buttonsubmit"
-										onclick="return onSubmit('modifyProperty-approve.action', this);" />
-								</s:if>
-								<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn) ||
-									@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_REJECTED.equalsIgnoreCase(model.state.nextAction) 
-									|| @org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_REJECTED.equalsIgnoreCase(model.state.nextAction)}">
-									<s:submit value="Forward" name="Forward" id="Modify:Forward"
-										cssClass="buttonsubmit"
-										onclick="return onSubmit('modifyProperty-forward.action', this);" />
-								</s:if>
-								<s:if test="!model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)">
-									<s:submit value="Reject" name="Reject"
-											id='Modify:Reject' cssClass="buttonsubmit" 
-											onclick="return onSubmit('modifyProperty-reject.action', this);" />
-								</s:if>
-								<input type="button" name="button2" id="button2" value="Close"
-									class="button" onclick="window.close();" />
-									
-							</s:else>
-						</div> --%>
 					</table>
 				</div>
 			</s:push>

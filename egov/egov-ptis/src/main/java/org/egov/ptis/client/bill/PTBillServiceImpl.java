@@ -162,7 +162,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
                 
                 if (!reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
-                    key = installmentDate.getYear() + "-" + reasonMasterCode;
+                    key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + reasonMasterCode;
 
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, demandDetail.getAmount()
                             .subtract(demandDetail.getAmtCollected()), demandDetail.getEgDemandReason().getGlcodeId()
@@ -173,7 +173,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 
                 if (reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)) {
                     
-                    key = installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
+                    key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
                     
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
                             installmentPenaltyAndRebate.get(installment).getRebate(),
@@ -187,7 +187,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         EgDemandDetails penaltyDemandDetail = null;
         for (Map.Entry<Installment, PenaltyAndRebate> penaltyAndRebate : installmentPenaltyAndRebate.entrySet()) {
             penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, orderMap, penaltyAndRebate.getValue()
-                            .getPenalty(), installment);
+                            .getPenalty(), penaltyAndRebate.getKey());
             if (penaltyDemandDetail != null)
                 ptDemand.getEgDemandDetails().add(penaltyDemandDetail);
         }
@@ -197,20 +197,20 @@ public class PTBillServiceImpl extends BillServiceInterface {
     }
 
     private EgDemandDetails insertPenaltyAndBillDetails(List<EgBillDetails> billDetails,
-            PropertyTaxBillable nmcBillable, HashMap<String, Integer> orderMap, BigDecimal penalty,
+            PropertyTaxBillable billable, HashMap<String, Integer> orderMap, BigDecimal penalty,
             Installment installment) {
         
         LOGGER.info("Entered into prepareDmdAndBillDetails");
         LOGGER.info("preapreDmdAndBillDetails- Installment : " + installment + ", Penalty Amount: " + penalty);
         String key = null;
-        EgDemandDetails penDmdDtls = getPenaltyDmdDtls(nmcBillable, installment);
+        EgDemandDetails penDmdDtls = getPenaltyDmdDtls(billable, installment);
         EgDemandDetails insertPenDmdDetail = null;
 
         boolean thereIsPenalty = penalty != null && !penalty.equals(BigDecimal.ZERO) ? true : false;
         DateTime installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
         // Checking whether to impose penalty or not
-        if (nmcBillable.getLevyPenalty()) {
+        if (billable.getLevyPenalty()) {
             /* do not create penalty demand details if penalty is zero */
             if (penDmdDtls == null && thereIsPenalty) {
                 insertPenDmdDetail = insertPenaltyDmdDetail(installment, penalty);
@@ -218,7 +218,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 penalty = penDmdDtls.getAmount().subtract(penDmdDtls.getAmtCollected());
             }
             if (thereIsPenalty) {
-                key = installmentDate.getYear() + "-" + DEMANDRSN_CODE_PENALTY_FINES;
+                key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_PENALTY_FINES;
                 BillDetailBean billDetailBean = new BillDetailBean(installment, orderMap.get(key), key, penalty,
                         GLCODE_FOR_PENALTY, PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES, Integer.valueOf(1));
                 billDetails.add(createBillDet(billDetailBean));

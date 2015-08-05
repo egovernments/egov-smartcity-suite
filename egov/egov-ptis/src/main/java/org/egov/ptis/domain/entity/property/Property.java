@@ -57,7 +57,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.joda.time.DateTime;
 
 /**
  * This is the interface for the Property which reperesents the Status and
@@ -74,9 +73,9 @@ public interface Property extends Auditable {
 
 	public void setCreatedBy(User createdBy);
 
-	public DateTime getCreatedDate();
+	public Date getCreatedDate();
 
-	public void setCreatedDate(DateTime createdDate);
+	public void setCreatedDate(Date createdDate);
 
 	public BasicProperty getBasicProperty();
 
