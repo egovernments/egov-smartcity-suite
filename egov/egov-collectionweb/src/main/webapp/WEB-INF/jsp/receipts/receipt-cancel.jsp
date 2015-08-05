@@ -39,7 +39,7 @@
 -->
 
 <%@ include file="/includes/taglibs.jsp" %>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -99,9 +99,9 @@ function warningInfo()
 				<td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptno"/></td>
 				<td width="24%" class="bluebox2"><b><s:property value="receiptnumber" /></b></td>
 				<td width="21%" class="bluebox2"><s:text name="viewReceipt.receiptdate"/></td>
-				<td width="30%" class="bluebox2"><b> <joda:format value="${receiptDate}" var="receiptDate"
-							pattern="dd-MM-yyyy" />
-						<c:out value="${receiptDate}"></c:out></b></td>
+				<td width="30%" class="bluebox2"><b> 
+				<fmt:formatDate value="${receiptDate}" var="receiptDate" pattern="dd-MM-yyyy"/>
+				<c:out value="${receiptDate}"></c:out></b></td>
 			</tr>
 			<tr>
 				<td width="4%" class="bluebox">&nbsp;</td>
