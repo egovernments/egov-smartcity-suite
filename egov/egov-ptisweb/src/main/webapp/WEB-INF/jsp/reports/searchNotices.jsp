@@ -48,21 +48,26 @@
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 		<script type="text/javascript">
+			jQuery.noConflict();
+			jQuery(function($) {
+				try {
+					jQuery(".datepicker").datepicker({
+						format : "dd/mm/yyyy"
+					});
+				} catch (e) {
+					console.warn("No Date Picker " + e);
+				}
+
+				jQuery('.datepicker').on('changeDate', function(ev) {
+					jQuery(this).datepicker('hide');
+				});
+			});
+			
 			function populateWard() {
 				populatewardId( {
 					zoneId : document.getElementById("zoneId").value
 				});
 			}
-			function loadOnStartUp() { 
-				if(document.getElementById("noticeFDate")==null || document.getElementById("noticeFDate").value=="DD/MM/YYYY" 
-						|| document.getElementById("noticeFDate").value=="") {
-					waterMarkInitialize('noticeFDate','DD/MM/YYYY');
-				}
-				if(document.getElementById("noticeTDate")==null || document.getElementById("noticeTDate").value=="DD/MM/YYYY" 
-						|| document.getElementById("noticeTDate").value=="") {
-					waterMarkInitialize('noticeTDate','DD/MM/YYYY');
-				}
-			} 
 			
 	 		function performBeforeSubmit(obj) {
 	 			if(document.getElementById("noticeFDate").value=='DD/MM/YYYY') {
@@ -87,15 +92,15 @@
 		 		if(isBlob=='N'){
 		 			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="+noticeNumber+"&fileName="+noticeNumber+".pdf";
 			 	} else {
-			 		sUrl = "/ptis/reports/searchNotices!showNotice.action?noticeNumber="+noticeNumber;
+			 		sUrl = "/ptis/reports/searchNotices-showNotice.action?noticeNumber="+noticeNumber;
 				}
  				window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=200,width=400,status=yes');
  			}
 		</script>
 		<sx:head/>
 	</head>
-	<body onload="loadOnStartUp();">
-		<div align="left">
+	<body>
+		<div align="left" class="errortext">
   			<s:actionerror/>
   			<s:fielderror />
   		</div>
@@ -104,15 +109,15 @@
 				<div class="headingbg"><s:text name="SearchNoticeHeader"/></div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td  width="15%">&nbsp;</td>
-						<td  width="30%"><s:text name="OwnerName"/> :</td>
-						<td ><s:textfield  name="ownerName" maxlength="512" onblur="trim(this,this.value);checkNotSpecialCharForName(this);"/></td>
-						<td  colspan="2">&nbsp;</td>
+						<td  width="15%" class="greybox">&nbsp;</td>
+						<td  width="30%"  class="greybox"><s:text name="OwnerName"/> :</td>
+						<td  class="greybox"><s:textfield  name="ownerName" maxlength="512" onblur="trim(this,this.value);checkNotSpecialCharForName(this);"/></td>
+						<td  colspan="2"  class="greybox">&nbsp;</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="Zone"/> :</td>
-						<td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="Zone"/> :</td>
+						<td class="greybox">
 							<s:select name="zoneId" id="zoneId" list="dropdownData.Zone"
 								listKey="id" listValue="name" headerKey="-1"
 								headerValue="%{getText('default.select')}" value="%{zoneId}"
@@ -120,88 +125,82 @@
 							<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
 								dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 						</td>
-						<td colspan="2">&nbsp;</td>
+						<td colspan="2"  class="greybox">&nbsp;</td>
 					</tr>	
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="Ward"/> :</td>
-						<td><s:select name="wardId" id="wardId"
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="Ward"/> :</td>
+						<td class="greybox"><s:select name="wardId" id="wardId"
 								list="dropdownData.wardList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="%{getText('default.select')}"
 								value="%{wardId}"/>
 						</td>
-						<td  colspan="2">&nbsp;</td>
+						<td  colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>  
-						<td >&nbsp;</td>
-		    			<td ><s:text name="PropertyType"/> : </td>
-		    			<td >
+						<td class="greybox">&nbsp;</td>
+		    			<td class="greybox"><s:text name="PropertyType"/> : </td>
+		    			<td class="greybox">
 							<s:select name="propertyType" id="propTypeMaster" list="dropdownData.PropTypeMaster" listKey="id" listValue="type" 
 								headerKey="-1" headerValue="%{getText('default.select')}" value="%{propertyType}"/>
 		    			</td>
-		    			<td  colspan="2">&nbsp;</td>
+		    			<td  colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>  
-						<td >&nbsp;</td>
-		    			<td ><s:text name="NoticeType"/><span class="mandatory1">*</span> : </td>
-		    			<td >
+						<td class="greybox">&nbsp;</td>
+		    			<td class="greybox"><s:text name="NoticeType"/><span class="mandatory1">*</span> : </td>
+		    			<td class="greybox">
 							<s:select name="noticeType" id="noticeType" list="noticeTypeMap"
 								listKey="key" listValue="value" headerKey="-1" headerValue="%{getText('default.select')}"/>
 		    			</td>
-		    			<td  colspan="2">&nbsp;</td>
+		    			<td  colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>
-						<td >&nbsp;</td>
-						<td ><s:text name="noticeNum"/> :</td>
-						<td ><s:textfield  name="noticeNumber" onblur="trim(this,this.value);"/></td>
-						<td  colspan="2">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="noticeNum"/> :</td>
+						<td class="greybox"><s:textfield  name="noticeNumber" onblur="trim(this,this.value);"/></td>
+						<td  colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="noticeDateFrom"/> :</td>
-						<td>
-						<s:date name="noticeFromDate" var="noticeFromDt" format="dd/MM/yyyy"/>
-						<s:textfield  name="noticeFromDate" id="noticeFDate" maxlength="10" 
-								onkeyup="DateFormat(this,this.value,event,false,'3')" onfocus = "waterMarkTextIn('noticeFDate','DD/MM/YYYY');" 
-	        					onblur="validateDateFormat(this);waterMarkTextOut('noticeFDate','DD/MM/YYYY');" value="%{noticeFromDt}"/>
-	        		</td>
-						<td colspan="2">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="noticeDateFrom"/> :</td>
+						<td class="greybox">
+							<s:date name="noticeFromDate" var="noticeFDate" format="dd/MM/yyyy" />
+							<s:textfield name="noticeFromDate" cssClass="datepicker" value="%{noticeFDate}" autocomplete="off"
+								id="noticeFDate" size="12" maxlength="12"></s:textfield>
+	        			</td>
+						<td colspan="2" class="greybox" >&nbsp;</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="noticeDateTo"/> :</td>
-						<td>
-						<s:date name="noticeToDate" var="noticeToDt" format="dd/MM/yyyy"/>
-						<s:textfield  name="noticeToDate" id="noticeTDate" maxlength="10" 
-								onkeyup="DateFormat(this,this.value,event,false,'3')" onfocus = "waterMarkTextIn('noticeTDate','DD/MM/YYYY');" 
-	        					onblur="validateDateFormat(this);waterMarkTextOut('noticeTDate','DD/MM/YYYY');" value="%{noticeToDt}"/>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="noticeDateTo"/> :</td>
+						<td class="greybox">
+							<s:date name="noticeToDate" var="noticeTDate" format="dd/MM/yyyy" />
+							<s:textfield name="noticeToDate" cssClass="datepicker" value="%{noticeTDate}" autocomplete="off"
+								id="noticeTDate" size="12" maxlength="12"></s:textfield>
 						</td>
-						<td colspan="2">&nbsp;</td>
+						<td colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="prop.Id"/> :</td>
-						<td><s:textfield  name="indexNumber" onblur="trim(this,this.value);" value="%{indexNumber}" maxlength="30"/></td>
-						<td colspan="2">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="prop.Id"/> :</td>
+						<td class="greybox"><s:textfield  name="indexNumber" onblur="trim(this,this.value);" value="%{indexNumber}" maxlength="30"/></td>
+						<td colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
-						<td><s:text name="HouseNo"/> :</td>
-						<td><s:textfield  name="houseNumber" onblur="trim(this,this.value);" value="%{houseNumber}"/></td>
-						<td colspan="2">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox"><s:text name="HouseNo"/> :</td>
+						<td class="greybox"><s:textfield  name="houseNumber" onblur="trim(this,this.value);" value="%{houseNumber}"/></td>
+						<td colspan="2" class="greybox">&nbsp;</td>
 					</tr>
 				</table>
 			</div>
 			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-					 	<td><s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Search" method="search" onclick="return performBeforeSubmit(this);"/></td>
-					 	<%-- <td><s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Merge & Download" method="mergeAndDownload" onclick="return performBeforeSubmit(this);" /></td>
-					 	<td><s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Zip & Download" method="zipAndDownload" onclick="return performBeforeSubmit(this);" /></td>
-					 	<td><s:submit type="submit" cssClass="button" value="Reset" method="reset" onclick="return performBeforeSubmit(this);"/></td> --%>
-					 	<td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
-					</tr>
-				</table>
+				<s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Search" method="search" onclick="return performBeforeSubmit(this);"/>
+				<s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Merge & Download" method="mergeAndDownload" onclick="return performBeforeSubmit(this);" />
+				<s:submit name="button32" type="submit" cssClass="buttonsubmit" id="button32" value="Zip & Download" method="zipAndDownload" onclick="return performBeforeSubmit(this);" />
+				<s:submit type="submit" cssClass="button" value="Reset" method="reset" onclick="return performBeforeSubmit(this);"/>
+				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/>
 			</div>
 	</s:form>
 	<s:if test="!noticeList.isEmpty()">
@@ -211,8 +210,8 @@
 					<span class="searchvalue1">Search Criteria :</span> 
 					<s:if test="noticeType!='-1'"><s:text name="NoticeType"/>: <span class="mandatory"><s:property value="noticeType"/></span></s:if>
 					<s:if test="ownerName!=''">, <s:text name="OwnerName"/>: <span class="mandatory"><s:property value="ownerName"/></span></s:if>
-					<s:if test="zoneId!='-1'">, <s:text name="Zone"/>: <span class="mandatory"><s:property value="%{getBoundary(zoneId)}" /></span></s:if>
-					<s:if test="wardId!='-1'">, <s:text name="Ward"/>: <span class="mandatory"><s:property value="%{getBoundary(wardId)}" /></span></s:if>
+					<s:if test="zoneId!=-1">, <s:text name="Zone"/>: <span class="mandatory"><s:property value="%{getBoundary(zoneId)}" /></span></s:if>
+					<s:if test="wardId!=-1">, <s:text name="Ward"/>: <span class="mandatory"><s:property value="%{getBoundary(wardId)}" /></span></s:if>
 					<s:if test="propertyType!='-1'">, <s:text name="PropertyType"/>: <span class="mandatory"><s:property value="%{getPropType(propertyType)}"/></span></s:if>
 					<s:if test="noticeNumber!=''">, <s:text name="noticeNum"/>: <span class="mandatory"><s:property value="noticeNumber"/></span></s:if>
 					<s:if test="noticeFromDate!=null">, 
@@ -247,15 +246,11 @@
 			
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Index Number"
 			 	style="text-align:center;width:10%;">
-				<s:iterator status="stat1" value="#attr.currentRowObject.basicProperty" >
-		    		<s:property value="upicNo"/>
-		    	</s:iterator>
+		    	<s:property value="#attr.currentRowObject.basicProperty.upicNo"/>
 	    	</display:column>
 	    	
 	    	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="House Number" style="text-align:center;width:10%;">
-		    	<s:iterator status="stat1" value="#attr.currentRowObject.basicProperty.address">
-		    		<s:property value="houseNoBldgApt"/>
-		    	</s:iterator>
+		    	<s:property value="#attr.currentRowObject.basicProperty.address.houseNoBldgApt"/>
 	    	</display:column>
 	  		
 	  		<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Name(s) of Owner" style="text-align:center;width:10%;">
@@ -264,12 +259,7 @@
 			
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Property Address"
 				style="text-align:center;width:10%;">
-				<s:iterator status="stat1" value="#attr.currentRowObject.basicProperty.address">
-		    		<s:property value="houseNoBldgApt"/>
-		    		<s:if test="pinCode!=null">
-		    		 ,<s:property value="pinCode"/>
-		    		</s:if>
-		    	</s:iterator>
+		    	<s:property value="#attr.currentRowObject.basicProperty.address"/>
 			</display:column>
 	    	
 			<display:setProperty name="export.csv" value="false" />

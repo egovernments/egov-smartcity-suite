@@ -110,14 +110,14 @@ import com.lowagie.text.pdf.PdfWriter;
 @Namespace("/reports")
 @ResultPath("/WEB-INF/jsp/")
 @Results({
-    @Result(name = "success", location = "fileStream", params = { "contentType", "${contentType}",
-            "contentDisposition", "attachment; filename=${fileName}" }),
-            @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
-            @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
+        @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}", "inputName",
+                "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
+        @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
+        @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
     private static final long serialVersionUID = 1L;
-    private static final String SUCCESS = "success";
+    protected static final String SUCCESS = "success";
     private static final String ERROR = "error";
     private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp";
     private static final String BILL_FROM_CLAUSE = " from EgBill bill, PtNotice notice left join notice.basicProperty bp";
@@ -187,6 +187,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return INDEX;
     }
 
+    @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-mergeAndDownload")
     public String mergeAndDownload() throws ValidationException {
         LOGGER.debug("Entered into mergeAndDownload method");
@@ -234,6 +235,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return null;
     }
 
+    @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-zipAndDownload")
     public String zipAndDownload() throws ValidationException {
         LOGGER.debug("Entered into zipAndDownload method");
@@ -289,6 +291,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @throws IOException
      */
     @SkipValidation
+    @Action(value = "/searchNotices-showNotice")
     public String showNotice() throws IOException {
         final PtNotice ptNotice = (PtNotice) getPersistenceService().find("from PtNotice notice where noticeNo=?",
                 noticeNumber);
@@ -310,6 +313,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return SUCCESS;
     }
 
+    @SkipValidation
     @Action(value = "/searchNotices-reset")
     public String reset() {
         LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
@@ -327,7 +331,7 @@ public class SearchNoticesAction extends SearchFormAction {
         indexNumber = "";
         houseNumber = "";
         LOGGER.debug("Exit from reset method");
-        return EDIT;
+        return INDEX;
     }
 
     @Override
@@ -367,12 +371,12 @@ public class SearchNoticesAction extends SearchFormAction {
         LOGGER.debug("Exit from prepareWardDropDownData method");
     }
 
-    public String getBoundary(final Integer boundaryId) {
+    public String getBoundary(final Long boundaryId) {
         LOGGER.debug("Entered into getBoundary method");
         LOGGER.debug("Boundary Id : " + boundaryId);
         Boundary bndry = null;
-        if (boundaryId != null && !boundaryId.equals(Integer.valueOf(-1)))
-            bndry = (Boundary) getPersistenceService().find("from BoundaryImpl BI where id = ?", boundaryId);
+        if (boundaryId != null && !boundaryId.equals(-1))
+            bndry = boundaryService.getBoundaryById(boundaryId);
         LOGGER.debug("Boundary : " + bndry);
         LOGGER.debug("Exit from getBoundary method");
         return bndry.getName();
