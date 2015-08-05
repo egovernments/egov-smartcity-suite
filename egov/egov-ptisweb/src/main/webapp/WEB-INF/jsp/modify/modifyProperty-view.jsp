@@ -208,6 +208,23 @@
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)}">
+						<div id="workflowCommentsDiv" align="center">
+					         <table width="100%">
+								<tr>
+						        	<td width="10%" class="bluebox">&nbsp;</td>
+						           	<td width="20%" class="bluebox">&nbsp;</td>
+						           	<td class="bluebox" width="13%">Approver Remarks: </td>
+						           	<td class="bluebox"> 
+						           		<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
+						           	</td>
+						           	<td class="bluebox">&nbsp;</td>
+						           	<td width="10%" class="bluebox">&nbsp;</td>
+						           	<td class="bluebox">&nbsp;</td>
+						           	</tr>
+					         </table>
+					  </div>   
+					</s:if>
 					<s:hidden name="modelId" id="modelId" value="%{modelId}" />
 					<tr>
 						<font size="2"><div align="left" class="mandatory">
