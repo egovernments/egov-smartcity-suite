@@ -191,15 +191,15 @@ public class DashboardService {
         List<Object[]> topFiveCompTypeData = dashboardRepository.fetchTopComplaintsBetween(
                 startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
         List<Object> dataHolder = new LinkedList<Object>();
-        int index = 1;
+        int index = 0;
         Map<String, Object> data = new HashMap<String, Object>();
         List<Integer> compCount = new ArrayList<Integer>();
         for (final Object[] top5CompType : topFiveCompTypeData) {
-                if (index < topFiveCompTypeData.size()) {
-                        compCount.add(((BigInteger) top5CompType[1]).intValue());
+                if (index < 5) {
+                        compCount.add(((BigDecimal) top5CompType[1]).intValue());
                         index++;
                 } else {
-                        compCount.add(((BigInteger) top5CompType[1]).intValue());
+                        compCount.add(((BigDecimal) top5CompType[1]).intValue());
                         data.put("name", String.valueOf(top5CompType[2]));
                         data.put("data", new LinkedList<Integer>(compCount));
                         dataHolder.add(new LinkedHashMap<String, Object>(data));
