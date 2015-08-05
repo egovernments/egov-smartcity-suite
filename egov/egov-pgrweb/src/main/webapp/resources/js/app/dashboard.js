@@ -117,13 +117,13 @@ function performanceGIS() {
 		var marker_image;
 		var infoClass = "panel-red";
 		if (index < 3) {
-			marker_image = 'http://maps.google.com/mapfiles/ms/micons/green-dot.png';
+			marker_image = 'https://maps.google.com/mapfiles/ms/micons/green-dot.png';
 			infoClass = "panel-green";
 		} else if(index < length-3) {
-	        marker_image = 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png';
+	        marker_image = 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png';
 	        infoClass = "panel-yellow";
 	    } else {
-	    	marker_image = 'http://maps.google.com/mapfiles/ms/micons/red-dot.png';
+	    	marker_image = 'https://maps.google.com/mapfiles/ms/micons/red-dot.png';
 	    }
 		var marker = new google.maps.Marker({
 	        position: new google.maps.LatLng(data.lat,data.lng),
@@ -916,13 +916,13 @@ function slaGIS() {
 		var marker_image;
 		var infoClass = "panel-green"; 
 		if (index < 3) {
-			marker_image = 'http://maps.google.com/mapfiles/ms/micons/red-dot.png';
+			marker_image = 'https://maps.google.com/mapfiles/ms/micons/red-dot.png';
 	        infoClass = "panel-red";	        
 		} else if(index < length-3) {
-	        marker_image = 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png';
+	        marker_image = 'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png';
 	        infoClass = "panel-yellow";
 	    } else {
-	    	marker_image = 'http://maps.google.com/mapfiles/ms/micons/green-dot.png';
+	    	marker_image = 'https://maps.google.com/mapfiles/ms/micons/green-dot.png';
 	    }
 		var marker = new google.maps.Marker({
 	        position: new google.maps.LatLng(data.lat,data.lng),
@@ -1194,13 +1194,14 @@ function overviewGis(gisData){
 					infoWin.setPosition(event.latLng);
 					infoWin.open(map);
 			    });
-				bounds.union(gpolygon.bounds);
+				bounds.union(gpolygon.bounds);				
 			} else {
 				google.maps.event.addListener(gpolygon,"mouseout",function(event) {
 					infoWin.close();
 			    });
-				gpolygon.setOptions({fillColor: "whitesmoke", strokeColor: "gray", fillOpacity: 0.3});
+				gpolygon.setOptions({fillColor: "green", strokeColor: "gray", fillOpacity: 0.3});
 			}
+	    	
 		});
 	    map.fitBounds(bounds);
 	    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(createPieInGmap());
@@ -1208,7 +1209,7 @@ function overviewGis(gisData){
 	};
 
 	var geoXml=new geoXML3.parser({map: map, singleInfoWindow: true,suppressInfoWindows: true,afterParse:drawPolygonColor});
-	geoXml.parse(kmlURL);	 
+	geoXml.parse(kmlURL);
 }
 
 function createPieInGmap() {
@@ -1370,12 +1371,12 @@ function gisSearch() {
 		var marker_image;
 		var infoClass = "alert-success";    
 		if (data.compCount <= 10)
-	        marker_image = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+	        marker_image = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
 	    else if(data.compCount > 10 && data.compCount <= 50) {
-	        marker_image = 'http://maps.google.com/mapfiles/ms/icons/pink-dot.png';
+	        marker_image = 'https://maps.google.com/mapfiles/ms/icons/pink-dot.png';
 	        infoClass = "alert-warning";
 	    } else {
-	        marker_image = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+	        marker_image = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
 	        infoClass = "alert-danger";
 	    }
 		
