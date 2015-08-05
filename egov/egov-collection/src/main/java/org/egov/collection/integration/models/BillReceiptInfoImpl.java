@@ -40,6 +40,7 @@
 package org.egov.collection.integration.models;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,7 +56,6 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.
@@ -182,7 +182,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 	/* (non-Javadoc)
 	 * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptDate()
 	 */
-	public DateTime getReceiptDate() {
+	public Date getReceiptDate() {
 		return receiptHeader.getReceiptdate();
 	}
 

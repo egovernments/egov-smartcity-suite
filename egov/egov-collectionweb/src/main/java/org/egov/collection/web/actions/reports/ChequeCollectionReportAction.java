@@ -47,21 +47,23 @@ import java.util.Map;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
   
   
-@ParentPackage("egov")  
-@Transactional(readOnly=true)
+@ParentPackage("egov") 
+@Results({
+    @Result(name=ChequeCollectionReportAction.INDEX,location="chequeCollectionReport-index.jsp"),
+    @Result(name=ChequeCollectionReportAction.REPORT,location="chequeCollectionReport-report.jsp") })
 public class ChequeCollectionReportAction extends BaseFormAction{  
 	
 private static final long serialVersionUID = 1L;
@@ -179,6 +181,7 @@ private static final long serialVersionUID = 1L;
 	 * 
 	 * @return view
 	 */
+	@Action(value="/reports/chequeCollectionReport-report")
 	public String report() {
 		ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE,
 				critParams, ReportDataSourceType.SQL);
@@ -187,7 +190,7 @@ private static final long serialVersionUID = 1L;
 		return REPORT;
 	}
 	
-	@Action(value="/reports/chequeCollectionReport-criteria",results = { @Result(name = INDEX,type="redirect")})
+	@Action(value="/reports/chequeCollectionReport-criteria")
 	public String criteria() {
 		return INDEX;
 	}

@@ -47,6 +47,7 @@ import java.util.Map;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
@@ -61,7 +62,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Action class for the receipt register report
  */
 @ParentPackage("egov")	
-@Transactional(readOnly=true)
+@Results({
+    @Result(name=ReceiptRegisterReportAction.INDEX,location="receiptRegisterReport-index.jsp"),
+    @Result(name=ReceiptRegisterReportAction.REPORT,location="receiptRegisterReport-report.jsp") })
 public class ReceiptRegisterReportAction extends ReportFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -191,10 +194,10 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/receiptRegisterReport!criteria", results = { @Result(name = INDEX,type="redirect")})
+	@Action(value="/reports/receiptRegisterReport-criteria")
 	public String criteria() {
 		// Setup drop down data for department list
-		addRelatedEntity("department", Department.class, "deptName");
+		addRelatedEntity("department", Department.class, "name");
 		addRelatedEntity("status", EgwStatus.class, "description");
 		setupDropdownDataExcluding();
 		
@@ -209,6 +212,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 
 		return INDEX;
 	}
+	
+	@Override
+        @Action(value="/reports/receiptRegisterReport-report")
+            public String report() {
+                return super.report();
+            }
 
 	@Override
 	protected String getReportTemplateName() {

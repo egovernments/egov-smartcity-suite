@@ -93,7 +93,7 @@ public class BillTaxCollection {
 				billRecpt.setBillId(egBill);
 				billRecpt.setReceiptAmt(totalCollectedAmt);
 				billRecpt.setReceiptNumber(bri.getReceiptNum());
-				billRecpt.setReceiptDate(bri.getReceiptDate().toDate());
+				billRecpt.setReceiptDate(bri.getReceiptDate());
 				billRecpt.setCollectionStatus(bri.getReceiptStatus().getCode());
 				billRecpt.setIsCancelled(Boolean.FALSE);
 				billRecpt.setCreatedBy(bri.getCreatedBy());

@@ -357,7 +357,7 @@ public class CollectionsUtil {
 		current.clear(Calendar.MILLISECOND);
 
 		Calendar validityStart = Calendar.getInstance();
-		validityStart.setTime(challan.getChallanDate().toDate());
+		validityStart.setTime(challan.getChallanDate());
 		validityStart.clear(Calendar.HOUR_OF_DAY);
 		validityStart.clear(Calendar.MINUTE);
 		validityStart.clear(Calendar.SECOND);

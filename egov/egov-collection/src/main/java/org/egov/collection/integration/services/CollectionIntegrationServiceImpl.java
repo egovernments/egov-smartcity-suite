@@ -32,7 +32,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

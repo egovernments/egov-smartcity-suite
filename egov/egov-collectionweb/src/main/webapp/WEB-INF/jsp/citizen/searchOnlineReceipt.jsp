@@ -206,7 +206,7 @@ function transitionStates(){
 		    remarks[i].disabled=false;
 	}
 	
-	document.searchOnlineReceiptForm.action="onlineReceipt!reconcileOnlinePayment.action";
+	document.searchOnlineReceiptForm.action="onlineReceipt-reconcileOnlinePayment.action";
 	document.searchOnlineReceiptForm.submit();
 }
 
@@ -231,7 +231,7 @@ function transitionStates(){
 	    <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>
 	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.servicetype"/></td>
-	      <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchOnlineReceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="serviceName" value="%{serviceTypeId}" /> </td>
+	      <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('searchOnlineReceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
 	      <td width="21%" class="bluebox2">&nbsp;</td>
 	      <td width="30%" class="bluebox2">&nbsp;</td>
 	    </tr>
@@ -239,10 +239,10 @@ function transitionStates(){
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchOnlineReceipts.criteria.fromdate"/></td>
 		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	      <td width="21%" class="bluebox"><s:text name="searchOnlineReceipts.criteria.todate"/></td>
 	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="${pageContext.request.contextPath}/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>
@@ -287,9 +287,9 @@ function transitionStates(){
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" property="receiptHeader.referencenumber"  format="{0,date,dd/MM/yyyy}" style="width:6%;text-align: center" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Reference ID" property="receiptHeader.id" style="width:8%;text-align:center"  />
 	
-	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" property="receiptHeader.receiptMisc.department.deptName" style="width:8%;text-align:center"  />
+	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" property="receiptHeader.receiptMisc.department.name" style="width:8%;text-align:center"  />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Amount (Rs.)" property="receiptHeader.totalAmount" style="width:4%;text-align: center" format="{0, number, #,##0.00}" />
-	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" property="receiptHeader.service.serviceName" style="width:10%; text-align: right" />
+	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Type" property="receiptHeader.service.name" style="width:10%; text-align: right" />
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" property="status.description" style="width:8%" />  
 	<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Change Status" style="width:8%">
 		<s:select name="statusCode" id="statusCode" cssClass="selectwk" headerKey="-1" headerValue="%{getText('searchOnlineReceipts.default.transition.transaction.status')}" 
