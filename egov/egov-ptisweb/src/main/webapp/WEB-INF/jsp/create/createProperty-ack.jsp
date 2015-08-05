@@ -67,7 +67,7 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:hidden name="modelId" id="modelId" value="%{id}" />
 					<tr>
-						<s:if test="mode == 'create' && @org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN.equalsIgnoreCase(userDesgn)">
+						<s:if test="mode == 'create' && @org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)">
 							<s:if test="%{basicProperty.applicationNo != null && !basicProperty.applicationNo.isEmpty()}">
 								<td colspan="5" style="font-size: 15px;" align="center"><span
 									class="bold"><s:property value="%{ackMessage}" /> <s:property

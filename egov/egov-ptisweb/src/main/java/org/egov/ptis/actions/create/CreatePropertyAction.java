@@ -314,7 +314,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.persist(basicProperty);
         buildSMS(property);
         setBasicProp(basicProperty);
-        setAckMessage("Property Created Successfully in System with application number : ");
+        setAckMessage("Property Created Successfully in System and forwarded to " +getApproverName()+" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("create: Property creation ended");
