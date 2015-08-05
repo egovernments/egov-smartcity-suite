@@ -69,6 +69,8 @@
 					<c:otherwise>N/A</c:otherwise>
 				</c:choose>
 			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhaar"/></div>
+			<div class="col-xs-3 add-margin view-content" id="aadhaar"></div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.ptassesmentnumber"/></div>

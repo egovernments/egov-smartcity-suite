@@ -36,6 +36,7 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
+						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);

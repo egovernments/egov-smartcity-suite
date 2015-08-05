@@ -156,6 +156,7 @@ $(document).ready(function(){
 								else
 									boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 							}
+							$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
 							$("#locality").val(response.boundaryDetails.localityName);
 							$("#zonewardblock").val(boundaryData);
 							$("#propertytax").val(response.propertyDetails.currentTax);

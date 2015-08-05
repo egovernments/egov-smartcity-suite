@@ -187,10 +187,7 @@ public class WaterConnectionDetailsService {
                 waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
         waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
         if (appProcessTime != null) {
-            final Calendar c = Calendar.getInstance();
-            c.setTime(waterConnectionDetails.getApplicationDate());
-            c.add(Calendar.DATE, appProcessTime);
-            waterConnectionDetails.setDisposalDate(c.getTime());
+            waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         }
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
@@ -545,13 +542,17 @@ public class WaterConnectionDetailsService {
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 changeOfUse.getApplicationType(), changeOfUse.getCategory());
         if (appProcessTime != null) {
-            final Calendar c = Calendar.getInstance();
-            c.setTime(changeOfUse.getApplicationDate());
-            c.add(Calendar.DATE, appProcessTime);
-            changeOfUse.setDisposalDate(c.getTime());
+            changeOfUse.setDisposalDate(getDisposalDate(changeOfUse, appProcessTime));
         }
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
         return savedChangeOfUse;
+    }
+
+    private Date getDisposalDate(final WaterConnectionDetails changeOfUse, final Integer appProcessTime) {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(changeOfUse.getApplicationDate());
+        c.add(Calendar.DATE, appProcessTime);
+        return c.getTime();
     }
 
     public void setApplicantName(final String applicantName) {

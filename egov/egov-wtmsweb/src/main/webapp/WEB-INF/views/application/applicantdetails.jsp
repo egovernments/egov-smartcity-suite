@@ -98,4 +98,9 @@
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control text-right" id="propertytax"  disabled value="0.00"> 
 	</div>	
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.aadhaar" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-left" id="aadhaar"  disabled> 
+	</div>	
 </div>					
