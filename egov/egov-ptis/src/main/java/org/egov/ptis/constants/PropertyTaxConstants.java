@@ -67,6 +67,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
+    
+        public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
 	// General constants used across Clients
 	public static final String PTMODULENAME = "Property Tax";
 	public static final String PTISCONFIGFILE = "ptis_egov_config.xml";
