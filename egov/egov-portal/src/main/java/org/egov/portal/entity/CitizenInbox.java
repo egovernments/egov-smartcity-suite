@@ -65,7 +65,6 @@ import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
-import org.joda.time.DateTime;
 
 /**
  * CitizenInbox class
@@ -194,8 +193,8 @@ public class CitizenInbox extends AbstractAuditable {
         this.read = read;
     }
 
-    public DateTime getMessageDate() {
-        return new DateTime(messageDate);
+    public Date getMessageDate() {
+        return messageDate;
     }
 
     public void setMessageDate(final Date messageDate) {
