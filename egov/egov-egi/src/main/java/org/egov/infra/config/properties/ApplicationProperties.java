@@ -150,6 +150,14 @@ public class ApplicationProperties {
         return environment.getProperty("multitenancy.enabled", Boolean.class);
     }
 
+    public String redisHost() {
+        return environment.getProperty("redis.host.name");
+    }
+
+    public int redisPort() {
+        return environment.getProperty("redis.host.port", Integer.class);
+    }
+
     public String getProperty(final String propCode) {
         return environment.getProperty(propCode, "");
     }
