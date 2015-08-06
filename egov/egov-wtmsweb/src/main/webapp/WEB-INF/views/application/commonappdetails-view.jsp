@@ -121,8 +121,8 @@
 					<div class="col-xs-3 add-margin view-content">N/A</div>
 				</c:otherwise>
 			</c:choose>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.arrear.due"/></div>
-			<div class="col-xs-3 add-margin view-content">N/A</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
+			<div class="col-xs-3 add-margin view-content" id="nooffloors"></div>
 		</div>
 	</div>
 

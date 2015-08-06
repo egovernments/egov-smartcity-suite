@@ -57,6 +57,7 @@ public class PropertyDetails implements Serializable {
 	private String propertyUsage;
 	private BigDecimal currentTax;
 	private BigDecimal arrearTax;
+	private Integer noOfFloors;
 	
 	public String getPropertyType() {
 		return propertyType;
@@ -88,7 +89,13 @@ public class PropertyDetails implements Serializable {
 	public void setArrearTax(BigDecimal arrearTax) {
 		this.arrearTax = arrearTax;
 	}
-	@Override
+	public Integer getNoOfFloors() {
+        return noOfFloors;
+    }
+    public void setNoOfFloors(Integer noOfFloors) {
+        this.noOfFloors = noOfFloors;
+    }
+    @Override
 	public String toString() {
 		return "PropertyDetails [propertyType=" + propertyType + ", taxDue=" + taxDue + ", propertyUsage="
 				+ propertyUsage + "]";

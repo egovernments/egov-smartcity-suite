@@ -85,6 +85,16 @@ public class WaterTaxUtils {
                 WaterTaxConstants.MODULE_NAME, "MULTIPLENEWCONNECTIONFORPID").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
+    
+    public Boolean isConnectionAllowedIfWTDuePresent(final String connectionType) {
+        Boolean isAllowed = false; 
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, connectionType);
+        if(null!=appConfigValue && !appConfigValue.isEmpty())
+            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+        
+        return isAllowed;
+    }
 
     public String documentRequiredForBPLCategory() {
         String documentName = null;

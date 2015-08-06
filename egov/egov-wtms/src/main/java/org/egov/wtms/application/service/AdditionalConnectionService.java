@@ -35,6 +35,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class AdditionalConnectionService {
     @Autowired
     private PropertyExternalService propertyExternalService;
 
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+    
+    public static final String ADDCONNALLOWEDIFWTDUE = "ADDCONNECTIONALLOWEDIFWTDUE";
+
     public String validateAdditionalConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
         String validationMessage = "";
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
@@ -66,18 +72,21 @@ public class AdditionalConnectionService {
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
-        else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue() > 0)
-            validationMessage = messageSource.getMessage("err.validate.primary.connection.watertax.due", null, null);
-        else if (assessmentDetails.getErrorDetails() != null
-                && assessmentDetails.getErrorDetails().getErrorCode() != null)
+        else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue() > 0) {
+            if(!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
+                validationMessage = messageSource.getMessage("err.validate.primary.connection.watertax.due", null, null); 
+        }
+        else if (null!=assessmentDetails.getErrorDetails()
+                && null!=assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (assessmentDetails.getPropertyDetails() != null
-                && assessmentDetails.getPropertyDetails().getTaxDue() != null
-                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
-            validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
-                    assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                    parentWaterConnectionDetail.getConnection().getPropertyIdentifier() }, null);
-        else if (null != inWorkflow)
+        else if (null!=assessmentDetails.getPropertyDetails()
+                && null!=assessmentDetails.getPropertyDetails().getTaxDue()
+                && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
+            if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                        assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier() }, null);
+        } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),

@@ -85,7 +85,7 @@ public abstract class GenericWorkFlowController {
         if (null == getModel() || null == getModel().getId()) {
             validActions = Arrays.asList("Forward");
         } else {
-            if (getModel().getCurrentState() != null) {
+            if (null!=getModel().getCurrentState()) {
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
                         .getStateType(), container.getWorkFlowDepartment(),
                          container.getAmountRule(),
@@ -107,8 +107,8 @@ public abstract class GenericWorkFlowController {
     public String getNextAction(@ModelAttribute("workflowcontainer") WorkflowContainer container) {
 
         WorkFlowMatrix wfMatrix = null;
-        if ( getModel()!=null && getModel().getId() != null) {
-            if (getModel().getCurrentState() != null) {
+        if (null != getModel() && null != getModel().getId()) {
+            if (null!=getModel().getCurrentState()) {
                 wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), getModel()
                                 .getCurrentState().getValue(), container.getPendingActions(), getModel()

@@ -156,6 +156,7 @@ $(document).ready(function(){
 									applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
 							}
 							$("#applicantname").val(applicantName);
+							$("#nooffloors").val(response.propertyDetails.noOfFloors);
 							if(response.ownerNames[0].mobileNumber != '')
 								$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
 							if(response.ownerNames[0].emailId != '')

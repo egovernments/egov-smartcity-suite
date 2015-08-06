@@ -78,8 +78,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private WaterConnectionService waterConnectionService;
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
-
-   private  WaterConnectionDetails parentConnectionDetails;
+    
+    private  WaterConnectionDetails addConnection;
+    
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
         addConnection.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION));
@@ -87,7 +88,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     }
 
     @RequestMapping(value = "/addconnection/{consumerCode}", method = RequestMethod.GET)
-    public String showAdditionalApplicationForm(@ModelAttribute final WaterConnectionDetails addConnection,
+    public String showAdditionalApplicationForm(WaterConnectionDetails parentConnectionDetails,@ModelAttribute final WaterConnectionDetails addConnection,
             final Model model, @PathVariable final String consumerCode) {
         parentConnectionDetails = waterConnectionDetailsService
                 .getParentConnectionDetails(consumerCode, ConnectionStatus.ACTIVE);
@@ -165,7 +166,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
     
     @ModelAttribute
     public StateAware getModel() {
-      return parentConnectionDetails;
+      return addConnection;
         
     }
     public String getAdditionalRule() {
