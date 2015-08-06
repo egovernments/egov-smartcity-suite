@@ -114,8 +114,7 @@ public class WaterTaxUtils {
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() },
-                null);
+                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
         return smsMsg;
     }
 
@@ -128,8 +127,7 @@ public class WaterTaxUtils {
         smsService.sendSMS(smsBody, "91" + mobileNumber);
     }
 
-    public void sendEmailOnWaterConnection(final String email, final String emailBody,
-            final String emailSubject) {
+    public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
         emailService.sendMail(email, emailBody, emailSubject);
     }
 
