@@ -56,7 +56,7 @@ public class AdditionalConnectionService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
+
     public static final String ADDCONNALLOWEDIFWTDUE = "ADDCONNECTIONALLOWEDIFWTDUE";
 
     public String validateAdditionalConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
@@ -72,20 +72,21 @@ public class AdditionalConnectionService {
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
-        else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue() > 0) {
-            if(!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
-                validationMessage = messageSource.getMessage("err.validate.primary.connection.watertax.due", null, null); 
-        }
-        else if (null!=assessmentDetails.getErrorDetails()
-                && null!=assessmentDetails.getErrorDetails().getErrorCode())
+        else if (null != assessmentDetails.getErrorDetails()
+                && null != assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (null!=assessmentDetails.getPropertyDetails()
-                && null!=assessmentDetails.getPropertyDetails().getTaxDue()
+        else if (null != assessmentDetails.getPropertyDetails()
+                && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
                 validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier() }, null);
+                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),"additional" }, null);
+        } else if (parentWaterConnectionDetail.getDemand().getBaseDemand().doubleValue()
+                - parentWaterConnectionDetail.getDemand().getAmtCollected().doubleValue() > 0) {
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE))
+                validationMessage = messageSource
+                .getMessage("err.validate.primary.connection.watertax.due", null, null);
         } else if (null != inWorkflow)
             validationMessage = messageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",

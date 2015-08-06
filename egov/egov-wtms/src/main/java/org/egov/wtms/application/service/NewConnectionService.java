@@ -98,7 +98,7 @@ public class NewConnectionService {
              **/
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
                 errorMessage = messageSource.getMessage("err.validate.property.taxdue",
-                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber }, null);
+                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber,"new" }, null);
         return errorMessage;
     }
 }
