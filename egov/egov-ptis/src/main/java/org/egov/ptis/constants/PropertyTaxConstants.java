@@ -992,4 +992,10 @@ public interface PropertyTaxConstants {
 
         }
     };
+    
+    //Application Types
+    
+    public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New Assessment";
+    public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter Assessment";
+    
 }

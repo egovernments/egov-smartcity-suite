@@ -60,7 +60,6 @@ import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
-	private String applicationNo;
 	private Boolean active;
 	private String upicNo;
 	private PropertyID propertyID;
@@ -610,16 +609,6 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
 	public void setInactiveProperty(PropertyImpl inactiveProperty) {
 		this.inactiveProperty = inactiveProperty;
-	}
-
-	@Override
-	public String getApplicationNo() {
-		return applicationNo;
-	}
-
-	@Override
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
 	}
 
 	@Override

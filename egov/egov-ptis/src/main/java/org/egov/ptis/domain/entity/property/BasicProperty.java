@@ -232,10 +232,6 @@ public interface BasicProperty {
 
 	public void setInactiveProperty(PropertyImpl inactiveProperty);
 	
-	public String getApplicationNo();
-	
-	public void setApplicationNo(String applicationNo);
-	
 	public String getVacantLandAssmtNo();
 	
 	public void setVacantLandAssmtNo(String vacantLandAssmtNo);

@@ -77,7 +77,6 @@
 		<property name="taxCalculator" ref="taxCalculator" />
 		<property name="eisCommonsService" ref="eisCommonsService" />
 		<property name="basicPropertyService" ref="basicPropertyService" />
-		<property name="ptNumberGenerator" ref="propertyTaxNumberGenerator" />  
 	</bean> 
   
     

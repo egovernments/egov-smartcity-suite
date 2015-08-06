@@ -399,7 +399,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 reportParams.put("currentDate", sdf.format(new Date()));
                 reportParams.put("receivedOn", sdf.format(objection.getRecievedOn()));
                 reportParams.put("docNumberObjection", objection.getObjectionNumber());
-                reportParams.put("HouseNo", objection.getBasicProperty().getApplicationNo());
+                reportParams.put("HouseNo", objection.getBasicProperty().getProperty().getApplicationNo());
                 reportParams.put("hearingTime", objection.getHearings().get(objection.getHearings().size() - 1)
                         .getHearingTime());
     
@@ -667,7 +667,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         
                     reportParams.put("currentDate", sdf.format(new Date()));
                     reportParams.put("receivedOn", sdf.format(objection.getRecievedOn()));
-                    reportParams.put("HouseNo", objection.getBasicProperty().getApplicationNo());
+                    reportParams.put("HouseNo", objection.getBasicProperty().getProperty().getApplicationNo());
                     reportParams.put("wardNumber", objection.getBasicProperty().getBoundary());
                     reportParams.put("AnnualPropertyTaxTo",
                             (currentDemand.get(CURR_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2)));

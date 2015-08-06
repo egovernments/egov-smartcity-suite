@@ -39,7 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.actions.modify;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
@@ -69,6 +71,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
@@ -113,7 +116,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
@@ -155,12 +157,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({
-        @Result(name = "ack", location = "modify/modifyProperty-ack.jsp"),
-        @Result(name = "edit", location = "modify/modifyProperty-new.jsp"),
-        @Result(name = "new", location = "modify/modifyProperty-new.jsp"),
-        @Result(name = "view", location = "modify/modifyProperty-view.jsp"),
-        @Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
-        @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
+    @Result(name = "ack", location = "modify/modifyProperty-ack.jsp"),
+    @Result(name = "edit", location = "modify/modifyProperty-new.jsp"),
+    @Result(name = "new", location = "modify/modifyProperty-new.jsp"),
+    @Result(name = "view", location = "modify/modifyProperty-view.jsp"),
+    @Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
+    @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
     private static final long serialVersionUID = 1L;
@@ -310,9 +312,8 @@ public class ModifyPropertyAction extends WorkflowAction {
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             if (propWF == null && (propertyModel == null || propertyModel.getId() == null))
                 propertyImpl = (PropertyImpl) oldProperty.createPropertyclone();
-            else {
+            else
                 propertyImpl = propWF != null ? propWF : propertyModel;
-            }
             setProperty(propertyImpl);
             setOwnerName(basicProp.getFullOwnerName());
             setPropAddress(basicProp.getAddress().toString());
@@ -340,10 +341,10 @@ public class ModifyPropertyAction extends WorkflowAction {
             propTypeId = propertyType.getId().toString();
             if (propertyModel.getPropertyDetail().getPropertyUsage() != null)
                 propUsageId = propertyModel.getPropertyDetail().getPropertyUsage().getId()
-                        .toString();
+                .toString();
             if (propertyModel.getPropertyDetail().getPropertyOccupation() != null)
                 propOccId = propertyModel.getPropertyDetail().getPropertyOccupation().getId()
-                        .toString();
+                .toString();
             setDocNumber(propertyModel.getDocNumber());
             if (propertyModel.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(propertyModel);
@@ -458,6 +459,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         addActionMessage(getText("property.forward.success", new String[] { propertyModel
@@ -487,6 +489,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         addActionMessage(getText("property.forward.success", new String[] { propertyModel
@@ -520,7 +523,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE
-                        .equals(modifyRsn)) {
+                .equals(modifyRsn)) {
             // createVoucher(); // Creates voucher
         }
 
@@ -542,6 +545,7 @@ public class ModifyPropertyAction extends WorkflowAction {
             updateAddress();
 
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         setBasicProp(basicProp);
         setAckMessage(getText("property.approve.succes", new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         addActionMessage(getText("property.approve.success", new String[] { propertyModel
@@ -554,19 +558,26 @@ public class ModifyPropertyAction extends WorkflowAction {
     @Action(value = "/modifyProperty-reject")
     public String reject() {
         LOGGER.debug("reject: Property rejection started");
+        if (isBlank(approverComments)) {
+            addActionError(getText("property.workflow.remarks"));
+            if (REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)
+                    || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn))
+                return NEW;
+            else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesgn)
+                    || COMMISSIONER_DESGN.equalsIgnoreCase(userDesgn)
+                    || REVENUE_OFFICER_DESGN.equalsIgnoreCase(userDesgn))
+                return VIEW;
+        }
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(
                 QUERY_PROPERTYIMPL_BYID, Long.valueOf(getModelId()));
-        TaxExeptionReason taxExemption = null;
+        final TaxExeptionReason taxExemption = null;
         if (propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
-                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propertyModel.getPropertyDetail().getFloorDetails().clear();
-        } else {
-            for (Floor floor : propertyModel.getPropertyDetail().getFloorDetails()) {
-                if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() == null) {
+        else
+            for (final Floor floor : propertyModel.getPropertyDetail().getFloorDetails())
+                if (floor.getTaxExemptedReason() != null && floor.getTaxExemptedReason().getId() == null)
                     floor.setTaxExemptedReason(taxExemption);
-                }
-            }
-        }
 
         LOGGER.debug("reject: Property: " + propertyModel);
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
@@ -576,6 +587,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
         propertyImplService.update(propertyModel);
+        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         setAckMessage("Property Rejected Successfully and forwarded to initiator : "
                 + propertyModel.getCreatedBy().getUsername() + " with Index Number : ");
@@ -727,7 +739,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                 .getId())
                 && !propertyModel.getStatus().equals('W'))
             if (propTypeMstr != null
-                    && StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel
@@ -758,13 +770,13 @@ public class ModifyPropertyAction extends WorkflowAction {
 
     /**
      * Changes the property details to {@link BuiltUpProperty} or {@link VacantProperty}
-     * 
+     *
      * @param modProperty the property which is getting modified
-     * 
+     *
      * @param propDetail the {@link PropertyDetail} type, either {@link BuiltUpProperty} or {@link VacantProperty}
-     * 
+     *
      * @param numOfFloors the no. of floors which is dependent on {@link PropertyDetail}
-     * 
+     *
      * @see {@link PropertyDetail}, {@link BuiltUpProperty}, {@link VacantProperty}
      */
 
@@ -1123,7 +1135,7 @@ public class ModifyPropertyAction extends WorkflowAction {
         ackBean.setOwnerName(basicProp.getFullOwnerName());
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
         ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
-        ackBean.setApplicationNo(basicProp.getApplicationNo());
+        ackBean.setApplicationNo(propertyModel.getApplicationNo());
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(),
                 Calendar.DAY_OF_MONTH, 15);
