@@ -68,12 +68,13 @@ public class ApplicationCoreFilter implements Filter {
     public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpSession session = request.getSession();
-        prepareCityPreferences(request, session);
-        prepareThreadLocal(request, session);
-
-        chain.doFilter(request, resp);
-
-        EgovThreadLocals.clearValues();
+        try {
+            prepareCityPreferences(request, session);
+            prepareThreadLocal(request, session);
+            chain.doFilter(request, resp);
+        } finally {
+            EgovThreadLocals.clearValues();
+        }
     }
 
     private void prepareCityPreferences(final HttpServletRequest request, final HttpSession session) {
