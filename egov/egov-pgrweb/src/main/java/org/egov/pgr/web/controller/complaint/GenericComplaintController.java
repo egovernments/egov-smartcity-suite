@@ -38,17 +38,20 @@
  */
 package org.egov.pgr.web.controller.complaint;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
@@ -58,6 +61,7 @@ import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,6 +89,9 @@ public abstract class GenericComplaintController {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
+
     @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
         if (request.getParameter("crn") != null && complaint.isNew())
@@ -106,4 +113,11 @@ public abstract class GenericComplaintController {
         else
             return null;
     }
+
+    @RequestMapping(value = "/complaint/downloadfile/{fileStoreId}")
+    public void download(@PathVariable final String fileStoreId,
+            final HttpServletResponse response) throws IOException {
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    }
+
 }
