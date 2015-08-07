@@ -42,12 +42,13 @@ package org.egov.wtms.web.controller.application;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.web.controller.workflow.GenericWorkFlowController;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +62,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class UpdateConnectionController extends GenericWorkFlowController {
+public class UpdateConnectionController extends GenericConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -71,6 +72,9 @@ public class UpdateConnectionController extends GenericWorkFlowController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -90,20 +94,14 @@ public class UpdateConnectionController extends GenericWorkFlowController {
     @ModelAttribute
     public StateAware getModel() {
         return waterConnectionDetails;
-
     }
 
-    /*
-     * @ModelAttribute(value="stateType") public String getStateType() {
-     * if(waterConnectionDetails!=null){ return
-     * waterConnectionDetails.getClass().getSimpleName(); } else return ""; }
-     */
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        // model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-       // model.addAttribute("additionalRule", getAdditionalRule());
-        //model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -135,25 +133,41 @@ public class UpdateConnectionController extends GenericWorkFlowController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+        if (waterConnectionDetails.getCurrentState() != null
+                && waterConnectionDetails.getCurrentState().getValue()
+                        .equals(WaterTaxConstants.WF_STATE_CLERK_APPROVED)
+                || waterConnectionDetails.getCurrentState().getValue()
+                        .equals(WaterTaxConstants.WF_STATE_PAYMENT_DONE_AGT_ESTIMATION))
+            approvalPosition = getApproverPosition("ULB Operator", waterConnectionDetails);
+        else if (waterConnectionDetails.getCurrentState() != null
+                && waterConnectionDetails.getCurrentState().getValue()
+                .equals(WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED))
+            approvalPosition = getApproverPosition("Assistant engineer", waterConnectionDetails);
+        else if (waterConnectionDetails.getCurrentState() != null
+                && waterConnectionDetails.getCurrentState().getValue()
+                .equals(WaterTaxConstants.WF_STATE_ASSISTANT_ENGINEER_APPROVED))
+            approvalPosition = getCityLevelCommissioner();
+        else if (request.getParameter("approvalPosition") != null
+                && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         else
-            // TODO: Assuming that there is no approvalPosition in last approver
-            // inbox. Need to replace with proper condition once requirement is
-            // clear i.e., when to capture sanction details
+        // TODO: IN Commissioner inbox
+        if (waterConnectionDetails.getCurrentState()!=null && waterConnectionDetails.getCurrentState().getValue()
+                .equals(WaterTaxConstants.WF_STATE_PAYMENT_DONE_AGT_ESTIMATION)){
             validateSanctionDetails(waterConnectionDetails, resultBinder);
-        if (request.getParameter("workflowAction") != null)
-            workFlowAction = request.getParameter("workflowAction");
+        }
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+
         if (!resultBinder.hasErrors()) {
             waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, getAdditionalRule(), workFlowAction);
+            final String approverName = getApprovalMessage(approvalPosition);
 
             return "redirect:/application/application-success?applicationNumber="
-            + waterConnectionDetails.getApplicationNumber();
+                    + waterConnectionDetails.getApplicationNumber() + "," + approverName;
         } else
             return loadViewData(model, request, waterConnectionDetails);
-
     }
 
     private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
@@ -168,5 +182,4 @@ public class UpdateConnectionController extends GenericWorkFlowController {
     public String getAdditionalRule() {
         return "NEW CONNECTION";
     }
-
 }

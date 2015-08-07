@@ -41,12 +41,12 @@ $(document).ready(function()
 {
 	//TODO - As of now hiding the approver dropdowns in the final approver inbox view for time being. 
 	//TODO - This needs to be condition driven based on number of level of workflow
-	$(".show-row").hide(); 
-	$('#approvalDepartment').removeAttr('required');
-	$('#approvalDesignation').removeAttr('required');
-	$('#approvalPosition').removeAttr('required');
+	//$(".show-row").hide(); 
+	//$('#approvalDepartment').removeAttr('required');
+	//$('#approvalDesignation').removeAttr('required');
+	//$('#approvalPosition').removeAttr('required');
 	
-	$("#submitBtn").click(function(){
+	$("#workflowAction").click(function(){
 		if($('#approvalDate') && $('#approvalDate').val() != '') {
 			var applicationDate = $('#applicationDate').html();
 		    var approvalDate = $('#approvalDate').val();

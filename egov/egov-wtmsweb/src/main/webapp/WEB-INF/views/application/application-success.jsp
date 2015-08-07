@@ -63,9 +63,12 @@
 								<spring:message code="msg.newconnection.approved.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>
+							<c:when test="${waterConnectionDetails.connectionStatus == 'INACTIVE' }">
+							<div><spring:message code="msg.newapplication.cancel.success" /></div>
+							</c:when>
 							<c:otherwise>
 								<div><spring:message code="msg.newconnection.ack.success" /></div>
-								<%-- <div ><spring:message code="msg.sussess.forward" />${approvalUser}</div> --%>
+								<div ><spring:message code="msg.sussess.forward" />${approverName}</div>
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>

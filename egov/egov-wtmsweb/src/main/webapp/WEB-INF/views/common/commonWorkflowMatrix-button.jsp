@@ -40,14 +40,36 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script>
+
+
+	function validateWorkFlowApprover(name) {
+		document.getElementById("workFlowAction").value=name;
+	    var approverPosId = document.getElementById("approvalPosition");
+	    /* if(approverPosId && approverPosId.value != -1) {
+			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
+			document.getElementById("approverName").value= approver.split('~')[0];
+		}   */
+		var rejectbutton=document.getElementById("workFlowAction").value;
+		if(rejectbutton!=null && rejectbutton=='Reject')
+			{
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
+			} 
+	   document.forms[0].submit;
+	   return true;
+	}
+</script>
+
 <div class="buttonbottom" align="center">
-	<form:input  path=""  id="validActionList" name="validActionList"/>
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<table>
 		<tr>
 			<td>
 		<c:forEach items="${validactionList}" var="validButtons">
-				<button type="submit" id="workflowAction" class="btn btn-primary"  value="${validButtons}" onclick="onsubmitworkflow();">
-						<c:out value="${validButtons}" /> </button>
+				<form:button type="submit" id="workFlowAction" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-primary" onclick="window.close();" /></td>

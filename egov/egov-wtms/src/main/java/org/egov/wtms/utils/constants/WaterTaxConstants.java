@@ -89,4 +89,12 @@ public class WaterTaxConstants {
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
     public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
+    public static final String WF_STATE_TAP_EXECUTION_DATE ="Tap Execution Date";
+    public static final String WF_STATE_CLERK_APPROVED  ="Clerk approved";
+    public static final String WF_STATE_PAYMENT_DONE_AGT_ESTIMATION ="Payment done against Estimation";
+    public static final String WF_STATE_COMMISSIONER_APPROVED="Commissioner Approved";
+    public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED="Asst engg approved";
+    public static final String WF_STATE_WORK_ORDER_GENERETED="Work order generated";
+    
+    public static final String APPROVEWORKFLOWACTION = "Approve";
 }

@@ -63,24 +63,29 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
+		<c:if test="${currentState=='Payment done against Estimation'}">
+		<jsp:include page="sanctiondetails.jsp"></jsp:include>
+		</c:if>	
 		
-		<!--TODO - Need handle proper use case when complete workflow is in place. The Sanction details needs to be captured only when object is in Final Approver inbox -->
-		<c:if test="${mode != null && mode=='inbox'}">
-			<jsp:include page="sanctiondetails.jsp"></jsp:include>	
-		</c:if>
 		
-		<jsp:include page="../common/workflow.jsp"></jsp:include>	
 </div>	
-<div class="row">
-	<div class="text-center">
-		<button type="submit" id="submitBtn" class="btn btn-primary"><spring:message code="lbl.approve"/></button>	
-		<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message code='lbl.close' /></a>
-	</div>
-</div>	 	
-<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+	 	
+<c:if test="${currentState==null || currentState=='NEW' ||  currentState=='Rejected'}">
+<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+</c:if>
+<c:if test="${currentState=='Clerk approved' || currentState=='Asst engg approved' ||currentState=='Payment done against Estimation' ||currentState=='Commissioner Approved' ||currentState=='Work order generated'}">
+	<div class="row">
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.comments"/>
+					</div>
+					<div class="col-md-6 col-xs-6 add-margin">
+						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+					</div>
+				</div>
+</c:if>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div>	 --%>
+				</div>	
 </form:form>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>

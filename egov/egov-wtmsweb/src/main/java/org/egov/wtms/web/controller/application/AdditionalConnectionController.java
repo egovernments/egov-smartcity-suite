@@ -64,6 +64,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -113,7 +114,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,@RequestParam String  workFlowAction,
             final HttpServletRequest request) {
 
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
@@ -153,14 +154,17 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         Long approvalPosition = 0l;
         String approvalComent = "";
-
+        
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
 
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent);
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent, getAdditionalRule(), workFlowAction );
         return "redirect:/application/application-success?applicationNumber=" + addConnection.getApplicationNumber();
     }
     
