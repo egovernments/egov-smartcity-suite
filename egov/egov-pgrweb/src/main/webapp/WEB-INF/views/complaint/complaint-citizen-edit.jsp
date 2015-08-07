@@ -53,7 +53,7 @@
 
 		<form:form id="complaintUpdate" modelAttribute="complaint"
 			method="post" role="form"
-			class="form-horizontal form-groups-bordered">
+			class="form-horizontal form-groups-bordered"  enctype="multipart/form-data">
 			<div class="form-group">
 				<div class="col-md-3 col-xs-6 add-margin">
 					<spring:message code="lbl.change.status" />

@@ -151,9 +151,9 @@ public class ComplaintUpdationController {
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
-        if (files != null)
-            complaint.getSupportDocs().addAll(addToFileStore(files));
+        if (!securityUtils.currentUserType().equals(UserType.CITIZEN))
+            if (files != null)
+                complaint.getSupportDocs().addAll(addToFileStore(files));
         if (!errors.hasErrors()) {
             complaint = complaintService.update(complaint, approvalPosition, approvalComent);
             redirectAttrs.addFlashAttribute("complaint", complaint);
