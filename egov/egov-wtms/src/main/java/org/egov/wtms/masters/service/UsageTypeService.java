@@ -107,6 +107,6 @@ public class UsageTypeService {
     }
 
     public List<UsageType> getAllUsageTypesByConnectionType(final String connectionType) {
-        return usageTypeRepository.getAllUsageTypes(connectionType);
+        return usageTypeRepository.getAllUsageTypesByConnectionType(connectionType);
     }
 }

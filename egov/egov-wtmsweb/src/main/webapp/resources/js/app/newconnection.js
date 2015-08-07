@@ -53,9 +53,9 @@ $(document).ready(function(){
 				
 				console.log("success"+response);
 				$('#usageType').empty();
-				$('#usageType').append($("<option value=''>Select</option>"));
+				$('#usageType').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-					$('#usageType').append($('<option>').text(value.code).attr('value', value.id))
+					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
 				});
 				
 			}, 
