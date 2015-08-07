@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -38,6 +37,8 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.infra.messaging;
+
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 import javax.jms.Destination;
 import javax.jms.MapMessage;
@@ -83,7 +84,7 @@ public class MessagingService {
     }
 
     public void sendEmail(final String email, final String subject, final String message) {
-        if (applicationProperties.emailEnabled())
+        if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString("email", email);
@@ -94,7 +95,7 @@ public class MessagingService {
     }
 
     public void sendSMS(final String mobileNo, final String message) {
-        if (applicationProperties.smsEnabled())
+        if (applicationProperties.smsEnabled() && isNoneBlank(mobileNo, message))
             jmsTemplate.send(smsQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString("mobile", "91" + mobileNo);
