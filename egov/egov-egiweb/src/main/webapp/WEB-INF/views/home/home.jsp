@@ -51,17 +51,6 @@
 		<title>eGov Urban Portal</title>
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
-		<script src="<c:url value='/resources/global/js/pace/pace.min.js'/>"></script>
-		<script>
-			paceOptions = {
-				ajax: false, // Monitors all ajax requests on the page
-				document: false, // Checks for the existance of specific elements on the page
-				eventLag: false, // Checks the document readyState
-				elements: {
-					selectors: ['.my-page'] // Checks for event loop lag signaling that javascript is being executed
-				}
-			};
-		</script>
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.ico'/>" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
@@ -69,7 +58,6 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/pace/pace.css'/>">
 		
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
@@ -82,11 +70,12 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
-		
-		
 	</head>
 	<body class="page-body">
-		
+		<div id="loadingMask"></div>
+		<div id="loading">
+		    <div class="loading-indicator"><img src="<c:url value='/resources/global/images/loading.gif'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> eGov Urban Portal <br /><span id="loading-msg">Initializing Urban Portal...</span></div>
+		</div>
 		<div class="page-container horizontal-menu">
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
@@ -429,5 +418,12 @@
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
+		<script type="text/javascript">
+			$(window).load(function(){
+		        console.log('Page Loaded (OnLoad)');
+		        document.getElementById("loading").style.display = "none";
+				document.getElementById("loadingMask").style.display = "none";
+		    });
+		</script>
 	</body>
 </html>																						
