@@ -114,7 +114,7 @@
 		<div class="row">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
-				<c:when test="${(waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
+				<c:when test="${null!=mode && (mode=='search' || mode=='addconnection') && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected}" /></div>
 				</c:when>	
 				<c:otherwise>
