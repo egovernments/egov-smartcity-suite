@@ -36,6 +36,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -46,6 +51,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -58,6 +64,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -110,18 +117,13 @@ public class NewConnectionController extends GenericConnectionController {
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
+        final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-                if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentNumber";
-                    resultBinder.rejectValue(fieldError, "documentNumber.required");
-                }
-                if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-                    final String fieldError = "applicationDocs[" + i + "].documentDate";
-                    resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
-                    applicationDocs.add(applicationDocument);
-                i++;
+             validateDocuments(applicationDocs, applicationDocument, i, resultBinder,
+                                          waterConnectionDetails.getCategory().getId(),
+                                        documentRequired);
+            i++;
             }
 
         if (resultBinder.hasErrors()) {
@@ -150,6 +152,44 @@ public class NewConnectionController extends GenericConnectionController {
         + waterConnectionDetails.getApplicationNumber();
     }
 
+    private void validateDocuments(final List<ApplicationDocuments> applicationDocs,
+            final ApplicationDocuments applicationDocument,
+             final int i, final BindingResult resultBinder, final Long categoryId, final String documentRequired) {
+
+        final ConnectionCategory connectionCategory = connectionCategoryService.findBy(categoryId);
+        if (connectionCategory != null && documentRequired != null
+                && connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
+                  && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())) {
+
+           if (applicationDocument.getDocumentNumber() == null) {
+                final String fieldError = "applicationDocs[" + i + "].documentNumber";
+               resultBinder.rejectValue(fieldError, "documentNumber.required");
+           }
+             if (applicationDocument.getDocumentDate() == null) {
+               final String fieldError = "applicationDocs[" + i + "].documentDate";
+                 resultBinder.rejectValue(fieldError, "documentDate.required");
+              }
+
+              Iterator<MultipartFile> stream = null;
+             if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
+                  stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty()).iterator();
+              if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null && !stream.hasNext()) {
+                  final String fieldError = "applicationDocs[" + i + "].files";
+                  resultBinder.rejectValue(fieldError, "files.required");
+              } else if (validApplicationDocument(applicationDocument))
+                  applicationDocs.add(applicationDocument);
+          } else {
+              if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
+                 final String fieldError = "applicationDocs[" + i + "].documentNumber";
+                  resultBinder.rejectValue(fieldError, "documentNumber.required");
+              }
+              if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
+                 final String fieldError = "applicationDocs[" + i + "].documentDate";
+                  resultBinder.rejectValue(fieldError, "documentDate.required");
+              } else if (validApplicationDocument(applicationDocument))
+                 applicationDocs.add(applicationDocument);
+          }
+      }
     @RequestMapping(value = "/application-success", method = GET)
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
