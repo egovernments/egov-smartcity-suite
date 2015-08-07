@@ -38,11 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
-	
+		
 	loadConnectionCategories();
-	
-	 
+		 
 	$('#connectionType').change(function(){
 		$.ajax({
 			url: "/wtms/ajax-connectionTypes",     
@@ -68,8 +66,6 @@ $(document).ready(function(){
 	});
 	
 	$('#connectionCategorie').change(function () {
-			
-		
 		loadConnectionCategories();
     });
 	
@@ -78,7 +74,6 @@ $(document).ready(function(){
 		
 	    var toAppend = '';
 	    if (connectionCategory == 1) {
-	    	    	
 	    	$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    }
@@ -87,10 +82,7 @@ $(document).ready(function(){
 	    	$("#bplCardHolderName").removeAttr('required');
 	    }
 	}
-	
-	
-	
-
+		
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});

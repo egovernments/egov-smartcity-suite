@@ -41,7 +41,6 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
-import org.egov.wtms.masters.entity.ConnectionUsage;
 import org.egov.wtms.masters.entity.UsageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -56,9 +55,9 @@ public interface UsageTypeRepository extends JpaRepository<UsageType, Long> {
     List<UsageType> findByNameContainingIgnoreCase(String name);
 
     UsageType findByCode(String code);
-    
+
     List<UsageType> findByActiveTrueOrderByNameAsc();
-   
+
     @Query("select CU.usagetype from ConnectionUsage CU where CU.connectionType=:connectionType ")
-   	List<UsageType> findAllUsageTypes(@Param("connectionType") String connectionType);
+    List<UsageType> getAllUsageTypes(@Param("connectionType") String connectionType);
 }
