@@ -74,7 +74,7 @@
 	<body class="page-body">
 		<div id="loadingMask"></div>
 		<div id="loading">
-		    <div class="loading-indicator"><img src="<c:url value='/resources/global/images/loading.gif'/>" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/> eGov Urban Portal <br /><span id="loading-msg">Initializing Urban Portal...</span></div>
+		    <div class="loading-indicator"><i class="fa fa-spinner fa-pulse fa-2x"></i></div>
 		</div>
 		<div class="page-container horizontal-menu">
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
@@ -420,7 +420,6 @@
 		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
 		<script type="text/javascript">
 			$(window).load(function(){
-		        console.log('Page Loaded (OnLoad)');
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
