@@ -1,0 +1,75 @@
+
+CREATE TABLE EGWTR_ESTIMATION_DETAILS
+(
+  	ID bigint NOT NULL, 
+    CONNECTIONDETAILSID 	bigint NOT NULL, 
+    ITEMDESCRIPTION			character varying(1024) NOT NULL,
+	QUANTITY				date NOT NULL,
+	UNITRATE				double precision NOT NULL,
+	UNITOFMEASUREMENT		character varying(50),
+    CREATEDBY				bigint NOT NULL,
+	CREATEDDATE     		timestamp without time zone NOT NULL,
+	LASTMODIFIEDDATE		timestamp without time zone NOT NULL,
+	LASTMODIFIEDBY			bigint NOT NULL,
+	VERSION					numeric NOT NULL,  
+    CONSTRAINT pk_estimationdetails PRIMARY KEY (id),
+    CONSTRAINT fk_estimationdetails_connectiondetailsid FOREIGN KEY (CONNECTIONDETAILSID)
+      REFERENCES egwtr_connectiondetails (id),
+    CONSTRAINT fk_estimationdetails_createdby FOREIGN KEY (createdby)
+      REFERENCES eg_user (id),
+    CONSTRAINT fk_estimationdetails_lastmodifiedby FOREIGN KEY (lastmodifiedby)
+      REFERENCES eg_user (id)
+);
+
+CREATE INDEX IDX_ESTIMATIONDETAILS_CONNECTIONDETAILSID ON EGWTR_ESTIMATION_DETAILS USING BTREE (CONNECTIONDETAILSID);
+CREATE SEQUENCE SEQ_EGWTR_ESTIMATION_DETAILS;
+
+CREATE TABLE EGWTR_ROAD_CATEGORY
+(
+  id 			bigint NOT NULL,
+  name 			character varying(50) NOT NULL,
+  version		numeric DEFAULT 0,
+  CONSTRAINT pk_road_category PRIMARY KEY (id),
+  CONSTRAINT unq_road_category_name UNIQUE (name)
+);
+CREATE SEQUENCE SEQ_EGWTR_ROAD_CATEGORY;
+
+CREATE TABLE EGWTR_FIELDINSPECTION_DETAILS
+(
+  	ID bigint NOT NULL, 
+    CONNECTIONDETAILSID 	bigint NOT NULL, 
+    ROADCATEGORY		 	bigint,
+	EXISTINGPIPELINE		character varying(50),
+	PIPELINEDISTANCE		double precision,
+	DIGGINGCHARGES			double precision NOT NULL,
+	SUPERVISIONCHARGES		double precision NOT NULL,
+	MATERIALCHARGES			double precision,
+	ESTIMATIONCHARGES		double precision NOT NULL,
+    CREATEDBY				bigint NOT NULL,
+	CREATEDDATE     		timestamp without time zone NOT NULL,
+	LASTMODIFIEDDATE		timestamp without time zone NOT NULL,
+	LASTMODIFIEDBY			bigint NOT NULL,
+	VERSION					numeric NOT NULL,  
+    CONSTRAINT pk_fieldinspectiondetails PRIMARY KEY (id),
+    CONSTRAINT fk_fieldinspectiondetails_connectiondetailsid FOREIGN KEY (CONNECTIONDETAILSID)
+      REFERENCES egwtr_connectiondetails (id),
+       CONSTRAINT fk_fieldinspectiondetails_roadcategory FOREIGN KEY (ROADCATEGORY)
+      REFERENCES egwtr_road_category (id),
+    CONSTRAINT fk_fieldinspectiondetails_createdby FOREIGN KEY (createdby)
+      REFERENCES eg_user (id),
+    CONSTRAINT fk_fieldinspectiondetails_lastmodifiedby FOREIGN KEY (lastmodifiedby)
+      REFERENCES eg_user (id)
+);
+
+CREATE INDEX IDX_FIELDINSPECTIONDETAILS_CONNECTIONDETAILSID ON EGWTR_FIELDINSPECTION_DETAILS USING BTREE (CONNECTIONDETAILSID);
+CREATE INDEX IDX_FIELDINSPECTIONDETAILS_ROADCATEGORY ON EGWTR_FIELDINSPECTION_DETAILS USING BTREE (ROADCATEGORY);
+CREATE SEQUENCE SEQ_EGWTR_FIELDINSPECTION_DETAILS;
+
+--rollback DROP TABLE EGWTR_FIELDINSPECTION_DETAILS;
+--rollback DROP SEQUENCE SEQ_EGWTR_FIELDINSPECTION_DETAILS;
+
+--rollback DROP TABLE EGWTR_ROAD_CATEGORY;
+--rollback DROP SEQUENCE SEQ_EGWTR_ROAD_CATEGORY;
+
+--rollback DROP TABLE EGWTR_ESTIMATION_DETAILS;
+--rollback DROP SEQUENCE SEQ_EGWTR_ESTIMATION_DETAILS;

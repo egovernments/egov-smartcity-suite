@@ -55,6 +55,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -150,12 +151,12 @@ public class WaterConnectionDetails extends StateAware {
     private Long plinthArea;
 
     private Integer numberOfPerson;
-    
+
     @Length(max = 1024)
     private String connectionReason;
-    
+
     private String connectionOrder;
-    
+
     private String bplCardHolderName;
 
     @NotNull
@@ -172,9 +173,18 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
+
+    @Valid
+    @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private FieldInspectionDetails fieldInspectionDetails;
+
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
 
     @Override
     public Long getId() {
@@ -340,7 +350,7 @@ public class WaterConnectionDetails extends StateAware {
         return connectionReason;
     }
 
-    public void setConnectionReason(String connectionReason) {
+    public void setConnectionReason(final String connectionReason) {
         this.connectionReason = connectionReason;
     }
 
@@ -348,7 +358,7 @@ public class WaterConnectionDetails extends StateAware {
         return connectionOrder;
     }
 
-    public void setConnectionOrder(String connectionOrder) {
+    public void setConnectionOrder(final String connectionOrder) {
         this.connectionOrder = connectionOrder;
     }
 
@@ -360,12 +370,28 @@ public class WaterConnectionDetails extends StateAware {
         this.demand = demand;
     }
 
+    public FieldInspectionDetails getFieldInspectionDetails() {
+        return fieldInspectionDetails;
+    }
+
+    public void setFieldInspectionDetails(final FieldInspectionDetails fieldInspectionDetails) {
+        this.fieldInspectionDetails = fieldInspectionDetails;
+    }
+
     public List<ApplicationDocuments> getApplicationDocs() {
         return applicationDocs;
     }
 
     public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
         this.applicationDocs = applicationDocs;
+    }
+
+    public List<ConnectionEstimationDetails> getEstimationDetails() {
+        return estimationDetails;
+    }
+
+    public void setEstimationDetails(final List<ConnectionEstimationDetails> estimationDetails) {
+        this.estimationDetails = estimationDetails;
     }
 
     @Override
@@ -375,11 +401,11 @@ public class WaterConnectionDetails extends StateAware {
                 applicationType.getName(), formatter.format(applicationDate));
     }
 
-	public String getBplCardHolderName() {
-		return bplCardHolderName;
-	}
+    public String getBplCardHolderName() {
+        return bplCardHolderName;
+    }
 
-	public void setBplCardHolderName(String bplCardHolderName) {
-		this.bplCardHolderName = bplCardHolderName;
-	}
+    public void setBplCardHolderName(final String bplCardHolderName) {
+        this.bplCardHolderName = bplCardHolderName;
+    }
 }
