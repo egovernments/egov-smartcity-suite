@@ -32,8 +32,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
             orderNo++;
             if (ownerInfo != null) {
-                final User user = userService.getUserByAadhaarNumberAndType(ownerInfo.getOwner().getAadhaarNumber(),
-                        ownerInfo.getOwner().getType());
+                final User user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
