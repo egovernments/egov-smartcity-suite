@@ -1,10 +1,9 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +17,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -64,6 +63,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor;
@@ -77,11 +77,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 @Configuration
-@EnableTransactionManagement(proxyTargetClass=true)
+@EnableTransactionManagement(proxyTargetClass = true)
 @Profile("production")
 public class JpaConfiguration {
     @Autowired
     private Environment env;
+
     @Autowired
     private DataSource dataSource;
 
@@ -91,6 +92,7 @@ public class JpaConfiguration {
     }
 
     @Bean
+    @DependsOn("dataSource")
     public EntityManagerFactory entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
@@ -140,22 +142,26 @@ public class JpaConfiguration {
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
         properties.put(AUTOCOMMIT, false);
         /*
-         * since jadira doesn't support multitenant settings
-         * properties.put("jadira.usertype.autoRegisterUserTypes", true);
-          properties.put("jadira.usertype.databaseZone", "jvm");*/
-        //properties.put("hibernate.enable_lazy_load_no_trans", true);
-        
-        //Multitenancy Configuration
-        if (env.getProperty("multitenancy.enabled",Boolean.class)) {
-        	properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
-        	properties.put("hibernate.database.type", env.getProperty("jpa.database"));
-        	if (env.getProperty(MULTI_TENANT).equals("SCHEMA")) {
-        		properties.put(MULTI_TENANT_CONNECTION_PROVIDER, "org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider");
-            	properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, "org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver");
-        	} else if (env.getProperty(MULTI_TENANT).equals("DATABASE")) {
-        		properties.put(MULTI_TENANT_CONNECTION_PROVIDER, "org.egov.infra.config.persistence.multitenancy.MultiTenantDatabaseConnectionProvider");
-            	properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, "org.egov.infra.config.persistence.multitenancy.DomainBasedDatabaseTenantIdentifierResolver");
-        	}
+         * since jadira doesn't support multitenant settings properties.put("jadira.usertype.autoRegisterUserTypes", true);
+         * properties.put("jadira.usertype.databaseZone", "jvm");
+         */
+        // properties.put("hibernate.enable_lazy_load_no_trans", true);
+
+        // Multitenancy Configuration
+        if (env.getProperty("multitenancy.enabled", Boolean.class)) {
+            properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
+            properties.put("hibernate.database.type", env.getProperty("jpa.database"));
+            if (env.getProperty(MULTI_TENANT).equals("SCHEMA")) {
+                properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
+                        "org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider");
+                properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,
+                        "org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver");
+            } else if (env.getProperty(MULTI_TENANT).equals("DATABASE")) {
+                properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
+                        "org.egov.infra.config.persistence.multitenancy.MultiTenantDatabaseConnectionProvider");
+                properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,
+                        "org.egov.infra.config.persistence.multitenancy.DomainBasedDatabaseTenantIdentifierResolver");
+            }
         }
         return properties;
     }

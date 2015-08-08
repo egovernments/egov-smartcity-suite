@@ -43,7 +43,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -77,5 +79,12 @@ public class RedisServerConfiguration {
         jedisPoolConfig.setTestWhileIdle(true);
         jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
         return jedisPoolConfig;
+    }
+
+    @Bean(name = "redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(final RedisConnectionFactory cf) {
+        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(cf);
+        return redisTemplate;
     }
 }

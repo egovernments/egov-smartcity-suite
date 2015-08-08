@@ -39,7 +39,9 @@
 package org.egov.infra.web.filter;
 
 import java.io.IOException;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -49,20 +51,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 
 public class ApplicationCoreFilter implements Filter {
 
-    private static final String DEFAULT_LOGO = "/resources/global/images/logo@2x.png";
-    private static final String CITI_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
-
     @Autowired
     private CityService cityService;
+
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, Object> hashOps;
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
@@ -78,31 +79,14 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareCityPreferences(final HttpServletRequest request, final HttpSession session) {
-        if (session.getAttribute("cityCode") == null) {
-            final String cityDomainURL = WebUtils.extractRequestedDomainName(request);
-            final City city = cityService.getCityByURL(cityDomainURL);
-            session.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
-            session.setAttribute("cityurl", city.getDomainURL());
-            session.setAttribute("cityname", city.getName());
-            final CityPreferences cityPreferences = city.getPreferences();
-            if (cityPreferences == null)
-                session.setAttribute("citylogo", DEFAULT_LOGO);
-            else {
-                session.setAttribute("citylogo", cityPreferences.logoExist()
-                        ? String.format(CITI_LOGO_URL, cityPreferences.getLogo().getFileStoreId(), city.getCode()) : "");
-                session.setAttribute("cityKmlFileStoreId", cityPreferences.kmlExist() ? cityPreferences.getGisKML().getFileStoreId() : "");
-                session.setAttribute("cityShapeFileStoreId", cityPreferences.shapeExist() ? cityPreferences.getGisShape().getFileStoreId() : "");
-            }
-
-            session.setAttribute("citynamelocal", city.getLocalName());
-            session.setAttribute("cityCode", city.getCode());
-            session.setAttribute("cityRecaptchaPK", city.getRecaptchaPK());
-            session.setAttribute("cityRecaptchaPub", city.getRecaptchaPub());
-            session.setAttribute("citylat", city.getLatitude() == null ? "0" : city.getLatitude().toString());
-            session.setAttribute("citylng", city.getLongitude() == null ? "0" : city.getLongitude().toString());
-            session.setAttribute("cityCode", city.getCode());
-        }
-
+        final Map<String, Object> cityPrefs = hashOps.entries(EgovThreadLocals.getTenantID() + "-cityPrefs");
+        if (cityPrefs.isEmpty())
+            hashOps.putAll(EgovThreadLocals.getTenantID() + "-cityPrefs",
+                    cityService.getCityByURL(WebUtils.extractRequestedDomainName(request)).toMap());
+        else if (session.getAttribute(EgovThreadLocals.getTenantID()) == null)
+            cityPrefs.forEach((k, v) -> {
+                session.setAttribute(k, v);
+            });
     }
 
     private void prepareThreadLocal(final HttpServletRequest request, final HttpSession session) {
