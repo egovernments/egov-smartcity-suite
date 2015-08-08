@@ -115,7 +115,7 @@ public interface CollectionIntegrationService {
 	 * @return an instance of <code>BillReceiptInfo</code> containing all
 	 *         details of the created receipt.
 	 */
-	public BillReceiptInfo createReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
+	public BillReceiptInfo createReceipt(BillInfo bill, PaymentInfo paymentInfo);
 
 	/**
 	 * Returns the online pending bill receipt information for given service and
@@ -149,5 +149,5 @@ public interface CollectionIntegrationService {
 	 * @return an instance of <code>BillReceiptInfo</code> containing all
 	 *         details of the created receipt.
 	 */
-	public BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
+	public BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, PaymentInfo paymentInfo);
 }
