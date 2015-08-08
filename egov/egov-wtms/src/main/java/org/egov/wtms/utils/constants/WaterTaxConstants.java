@@ -62,7 +62,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
     public static final String SMSEMAILTYPENEWCONNCREATE = "newconncreate";
     public static final String CATEGORY_BPL = "BPL";
-
+    public static final String WATERTAX_FIELDINSPECTION_CHARGE ="WTAXFIELDINSPEC";
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
@@ -97,4 +97,6 @@ public class WaterTaxConstants {
     public static final String WF_STATE_WORK_ORDER_GENERETED="Work order generated";
     
     public static final String APPROVEWORKFLOWACTION = "Approve";
+    
+    public static final String BPL_CATEGORY = "BPL";
 }
