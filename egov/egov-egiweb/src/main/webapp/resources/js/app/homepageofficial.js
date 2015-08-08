@@ -40,6 +40,15 @@
 
 $(document).ready(function()
 {	
+	$('.page-container.horizontal-menu header.navbar .navbar-right > li, .page-container.horizontal-menu header.navbar .navbar-right > li ul li').hover(
+			function() {
+				$(this).children('ul').show();
+			},
+			function() {
+				$(this).children('ul').removeAttr('style');
+				$(this).children('ul').hide();
+	});
+	
 	//TODO not yet implemented at backend
 	$('#feedback-form').on('submit', function(e){
         e.preventDefault();
