@@ -53,8 +53,8 @@
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
 				enableAppartnaumtLandDetailsView();
-				enableOrDisableSiteOwnerDetails(jQuery('input[name="referenceProperty.propertyDetail.structure"]'));
-				enableOrDisableBPADetails(jQuery('input[name="referenceProperty.propertyDetail.buildingPlanDetailsChecked"]'));
+				enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
+				enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 				toggleFloorDetailsView();
 			}
 
@@ -183,7 +183,7 @@
             <td>
             <div id="property_header">
          		
-         		 <s:if test="referenceProperty!=null" >
+         		 <s:if test="property!=null" >
          		 <s:if test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
@@ -251,8 +251,7 @@
 	  		    <%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
 	  		 --%>
 	  		       
-       			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) || 
-       			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
+       			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
        			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY)  ||    
        					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
        			 	<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
@@ -351,7 +350,7 @@
 		</table> --%></div>      
 		<s:hidden name="model.id" id="model.id"/>
 			<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
-	<%-- 	<s:hidden name="model.referenceProperty" id="model.referenceProperty"/>
+	<%-- 	<s:hidden name="model.property" id="model.property"/>
 		 --%>
 		</s:push>
 	</s:form>

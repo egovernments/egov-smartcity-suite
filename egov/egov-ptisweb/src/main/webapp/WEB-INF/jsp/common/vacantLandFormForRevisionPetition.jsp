@@ -52,33 +52,33 @@
 	
 	<tr id="vacantLandRow">
         <td class="blueborderfortd" align="center">
-		 <s:textfield name="referenceProperty.propertyDetail.surveyNumber" id="referenceProperty.propertyDetail.surveyNumber"
-				maxlength="15" value="%{referenceProperty.propertyDetail.surveyNumber}" />
+		 <s:textfield name="property.propertyDetail.surveyNumber" id="property.propertyDetail.surveyNumber"
+				maxlength="15" value="%{property.propertyDetail.surveyNumber}" />
 		</td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="referenceProperty.propertyDetail.pattaNumber" id="referenceProperty.propertyDetail.pattaNumber"
-				maxlength="15" value="%{referenceProperty.propertyDetail.pattaNumber}" />
+        	<s:textfield name="property.propertyDetail.pattaNumber" id="property.propertyDetail.pattaNumber"
+				maxlength="15" value="%{property.propertyDetail.pattaNumber}" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="referenceProperty.propertyDetail.sitalArea.area" id="referenceProperty.propertyDetail.sitalArea.area"
-				maxlength="15" value="%{referenceProperty.propertyDetail.sitalArea.area}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'referenceProperty.propertyDetail.sitalArea.area');checkZero(this,'referenceProperty.propertyDetail.sitalArea.area');" />
+        	<s:textfield name="property.propertyDetail.sitalArea.area" id="property.propertyDetail.sitalArea.area"
+				maxlength="15" value="%{property.propertyDetail.sitalArea.area}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.sitalArea.area');checkZero(this,'property.propertyDetail.sitalArea.area');" />
         </td>
         <td class="blueborderfortd" align="center">
-        	<s:textfield name="referenceProperty.propertyDetail.marketValue" id="referenceProperty.propertyDetail.marketValue"
-				maxlength="15" value="%{referenceProperty.propertyDetail.marketValue}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'referenceProperty.propertyDetail.marketValue');checkZero(this,'referenceProperty.propertyDetail.marketValue');" />
+        	<s:textfield name="property.propertyDetail.marketValue" id="property.propertyDetail.marketValue"
+				maxlength="15" value="%{property.propertyDetail.marketValue}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.marketValue');checkZero(this,'property.propertyDetail.marketValue');" />
 		</td>
         
         <td class="blueborderfortd">
-        	<s:textfield name="referenceProperty.propertyDetail.currentCapitalValue"
-				id="referenceProperty.propertyDetail.currentCapitalValue" maxlength="15"	value="%{referenceProperty.propertyDetail.currentCapitalValue}"
-				onblur="trim(this,this.value);checkForTwoDecimals(this,'referenceProperty.propertyDetail.currentCapitalValue');checkZero(this,'referenceProperty.propertyDetail.currentCapitalValue');" />
+        	<s:textfield name="property.propertyDetail.currentCapitalValue"
+				id="property.propertyDetail.currentCapitalValue" maxlength="15"	value="%{property.propertyDetail.currentCapitalValue}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'property.propertyDetail.currentCapitalValue');checkZero(this,'property.propertyDetail.currentCapitalValue');" />
         </td>
         
         <td class="blueborderfortd">
-		   <s:date name="%{referenceProperty.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
-				name="referenceProperty.propertyDetail.dateOfCompletion" id="referenceProperty.propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
+		   <s:date name="%{property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
+				name="property.propertyDetail.dateOfCompletion" id="property.propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
 				size="10" maxlength="10"></s:textfield>
 		</td>
     </tr>

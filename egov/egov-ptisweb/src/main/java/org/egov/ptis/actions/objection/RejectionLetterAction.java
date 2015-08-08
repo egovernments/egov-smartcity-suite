@@ -59,7 +59,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 
 /**
  * @author manoranjan
@@ -70,9 +70,9 @@ public class RejectionLetterAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(RejectionLetterAction.class);
-	private Objection objection = new Objection();
+	private RevisionPetition objection = new RevisionPetition();
 	private static final String REJECTIONLETTERTEMPLATE = "objectionRejectionLetter";
-	private PersistenceService<Objection, Long> objectionService;
+	private PersistenceService<RevisionPetition, Long> objectionService;
 	protected ReportService reportService;
 	public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 	private Integer reportId = -1;
@@ -121,15 +121,15 @@ public class RejectionLetterAction extends BaseFormAction {
 		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
 	}
 
-	public Objection getObjection() {
+	public RevisionPetition getObjection() {
 		return objection;
 	}
 
-	public void setObjection(Objection objection) {
+	public void setObjection(RevisionPetition objection) {
 		this.objection = objection;
 	}
 
-	public void setObjectionService(PersistenceService<Objection, Long> objectionService) {
+	public void setObjectionService(PersistenceService<RevisionPetition, Long> objectionService) {
 		this.objectionService = objectionService;
 	}
 

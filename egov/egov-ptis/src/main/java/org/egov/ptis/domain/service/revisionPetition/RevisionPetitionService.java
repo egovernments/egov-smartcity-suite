@@ -2,13 +2,13 @@ package org.egov.ptis.domain.service.revisionPetition;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.springframework.transaction.annotation.Transactional;
 
-public class RevisionPetitionService extends PersistenceService<Objection, Long> {
+public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     private static final Logger LOGGER = Logger.getLogger(RevisionPetitionService.class);
     @Transactional
-    public Objection createRevisionPetition(Objection objection) {
+    public RevisionPetition createRevisionPetition(RevisionPetition objection) {
         if (objection.getId() == null)
             objection = persist(objection);
         else {
@@ -19,7 +19,7 @@ public class RevisionPetitionService extends PersistenceService<Objection, Long>
 
     }
     @Transactional
-    public Objection updateRevisionPetition(Objection objection) {
+    public RevisionPetition updateRevisionPetition(RevisionPetition objection) {
         if (objection.getId() == null)
             objection = persist(objection);
         else {

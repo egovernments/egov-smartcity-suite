@@ -115,7 +115,10 @@
 				<input type="button" class="buttonsubmit" name="btnViewDCB"
 					id="btnViewDCB" value="View DCB"
 					onclick="window.location='../view/viewDCBProperty-displayPropInfo.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
-				<input type="button" name="btnPrint" id="btnPrint" value="Print"
+				<input type="button" class="buttonsubmit" name="revPetition"
+					id="revPetition" value="Create Revision Petition"
+					onclick="window.location='../revPetition/revPetition-newForm.action?propertyId=<s:property value="%{basicProperty.upicNo}" />';" />
+			    <input type="button" name="btnPrint" id="btnPrint" value="Print"
 					class="buttonsubmit" onclick="window.print();" />
 				<input type="button" name="button2" id="button2" value="Close"
 					class="button" onclick="window.close();" />

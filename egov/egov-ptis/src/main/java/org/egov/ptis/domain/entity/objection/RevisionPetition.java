@@ -61,7 +61,7 @@ import org.hibernate.validator.constraints.Length;
  * 
  */
 //@CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message = "dateOfOutcome.greaterThan.recievedOn")
-public class Objection extends StateAware implements Auditable{
+public class RevisionPetition extends StateAware implements Auditable{
 
 	/**
 	 * Default serial version Id
@@ -89,8 +89,8 @@ public class Objection extends StateAware implements Auditable{
 	private String docNumberObjection;
 
 	private String docNumberOutcome;
-	private PropertyImpl referenceProperty;
-
+	private PropertyImpl property;
+	
 	@Valid
 	private List<Hearing> hearings = new LinkedList<Hearing>();
 
@@ -250,12 +250,20 @@ public class Objection extends StateAware implements Auditable{
        this.id= id;
     }
 
-    public PropertyImpl getReferenceProperty() {
+    public PropertyImpl getProperty() {
+        return property;
+    }
+
+    public void setProperty(PropertyImpl property) {
+        this.property = property;
+    }
+
+    /*public PropertyImpl getReferenceProperty() {
         return referenceProperty;
     }
 
     public void setReferenceProperty(PropertyImpl referenceProperty) {
         this.referenceProperty = referenceProperty;
-    }
+    }*/
 
 }

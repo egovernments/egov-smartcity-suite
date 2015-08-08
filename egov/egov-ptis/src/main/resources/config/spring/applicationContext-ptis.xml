@@ -89,7 +89,7 @@
 		<constructor-arg index="0" ref="propertyImplService"/>
 	</bean> -->
 	<bean id="objectionService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
+		<property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
 	</bean>
 	<!-- <bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg index="0" ref="objectionService"/>

@@ -18,7 +18,7 @@
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   
 		<s:if test="%{getNextAction()!='END'}">
-	    if((name=="Forward" || name=="forward") && document.getElementById('approverPositionId').value=="-1") {
+	    if((name=="Forward" || name=="forward") && approverPosId && approverPosId.value != -1) {
 	        alert("Please Select the Approver ");
 			return false;
 	    }

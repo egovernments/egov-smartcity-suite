@@ -55,7 +55,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 
@@ -79,7 +79,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private String gisReferenceNo;
 	private String partNo;
 	private Set<PtNotice> notices = new HashSet<PtNotice>();
-	private Set<Objection> objections = new HashSet<Objection>();
+	private Set<RevisionPetition> objections = new HashSet<RevisionPetition>();
 	private Set<Recovery> recoveries = new HashSet<Recovery>();
 	private Character isMigrated = 'N';
 	private Set<PropertyDocs> propertyDocsSet = new HashSet<PropertyDocs>();
@@ -372,22 +372,22 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	}
 
 	@Override
-	public Set<Objection> getObjections() {
+	public Set<RevisionPetition> getObjections() {
 		return objections;
 	}
 
 	@Override
-	public void setObjections(Set<Objection> objections) {
+	public void setObjections(Set<RevisionPetition> objections) {
 		this.objections = objections;
 	}
 
 	@Override
-	public void addObjection(Objection objection) {
+	public void addObjection(RevisionPetition objection) {
 		getObjections().add(objection);
 	}
 
 	@Override
-	public void removeObjection(Objection objection) {
+	public void removeObjection(RevisionPetition objection) {
 		getObjections().remove(objection);
 	}
 
@@ -455,8 +455,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 
 	private Map<String, String> propertyInObjectionWf() {
 		Map<String, String> wfMap = new HashMap<String, String>();
-		Objection wfObjection = null;
-		for (Objection objection : getObjections()) {
+		RevisionPetition wfObjection = null;
+		for (RevisionPetition objection : getObjections()) {
 			wfObjection = objection;
 			if (wfObjection.hasState() && !wfObjection.stateIsEnded()) {
 				break;

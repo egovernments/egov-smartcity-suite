@@ -364,6 +364,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Long userId = securityUtils.getCurrentUser().getId();
         LOGGER.debug("setUserInfo: Logged in userId" + userId);
         Designation designation = propertyTaxUtil.getDesignationForUser(userId);
+        if(designation!=null)
         setUserDesgn(designation.getName());
         LOGGER.debug("Exit from setUserInfo");
     }

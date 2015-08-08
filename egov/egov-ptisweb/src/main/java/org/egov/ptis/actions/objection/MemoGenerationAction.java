@@ -61,7 +61,7 @@ import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 
 /**
  * when the objection is accepted this will get invoke to show memo PDF
@@ -73,10 +73,10 @@ import org.egov.ptis.domain.entity.objection.Objection;
 @SuppressWarnings("serial")
 public class MemoGenerationAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(MemoGenerationAction.class);
-	private Objection objection = new Objection();
+	private RevisionPetition objection = new RevisionPetition();
 	private static final String OBJECTIONMEMO = "ObjectionMemo";
 	private static final String PROPERTYSATUSFORMEMO = "getPropertySatusForMemo";
-	private PersistenceService<Objection, Long> objectionService;
+	private PersistenceService<RevisionPetition, Long> objectionService;
 	protected ReportService reportService;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private Integer reportId = -1;
@@ -97,11 +97,11 @@ public class MemoGenerationAction extends BaseFormAction {
 		}
 	}
 
-	public PersistenceService<Objection, Long> getObjectionService() {
+	public PersistenceService<RevisionPetition, Long> getObjectionService() {
 		return objectionService;
 	}
 
-	public void setObjectionService(PersistenceService<Objection, Long> objectionService) {
+	public void setObjectionService(PersistenceService<RevisionPetition, Long> objectionService) {
 		this.objectionService = objectionService;
 	}
 
@@ -158,11 +158,11 @@ public class MemoGenerationAction extends BaseFormAction {
 		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
 	}
 
-	public Objection getObjection() {
+	public RevisionPetition getObjection() {
 		return objection;
 	}
 
-	public void setObjection(Objection objection) {
+	public void setObjection(RevisionPetition objection) {
 		this.objection = objection;
 	}
 

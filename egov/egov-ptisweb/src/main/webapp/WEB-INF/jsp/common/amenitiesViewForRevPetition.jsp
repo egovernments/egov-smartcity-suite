@@ -44,25 +44,25 @@
 			<table width="100%" class="checkbox-section">
 				<tr>
 					<td width="20%" align="right">
-					<label><s:text name="lift"></s:text> <s:checkbox name="referenceProperty.propertyDetail.lift"
-								id="referenceProperty.propertyDetail.lift" disabled="true"/></label> <br />
-					<label><s:text name="electricity"></s:text> <s:checkbox name="referenceProperty.propertyDetail.electricity"
-								id="referenceProperty.propertyDetail.electricity" disabled="true"/> </label>
+					<label><s:text name="lift"></s:text> <s:checkbox name="property.propertyDetail.lift"
+								id="property.propertyDetail.lift" disabled="true"/></label> <br />
+					<label><s:text name="electricity"></s:text> <s:checkbox name="property.propertyDetail.electricity"
+								id="property.propertyDetail.electricity" disabled="true"/> </label>
 				  </td>
 				  <td width="20%" align="right"><label><s:text name="toilets"></s:text> <s:checkbox
-								name="referenceProperty.propertyDetail.toilets" id="referenceProperty.propertyDetail.toilets" disabled="true"/> </label> <br />
-						<label><s:text name="attachbathroom"></s:text> <s:checkbox name="referenceProperty.propertyDetail.attachedBathRoom"
-								id="referenceProperty.propertyDetail.attachedBathRoom" disabled="true"/> </label>
+								name="property.propertyDetail.toilets" id="property.propertyDetail.toilets" disabled="true"/> </label> <br />
+						<label><s:text name="attachbathroom"></s:text> <s:checkbox name="property.propertyDetail.attachedBathRoom"
+								id="property.propertyDetail.attachedBathRoom" disabled="true"/> </label>
 				   </td>
 				   <td width="20%" align="right"><label><s:text name="watertap"></s:text> <s:checkbox
-								name="referenceProperty.propertyDetail.waterTap" id="referenceProperty.propertyDetail.waterTap"
-								value="%{referenceProperty.propertyDetail.waterTap}" disabled="true"/></label> <br />
+								name="property.propertyDetail.waterTap" id="property.propertyDetail.waterTap"
+								value="%{property.propertyDetail.waterTap}" disabled="true"/></label> <br />
 					     <label><s:text
-								name="waterharvesting"></s:text> <s:checkbox name="referenceProperty.propertyDetail.waterHarvesting"
-								id="referenceProperty.propertyDetail.waterHarvesting" disabled="true"/></label>
+								name="waterharvesting"></s:text> <s:checkbox name="property.propertyDetail.waterHarvesting"
+								id="property.propertyDetail.waterHarvesting" disabled="true"/></label>
 				   </td>
 				   <td width="20%" align="right">
-				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="referenceProperty.propertyDetail.cable" id="referenceProperty.propertyDetail.cable" disabled="true"/></label><br/>
+				            <label><s:text name="cableconnection"></s:text> <s:checkbox name="property.propertyDetail.cable" id="property.propertyDetail.cable" disabled="true"/></label><br/>
 				            </td>
 					<td width="10%"></td>
 				</tr>

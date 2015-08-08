@@ -46,7 +46,7 @@ import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
 
@@ -168,13 +168,13 @@ public interface BasicProperty {
 
 	public void removeNotice(PtNotice ptNotice);
 
-	public Set<Objection> getObjections();
+	public Set<RevisionPetition> getObjections();
 
-	public void setObjections(Set<Objection> objections);
+	public void setObjections(Set<RevisionPetition> objections);
 
-	public void addObjection(Objection objection);
+	public void addObjection(RevisionPetition objection);
 
-	public void removeObjection(Objection objection);
+	public void removeObjection(RevisionPetition objection);
 
 	public Map<String, String> getPropertyWfStatus();
 
