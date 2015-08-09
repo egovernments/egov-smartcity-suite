@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -42,6 +41,8 @@ package org.egov.infra.admin.master.repository;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
@@ -49,12 +50,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     Boundary findByName(String name);
 
     List<Boundary> findByNameContainingIgnoreCase(String name);
@@ -65,7 +68,6 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
             @Param("boundaryNum") Long boundaryNum);
-    
 
     @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType = :boundaryType AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.boundaryNum")
     List<Boundary> findActiveBoundariesByBoundaryTypeAndAsOnDate(@Param("boundaryType") BoundaryType boundaryType,
@@ -113,7 +115,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.boundaryType.name=:boundaryType and b.boundaryType.hierarchyType.name=:hierarchyType and b.boundaryType.hierarchy=:hierarchyLevel")
     Boundary findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(@Param("boundaryType") String boundaryType,
             @Param("hierarchyType") String hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel);
-    
+
     @Query("select b from Boundary b where b.isHistory='N' AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);

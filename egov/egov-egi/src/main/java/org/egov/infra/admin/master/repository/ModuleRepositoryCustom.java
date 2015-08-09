@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -45,8 +44,10 @@ import java.util.Set;
 import org.egov.infra.admin.master.entity.Role;
 
 public interface ModuleRepositoryCustom {
-    
-    List<Object []> fetchModulesForRoles(Set<Role> roles); 
-    List<Object []> fetchModulesByParentModuleId(Long parentId, Long userId);
-    List<Object []> fetchUserFavourateModules(Long userId);
+
+    List<Object[]> fetchModulesForRoles(Set<Role> roles);
+
+    List<Object[]> fetchModulesByParentModuleId(Long parentId, Long userId);
+
+    List<Object[]> fetchUserFavourateModules(Long userId);
 }

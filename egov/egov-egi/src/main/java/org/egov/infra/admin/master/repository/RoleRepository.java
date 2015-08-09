@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -48,8 +47,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-	Role findByName(String name);
+    Role findByName(String name);
 
-	List<Role> findByNameContainingIgnoreCase(String name);
+    List<Role> findByNameContainingIgnoreCase(String name);
 
 }

@@ -40,18 +40,24 @@ package org.egov.infra.admin.master.repository;
 
 import java.util.List;
 
+import javax.persistence.QueryHint;
+
 import org.egov.infra.admin.master.entity.City;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CityRepository extends JpaRepository<City, Long> {
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     City findByCode(String code);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     City findByName(String name);
 
     List<City> findByNameContainingIgnoreCase(String name);
 
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     City findByDomainURL(String url);
 }
