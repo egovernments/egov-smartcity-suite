@@ -198,7 +198,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (propTypeId == null || propTypeId.equals("-1")) {
             addActionError(getText("mandatory.propType"));
         }
-        if (isBlank(property.getPropertyDetail().getCategoryType())) {
+        if (isBlank(property.getPropertyDetail().getCategoryType())
+                || property.getPropertyDetail().getCategoryType().equals("-1")) {
             addActionError(getText("mandatory.propcatType"));
         }
 

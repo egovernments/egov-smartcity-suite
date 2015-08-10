@@ -443,7 +443,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                 .getPropertyTypeMaster();
         final PropertyTypeMaster newPropTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                 "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
-        if (!newPropTypeMstr.getType().equals(oldPropTypeMstr.getType()))
+        if (null != newPropTypeMstr && !newPropTypeMstr.getType().equals(oldPropTypeMstr.getType()))
             if (newPropTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())

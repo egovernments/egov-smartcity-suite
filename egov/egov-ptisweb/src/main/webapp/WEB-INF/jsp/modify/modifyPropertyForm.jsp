@@ -129,18 +129,15 @@
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
-		<td class="greybox">
-			<s:checkbox name="propertyDetail.structure" id="propertyDetail.structure" disabled="true"/>
-			<s:hidden name="propertyDetail.structure" value="%{propertyDetail.structure}"/>
+		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
+		<td class="bluebox">
+			 <s:checkbox name="propertyDetail.structure" id="propertyDetail.structure"
+				value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
 		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="greybox siteowner">
-			<span class="bold"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></span>
-			<s:hidden name="propertyDetail.siteOwner" value="%{propertyDetail.siteOwner}"/>
-		</td>
+		<td class="greybox siteowner"><s:text name="siteowner"></s:text><span class="mandatory1"> *</span> :</td>
+		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{propertyDetail.siteOwner}"
+				name="propertyDetail.siteOwner" id="propertyDetail.siteOwner"></s:textfield></td>
 	</tr>
-
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
@@ -207,11 +204,11 @@
 	
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
+		<td class="greybox"><s:text name="building.permNo"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:textfield name="propertyDetail.buildingPermissionNo" id="propertyDetail.buildingPermissionNo" size="12" maxlength="12"
 				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
-		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
+		<td class="greybox"><s:text name="buildingpermdate"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox"><s:date name="propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
 		<s:textfield name="propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
 				id="propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
@@ -221,7 +218,7 @@
 
     <tr class="bpddetails">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
+		<td class="bluebox"><s:text name="deviationper"></s:text><span class="mandatory1">*</span> :</td>
 		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propertyDetail.deviationPercentage"
 				id="propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
