@@ -82,7 +82,7 @@ $(document).ready(function(){
 	    	$("#bplCardHolderName").removeAttr('required');
 	    }
 	}
-	/*	
+		
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});
@@ -182,7 +182,7 @@ $(document).ready(function(){
 			});
 		}		
 	}
-	*/
+	
 	function resetPropertyDetails() {
 		$('#propertyIdentifier').val('');
 		$('#applicantname').val('');
