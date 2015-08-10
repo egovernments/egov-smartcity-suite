@@ -88,10 +88,10 @@ public class CollectionSummaryReportAction extends SearchFormAction {
         @SuppressWarnings("unchecked")
         public void prepare() {
                 LOGGER.debug("Entered into prepare method");
-                setZoneBndryMap(CommonServices.getFormattedBndryMap(propertyTaxUtil.prepareBoundaryList("Zone",ADMIN_HIERARCHY_TYPE)));
-                setWardBndryMap(CommonServices.getFormattedBndryMap(propertyTaxUtil.prepareBoundaryList("Ward",ADMIN_HIERARCHY_TYPE)));
-                setBlockBndryMap(CommonServices.getFormattedBndryMap(propertyTaxUtil.prepareBoundaryList("Block",ADMIN_HIERARCHY_TYPE)));
-                setLocalityBndryMap(CommonServices.getFormattedBndryMap(propertyTaxUtil.prepareBoundaryList("Locality",LOCATION_HIERARCHY_TYPE)));
+                setZoneBndryMap(CommonServices.getFormattedBndryMap(boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Zone",ADMIN_HIERARCHY_TYPE)));
+                setWardBndryMap(CommonServices.getFormattedBndryMap(boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",ADMIN_HIERARCHY_TYPE)));
+                setBlockBndryMap(CommonServices.getFormattedBndryMap(boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Block",ADMIN_HIERARCHY_TYPE)));
+                setLocalityBndryMap(CommonServices.getFormattedBndryMap(boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Locality",LOCATION_HIERARCHY_TYPE)));
                 addDropdownData("instrumentTypeList", propertyTaxUtil.prepareInstrumentTypeList());  
                 setCollectionModesMap(COLL_MODES_MAP);
                 CFinancialYear finyear=financialYearDAO.getFinancialYearByDate(new Date());

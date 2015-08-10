@@ -1875,13 +1875,6 @@ public class PropertyTaxUtil {
             return persistenceService.findAllBy("from InstrumentType order by type");
         } 
 
-        public List<Boundary> prepareBoundaryList(String boundaryType, String hierarchyType){
-            List<Boundary> boundaryList = persistenceService.findAllBy(
-                    "from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
-                                    + "and BI.isHistory='N' order by BI.id", boundaryType, hierarchyType);
-            return boundaryList;
-        }
-        
 }
 
 
