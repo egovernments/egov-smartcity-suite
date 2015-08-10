@@ -143,7 +143,8 @@ public class JamabandiReportAction extends ReportFormAction {
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = INDEX)
 	public String generateJamabandi() {
-		ReportInfo reportInfo = new ReportInfo();
+	 // TODO : commented as part of DCB report story. 
+		/*ReportInfo reportInfo = new ReportInfo();
 		List<UnitWiseInfo> unitWiseInfoList = new ArrayList<UnitWiseInfo>();
 		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
 		if ((zoneId != null && zoneId != -1) && (wardId != null && wardId != -1)) {
@@ -189,12 +190,12 @@ public class JamabandiReportAction extends ReportFormAction {
 						List unitList = new ArrayList();
 						UnitWiseInfo unitWiseInfoTotal = null;
 						int unitCounter = 0;
-						/**
+						*//**
 						 * unitList list has the list of unit number for that
 						 * particular index number unitWiseInfoTotal has the
 						 * grouped info of unitwise if the unit numbers are same
 						 * for that particular index num
-						 */
+						 *//*
 						for (CurrFloorDmdCalcMaterializeView currFlrDmdMatView : flrDmdCalcList) {
 							UnitWiseInfo unitWiseInfo = prepareUnitWiseInfo(currFlrDmdMatView);
 							// initially the block is executed
@@ -205,46 +206,46 @@ public class JamabandiReportAction extends ReportFormAction {
 							} else if (unitList.contains(unitWiseInfo.getUnitNo())) {
 
 								if (unitWiseInfoTotal == null) {
-									/**
+									*//**
 									 * if the unit is already added to the list
 									 * and if still similar units exists
-									 */
+									 *//*
 									unitWiseInfoTotal = getExistingUnitFromList(unitWiseInfoList, unitWiseInfo);
 								} else {
-									/**
+									*//**
 									 * if the next unit exists in the list, then
 									 * the unit info is added to the existing
 									 * total
-									 */
+									 *//*
 									unitWiseInfoTotal = addUnitWiseInfo(unitWiseInfoTotal, unitWiseInfo);
 								}
 
 								unitCounter++;
-								/**
+								*//**
 								 * if the counter and size are same, ie. if no
 								 * other units exits, then the unitWiseInfoTotal
 								 * is added to list
-								 */
+								 *//*
 								if (unitCounter == flrDmdCalcList.size()) {
 									unitWiseInfoList.add(unitWiseInfoTotal);
 								}
 							} else if (!unitList.contains(unitWiseInfo.getUnitNo())) {
-								/**
+								*//**
 								 * if the next unit number does not exist in the
 								 * list, then the unit number is added to
 								 * unitList and the total is added to list.
-								 */
+								 *//*
 								unitList.add(unitWiseInfo.getUnitNo());
 								if (unitWiseInfoTotal != null) {
 									unitWiseInfoList.add(unitWiseInfoTotal);
 									unitWiseInfoTotal = null;
 								}
-								/**
+								*//**
 								 * This use case occurs when there are no common
 								 * unit numbers, so there wont be
 								 * unitWiseInfoTotal and the actual unitWiseInfo
 								 * has to be added to the list
-								 */
+								 *//*
 								if (unitWiseInfoTotal == null) {
 									unitWiseInfoList.add(unitWiseInfo);
 								}
@@ -270,7 +271,7 @@ public class JamabandiReportAction extends ReportFormAction {
 			setDataSourceType(ReportDataSourceType.JAVABEAN);
 			setReportData(reportInfo);
 			super.report();
-		}
+		}*/
 		return "generate";
 	}
 
@@ -437,7 +438,7 @@ public class JamabandiReportAction extends ReportFormAction {
 		/*
 		 * Total of cons tax, water tax, general tax, fire tax and light tax
 		 */
-		BigDecimal totalTax = currInstDmdCollMatView.getSewerageTax().add(currInstDmdCollMatView.getWaterTax())
+		/*BigDecimal totalTax = currInstDmdCollMatView.getSewerageTax().add(currInstDmdCollMatView.getWaterTax())
 				.add(currInstDmdCollMatView.getGeneralTax()).add(currInstDmdCollMatView.getFireTax())
 				.add(currInstDmdCollMatView.getLightTax());
 
@@ -452,7 +453,7 @@ public class JamabandiReportAction extends ReportFormAction {
 		unitwiseInfo.setEduCess(currInstDmdCollMatView.getEduCessResdTax().add(
 				currInstDmdCollMatView.getEduCessNonResdTax()));
 		unitwiseInfo.setEgsCess(currInstDmdCollMatView.getEgsTax());
-
+*/
 		return unitwiseInfo;
 	}
 

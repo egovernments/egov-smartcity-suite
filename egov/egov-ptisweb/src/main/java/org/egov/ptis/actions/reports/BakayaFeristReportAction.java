@@ -236,7 +236,8 @@ public class BakayaFeristReportAction extends ReportFormAction {
 
 				// taxInfo.setInstallment(installmentFromDate.get(YEAR) + "-" +
 				// installmentToDate.get(YEAR));
-				taxInfo.setInstallment(demandDetailsAndInstallment.getInstallment().toString());
+				// TODO : commented as part of DCB report story. 
+				/*axInfo.setInstallment(demandDetailsAndInstallment.getInstallment().toString());
 				taxInfo.setConservancyTax(demandDetailsAndInstallment.getSewerageTax()
 						.subtract(demandDetailsAndInstallment.getSewerageTaxColl())
 						.setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -281,7 +282,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
 						.add(demandDetailsAndInstallment.getBigBldgTax().subtract(
 								demandDetailsAndInstallment.getBigBldgTaxColl())).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-				grandTotal = grandTotal.add(taxInfo.getTotal());
+				grandTotal = grandTotal.add(taxInfo.getTotal());*/
 
 				if (currentInstallment.equals(demandDetailsAndInstallment.getInstallment())) {
 					taxInfo.setGrandTotal(grandTotal.setScale(2, BigDecimal.ROUND_HALF_UP));

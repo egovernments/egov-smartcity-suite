@@ -46,233 +46,144 @@ import java.util.Date;
 import org.egov.commons.Installment;
 
 public class InstDmdCollMaterializeView implements Serializable {
-
-	private PropertyMaterlizeView propMatView;
+    
+   	private PropertyMaterlizeView propMatView;
 	private Installment installment;
 	private BigDecimal generalTax;
-	private BigDecimal egsTax;
-	private BigDecimal eduCessResdTax;
-	private BigDecimal eduCessNonResdTax;
-	private BigDecimal waterTax;
-	private BigDecimal fireTax;
-	private BigDecimal sewerageTax;
-	private BigDecimal lightTax;
-	private BigDecimal bigBldgTax;
+	private BigDecimal libCessTax;
+	private BigDecimal eduCessTax;
+	private BigDecimal unauthPenaltyTax;
+	private BigDecimal penaltyFinesTax;
+	private BigDecimal sewTax;
+	private BigDecimal vacantLandTax;
+	private BigDecimal pubSerChrgTax;
+	
 	private BigDecimal generalTaxColl;
-	private BigDecimal egsTaxColl;
-	private BigDecimal eduCessResdTaxColl;
-	private BigDecimal eduCessNonResdTaxColl;
-	private BigDecimal waterTaxColl;
-	private BigDecimal fireTaxColl;
-	private BigDecimal sewerageTaxColl;
-	private BigDecimal lightTaxColl;
-	private BigDecimal bigBldgTaxColl;
-	private BigDecimal chqBouncePenalty;
-	private BigDecimal penaltyFine;
-	private BigDecimal chqBuncPnltyColl;
-	private BigDecimal penaltyFineColl;
+	private BigDecimal libCessTaxColl;
+	private BigDecimal eduCessTaxColl;
+	private BigDecimal unauthPenaltyTaxColl;
+	private BigDecimal penaltyFinesTaxColl;
+	private BigDecimal sewTaxColl;
+	private BigDecimal vacantLandTaxColl;
+	private BigDecimal pubSerChrgTaxColl;
 	private Date createdDate;
 	
-	public PropertyMaterlizeView getPropMatView() {
-		return propMatView;
-	}
-
-	public void setPropMatView(PropertyMaterlizeView propMatView) {
-		this.propMatView = propMatView;
-	}
-
-	public Installment getInstallment() {
-		return installment;
-	}
-
-	public void setInstallment(Installment installment) {
-		this.installment = installment;
-	}
-
-	public BigDecimal getGeneralTax() {
-		return generalTax;
-	}
-
-	public void setGeneralTax(BigDecimal generalTax) {
-		this.generalTax = generalTax;
-	}
-
-	public BigDecimal getEgsTax() {
-		return egsTax;
-	}
-
-	public void setEgsTax(BigDecimal egsTax) {
-		this.egsTax = egsTax;
-	}
-
-	public BigDecimal getEduCessResdTax() {
-		return eduCessResdTax;
-	}
-
-	public void setEduCessResdTax(BigDecimal eduCessResdTax) {
-		this.eduCessResdTax = eduCessResdTax;
-	}
-
-	public BigDecimal getEduCessNonResdTax() {
-		return eduCessNonResdTax;
-	}
-
-	public void setEduCessNonResdTax(BigDecimal eduCessNonResdTax) {
-		this.eduCessNonResdTax = eduCessNonResdTax;
-	}
-
-	public BigDecimal getWaterTax() {
-		return waterTax;
-	}
-
-	public void setWaterTax(BigDecimal waterTax) {
-		this.waterTax = waterTax;
-	}
-
-	public BigDecimal getFireTax() {
-		return fireTax;
-	}
-
-	public void setFireTax(BigDecimal fireTax) {
-		this.fireTax = fireTax;
-	}
-
-	public BigDecimal getSewerageTax() {
-		return sewerageTax;
-	}
-
-	public void setSewerageTax(BigDecimal sewerageTax) {
-		this.sewerageTax = sewerageTax;
-	}
-
-	public BigDecimal getLightTax() {
-		return lightTax;
-	}
-
-	public void setLightTax(BigDecimal lightTax) {
-		this.lightTax = lightTax;
-	}
-
-	public BigDecimal getBigBldgTax() {
-		return bigBldgTax;
-	}
-
-	public void setBigBldgTax(BigDecimal bigBldgTax) {
-		this.bigBldgTax = bigBldgTax;
-	}
-
-	public BigDecimal getGeneralTaxColl() {
-		return generalTaxColl;
-	}
-
-	public void setGeneralTaxColl(BigDecimal generalTaxColl) {
-		this.generalTaxColl = generalTaxColl;
-	}
-
-	public BigDecimal getEgsTaxColl() {
-		return egsTaxColl;
-	}
-
-	public void setEgsTaxColl(BigDecimal egsTaxColl) {
-		this.egsTaxColl = egsTaxColl;
-	}
-
-	public BigDecimal getEduCessResdTaxColl() {
-		return eduCessResdTaxColl;
-	}
-
-	public void setEduCessResdTaxColl(BigDecimal eduCessResdTaxColl) {
-		this.eduCessResdTaxColl = eduCessResdTaxColl;
-	}
-
-	public BigDecimal getEduCessNonResdTaxColl() {
-		return eduCessNonResdTaxColl;
-	}
-
-	public void setEduCessNonResdTaxColl(BigDecimal eduCessNonResdTaxColl) {
-		this.eduCessNonResdTaxColl = eduCessNonResdTaxColl;
-	}
-
-	public BigDecimal getWaterTaxColl() {
-		return waterTaxColl;
-	}
-
-	public void setWaterTaxColl(BigDecimal waterTaxColl) {
-		this.waterTaxColl = waterTaxColl;
-	}
-
-	public BigDecimal getFireTaxColl() {
-		return fireTaxColl;
-	}
-
-	public void setFireTaxColl(BigDecimal fireTaxColl) {
-		this.fireTaxColl = fireTaxColl;
-	}
-
-	public BigDecimal getSewerageTaxColl() {
-		return sewerageTaxColl;
-	}
-
-	public void setSewerageTaxColl(BigDecimal sewerageTaxColl) {
-		this.sewerageTaxColl = sewerageTaxColl;
-	}
-
-	public BigDecimal getLightTaxColl() {
-		return lightTaxColl;
-	}
-
-	public void setLightTaxColl(BigDecimal lightTaxColl) {
-		this.lightTaxColl = lightTaxColl;
-	}
-
-	public BigDecimal getBigBldgTaxColl() {
-		return bigBldgTaxColl;
-	}
-
-	public void setBigBldgTaxColl(BigDecimal bigBldgTaxColl) {
-		this.bigBldgTaxColl = bigBldgTaxColl;
-	}
-
-	public BigDecimal getChqBouncePenalty() {
-		return chqBouncePenalty;
-	}
-
-	public void setChqBouncePenalty(BigDecimal chqBouncePenalty) {
-		this.chqBouncePenalty = chqBouncePenalty;
-	}
-
-	public BigDecimal getPenaltyFine() {
-		return penaltyFine;
-	}
-
-	public void setPenaltyFine(BigDecimal penaltyFine) {
-		this.penaltyFine = penaltyFine;
-	}
-
-	public BigDecimal getChqBuncPnltyColl() {
-		return chqBuncPnltyColl;
-	}
-
-	public void setChqBuncPnltyColl(BigDecimal chqBuncPnltyColl) {
-		this.chqBuncPnltyColl = chqBuncPnltyColl;
-	}
-
-	public BigDecimal getPenaltyFineColl() {
-		return penaltyFineColl;
-	}
-
-	public void setPenaltyFineColl(BigDecimal penaltyFineColl) {
-		this.penaltyFineColl = penaltyFineColl;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
+	
+    public PropertyMaterlizeView getPropMatView() {
+        return propMatView;
+    }
+    public void setPropMatView(PropertyMaterlizeView propMatView) {
+        this.propMatView = propMatView;
+    }
+    public Installment getInstallment() {
+        return installment;
+    }
+    public void setInstallment(Installment installment) {
+        this.installment = installment;
+    }
+    public BigDecimal getGeneralTax() {
+        return generalTax;
+    }
+    public void setGeneralTax(BigDecimal generalTax) {
+        this.generalTax = generalTax;
+    }
+    public BigDecimal getLibCessTax() {
+        return libCessTax;
+    }
+    public void setLibCessTax(BigDecimal libCessTax) {
+        this.libCessTax = libCessTax;
+    }
+    public BigDecimal getEduCessTax() {
+        return eduCessTax;
+    }
+    public void setEduCessTax(BigDecimal eduCessTax) {
+        this.eduCessTax = eduCessTax;
+    }
+    public BigDecimal getUnauthPenaltyTax() {
+        return unauthPenaltyTax;
+    }
+    public void setUnauthPenaltyTax(BigDecimal unauthPenaltyTax) {
+        this.unauthPenaltyTax = unauthPenaltyTax;
+    }
+    public BigDecimal getPenaltyFinesTax() {
+        return penaltyFinesTax;
+    }
+    public void setPenaltyFinesTax(BigDecimal penaltyFinesTax) {
+        this.penaltyFinesTax = penaltyFinesTax;
+    }
+    public BigDecimal getSewTax() {
+        return sewTax;
+    }
+    public void setSewTax(BigDecimal sewTax) {
+        this.sewTax = sewTax;
+    }
+    public BigDecimal getVacantLandTax() {
+        return vacantLandTax;
+    }
+    public void setVacantLandTax(BigDecimal vacantLandTax) {
+        this.vacantLandTax = vacantLandTax;
+    }
+    public BigDecimal getPubSerChrgTax() {
+        return pubSerChrgTax;
+    }
+    public void setPubSerChrgTax(BigDecimal pubSerChrgTax) {
+        this.pubSerChrgTax = pubSerChrgTax;
+    }
+    public BigDecimal getGeneralTaxColl() {
+        return generalTaxColl;
+    }
+    public void setGeneralTaxColl(BigDecimal generalTaxColl) {
+        this.generalTaxColl = generalTaxColl;
+    }
+    public BigDecimal getLibCessTaxColl() {
+        return libCessTaxColl;
+    }
+    public void setLibCessTaxColl(BigDecimal libCessTaxColl) {
+        this.libCessTaxColl = libCessTaxColl;
+    }
+    public BigDecimal getEduCessTaxColl() {
+        return eduCessTaxColl;
+    }
+    public void setEduCessTaxColl(BigDecimal eduCessTaxColl) {
+        this.eduCessTaxColl = eduCessTaxColl;
+    }
+    public BigDecimal getUnauthPenaltyTaxColl() {
+        return unauthPenaltyTaxColl;
+    }
+    public void setUnauthPenaltyTaxColl(BigDecimal unauthPenaltyTaxColl) {
+        this.unauthPenaltyTaxColl = unauthPenaltyTaxColl;
+    }
+    public BigDecimal getPenaltyFinesTaxColl() {
+        return penaltyFinesTaxColl;
+    }
+    public void setPenaltyFinesTaxColl(BigDecimal penaltyFinesTaxColl) {
+        this.penaltyFinesTaxColl = penaltyFinesTaxColl;
+    }
+    public BigDecimal getSewTaxColl() {
+        return sewTaxColl;
+    }
+    public void setSewTaxColl(BigDecimal sewTaxColl) {
+        this.sewTaxColl = sewTaxColl;
+    }
+    public BigDecimal getVacantLandTaxColl() {
+        return vacantLandTaxColl;
+    }
+    public void setVacantLandTaxColl(BigDecimal vacantLandTaxColl) {
+        this.vacantLandTaxColl = vacantLandTaxColl;
+    }
+    public BigDecimal getPubSerChrgTaxColl() {
+        return pubSerChrgTaxColl;
+    }
+    public void setPubSerChrgTaxColl(BigDecimal pubSerChrgTaxColl) {
+        this.pubSerChrgTaxColl = pubSerChrgTaxColl;
+    }
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+	/*
 	@Override
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
@@ -290,5 +201,5 @@ public class InstDmdCollMaterializeView implements Serializable {
 				.append("|LightTaxColl: ").append(getLightTaxColl()).append("|BigBldgTaxColl: ").append(getBigBldgTaxColl());
 
 		return objStr.toString();
-	}
+	}*/
 }

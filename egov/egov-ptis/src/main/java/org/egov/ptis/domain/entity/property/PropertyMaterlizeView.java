@@ -70,7 +70,7 @@ public class PropertyMaterlizeView implements Serializable {
 	private BigDecimal totalDemand;
 	private String gisRefNo;
 	private Set<InstDmdCollMaterializeView> instDmdColl;
-	private Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc;
+	/*private Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc;*/
 	private BigDecimal alv;
 	
 	public Integer getBasicPropertyID() {
@@ -241,13 +241,13 @@ public class PropertyMaterlizeView implements Serializable {
 		this.instDmdColl = instDmdColl;
 	}
 
-	public Set<CurrFloorDmdCalcMaterializeView> getCurrFloorDmdCalc() {
+	/*public Set<CurrFloorDmdCalcMaterializeView> getCurrFloorDmdCalc() {
 		return currFloorDmdCalc;
 	}
 
 	public void setCurrFloorDmdCalc(Set<CurrFloorDmdCalcMaterializeView> currFloorDmdCalc) {
 		this.currFloorDmdCalc = currFloorDmdCalc;
-	}
+	}*/
 
 	public BigDecimal getAlv() {
 		return alv;

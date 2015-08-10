@@ -40,184 +40,61 @@
 package org.egov.ptis.actions.reports;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DCBREPORT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Installment;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
-import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.actions.common.CommonServices;
-import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ParentPackage("egov")
-@Namespace("/reports")
-@ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = "search", location = "reports/dcbReport-search.jsp"),
-		@Result(name = "search", location = "reports/dcbReport-report.jsp") })
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
-public class DCBReportAction extends ReportFormAction {
+@SuppressWarnings("serial")
+@ParentPackage("egov")
+@Validations
+@Results({ @Result(name = DCBReportAction.SEARCH, location = "dCBReport-search.jsp")})
+public class DCBReportAction extends BaseFormAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	public static final String SEARCH = "search";
-	private List<ReportInfo> reportInfoList = new ArrayList<ReportInfo>();
 	private Long zoneId;
 	private Map<Long, String> ZoneBndryMap;
 	List<Boundary> zoneList;
-
-	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
-	
+	private String mode; // stores current mode (ex: zone / ward / block / property)
+	private Long boundaryId; // stores selected boundary id
+	private String selectedModeBndry; // Used to traverse back. Block -> Ward -> Zone
 	@Autowired
 	private BoundaryService boundaryService;
-
-	private void prepareReportInfo() {
-		StringBuffer query = new StringBuffer(1000);
-		StringBuilder billQueryString = new StringBuilder();
-		Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
-		List<Long> zoneParamList = new ArrayList<Long>();
-
-		billQueryString
-				.append("select propMatView.zone.id, propMatView.ward.id, propMatView.partNo, count(*) ")
-				.append("from EgBill bill, PropertyMaterlizeView propMatView, PtNotice notice left join notice.basicProperty bp ")
-				.append("where bp.propertyID.zone.id=propMatView.zone.id ")
-				.append("and bp.propertyID.ward.id=propMatView.ward.id ")
-				.append("and bill.is_History = 'N' ")
-				.append("and bp.id = propMatView.basicPropertyID ")
-				.append("and :FromDate <= bill.issueDate ")
-				.append("and :ToDate >= bill.issueDate ")
-				.append("and bill.egBillType.code = :BillType ")
-				.append("and bill.billNo = notice.noticeNo ")
-				.append("and notice.noticeType = 'Bill' ")
-				.append("and notice.noticeFile is not null ")
-				.append("and propMatView.zone.id in (:ZoneId) ")
-				.append("group by propMatView.zone.id, propMatView.ward.id, propMatView.partNo ");
-
-		query.append(
-				"select zone.id, ward.id, partNo, count(*) as totalProp, sum(aggrCurrDmd) as currDmd,")
-				.append(" sum(aggrArrDmd) as arrDmd, sum(aggrCurrColl) as currColl, sum(aggrArrColl) as arrColl, ")
-				.append(" (sum(aggrCurrDmd) + sum(aggrArrDmd)) as totalDmd, (sum(aggrCurrColl) + sum(aggrArrColl)) as totalColl ")
-				.append(" from PropertyMaterlizeView ").append(" where zone.id in (:ZoneId)")
-				.append(" group by zone.id, ward.id, partNo")
-				.append(" order by zone.id, ward.id, LPAD(partNo,'20',0)");
-
-		if (!zoneId.equals(new Integer(-1)) && !zoneId.equals(new Integer(0))) {
-			zoneParamList.add(zoneId);
-		} else if (zoneId.equals(new Integer(0))) {
-			for (Boundary bndry : zoneList) {
-				zoneParamList.add(bndry.getId());
-			}
-		}
-
-		Query propMatViewQuery = getPersistenceService().getSession().createQuery(query.toString());
-		propMatViewQuery.setParameterList("ZoneId", zoneParamList);
-		List<Object[]> propMatViewList = propMatViewQuery.list();
-
-		Query billQuery = getPersistenceService().getSession().createQuery(
-				billQueryString.toString());
-		billQuery.setDate("FromDate", currentInstallment.getFromDate());
-		billQuery.setDate("ToDate", currentInstallment.getToDate());
-		billQuery.setString("BillType", BILLTYPE_MANUAL);
-		billQuery.setParameterList("ZoneId", zoneParamList);
-		List<Object[]> billList = billQuery.list();
-
-		LOGGER.debug("DCB Report List size: " + propMatViewList.size());
-		LOGGER.debug("Bills List size: " + billList.size());
-
-		for (Object[] obj : propMatViewList) {
-			ReportInfo repInfo = new ReportInfo();
-			long mvZone, mvWard;
-
-			mvZone = ((Integer) obj[0]).intValue();
-			mvWard = ((Integer) obj[1]).intValue();
-			
-			String strZoneNum = (boundaryService.getActiveBoundaryByIdAsOnCurrentDate(mvZone).getBoundaryNum()).toString();
-			String strWardNum = (boundaryService.getActiveBoundaryByIdAsOnCurrentDate(mvWard).getBoundaryNum()).toString();
-
-			repInfo.setZoneNo(strZoneNum);
-			repInfo.setWardNo(strWardNum);
-			repInfo.setPartNo((String) obj[2]);
-			repInfo.setTotalNoProps(Integer.valueOf(((Long) obj[3]).toString()));
-			repInfo.setArrDmd(((BigDecimal) obj[5]).setScale(2, BigDecimal.ROUND_HALF_UP));
-			repInfo.setCurrDmd(((BigDecimal) obj[4]).setScale(2, BigDecimal.ROUND_HALF_UP));
-			repInfo.setArrColl(((BigDecimal) obj[7]).setScale(2, BigDecimal.ROUND_HALF_UP));
-			repInfo.setCurrColl(((BigDecimal) obj[6]).setScale(2, BigDecimal.ROUND_HALF_UP));
-			repInfo.setTotalDmd(((BigDecimal) obj[8]).setScale(2, BigDecimal.ROUND_HALF_UP));
-			repInfo.setTotalColl(((BigDecimal) obj[9]).setScale(2, BigDecimal.ROUND_HALF_UP));
-
-			for (Object[] billObj : billList) {
-				int zoneNo, wardNo;
-				String partNo;
-				zoneNo = ((Integer) billObj[0]).intValue();
-				wardNo = ((Integer) billObj[1]).intValue();
-				partNo = (String) billObj[2];
-
-				if (zoneNo == mvZone && wardNo == mvWard && partNo.equals(repInfo.getPartNo())) {
-					repInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[3]).toString()));
-					break;
-				}
-			}
-			LOGGER.debug("zoneNo:" + repInfo.getZoneNo() + ", wardNo:" + repInfo.getWardNo()
-					+ ", partNo:" + repInfo.getPartNo() + ", Total Properties:"
-					+ repInfo.getTotalNoProps() + ", Total bill generated:"
-					+ repInfo.getTotalGenBills() + ", Arrear Demand:" + repInfo.getArrDmd()
-					+ ", Current Demand:" + repInfo.getCurrDmd() + ", Total Demand:"
-					+ repInfo.getTotalDmd() + ", Arrear Recovery:" + repInfo.getArrColl()
-					+ ", Current Recovery:" + repInfo.getCurrColl() + ", Total Recovery:"
-					+ repInfo.getTotalColl());
-
-			reportInfoList.add(repInfo);
-		}
-
-		setDataSourceType(ReportDataSourceType.JAVABEAN);
-		setReportData(reportInfoList);
-		super.report();
-	}
-
-	@Action(value = "/dCBReport-search" )
-	public String search() {
-		return SEARCH;
-	}
-
-	@Action(value = "/dCBReport-searchForm" )
-	public String searchForm() {
-		prepareReportInfo();
-		return REPORT;
-	}
-
+	
 	@Override
-	public void prepare() {
-		zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,ADMIN_HIERARCHY_TYPE);
-		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-		ZoneBndryMap.put(0l, "All");
-	}
+	public Object getModel() {
+	     // TODO Auto-generated method stub
+	     return null;
+	 }
+	
+        @Override
+        public void prepare() {
+                zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,ADMIN_HIERARCHY_TYPE);
+                setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
+                ZoneBndryMap.put(0l, "All");
+        }
 
-	@Override
-	public String criteria() {
-		return null;
-	}
-
-	@Override
-	protected String getReportTemplateName() {
-		return REPORT_TEMPLATENAME_DCBREPORT;
-	}
+        @SkipValidation
+        @Action(value = "/reports/dCBReport-search")
+        public String search() {
+            mode="zone";
+            return SEARCH; 
+        }
 
 	public Long getZoneId() {
 		return zoneId;
@@ -243,4 +120,27 @@ public class DCBReportAction extends ReportFormAction {
 		this.zoneList = zoneList;
 	}
 
+        public String getMode() {
+            return mode;
+        }
+    
+        public void setMode(String mode) {
+            this.mode = mode;
+        }
+    
+        public Long getBoundaryId() {
+            return boundaryId;
+        }
+    
+        public void setBoundaryId(Long boundaryId) {
+            this.boundaryId = boundaryId;
+        }
+    
+        public String getSelectedModeBndry() {
+            return selectedModeBndry;
+        }
+    
+        public void setSelectedModeBndry(String selectedModeBndry) {
+            this.selectedModeBndry = selectedModeBndry;
+        }
 }

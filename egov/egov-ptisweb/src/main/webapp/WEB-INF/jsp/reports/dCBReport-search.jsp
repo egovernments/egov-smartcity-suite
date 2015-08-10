@@ -38,53 +38,147 @@
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp" %>
-
+<%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>  	
-    <title><s:text name='dcbreport.search'/></title>
-
-<script type="text/javascript">
- function generateDCBReport() 
- { 
-	 var zoneid = document.getElementById("zoneId").value;
-	 if(zoneid=="-1")
-	  { 
-		 alert("Please Select Zone");
-		 return false;
-	  } 
-	 win1 =window.open('../reports/dCBReport-searchForm.action?zoneId='+zoneid,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
- }
-</script>
+<head>
+	<title><s:text name='dcbreport.search' /></title>
 </head>
 <body>
-  
-  <s:form name="dcbForm" action="dCBReport" theme="simple">
-	  <div class="formmainbox">
-	  <div class="formheading"></div>
-			<div class="headingbg"><s:text name="dcbreport.search"/></div>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td class="bluebox2" width="5%">&nbsp;</td>
-					<td class="bluebox" width=""><s:text name="Zone" /> <span
-						class="mandatory1">*</span> :</td>
-					<td class="bluebox" width=""><s:select headerKey="-1"
-							headerValue="%{getText('default.select')}" name="zoneId" id="zoneId"
-							listKey="key" listValue="value" list="ZoneBndryMap"
-							cssClass="selectnew" value="%{zoneId}" />
-					</td>
-					<td class="bluebox" colspan="2">&nbsp;</td>
-				</tr>
-			</table>
-	  </div>
-	  <div class="buttonbottom" align="center">		   
-    	<input value="Search" name="Search" id='Search' type="button" class="buttonsubmit"
-				onclick="generateDCBReport();" />			
-		<input type="button" name="button2" id="button2"
-				value="Close" class="button" onclick="window.close();">				
-	 </div>
-  </s:form>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-body">
+				<s:form name="dcbForm" action="dCBReport" theme="simple"
+					cssClass="form-horizontal form-groups-bordered">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title text-left">DCB Drill Down Report</div>
+						</div>
+						<div class="panel-body custom-form">
+						<s:hidden id="mode" name="mode" value="%{mode}"/> 
+						<s:hidden id="boundaryId" name="boundaryId" value="%{boundaryId}"/> 
+						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="%{selectedModeBndry}"/> 
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label text-right"><s:text
+										name="Zone" /> :</label>
+								<div class="col-sm-6 add-margin">
+									<s:select headerKey="-1"
+										headerValue="%{getText('default.select')}" name="zoneId"
+										id="zoneId" listKey="key" listValue="value"
+										list="ZoneBndryMap" cssClass="form-control" value="%{zoneId}" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</s:form>
+
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="btnsearch" class="btn btn-success">
+							Search</button>
+						<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+							Close</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="row display-hide report-section">
+				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
+				<div class="col-md-12 form-group report-table-container">
+					<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="tbldcbdrilldown">
+						<thead>
+                            <tr>
+                             <th rowspan="2">Name</th>
+                             <th colspan="7">Demand</th>
+                             <th colspan="9">Collection</th>
+                             <th colspan="3">Balance</th>
+                            </tr>
+
+							<tr>
+								<th>Arrear
+									Property Tax</th>
+								<th>Arrear
+									LibraryCess</th>
+								<th>Arrear
+									Total</th>
+								<th>Current
+									Property Tax</th>
+								<th>Current
+									LibraryCess</th>
+								<th>Current Total</th>
+								<th>Total
+									Demand</th>
+								<th>Arrear
+									Property Tax</th>
+								<th>Arrear
+									LibraryCess</th>
+								<th>Penalty
+									On Arrear</th>
+								<th>Arrear
+									Total</th>
+								<th>Current
+									Property Tax</th>
+								<th>Current
+									LibraryCess</th>
+								<th>Position</th>
+								<th>Current
+									Total</th>
+								<th>Total
+									Collection</th>
+								<th>Arrear
+									Property Tax</th>
+								<th>Current Property Tax</th>
+								<th>Total PropertyTax Balance</th>
+							</tr>
+						</thead>
+						 <tfoot id="report-footer">
+							<tr>
+								<td>Total</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tfoot> 
+					</table>
+				</div>
+			</div>
+
+			<div id="report-backbutton" class="col-xs-12 text-center">
+				<div class="form-group"> <buttton class="btn btn-primary" id="backButton" > Back</buttton></div>
+			</div>
+		</div>
+	</div>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/dCBReport.js'/>"></script>
 </html>

@@ -80,12 +80,12 @@
             <one-to-many class="org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView" />
         </set>
 		
-		<set name="currFloorDmdCalc" table="EGPT_MV_CURR_FLOOR_DMDCALC" >
+		<!-- <set name="currFloorDmdCalc" table="EGPT_MV_CURR_FLOOR_DMDCALC" >
             <key>
                 <column name="ID_BASIC_PROPERTY"  not-null="true" />
             </key>
             <one-to-many class="org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView" />
-        </set>
+        </set> -->
 	</class>
 
 </hibernate-mapping>

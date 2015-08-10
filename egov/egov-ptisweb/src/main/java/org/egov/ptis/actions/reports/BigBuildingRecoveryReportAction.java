@@ -119,7 +119,8 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 				.setDate(0, fromDate).setDate(1, toDate).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		Installment currInstallment = propertyTaxUtil.getCurrentInstallment();		
 		for (InstDmdCollMaterializeView instDmdColl : instDmdCollList) {
-			if (instDmdColl.getInstallment().compareTo(currInstallment) < 0) {
+		    // TODO : commented as part of DCB report story. 	
+		    /*if (instDmdColl.getInstallment().compareTo(currInstallment) < 0) {
 				if (!instDmdColl.getBigBldgTaxColl().equals(BigDecimal.ZERO)) {
 					arrBigBldgTaxColl = arrBigBldgTaxColl.add(instDmdColl.getBigBldgTaxColl());
 				}
@@ -128,7 +129,7 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 					currBigBldgTaxColl = currBigBldgTaxColl.add(instDmdColl.getBigBldgTaxColl());
 					totalNoProps++;
 				}
-			}
+			}*/
 		}
 		String fdate = dateFormatter.format(fromDate);
 		String tdate = dateFormatter.format(toDate);
