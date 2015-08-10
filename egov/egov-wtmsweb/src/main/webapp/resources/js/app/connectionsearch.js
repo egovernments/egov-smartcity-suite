@@ -38,123 +38,91 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 var tableContainer;
-jQuery(document)
-		.ready(
-				function($) {
-					$(":input").inputmask();
+jQuery(document).ready(function($) {
+		$(":input").inputmask();
+		tableContainer = $("#aplicationSearchResults");
+		var userrole = $('#userRole').val();
+		$('#searchapprvedapplication').click(function() {
+			$.post("/wtms/search/waterSearch/",$('#waterSearchRequestForm').serialize())
+			.done(function(searchResult) {
+			console.log(JSON.stringify(searchResult));
+			tableContainer.dataTable({
+			destroy : true,
+			"sPaginationType" : "bootstrap",
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
+			"autoWidth" : false,
+			searchable : true,
+			data : searchResult,
+			columns : [{title : 'Applicant Name',data : 'resource.searchable.consumername'},
+			           {title : 'Consumer No.',class : 'row-detail',data : 'resource.clauses.consumercode'},
+			           {title : 'Address',data : 'resource.searchable.locality'},
+			           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
+			           {title : 'Usage Type',data : 'resource.clauses.usage'},
+			           {title : 'Total Due',data : 'resource.clauses.totaldue'},
+			           {title : 'Status',data : 'resource.clauses.status'},
+			           {title : 'Actions',
+			        	   render : function(data,type,full) {
+									if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined && full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
+										if (full.resource.clauses.status == 'ACTIVE') {
+										if (userrole == "CSC Operator") {
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										} else if (userrole == "ULB Operator") {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+										}													
+										else if(userrole=='Super User'){
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+											
+										}
+									} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator' )
+											&& full.resource.clauses.status == 'DISCONNECTED') {
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+									}
+									else if(userrole=='Super User' & full.resource.clauses.status == 'DISCONNECTED') {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
+									}
+									}
+								if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
+										&& full.resource.clauses.applicationcode == 'NEWCONNECTION') {
+									if (full.resource.clauses.status == 'ACTIVE') {
+										if (userrole == "CSC Operator") {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										} else if (userrole == "ULB Operator") {
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+										}
+										else if(userrole=='Super User'){
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										}
+									} else if ((userrole == 'CSC Operator' )&& full.resource.clauses.status == 'DISCONNECTED') {
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
+									}
+									else if (((userrole == 'ULB Operator') || (userrole=='Super User')) && full.resource.clauses.status == 'DISCONNECTED') {
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
+									}
+								}	
+								if (full!=null && full.resource !=undefined ){
+								if((full.resource.clauses.status == 'CLOSED'|| full.resource.clauses.status == 'HOLDING'|| userrole == "Water Tax Approver")) { // Assistant
+																				// Engineer,Commitioner
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
+								} else if (userrole == "Operator") { // Collection
+																		// Operator
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Fees</option></select>');
+								} 
+								else
+									{
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option></select>');
+									
+									}
+							}
+								
 
-					tableContainer = $("#aplicationSearchResults");
-					var userrole = $('#userRole').val();
-					$('#searchapprvedapplication').click(function() {
-										$.post("/wtms/search/waterSearch/",
-														$('#waterSearchRequestForm').serialize())
-												.done(function(searchResult) {
-															console.log(JSON.stringify(searchResult));
-															tableContainer.dataTable({
-																		destroy : true,
-																		"sPaginationType" : "bootstrap",
-																		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-																		"aLengthMenu" : [
-																				[10,25,50,-1 ],
-																				[10,25,50,"All" ] ],
-																		"autoWidth" : false,
-																		searchable : true,
-																		data : searchResult,
-																		columns : [
-																				{
-																					title : 'Applicant Name',
-																					data : 'resource.searchable.consumername'
-																				},
-																				{
-																					title : 'Consumer No.',
-																					class : 'row-detail',
-																					data : 'resource.clauses.consumercode'
-																				},
-																				{
-																					title : 'Address',
-																					data : 'resource.searchable.locality'
-																				},
-																				{
-																					title : 'apptype',
-																					data : 'resource.clauses.applicationcode',
-																					"bVisible" : false
-																				},
-																				{
-																					title : 'Usage Type',
-																					data : 'resource.clauses.usage'
-																				},
-																				{
-																					title : 'Total Due',
-																					data : 'resource.clauses.totaldue'
-																				},
-																				{
-																					title : 'Status',
-																					data : 'resource.clauses.status'
-																				},
-																				{title : 'Actions',
-																					render : function(data,type,full) {
-																						if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined
-																								&& full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
-																							if (full.resource.clauses.status == 'ACTIVE') {
-																								if (userrole == "CSC Operator") {
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
-																								} else if (userrole == "ULB Operator") {
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
-																								}
-																								else if(userrole=='Super User'){
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
-																									
-																								}
-																							} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator' )
-																									&& full.resource.clauses.status == 'DISCONNECTED') {
-																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
-																							}
-																							else if(userrole=='Super User' & full.resource.clauses.status == 'DISCONNECTED') {
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
-																								
-																							}
+							}
 
-																						}
-																						if (full != null&& full.resource != undefined&& full.resource.clauses.applicationcode != undefined
-																								&& full.resource.clauses.applicationcode == 'NEWCONNECTION') {
-																							if (full.resource.clauses.status == 'ACTIVE') {
-																								if (userrole == "CSC Operator") {
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
-																								} else if (userrole == "ULB Operator") {
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
-																								}
-																								else if(userrole=='Super User'){
-																									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
-																								}
-																							} else if ((userrole == 'CSC Operator' )&& full.resource.clauses.status == 'DISCONNECTED') {
-																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
-																							}
-																							else if (((userrole == 'ULB Operator') || (userrole=='Super User')) && full.resource.clauses.status == 'DISCONNECTED') {
-																								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="4">Reconnection</option></select>');
-																							}
-																							
-																						}
-																						
-																							
-																						if (full.resource.clauses.status == 'CLOSED'|| full.resource.clauses.status == 'HOLDING'|| userrole == "Water Tax Approver") { // Assistant
-																																		// Engineer,Commitioner
-																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
-																						} else if (userrole == "Operator") { // Collection
-																																// Operator
-																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Fees</option></select>');
-																						} else if (userrole == "Tap Inspector") { // TAP need to change after adding role
-																																	// inspector
-																							return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="7">Execution Date</option></select>');
-																						}
-																						
-
-																					}
-
-																				} ]
-																	});
-														})
-									});
-
+						} ]
+			});
+			})
+		});
+														
 					$("#aplicationSearchResults").on('change','tbody tr td .dropchange',
 							function() {
 							var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);

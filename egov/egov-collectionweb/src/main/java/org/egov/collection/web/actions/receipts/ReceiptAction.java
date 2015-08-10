@@ -108,7 +108,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
@@ -201,7 +200,7 @@ public class ReceiptAction extends BaseFormAction {
 	 */
 	private InstrumentHeader instrHeaderBank;
 
-	private DateTime voucherDate;
+	private Date voucherDate;
 	private String voucherNum;
 	private List<ReceiptDetailInfo> subLedgerlist;
 	private List<ReceiptDetailInfo> billCreditDetailslist;
@@ -247,7 +246,7 @@ public class ReceiptAction extends BaseFormAction {
 
 	private String payeename = "";
 
-	private DateTime manualReceiptDate;
+	private Date manualReceiptDate;
 
 	private String manualReceiptNumber;
 
@@ -650,7 +649,7 @@ public class ReceiptAction extends BaseFormAction {
 		String returnValue = "" ;
 		long startTimeMillis = System.currentTimeMillis();
 		if (manualReceiptNumber != null && manualReceiptDate !=null){
-			CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(manualReceiptDate.toDate());
+			CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(manualReceiptDate);
 			rhForValidation = receiptHeaderService.findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE, manualReceiptNumber, /*modelPayeeList.iterator().next().getReceiptHeaders().iterator().next().getService().getCode(),*/ financialYear.getStartingDate(), financialYear.getEndingDate(), CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
 		}
 		
@@ -871,20 +870,20 @@ public class ReceiptAction extends BaseFormAction {
 						// currentDate.
 						// Thus overridding the manualReceiptDate set above
 						//receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-						receiptHeader.setManualreceiptdate(manualReceiptDate.toDate());
-						receiptHeader.setReceiptdate(manualReceiptDate.toDate());
-						receiptHeader.setVoucherDate(manualReceiptDate.toDate());
+						receiptHeader.setManualreceiptdate(manualReceiptDate);
+						receiptHeader.setReceiptdate(manualReceiptDate);
+						receiptHeader.setVoucherDate(manualReceiptDate);
 					}
 					if (manualReceiptNumber != null) {
 						receiptHeader.setManualreceiptnumber(manualReceiptNumber);
 					}
 					if (isBillSourcemisc()) {
 						receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
-						receiptHeader.setVoucherDate(voucherDate.toDate());
+						receiptHeader.setVoucherDate(voucherDate);
 						receiptHeader.setVoucherNum(voucherNum);
 						receiptHeader.setIsReconciled(Boolean.TRUE);
-						receiptHeader.setReceiptdate(manualReceiptDate.toDate());
-						receiptHeader.setManualreceiptdate(manualReceiptDate.toDate());
+						receiptHeader.setReceiptdate(manualReceiptDate);
+						receiptHeader.setManualreceiptdate(manualReceiptDate);
 
 					} else {
 						receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
@@ -1157,7 +1156,7 @@ public class ReceiptAction extends BaseFormAction {
 		totalAmountToBeCollected = BigDecimal.valueOf(0);
 		
 		ReceiptHeader receiptHeader = new ReceiptHeader(oldReceiptHeader.getReferencenumber(),
-				oldReceiptHeader.getReferencedate().toDate(), oldReceiptHeader.getConsumerCode(),
+				oldReceiptHeader.getReferencedate(), oldReceiptHeader.getConsumerCode(),
 				oldReceiptHeader.getReferenceDesc(), oldReceiptHeader.getTotalAmount(),
 				oldReceiptHeader.getMinimumAmount(), oldReceiptHeader.getPartPaymentAllowed(),
 				oldReceiptHeader.getOverrideAccountHeads(), oldReceiptHeader.getCallbackForApportioning(),
@@ -1616,7 +1615,7 @@ public class ReceiptAction extends BaseFormAction {
 	/**
 	 * @return the voucherDate
 	 */
-	public DateTime getVoucherDate() {
+	public Date getVoucherDate() {
 		return voucherDate;
 	}
 
@@ -1624,7 +1623,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * @param voucherDate
 	 *            the voucherDate to set
 	 */
-	public void setVoucherDate(DateTime voucherDate) {
+	public void setVoucherDate(Date voucherDate) {
 		this.voucherDate = voucherDate;
 	}
 
@@ -1968,11 +1967,11 @@ public class ReceiptAction extends BaseFormAction {
 		this.payeename = payeename;
 	}
 
-	public DateTime getManualReceiptDate() {
+	public Date getManualReceiptDate() {
 		return manualReceiptDate;
 	}
 
-	public void setManualReceiptDate(DateTime manualReceiptDate) {
+	public void setManualReceiptDate(Date manualReceiptDate) {
 		this.manualReceiptDate = manualReceiptDate;
 	}
 

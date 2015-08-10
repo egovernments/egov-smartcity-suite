@@ -38,19 +38,13 @@
  */
 package org.egov.infra.web.controller.common;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -63,40 +57,28 @@ public class FileDownloadController {
 
     @Qualifier("localDiskFileStoreService")
     private @Autowired FileStoreService fileStoreService;
-    private @Autowired FileStoreMapperRepository fileStoreMapperRepository;
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
 
     @RequestMapping
     public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
             @RequestParam(defaultValue = "false") final boolean toSave,
             final HttpServletResponse response) throws IOException {
-        fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
     }
 
     @RequestMapping("/logo")
     public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName, final HttpSession session,
             final HttpServletResponse response) throws IOException {
         if (session.getAttribute("citylogo") != null && session.getAttribute("citylogo").toString().contains(fileStoreId))
-            fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+            fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
 
     }
-    
+
     @RequestMapping("/gis")
     public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
             final HttpServletResponse response) throws IOException {
-            fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
     }
 
-    private void fetchFileAndWriteToStream(final String fileStoreId, final String moduleName, final boolean toSave,
-            final HttpServletResponse response) throws IOException {
-        final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
-        if (fileStoreMapper != null) {
-            final File file = fileStoreService.fetch(fileStoreMapper, moduleName);
-            if (toSave)
-                response.setHeader("Content-Disposition", "attachment;filename=" + fileStoreMapper.getFileName());
-            response.setContentType(Files.probeContentType(file.toPath()));
-            final OutputStream out = response.getOutputStream();
-            IOUtils.write(FileUtils.readFileToByteArray(file), out);
-            IOUtils.closeQuietly(out);
-        }
-    }
 }

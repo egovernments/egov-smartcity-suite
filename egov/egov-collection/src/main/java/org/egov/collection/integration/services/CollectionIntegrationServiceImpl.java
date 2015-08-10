@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,9 @@ import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.PaymentInfoBank;
+import org.egov.collection.integration.models.PaymentInfoCash;
+import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
@@ -28,11 +32,12 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
-import org.joda.time.DateTime;
+import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -199,137 +204,139 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 	 */
 	@Override
 	public BillReceiptInfo createReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList) {
-		LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Started....");
-		Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
-		if (fund == null) {
-			throw new EGOVRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
-		}
+	    LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Started....");
+	    Fund fund = commonsServiceImpl.fundByCode(bill.getFundCode());
+	    if (fund == null) {
+	        throw new EGOVRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
+	    }
 
-		Department dept = (Department) persistenceService.findByNamedQuery(CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
+	    Department dept = (Department) persistenceService.findByNamedQuery(CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
 
-		if (dept == null) {
-			throw new EGOVRuntimeException("Department not present for the department code [" + bill.getDepartmentCode() + "].");
-		}
-		ReceiptHeader receiptHeader =collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
+	    if (dept == null) {
+	        throw new EGOVRuntimeException("Department not present for the department code [" + bill.getDepartmentCode() + "].");
+	    }
+	    ReceiptHeader receiptHeader =collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
-		receiptHeader.setCreatedDate(new Date());
-		receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
-		receiptHeader.setIsModifiable(Boolean.TRUE);
-		receiptHeader.setIsReconciled(Boolean.FALSE);
-		receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION);
+	    receiptHeader.setCreatedDate(new Date());
+	    receiptHeader.setReceiptdate(new Date());
+	    receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
+	    receiptHeader.setIsModifiable(Boolean.TRUE);
+	    receiptHeader.setIsReconciled(Boolean.FALSE);
+	    receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION);
 
-		receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+	    receiptHeader.setStatus(collectionsUtil.getEgwStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 
-		receiptHeader.setPaidBy(bill.getPaidBy());
+	    receiptHeader.setPaidBy(bill.getPaidBy());
 
-		if (EgovThreadLocals.getUserId() != null) {
-			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
-			Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
-			if (location != null) {
-				receiptHeader.setLocation(location);
-			}
-		}
+	    if (EgovThreadLocals.getUserId() != null) {
+	        User user = collectionsUtil.getUserById(EgovThreadLocals.getUserId());
+	        receiptHeader.setCreatedBy(user);
+	        receiptHeader.setLastModifiedBy(user);
+	        Location location = collectionsUtil.getLocationByUser(EgovThreadLocals.getUserId());
+	        if (location != null) {
+	            receiptHeader.setLocation(location);
+	        }
+	    }
 
-		BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
-		BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
+	    BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
+	    BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
 
-		// populate instrument details
-		//List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
+	    // populate instrument details
+	    List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
 
-		for (PaymentInfo paytInfo : paymentInfoList) {
-			/*String instrType = paytInfo.getInstrumentType().toString();
+	    for (PaymentInfo paytInfo : paymentInfoList) {
+	        String instrType = paytInfo.getInstrumentType().toString();
 
-			if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) {
-				PaymentInfoCash paytInfoCash = (PaymentInfoCash) paytInfo;
+	        if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrType)) {
+	            PaymentInfoCash paytInfoCash = (PaymentInfoCash) paytInfo;
 
-				instrumentHeaderList.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
-				otherInstrumenttotal = paytInfo.getInstrumentAmount();
-			}*/
+	            instrumentHeaderList.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
+	            otherInstrumenttotal = paytInfo.getInstrumentAmount();
+	        }
 
-			/*
-			 * if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrType)){
-			 * PaymentInfoCard paytInfoCard = (PaymentInfoCard)paytInfo;
-			 * 
-			 * instrumentHeaderList.add(
-			 * collectionCommon.validateAndConstructCardInstrument(
-			 * paytInfoCard,receiptHeader));
-			 * 
-			 * otherInstrumenttotal = paytInfoCard.getInstrumentAmount(); }
-			 */
+	        /*
+			  if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrType)){
+			  PaymentInfoCard paytInfoCard = (PaymentInfoCard)paytInfo;
 
-			/*if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
-				PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
+			  instrumentHeaderList.add(
+			 collectionCommon.validateAndConstructCardInstrument(
+			 paytInfoCard,receiptHeader));
 
-				instrumentHeaderList.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
+			  otherInstrumenttotal = paytInfoCard.getInstrumentAmount(); }*/
 
-				otherInstrumenttotal = paytInfoBank.getInstrumentAmount();
-			}
 
-			if (CollectionConstants.INSTRUMENTTYPE_CHEQUE.equals(instrType) || CollectionConstants.INSTRUMENTTYPE_DD.equals(instrType)) {
+	        if  (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
+	            PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
 
-				PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD) paytInfo;
+	            instrumentHeaderList.add(collectionCommon.validateAndConstructBankInstrument(paytInfoBank));
 
-				instrumentHeaderList.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
+	            otherInstrumenttotal = paytInfoBank.getInstrumentAmount();
+	        }
 
-				chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
-			}*/
-			/*
-			 * if(CollectionConstants.INSTRUMENTTYPE_ATM.equals(instrType)){
-			 * PaymentInfoATM paytInfoATM = (PaymentInfoATM)paytInfo;
-			 * 
-			 * instrumentHeaderList.add(
-			 * collectionCommon.validateAndConstructATMInstrument(
-			 * paytInfoATM));
-			 * 
-			 * otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }
-			 */
-		}
+	        if (CollectionConstants.INSTRUMENTTYPE_CHEQUE.equals(instrType) || CollectionConstants.INSTRUMENTTYPE_DD.equals(instrType)) {
 
-		/*instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
-		LOGGER.info("	Instrument List created	");
+	            PaymentInfoChequeDD paytInfoChequeDD = (PaymentInfoChequeDD) paytInfo;
 
-		receiptHeader.setReceiptInstrument(new HashSet(instrumentHeaderList));
-		 */
-		BigDecimal debitAmount = BigDecimal.ZERO;
+	            instrumentHeaderList.add(collectionCommon.validateAndConstructChequeDDInstrument(paytInfoChequeDD));
 
-		for (ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-			debitAmount = debitAmount.add(receiptDetail.getCramount());
-			debitAmount = debitAmount.subtract(receiptDetail.getDramount());
-		}
+	            chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
+	        }
 
-		receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader, chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList
-				.get(0).getInstrumentType().toString()));
+	        /* if(CollectionConstants.INSTRUMENTTYPE_ATM.equals(instrType)){
+			  PaymentInfoATM paytInfoATM = (PaymentInfoATM)paytInfo;
 
-		receiptHeaderService.persist(receiptHeader);
-		receiptHeaderService.getSession().flush();
-		LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
+			  instrumentHeaderList.add(
+			  collectionCommon.validateAndConstructATMInstrument(
+			 paytInfoATM));
 
-		try {
+			  otherInstrumenttotal = paytInfoATM.getInstrumentAmount(); }*/
+	    }
+
+	    instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
+	    LOGGER.info("	Instrument List created	");
+
+	    receiptHeader.setReceiptInstrument(new HashSet(instrumentHeaderList));
+
+	    BigDecimal debitAmount = BigDecimal.ZERO;
+
+	    for (ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+	        debitAmount = debitAmount.add(receiptDetail.getCramount());
+	        debitAmount = debitAmount.subtract(receiptDetail.getDramount());
+	    }
+
+	    receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader, chequeDDInstrumenttotal, otherInstrumenttotal, paymentInfoList
+	            .get(0).getInstrumentType().toString()));
+
+	    receiptHeaderService.persist(receiptHeader);
+	    receiptHeaderService.getSession().flush();
+	    LOGGER.info("Receipt Created with receipt number: " + receiptHeader.getReceiptnumber());
+
+	    /*try {
 			receiptHeaderService.createVoucherForReceipt(receiptHeader, Boolean.FALSE);
 			LOGGER.debug("Updated financial systems and created voucher.");
 		} catch (EGOVRuntimeException ex) {
 			errors.add(new ValidationError("Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state.",
 					"Receipt creation transaction rolled back as update to financial system failed. Payment is in PENDING state."));
 			LOGGER.error("Update to financial systems failed");
-		}
+		}*/
 
-		collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
-		LOGGER.info("Billing system updated with receipt info");
+	    collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
+	    LOGGER.info("Billing system updated with receipt info");
 
-		// Create Vouchers
-		List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+	    // Create Vouchers
+	    /*List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
 
 		LOGGER.info("Receipt Voucher created with vouchernumber:	" + receiptHeader.getVoucherNum());
 
 		for (ReceiptVoucher receiptVoucher : receiptHeader.getReceiptVoucher()) {
 			voucherHeaderList.add(receiptVoucher.getVoucherheader());
 		}
-
-		/*if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
+	     */
+	    /*if (voucherHeaderList != null && !instrumentHeaderList.isEmpty()) {
 			receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList);
 		}*/
-		LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
-		return new BillReceiptInfoImpl(receiptHeader);
+	    LOGGER.info("Logs For HandHeldDevice Permance Test : Receipt Creation Finished....");
+	    return new BillReceiptInfoImpl(receiptHeader);
 	}
 
 	/*

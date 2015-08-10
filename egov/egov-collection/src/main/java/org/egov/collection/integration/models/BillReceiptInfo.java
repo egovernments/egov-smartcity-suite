@@ -40,12 +40,12 @@
 package org.egov.collection.integration.models;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.security.terminal.model.Location;
-import org.joda.time.DateTime;
 
 public interface BillReceiptInfo {
 
@@ -68,7 +68,7 @@ public interface BillReceiptInfo {
 	/**
 	 * @return the receipt date
 	 */
-	public abstract DateTime getReceiptDate();
+	public abstract Date getReceiptDate();
 
 	/**
 	 * @return the receipt location

@@ -8,6 +8,7 @@ function enableAppartnaumtLandDetails() {
 		jQuery('tr.vacantlanddetaills').show();
 		jQuery('#appurtenantRow').show();
 		jQuery('tr.floordetails').show();
+		jQuery('#areaOfPlot').val("");
 		jQuery('tr.extentSite').hide();
 	} else {
 		enableFieldsForPropType();
@@ -17,7 +18,6 @@ function enableAppartnaumtLandDetails() {
 function enableFieldsForPropType() {
 	var propType = document.forms[0].propTypeId.options[document.forms[0].propTypeId.selectedIndex].text;
 	if (propType != "select") {
-		//onChangeOfPropertyTypeFromMixedToOthers(propType);
 		if (propType == "Vacant Land") {
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
@@ -1026,20 +1026,13 @@ function enableOrDisableSiteOwnerDetails(obj) {
 function enableOrDisableBPADetails(obj) {
 	if (jQuery(obj).is(":checked")) {
 		jQuery('tr.bpddetails').show();
-		//jQuery('tr.bpddetails input').show();
-		//jQuery('tr.bpddetails select').show();
-		//jQuery('tr.bpddetails input').prop('readonly', false);
 	} else {
 		jQuery('tr.bpddetails').hide();
-		//jQuery('tr.bpddetails input').hide();
-		//jQuery('tr.bpddetails select').hide();
-		//jQuery('tr.bpddetails input').prop('readonly', true);
 	}
 }
 
 function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 	if (propType != "select") {
-		//onChangeOfPropertyTypeFromMixedToOthers(propType);
 		if (propType == "Vacant Land") {
 			jQuery('tr.floordetails').hide();
 			jQuery('tr.vacantlanddetaills').show();
@@ -1058,6 +1051,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('tr.appurtenant').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
+				jQuery('tr.extentSite').hide();
 				jQuery('#appurtenantRow').show();
 			}
 		}

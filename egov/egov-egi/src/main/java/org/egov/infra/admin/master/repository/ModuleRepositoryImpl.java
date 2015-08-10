@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -60,7 +59,8 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
                 .append("WHERE act.id IN (SELECT DISTINCT actionid FROM eg_roleaction WHERE roleid IN ( ");
         roles.parallelStream().forEach(role -> sql.append("?,"));
         sql.deleteCharAt(sql.length() - 1);
-        sql.append("))  AND mod.enabled=true AND act.enabled = true AND act.application=mod.id AND mod.parentmodule is null ORDER BY mod.ordernumber ASC");
+        sql.append(
+                "))  AND mod.enabled=true AND act.enabled = true AND act.application=mod.id AND mod.parentmodule is null ORDER BY mod.ordernumber ASC");
         final Query query = entityManager.createNativeQuery(sql.toString());
 
         int i = 1;

@@ -64,7 +64,6 @@ import org.egov.infstr.annotation.Search;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -173,8 +172,8 @@ public class ReceiptHeader extends StateAware implements Auditable{
 		this.referencenumber = referencenumber;
 	}
 
-	public DateTime getReferencedate() {
-		return null == this.referencedate ? null : new DateTime(this.referencedate);
+	public Date getReferencedate() {
+		return null == this.referencedate ? null : this.referencedate;
 	}
 
 	public void setReferencedate(Date referencedate) {
@@ -214,8 +213,8 @@ public class ReceiptHeader extends StateAware implements Auditable{
 		this.manualreceiptnumber = manualreceiptnumber;
 	}
 
-	public DateTime getManualreceiptdate() {
-		return null == this.manualreceiptdate ? null : new DateTime(this.manualreceiptdate);
+	public Date getManualreceiptdate() {
+		return null == this.manualreceiptdate ? null : this.manualreceiptdate;
 	}
 
 	public void setManualreceiptdate(Date manualreceiptdate) {
@@ -541,8 +540,8 @@ public class ReceiptHeader extends StateAware implements Auditable{
 	/**
 	 * @return the voucherDate
 	 */
-	public DateTime getVoucherDate() {
-		return null == voucherDate ? null : new DateTime(voucherDate);
+	public Date getVoucherDate() {
+		return null == voucherDate ? null : voucherDate;
 	}
 
 	/**
@@ -698,8 +697,8 @@ public class ReceiptHeader extends StateAware implements Auditable{
 		this.payeeAddress = payeeAddress;
 	}
 
-	public DateTime getReceiptdate() {
-		return null == receiptdate ? null : new DateTime(receiptdate);
+	public Date getReceiptdate() {
+		return null == receiptdate ? null : receiptdate;
 	}
 
 	public void setReceiptdate(Date receiptdate) {

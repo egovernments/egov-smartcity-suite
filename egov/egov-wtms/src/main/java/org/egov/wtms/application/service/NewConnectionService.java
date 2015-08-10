@@ -59,25 +59,28 @@ public class NewConnectionService {
     public String checkConnectionPresentForProperty(final String propertyID) {
         String validationMessage = "";
         /**
-         * Validate only if configuration value is 'NO' for multiple new connection per property allowed or not. If configuration
-         * value is 'YES' then multiple new connections are allowed. This will impact on the Additional connection feature.
+         * Validate only if configuration value is 'NO' for multiple new
+         * connection per property allowed or not. If configuration value is
+         * 'YES' then multiple new connections are allowed. This will impact on
+         * the Additional connection feature.
          **/
         if (!waterTaxUtils.isMultipleNewConnectionAllowedForPID()) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .getPrimaryConnectionDetailsByPropertyIdentifier(propertyID);
             if (waterConnectionDetails != null)
                 if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-                    validationMessage = messageSource.getMessage("err.validate.newconnection.active",
-                            new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+                    validationMessage = messageSource.getMessage("err.validate.newconnection.active", new String[] {
+                            waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
                 else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))
                     validationMessage = messageSource.getMessage("err.validate.newconnection.application.inprocess",
                             new String[] { propertyID, waterConnectionDetails.getApplicationNumber() }, null);
                 else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
-                    validationMessage = messageSource.getMessage("err.validate.newconnection.disconnected",
-                            new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+                    validationMessage = messageSource
+                            .getMessage("err.validate.newconnection.disconnected", new String[] {
+                                    waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
                 else if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.HOLDING))
-                    validationMessage = messageSource.getMessage("err.validate.newconnection.holding",
-                            new String[] { waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+                    validationMessage = messageSource.getMessage("err.validate.newconnection.holding", new String[] {
+                            waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
         }
         return validationMessage;
     }
@@ -89,16 +92,19 @@ public class NewConnectionService {
 
         if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)
             errorMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (assessmentDetails.getPropertyDetails() != null && assessmentDetails.getPropertyDetails().getTaxDue() != null
+        else if (assessmentDetails.getPropertyDetails() != null
+                && assessmentDetails.getPropertyDetails().getTaxDue() != null
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
             /**
-             * If property tax due present and configuration value is 'NO' then restrict not to allow new water tap connection
-             * application. If configuration value is 'YES' then new water tap connection can be created even though there is
-             * Property Tax Due present.
+             * If property tax due present and configuration value is 'NO' then
+             * restrict not to allow new water tap connection application. If
+             * configuration value is 'YES' then new water tap connection can be
+             * created even though there is Property Tax Due present.
              **/
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                errorMessage = messageSource.getMessage("err.validate.property.taxdue",
-                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber }, null);
+                errorMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                        assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" }, null);
         return errorMessage;
     }
+
 }

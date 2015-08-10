@@ -51,20 +51,20 @@
 	
 	<tr id="vacantLandRow">
         <td class="blueborderfortd" align="center">
-		 	<span class="bold"><s:property value="%{referenceProperty.propertyDetail.surveyNumber}" default="N/A"/></span>
+		 	<span class="bold"><s:property value="%{property.propertyDetail.surveyNumber}" default="N/A"/></span>
 		</td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{referenceProperty.propertyDetail.pattaNumber}" default="N/A"/></span>
+        	<span class="bold"><s:property value="%{property.propertyDetail.pattaNumber}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{referenceProperty.propertyDetail.sitalArea.area}" default="N/A"/></span>
+        	<span class="bold"><s:property value="%{property.propertyDetail.sitalArea.area}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{referenceProperty.propertyDetail.marketValue}" default="N/A"/></span>
+        	<span class="bold"><s:property value="%{property.propertyDetail.marketValue}" default="N/A"/></span>
 		</td>
         
         <td class="blueborderfortd">
-        	<span class="bold"><s:property value="%{referenceProperty.propertyDetail.currentCapitalValue}" default="N/A"/></span>
+        	<span class="bold"><s:property value="%{property.propertyDetail.currentCapitalValue}" default="N/A"/></span>
         </td>
     </tr>
     

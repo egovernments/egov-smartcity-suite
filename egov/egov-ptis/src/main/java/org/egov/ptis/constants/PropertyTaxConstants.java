@@ -67,6 +67,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
+    
+        public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
 	// General constants used across Clients
 	public static final String PTMODULENAME = "Property Tax";
 	public static final String PTISCONFIGFILE = "ptis_egov_config.xml";
@@ -112,6 +114,8 @@ public interface PropertyTaxConstants {
 	public static final String OBJECTION_CREATED = "CREATED";
 	public static final String OBJECTION_HEARING_FIXED = "HEARING DATE FIXED";
 	public static final String OBJECTION_HEARING_COMPLETED = "HEARING COMPLETED";
+	public static final String REVISIONPETITION_HEARINGCOMPLETED= "Revision Petition:Hearing completed";
+	public static final String REVISIONPETITION_CREATED= "Revision Petition:CREATED";
 	public static final String OBJECTION_INSPECTION_COMPLETED = "INSPECTION COMPLETED";
 	public static final String OBJECTION_INSPECTION_VERIFY = "INSPECTION VERIFY";
 	public static final String OBJECTION_ACCEPTED = "OBJECTION ACCEPTED";
@@ -990,4 +994,10 @@ public interface PropertyTaxConstants {
 
         }
     };
+    
+    //Application Types
+    
+    public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New Assessment";
+    public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter Assessment";
+    
 }

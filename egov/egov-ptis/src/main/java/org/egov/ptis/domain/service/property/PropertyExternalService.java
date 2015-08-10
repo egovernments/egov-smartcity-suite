@@ -153,6 +153,10 @@ public class PropertyExternalService {
 					assessmentDetail.getPropertyDetails().setPropertyUsage(
 							propertyDetail.getPropertyUsage().getUsageName());
 				}
+				if(null!=propertyDetail.getNo_of_floors())
+				    assessmentDetail.getPropertyDetails().setNoOfFloors(propertyDetail.getNo_of_floors());
+				else
+				    assessmentDetail.getPropertyDetails().setNoOfFloors(0);
 			}
 		}
 	}

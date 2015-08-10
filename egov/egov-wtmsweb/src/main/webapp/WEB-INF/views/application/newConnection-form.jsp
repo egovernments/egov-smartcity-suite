@@ -51,6 +51,7 @@
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
+			
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -64,22 +65,11 @@
 					<jsp:include page="documentdetails.jsp"></jsp:include>	
 				</div>
 			</div>			
-			<jsp:include page="../common/workflow.jsp"></jsp:include>	
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.createapplication"/></button>
-					<button type="reset" class="btn btn-primary">
-						<spring:message code="lbl.clear" />
-					</button>
-					<a href="javascript:void(0);" id="closeComplaints"
-						class="btn btn-primary" onclick="self.close()"><spring:message
-							code='lbl.close' /></a>
-				</div>
-			</div>
-		<%-- 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div> --%>
+				</div>
 		</form:form>
 	</div>
 </div>

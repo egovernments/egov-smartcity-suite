@@ -41,6 +41,8 @@ package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
@@ -108,7 +110,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -154,7 +155,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * @author parvati
  */
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
@@ -261,7 +261,6 @@ public class CreatePropertyAction extends WorkflowAction {
     @Autowired
     private PtDemandDao ptDemandDAO;
 
-    private ApplicationNumberGenerator applicationNumberGenerator;
     private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
 
     public CreatePropertyAction() {
@@ -312,6 +311,7 @@ public class CreatePropertyAction extends WorkflowAction {
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.persist(basicProperty);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
         setBasicProp(basicProperty);
         setAckMessage("Property Created Successfully in System and forwarded to " +getApproverName()+" with application number : ");
@@ -448,6 +448,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicProp.addProperty(property);
         basicPropertyService.persist(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         LOGGER.debug("forward: Property forward started " + property);
         final long startTimeMillis = System.currentTimeMillis();
         setDocNumber(getDocNumber());
@@ -518,6 +519,7 @@ public class CreatePropertyAction extends WorkflowAction {
         processAndStoreDocumentsWithReason(basicProp, DOCS_CREATE_PROPERTY);
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.update(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
         setAckMessage("Property Approved Successfully by : "
                 + userService.getUserById(securityUtils.getCurrentUser().getId()).getName()
@@ -534,6 +536,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicProp.setUnderWorkflow(true);
         basicPropertyService.persist(basicProp);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
         setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator " + property.getCreatedBy().getUsername()
                 + " with application No :");
@@ -664,7 +667,6 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProperty.setRegdDocDate(property.getBasicProperty().getRegdDocDate());
         basicProperty.setRegdDocNo(property.getBasicProperty().getRegdDocNo());
         basicProperty.setActive(Boolean.TRUE);
-        basicProperty.setApplicationNo(applicationNumberGenerator.generate());
         basicProperty.setAddress(createPropAddress());
         basicProperty.setPropertyID(createPropertyID(basicProperty));
         basicProperty.setStatus(propStatus);
@@ -893,7 +895,7 @@ public class CreatePropertyAction extends WorkflowAction {
         ackBean.setOwnerName(basicProp.getFullOwnerName());
         ackBean.setOwnerAddress(basicProp.getAddress().toString());
         ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
-        ackBean.setApplicationNo(basicProp.getApplicationNo());
+        ackBean.setApplicationNo(property.getApplicationNo());
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
         final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH,
                 15);
@@ -920,11 +922,11 @@ public class CreatePropertyAction extends WorkflowAction {
             final State propertyState = property.getState();
             if (propertyState.getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
                 if (propertyState.getValue().endsWith(WF_STATE_REVENUE_CLERK_APPROVED)) {
-                    args.add(property.getBasicProperty().getApplicationNo());
+                    args.add(property.getApplicationNo());
                     args.add(sMSEmailService.getCityName());
                     smsMsg = getText("msg.newpropertycreate.sms", args);
                 } else if (propertyState.getValue().endsWith(WF_STATE_REJECTED)) {
-                    args.add(property.getBasicProperty().getApplicationNo());
+                    args.add(property.getApplicationNo());
                     args.add(sMSEmailService.getCityName());
                     smsMsg = getText("msg.newpropertyreject.sms", args);
                 } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
@@ -1406,15 +1408,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setReportId(final Integer reportId) {
         this.reportId = reportId;
-    }
-
-    public ApplicationNumberGenerator getApplicationNumberGenerator() {
-        return applicationNumberGenerator;
-
-    }
-
-    public void setApplicationNumberGenerator(final ApplicationNumberGenerator applicationNumberGenerator) {
-        this.applicationNumberGenerator = applicationNumberGenerator;
     }
 
     public boolean isApproved() {

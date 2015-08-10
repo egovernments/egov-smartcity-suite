@@ -46,15 +46,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
+@Results({
+    @Result(name=SearchOnlineReceiptAction.SUCCESS,location="searchOnlineReceipt.jsp")
+  })
 public class SearchOnlineReceiptAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -74,7 +78,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 	
 	public SearchOnlineReceiptAction() {
 		super();
-		addRelatedEntity("serviceType", ServiceDetails.class,"serviceName");
+		addRelatedEntity("serviceType", ServiceDetails.class,"name");
 	}
 	
 	public String reset() {
@@ -85,6 +89,11 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 		searchTransactionStatus=-1;
 		return SUCCESS;
 	}
+	
+	@Action(value="/receipts/searchOnlineReceipt") 
+        public String  execute() {
+                return SUCCESS;
+        }
 	
 	public void prepare() {
 		super.prepare();
@@ -107,6 +116,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 				OnlinePayment.class.getSimpleName(),statusCodes);
 	}
 	
+	@Action(value="/receipts/searchOnlineReceipt-search") 
 	public String search() {
 		StringBuilder queryString=new StringBuilder(" select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
 		StringBuilder criteria = new StringBuilder();

@@ -109,10 +109,10 @@
 		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="">
 		   <span class="bold">
-		   <s:hidden id="referenceProperty.propertyDetail.id" name="referenceProperty.propertyDetail.id" value="%{referenceProperty.propertyDetail.id}" />
-			 <s:hidden id="referenceProperty.id" name="referenceProperty.id" value="%{referenceProperty.id}" />
+		   <s:hidden id="property.propertyDetail.id" name="property.propertyDetail.id" value="%{property.propertyDetail.id}" />
+			 <s:hidden id="property.id" name="property.id" value="%{property.id}" />
 							
-		   <s:property value="%{referenceProperty.propertyDetail.extentSite}" default="N/A"/></span>
+		   <s:property value="%{property.propertyDetail.extentSite}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"></td>
 		<td class="greybox">
@@ -135,13 +135,13 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
-			<s:checkbox name="referenceProperty.propertyDetail.structure" id="referenceProperty.propertyDetail.structure" disabled="true"/>
-			<s:hidden name="referenceProperty.propertyDetail.structure" value="%{referenceProperty.propertyDetail.structure}"/>
+			<s:checkbox name="property.propertyDetail.structure" id="property.propertyDetail.structure" disabled="true"/>
+			<s:hidden name="property.propertyDetail.structure" value="%{property.propertyDetail.structure}"/>
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
 		<td class="greybox siteowner">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.siteOwner}" default="N/A"/></span>
-			<s:hidden name="referenceProperty.propertyDetail.siteOwner" value="%{referenceProperty.propertyDetail.siteOwner}"/>
+			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
+			<s:hidden name="property.propertyDetail.siteOwner" value="%{property.propertyDetail.siteOwner}"/>
 		</td>
 	</tr>
 	
@@ -165,17 +165,17 @@
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
-				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{referenceProperty.propertyDetail.propertyTypeMaster.id}"
+				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{property.propertyDetail.propertyTypeMaster.id}"
 				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" /></td>
-			<s:hidden id="referenceProperty.propertyDetail.propertyTypeMaster.type" name="referenceProperty.propertyDetail.propertyTypeMaster.type" value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}" />
+			<s:hidden id="property.propertyDetail.propertyTypeMaster.type" name="property.propertyDetail.propertyTypeMaster.type" value="%{property.propertyDetail.propertyTypeMaster.type}" />
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
 			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
-		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.categoryType"
-				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{referenceProperty.propertyDetail.categoryType}"
+		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="property.propertyDetail.categoryType"
+				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{property.propertyDetail.categoryType}"
 				cssClass="selectnew"/>
 		</td>
 	</tr>
@@ -183,8 +183,8 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox"><s:select headerKey=""
-				headerValue="%{getText('default.select')}" 	name="referenceProperty.propertyDetail.apartment" id="referenceProperty.propertyDetail.apartment.id"
-				listKey="id" listValue="name" value="%{referenceProperty.propertyDetail.apartment.id}"
+				headerValue="%{getText('default.select')}" 	name="property.propertyDetail.apartment" id="property.propertyDetail.apartment.id"
+				listKey="id" listValue="name" value="%{property.propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
 		<td class="greybox" colspan="2">
 			&nbsp;			
@@ -194,18 +194,18 @@
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="referenceProperty.propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
-				value="%{referenceProperty.propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
+		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
+				value="%{property.propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
 		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="bluebox"><s:textfield maxlength="64" name="referenceProperty.propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{referenceProperty.propertyDetail.occupancyCertificationNo}"/></td>
+		<td class="bluebox"><s:textfield maxlength="64" name="property.propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{property.propertyDetail.occupancyCertificationNo}"/></td>
 	</tr>
 	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
 			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="referenceProperty.propertyDetail.extentAppartenauntLand" id="referenceProperty.propertyDetail.extentAppartenauntLand"
-				value="%{referenceProperty.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
+		<td class="greybox"><s:textfield name="property.propertyDetail.extentAppartenauntLand" id="property.propertyDetail.extentAppartenauntLand"
+				value="%{property.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
 				onblur="validNumber(this);checkZero(this);"></s:textfield>
 		</td>
 		<td class="bluebox" colspan="2">
@@ -216,8 +216,8 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 <s:checkbox name="referenceProperty.propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
-			value="%{referenceProperty.propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
+		 <s:checkbox name="property.propertyDetail.buildingPlanDetailsChecked" id="buildingPlanDetailsChecked"
+			value="%{property.propertyDetail.buildingPlanDetailsChecked}" onclick="enableOrDisableBPADetails(this);" />
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -226,13 +226,13 @@
 	<tr class="bpddetails">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="building.permNo"></s:text> :</td>
-		<td class="greybox"><s:textfield name="referenceProperty.propertyDetail.buildingPermissionNo" id="referenceProperty.propertyDetail.buildingPermissionNo" size="12" maxlength="12"
-				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{referenceProperty.propertyDetail.buildingPermissionNo}"></s:textfield>
+		<td class="greybox"><s:textfield name="property.propertyDetail.buildingPermissionNo" id="property.propertyDetail.buildingPermissionNo" size="12" maxlength="12"
+				onchange="trim(this,this.value);" onblur="checkZero(this);" value="%{property.propertyDetail.buildingPermissionNo}"></s:textfield>
 		</td>
 		<td class="greybox"><s:text name="buildingpermdate"></s:text> :</td>
-		<td class="greybox"><s:date name="referenceProperty.propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
-		<s:textfield name="referenceProperty.propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
-				id="referenceProperty.propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
+		<td class="greybox"><s:date name="property.propertyDetail.buildingPermissionDate" var="buildingPermDate" format="dd/MM/yyyy" /> 
+		<s:textfield name="property.propertyDetail.buildingPermissionDate" cssClass="datepicker" value="%{#buildingPermDate}" autocomplete="off"
+				id="property.propertyDetail.buildingPermissionDate" size="12" maxlength="12"></s:textfield>
 		</td>
 
 	</tr>
@@ -240,8 +240,8 @@
 	  <tr class="bpddetails">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
-		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.deviationPercentage"
-				id="referenceProperty.propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{referenceProperty.propertyDetail.deviationPercentage}"
+		<td class="bluebox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.deviationPercentage"
+				id="property.propertyDetail.deviationPercentage" listKey="key" listValue="value" list="deviationPercentageMap" value="%{property.propertyDetail.deviationPercentage}"
 				cssClass="selectnew"/>
 		</td>
 		<td class="bluebox" colspan="2">
@@ -334,7 +334,7 @@
 	}
 
 	function enableFieldsForPropTypeView() {
-		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 		if (propType != "select") {
 			//onChangeOfPropertyTypeFromMixedToOthers(propType);
 			if (propType == "Vacant Land") {
@@ -360,7 +360,7 @@
 	}
 
 	function toggleFloorDetailsView() {
-		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 		
 		if (propType == "Vacant Land") {
 			jQuery('tr.floordetails').hide();

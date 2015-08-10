@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -38,6 +37,9 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.infra.admin.master.entity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -236,6 +238,31 @@ public class City extends AbstractAuditable {
 
     public void setPreferences(final CityPreferences preferences) {
         this.preferences = preferences;
+    }
+
+    public Map<String, Object> toMap() {
+        final Map<String, Object> cityPrefs = new HashMap<>();
+        cityPrefs.put("cityBoundaryId", getBoundary().getId().toString());
+        cityPrefs.put("cityurl", getDomainURL());
+        cityPrefs.put("cityname", getName());
+        final CityPreferences cityPreferences = getPreferences();
+        if (cityPreferences == null)
+            cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
+        else {
+            cityPrefs.put("citylogo", cityPreferences.logoExist()
+                    ? String.format("/downloadfile/logo?fileStoreId=%s&moduleName=%s", cityPreferences.getLogo().getFileStoreId(), getCode()) : "");
+            cityPrefs.put("cityKmlFileStoreId", cityPreferences.kmlExist() ? cityPreferences.getGisKML().getFileStoreId() : "");
+            cityPrefs.put("cityShapeFileStoreId", cityPreferences.shapeExist() ? cityPreferences.getGisShape().getFileStoreId() : "");
+        }
+
+        cityPrefs.put("citynamelocal", getLocalName());
+        cityPrefs.put("cityCode", getCode());
+        cityPrefs.put("cityRecaptchaPK", getRecaptchaPK());
+        cityPrefs.put("cityRecaptchaPub", getRecaptchaPub());
+        cityPrefs.put("citylat", getLatitude());
+        cityPrefs.put("citylng", getLongitude());
+        cityPrefs.put("cityCode", getCode());
+        return cityPrefs;
     }
 
     @Override

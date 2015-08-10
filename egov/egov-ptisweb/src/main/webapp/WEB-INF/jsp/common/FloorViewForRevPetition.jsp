@@ -52,7 +52,7 @@
 		<th class="bluebgheadtd"><s:text name="drainage" /></th>
 		<th class="bluebgheadtd"><s:text name="noOfSeats" /></th>
     </tr>
-    <s:iterator value="referenceProperty.propertyDetail.floorDetails" status="floorsstatus">
+    <s:iterator value="property.propertyDetail.floorDetails" status="floorsstatus">
         <tr id="Floorinfo">
 		
 	    <td class="blueborderfortd" style="padding: 2px 2px">

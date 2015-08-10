@@ -173,7 +173,7 @@ public class WaterTaxCollection extends TaxCollection {
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
 
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-                            billRcptInfo.getReceiptDate().toDate(), demandDetail.getAmtCollected());
+                            billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
                     LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
                             + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
                             + rcptAccInfo.getCrAmount());

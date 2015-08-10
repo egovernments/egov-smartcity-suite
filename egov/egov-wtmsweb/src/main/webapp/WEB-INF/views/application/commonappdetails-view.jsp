@@ -69,6 +69,8 @@
 					<c:otherwise>N/A</c:otherwise>
 				</c:choose>
 			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhaar"/></div>
+			<div class="col-xs-3 add-margin view-content" id="aadhaar"></div>
 		</div>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.ptassesmentnumber"/></div>
@@ -112,15 +114,15 @@
 		<div class="row">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			<c:choose>
-				<c:when test="${null!=mode && (mode=='search' || mode=='addconnection') && waterConnectionDetails.demand.baseDemand>0}">
-					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand}" /></div>
+				<c:when test="${null!=mode && (mode=='search' || mode=='addconnection') && (waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected)>0}">
+					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterConnectionDetails.demand.baseDemand-waterConnectionDetails.demand.amtCollected}" /></div>
 				</c:when>	
 				<c:otherwise>
 					<div class="col-xs-3 add-margin view-content">N/A</div>
 				</c:otherwise>
 			</c:choose>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.arrear.due"/></div>
-			<div class="col-xs-3 add-margin view-content">N/A</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.nooffloors"/></div>
+			<div class="col-xs-3 add-margin view-content" id="nooffloors"></div>
 		</div>
 	</div>
 

@@ -38,11 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
-	
-	
-	
-	 
+		
+	loadConnectionCategories();
+		 
 	$('#connectionType').change(function(){
 		$.ajax({
 			url: "/wtms/ajax-connectionTypes",     
@@ -55,9 +53,9 @@ $(document).ready(function(){
 				
 				console.log("success"+response);
 				$('#usageType').empty();
-				$('#usageType').append($("<option value=''>Select</option>"));
+				$('#usageType').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
-					$('#usageType').append($('<option>').text(value.code).attr('value', value.id))
+					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
 				});
 				
 			}, 
@@ -67,10 +65,24 @@ $(document).ready(function(){
 		});
 	});
 	
+	$('#connectionCategorie').change(function () {
+		loadConnectionCategories();
+    });
 	
-	
-	
-
+	function loadConnectionCategories(){
+		var connectionCategory = $('#connectionCategorie').val();
+		
+	    var toAppend = '';
+	    if (connectionCategory == 1) {
+	    	$("#cardHolderDiv").show();
+	    	$("#bplCardHolderName").attr('required', 'required');
+	    }
+	    else{
+	    	$("#cardHolderDiv").hide();
+	    	$("#bplCardHolderName").removeAttr('required');
+	    }
+	}
+		
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});
@@ -136,6 +148,7 @@ $(document).ready(function(){
 									applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
 							}
 							$("#applicantname").val(applicantName);
+							$("#nooffloors").val(response.propertyDetails.noOfFloors);
 							if(response.ownerNames[0].mobileNumber != '')
 								$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
 							if(response.ownerNames[0].emailId != '')
@@ -156,6 +169,7 @@ $(document).ready(function(){
 								else
 									boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 							}
+							$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
 							$("#locality").val(response.boundaryDetails.localityName);
 							$("#zonewardblock").val(boundaryData);
 							$("#propertytax").val(response.propertyDetails.currentTax);

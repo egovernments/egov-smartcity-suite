@@ -587,6 +587,7 @@ public class PropertyTaxUtil {
                 Designation designation = null;
                 if (userId != null && userId.intValue() != 0) {
                         position = positionMasterService.getPositionByUserId(userId);
+                        if(position!=null)
                         designation = position.getDeptDesig().getDesignation();
                 }
                 return designation;

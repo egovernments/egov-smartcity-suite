@@ -42,12 +42,14 @@ package org.egov.wtms.web.controller.application;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.web.controller.workflow.GenericWorkFlowController;
+import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +63,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application")
-public class UpdateConnectionController extends GenericWorkFlowController {
+public class UpdateConnectionController extends GenericConnectionController {
 
     private final WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -71,6 +73,11 @@ public class UpdateConnectionController extends GenericWorkFlowController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -90,20 +97,18 @@ public class UpdateConnectionController extends GenericWorkFlowController {
     @ModelAttribute
     public StateAware getModel() {
         return waterConnectionDetails;
-
     }
 
-    /*
-     * @ModelAttribute(value="stateType") public String getStateType() {
-     * if(waterConnectionDetails!=null){ return
-     * waterConnectionDetails.getClass().getSimpleName(); } else return ""; }
-     */
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        // model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-       // model.addAttribute("additionalRule", getAdditionalRule());
-        //model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+        model.addAttribute("statuscode", waterConnectionDetails.getEgwStatus().getCode());
+        model.addAttribute("wfstate", waterConnectionDetails.getState().getId());
+        model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                0l, getAdditionalRule()));
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -135,25 +140,29 @@ public class UpdateConnectionController extends GenericWorkFlowController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        // TODO: IN Commissioner inbox
+        if (workFlowAction!=null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION) && waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode() != null
+                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)){
+            validateSanctionDetails(waterConnectionDetails, resultBinder);
+        }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        else
-            // TODO: Assuming that there is no approvalPosition in last approver
-            // inbox. Need to replace with proper condition once requirement is
-            // clear i.e., when to capture sanction details
-            validateSanctionDetails(waterConnectionDetails, resultBinder);
-        if (request.getParameter("workflowAction") != null)
-            workFlowAction = request.getParameter("workflowAction");
+
+        if(approvalPosition==null || approvalPosition.equals(Long.valueOf(0))){
+        approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                approvalPosition, getAdditionalRule());
+        }
         if (!resultBinder.hasErrors()) {
             waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, getAdditionalRule(), workFlowAction);
 
-            return "redirect:/application/application-success?applicationNumber="
-            + waterConnectionDetails.getApplicationNumber();
+            final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
+                    + waterTaxUtils.getApproverUserName(approvalPosition);
+            return "redirect:/application/application-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, waterConnectionDetails);
-
     }
 
     private void validateSanctionDetails(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
@@ -168,5 +177,4 @@ public class UpdateConnectionController extends GenericWorkFlowController {
     public String getAdditionalRule() {
         return "NEW CONNECTION";
     }
-
 }

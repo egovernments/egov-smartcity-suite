@@ -42,6 +42,7 @@ package org.egov.wtms.utils.constants;
 public class WaterTaxConstants {
 
     public static final String MODULE_NAME = "Water Tax Management";
+    public static final String MODULETYPE = "WATERTAXAPPLICATION"; 
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
     public static final String CREATEWORKFLOWSTATE = "CREATED";
@@ -62,7 +63,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
     public static final String SMSEMAILTYPENEWCONNCREATE = "newconncreate";
     public static final String CATEGORY_BPL = "BPL";
-
+    public static final String WATERTAX_FIELDINSPECTION_CHARGE ="WTAXFIELDINSPEC";
     // User Roles
     public static final String CSCOPERTAORROLE = "CSC Operator";
     public static final String CLERKULB = "ULB Operator";
@@ -89,4 +90,37 @@ public class WaterTaxConstants {
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
     public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
+    public static final String WF_STATE_TAP_EXECUTION_DATE ="Tap Execution Date";
+    public static final String WF_STATE_CLERK_APPROVED  ="Clerk approved";
+    public static final String WF_STATE_PAYMENT_DONE_AGT_ESTIMATION ="Payment done against Estimation";
+    public static final String WF_STATE_COMMISSIONER_APPROVED="Commissioner Approved";
+    public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED="Asst engg approved";
+    public static final String WF_STATE_WORK_ORDER_GENERETED="Work order generated";
+    
+    public static final String APPROVEWORKFLOWACTION = "Approve";
+    
+    public static final String BPL_CATEGORY = "BPL";
+    
+    public static final String WF_STATE_BUTTON_GENERATEESTIMATE ="Generate Estimation Notice";
+    public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON ="Tap Execution Date"; 
+    
+    //Application status
+    public static final String APPLICATION_STATUS_CREATED = "CREATED";
+    public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+    public static final String APPLICATION_STATUS_VERIFIED = "VERIFIED";
+    public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
+    public static final String APPLICATION_STATUS_FEEPAID = "ESTIMATIONAMOUNTPAID";
+    public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
+    public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
+    public static final String APPLICATION_STATUS_CANCELLED ="CANCELLED";
+    
+    //appconfig values
+    public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
+    public static final String WATERTAXWORKFLOWDEPARTEMENT = "WATERTAXWORKFLOWDEPARTEMENT";
+    public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";
+    public static final String SENDEMAILFORWATERTAX = "SENDEMAILFORWATERTAX";
+    public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
+    public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
+    public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
+    
 }

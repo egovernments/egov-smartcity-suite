@@ -18,6 +18,7 @@ $(document).ready(function(){
 								applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
 						}
 						$("#applicantname").html(applicantName);
+						$("#nooffloors").html(response.propertyDetails.noOfFloors);
 						if(response.ownerNames[0].mobileNumber != '')
 							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
 						$("#propertyaddress").html(response.propertyAddress);
@@ -36,6 +37,7 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
+						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);

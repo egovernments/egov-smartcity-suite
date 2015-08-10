@@ -60,8 +60,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.messaging.email.EmailService;
-import org.egov.infra.messaging.sms.SMSService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -125,10 +124,7 @@ public class ComplaintService {
     private BoundaryService boundaryService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private SMSService smsService;
+    private MessagingService messagingService;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -387,10 +383,8 @@ public class ComplaintService {
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
                 .append(", Thank you for registering a complaint (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
-        if (complaint.getComplainant().getEmail() != null)
-            emailService.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
-        if (complaint.getComplainant().getMobile() != null)
-            smsService.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
+            messagingService.sendEmail(complaint.getComplainant().getEmail(), emailSubject.toString(), emailBody.toString());
+            messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
 
     }
 

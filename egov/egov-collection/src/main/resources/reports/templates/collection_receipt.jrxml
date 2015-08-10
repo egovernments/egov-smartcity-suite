@@ -2,8 +2,6 @@
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
 <!-- 2015-07-07T17:08:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="4b290c7e-638d-4115-b638-21eedae5185f">
-	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.joda.time.format.DateTimeFormat"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.collection.constants.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -19,7 +17,7 @@
 	<field name="receiptNum" class="java.lang.String">
 		<fieldDescription><![CDATA[Receipt Number]]></fieldDescription>
 	</field>
-	<field name="receiptDate" class="org.joda.time.DateTime"/>
+	<field name="receiptDate" class="java.util.Date"/>
 	<field name="payeeAddress" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Address]]></fieldDescription>
 	</field>
@@ -113,7 +111,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DateTimeFormat.forPattern("dd/MM/yyyy").print($F{receiptDate})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptDate}]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="10" y="10" width="60" height="60" uuid="e806626d-3d2f-4264-9b7c-66bc13608c85"/>

@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -47,8 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.messaging.email.EmailService;
-import org.egov.infra.messaging.sms.SMSService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.egov.portal.utils.constants.CommonConstants;
@@ -65,10 +63,7 @@ public class CitizenService {
     private CitizenRepository citizenRepository;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private SMSService smsService;
+    private MessagingService messagingService;
 
     @Autowired
     private RoleService roleService;
@@ -116,18 +111,8 @@ public class CitizenService {
     }
 
     public void sendActivationMessage(final Citizen citizen) throws EGOVRuntimeException {
-
-        boolean hasSent = false;
-
-        if (citizen.getEmailId() != null && !citizen.getEmailId().isEmpty())
-            hasSent = emailService.sendMail(citizen.getEmailId(),
-                    "Hello,\r\n Your Portal Activation Code is : " + citizen.getActivationCode(), "Portal Activation");
-
-        hasSent = smsService.sendSMS("Your Portal Activation Code is : " + citizen.getActivationCode(),
-                "91" + citizen.getMobileNumber()) || hasSent;
-
-        if (!hasSent)
-            throw new EGOVRuntimeException("Neither email nor mobile activation send.");
+        messagingService.sendEmail(citizen.getEmailId(), "Portal Activation", "Hello,\r\n Your Portal Activation Code is : " + citizen.getActivationCode());
+        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
     }
 
 }

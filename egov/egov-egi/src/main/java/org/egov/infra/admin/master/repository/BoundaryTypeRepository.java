@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -77,7 +76,7 @@ public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long
     @Query("select bt from BoundaryType bt where bt.parent is not null and bt.hierarchyType = :hierarchyType")
     public List<BoundaryType> findAllByHierarchyTypeWhenParentIsNotNull(
             @Param("hierarchyType") HierarchyType hierarchyType);
-    
+
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:name")
     public List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName);
 }

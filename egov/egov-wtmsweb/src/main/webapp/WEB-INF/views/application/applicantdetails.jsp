@@ -49,12 +49,14 @@
 		</div>
 		<form:errors path="connection.propertyIdentifier" id="propertyIdentifierError" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.bpanumber" /></label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="bpaIdentifier" path="connection.bpaIdentifier" min="3" maxlength="50" />
-		<form:errors path="connection.bpaIdentifier" cssClass="add-margin error-msg" />
+	<div class="form-group">
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.nooffloors" /></label>
+		<div class="col-sm-3 add-margin">
+			<input type="text" class="form-control" id="nooffloors" disabled>
+		</div>
 	</div>
+	
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
@@ -97,5 +99,10 @@
 			code="lbl.properttax" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control text-right" id="propertytax"  disabled value="0.00"> 
+	</div>	
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.aadhaar" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-left" id="aadhaar"  disabled> 
 	</div>	
 </div>					

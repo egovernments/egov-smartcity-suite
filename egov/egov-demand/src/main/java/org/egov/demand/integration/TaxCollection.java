@@ -122,7 +122,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		for (BillReceiptInfo bri : billReceipts) {
 			try {
 				LOGGER.debug("-----updateReceiptDetails is called----------------");
-				//updateNewReceipt(bri);
+				updateNewReceipt(bri);
 			} catch (Exception e) {
 				LOGGER.error("Exception while updating receipt details in billing system", e);
 				throw new EGOVRuntimeException("", e);
@@ -216,7 +216,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 			billRecpt.setBillId(egBill);
 			billRecpt.setReceiptAmt(totalCollectedAmt);
 			billRecpt.setReceiptNumber(bri.getReceiptNum());
-			billRecpt.setReceiptDate(bri.getReceiptDate().toDate());
+			billRecpt.setReceiptDate(bri.getReceiptDate());
 			billRecpt.setCollectionStatus(bri.getReceiptStatus().getCode());
 			billRecpt.setCreatedBy(bri.getCreatedBy());
 			billRecpt.setModifiedBy(bri.getModifiedBy());

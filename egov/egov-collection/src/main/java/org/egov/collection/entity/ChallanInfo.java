@@ -40,6 +40,7 @@
 package org.egov.collection.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,7 +52,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 
 /**
  * The challan information class. Provides details of a challan.
@@ -115,7 +115,7 @@ public class ChallanInfo {
 	/**
 	 * @return the challan date
 	 */
-	public DateTime getChallanDate() {
+	public Date getChallanDate() {
 		if(receiptHeader.getChallan()==null)
 		{	
 			return receipHeaderReferenceObj.getChallan().getChallanDate();

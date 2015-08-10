@@ -66,19 +66,16 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
-import org.egov.wtms.masters.entity.ConnectionCharges;
 import org.egov.wtms.masters.entity.DonationDetails;
-import org.egov.wtms.masters.entity.SecurityDeposit;
-import org.egov.wtms.masters.service.ConnectionChargesService;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
-import org.egov.wtms.masters.service.SecurityDepositService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -95,12 +92,6 @@ public class ConnectionDemandService {
 
     @Autowired
     private DonationDetailsService donationDetailsService;
-
-    @Autowired
-    private SecurityDepositService securityDepositService;
-
-    @Autowired
-    private ConnectionChargesService connectionChargesService;
 
     @Autowired
     private DonationHeaderService donationHeaderService;
@@ -138,20 +129,16 @@ public class ConnectionDemandService {
 
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
         final Map<String, Object> feeDetails = new HashMap<String, Object>();
-        // TODO: Passing hard coded application type for connection
-        // charges(Based on assumptions).
-        final ConnectionCharges connectionCharges = connectionChargesService
-                .findByTypeAndDate(WaterTaxConstants.CONNECTION_FEE);
-        // TODO: Hard coded number of months as 6 to get security deposit (Based
-        // on assumptions).
-        final SecurityDeposit securityDeposit = securityDepositService
-                .findByUsageTypeAndNoOfMonths(waterConnectionDetails.getUsageType(), Long.valueOf(6));
-        final DonationDetails donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                .findByCategoryandUsage(waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType()));
-        if (connectionCharges != null)
-            feeDetails.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, connectionCharges.getAmount());
-        if (securityDeposit != null)
-            feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, securityDeposit.getAmount());
+        DonationDetails donationDetails = null;
+        final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
+
+        if (null != fieldInspectionDetails)
+            feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, fieldInspectionDetails.getEstimationCharges());
+
+        if (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
+            donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
+                    .findByCategoryandUsage(waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType()));
+
         if (donationDetails != null)
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
 
@@ -356,7 +343,7 @@ public class ConnectionDemandService {
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         final AssessmentDetails assessmentDetails = propertyExternalService
                 .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),
-        				PropertyExternalService.FLAG_FULL_DETAILS);
+                        PropertyExternalService.FLAG_FULL_DETAILS);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
@@ -380,11 +367,9 @@ public class ConnectionDemandService {
         installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
         // FIX ME
         /*
-         * String index = sequenceNumberGenerator.getNextNumberWithFormat(
-         * BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0', Long.valueOf(1))
-         * .getFormattedNumber(); billNo.append(wardNo); billNo.append("/");
-         * billNo.append(index); billNo.append("/");
-         * billNo.append(finYear.getDescription());
+         * String index = sequenceNumberGenerator.getNextNumberWithFormat( BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0',
+         * Long.valueOf(1)) .getFormattedNumber(); billNo.append(wardNo); billNo.append("/"); billNo.append(index);
+         * billNo.append("/"); billNo.append(finYear.getDescription());
          */
         return billNo.toString();
     }

@@ -41,11 +41,11 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.floorType.name}" default = "N/A"/></span> 
+			<span class="bold"><s:property value="%{property.propertyDetail.floorType.name}" default = "N/A"/></span> 
 		</td>
 		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.roofType.name}" default = "N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.roofType.name}" default = "N/A"/></span>
 		</td>
 	</tr>
 	
@@ -53,10 +53,10 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.wallType.name}" default = "N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.wallType.name}" default = "N/A"/></span>
 		</td>
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.woodType.name}" default = "N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.woodType.name}" default = "N/A"/></span>
 		</td>
 	</tr>

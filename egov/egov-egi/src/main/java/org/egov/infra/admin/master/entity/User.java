@@ -74,7 +74,6 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -109,7 +108,6 @@ public class User extends AbstractAuditable {
 
     @NotNull
     @Length(min = 8, max = 64)
-    @Pattern(regexp = Constants.PASSWORD)
     private String password;
 
     private String salutation;

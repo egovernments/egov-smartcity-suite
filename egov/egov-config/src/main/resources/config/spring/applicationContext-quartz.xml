@@ -74,7 +74,7 @@
         <property name="jobFactory" ref="jobFactory"/>
         <property name="taskExecutor" ref="taskExecutor" />
         <property name="waitForJobsToCompleteOnShutdown" value="true"/>
-        <property name="startupDelay" value="60"/>
+        <property name="startupDelay" value="120"/>
         <property name="schedulerContextAsMap">
         	<map>
 				<entry key="userService" value-ref="userService"/>

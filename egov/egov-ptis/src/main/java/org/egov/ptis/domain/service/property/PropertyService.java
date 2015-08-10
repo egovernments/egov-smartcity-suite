@@ -100,13 +100,16 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.search.elastic.entity.ApplicationIndex;
+import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
-import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
@@ -167,13 +170,16 @@ public class PropertyService {
     protected PersistenceService<BasicProperty, Long> basicPropertyService;
     private Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
     private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
-    private PropertyTaxNumberGenerator ptNumberGenerator;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
     @Qualifier("documentTypePersistenceService")
     private PersistenceService<DocumentType, Long> documentTypePersistenceService;
     @Autowired
     @Qualifier("fileStoreService")
     private FileStoreService fileStoreService;
+    @Autowired
+    private ApplicationIndexService applicationIndexService;
 
     public PropertyImpl createProperty(PropertyImpl property, String areaOfPlot, String mutationCode,
             String propTypeId, String propUsageId, String propOccId, Character status, String docnumber,
@@ -260,6 +266,9 @@ public class PropertyService {
         property.setEffectiveDate(currentInstall.getFromDate());
         property.setPropertySource(propertySource);
         property.setDocNumber(docnumber);
+        if (property.getApplicationNo() == null) {
+            property.setApplicationNo(applicationNumberGenerator.generate());
+        }
         LOGGER.debug("Exiting from createProperty");
         return property;
     }
@@ -1971,10 +1980,6 @@ public class PropertyService {
         return modProperty;
     }
 
-    public void setPtNumberGenerator(PropertyTaxNumberGenerator ptNumberGenerator) {
-        this.ptNumberGenerator = ptNumberGenerator;
-    }
-
     public List<DocumentType> getPropertyModificationDocumentTypes() {
         return documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
                 TransactionType.MODIFY);
@@ -2000,6 +2005,22 @@ public class PropertyService {
         });
     }
 
+    public void updateIndexes(PropertyImpl property, String applictionType) {
+        final ApplicationIndex applicationIndex = applicationIndexService
+                .findByApplicationNumber(property.getApplicationNo());
+        String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo();
+        if (null == applicationIndex) {
+            ApplicationIndexBuilder applicationIndexBuilder =
+                    new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, property.getApplicationNo(),
+                            property.getCreatedDate(), applictionType,
+                            property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
+            applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+        } else {
+            applicationIndex.setStatus(property.getState().getValue());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+        }
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }

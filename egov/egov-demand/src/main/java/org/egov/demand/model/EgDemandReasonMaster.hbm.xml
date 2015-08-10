@@ -41,7 +41,9 @@
         <property name="createdDate" type="java.util.Date">
             <column name="CREATE_DATE"  />
         </property>
-    
+    	<property name="isDemand" type="java.lang.Boolean">
+    		<column name="ISDEMAND" not-null="true"/>
+    	</property>
         <set name="egDemandReasons" table="EG_DEMAND_REASON" >
             <key>
                 <column name="ID_DEMAND_REASON_MASTER"  not-null="true" />

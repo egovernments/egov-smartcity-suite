@@ -32,7 +32,6 @@ package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -179,24 +178,22 @@ public class WaterConnectionDetailsService {
 
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent) {
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
         if (waterConnectionDetails.getApplicationNumber() == null)
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
         waterConnectionDetails.setApplicationDate(new Date());
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
         waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
-        if (appProcessTime != null) {
-            final Calendar c = Calendar.getInstance();
-            c.setTime(waterConnectionDetails.getApplicationDate());
-            c.add(Calendar.DATE, appProcessTime);
-            waterConnectionDetails.setDisposalDate(c.getTime());
-        }
+        if (appProcessTime != null)
+            waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-        createWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent);
-        // createWorkflowTransition(savedWaterConnectionDetails,
-        // approvalPosition, approvalComent,additionalRule,workFlowAction);
+
+        createMatrixWorkflowTransition(savedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
+
         updateIndexes(savedWaterConnectionDetails);
         sendSmsAndEmail(waterConnectionDetails);
 
@@ -319,16 +316,6 @@ public class WaterConnectionDetailsService {
         return historyTable;
     }
 
-    private void createWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent) {
-        final User user = securityUtils.getCurrentUser();
-        final Position assignee = positionMasterService.getPositionById(approvalPosition);
-        waterConnectionDetails.transition().start().withSenderName(user.getName())
-        .withStateValue(WaterConnectionDetails.WorkFlowState.CREATED.toString()).withOwner(assignee)
-        .withComments(approvalComent).withDateInfo(new Date());
-    }
-
-    @SuppressWarnings("unused")
     private void createMatrixWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
@@ -340,80 +327,139 @@ public class WaterConnectionDetailsService {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(waterConnectionDetails
                     .getCreatedBy().getId());
-            if (wfInitiator.equals(userAssignment))
+            if (wfInitiator.equals(userAssignment)) {
+                waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
+                waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                        WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.transition(true).end().withSenderName(user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate());
-            else {
-                final String stateValue = waterConnectionDetails.getCurrentState().getValue().split(":")[0] + ":"
-                        + WF_STATE_REJECTED;
+                .withComments(approvalComent).withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = WF_STATE_REJECTED;
                 waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected");
             }
 
         } else {
-
-            if (null != approvalPosition && approvalPosition != -1)
+            WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                    null, null, additionalRule, null, null);
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
-            if (null == waterConnectionDetails.getState()) {
-                final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(
-                        waterConnectionDetails.getStateType(), null, null, additionalRule, null, null);
+            if (null == waterConnectionDetails.getState())
                 waterConnectionDetails.transition().start().withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-
-            } else if (waterConnectionDetails.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                waterConnectionDetails.transition(true).end().withSenderName(user.getName())
-                .withComments(approvalComent).withDateInfo(currentDate.toDate());
-            else {
-                final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
-                        .getStateType(), null, null, additionalRule, waterConnectionDetails.getCurrentState()
-                        .getValue(), null);
-                waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
+            else if (workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON)
+                    || workFlowAction.equals("Enter Meter Details")) {
+                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+                waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                        WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
+                waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+                if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                    waterConnectionDetails.transition(true).end().withSenderName(user.getName())
+                            .withComments(approvalComent).withDateInfo(currentDate.toDate());
+            } else {
+                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                        null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+
+                waterConnectionDetails.transition(true).withSenderName(user.getName()).withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
             }
         }
-    }
-
-    public String getApprovalMessage(final Long approvalPosition) {
-        Assignment assignment = null;
-        String approverUser = "";
-        if (approvalPosition != null)
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        if (assignment != null && !assignment.equals("") && assignment.getEmployee()!=null)
-            approverUser = assignment.getEmployee().getUsername();
-        return approverUser;
     }
 
     @Transactional
     public WaterConnectionDetails updateNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
-        final User user = securityUtils.getCurrentUser();
-        if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = positionMasterService.getPrimaryAssignmentPositionForEmp(approvalPosition);
-            waterConnectionDetails.transition(true).withOwner(owner).withComments(approvalComent)
-                    .withSenderName(user.getName())
-                    .withStateValue(WaterConnectionDetails.WorkFlowState.CHECKED.toString()).withDateInfo(new Date());
-        } else
-            waterConnectionDetails.transition(true).end().withComments(approvalComent).withSenderName(user.getName())
-                    .withStateValue(WaterConnectionDetails.WorkFlowState.APPROVED.toString()).withDateInfo(new Date());
-
-        if (waterConnectionDetails.getState() != null
-                && waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
-            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
-                waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
-            updateIndexes(waterConnectionDetails);
-
-        }
+        applicationStatusChange(waterConnectionDetails, workFlowAction);
 
         final WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
-      // createMatrixWorkflowTransition(updatedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,workFlowAction);
+
+        createMatrixWorkflowTransition(updatedWaterConnectionDetails, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
         sendSmsAndEmail(waterConnectionDetails);
         return updatedWaterConnectionDetails;
+    }
+
+    private void applicationStatusChange(final WaterConnectionDetails waterConnectionDetails,
+            final String workFlowAction) {
+        // TODO: this application status changes needs to do once Assistant
+        // Enginneer approves record
+        if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
+                && waterConnectionDetails.getState() != null)
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_VERIFIED, WaterTaxConstants.MODULETYPE));
+        // TODO: status change from Verified to Estimate generate in clerk inbox
+        // ..as off now am skiffing this
+        else if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED))
+            /*waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, WaterTaxConstants.MODULETYPE));
+        // TODO: status change from Estimate generated to Estimate Amount paid
+        // after collection in clerk ..
+        else if (waterConnectionDetails.getEgwStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))*/
+            
+            //TODO Skipping this status cos no collection as pf now.
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+        // TODO:this application status needs to do after commssioner click on
+        // Approve button
+        else if (waterConnectionDetails.getEgwStatus() != null
+                && waterConnectionDetails.getEgwStatus().getCode() != null
+                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                && workFlowAction.equalsIgnoreCase(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
+
+            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
+            updateIndexes(waterConnectionDetails);
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
+        }
+        // TODO: this application status needs to do after workflow generated
+        else if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED))
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    WaterTaxConstants.APPLICATION_STATUS_WOGENERATED, WaterTaxConstants.MODULETYPE));
+       
+        updateIndexes(waterConnectionDetails);
+    }
+
+    public Long getApprovalPositionByMatrixDesignation(final WaterConnectionDetails waterConnectionDetails,
+            Long approvalPosition, final String additionalRule) {
+        final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
+                .getStateType(), null, null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+
+        if (waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode() != null)
+            if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
+                    && waterConnectionDetails.getState() != null)
+                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
+                        waterConnectionDetails);// AE->Clerk
+            else if (waterConnectionDetails.getEgwStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED))
+                // to get Assistant Engineer from Clerk after Approved
+                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
+                        waterConnectionDetails);
+            else if (waterConnectionDetails.getEgwStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID))
+                // to get previous Clerk from Commissioner inbox
+                approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
+                        waterConnectionDetails);
+            // this API Needs to call once collection done//&&
+            // workFlowAction.equals(WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE)
+            else if (waterConnectionDetails.getEgwStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
+                    || waterConnectionDetails.getEgwStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
+                    || waterConnectionDetails.getEgwStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)){
+                Position posobj=waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+                if(posobj!=null)
+                approvalPosition = posobj.getId();
+            }
+        return approvalPosition;
     }
 
     private void updateIndexes(final WaterConnectionDetails waterConnectionDetails) {
@@ -430,14 +476,31 @@ public class WaterConnectionDetailsService {
                 consumerName.append(", ".concat(ownerNameItr.next().getOwnerName()));
         }
         setApplicantName(consumerName.toString());
-
-        if (waterConnectionDetails.getState().getValue().equals(WaterTaxConstants.APPROVED)) {
-            final ApplicationIndex applicationIndex = applicationIndexService
-                    .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
-            applicationIndex.setStatus(waterConnectionDetails.getConnectionStatus().toString());
-            applicationIndexService.updateApplicationIndex(applicationIndex);
-            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
-
+        if (waterConnectionDetails.getEgwStatus() != null
+                && !waterConnectionDetails.getEgwStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
+            if (waterConnectionDetails.getEgwStatus() != null
+                    && (waterConnectionDetails.getEgwStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
+                            || waterConnectionDetails.getEgwStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
+                            || waterConnectionDetails.getEgwStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
+                            || waterConnectionDetails.getEgwStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                            || waterConnectionDetails.getEgwStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED) 
+                            || waterConnectionDetails
+                            .getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
+                final ApplicationIndex applicationIndex = applicationIndexService
+                        .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+                applicationIndex.setStatus(waterConnectionDetails.getConnectionStatus().toString());
+                applicationIndexService.updateApplicationIndex(applicationIndex);
+            }
+            if (waterConnectionDetails.getEgwStatus() != null
+                    && waterConnectionDetails.getEgwStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED))
+                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails);
         } else {
             final String strQuery = "select md from EgModules md where md.name=:name";
             final Query hql = getCurrentSession().createQuery(strQuery);
@@ -544,14 +607,17 @@ public class WaterConnectionDetailsService {
 
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 changeOfUse.getApplicationType(), changeOfUse.getCategory());
-        if (appProcessTime != null) {
-            final Calendar c = Calendar.getInstance();
-            c.setTime(changeOfUse.getApplicationDate());
-            c.add(Calendar.DATE, appProcessTime);
-            changeOfUse.setDisposalDate(c.getTime());
-        }
+        if (appProcessTime != null)
+            changeOfUse.setDisposalDate(getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
         return savedChangeOfUse;
+    }
+
+    private Date getDisposalDate(final WaterConnectionDetails changeOfUse, final Integer appProcessTime) {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(changeOfUse.getApplicationDate());
+        c.add(Calendar.DATE, appProcessTime);
+        return c.getTime();
     }
 
     public void setApplicantName(final String applicantName) {

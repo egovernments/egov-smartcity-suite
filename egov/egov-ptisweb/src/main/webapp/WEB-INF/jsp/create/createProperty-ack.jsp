@@ -68,10 +68,10 @@
 					<s:hidden name="modelId" id="modelId" value="%{id}" />
 					<tr>
 						<s:if test="mode == 'create' && @org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)">
-							<s:if test="%{basicProperty.applicationNo != null && !basicProperty.applicationNo.isEmpty()}">
+							<s:if test="%{applicationNo != null && !applicationNo.isEmpty()}">
 								<td colspan="5" style="font-size: 15px;" align="center"><span
 									class="bold"><s:property value="%{ackMessage}" /> <s:property
-											value="%{basicProperty.applicationNo}" /></span></td>
+											value="%{applicationNo}" /></span></td>
 							</s:if>
 						</s:if>
 						<s:elseif test="approved == true">
@@ -80,7 +80,7 @@
 						</s:elseif>
 						<s:else>
 							<td colspan="5" style="font-size: 15px;" align="center">
-							<span class="bold"><s:property value="%{ackMessage}" /><s:property value="%{basicProperty.applicationNo}" /></span></td>
+							<span class="bold"><s:property value="%{ackMessage}" /><s:property value="%{applicationNo}" /></span></td>
 						</s:else>
 					</tr>
 					<tr>

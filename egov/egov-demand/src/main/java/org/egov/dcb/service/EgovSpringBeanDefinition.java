@@ -49,11 +49,16 @@ public class EgovSpringBeanDefinition {
 	}
 
 	private static ApplicationContextBeanProvider beanProvider = (ApplicationContextBeanProvider) new ClassPathXmlApplicationContext(
-			new String[] { "org/egov/infstr/beanfactory/globalApplicationContext.xml",
-					"org/egov/infstr/beanfactory/egiApplicationContext.xml",
-					"org/egov/infstr/beanfactory/applicationContext-pims.xml",
-					"org/egov/infstr/beanfactory/applicationContext-egf.xml",
-					"org/egov/infstr/beanfactory/applicationContext-erpcollections.xml" })
+			new String[] {  "config/spring/applicationContext-egi.xml",
+			                "config/spring/applicationContext-events.xml",
+			                "config/spring/applicationContext-jms.xml",
+			                "config/spring/applicationContext-messages.xml",
+			                "config/spring/applicationContext-eis.xml",
+			                "config/spring/applicationContext-egf.xml",
+			                "config/spring/applicationContext-egf-global-services.xml",
+			                "config/spring/applicationContext-collection-global-services.xml",
+                                        "config/spring/applicationContext-collection.xml"
+					})
 			.getBean("beanProvider");
 
 	public static CollectionIntegrationService getCollectionIntegrationService() {

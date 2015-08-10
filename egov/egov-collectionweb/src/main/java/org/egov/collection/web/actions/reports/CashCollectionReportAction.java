@@ -38,7 +38,6 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.reports;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,20 +46,23 @@ import java.util.Map;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Transactional(readOnly=true)
+@Results({
+    @Result(name=CashCollectionReportAction.INDEX,location="cashCollectionReport-index.jsp"),
+    @Result(name=CashCollectionReportAction.REPORT,location="cashCollectionReport-report.jsp") })
 public class CashCollectionReportAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -256,10 +258,12 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 * 
 	 * @return report
 	 */
+	@Action(value="/reports/cashCollectionReport-report")
 	public String report() {
 		ReportRequest reportInput = new ReportRequest(CASH_COLLECTION_TEMPLATE,
 				critParams, ReportDataSourceType.SQL);
 		ReportOutput reportOutput = reportService.createReport(reportInput);
+		getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
 		reportId = ReportViewerUtil.addReportToSession(reportOutput,
 				getSession());
 		return REPORT;
@@ -270,7 +274,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/cashCollectionReport-criteria",results = { @Result(name = INDEX,type="redirect")})
+	@Action(value="/reports/cashCollectionReport-criteria")
 	public String criteria() {
 		return INDEX;
 	}

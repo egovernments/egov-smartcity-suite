@@ -50,9 +50,6 @@
 				<param name="sequence">SEQ_EGPT_BASIC_PROPERTY</param>
 			</generator>
 		</id>
-		<property name="applicationNo" type="java.lang.String">
-			<column name="applicationno"/>
-		</property>
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
 		</property>
@@ -158,7 +155,7 @@
 		
 		<set name="objections" cascade="all-delete-orphan" table="EGPT_OBJECTION">
 			<key column="ID_BASICPROPERTY"  />
-			<one-to-many class="org.egov.ptis.domain.entity.objection.Objection" />
+			<one-to-many class="org.egov.ptis.domain.entity.objection.RevisionPetition" />
 		</set>
 		
 		<set name="recoveries" cascade="all-delete-orphan" table="EGPT_RECOVERY">

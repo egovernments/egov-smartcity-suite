@@ -72,10 +72,9 @@ public class AjaxController {
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private UsageTypeService usageTypeService;
-    
 
     @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByDepartmentId(
@@ -87,15 +86,7 @@ public class AjaxController {
         return designations;
     }
 
-	/*@RequestMapping(value = "/ajax-connectionTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<ConnectionUsage> getUsageTypesByConnectionType(
-			@RequestParam final String connectionType) {
-		List<ConnectionUsage> usageTypes = new ArrayList<ConnectionUsage>(0);
-		usageTypes = usageTypeService.getAllUsageTypesByConnectionType(connectionType);
-
-		return usageTypes;
-	}*/
-   @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/ajax-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
         List<Assignment> assignmentList = new ArrayList<Assignment>();

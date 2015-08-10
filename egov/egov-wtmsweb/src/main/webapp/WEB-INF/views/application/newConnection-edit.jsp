@@ -46,6 +46,10 @@
 id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">				
 <div class="page-container" id="page-container">
 	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
+	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
+	<form:hidden path="" id="statuscode" value="${statuscode}"/>
+	<form:hidden path="" id="wfstate" value="${wfstate}"/>
+			
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -63,24 +67,17 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
+		<c:if test="${currentState=='Payment done against Estimation'}">
+		<jsp:include page="sanctiondetails.jsp"></jsp:include>
+		</c:if>	
 		
-		<!--TODO - Need handle proper use case when complete workflow is in place. The Sanction details needs to be captured only when object is in Final Approver inbox -->
-		<c:if test="${mode != null && mode=='inbox'}">
-			<jsp:include page="sanctiondetails.jsp"></jsp:include>	
-		</c:if>
 		
-		<jsp:include page="../common/workflow.jsp"></jsp:include>	
 </div>	
-<div class="row">
-	<div class="text-center">
-		<button type="submit" id="submitBtn" class="btn btn-primary"><spring:message code="lbl.approve"/></button>	
-		<a href="javascript:void(0);" class="btn btn-primary" onclick="self.close()"><spring:message code='lbl.close' /></a>
-	</div>
-</div>	 	
-<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-				<div class="buttonbottom" align="center">
-					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div>	 --%>
+	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+		<div class="buttonbottom" align="center">
+		<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+		</div>	
+		
 </form:form>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>

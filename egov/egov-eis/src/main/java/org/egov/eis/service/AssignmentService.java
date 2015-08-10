@@ -259,4 +259,8 @@ public class AssignmentService {
     public List<Assignment> findByEmployeeAndGivenDate(final Long empId,final Date givenDate) {
         return assignmentRepository.findByEmployeeAndGivenDate(empId, givenDate);
     }
+    
+    public List<Assignment> findPrimaryAssignmentForDesignationName(final String name) {
+        return assignmentRepository.findPrimaryAssignmentForDesignationName(name);
+    }
 }

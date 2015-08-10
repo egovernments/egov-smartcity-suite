@@ -41,23 +41,23 @@
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.floorType"
-				id="referenceProperty.propertyDetail.floorType" listKey="id" listValue="name" list="dropdownData.floorType" value="%{referenceProperty.propertyDetail.floorType.id}"
+		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.floorType"
+				id="property.propertyDetail.floorType" listKey="id" listValue="name" list="dropdownData.floorType" value="%{property.propertyDetail.floorType.id}"
 				cssClass="selectnew" /></td>
 		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.roofType"
-				id="referenceProperty.propertyDetail.roofType" listKey="id" listValue="name" list="dropdownData.roofType" value="%{referenceProperty.propertyDetail.roofType.id}"
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.roofType"
+				id="property.propertyDetail.roofType" listKey="id" listValue="name" list="dropdownData.roofType" value="%{property.propertyDetail.roofType.id}"
 				cssClass="selectnew" /></td>
 	</tr>
 	
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="walltype"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.wallType"
-				id="referenceProperty.propertyDetail.wallType" listKey="id" listValue="name" list="dropdownData.wallType" value="%{referenceProperty.propertyDetail.wallType.id}"
+		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.wallType"
+				id="property.propertyDetail.wallType" listKey="id" listValue="name" list="dropdownData.wallType" value="%{property.propertyDetail.wallType.id}"
 				cssClass="selectnew" /></td>
 		<td class="greybox"><s:text name="woodtype"></s:text> :</td>
-		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="referenceProperty.propertyDetail.woodType"
-				id="referenceProperty.propertyDetail.woodType" listKey="id" listValue="name" list="dropdownData.woodType" value="%{referenceProperty.propertyDetail.woodType.id}"
+		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="property.propertyDetail.woodType"
+				id="property.propertyDetail.woodType" listKey="id" listValue="name" list="dropdownData.woodType" value="%{property.propertyDetail.woodType.id}"
 				cssClass="selectnew" /></td>
 	</tr>

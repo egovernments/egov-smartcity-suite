@@ -51,7 +51,7 @@
             	<param name="sequence">SEQ_EGPT_HEARING</param>
             </generator>
         </id>
-        <many-to-one name="objection" class="org.egov.ptis.domain.entity.objection.Objection" fetch="select" insert="false" update="false">
+        <many-to-one name="objection" class="org.egov.ptis.domain.entity.objection.RevisionPetition" fetch="select" insert="false" update="false">
             <column name="ID_OBJECTION"  not-null="true" />
         </many-to-one>
         <property name="plannedHearingDt" type="java.util.Date">

@@ -57,7 +57,6 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
@@ -72,7 +71,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
-public abstract class GenericConnectionController extends GenericWorkFlowController{
+public abstract class GenericConnectionController extends GenericWorkFlowController {
 
     @Autowired(required = true)
     protected WaterConnectionDetailsService waterConnectionDetailsService;
@@ -102,14 +101,11 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private DepartmentService departmentService;
 
+
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
-
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
-        return usageTypeService.getActiveUsageTypes();
-    }
-
+    
     public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
         return connectionCategoryService.getAllActiveConnectionCategory();
     }
@@ -153,12 +149,12 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
-    
+
     protected boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
         if (!applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
                 && applicationDocument.getDocumentDate() == null)
             return false;
         return true;
     }
-
+  
 }

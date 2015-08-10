@@ -77,7 +77,6 @@ import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")  
@@ -160,8 +159,8 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 		Date dt = new Date();
 		try {
 			dt = sdfInput.parse(input[0]);
-			receiptAction.setManualReceiptDate(new DateTime(dt));
-			receiptAction.setVoucherDate(new DateTime(dt));
+			receiptAction.setManualReceiptDate(dt);
+			receiptAction.setVoucherDate(dt);
 		} catch (ParseException e) {
 			LOGGER.debug("Error occured while parsing receipt date [ " + input[0] + " ] : "+ e.getMessage());
 		}
@@ -182,7 +181,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 			
 			InstrumentHeader instrHeaderBank = new InstrumentHeader();
 			instrHeaderBank.setInstrumentAmount(new BigDecimal(input[8]));
-			instrHeaderBank.setTransactionDate(receiptAction.getManualReceiptDate().toDate());
+			instrHeaderBank.setTransactionDate(receiptAction.getManualReceiptDate());
 			
 			instrHeaderBank.setTransactionNumber(dept.getCode()+new SimpleDateFormat ("ddMMyy", Locale.getDefault()).format(dt)+"UPL");
 			

@@ -257,7 +257,11 @@ public class PositionMasterService {
      * @return Position object
      */
     public Position getPositionByUserId(final Long userId) {
-        return assignmentService.getPrimaryAssignmentForUser(userId).getPosition();
+        Assignment assignment=null;
+        assignment=assignmentService.getPrimaryAssignmentForUser(userId);
+        if(assignment!=null)
+            return assignment.getPosition();
+        return null;
     }
     
     /**

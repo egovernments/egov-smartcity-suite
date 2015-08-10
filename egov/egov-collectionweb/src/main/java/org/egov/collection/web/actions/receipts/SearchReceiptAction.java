@@ -57,11 +57,9 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
-import org.joda.time.DateTime;
 
 @ParentPackage("egov") 
 @Results({
-    @Result(name="searchresult",location="searchReceipt.jsp"),
     @Result(name=SearchReceiptAction.SUCCESS,location="searchReceipt.jsp")
   })
 public class SearchReceiptAction extends SearchFormAction {
@@ -75,7 +73,6 @@ public class SearchReceiptAction extends SearchFormAction {
 	private Date fromDate;
 	private Date toDate;
 	private Integer searchStatus=-1;
-	private List<ReceiptHeader> results= new ArrayList<ReceiptHeader>();
 	private String target="new";
 	private String manualReceiptNumber;
 	
@@ -140,7 +137,6 @@ public class SearchReceiptAction extends SearchFormAction {
 	}
 	
 	public String reset() {
-		results = null;
 		setPage(1);
 		serviceTypeId=-1;
 		counterId = -1;
@@ -224,11 +220,11 @@ public class SearchReceiptAction extends SearchFormAction {
 		}
 		if (getFromDate() != null) {
 			criteriaString.append(" and receipt.createdDate >= ? ");
-			params.add(new DateTime(fromDate));
+			params.add(fromDate);
 		}
 		if (getToDate() != null) {
 			criteriaString.append(" and receipt.createdDate < ? ");
-			params.add(new DateTime(DateUtils.add(toDate, Calendar.DATE, 1)));
+			params.add(DateUtils.add(toDate, Calendar.DATE, 1));
 		}
 		if (getServiceTypeId() != -1) {
 			criteriaString.append(" and receipt.service.id = ? ");

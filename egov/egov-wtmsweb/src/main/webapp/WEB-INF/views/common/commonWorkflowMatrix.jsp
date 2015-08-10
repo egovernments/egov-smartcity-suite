@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:if test="${nextaction !='END'}" > 
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">				
@@ -49,22 +50,23 @@
 				</div>					
 			</div>
 			<div class="panel-body">
-			<c:out value="${state.value}"/>
-	<c:if test="${nextaction !='END'}" > 
+	
  <c:if test="${currentState!= 'null' && !'Closed'.equalsIgnoreCase(currentState)}">
 	<form:hidden path="" id="currentState" name="currentState" value="${currentState}"/>
 </c:if> 
  <c:if test="${currentState!= 'null' && 'Closed'.equalsIgnoreCase(currentState)}">
 	<form:hidden path="" id="currentState" name="currentState" value=""/>
 </c:if> 
+																																																									
 
 <form:hidden path="" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 <form:hidden path="" id="additionalRule" name="additionalRule" value="${additionalRule}"/>
 <form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
-<form:hidden path="" id="approverName" name="approverName" />
+<%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>			
+				
 				<div class="row show-row">
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.approverdepartment"/><span class="mandatory"></span>
@@ -108,6 +110,7 @@
 					</form:select>		
 					</div> 
 				</div>
+				
 			<%-- 	</c:when> --%>
 				<div class="row">
 					<div class="col-md-3 col-xs-6 add-margin">
@@ -117,9 +120,10 @@
 						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
-				</c:if>
+				
 			</div>				
 		</div>
 	</div>
 </div>
+</c:if>
 <script src="<c:url value='/resources/js/app/commonworkflow.js'/>"></script>

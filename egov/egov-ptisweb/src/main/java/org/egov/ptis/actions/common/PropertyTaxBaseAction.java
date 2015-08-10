@@ -198,7 +198,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (propTypeId == null || propTypeId.equals("-1")) {
             addActionError(getText("mandatory.propType"));
         }
-        if (isBlank(property.getPropertyDetail().getCategoryType())) {
+        if (isBlank(property.getPropertyDetail().getCategoryType())
+                || property.getPropertyDetail().getCategoryType().equals("-1")) {
             addActionError(getText("mandatory.propcatType"));
         }
 
@@ -364,6 +365,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Long userId = securityUtils.getCurrentUser().getId();
         LOGGER.debug("setUserInfo: Logged in userId" + userId);
         Designation designation = propertyTaxUtil.getDesignationForUser(userId);
+        if(designation!=null)
         setUserDesgn(designation.getName());
         LOGGER.debug("Exit from setUserInfo");
     }

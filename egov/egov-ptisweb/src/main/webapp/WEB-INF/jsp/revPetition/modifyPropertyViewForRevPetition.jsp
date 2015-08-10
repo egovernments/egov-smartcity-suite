@@ -109,10 +109,10 @@
 		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="">
 		   <span class="bold">
-		   <s:hidden id="referenceProperty.propertyDetail.id" name="referenceProperty.propertyDetail.id" value="%{referenceProperty.propertyDetail.id}" />
-			 <s:hidden id="referenceProperty.id" name="referenceProperty.id" value="%{referenceProperty.id}" />
+		   <s:hidden id="property.propertyDetail.id" name="property.propertyDetail.id" value="%{property.propertyDetail.id}" />
+			 <s:hidden id="property.id" name="property.id" value="%{property.id}" />
 							
-		   <s:property value="%{referenceProperty.propertyDetail.extentSite}" default="N/A"/></span>
+		   <s:property value="%{property.propertyDetail.extentSite}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"></td>
 		<td class="greybox">
@@ -135,11 +135,11 @@
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:checkbox name="referenceProperty.propertyDetail.structure" disabled="true"/></span>
+			<span class="bold"><s:checkbox name="property.propertyDetail.structure" disabled="true"/></span>
 		</td>
 		<td class="greybox siteowner"><s:text name="siteowner"></s:text>:</td>
 		<td class="greybox siteowner">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.siteOwner}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
 		</td>
 	</tr>
 	
@@ -147,7 +147,7 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text> :</td>
 		<td class="bluebox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -158,18 +158,18 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.propertyTypeMaster.type}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text></td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.categoryType}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.categoryType}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr id="apartmentRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="apartcomplex.name"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.apartment.name}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.apartment.name}" default="N/A"/></span>
 		</td>
 		<td class="greybox" colspan="2">
 			&nbsp;			
@@ -179,18 +179,18 @@
 	<tr class="appurtenant">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="extent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="referenceProperty.propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
+		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
 		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.occupancyCertificationNo}"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.occupancyCertificationNo}"/></span>
 		</td>
 	</tr>
 	<tr id="appurtenantRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.appurtntland"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -200,7 +200,7 @@
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="builidingdetails"></s:text> :</td>
 		<td class="bluebox">
-		 	<span class="bold"><s:checkbox name="referenceProperty.propertyDetail.buildingPlanDetailsChecked" disabled="true" id="buildingPlanDetailsChecked"/></span>
+		 	<span class="bold"><s:checkbox name="property.propertyDetail.buildingPlanDetailsChecked" disabled="true" id="buildingPlanDetailsChecked"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -210,18 +210,18 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="building.permNo"></s:text> :</td>
 		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.buildingPermissionNo}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.buildingPermissionNo}" default="N/A"/></span>
 		</td>
 		<td class="greybox" width="25%"><s:text name="buildingpermdate"></s:text> :</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.buildingPermissionDate}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.buildingPermissionDate}" default="N/A"/></span>
 		</td>
 	</tr>
 	<tr class="bpddetails">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="deviationper"></s:text> :</td>
 		<td class="bluebox">
-			<span class="bold"><s:property value="%{referenceProperty.propertyDetail.deviationPercentage}" default="N/A"/></span>
+			<span class="bold"><s:property value="%{property.propertyDetail.deviationPercentage}" default="N/A"/></span>
 		</td>
 		<td class="bluebox" colspan="2">
 			&nbsp;
@@ -299,8 +299,8 @@
 		</td>
 	</tr>
 	
-	<s:if test="%{referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
-		|| referenceProperty.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && referenceProperty.propertyDetail.floorDetails.isEmpty())}">
+	<s:if test="%{property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
+		|| property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && property.propertyDetail.floorDetails.isEmpty())}">
 		<tr>
 			<td class="greybox" width="5%">&nbsp;</td>
 			<td class="greybox" width="25%"><s:text name="constCompl.date"></s:text> :</td>
@@ -322,8 +322,8 @@
 	function loadOnStartUp() {
 		enableFieldsForPropTypeView();
 		enableAppartnaumtLandDetailsView();
-		enableOrDisableSiteOwnerDetails(jQuery('input[name="referenceProperty.propertyDetail.structure"]'));
-		enableOrDisableBPADetails(jQuery('input[name="referenceProperty.propertyDetail.buildingPlanDetailsChecked"]'));
+		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
+		enableOrDisableBPADetails(jQuery('input[name="property.propertyDetail.buildingPlanDetailsChecked"]'));
 		toggleFloorDetailsView();
 	}
 
@@ -339,7 +339,7 @@
 	}
 
 	function enableFieldsForPropTypeView() {
-		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 			if (propType != "select") {
 			//onChangeOfPropertyTypeFromMixedToOthers(propType);
 			if (propType == "Vacant Land") {
@@ -363,7 +363,7 @@
 	}
 
 	function toggleFloorDetailsView() {
-		var propType = '<s:property value="%{referenceProperty.propertyDetail.propertyTypeMaster.type}"/>';
+		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 		if (propType == "Vacant Land") {
 			jQuery('tr.floordetails').hide();
 		} else {

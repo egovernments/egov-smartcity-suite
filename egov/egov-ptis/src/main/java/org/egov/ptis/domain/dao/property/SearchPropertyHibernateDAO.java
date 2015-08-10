@@ -74,7 +74,7 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.entity.objection.Objection;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
@@ -1219,7 +1219,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 					"ObjectioNumber or ObjectionDate is mandatory");
 		Criteria propertyCriteria = getCurrentSession().createCriteria(PropertyImpl.class, "propertyImpl").add(
 				Restrictions.eq("status", PropertyTaxConstants.STATUS_ISACTIVE));
-		DetachedCriteria detachCrtObjection = DetachedCriteria.forClass(Objection.class);
+		DetachedCriteria detachCrtObjection = DetachedCriteria.forClass(RevisionPetition.class);
 		detachCrtObjection.setProjection(Projections.projectionList().add(Projections.property("basicProperty")));
 		if (propertyTypeMasterId != null && propertyTypeMasterId > 0) {
 			propertyCriteria.createAlias("propertyDetail", "propertyDetail");

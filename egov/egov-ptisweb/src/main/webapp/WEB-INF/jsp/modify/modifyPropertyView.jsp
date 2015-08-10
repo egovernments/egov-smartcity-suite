@@ -112,7 +112,23 @@
 			&nbsp;
 		</td>
 	</tr>
-
+	<tr>
+		<td class="greybox" width="5%">
+			&nbsp;
+		</td>
+		<td class="greybox">
+			<s:text name="MobileNumber" />:
+		</td>
+		<td class="greybox">
+			<span class="bold"><s:property value="%{basicProp.mobileNumber}" default="N/A"/></span>
+		</td>
+		<td class="bluebox" width="20%">
+			&nbsp;
+		</td>
+		<td class="bluebox" width="20%">
+			&nbsp;
+		</td>
+	</tr>
 	<tr>
 		<td class="bluebox2">
 			&nbsp;
@@ -289,7 +305,7 @@
 
 	<!-- Floor Details Section -->
 
-	<tr>
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorView.jsp"%>

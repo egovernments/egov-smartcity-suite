@@ -232,10 +232,16 @@ mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database 
 ```
 
 #  
-Note: This system is supported only on Linux environment. Supported browser are-
-* Chrome
-* Firefox
+Note: This system is supported
 
+OS:-
+* Linux
+* Mac
+* Windows (If Redis server standalone installed). 
+
+Browser:-
+* Chrome (Recommended)
+* Firefox
 
 [Git]: http://help.github.com/set-up-git-redirect
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads

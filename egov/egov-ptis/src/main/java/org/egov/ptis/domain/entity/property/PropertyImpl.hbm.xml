@@ -56,6 +56,7 @@
 		<property name="lastModifiedDate" type="timestamp">
 			<column name="MODIFIED_DATE" />
 		</property>
+		<property name="applicationNo" column="applicationno" type="java.lang.String"/>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="CREATED_BY" />
 		</many-to-one>

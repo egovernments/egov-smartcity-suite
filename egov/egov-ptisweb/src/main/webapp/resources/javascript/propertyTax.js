@@ -114,10 +114,9 @@ function paintAlternateColorForRows() {
 }
 
 function checkHouseNoStartsWithNo(field) {
-	var pattern = /^[1-9].*$/; 
-	
-	if (!pattern.test(field.value)) {
-		alert('House number should start with a number');
+	var pattern = /^0+$/; 
+	if (pattern.test(field.value)) {
+		alert('House number should not contain only zeros');
 		field.value="";
 		field.focus();
 		return false;

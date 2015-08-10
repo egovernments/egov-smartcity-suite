@@ -47,9 +47,6 @@
 <bean name="collectionSchedular" id="collectionSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy" lazy-init="false">
      	<property name="overwriteExistingJobs" value="true"/>
         <property name="autoStartup" value="true" />
-        <property name="jobFactory" ref="jobFactory"/>
-        <property name="taskExecutor" ref="taskExecutor" />
-        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
 		<property name="schedulerName" value="collection-scheduler"/>
 		<property name="triggers">
 	    	<list>

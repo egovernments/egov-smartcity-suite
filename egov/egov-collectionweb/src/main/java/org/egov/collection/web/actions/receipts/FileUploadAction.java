@@ -918,7 +918,7 @@ public class FileUploadAction extends BaseFormAction{
 				CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 		
 		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-		receiptHeader.setCreatedDate(receiptHeader.getManualreceiptdate().toDate());
+		receiptHeader.setCreatedDate(receiptHeader.getManualreceiptdate());
 		if(setInstrument){
 			receiptInstrList=populateInstrumentDetails(input,nextRecords);
 			setInstrument=false;

@@ -69,7 +69,7 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 	private Date createdDate;
 	private Date modifiedDate;
 	private Set<EgDemandReason> egDemandReasons = new HashSet<EgDemandReason>(0);
-
+	private Boolean isDemand;
 	public String toString() {
 	    return code;
 	}
@@ -153,6 +153,14 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+        public Boolean getIsDemand() {
+            return isDemand;
+        }
+    
+        public void setIsDemand(Boolean isDemand) {
+            this.isDemand = isDemand;
+        }
 
 
 }
