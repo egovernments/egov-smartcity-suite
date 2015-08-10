@@ -48,8 +48,8 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${statuscode}"/>
-	<form:hidden path="" id="wfstate" value="${wfstate}"/>
-			
+	<form:hidden path="" id="wfstate" value="${wfstate}"/><%-- 
+	<input type="hidden" id="currentUser" value="${currentUser}"/>  --%>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -67,7 +67,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
-		<c:if test="${currentState=='Payment done against Estimation'}">
+		<c:if test="${statuscode=='ESTIMATIONAMOUNTPAID'}">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
 		

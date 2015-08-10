@@ -42,20 +42,20 @@ $(document).ready(function()
 	var status=$('#statuscode').val();
 	var wfstate=$('#wfstate').val();
 	var approvalPositionExist=$('#approvalPositionExist').val();
-	if(approvalPositionExist!=0 && ((status=='Created' && wfstate!=null )|| status=='Verified' || status=='Estimation Amount Paid' ||status=='Approved' || status=='Work Order Generated'))
+	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='ESTIMATIONNOTICEGENERATED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
-	else {
-		if(approvalPositionExist=='' || approvalPositionExist==0)
+	 	if(approvalPositionExist=='' || approvalPositionExist==0){
 		$(".show-row").show(); 
 		$('#approvalDepartment').attr('required', 'required');
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
-	}
+		}
+	
 	$("#workflowAction").click(function(){
 		if($('#approvalDate') && $('#approvalDate').val() != '') {
 			var applicationDate = $('#applicationDate').html();
