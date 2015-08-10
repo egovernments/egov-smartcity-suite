@@ -98,7 +98,7 @@
 			}
 
 			function enableFieldsForPropTypeView() {
-				var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
 					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
@@ -122,7 +122,7 @@
 			}
 
 			function toggleFloorDetailsView() {
-				var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
+				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType == "Vacant Land") {
 					jQuery('tr.floordetails').hide();
 				} else {

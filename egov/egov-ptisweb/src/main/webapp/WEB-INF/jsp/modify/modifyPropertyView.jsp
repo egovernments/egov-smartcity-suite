@@ -305,7 +305,7 @@
 
 	<!-- Floor Details Section -->
 
-	<tr>
+	<tr class="floordetails">
 		<td colspan="5">
 			<div align="center">
 				<%@ include file="../common/FloorView.jsp"%>
