@@ -39,13 +39,23 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
-	//TODO - As of now hiding the approver dropdowns in the final approver inbox view for time being. 
-	//TODO - This needs to be condition driven based on number of level of workflow
-	//$(".show-row").hide(); 
-	//$('#approvalDepartment').removeAttr('required');
-	//$('#approvalDesignation').removeAttr('required');
-	//$('#approvalPosition').removeAttr('required');
-	
+	var status=$('#statuscode').val();
+	var wfstate=$('#wfstate').val();
+	var approvalPositionExist=$('#approvalPositionExist').val();
+	if(approvalPositionExist!=0 && ((status=='Created' && wfstate!=null )|| status=='Verified' || status=='Estimation Amount Paid' ||status=='Approved' || status=='Work Order Generated'))
+		{
+		$(".show-row").hide(); 
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		}
+	else {
+		if(approvalPositionExist=='' || approvalPositionExist==0)
+		$(".show-row").show(); 
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
 	$("#workflowAction").click(function(){
 		if($('#approvalDate') && $('#approvalDate').val() != '') {
 			var applicationDate = $('#applicationDate').html();

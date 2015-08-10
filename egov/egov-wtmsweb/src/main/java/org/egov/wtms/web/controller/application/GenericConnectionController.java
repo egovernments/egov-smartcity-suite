@@ -40,31 +40,24 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
@@ -95,9 +88,6 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     @Autowired
     protected PipeSizeService pipeSizeService;
-
-    @Autowired
-    private AssignmentService assignmentService;
 
     @Autowired
     protected PropertyTypeService propertyTypeService;
@@ -170,48 +160,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return true;
     }
 
-    public Long getCityLevelCommissioner() {
-        // TODO: assuming only one Commissioner at ULB level
-        if (!assignmentService.findPrimaryAssignmentForDesignationName("Commissioner").isEmpty()) {
-            final Assignment assgn = assignmentService.findPrimaryAssignmentForDesignationName("Commissioner").get(0);
-            return assgn.getPosition().getId();
-        }
-        return null;
-    }
+  
 
-    public Long getApproverPosition(final String rolename, final WaterConnectionDetails waterConnectionDetails) {
-        final List<StateHistory> state = waterConnectionDetails.getState().getHistory();
-        Long approvalPosition = 0l;
-        if (state != null && !state.isEmpty()) {
-            for (final StateHistory stateHistory : state){
-                if (rolename.equals("Assistant engineer")
-                        && stateHistory.getValue().equals(WaterTaxConstants.WF_STATE_CLERK_APPROVED)) {
-                    approvalPosition = stateHistory.getOwnerPosition().getId();
-                    break;
-                } else {
-                    final Position posObj = positionMasterService.getCurrentPositionForUser(stateHistory
-                            .getLastModifiedBy().getId());
-                    approvalPosition = posObj.getId();
-                    break;
-                }
-        } 
-        }else
-            for (final Role userrole : waterConnectionDetails.getCreatedBy().getRoles())
-                if (userrole.getName().equals(rolename)) {
-                    final Position posObj = positionMasterService.getCurrentPositionForUser(waterConnectionDetails
-                            .getCreatedBy().getId());
-                    approvalPosition = posObj.getId();
-                }
-        return approvalPosition;
-    }
-
-    public String getApprovalMessage(final Long approvalPosition) {
-        Assignment assignment = null;
-        String approverUser = "";
-        if (approvalPosition != null)
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        if (assignment != null && !assignment.equals("") && assignment.getEmployee() != null)
-            approverUser = assignment.getEmployee().getUsername();
-        return approverUser;
-    }
+    
 }

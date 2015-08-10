@@ -30,14 +30,24 @@
  */
 package org.egov.wtms.utils;
 
+import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.messaging.email.EmailService;
 import org.egov.infra.messaging.sms.SMSService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +62,18 @@ public class WaterTaxUtils {
 
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PersistenceService persistenceService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
-    private SMSService smsService;
-
-    @Autowired
-    private EmailService emailService;
+    private MessagingService messagingService;
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
@@ -66,6 +82,24 @@ public class WaterTaxUtils {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, "SENDSMSFORWATERTAX").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
+    
+    public String getDepartmentForWorkFlow() {
+        String department="";
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "WATERTAXWORKFLOWDEPARTEMENT");
+        if(null!=appConfigValue && !appConfigValue.isEmpty())
+            department= appConfigValue.get(0).getValue();
+        return department;
+    }
+    
+    public String getDesignationForThirdPartyUser() {
+        String designation="";
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, "CLERKDESIGNATIONFORCSCOPERATOR");
+        if(null!=appConfigValue && !appConfigValue.isEmpty())
+            designation= appConfigValue.get(0).getValue();
+        return designation;
     }
 
     public Boolean isEmailEnabled() {
@@ -134,11 +168,71 @@ public class WaterTaxUtils {
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        smsService.sendSMS(smsBody, "91" + mobileNumber);
+        messagingService.sendSMS(smsBody, "91" + mobileNumber);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        emailService.sendMail(email, emailBody, emailSubject);
+        messagingService.sendEmail(email, emailBody, emailSubject);
     }
 
+    public Long getCityLevelCommissionerPosition(String commissionerDesgn) {
+        // TODO: assuming only one Commissioner at ULB level
+     if (!assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).isEmpty()) {
+            final Assignment assgn = assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0);
+            return assgn.getPosition().getId();
+        }
+        return null;
+    }
+
+    public String getApprovalName(final Long approvalPosition) {
+        Assignment assignment = null;
+        String approverUser = "";
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        if (assignment != null && !assignment.equals("") && assignment.getEmployee() != null)
+            approverUser = assignment.getEmployee().getUsername();
+        return approverUser;
+    }
+    
+    public EgwStatus getstatusbyCodeAndModuleType(String code,String moduleName) {
+        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and lower(code)=?", moduleName,code.toLowerCase());
+    }
+    public Long getApproverPosition(final String designationname, final WaterConnectionDetails waterConnectionDetails) {
+
+        final List<StateHistory> state = waterConnectionDetails.getState().getHistory();
+        Long approvalPosition = 0l;
+        if (state != null && !state.isEmpty()) {
+            for (final StateHistory stateHistory : state) {
+                final List<Assignment> assignmentList2 = assignmentService.getAssignmentsForPosition(stateHistory
+                        .getOwnerPosition().getId(), new Date());
+                for (final Assignment assgn : assignmentList2) {
+                   if (assgn.getDesignation().getName().equals(designationname)) {
+                        approvalPosition = stateHistory.getOwnerPosition().getId();
+                        break;
+                    }
+                }
+            }
+            // TODO: just incase entry is not present in workflow histrory table
+            // then checkinh in workflow state table;
+            if (approvalPosition == 0) {
+                final State stateObj = waterConnectionDetails.getState();
+                final List<Assignment> assignmentList2 = assignmentService.getAssignmentsForPosition(stateObj
+                        .getOwnerPosition().getId(), new Date());
+                for (final Assignment assgn : assignmentList2)
+                    if (assgn.getDesignation().getName().equals(designationname)) {
+                        approvalPosition = stateObj.getOwnerPosition().getId();
+                        break;
+                    }
+            }
+        } else {
+            // First after AE->CLERK need previous clerk User so by passing
+            // workflow Initiator name
+            final Position posObjToClerk = positionMasterService.getCurrentPositionForUser(waterConnectionDetails.
+                    getCreatedBy().getId());
+            approvalPosition = posObjToClerk.getId();
+        }
+
+        return approvalPosition;
+
+    }
 }

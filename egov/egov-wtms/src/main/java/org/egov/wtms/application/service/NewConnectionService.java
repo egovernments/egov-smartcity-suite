@@ -30,6 +30,10 @@
  */
 package org.egov.wtms.application.service;
 
+import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.pims.commons.Designation;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -52,6 +56,13 @@ public class NewConnectionService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private DesignationService designationService;
+    
 
     @Autowired
     private PropertyExternalService propertyExternalService;
@@ -100,5 +111,17 @@ public class NewConnectionService {
                 errorMessage = messageSource.getMessage("err.validate.property.taxdue",
                         new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber,"new" }, null);
         return errorMessage;
+    }
+    
+    public String getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
+        String errorMessage = "";
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
+                PropertyExternalService.FLAG_FULL_DETAILS);
+        Designation desgnObj=designationService.getDesignationByName(waterTaxUtils.getDesignationForThirdPartyUser());
+        Department deptObj=departmentService.getDepartmentByName(waterTaxUtils.getDepartmentForWorkFlow()       );
+       // List<EmployeeView> empList=getEmployeeByBoundaryAndDepartmentAndDesgn(assessmentDetails.getBoundaryDetails().getZoneNumber(),deptObj.getId(),desgnObj.getId(),new Date());
+        
+        
+        return null;
     }
 }

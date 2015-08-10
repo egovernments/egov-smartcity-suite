@@ -34,16 +34,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Iterator;
 import java.util.Arrays;
-
-import org.apache.commons.lang3.ArrayUtils;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -78,6 +80,8 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterTaxUtils waterTaxUtils;
     private final NewConnectionService newConnectionService;
     private WaterConnectionDetails waterconnection;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -104,6 +108,8 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("statuscode", "");
+        
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         return "newconnection-form";
     }
@@ -113,7 +119,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,@RequestParam String  workFlowAction) {
 
-            validatePropertyID(waterConnectionDetails, resultBinder);
+            //validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -125,7 +131,9 @@ public class NewConnectionController extends GenericConnectionController {
                                         documentRequired);
             i++;
             }
-
+        if(waterConnectionDetails.getState()==null){
+        waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_CREATED,WaterTaxConstants.MODULETYPE));
+       }
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             return "newconnection-form";
@@ -145,15 +153,13 @@ public class NewConnectionController extends GenericConnectionController {
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
+       
+       
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                 approvalComent,getAdditionalRule(),workFlowAction);
-     
-        String approverName=getApprovalMessage(approvalPosition);
-        model.addAttribute("approverName", getApprovalMessage(approvalPosition));
         
-       return "redirect:/application/application-success?applicationNumber="
-                + waterConnectionDetails.getApplicationNumber()+","+approverName;
+        String pathVars = waterConnectionDetails.getApplicationNumber() + "," + waterTaxUtils.getApprovalName(approvalPosition);
+        return "redirect:/application/application-success?pathVars="+ pathVars;
     }
 
     private void validateDocuments(final List<ApplicationDocuments> applicationDocs,
@@ -197,7 +203,8 @@ public class NewConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/application-success", method = GET)
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final Model model) {
-        String[] keyNameArray= request.getParameter("applicationNumber").split(",");
+        
+        String[] keyNameArray= request.getParameter("pathVars").split(",");
         String applicationNumber="";
         String approverName="";
         if (keyNameArray.length != 0 && keyNameArray.length > 0) {
@@ -213,8 +220,7 @@ public class NewConnectionController extends GenericConnectionController {
                      .findByApplicationNumber(applicationNumber);
          model.addAttribute("approverName",approverName );
         model.addAttribute(
-                "connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(
+                "connectionType",waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterTaxUtils.getCityName());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
@@ -242,5 +248,5 @@ public class NewConnectionController extends GenericConnectionController {
     public String getAdditionalRule() {
         return "NEW CONNECTION";
     }
-
+  
 }

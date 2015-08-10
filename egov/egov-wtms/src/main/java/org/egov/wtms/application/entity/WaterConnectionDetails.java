@@ -64,6 +64,7 @@ import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -97,6 +98,12 @@ public class WaterConnectionDetails extends StateAware {
     @NotNull
     @JoinColumn(name = "applicationtype", nullable = false)
     private ApplicationType applicationType;
+    
+    @ManyToOne
+    @JoinColumn(name = "statusid", nullable = false)
+    private EgwStatus egwStatus;
+    
+    
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
@@ -394,6 +401,15 @@ public class WaterConnectionDetails extends StateAware {
         this.estimationDetails = estimationDetails;
     }
 
+    
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
+
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -408,4 +424,5 @@ public class WaterConnectionDetails extends StateAware {
     public void setBplCardHolderName(final String bplCardHolderName) {
         this.bplCardHolderName = bplCardHolderName;
     }
+    
 }

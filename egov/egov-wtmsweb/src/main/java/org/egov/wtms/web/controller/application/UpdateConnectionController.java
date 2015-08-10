@@ -48,6 +48,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,6 +73,8 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -102,6 +105,10 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("additionalRule", getAdditionalRule());
         model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+        model.addAttribute("statuscode", waterConnectionDetails.getEgwStatus().getCode());
+        model.addAttribute("wfstate", waterConnectionDetails.getState().getId());
+        model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                0l, getAdditionalRule()));
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -133,39 +140,27 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
-        if (waterConnectionDetails.getCurrentState() != null
-                && waterConnectionDetails.getCurrentState().getValue()
-                        .equals(WaterTaxConstants.WF_STATE_CLERK_APPROVED)
-                || waterConnectionDetails.getCurrentState().getValue()
-                        .equals(WaterTaxConstants.WF_STATE_PAYMENT_DONE_AGT_ESTIMATION))
-            approvalPosition = getApproverPosition("ULB Operator", waterConnectionDetails);
-        else if (waterConnectionDetails.getCurrentState() != null
-                && waterConnectionDetails.getCurrentState().getValue()
-                .equals(WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED))
-            approvalPosition = getApproverPosition("Assistant engineer", waterConnectionDetails);
-        else if (waterConnectionDetails.getCurrentState() != null
-                && waterConnectionDetails.getCurrentState().getValue()
-                .equals(WaterTaxConstants.WF_STATE_ASSISTANT_ENGINEER_APPROVED))
-            approvalPosition = getCityLevelCommissioner();
-        else if (request.getParameter("approvalPosition") != null
-                && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        else
-        // TODO: IN Commissioner inbox
-        if (waterConnectionDetails.getCurrentState()!=null && waterConnectionDetails.getCurrentState().getValue()
-                .equals(WaterTaxConstants.WF_STATE_PAYMENT_DONE_AGT_ESTIMATION)){
-            validateSanctionDetails(waterConnectionDetails, resultBinder);
-        }
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        // TODO: IN Commissioner inbox
+        if (workFlowAction!=null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION) && waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode() != null
+                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)){
+            validateSanctionDetails(waterConnectionDetails, resultBinder);
+        }
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+        if(approvalPosition==null || approvalPosition.equals(Long.valueOf(0))){
+        approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                approvalPosition, getAdditionalRule());
+        }
         if (!resultBinder.hasErrors()) {
             waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, getAdditionalRule(), workFlowAction);
-            final String approverName = getApprovalMessage(approvalPosition);
 
-            return "redirect:/application/application-success?applicationNumber="
-                    + waterConnectionDetails.getApplicationNumber() + "," + approverName;
+            final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
+                    + waterTaxUtils.getApprovalName(approvalPosition);
+            return "redirect:/application/application-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, waterConnectionDetails);
     }

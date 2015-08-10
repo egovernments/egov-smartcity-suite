@@ -42,6 +42,7 @@ package org.egov.wtms.utils.constants;
 public class WaterTaxConstants {
 
     public static final String MODULE_NAME = "Water Tax Management";
+    public static final String MODULETYPE = "WATERTAXAPPLICATION"; 
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
     public static final String CREATEWORKFLOWSTATE = "CREATED";
@@ -99,4 +100,17 @@ public class WaterTaxConstants {
     public static final String APPROVEWORKFLOWACTION = "Approve";
     
     public static final String BPL_CATEGORY = "BPL";
+    
+    public static final String WF_STATE_BUTTON_GENERATEESTIMATE ="Generate Estimation Notice";
+    public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON ="Tap Execution Date"; 
+    
+    //Application status
+    public static final String APPLICATION_STATUS_CREATED = "Created";
+    public static final String APPLICATION_STATUS_APPROVED = "Approved";
+    public static final String APPLICATION_STATUS_VERIFIED = "Verified";
+    public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "Estimation Notice Generated";
+    public static final String APPLICATION_STATUS_FEEPAID = "Estimation Amount Paid";
+    public static final String APPLICATION_STATUS_WOGENERATED = "Work Order Generated";
+    public static final String APPLICATION_STATUS_SANCTIONED = "Sanctioned";
+    public static final String APPLICATION_STATUS_CANCELLED ="Cancelled";
 }
