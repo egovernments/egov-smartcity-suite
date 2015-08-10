@@ -109,7 +109,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
     public static final String APPLICATION_STATUS_VERIFIED = "VERIFIED";
     public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
-    public static final String APPLICATION_STATUS_FEEPAID = "ESTIMATIONNOTICEGENERATED";
+    public static final String APPLICATION_STATUS_FEEPAID = "ESTIMATIONAMOUNTPAID";
     public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CANCELLED ="CANCELLED";
