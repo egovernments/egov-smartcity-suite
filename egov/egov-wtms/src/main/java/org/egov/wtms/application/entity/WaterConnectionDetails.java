@@ -98,12 +98,10 @@ public class WaterConnectionDetails extends StateAware {
     @NotNull
     @JoinColumn(name = "applicationtype", nullable = false)
     private ApplicationType applicationType;
-    
+
     @ManyToOne
     @JoinColumn(name = "statusid", nullable = false)
     private EgwStatus egwStatus;
-    
-    
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
@@ -401,12 +399,11 @@ public class WaterConnectionDetails extends StateAware {
         this.estimationDetails = estimationDetails;
     }
 
-    
     public EgwStatus getEgwStatus() {
         return egwStatus;
     }
 
-    public void setEgwStatus(EgwStatus egwStatus) {
+    public void setEgwStatus(final EgwStatus egwStatus) {
         this.egwStatus = egwStatus;
     }
 
@@ -424,5 +421,5 @@ public class WaterConnectionDetails extends StateAware {
     public void setBplCardHolderName(final String bplCardHolderName) {
         this.bplCardHolderName = bplCardHolderName;
     }
-    
+
 }

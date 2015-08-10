@@ -329,7 +329,7 @@ public class WaterConnectionDetailsService {
                     .getCreatedBy().getId());
             if (wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
-                waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+                waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.transition(true).end().withSenderName(user.getName())
                 .withComments(approvalComent).withDateInfo(currentDate.toDate());
@@ -351,10 +351,9 @@ public class WaterConnectionDetailsService {
                 .withNextAction(wfmatrix.getNextAction());
             else if (workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON)
                     || workFlowAction.equals("Enter Meter Details")) {
-                // TODO: ending workflow and change the status to Sanctioned
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                         null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-                waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+                waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
@@ -392,7 +391,7 @@ public class WaterConnectionDetailsService {
         // Enginneer approves record
         if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 && waterConnectionDetails.getState() != null)
-            waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_VERIFIED, WaterTaxConstants.MODULETYPE));
         // TODO: status change from Verified to Estimate generate in clerk inbox
         // ..as off now am skiffing this
@@ -405,7 +404,7 @@ public class WaterConnectionDetailsService {
                 .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))*/
             
             //TODO Skipping this status cos no collection as pf now.
-            waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
         // TODO:this application status needs to do after commssioner click on
         // Approve button
@@ -417,22 +416,14 @@ public class WaterConnectionDetailsService {
             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                 waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
             updateIndexes(waterConnectionDetails);
-            waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
         }
         // TODO: this application status needs to do after workflow generated
         else if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED))
-            waterConnectionDetails.setEgwStatus(waterTaxUtils.getstatusbyCodeAndModuleType(
+            waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_WOGENERATED, WaterTaxConstants.MODULETYPE));
-        /*
-         * else if(
-         * waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants
-         * .APPLICATION_STATUS_WOGENERATED)){
-         * waterConnectionDetails.setEgwStatus
-         * (waterTaxUtils.getstatusbyCodeAndModuleType(
-         * WaterTaxConstants.APPLICATION_STATUS_WOGENERATED,
-         * WaterTaxConstants.MODULETYPE)); }
-         */
+       
         updateIndexes(waterConnectionDetails);
     }
 
@@ -463,8 +454,11 @@ public class WaterConnectionDetailsService {
                     || waterConnectionDetails.getEgwStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
                     || waterConnectionDetails.getEgwStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID))
-                approvalPosition = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)){
+                Position posobj=waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+                if(posobj!=null)
+                approvalPosition = posobj.getId();
+            }
         return approvalPosition;
     }
 
@@ -490,12 +484,13 @@ public class WaterConnectionDetailsService {
                             .equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
                             || waterConnectionDetails.getEgwStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                            | waterConnectionDetails.getEgwStatus().getCode()
+                            || waterConnectionDetails.getEgwStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
                             || waterConnectionDetails.getEgwStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
                             || waterConnectionDetails.getEgwStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED) || waterConnectionDetails
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED) 
+                            || waterConnectionDetails
                             .getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
                 final ApplicationIndex applicationIndex = applicationIndexService
                         .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());

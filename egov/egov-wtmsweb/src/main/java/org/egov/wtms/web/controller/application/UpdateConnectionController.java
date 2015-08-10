@@ -159,7 +159,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     approvalComent, getAdditionalRule(), workFlowAction);
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
-                    + waterTaxUtils.getApprovalName(approvalPosition);
+                    + waterTaxUtils.getApproverUserName(approvalPosition);
             return "redirect:/application/application-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, waterConnectionDetails);

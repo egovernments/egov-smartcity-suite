@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -102,8 +101,6 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private DepartmentService departmentService;
 
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
@@ -159,8 +156,5 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
             return false;
         return true;
     }
-
   
-
-    
 }

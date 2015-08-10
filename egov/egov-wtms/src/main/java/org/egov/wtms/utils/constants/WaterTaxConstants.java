@@ -105,12 +105,22 @@ public class WaterTaxConstants {
     public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON ="Tap Execution Date"; 
     
     //Application status
-    public static final String APPLICATION_STATUS_CREATED = "Created";
-    public static final String APPLICATION_STATUS_APPROVED = "Approved";
-    public static final String APPLICATION_STATUS_VERIFIED = "Verified";
-    public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "Estimation Notice Generated";
-    public static final String APPLICATION_STATUS_FEEPAID = "Estimation Amount Paid";
-    public static final String APPLICATION_STATUS_WOGENERATED = "Work Order Generated";
-    public static final String APPLICATION_STATUS_SANCTIONED = "Sanctioned";
-    public static final String APPLICATION_STATUS_CANCELLED ="Cancelled";
+    public static final String APPLICATION_STATUS_CREATED = "CREATED";
+    public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+    public static final String APPLICATION_STATUS_VERIFIED = "VERIFIED";
+    public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
+    public static final String APPLICATION_STATUS_FEEPAID = "ESTIMATIONNOTICEGENERATED";
+    public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
+    public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
+    public static final String APPLICATION_STATUS_CANCELLED ="CANCELLED";
+    
+    //appconfig values
+    public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
+    public static final String WATERTAXWORKFLOWDEPARTEMENT = "WATERTAXWORKFLOWDEPARTEMENT";
+    public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";
+    public static final String SENDEMAILFORWATERTAX = "SENDEMAILFORWATERTAX";
+    public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
+    public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
+    public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
+    
 }
