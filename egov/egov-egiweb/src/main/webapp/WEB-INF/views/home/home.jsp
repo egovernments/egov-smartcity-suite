@@ -51,7 +51,7 @@
 		<title>eGov Urban Portal</title>
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
-		<link rel="icon" href="<c:url value='/resources/global/images/favicon.ico'/>" sizes="32x32">
+		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">

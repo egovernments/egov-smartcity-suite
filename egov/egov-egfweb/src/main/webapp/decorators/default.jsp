@@ -42,6 +42,7 @@
 <head>
  <%@ include file="/includes/meta.jsp" %> 
 		<title>eGov Financials <decorator:title/></title>
+		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 		<link href="<c:url value='/resources/css/budget.css'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/css/commonegovnew.css'/>" rel="stylesheet" type="text/css" />
 		<link href="${pageContext.request.contextPath}/resources/css/error.css" rel="stylesheet" type="text/css"></link>
