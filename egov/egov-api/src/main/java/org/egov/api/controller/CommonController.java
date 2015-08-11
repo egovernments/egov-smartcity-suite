@@ -120,6 +120,7 @@ public class CommonController extends ApiController {
     public ResponseEntity<String> passwordRecover(HttpServletRequest request) {
         ApiResponse res = ApiResponse.newInstance();
         String identity = request.getParameter("identity");
+        String redirectURL = request.getParameter("redirectURL");
 
         if (identity == null || !identity.matches("\\d{10}")) {
             return res.error("Invalid mobile number");
@@ -129,12 +130,9 @@ public class CommonController extends ApiController {
         if (citizen == null) {
             return res.error(getMessage("user.not.found"));
         }
-
-        String url = request.getRequestURL().toString();
-        url = url.substring(0, url.indexOf("/api"));
-
+       
         if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-                identity, url + "/egi/login/password/reset?token=")) {
+                identity, redirectURL + "/egi/login/password/reset?token=")) {
             return res.success("", "Password has been sent to mail");
         }
 
