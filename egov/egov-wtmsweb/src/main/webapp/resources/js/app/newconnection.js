@@ -39,6 +39,18 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
+	var mode =$('#mode').val();
+	var currentloggedInUser=$('#currentUser').val();
+	if(currentloggedInUser=='true' && mode=='')
+		{
+		$(".show-row").hide(); 
+		/*$('#approvalComent').hide();
+		$('#approvalComent').hide();*/
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		}
+	
 	loadConnectionCategories();
 	var documentName = $('#documentName').val();
     

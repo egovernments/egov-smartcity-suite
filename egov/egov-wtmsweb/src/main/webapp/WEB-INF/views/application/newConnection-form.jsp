@@ -51,7 +51,8 @@
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
-			
+			<input type="hidden" id="currentUser" value="${currentUser}"/>  
+			<form:hidden id="mode" path=""  value="${mode}"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<form:hidden id="documentName" path="" value="${documentName}"/>
 			<div class="panel panel-primary" data-collapsed="0">

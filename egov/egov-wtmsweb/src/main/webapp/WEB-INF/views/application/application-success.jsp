@@ -59,7 +59,7 @@
 					</c:when>
 					<c:otherwise>
 						<c:choose>
-							<c:when test="${waterConnectionDetails.egwStatus.code == 'Sanctioned' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
+							<c:when test="${waterConnectionDetails.egwStatus.code == 'SANCTIONED' && waterConnectionDetails.connectionStatus == 'ACTIVE' }">
 								<spring:message code="msg.newconnection.approved.success" />
 								<%-- <spring:message code="msg.sussess.forward" /><br>${approvalUser} --%>
 							</c:when>

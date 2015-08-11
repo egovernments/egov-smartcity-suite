@@ -35,17 +35,29 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +77,23 @@ public class WaterTaxUtils {
     private AssignmentService assignmentService;
 
     @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
     private PersistenceService persistenceService;
+
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @Autowired
+    private PropertyExternalService propertyExternalService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -100,6 +128,15 @@ public class WaterTaxUtils {
         return designation;
     }
 
+    public List<AppConfigValues> getRolesThirdPartyUser() {
+
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLEFORNONEMPLOYEEINWATERTAX);
+
+        return !appConfigValueList.isEmpty() ? appConfigValueList : null;
+
+    }
+
     public Boolean isEmailEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
@@ -114,7 +151,7 @@ public class WaterTaxUtils {
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WaterTaxConstants.MODULE_NAME,WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
@@ -174,7 +211,7 @@ public class WaterTaxUtils {
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
-       return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0).getPosition();
+        return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0).getPosition();
     }
 
     public String getApproverUserName(final Long approvalPosition) {
@@ -202,8 +239,6 @@ public class WaterTaxUtils {
                         break;
                     }
             }
-            // TODO: just incase entry is not present in workflow histrory table
-            // then checkinh in workflow state table;
             if (approverPosition == 0) {
                 final State stateObj = waterConnectionDetails.getState();
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
@@ -215,8 +250,6 @@ public class WaterTaxUtils {
                     }
             }
         } else {
-            // First after AE->CLERK need previous clerk User so by passing
-            // workflow Initiator name
             final Position posObjToClerk = positionMasterService.getCurrentPositionForUser(waterConnectionDetails
                     .getCreatedBy().getId());
             approverPosition = posObjToClerk.getId();
@@ -224,5 +257,23 @@ public class WaterTaxUtils {
 
         return approverPosition;
 
+    }
+
+    public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
+        //TODO: refering findByDepartmentDesignationAndBoundary this API needs to change according to get all emplyees of Passed Boundary(which is BoundaryType of "Zone")
+        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
+                PropertyExternalService.FLAG_FULL_DETAILS);
+        Assignment assignmentObj = null;
+        final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByName(assessmentDetails
+                .getBoundaryDetails().getZoneBoundaryType());
+        final Boundary boundaryObj = boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails
+                .getBoundaryDetails().getZoneNumber());
+        final Designation desgnObj = designationService.getDesignationByName(getDesignationForThirdPartyUser());
+        final Department deptObj = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
+        final List<Employee> employeeList = employeeService.findByDepartmentDesignationAndBoundary(deptObj.getId(),
+                desgnObj.getId(), boundaryObj.getId());
+        if (!employeeList.isEmpty())
+            assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
+        return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
 }

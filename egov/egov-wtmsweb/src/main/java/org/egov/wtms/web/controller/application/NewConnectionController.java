@@ -45,6 +45,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -75,8 +76,8 @@ public class NewConnectionController extends GenericConnectionController {
     private final WaterConnectionDetailsService waterConnectionDetailsService;
     private final ApplicationTypeService applicationTypeService;
     private final ConnectionDemandService connectionDemandService;
-    private final WaterTaxUtils waterTaxUtils;
     private final NewConnectionService newConnectionService;
+    private final WaterTaxUtils waterTaxUtils;
     private WaterConnectionDetails waterconnection;
     @Autowired
     private SecurityUtils securityUtils;
@@ -91,6 +92,7 @@ public class NewConnectionController extends GenericConnectionController {
         this.connectionDemandService = connectionDemandService;
         this.waterTaxUtils = waterTaxUtils;
         this.newConnectionService = newConnectionService;
+        
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -107,6 +109,8 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("additionalRule", getAdditionalRule());
         model.addAttribute("statuscode", "");
+        model.addAttribute("currentUser",
+                waterConnectionDetailsService.getCurrentUserRole(securityUtils.getCurrentUser()));
 
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
@@ -118,7 +122,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction) {
 
-        validatePropertyID(waterConnectionDetails, resultBinder);
+         //validatePropertyID(waterConnectionDetails, resultBinder);
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
@@ -151,6 +155,15 @@ public class NewConnectionController extends GenericConnectionController {
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        final Boolean applicationByOthers = waterConnectionDetailsService.getCurrentUserRole(securityUtils
+                .getCurrentUser());
+
+        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails
+                    .getConnection().getPropertyIdentifier());
+            if(userPosition!=null)
+            approvalPosition = userPosition.getId();
+        }
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                 approvalComent, getAdditionalRule(), workFlowAction);
@@ -181,7 +194,7 @@ public class NewConnectionController extends GenericConnectionController {
             Iterator<MultipartFile> stream = null;
             if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
                 stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                        .iterator();
+                .iterator();
             if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
                     && !stream.hasNext()) {
                 final String fieldError = "applicationDocs[" + i + "].files";
@@ -227,7 +240,6 @@ public class NewConnectionController extends GenericConnectionController {
         return new ModelAndView("application/application-success", "waterConnectionDetails", waterConnectionDetails);
 
     }
-
     private void validatePropertyID(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
@@ -238,7 +250,6 @@ public class NewConnectionController extends GenericConnectionController {
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
     }
-
     @ModelAttribute
     @Override
     public StateAware getModel() {

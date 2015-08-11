@@ -44,6 +44,7 @@ import javax.validation.Valid;
 
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -78,6 +79,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -107,8 +111,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         model.addAttribute("statuscode", waterConnectionDetails.getEgwStatus().getCode());
         model.addAttribute("wfstate", waterConnectionDetails.getState().getId());
-        model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
-                0l, getAdditionalRule()));
+        model.addAttribute("currentUser", waterConnectionDetailsService.getCurrentUserRole(securityUtils.getCurrentUser()));
+        
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -120,13 +124,57 @@ public class UpdateConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
-
-        if (null == request.getAttribute("mode")) {
-            model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
-            model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-            model.addAttribute("mode", "inbox");
-        }
+       
+        model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         return "newconnection-edit";
+    }
+
+    private void appendModeBasedOnApplicationCreator(final Model model, final HttpServletRequest request,
+            final WaterConnectionDetails waterConnectionDetails) {
+       
+        Boolean recordCreatedBYNonEmployee=waterConnectionDetailsService.getCurrentUserRole(waterConnectionDetails.getCreatedBy());
+        if(recordCreatedBYNonEmployee.equals(true)){
+        if (null == request.getAttribute("mode") && waterConnectionDetails.getState().getHistory().isEmpty()) {
+             model.addAttribute("mode", "noedit");
+           
+            model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                    0l, getAdditionalRule(),"noedit"));
+      
+        }
+        //"edit" mode for AE inbox record
+       else if( request.getAttribute("mode")==null &&  waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) && waterConnectionDetails.getState().getHistory()!=null)
+        {
+            model.addAttribute("mode", "edit"); 
+            model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                    0l, getAdditionalRule(),"edit"));
+        }
+       else{
+           model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                   0l, getAdditionalRule(),"")); 
+       }
+        }
+        else{
+            
+            if( waterConnectionDetails.getEgwStatus()!=null && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)){
+                model.addAttribute("mode", "edit");
+               
+                model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                    0l, getAdditionalRule(),"edit"));
+            }
+            else
+            {
+            model.addAttribute("approvalPositionExist",  waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
+                    0l, getAdditionalRule(),""));
+            }
+           
+            model.addAttribute("mode", "");
+        }
+        if(waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
+        {
+            model.addAttribute("mode", "");
+        }
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
@@ -150,13 +198,19 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+        String mode="";
+        if(request.getAttribute("mode")!=null){
+            mode=request.getParameter("mode");
+        }
         if(approvalPosition==null || approvalPosition.equals(Long.valueOf(0))){
         approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
-                approvalPosition, getAdditionalRule());
+                approvalPosition, getAdditionalRule(),mode);
         }
+        appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
+      
         if (!resultBinder.hasErrors()) {
             waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, getAdditionalRule(), workFlowAction);
+                    approvalComent, getAdditionalRule(), workFlowAction,mode);
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);

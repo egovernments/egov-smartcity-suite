@@ -45,11 +45,11 @@
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
 id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">				
 <div class="page-container" id="page-container">
-	<input type="hidden" id="mode" name="hidden" value="${mode}"/>
+	<form:hidden id="mode" path=""  value="${mode}"/>
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
 	<form:hidden path="" id="statuscode" value="${statuscode}"/>
-	<form:hidden path="" id="wfstate" value="${wfstate}"/><%-- 
-	<input type="hidden" id="currentUser" value="${currentUser}"/>  --%>
+	<form:hidden path="" id="wfstate" value="${wfstate}"/> 
+	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">

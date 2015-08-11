@@ -41,6 +41,8 @@ $(document).ready(function()
 {
 	var status=$('#statuscode').val();
 	var wfstate=$('#wfstate').val();
+	var currentUser=$('#currentUser').val();
+	var mode =$('#mode').val();
 	var approvalPositionExist=$('#approvalPositionExist').val();
 	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='ESTIMATIONNOTICEGENERATED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{
@@ -49,7 +51,15 @@ $(document).ready(function()
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		}
-	 	if(approvalPositionExist=='' || approvalPositionExist==0){
+	 if(approvalPositionExist!=0 && status=='CREATED' && (mode =='noedit' || mode==''))
+		{
+			$(".show-row").show(); 
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required');
+		}
+	 
+		if(approvalPositionExist=='' || approvalPositionExist==0){
 		$(".show-row").show(); 
 		$('#approvalDepartment').attr('required', 'required');
 		$('#approvalDesignation').attr('required', 'required');
@@ -57,7 +67,10 @@ $(document).ready(function()
 		}
 	
 	$("#workflowAction").click(function(){
-		if($('#approvalDate') && $('#approvalDate').val() != '') {
+		
+		var mode =$('#mode').val();
+	    document.getElementById("mode").value=mode;
+	    if($('#approvalDate') && $('#approvalDate').val() != '') {
 			var applicationDate = $('#applicationDate').html();
 		    var approvalDate = $('#approvalDate').val();
 			if(!validateDateRange(applicationDate, approvalDate)) {
