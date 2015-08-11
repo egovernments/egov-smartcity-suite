@@ -38,9 +38,13 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-		
+	
 	loadConnectionCategories();
-		 
+	var documentName = $('#documentName').val();
+    
+	$(".check-text:contains('"+documentName+"')").parent().hide();
+ 	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	
 	$('#connectionType').change(function(){
 		$.ajax({
 			url: "/wtms/ajax-connectionTypes",     
@@ -55,6 +59,8 @@ $(document).ready(function(){
 				$('#usageType').empty();
 				$('#usageType').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
+					
+								
 					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
 				});
 				
@@ -69,20 +75,27 @@ $(document).ready(function(){
 		loadConnectionCategories();
     });
 	
+		
 	function loadConnectionCategories(){
 		var connectionCategory = $('#connectionCategorie').val();
 		
 	    var toAppend = '';
+	    var documentName = $('#documentName').val();
 	    if (connectionCategory == 1) {
 	    	$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
+	    	$("#bplCardHolderName").val();
+	    	$(".check-text:contains('"+documentName+"')").parent().show();
+			$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
 	    }
 	    else{
 	    	$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
+	    	$(".check-text:contains('"+documentName+"')").parent().hide();
+	    	
 	    }
 	}
-		
+
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});
@@ -120,6 +133,7 @@ $(document).ready(function(){
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').val()
 		allowIfPTDueExists = $('#allowIfPTDueExists').val() 
+		alert(allowIfPTDueExists+"ssss")
 		if(propertyID != '') {
 			$.ajax({
 				url: "/ptis/rest/property/"+propertyID,      
@@ -148,7 +162,6 @@ $(document).ready(function(){
 									applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
 							}
 							$("#applicantname").val(applicantName);
-							$("#nooffloors").val(response.propertyDetails.noOfFloors);
 							if(response.ownerNames[0].mobileNumber != '')
 								$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
 							if(response.ownerNames[0].emailId != '')

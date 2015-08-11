@@ -114,7 +114,7 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CANCELLED ="CANCELLED";
     
-    //appconfig values
+    //appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
     public static final String WATERTAXWORKFLOWDEPARTEMENT = "WATERTAXWORKFLOWDEPARTEMENT";
     public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";

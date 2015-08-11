@@ -47,21 +47,25 @@
 	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 	</div>
 </div>
+
+
 <div class="col-sm-12 view-content header-color hidden-xs">
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentname"/></div>											
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>
 	<div class="col-sm-3 table-div-column"><spring:message code="lbl.attachdocument"/>(<span class="mandatory"></span> )</div>																							
 </div>
+
 <c:forEach var="docs" items="${documentNamesList}" varStatus="status">	
+
 <div class="form-group">	
-	<div class="col-sm-3 add-margin">
+ 	<div class="col-sm-3 add-margin check-text">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<input type="checkbox" checked disabled>&nbsp;<c:out value="${docs.documentName}"/> 
+				<input type="checkbox" >&nbsp;<c:out value="${docs.documentName}"/> 
 			</c:when>
 			<c:otherwise>
-				<input type="checkbox" disabled>&nbsp;<c:out value="${docs.documentName}"/> 
+				<input type="checkbox" >&nbsp;<c:out value="${docs.documentName}"/> 
 			</c:otherwise>		
 		</c:choose> 
 		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
@@ -105,4 +109,5 @@
 </c:forEach> 
 </c:when>
 </c:choose>
+
 <script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>

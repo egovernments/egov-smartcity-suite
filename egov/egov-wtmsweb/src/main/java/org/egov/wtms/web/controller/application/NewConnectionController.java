@@ -109,6 +109,7 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("statuscode", "");
 
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
         return "newconnection-form";
     }
 
