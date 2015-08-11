@@ -68,6 +68,21 @@
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.sumpCapacity}" /></div>
 				</div>
 				<div class="row add-border">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.no.of.persons" /></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.numberOfPerson}" /></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.bpl.cardholdername" /></div>
+					<div class="col-xs-3 add-margin view-content">
+					<c:choose>
+                        <c:when test="${waterConnectionDetails.bplCardHolderName != null}">
+                          <c:out value="${waterConnectionDetails.bplCardHolderName}" />
+                        </c:when>
+                        <c:otherwise>
+                          <c:out value="Not Applicable" />
+                        </c:otherwise>          
+                    </c:choose>
+					</div>
+				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.connectioncharge"/></div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXCONCHARGE}" /></div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>
