@@ -53,13 +53,15 @@ public class BoundaryDetails implements Serializable {
 	
 	private Long zoneNumber;
 	private String zoneName;
+	private String zoneBoundaryType;
 	private Long wardNumber;
 	private String wardName;
+	private String wardBoundaryType;
 	private Long blockNumber;
 	private String blockName;
 	private String localityName;
 	private String streetName;
-	
+
 	public Long getZoneNumber() {
 		return zoneNumber;
 	}
@@ -72,6 +74,12 @@ public class BoundaryDetails implements Serializable {
 	public void setZoneName(String zoneName) {
 		this.zoneName = zoneName;
 	}
+	public String getZoneBoundaryType() {
+		return zoneBoundaryType;
+	}
+	public void setZoneBoundaryType(String zoneBoundaryType) {
+		this.zoneBoundaryType = zoneBoundaryType;
+	}
 	public Long getWardNumber() {
 		return wardNumber;
 	}
@@ -83,6 +91,12 @@ public class BoundaryDetails implements Serializable {
 	}
 	public void setWardName(String wardName) {
 		this.wardName = wardName;
+	}
+	public String getWardBoundaryType() {
+		return wardBoundaryType;
+	}
+	public void setWardBoundaryType(String wardBoundaryType) {
+		this.wardBoundaryType = wardBoundaryType;
 	}
 	public Long getBlockNumber() {
 		return blockNumber;
@@ -111,9 +125,9 @@ public class BoundaryDetails implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "BoundaryDetails [zoneNumber=" + zoneNumber + ", zoneName=" + zoneName + ", wardNumber=" + wardNumber
-				+ ", wardName=" + wardName + ", blockNumber=" + blockNumber + ", blockName=" + blockName
-				+ ", localityName=" + localityName + ", streetName=" + streetName + "]";
+		return "BoundaryDetails [zoneNumber=" + zoneNumber + ", zoneName=" + zoneName + ", zoneBoundaryType="
+				+ zoneBoundaryType + ", wardNumber=" + wardNumber + ", wardName=" + wardName + ", wardBoundaryType="
+				+ wardBoundaryType + ", blockNumber=" + blockNumber + ", blockName=" + blockName + ", localityName="
+				+ localityName + ", streetName=" + streetName + "]";
 	}
-	
 }

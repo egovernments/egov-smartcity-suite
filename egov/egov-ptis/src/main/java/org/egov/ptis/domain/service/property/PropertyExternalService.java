@@ -1,3 +1,42 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.domain.service.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -168,10 +207,12 @@ public class PropertyExternalService {
 			if (null != propertyID.getZone()) {
 				boundaryDetails.setZoneNumber(propertyID.getZone().getBoundaryNum());
 				boundaryDetails.setZoneName(propertyID.getZone().getName());
+				boundaryDetails.setZoneBoundaryType(propertyID.getZone().getBoundaryType().getName());
 			}
 			if (null != propertyID.getWard()) {
 				boundaryDetails.setWardNumber(propertyID.getWard().getBoundaryNum());
 				boundaryDetails.setWardName(propertyID.getWard().getName());
+				boundaryDetails.setWardBoundaryType(propertyID.getWard().getBoundaryType().getName());
 			}
 			if (null != propertyID.getArea()) {
 				boundaryDetails.setBlockNumber(propertyID.getArea().getBoundaryNum());
@@ -352,7 +393,7 @@ public class PropertyExternalService {
 		}
 		return arrearsTaxDetails;
 	}
-	
+
 	private TaxDetails getTaxDetailsByType(TaxDetails taxDetails, String taxType, BigDecimal taxVal) {
 		if (taxType.equalsIgnoreCase(PropertyTaxConstants.LIB_CESS)) {
 			taxDetails.setLibCess(taxVal);
@@ -368,7 +409,7 @@ public class PropertyExternalService {
 		}
 		return taxDetails;
 	}
-	
+
 	private PropertyTaxDetails getPropertyTaxDetails(BasicProperty basicProperty) {
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
 		ErrorDetails errorDetails = new ErrorDetails();
@@ -391,7 +432,7 @@ public class PropertyExternalService {
 			}
 			Property property = basicProperty.getProperty();
 			Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-	
+
 			List<PropertyOwnerInfo> propOwnerInfos = property.getBasicProperty().getPropertyOwnerInfo();
 			StringBuffer ownerNameStr = new StringBuffer();
 			for (int i = 0; i < propOwnerInfos.size(); i++) {
