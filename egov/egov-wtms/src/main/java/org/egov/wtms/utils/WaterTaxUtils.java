@@ -211,7 +211,9 @@ public class WaterTaxUtils {
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
-        return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0).getPosition();
+        //TODO: In db there 2 assignment present for General and Revenue department so For General Department and Commissioner Designation 
+        //related employee dont have access to view inbox so as off now using get(1) Means Revenue Department Commissioner
+        return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(1).getPosition();
     }
 
     public String getApproverUserName(final Long approvalPosition) {
