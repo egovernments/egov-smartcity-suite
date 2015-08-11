@@ -516,8 +516,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
                         .withDateInfo(currentDate.toDate());
             else {
-                final String stateValue = propertyMutation.getCurrentState().getValue().split(":")[0] + ":"
-                        + WF_STATE_REJECTED;
+                final String stateValue = WF_STATE_REJECTED;
                 propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);

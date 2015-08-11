@@ -47,7 +47,6 @@
 		<script type="text/javascript">
 		  function printAcknowledgement() {
 			  var mutationId = document.getElementById("mutationId").value;
-			  alert("mutationId"+mutationId);
 			  window.location="printAck.action?mutationId="+mutationId;
 		  }
 		</script>
@@ -56,7 +55,6 @@
 		<s:form name="transPropAckForm" theme="simple">
 			<s:push value="model">
 			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
-			approverName : <s:property value="%{approverName}"/>
 			<s:token/>
 				<div class="formmainbox">
 					<div class="formheading"></div>
@@ -75,23 +73,6 @@
 								<td colspan="5" style="font-size: 15px;" align="center">
 							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td> 
 								</s:else>
-								<%-- 	<s:if test="%{ackMessage != null}">
-										<span ><s:property value="%{ackMessage}" /></span>
-									</s:if>
-									<s:else>
-										<s:if test="%{nextUser != null }" >
-	                                 		<span ><s:text name="transferdet.head"></s:text> </span>
-											<s:property value="%{assessmentNo}" />
-											 <span > 
-											<s:text name="forward.success"></s:text>  </span>
-										    <s:property value="%{nextUser}" />
-										</s:if>
-										<s:else>
-											 <span ><s:text name="transferOwner.ack"></s:text> </span>
-											<a href="../../view/viewProperty-viewForm.action?propertyId=<s:property value='%{assessmentNo}'/>"
-											target='_blank'> <s:property value="%{assessmentNo}" /> </a>
-										</s:else>
-									</s:else> --%>
 							</td>
 						</tr>
 					</table>

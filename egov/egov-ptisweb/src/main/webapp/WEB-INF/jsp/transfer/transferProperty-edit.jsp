@@ -221,7 +221,7 @@
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].salutation" maxlength="10" size="10"  value="" 
+								        	<s:textfield name="transfereeInfos[%{#status.index}].salutation" maxlength="10" size="10" 
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">

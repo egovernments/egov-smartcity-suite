@@ -73,10 +73,6 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
     private EgBillDao egBillDAO;
-
-   /* @Autowired
-    @Qualifier("transferOwnerService")
-    private PropertyTransferService transferOwnerService;*/
     
     @Autowired
     private SecurityUtils securityUtils;
@@ -98,6 +94,7 @@ public class MutationFeeCollection extends TaxCollection {
                 .withOwner(userAssignment.getPosition()).withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
                 .withNextAction(WF_STATE_COMMISSIONER_APPROVAL_PENDING);
         persistenceService.persist(propertyMutation);
+        persistenceService.getSession().flush();
     }
 
     @Override

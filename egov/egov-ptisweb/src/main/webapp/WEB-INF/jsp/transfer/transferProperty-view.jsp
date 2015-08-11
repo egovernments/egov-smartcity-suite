@@ -48,13 +48,7 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 		function generateMutationCertificate() {
-			var basicPropId = document.getElementById("basicPropId").value;
-			alert("basicPropId"+basicPropId);
-			window.open("/ptis/notice/propertyTaxNotice-generateNotice.action?" + 
-					"indexNumber=<s:property value='%{indexNumber}'/>&" + 
-					"noticeType=MutationCertificate&" +
-					"basicPropId="+basicPropId+"&isPreviewPVR=false",
-					"","resizable=yes, scrollbars=yes, top=40, width=900, height=650");
+			window.location = "printNotice.action?mutationId="+mutationId.value;
 		}
     
 	function onSubmit() {
@@ -67,6 +61,7 @@
 			document.forms[0].action = '/ptis/property/transfer/approve.action';
 		} else {
 			generateMutationCertificate();
+			return false;
 		}
 		document.forms[0].submit;
 		return true;
@@ -305,7 +300,6 @@
 				</s:if>
 				<s:elseif test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
 					<div id="workflowCommentsDiv" align="center">
-					model.state.nextAction<s:property value="%{model.state.nextAction}"/>
 						<table width="100%">
 							<tr>
 								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
@@ -321,11 +315,6 @@
 						</table>
 					</div>
 					<tr>
-					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-				   </tr>
-				</s:elseif>
-				<s:elseif test="%{model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
-				   <tr>
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 				   </tr>
 				</s:elseif>
