@@ -27,6 +27,13 @@ $(document).ready(function(){
 	//This will allow you to enter alphabets and numbers with specified special characters like  slash(/), hyphen(-). (eg: data-pattern="alphanumerichyphenbackslash")
 	var regexp_alphanumerichyphenbackslash = /[^a-zA-Z0-9/-]*$/ ;
 
+	
+	patternvalidation();
+	
+});
+
+function patternvalidation(){
+	
 	$('.patternvalidation').on("input", function(){
 
 		if($(this).data('pattern') === "alphabetwithspace"){ //alphabetwithspaces
@@ -64,5 +71,5 @@ $(document).ready(function(){
 		}
 
 	});
-
-});
+	
+}
