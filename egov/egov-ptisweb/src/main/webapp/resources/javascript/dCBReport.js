@@ -96,20 +96,6 @@ jQuery(document).ready(function() {
 
 });
 
-
-try {
-	jQuery(":input").inputmask();
-	} catch (e) {}
-
-try {
-	jQuery(".datepicker").datepicker({
-		format : "dd/mm/yyyy",
-		autoclose : true
-	});
-} catch (e) {
-	console.warn("No Date Picker");
-}
-	
 function setHiddenValueByLink(obj, param) {
 	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
 	.val(jQuery(obj).data('eleval'));   
@@ -265,11 +251,10 @@ function callAjaxByBoundary() {
 						updateTotalFooter(17, api);
 						updateTotalFooter(18, api);
 						updateTotalFooter(19, api);
-						updateTotalFooter(20, api);
 					}
 				},
 				"aoColumnDefs" : [ {
-					"aTargets" : [ 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+					"aTargets" : [ 1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
 					"mRender" : function(data, type, full) {
 						return formatNumberInr(data);    
 					}
