@@ -46,13 +46,17 @@
 		</title>
 		<script type="text/javascript">
 		  function printAcknowledgement() {
-			  window.location="printAck.action?mutationId=${mutationId}";
+			  var mutationId = document.getElementById("mutationId").value;
+			  alert("mutationId"+mutationId);
+			  window.location="printAck.action?mutationId="+mutationId;
 		  }
 		</script>
 	</head>
 	<body onload=" refreshParentInbox(); ">
 		<s:form name="transPropAckForm" theme="simple">
 			<s:push value="model">
+			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
+			approverName : <s:property value="%{approverName}"/>
 			<s:token/>
 				<div class="formmainbox">
 					<div class="formheading"></div>
@@ -64,8 +68,14 @@
 							<td colspan="5"
 								style="background-color: #FDF7F0; font-size: 15px;"
 								align="center">
-								
-									<s:if test="%{ackMessage != null}">
+								<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_CLERK_APPROVED.equalsIgnoreCase(model.state.value)">
+								    <td colspan="5" style="font-size: 15px;" align="center"><s:property value="%{ackMessage}"/><span class="bold"><s:property value="%{approverName}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td>
+								</s:if>
+								<s:else>
+								<td colspan="5" style="font-size: 15px;" align="center">
+							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td> 
+								</s:else>
+								<%-- 	<s:if test="%{ackMessage != null}">
 										<span ><s:property value="%{ackMessage}" /></span>
 									</s:if>
 									<s:else>
@@ -81,12 +91,14 @@
 											<a href="../../view/viewProperty-viewForm.action?propertyId=<s:property value='%{assessmentNo}'/>"
 											target='_blank'> <s:property value="%{assessmentNo}" /> </a>
 										</s:else>
-									</s:else>
+									</s:else> --%>
 							</td>
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
-						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="button" onclick="printAcknowledgement()" />
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_CLERK_APPROVED.equalsIgnoreCase(model.state.value)}">
+						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
+						</s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 					</div>
 				</div>

@@ -124,6 +124,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billdetail.setDescription(MUTATION_FEE_STR + "-" + currInstallment.getDescription());
             billdetail.setAdditionalFlag(Integer.valueOf(0));
             billdetail.setEgInstallmentMaster(currInstallment);
+            billdetail.setAdditionalFlag(Integer.valueOf(1));
             billDetails.add(billdetail);
             return billDetails;
         }

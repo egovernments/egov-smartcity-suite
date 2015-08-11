@@ -66,6 +66,16 @@
 		
 		
 	}
+	function onSubmit() {
+		var actionName = document.getElementById("workFlowAction").value;
+		if (actionName == 'Forward') {
+			document.forms[0].action = '/ptis/property/transfer/forward.action';
+		} else {
+			document.forms[0].action = '/ptis/property/transfer/reject.action';
+		}
+		document.forms[0].submit;
+		return true;
+	}
 </script>
 	</head>
 	<body onload="loadOnStartUp();">
@@ -77,8 +87,11 @@
 					</div>
 				</div>
 			</s:if>
-			<s:form action="approve" name="transferform" theme="simple" enctype="multipart/form-data">
+			<s:form action="propertyTransfer" name="transferform" theme="simple" enctype="multipart/form-data">
+			
 				<s:push value="model">
+				<s:hidden name="mutationId" id="mutationId" value="%{mutationId}"></s:hidden>
+	            <s:hidden name="mode" id="mode" value="%{mode}"/>
 				<s:token/>
 				<div class="headingbg">
 					<s:text name="transferortitle" />
@@ -93,7 +106,6 @@
 						</td>
 						<td class="bluebox">
 							<span class="bold"><s:property value="basicproperty.upicNo" default="N/A"/></span>
-							<s:hidden name="mutationId" id="mutationId" value="%{id}"/>
 							<s:hidden name="assessmentNo" id="assessmentNo" value="%{basicproperty.upicNo}"/>
 						</td>
 						<td class="bluebox">
@@ -313,7 +325,7 @@
 							<s:text name="payablefee" /><span class="mandatory1">*</span> :
 						</td>
 						<td class="bluebox">
-							<s:textfield name="mutationFee" id="mutationFee" />
+							<s:textfield name="mutationFee" id="mutationFee" readOnly="true"/>
 						</td>
 					</tr>
 					
@@ -370,11 +382,19 @@
 
 				</table>
         		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
-       			 <div class="buttonbottom">
+       			<%--  <div class="buttonbottom">
 					<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="setWorkFlowInfo(this);resetDateFields();doLoadingMask();"></s:submit>
 					<input type="reset" value="Cancel" class="button" align="center" />
 					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-				</div>
+				</div> --%>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+					</tr>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
+				</table>
 				</s:push>
 			</s:form>
 			<div align="left" class="mandatory1" style="font-size: 11px">
@@ -387,7 +407,6 @@
 			var transferReason = document.getElementById("transRsnId").options[document.getElementById("transRsnId").selectedIndex].text;
 	 		if(isNaN(marketVal) || marketVal < 1)
 	  			return false;
-			
 			jQuery.ajax({
 				type: "GET",
 				url: "calculate-mutationfee.action",

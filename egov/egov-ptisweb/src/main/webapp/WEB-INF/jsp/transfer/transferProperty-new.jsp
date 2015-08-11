@@ -393,12 +393,15 @@
 				 </tr>
 
 				</table>
-        		<%-- <%@ include file="../workflow/property-workflow.jsp" %>   --%>
-       			 <div class="buttonbottom">
-					<s:submit value="Forward" id="Mutation:Forward" name="Transfer" cssClass="buttonsubmit" align="center" onclick="doLoadingMask();"></s:submit>
-					<input type="reset" value="Cancel" class="button" align="center" />
-					<input type="button" value="Close" class="button" align="center" onClick="return confirmClose();" />
-				</div>
+        		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+					</tr>
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
+
+				</table>
 				</s:push>
 			</s:form>
 			<div align="left" class="mandatory1" style="font-size: 11px">

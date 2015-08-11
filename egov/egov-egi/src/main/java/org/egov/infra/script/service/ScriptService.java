@@ -100,7 +100,7 @@ public class ScriptService  {
         return scriptRepository.findByName(name);
     }
 
-    public Script findByNameAndPeriod( String name, DateTime period) {
+    public Script findByNameAndPeriod( String name, Date period) {
         return scriptRepository.findByNameAndPeriod(name, period);
     }
     
@@ -314,9 +314,9 @@ public class ScriptService  {
      *             if the script is not configured in the system
      */
     private Script getScript(final String scriptName, Date asOnDate) {
-    	  DateTime currentDate = new DateTime();
+    	  Date currentDate = new Date();
     	if (asOnDate != null)
-    		currentDate =  new DateTime(asOnDate);
+    		currentDate =  asOnDate;
 
         Script script = scriptCache.get(scriptName);
         if (script != null && script.getPeriod().getEndDate().isAfter(asOnDate.getTime()))

@@ -41,8 +41,13 @@ package org.egov.ptis.actions.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVAL_PENDING;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -61,11 +66,19 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -73,24 +86,27 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.ActionContext;
 
-@Results({ @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
-        @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
-        @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
-        @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
-        @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
-        @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
-        @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
-        @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
-        @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
-        @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
-                "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }) })
+@Results({
+        @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
+    @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
+    @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
+    @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
+    @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
+    @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
+    @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
+    @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
+    @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
+    @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
+            "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }) })
 @Namespace("/property/transfer")
-public class PropertyTransferAction extends BaseFormAction {
+public class PropertyTransferAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = 1L;
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
@@ -111,6 +127,15 @@ public class PropertyTransferAction extends BaseFormAction {
     @Qualifier("transferOwnerService")
     private PropertyTransferService transferOwnerService;
 
+    @Autowired
+    protected AssignmentService assignmentService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -128,6 +153,10 @@ public class PropertyTransferAction extends BaseFormAction {
     private String transferReason;
     private String collectXML;
     private String applicationNo;
+    private String ackMessage;
+    private String mode;
+    private String mutationInitiatedBy;
+    private String assessmentNoMessage;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -139,7 +168,10 @@ public class PropertyTransferAction extends BaseFormAction {
         if (basicproperty.isUnderWorkflow()) {
             wfErrorMsg = "Could not do property transfer now, property is undergoing some workflow.";
             return WORKFLOW_ERROR;
-        } else {
+        } /*else if(propertyMutation != null) {
+            wfErrorMsg = "Transfer of ownership is already initiated for the property";
+            return WORKFLOW_ERROR;
+        } */else {
             final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
                     WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), assessmentNo);
             currentWaterTaxDue = transferOwnerService.getWaterTaxDues(wtmsRestURL, assessmentNo);
@@ -153,15 +185,26 @@ public class PropertyTransferAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/save")
     public String save() {
+        transitionWorkFlow(propertyMutation);
         transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
-        mutationId = propertyMutation.getId();
-        return REDIRECT_SUCCESS;
+        setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
+        setAssessmentNoMessage(" with assessment number : ");
+        return ACK;
     }
 
     @SkipValidation
     @Action(value = "/view")
     public String view() {
-        return EDIT;
+        final String currState = propertyMutation.getState().getValue();
+        final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
+        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesignation)) {
+            mode = EDIT;
+            return EDIT;
+        } else {
+            mode = VIEW;
+            return VIEW;
+        }
+
     }
 
     @SkipValidation
@@ -185,42 +228,65 @@ public class PropertyTransferAction extends BaseFormAction {
         return COLLECT_FEE;
     }
 
-    @ValidationErrorPage(value = EDIT)
+    @SkipValidation
     @Action(value = "/forward")
     public String forward() {
-        return REDIRECT_SUCCESS;
+        transitionWorkFlow(propertyMutation);
+        if(mode.equals(EDIT)) {
+            this.validate();
+            if(hasErrors()) {
+                mode = EDIT;
+                return EDIT;
+            }
+            transferOwnerService.updatePropertyTransfer(basicproperty, propertyMutation);
+        } else {
+            transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
+        }
+        setAssessmentNoMessage(" with assessment number : ");
+        return ACK;
     }
 
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        return REDIRECT_SUCCESS;
+        transitionWorkFlow(propertyMutation);
+        transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
+        mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+        setAckMessage("Transfer of ownership data rejected successfuly and forwarded to initiator : ");
+        setAssessmentNoMessage(" with assessment number : ");
+        return ACK;
     }
 
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/approve")
     public String approve() {
+        transitionWorkFlow(propertyMutation);
         transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
-        return REDIRECT_SUCCESS;
+        mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+        setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : " );
+        setAssessmentNoMessage(" for notice generation for the property : ");
+        return ACK;
     }
 
     @SkipValidation
     @Action(value = "/printAck")
     public String printAck() {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        final String cityLogo = WebUtils.extractRequestDomainURL(request, false).concat(PropertyTaxConstants.IMAGES_BASE_PATH)
+        final String cityLogo = WebUtils.extractRequestDomainURL(request, false)
+                .concat(PropertyTaxConstants.IMAGES_BASE_PATH)
                 .concat(request.getSession().getAttribute("citylogo").toString());
         final String cityName = request.getSession().getAttribute("cityname").toString();
         reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo), getSession());
+                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo),
+                getSession());
         return PRINTACK;
     }
 
     @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
-        reportId = ReportViewerUtil
-                .addReportToSession(transferOwnerService.generateTransferNotice(basicproperty, propertyMutation), getSession());
+        reportId = ReportViewerUtil.addReportToSession(
+                transferOwnerService.generateTransferNotice(basicproperty, propertyMutation), getSession());
         return PRINTNOTICE;
     }
 
@@ -238,9 +304,11 @@ public class PropertyTransferAction extends BaseFormAction {
     @Action(value = "/calculate-mutationfee")
     public void calculateMutationFee() throws IOException {
         if (marketValue > 0)
-            ServletActionContext.getResponse().getWriter()
-                    .write(String
-                            .valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason, propertyMutation)));
+            ServletActionContext
+                    .getResponse()
+                    .getWriter()
+            .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason,
+                            propertyMutation)));
         else
             ServletActionContext.getResponse().getWriter().write("0");
     }
@@ -248,29 +316,31 @@ public class PropertyTransferAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/redirect-success")
     public String redirectSuccess() {
+        getAckMessage();
         return ACK;
     }
 
     @Override
     public void prepare() {
+        super.prepare();
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
                 basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
             if (mutationId != null) {
-                propertyMutation = transferOwnerService.load(mutationId, PropertyMutation.class);
+                propertyMutation = transferOwnerService.find("From PropertyMutation where id = ? ", mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
             }
 
             final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
             currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
+                    .subtract(propertyTaxDetails.get(CURR_COLL_STR));
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
-            super.prepare();
         }
     }
 
@@ -278,7 +348,8 @@ public class PropertyTransferAction extends BaseFormAction {
     public void validate() {
         if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
             addActionError(getText("mandatory.trRsnId"));
-        else if (propertyMutation.getMutationReason().getMutationName().equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
+        else if (propertyMutation.getMutationReason().getMutationName()
+                .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
                 && StringUtils.isBlank(propertyMutation.getSaleDetail()))
             addActionError(getText("mandatory.saleDtl"));
         if (propertyMutation.getDeedDate() == null)
@@ -335,7 +406,7 @@ public class PropertyTransferAction extends BaseFormAction {
     }
 
     @Override
-    public Object getModel() {
+    public StateAware getModel() {
         return propertyMutation;
     }
 
@@ -392,10 +463,98 @@ public class PropertyTransferAction extends BaseFormAction {
     }
 
     public String getCollectXML() throws UnsupportedEncodingException {
-        return URLEncoder.encode(collectXML,"utf-8");
+        return URLEncoder.encode(collectXML, "utf-8");
     }
 
     public void setApplicationNo(final String applicationNo) {
         this.applicationNo = applicationNo;
+    }
+
+    public String getAckMessage() {
+        return ackMessage;
+    }
+
+    public void setAckMessage(final String ackMessage) {
+        this.ackMessage = ackMessage;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+    
+    public String getMutationInitiatedBy() {
+        return mutationInitiatedBy;
+    }
+
+    public void setMutationInitiatedBy(String mutationInitiatedBy) {
+        this.mutationInitiatedBy = mutationInitiatedBy;
+    }
+    
+    public String getAssessmentNoMessage() {
+        return assessmentNoMessage;
+    }
+
+    public void setAssessmentNoMessage(String assessmentNoMessage) {
+        this.assessmentNoMessage = assessmentNoMessage;
+    }
+
+    public void transitionWorkFlow(final PropertyMutation propertyMutation) {
+        final DateTime currentDate = new DateTime();
+        final User user = transferOwnerService.getLoggedInUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final String designationName = userAssignment.getDesignation().getName();
+        Position pos = null;
+
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
+                    .getCreatedBy().getId());
+            if (wfInitiator.equals(userAssignment))
+                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final String stateValue = propertyMutation.getCurrentState().getValue().split(":")[0] + ":"
+                        + WF_STATE_REJECTED;
+                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+            }
+
+        } else {
+            if (null != approverPositionId && approverPositionId != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            else if (COMMISSIONER_DESGN.equals(designationName)) {
+                final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
+                        .getCreatedBy().getId());
+                pos = wfInitiator.getPosition();
+            }
+            if (null == propertyMutation.getState()) {
+                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                        null, null, getAdditionalRule(), null, null);
+                propertyMutation.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
+            } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                        null, null, getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
+                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+        if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
+            final String approvalmesg = " Succesfully Forwarded to : ";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        } else if (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
+            final String approvalmesg = " Succesfully Cancelled.";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        }
+
     }
 }

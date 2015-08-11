@@ -92,10 +92,11 @@ import org.springframework.stereotype.Component;
  */
 @Component("propertyTaxBillable")
 public class PropertyTaxBillable extends AbstractBillable implements Billable, LatePayPenaltyCalculator,
-RebateCalculator {
+        RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "R";
     private static final String STRING_SERVICE_CODE = "PT";
+    private static final String STRING_MUTATION_SERVICE_CODE = "PTMF";
     private BasicProperty basicProperty;
     private Long userId;
     EgBillType egBillType;
@@ -127,7 +128,7 @@ RebateCalculator {
     private String collType;
     private String pgType;
     private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
-    private boolean mutationFeePayment;
+    private Boolean mutationFeePayment = Boolean.FALSE;
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
 
@@ -245,25 +246,33 @@ RebateCalculator {
 
     @Override
     public String getServiceCode() {
-        return STRING_SERVICE_CODE;
+        if (isMutationFeePayment()) {
+            return STRING_MUTATION_SERVICE_CODE;
+        } else {
+            return STRING_SERVICE_CODE;
+        }
     }
 
     @Override
     public BigDecimal getTotalAmount() {
-        final EgDemand currentDemand = getCurrentDemand();
-        final List instVsAmt = propertyDAO.getDmdCollAmtInstWise(currentDemand);
         BigDecimal balance = BigDecimal.ZERO;
-        for (final Object object : instVsAmt) {
-            final Object[] ddObject = (Object[]) object;
-            final BigDecimal dmdAmt = (BigDecimal) ddObject[1];
-            BigDecimal collAmt = BigDecimal.ZERO;
-            if (ddObject[2] != null)
-                collAmt = new BigDecimal((Double) ddObject[2]);
-            balance = balance.add(dmdAmt.subtract(collAmt));
-            final BigDecimal penaltyAmount = demandGenericDAO.getBalanceByDmdMasterCode(currentDemand,
-                    PropertyTaxConstants.PENALTY_DMD_RSN_CODE, getModule());
-            if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
-                balance = balance.add(penaltyAmount);
+        if (!isMutationFeePayment()) {
+            final EgDemand currentDemand = getCurrentDemand();
+            final List instVsAmt = propertyDAO.getDmdCollAmtInstWise(currentDemand);
+            for (final Object object : instVsAmt) {
+                final Object[] ddObject = (Object[]) object;
+                final BigDecimal dmdAmt = (BigDecimal) ddObject[1];
+                BigDecimal collAmt = BigDecimal.ZERO;
+                if (ddObject[2] != null)
+                    collAmt = new BigDecimal((Double) ddObject[2]);
+                balance = balance.add(dmdAmt.subtract(collAmt));
+                final BigDecimal penaltyAmount = demandGenericDAO.getBalanceByDmdMasterCode(currentDemand,
+                        PropertyTaxConstants.PENALTY_DMD_RSN_CODE, getModule());
+                if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
+                    balance = balance.add(penaltyAmount);
+            }
+        } else {
+            balance = getMutationFee();
         }
         return balance;
     }
@@ -385,20 +394,20 @@ RebateCalculator {
 
     @Override
     public String getPropertyId() {
-        if(isMutationFeePayment()){
+        if (isMutationFeePayment()) {
             return mutationApplicationNo;
-        }else {
-        final StringBuilder consumerCode = new StringBuilder();
-        consumerCode.append(getBasicProperty().getUpicNo());
-        if (getBasicProperty().getPropertyID() != null) {
-            consumerCode.append("(Zone:");
-            if (getBasicProperty().getPropertyID().getZone() != null)
-                consumerCode.append(getBasicProperty().getPropertyID().getZone().getBoundaryNum());
-            consumerCode.append(" Ward:");
-            if (getBasicProperty().getPropertyID().getWard() != null)
-                consumerCode.append(getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
-        }
-        return consumerCode.toString();
+        } else {
+            final StringBuilder consumerCode = new StringBuilder();
+            consumerCode.append(getBasicProperty().getUpicNo());
+            if (getBasicProperty().getPropertyID() != null) {
+                consumerCode.append("(Zone:");
+                if (getBasicProperty().getPropertyID().getZone() != null)
+                    consumerCode.append(getBasicProperty().getPropertyID().getZone().getBoundaryNum());
+                consumerCode.append(" Ward:");
+                if (getBasicProperty().getPropertyID().getWard() != null)
+                    consumerCode.append(getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
+            }
+            return consumerCode.toString();
         }
     }
 
@@ -422,10 +431,12 @@ RebateCalculator {
         } else {
             ptDemand = (Ptdemand) list.get(0);
             for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
-                /*if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))*/
-                    installmentWisePenaltyDemandDetails
-                    .put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+                /*
+                 * if
+                 * (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode
+                 * () .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+                 */
+                installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
         }
 
         return installmentWisePenaltyDemandDetails;
@@ -479,7 +490,8 @@ RebateCalculator {
                         penaltyAndRebate.setPenalty(calculatePenalty(null, getPenaltyEffectiveDate(installment),
                                 balance));
                     } else {
-                        penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(existingPenaltyDemandDetail.getAmtCollected()));
+                        penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
+                                existingPenaltyDemandDetail.getAmtCollected()));
                     }
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
                 }

@@ -62,12 +62,14 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Designation;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
@@ -135,6 +137,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     private UserService userService;
 
     @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
     private SimpleRestClient simpleRestClient;
 
     @Autowired
@@ -151,6 +156,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private ApplicationContextBeanProvider beanProvider;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -163,7 +171,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
-        propertyMutation.transition().start();
+        //propertyMutation.transition().start();
         processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);
     }
@@ -181,6 +189,19 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
             basicProperty.getPropertyOwnerInfo().add(propertyOwnerInfo);
         }
         basicProperty.setUnderWorkflow(false);
+        basicPropertyService.persist(basicProperty);
+    }
+    
+    @Transactional
+    public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        checkAllMandatoryDocumentsAttached(propertyMutation);
+        createUserIfNotExist(propertyMutation.getTransfereeInfos());
+        basicProperty.setUnderWorkflow(true);
+        basicPropertyService.persist(basicProperty);
+    }
+    
+    @Transactional
+    public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         basicPropertyService.persist(basicProperty);
     }
 
@@ -344,5 +365,18 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
                 .generateManualBillNumber(propertyMutation.getBasicProperty().getPropertyID()));
         return ptBillServiceImpl.getBillXML(propertyTaxBillable);
     }
-
+    
+    public String getLoggedInUserDesignation() {
+        Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
+        return designation.getName();
+    }
+    
+    public User getLoggedInUser() {
+       return securityUtils.getCurrentUser();
+    }
+    
+    @Transactional
+    public void updateMutationCollection(final PropertyMutation propertyMutation) {
+        persist(propertyMutation);
+    }
 }

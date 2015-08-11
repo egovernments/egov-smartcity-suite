@@ -493,6 +493,7 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_NAME_BIFURCATE = "Bifurcate";
 	public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
 	public static final String WFLOW_ACTION_END = "END";
+	public static final String WFLOW_ACTION_READY_FOR_PAYMENT = "Ready For Payment";
 
 	// WORKFLOW property states
 	public static final String WF_STATE_NEW = "New";
@@ -506,6 +507,7 @@ public interface PropertyTaxConstants {
 	public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
 	public static final String WF_STATE_REJECTED = "Rejected";
 	public static final String WF_STATE_REVENUE_CLERK_APPROVED = "Revenue Clerk Approved";
+	public static final String WF_STATE_COMMISSIONER_APPROVAL_PENDING = "Commissioner Approval Pending";
 
 	public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
