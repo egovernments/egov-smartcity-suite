@@ -169,7 +169,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     0l, getAdditionalRule(),""));
             }
            
-            model.addAttribute("mode", "");
+           // model.addAttribute("mode", "");
         }
         if(waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
         {
