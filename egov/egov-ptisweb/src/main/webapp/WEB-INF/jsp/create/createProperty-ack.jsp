@@ -69,18 +69,19 @@
 					<tr>
 						<s:if test="mode == 'create' && @org.egov.ptis.constants.PropertyTaxConstants@REVENUE_CLERK_DESGN.equalsIgnoreCase(userDesgn)">
 							<s:if test="%{applicationNo != null && !applicationNo.isEmpty()}">
-								<td colspan="5" style="font-size: 15px;" align="center"><span
-									class="bold"><s:property value="%{ackMessage}" /> <s:property
-											value="%{applicationNo}" /></span></td>
+								<td colspan="5" style="font-size: 15px;" align="center"><s:property value="%{ackMessage}" /> <span
+									class="bold"><s:property value="%{approverName}"/></span><s:property value="%{applicationNoMessage}"/><span
+									class="bold"> <s:property value="%{applicationNo}" /></span></td>
 							</s:if>
 						</s:if>
-						<s:elseif test="approved == true">
-							<span class="bold"><s:property value="%{ackMessage}" /> <s:property
+						<s:elseif test="approved == true"><s:property value="%{ackMessage}" /><span
+									class="bold"><s:property value="%{propertyInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/> <span class="bold"><s:property
 									value="%{basicProperty.upicNo}" /> </span>
 						</s:elseif>
 						<s:else>
 							<td colspan="5" style="font-size: 15px;" align="center">
-							<span class="bold"><s:property value="%{ackMessage}" /><s:property value="%{applicationNo}" /></span></td>
+							<s:property value="%{ackMessage}"/><span
+									class="bold"><s:property value="%{propertyInitiatedBy}"/><s:property value="%{approverName}"/></span><s:property value="%{applicationNoMessage}"/><span class="bold"><s:property value="%{applicationNo}" /></span></td>
 						</s:else>
 					</tr>
 					<tr>

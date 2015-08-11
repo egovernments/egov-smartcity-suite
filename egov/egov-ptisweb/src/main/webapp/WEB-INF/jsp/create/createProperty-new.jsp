@@ -193,14 +193,6 @@ function loadOnStartUp() {
 	document.getElementById("taxExemptRow").style.display = "none";		 */
 	//enableSubmitButton();  
 }
-function onSubmit(action,obj) { 
-	//alert("On Submit called");
-	document.getElementById('workflowBean.actionName').value = obj.id;
-	document.forms[0].action = 'createProperty-create.action';
-	//alert("On Submit called with  "+document.forms[0].action );
-	document.forms[0].submit;
-   return true;      
-}
 
 function onSubmit() { 
 	document.forms[0].action = 'createProperty-create.action';

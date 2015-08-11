@@ -425,7 +425,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
         if (approverName != null && !approverName.isEmpty()
                 && !approverName.equalsIgnoreCase("----Choose----")) {
-            String approvalmesg = " Succesfully Forwarded to " + approverName + ".";
+            String approvalmesg = " Succesfully Forwarded to : ";
             ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
         } else if (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
             String approvalmesg = " Succesfully Cancelled.";

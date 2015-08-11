@@ -41,7 +41,6 @@ package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
@@ -101,6 +100,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -246,6 +246,9 @@ public class CreatePropertyAction extends WorkflowAction {
     private Map<String, String> deviationPercentageMap;
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
+    private String applicationNoMessage;
+    private String assessmentNoMessage;
+    private String propertyInitiatedBy;
 
     @Autowired
     private UserService userService;
@@ -257,10 +260,13 @@ public class CreatePropertyAction extends WorkflowAction {
     private SecurityUtils securityUtils;
 
     private SMSEmailService sMSEmailService;
+    
+    @Autowired
+    private MessagingService messagingService;
 
     @Autowired
     private PtDemandDao ptDemandDAO;
-
+    
     private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
 
     public CreatePropertyAction() {
@@ -314,7 +320,8 @@ public class CreatePropertyAction extends WorkflowAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
         setBasicProp(basicProperty);
-        setAckMessage("Property Created Successfully in System and forwarded to " +getApproverName()+" with application number : ");
+        setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
+        setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("create: Property creation ended");
@@ -452,6 +459,7 @@ public class CreatePropertyAction extends WorkflowAction {
         LOGGER.debug("forward: Property forward started " + property);
         final long startTimeMillis = System.currentTimeMillis();
         setDocNumber(getDocNumber());
+        setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forward: Property forward ended");
@@ -521,9 +529,9 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
-        setAckMessage("Property Approved Successfully by : "
-                + userService.getUserById(securityUtils.getCurrentUser().getId()).getName()
-                + " with assessment number : ");
+        propertyInitiatedBy = property.getCreatedBy().getName();
+        setAckMessage("Property Created Successfully in the System and Forwarded to : ");
+        setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
         LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("approve: Property approval ended");
         return RESULT_ACK;
@@ -538,11 +546,11 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property);
-        setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator " + property.getCreatedBy().getUsername()
-                + " with application No :");
+        propertyInitiatedBy = property.getCreatedBy().getName();
+        setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
+        setApplicationNoMessage(" with application No :");
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
-
         return RESULT_ACK;
     }
 
@@ -938,7 +946,8 @@ public class CreatePropertyAction extends WorkflowAction {
                     smsMsg = getText("msg.newpropertyapprove.sms", args);
                 }
         }
-        sMSEmailService.sendSMSOnNewAssessment(mobileNumber, smsMsg);
+        messagingService.sendSMS(mobileNumber, smsMsg);
+       //sMSEmailService.sendSMSOnNewAssessment(mobileNumber, smsMsg);
     }
 
     @Override
@@ -1488,6 +1497,30 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setOwnerAddress(final Address ownerAddress) {
         this.ownerAddress = ownerAddress;
+    }
+
+    public String getApplicationNoMessage() {
+        return applicationNoMessage;
+    }
+
+    public void setApplicationNoMessage(String applicationNoMessage) {
+        this.applicationNoMessage = applicationNoMessage;
+    }
+
+    public String getAssessmentNoMessage() {
+        return assessmentNoMessage;
+    }
+
+    public void setAssessmentNoMessage(String assessmentNoMessage) {
+        this.assessmentNoMessage = assessmentNoMessage;
+    }
+
+    public String getPropertyInitiatedBy() {
+        return propertyInitiatedBy;
+    }
+
+    public void setPropertyInitiatedBy(String propertyInitiatedBy) {
+        this.propertyInitiatedBy = propertyInitiatedBy;
     }
 
     @Override
