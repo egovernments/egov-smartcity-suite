@@ -42,7 +42,6 @@ package org.egov.ptis.actions.create;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
@@ -65,13 +64,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRAT
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_CLERK_APPROVED;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,10 +92,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -111,7 +104,6 @@ import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.portal.entity.Citizen;
@@ -120,7 +112,6 @@ import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -148,7 +139,6 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -259,14 +249,6 @@ public class CreatePropertyAction extends WorkflowAction {
     @Autowired
     private SecurityUtils securityUtils;
 
-    private SMSEmailService sMSEmailService;
-    
-    @Autowired
-    private MessagingService messagingService;
-
-    @Autowired
-    private PtDemandDao ptDemandDAO;
-    
     private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
 
     public CreatePropertyAction() {
@@ -318,7 +300,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.persist(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property);
+        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
@@ -528,7 +510,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.applyAuditing(property.getState());
         basicPropertyService.update(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property);
+        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
         propertyInitiatedBy = property.getCreatedBy().getName();
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Notice Genaration with assessment number : ");
@@ -545,7 +527,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProp.setUnderWorkflow(true);
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        buildSMS(property);
+        buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
         propertyInitiatedBy = property.getCreatedBy().getName();
         setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
         setApplicationNoMessage(" with application No :");
@@ -915,39 +897,6 @@ public class CreatePropertyAction extends WorkflowAction {
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
         return PRINTACK;
-    }
-
-    private void buildSMS(final PropertyImpl property) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
-        user.getEmailId();
-        final String mobileNumber = user.getMobileNumber();
-        final String applicantName = user.getName();
-        final List<String> args = new ArrayList<String>();
-        args.add(applicantName);
-        String smsMsg = "";
-        final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-        if (null != property && null != property.getState()) {
-            final State propertyState = property.getState();
-            if (propertyState.getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
-                if (propertyState.getValue().endsWith(WF_STATE_REVENUE_CLERK_APPROVED)) {
-                    args.add(property.getApplicationNo());
-                    args.add(sMSEmailService.getCityName());
-                    smsMsg = getText("msg.newpropertycreate.sms", args);
-                } else if (propertyState.getValue().endsWith(WF_STATE_REJECTED)) {
-                    args.add(property.getApplicationNo());
-                    args.add(sMSEmailService.getCityName());
-                    smsMsg = getText("msg.newpropertyreject.sms", args);
-                } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
-                    args.add(property.getBasicProperty().getUpicNo());
-                    args.add(demandCollMap.get(CURR_DMD_STR).toString());
-                    args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(),
-                            "dd/MM/yyyy"));
-                    args.add(sMSEmailService.getCityName());
-                    smsMsg = getText("msg.newpropertyapprove.sms", args);
-                }
-        }
-        messagingService.sendSMS(mobileNumber, smsMsg);
-       //sMSEmailService.sendSMSOnNewAssessment(mobileNumber, smsMsg);
     }
 
     @Override
@@ -1481,14 +1430,6 @@ public class CreatePropertyAction extends WorkflowAction {
 
     public void setDocumentTypes(final List<DocumentType> documentTypes) {
         this.documentTypes = documentTypes;
-    }
-
-    public SMSEmailService getsMSEmailService() {
-        return sMSEmailService;
-    }
-
-    public void setsMSEmailService(final SMSEmailService sMSEmailService) {
-        this.sMSEmailService = sMSEmailService;
     }
 
     public Address getOwnerAddress() {
