@@ -110,7 +110,7 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("additionalRule", getAdditionalRule());
         model.addAttribute("statuscode", "");
         model.addAttribute("currentUser",
-                waterConnectionDetailsService.getCurrentUserRole(securityUtils.getCurrentUser()));
+                waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
 
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
@@ -155,7 +155,7 @@ public class NewConnectionController extends GenericConnectionController {
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        final Boolean applicationByOthers = waterConnectionDetailsService.getCurrentUserRole(securityUtils
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils
                 .getCurrentUser());
 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {

@@ -44,6 +44,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -128,13 +130,26 @@ public class WaterTaxUtils {
         return designation;
     }
 
-    public List<AppConfigValues> getRolesThirdPartyUser() {
+    public List<AppConfigValues> getThirdPartyUserRoles() {
 
         final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLEFORNONEMPLOYEEINWATERTAX);
 
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
 
+    }
+
+    public Boolean getCurrentUserRole(final User currentUser) {
+        Boolean applicationByOthers = false;
+        for (final Role userrole : currentUser.getRoles())
+            for (final AppConfigValues appconfig : getThirdPartyUserRoles()) {
+                if (userrole != null && userrole.getName().equals(appconfig.getValue())) {
+                    applicationByOthers = true;
+                    break;
+                }
+                break;
+            }
+        return applicationByOthers;
     }
 
     public Boolean isEmailEnabled() {
@@ -193,7 +208,7 @@ public class WaterTaxUtils {
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getCityName() }, null);
         return smsMsg;
     }
 
@@ -211,8 +226,10 @@ public class WaterTaxUtils {
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
-        //TODO: In db there 2 assignment present for General and Revenue department so For General Department and Commissioner Designation 
-        //related employee dont have access to view inbox so as off now using get(1) Means Revenue Department Commissioner
+        // TODO: In db there 2 assignment present for General and Revenue
+        // department so For General Department and Commissioner Designation
+        // related employee dont have access to view inbox so as off now using
+        // get(1) Means Revenue Department Commissioner
         return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(1).getPosition();
     }
 
@@ -262,7 +279,9 @@ public class WaterTaxUtils {
     }
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
-        //TODO: refering findByDepartmentDesignationAndBoundary this API needs to change according to get all emplyees of Passed Boundary(which is BoundaryType of "Zone")
+        // TODO: refering findByDepartmentDesignationAndBoundary  API needs
+        // to change according to get all employees of Passed Boundary(which is
+        // BoundaryType of "Zone")
         final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
