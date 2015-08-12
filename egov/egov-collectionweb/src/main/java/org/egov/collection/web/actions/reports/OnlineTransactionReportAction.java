@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.utils.CollectionsUtil;
@@ -53,12 +54,13 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for Online Trasaction Report
  */
-@Transactional(readOnly=true)
+@Results({
+    @Result(name=OnlineTransactionReportAction.INDEX,location="onlineTransactionReport-index.jsp"),
+    @Result(name=OnlineTransactionReportAction.REPORT,location="receiptRegisterReport-report.jsp")})
 public class OnlineTransactionReportAction extends ReportFormAction {
 	private static final long serialVersionUID = 1L;
 	// Report parameter names
@@ -75,14 +77,14 @@ public class OnlineTransactionReportAction extends ReportFormAction {
 		super.prepare();
 
 		setReportFormat(FileFormat.PDF);
-		setDataSourceType(ReportDataSourceType.HQL);
+		setDataSourceType(ReportDataSourceType.SQL);
 	}
 
 	@Override
-	@Action(value="/reports/onlineTransactionReport-criteria",results = { @Result(name = INDEX, type="redirect")})
+	@Action(value="/reports/onlineTransactionReport-criteria")
 	public String criteria() {
 		// Setup drop down data for department list
-		addRelatedEntity("department", Department.class, "deptName");
+		addRelatedEntity("department", Department.class, "name");
 		setupDropdownDataExcluding();
 		
 		// Add dropdown data for billing services (serviceList)
@@ -96,6 +98,13 @@ public class OnlineTransactionReportAction extends ReportFormAction {
 
 		return INDEX;
 	}
+	       
+        @Override
+        @Action(value="/reports/onlineTransactionReport-report")
+            public String report() {
+                return super.report();
+            }
+
 	
 	private List<EgwStatus> getOnlineReceiptStatuses () {
 		return persistenceService.findAllByNamedQuery(

@@ -90,16 +90,16 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 		return SUCCESS;
 	}
 	
-	@Action(value="/receipts/searchOnlineReceipt") 
-        public String  execute() {
-                return SUCCESS;
-        }
-	
 	public void prepare() {
 		super.prepare();
 		setupDropdownDataExcluding();
 	}
 	
+	@Action(value="/citizen/searchOnlineReceipt") 
+	public String  execute() {
+	       return SUCCESS;
+	}
+	       
 	public List getOnlineReceiptStatuses () {
 		return persistenceService.findAllByNamedQuery(
 				CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE, 
@@ -116,7 +116,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 				OnlinePayment.class.getSimpleName(),statusCodes);
 	}
 	
-	@Action(value="/receipts/searchOnlineReceipt-search") 
+	@Action(value="/citizen/searchOnlineReceipt-search") 
 	public String search() {
 		StringBuilder queryString=new StringBuilder(" select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
 		StringBuilder criteria = new StringBuilder();
@@ -132,7 +132,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 			params.add(getSearchTransactionStatus());
 		}
 		if (getFromDate() != null) {
-			criteria.append(getJoinOperand(criteria)).append(" trunc(onlinePayment.createdDate) >= ? ");
+			criteria.append(getJoinOperand(criteria)).append(" onlinePayment.createdDate >= ? ");
 			params.add(fromDate);
 		}
 		if (getToDate() != null) {

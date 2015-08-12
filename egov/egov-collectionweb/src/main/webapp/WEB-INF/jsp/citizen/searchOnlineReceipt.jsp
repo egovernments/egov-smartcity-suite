@@ -222,7 +222,7 @@ function transitionStates(){
 </span>
 
 <body onLoad="onBodyLoad();" >
-<s:form theme="simple" name="searchOnlineReceiptForm" action="searchOnlineReceipt">
+<s:form theme="simple" name="searchOnlineReceiptForm" action="searchOnlineReceipt-search">
 <div class="formmainbox"><div class="subheadnew"><s:text name="searchOnlineReceipts.title"/>
 </div>
 <div class="subheadsmallnew"><span class="subheadnew"><s:text name="searchOnlineReceipts.criteria"/></span></div>
@@ -254,8 +254,8 @@ function transitionStates(){
 	    </table>
 </div>
     <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>&nbsp;
-      <label><s:submit type="submit" cssClass="button" value="Reset" method="reset"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>&nbsp;
+      <label><s:submit type="submit" cssClass="button" value="Reset" /></label>&nbsp;
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
       </logic:empty>
@@ -334,8 +334,6 @@ function transitionStates(){
 	
 	</s:if>
 </logic:empty>
-
-
 </s:form>
 </body>
 

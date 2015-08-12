@@ -48,17 +48,18 @@
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_DEPT_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND rh.receiptMisc.department.id = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND cm.department = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_SERVICE_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "" : "AND rh.service.id = " + $P{EGOV_BILLING_SERVICE_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "" : "AND rh.service = " + $P{EGOV_BILLING_SERVICE_ID}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Q_PAYMENTSTATUS_ID" class="java.lang.String">
-		<defaultValueExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "" : "AND rh.onlinePayment.status.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "" : "AND onlinePayment.status = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID}]]></defaultValueExpression>
 	</parameter>
-	<queryString language="hql">
-		<![CDATA[SELECT rh FROM 
-	org.egov.collection.entity.ReceiptHeader rh
+	<queryString>
+		<![CDATA[SELECT referencenumber,consumerCode,rh.createdDate,receiptnumber,totalAmount,rh.servicedetails as service,onlinePayment.status FROM 
+	EGCL_COLLECTIONHEADER rh, egcl_onlinepayments onlinePayment, egcl_collectionmis cm
+	
 	WHERE rh.collectiontype = 'O'
 	AND rh.createdDate >= $P{EGOV_FROM_DATE}
 	and rh.createdDate <= $P{EGOV_TO_DATE}
@@ -81,11 +82,11 @@
 	<field name="totalAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Receipt Amount]]></fieldDescription>
 	</field>
-	<field name="service" class="org.egov.infstr.models.ServiceDetails">
+	<field name="service" class="java.lang.String">
 		<fieldDescription><![CDATA[Billing System]]></fieldDescription>
 	</field>
-	<field name="status" class="org.egov.commons.EgwStatus"/>
-	<field name="onlinePayment" class="org.egov.collection.entity.OnlinePayment"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="onlinePayment" />
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -101,7 +102,7 @@
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="537c4785-f758-4469-a8db-ad7c2f7a85e3"/>
-				<imageExpression><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -497,7 +498,7 @@
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="36830bfe-46f8-42a5-92e1-9e6f901644ca"/>
-				<imageExpression><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="221" y="117" width="368" height="31" uuid="63f655ee-0049-4443-a296-d4a150e4bc99"/>
