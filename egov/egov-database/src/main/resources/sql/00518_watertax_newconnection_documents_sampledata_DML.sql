@@ -1,3 +1,4 @@
+delete from egwtr_application_documents;
 delete from egwtr_document_names where applicationtype in(select id from egwtr_application_type where code = 'NEWCONNECTION');
 
 INSERT INTO egwtr_document_names(id, applicationtype, documentname, description, required, active, createddate, createdby)
