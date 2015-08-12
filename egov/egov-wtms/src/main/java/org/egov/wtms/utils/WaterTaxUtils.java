@@ -203,6 +203,13 @@ public class WaterTaxUtils {
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(), getCityName() }, null);
         return smsMsg;
     }
+    
+    public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
+            final String applicantName) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { applicantName,approvalComment, getCityName() }, null);
+        return smsMsg;
+    }
 
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
@@ -218,11 +225,11 @@ public class WaterTaxUtils {
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(smsBody, mobileNumber);
+        messagingService.sendSMS(mobileNumber,smsBody);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailBody, emailSubject);
+        messagingService.sendEmail(email,emailSubject,emailBody);
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
@@ -297,4 +304,5 @@ public class WaterTaxUtils {
             assignmentObj = assignmentService.getPrimaryAssignmentForEmployee(employeeList.get(0).getId());
         return assignmentObj != null ? assignmentObj.getPosition() : null;
     }
+
 }
