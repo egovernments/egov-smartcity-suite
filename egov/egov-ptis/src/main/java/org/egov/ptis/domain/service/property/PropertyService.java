@@ -2079,7 +2079,8 @@ public class PropertyService {
     public Boolean isPropertyBifurcated(final BasicProperty basicProperty) {
         Boolean propBifurcated = Boolean.FALSE;
         for (final Property property : basicProperty.getPropertySet())
-            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason())) {
+            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason())
+                    && !STATUS_WORKFLOW.equals(property.getStatus())) {
                 propBifurcated = Boolean.TRUE;
                 break;
             }

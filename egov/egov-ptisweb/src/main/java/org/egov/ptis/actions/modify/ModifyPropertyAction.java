@@ -41,6 +41,7 @@ package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -1804,7 +1805,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 
     @Override
     public String getAdditionalRule() {
-        return ADDTIONAL_RULE_ALTER_ASSESSMENT;
+        return PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ADDTIONAL_RULE_ALTER_ASSESSMENT
+                : ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
     }
 
     public BigDecimal getCurrentPropertyTax() {

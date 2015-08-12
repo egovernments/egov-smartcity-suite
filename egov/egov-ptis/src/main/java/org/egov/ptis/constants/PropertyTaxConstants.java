@@ -596,6 +596,7 @@ public interface PropertyTaxConstants {
 
 	public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
 	public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
+	public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
 	public static final String WFSTATUS = "WFSTATUS";
 	public static final String WFOWNER = "WFOWNER";
 

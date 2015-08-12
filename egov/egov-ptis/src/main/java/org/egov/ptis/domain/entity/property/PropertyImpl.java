@@ -47,6 +47,7 @@ package org.egov.ptis.domain.entity.property;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 import java.math.BigDecimal;
@@ -628,7 +629,8 @@ public class PropertyImpl extends StateAware implements Property {
     public String myLinkId() {
         String url = "";
         if (getState() != null && getState().getValue() != null
-                && getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER))
+                && (getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER) || 
+                        getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
