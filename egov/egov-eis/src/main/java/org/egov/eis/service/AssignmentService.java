@@ -263,4 +263,8 @@ public class AssignmentService {
     public List<Assignment> findPrimaryAssignmentForDesignationName(final String name) {
         return assignmentRepository.findPrimaryAssignmentForDesignationName(name);
     }
+    public List<Assignment>  findByDesignationAndBoundary( final Long desigId,
+            final Long boundaryId) {
+        return assignmentRepository.findByDepartmentDesignationAndBoundary( desigId, boundaryId);
+    }
 }

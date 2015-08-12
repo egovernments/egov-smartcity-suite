@@ -97,30 +97,22 @@ function checkLength(obj){
 	}
 }
 
-
-/*function validateRecordObjection(obj){
-	document.getElementById("workflowBean.actionName").value=obj.value;
+function validateRecordObjections(){
 	document.getElementById("lblError").style.display='none';
 	if(dom.get('recievedOn').value==''){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML  = "Please enter Objection Received Date";
+		alert('Please enter Revision Petition Received Date');
 		return false;
 	}
 	else if(dom.get('recievedBy').value==''){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML  = "Please enter Objection Received By";
+		alert('Please enter Revision Petition Received By');
 		return false;
 	}
 	else if(dom.get('details').value==''){
-		document.getElementById("lblError").style.display='block';
-		document.getElementById("lblError").innerHTML  = "Please enter Objection Details";
+		alert('Please enter Revision Petition Details');
 		return false;
-	}else{
-		
-		return validateApproval(obj);
 	}
-	
-}*/
+	return true;
+}
 
 function validateHearingDate(){
 //	document.getElementById("lblError").style.display='none';

@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -123,4 +124,10 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     
     @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.designation.name=:name and A.primary=true")
     public List<Assignment> findPrimaryAssignmentForDesignationName(@Param("name") String name);
+    
+   
+    @Query(" select A from Assignment A inner join A.employee EMP inner join  EMP.jurisdictions as JRDN  where  JRDN.boundary.id=:boundaryId AND A.designation.id=:desigId and  A.fromDate<=current_date and A.toDate>=current_date order by A.fromDate ")
+    public List<Assignment> findByDepartmentDesignationAndBoundary( @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
+
+    
 }

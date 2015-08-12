@@ -104,6 +104,7 @@ public class RevisionPetition extends StateAware implements Auditable{
 	private String remarks;// for dateOfOutcome
 
 	private Boolean objectionRejected;
+	private Boolean generateSpecialNotice;
 	public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
 	@Override
@@ -256,6 +257,14 @@ public class RevisionPetition extends StateAware implements Auditable{
 
     public void setProperty(PropertyImpl property) {
         this.property = property;
+    }
+
+    public Boolean getGenerateSpecialNotice() {
+        return generateSpecialNotice;
+    }
+
+    public void setGenerateSpecialNotice(Boolean generateSpecialNotice) {
+        this.generateSpecialNotice = generateSpecialNotice;
     }
 
     /*public PropertyImpl getReferenceProperty() {

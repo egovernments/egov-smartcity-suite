@@ -71,7 +71,15 @@
 
 						if(statusCode=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>')
 							{	
-								if(validateHearingDate())
+							  if(state=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED}"/>')
+								{
+									if(validateRecordObjections())
+										{
+										action = 'revPetition.action';
+										}else
+											return false;
+									
+								}else if(validateHearingDate())
 									{
 									action = 'revPetition-addHearingDate.action';
 									}else
@@ -130,10 +138,17 @@
 				    	}else if (actionName=='Print Endoresement')
 						{
 				    		action = 'revPetition-generateEnodresementNotice.action';
+						}else if (actionName=='Print Special Notice')
+						{
+				    		action = 'revPetition-generateSpecialNotice.action';
+						}
+				    	else if (actionName=='Reject Inspection')
+						{
+				    		action = 'revPetition-rejectInspectionDetails.action';
 						}
 				    	else if (actionName=='Reject')
 						{
-				    		action = 'revPetition-rejectInspectionDetails.action';
+				    		action = 'revPetition-reject.action';
 						}
 				    	else if (actionName=='Approve')
 						{
@@ -187,6 +202,7 @@
          		 <s:if test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& ( egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) ||
+							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
 							">
 							
@@ -209,11 +225,10 @@
         	<jsp:include page="objectionDetailsCommonView.jsp"/>
         	
         			<s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
-        		state.text1.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_RECORD_SAVED)">
+        		state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
         				<jsp:include page="recordObjection.jsp"/>	
         		</s:if>
-        
-					<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) && 
+        	<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) && 
 						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)">
 						<jsp:include page="addHearingDate.jsp"/>	
 					</s:elseif>
@@ -227,7 +242,7 @@
 						
 					<s:elseif test="egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
-							&& hearings[hearings.size()-1].inspectionRequired == true">
+							">
 							<jsp:include page="recordInspecationDetails.jsp"/>	
 					</s:elseif>
 					<s:elseif test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
@@ -252,17 +267,21 @@
 	  		 --%>
 	  		       
        			 <s:if test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
-       			egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY)  ||    
+       			 egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY)  ||    
        					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
        			 	<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
        			 	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
        			 </s:if>
        			 <s:elseif test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
-							&& hearings[hearings.size()-1].inspectionRequired == true">
+							">
        			 		<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
        			 		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
        			 </s:elseif> 
-
+				 <s:elseif test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)
+							&& state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
+       			 		<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
+       			 		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+       			 </s:elseif> 
        			 <s:else>
        			 <div align="center" ><br>
 	 			 <%--  <table width="100%" border="0" cellspacing="0" cellpadding="0" >

@@ -108,6 +108,9 @@
         <property name="objectionRejected" type="java.lang.Boolean">
             <column name="OBJECTION_REJECTED" length="1"  />
         </property>
+          <property name="generateSpecialNotice" type="java.lang.Boolean">
+            <column name="GENERATE_SPECIALNOTICE" length="1"  />
+        </property>
          <list name="hearings"  cascade="all-delete-orphan">
 			<key column="ID_OBJECTION" not-null="true" />
 			<list-index column="objection_idx" />

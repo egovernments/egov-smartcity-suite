@@ -66,7 +66,7 @@
 		</many-to-one>
 
 		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary"
-			column="ZONE_NUM" />
+			column="ZONE_NUM"  fetch="select"/>
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
 			column="WARD_ADM_ID" />
 		<many-to-one name="area" class="org.egov.infra.admin.master.entity.Boundary"
