@@ -40,6 +40,7 @@
 package org.egov.eis.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
@@ -61,9 +62,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id=:boundaryId")
+            + " and JRDN.boundary.id in :boundaryIds")
     public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
-            @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
+            @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
     public Employee findByName(String name);
 

@@ -60,6 +60,8 @@ import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
 import org.egov.eis.utils.constants.EisConstants;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.hibernate.Criteria;
@@ -102,6 +104,9 @@ public class EmployeeService {
 
     @Autowired
     private ApplicationProperties applicationProperties;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
@@ -276,7 +281,10 @@ public class EmployeeService {
      */
     public List<Employee> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
             final Long boundaryId) {
-        return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, boundaryId);
+        Set<Long> bndIds=new HashSet<Long>();
+        List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
+        boundaries.forEach((bndry)->bndIds.add(bndry.getId()));
+        return employeeRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, bndIds);
     }
 
     /**

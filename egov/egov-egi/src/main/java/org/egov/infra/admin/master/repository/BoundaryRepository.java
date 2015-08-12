@@ -90,6 +90,9 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.isHistory='N' AND b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
+    
+    @Query("from Boundary BND where BND.isHistory='N' AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
+    List<Boundary> findActiveChildrenWithParent(@Param("parentId") Long parentId);
 
     @Query("select b from Boundary b where b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
