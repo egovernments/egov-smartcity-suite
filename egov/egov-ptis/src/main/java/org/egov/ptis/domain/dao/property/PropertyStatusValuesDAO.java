@@ -63,5 +63,7 @@ public interface PropertyStatusValuesDAO {
 	
 	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
                 String referenceNumber);
+	
+	public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(BasicProperty basicProperty);
 
 }

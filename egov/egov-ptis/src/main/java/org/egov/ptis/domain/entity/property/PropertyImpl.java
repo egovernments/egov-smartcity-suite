@@ -100,7 +100,7 @@ public class PropertyImpl extends StateAware implements Property {
     private Date effectiveDate;
 
     private PropertyDetail propertyDetail;
-    private PropertyModifyReason propertyModifyReason;
+    private String propertyModifyReason;
     private Installment installment;
     private BigDecimal manualAlv;
     private String occupierName;
@@ -348,12 +348,12 @@ public class PropertyImpl extends StateAware implements Property {
     }
 
     @Override
-    public PropertyModifyReason getPropertyModifyReason() {
+    public String getPropertyModifyReason() {
         return propertyModifyReason;
     }
 
     @Override
-    public void setPropertyModifyReason(final PropertyModifyReason propertyModifyReason) {
+    public void setPropertyModifyReason(final String propertyModifyReason) {
         this.propertyModifyReason = propertyModifyReason;
     }
 

@@ -130,7 +130,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
         }
 
         
-        BigDecimal rebateAmt = BigDecimal.ZERO;
         String key = "";
         BigDecimal balance = BigDecimal.ZERO;
         DateTime installmentDate = null;
@@ -140,7 +139,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
         String reasonMasterCode = null;
 
         Property activeProperty = billable.getBasicProperty().getProperty();
-        List<EgDemandDetails> pendmdList = new ArrayList<EgDemandDetails>();
         
         Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         billable.setInstTaxBean(installmentPenaltyAndRebate);
@@ -215,7 +213,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             /* do not create penalty demand details if penalty is zero */
             if (penDmdDtls == null && thereIsPenalty) {
                 insertPenDmdDetail = insertPenaltyDmdDetail(installment, penalty);
-            } else {
+            } else if (penDmdDtls != null){
                 penalty = penDmdDtls.getAmount().subtract(penDmdDtls.getAmtCollected());
             }
             if (thereIsPenalty) {

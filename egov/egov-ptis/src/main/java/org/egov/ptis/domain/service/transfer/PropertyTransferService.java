@@ -75,7 +75,6 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -83,7 +82,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
-import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -110,9 +108,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-
-    @Autowired
-    private PtDemandDao ptDemandDAO;
 
     @Autowired
     private PropertyMutationMasterDAO propertyMutationMasterDAO;
@@ -235,10 +230,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
 
     public BasicPropertyImpl getBasicPropertyByUpicNo(final String upicNo) {
         return (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(upicNo);
-    }
-
-    public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
-        return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
 
     public List<DocumentType> getPropertyTransferDocumentTypes() {

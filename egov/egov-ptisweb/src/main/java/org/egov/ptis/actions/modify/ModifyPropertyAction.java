@@ -42,10 +42,15 @@ package org.egov.ptis.actions.modify;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
@@ -71,11 +76,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -157,21 +160,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Results({
-    @Result(name = "ack", location = "modify/modifyProperty-ack.jsp"),
-    @Result(name = "edit", location = "modify/modifyProperty-new.jsp"),
-    @Result(name = "new", location = "modify/modifyProperty-new.jsp"),
-    @Result(name = "view", location = "modify/modifyProperty-view.jsp"),
-    @Result(name = "workFlowError", location = "workflow/workflow-error.jsp"),
-    @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
+        @Result(name = ModifyPropertyAction.RESULT_ACK, location = "modify/modifyProperty-ack.jsp"),
+        @Result(name = ModifyPropertyAction.EDIT, location = "modify/modifyProperty-new.jsp"),
+        @Result(name = ModifyPropertyAction.NEW, location = "modify/modifyProperty-new.jsp"),
+        @Result(name = ModifyPropertyAction.VIEW, location = "modify/modifyProperty-view.jsp"),
+        @Result(name = ModifyPropertyAction.WORK_FLOW_ERROR, location = "workflow/workflow-error.jsp"),
+        @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
+        @Result(name = ModifyPropertyAction.PRINTACK, location = "modify/modifyProperty-printAck.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
-    private static final long serialVersionUID = 1L;
-    private static final String RESULT_ACK = "ack";
-    private static final String RESULT_ERROR = "error";
-    private static final String VIEW = "view";
+    private static final String BIFURCATION = "Bifurcation";
     private final Logger LOGGER = Logger.getLogger(getClass());
-    @Autowired
-    private PropertyPersistenceService basicPropertyService;
+    protected static final String WORK_FLOW_ERROR = "workFlowError";
+    protected static final String BALANCE = "balance";
+    private static final long serialVersionUID = 1L;
+    protected static final String RESULT_ACK = "ack";
+    private static final String RESULT_ERROR = "error";
+    protected static final String VIEW = "view";
+    private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
+    public static final String PRINTACK = "printAck";
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
     private BasicProperty basicProp;
@@ -214,8 +221,6 @@ public class ModifyPropertyAction extends WorkflowAction {
     private String propOccId;
     private String amenities;
     private String[] floorNoStr = new String[100];
-    @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
     List<ValidationError> errors = new ArrayList<ValidationError>();
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     int i = 0;
@@ -235,8 +240,35 @@ public class ModifyPropertyAction extends WorkflowAction {
     private String modificationType;
     private boolean isTenantFloorPresent;
     private String mode;
+    private Integer buildingPermissionNo;
+    private Date buildingPermissionDate;
+    private Long floorTypeId;
+    private Long roofTypeId;
+    private Long wallTypeId;
+    private Long woodTypeId;
+    private List<DocumentType> documentTypes = new ArrayList<>();
+    private ReportService reportService;
+    private Integer reportId = -1;
+    private PropertyTypeMaster propTypeMstr;
+    private Map<String, String> deviationPercentageMap;
+    private String certificationNumber;
+    private String northBoundary;
+    private String southBoundary;
+    private String eastBoundary;
+    private String westBoundary;
+    private BigDecimal currentPropertyTax;
+    private BigDecimal currentPropertyTaxDue;
+    private BigDecimal currentWaterTaxDue;
+    private BigDecimal arrearPropertyTaxDue;
+    private String taxDueErrorMsg;
+    @Autowired
+    private PropertyPersistenceService basicPropertyService;
+    @Autowired
+    private PropertyService propertyService;
     @Autowired
     private EisCommonService eisCommonService;
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private UserService userService;
     @Autowired
@@ -245,29 +277,10 @@ public class ModifyPropertyAction extends WorkflowAction {
     private PropertyStatusValuesDAO propertyStatusValuesDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
-    private Integer buildingPermissionNo;
-    private Date buildingPermissionDate;
-    private Long floorTypeId;
-    private Long roofTypeId;
-    private Long wallTypeId;
-    private Long woodTypeId;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private AssignmentService assignmentService;
-    private List<DocumentType> documentTypes = new ArrayList<>();
-
-    public static final String PRINTACK = "printAck";
-    private ReportService reportService;
-    private Integer reportId = -1;
-    private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
-    private PropertyTypeMaster propTypeMstr;
-    private Map<String, String> deviationPercentageMap;
-    private String certificationNumber;
-    private String northBoundary;
-    private String southBoundary;
-    private String eastBoundary;
-    private String westBoundary;
 
     public ModifyPropertyAction() {
         super();
@@ -300,15 +313,24 @@ public class ModifyPropertyAction extends WorkflowAction {
     private String populateFormData(final Boolean fromInbox) {
         LOGGER.debug("Entered into populateFormData");
         String target = "";
-        final Map<String, String> wfMap = basicProp.getPropertyWfStatus();
         PropertyImpl propertyImpl = null;
-        final String wfStatus = wfMap.get(WFSTATUS);
-        if (wfStatus.equalsIgnoreCase("TRUE") && !fromInbox) {
-            getSession().put(WFOWNER, wfMap.get(WFOWNER));
-            setWfErrorMsg("This Property Under Work flow in " + getSession().get(WFOWNER)
-                    + "'s inbox. Please finish pending work flow before do any transactions on it.");
-            target = "workFlowError";
+        if (basicProp.isUnderWorkflow() && !fromInbox) {
+            setWfErrorMsg("This Property Under Work flow. Please finish pending work flow before do any transactions on it.");
+            target = WORK_FLOW_ERROR;
         } else {
+            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
+                final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
+                        .getActiveProperty());
+                currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
+                currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(propertyTaxDetails.get(CURR_COLL_STR));
+                arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
+                currentWaterTaxDue = propertyService.getWaterTaxDues(basicProp.getUpicNo());
+                if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+                    setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { BIFURCATION }));
+                    return BALANCE;
+                }
+            }
+
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             if (propWF == null && (propertyModel == null || propertyModel.getId() == null))
                 propertyImpl = (PropertyImpl) oldProperty.createPropertyclone();
@@ -341,10 +363,10 @@ public class ModifyPropertyAction extends WorkflowAction {
             propTypeId = propertyType.getId().toString();
             if (propertyModel.getPropertyDetail().getPropertyUsage() != null)
                 propUsageId = propertyModel.getPropertyDetail().getPropertyUsage().getId()
-                .toString();
+                        .toString();
             if (propertyModel.getPropertyDetail().getPropertyOccupation() != null)
                 propOccId = propertyModel.getPropertyDetail().getPropertyOccupation().getId()
-                .toString();
+                        .toString();
             setDocNumber(propertyModel.getDocNumber());
             if (propertyModel.getPropertyDetail().getFloorDetails().size() > 0)
                 setFloorDetails(propertyModel);
@@ -439,6 +461,16 @@ public class ModifyPropertyAction extends WorkflowAction {
         } else
             populateBasicProp();
         oldProperty = (PropertyImpl) basicProp.getProperty();
+        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+            final Area area = new Area();
+            area.setArea(new Float(areaOfPlot));
+            propertyModel.getPropertyDetail().setSitalArea(area);
+        }
+        String errorKey = propService.validationForBifurcation(propertyModel, basicProp, modifyRsn);
+        if (!isBlank(errorKey)) {
+            addActionError(getText(errorKey));
+        }
+
         final PropertyTypeMaster oldPropTypeMstr = oldProperty.getPropertyDetail()
                 .getPropertyTypeMaster();
         final PropertyTypeMaster newPropTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -459,7 +491,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
         basicPropertyService.update(basicProp);
-        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        propService.updateIndexes(propertyModel,
+                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
+                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         addActionMessage(getText("property.forward.success", new String[] { propertyModel
@@ -489,7 +523,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("forwardView: Workflow property: " + propertyModel);
         transitionWorkFlow(propertyModel);
         basicPropertyService.update(basicProp);
-        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        propService.updateIndexes(propertyModel,
+                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
+                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         addActionMessage(getText("property.forward.success", new String[] { propertyModel
@@ -523,7 +559,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE
-                .equals(modifyRsn)) {
+                        .equals(modifyRsn)) {
             // createVoucher(); // Creates voucher
         }
 
@@ -531,21 +567,24 @@ public class ModifyPropertyAction extends WorkflowAction {
 
         /**
          * The old property will be made history and the workflow property will be made active only when all the changes are
-         * completed in case of modify reason is 'ADD_OR_ALTER'
+         * completed in case of modify reason is 'ADD_OR_ALTER' or 'BIFURCATE'
          */
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(getModifyRsn())) {
-
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE
+                .equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
         }
         // upload docs
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(getModifyRsn()))
+        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE
+                .equals(modifyRsn) || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
             updateAddress();
 
         basicPropertyService.update(basicProp);
-        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        propService.updateIndexes(propertyModel,
+                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
+                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setBasicProp(basicProp);
         setAckMessage(getText("property.approve.succes", new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         addActionMessage(getText("property.approve.success", new String[] { propertyModel
@@ -587,7 +626,9 @@ public class ModifyPropertyAction extends WorkflowAction {
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
         propertyImplService.update(propertyModel);
-        propService.updateIndexes(propertyModel, APPLICATION_TYPE_ALTER_ASSESSENT);
+        propService.updateIndexes(propertyModel,
+                PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
+                        : APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         setAckMessage("Property Rejected Successfully and forwarded to initiator : "
                 + propertyModel.getCreatedBy().getUsername() + " with Index Number : ");
@@ -726,6 +767,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                 propTypeId, propUsageId, propOccId, status, propertyModel.getDocNumber(), null,
                 floorTypeId, roofTypeId, wallTypeId, woodTypeId));
         updatePropertyID(basicProp);
+        propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         propertyModel.setEffectiveDate(propCompletionDate);
         final Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
@@ -739,7 +781,7 @@ public class ModifyPropertyAction extends WorkflowAction {
                 .getId())
                 && !propertyModel.getStatus().equals('W'))
             if (propTypeMstr != null
-            && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+                    && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
                 changePropertyDetail(propertyModel, new VacantProperty(), 0);
             else
                 changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel
@@ -1760,6 +1802,46 @@ public class ModifyPropertyAction extends WorkflowAction {
     @Override
     public String getAdditionalRule() {
         return ADDTIONAL_RULE_ALTER_ASSESSMENT;
+    }
+
+    public BigDecimal getCurrentPropertyTax() {
+        return currentPropertyTax;
+    }
+
+    public void setCurrentPropertyTax(final BigDecimal currentPropertyTax) {
+        this.currentPropertyTax = currentPropertyTax;
+    }
+
+    public BigDecimal getCurrentPropertyTaxDue() {
+        return currentPropertyTaxDue;
+    }
+
+    public void setCurrentPropertyTaxDue(final BigDecimal currentPropertyTaxDue) {
+        this.currentPropertyTaxDue = currentPropertyTaxDue;
+    }
+
+    public BigDecimal getCurrentWaterTaxDue() {
+        return currentWaterTaxDue;
+    }
+
+    public void setCurrentWaterTaxDue(final BigDecimal currentWaterTaxDue) {
+        this.currentWaterTaxDue = currentWaterTaxDue;
+    }
+
+    public BigDecimal getArrearPropertyTaxDue() {
+        return arrearPropertyTaxDue;
+    }
+
+    public void setArrearPropertyTaxDue(final BigDecimal arrearPropertyTaxDue) {
+        this.arrearPropertyTaxDue = arrearPropertyTaxDue;
+    }
+
+    public String getTaxDueErrorMsg() {
+        return taxDueErrorMsg;
+    }
+
+    public void setTaxDueErrorMsg(final String taxDueErrorMsg) {
+        this.taxDueErrorMsg = taxDueErrorMsg;
     }
 
 }

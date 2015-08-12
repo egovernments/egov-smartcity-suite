@@ -43,7 +43,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><s:text name='ModProp.title' /></title>
+<title>
+	<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)}">
+		<s:text name='ModProp.title' />
+	</s:if>
+	<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
+		<s:text name='BifurProp.title' />
+	</s:elseif>
+</title>
 <sx:head />
 
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
@@ -105,7 +112,12 @@
 			<s:token />
 			<div class="formmainbox">
 				<div class="headingbg" id="modPropHdr">
-					<s:text name="ModProp.title" />
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)}">
+						<s:text name='ModProp.title' />
+					</s:if>
+					<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
+						<s:text name='BifurProp.title' />
+					</s:elseif>
 				</div>
 				<%@ include file="modifyPropertyForm.jsp"%>
 				<s:hidden name="modelId" id="modelId" value="%{modelId}" />

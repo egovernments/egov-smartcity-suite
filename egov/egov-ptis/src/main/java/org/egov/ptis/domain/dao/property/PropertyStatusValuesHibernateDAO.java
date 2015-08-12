@@ -56,85 +56,93 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
-			List Code) {
-		Query qry = getCurrentSession()
-				.createQuery(
-						"from PropertyStatusValues PSV "
-								+ "left join fetch PSV.basicProperty BP "
-								+ "left join fetch PSV.propertyStatus PS "
-								+ "where PSV.isActive ='Y' and BP.upicNo =:PropertyId and PS.statusCode in (:Code) "
-								+ "order by PSV.createdDate desc").setMaxResults(1);
-		qry.setString("PropertyId", PropertyId);
-		qry.setParameterList("Code", Code);
-		return (PropertyStatusValues) qry.uniqueResult();
-	}
-	
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
-                String referenceNumber)
-                {
-	    Query qry = getCurrentSession()
+    @Override
+    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
+            List Code) {
+        Query qry = getCurrentSession()
+                .createQuery(
+                        "from PropertyStatusValues PSV "
+                                + "left join fetch PSV.basicProperty BP "
+                                + "left join fetch PSV.propertyStatus PS "
+                                + "where PSV.isActive ='Y' and BP.upicNo =:PropertyId and PS.statusCode in (:Code) "
+                                + "order by PSV.createdDate desc").setMaxResults(1);
+        qry.setString("PropertyId", PropertyId);
+        qry.setParameterList("Code", Code);
+        return (PropertyStatusValues) qry.uniqueResult();
+    }
+
+    public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(String PropertyId,
+            String referenceNumber)
+    {
+        Query qry = getCurrentSession()
+                .createQuery(
+                        "from PropertyStatusValues PSV "
+                                + " where PSV.basicProperty.upicNo =:PropertyId and PSV.referenceNo in (:referenceNumber) "
+                                + " order by PSV.createdDate desc").setMaxResults(1);
+        qry.setString("PropertyId", PropertyId);
+        qry.setString("referenceNumber", referenceNumber);
+        return (PropertyStatusValues) qry.uniqueResult();
+
+    }
+
+    @Override
+    public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty) {
+        List<PropertyStatusValues> propStatValueList = new ArrayList<PropertyStatusValues>();
+        if (basicProperty != null) {
+            Query qry = getCurrentSession()
                     .createQuery(
-                                    "from PropertyStatusValues PSV "
-                                   + " where PSV.basicProperty.upicNo =:PropertyId and PSV.referenceNo in (:referenceNumber) "
-                                                    + " order by PSV.createdDate desc").setMaxResults(1);
-                    qry.setString("PropertyId", PropertyId);
-                    qry.setString("referenceNumber", referenceNumber);
-                    return (PropertyStatusValues) qry.uniqueResult();
-	    
-                }
-	
-	
+                            "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.basicProperty =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' ");
+            qry.setString("BasicPropertyId", basicProperty.getId().toString());
+            propStatValueList = qry.list();
+        }
+        return propStatValueList;
+    }
 
-	@Override
-	public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty) {
-		List<PropertyStatusValues> propStatValueList = new ArrayList<PropertyStatusValues>();
-		if (basicProperty != null) {
-			Query qry = getCurrentSession()
-					.createQuery(
-							"from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.basicProperty =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' ");
-			qry.setString("BasicPropertyId", basicProperty.getId().toString());
-			propStatValueList = qry.list();
-		}
-		return propStatValueList;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PropertyStatusValues> getPropertyStatusValuesByReferenceBasicProperty(BasicProperty basicProperty) {
+        Query qry = getCurrentSession()
+                .createQuery(
+                        "from PropertyStatusValues PSV left join fetch PSV.propertyStatus PS where PSV.referenceBasicProperty.id =:BasicPropertyId and PS.statusCode = 'CREATE' and PSV.isActive='Y' ");
+        qry.setParameter("BasicPropertyId", basicProperty.getId());
+        return (List<PropertyStatusValues>) qry.list();
+    }
+    
+    @Override
+    public PropertyStatusValues findById(Integer id, boolean lock) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public PropertyStatusValues findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<PropertyStatusValues> findAll() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<PropertyStatusValues> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public PropertyStatusValues create(PropertyStatusValues propertyStatusValues) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public PropertyStatusValues create(PropertyStatusValues propertyStatusValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void delete(PropertyStatusValues propertyStatusValues) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void delete(PropertyStatusValues propertyStatusValues) {
-		// TODO Auto-generated method stub
+    }
 
-	}
-
-	@Override
-	public PropertyStatusValues update(PropertyStatusValues propertyStatusValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public PropertyStatusValues update(PropertyStatusValues propertyStatusValues) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

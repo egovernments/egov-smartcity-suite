@@ -44,7 +44,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><s:text name='ModProp.title' /></title>
+<title>
+	<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)}">
+		<s:text name='ModProp.title' />
+	</s:if>
+	<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
+		<s:text name='BifurProp.title' />
+	</s:elseif>
+</title>
 </head>
 <script type="text/javascript">
   	function onSubmit() { 
@@ -55,20 +62,23 @@
 	}
 </script>
 
-<body onload=" refreshParentInbox();">
+<body>
 	<s:form name="ModifyPropertyForm" theme="simple">
 		<s:push value="model">
 			<s:token />
 			<div class="formmainbox">
-				<div class="formheading"></div>
-
 					<div class="headingbg">
-						<s:text name="ModifyPropAckHeader" />
+						<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)}">
+							<s:text name="ModifyPropAckHeader" />
+						</s:if>
+						<s:elseif test="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)}">
+							<s:text name="BifurcatePropAckHeader"/>
+						</s:elseif>
 					</div>
 
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td colspan="5" style="background-color: #FDF7F0; font-size: 15px;"	align="center">
+							<td colspan="5" style="font-size: 15px;" align="center">
 									<span class="bold">
 										<s:property value="%{ackMessage}" />
 									</span> 

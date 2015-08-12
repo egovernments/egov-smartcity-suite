@@ -155,16 +155,6 @@
 			</div>
 		</td>
 	</tr>
-	<tr class="extentSite">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
-		<td class="greybox" width="">
-		   <span class="bold"><s:property value="%{areaOfPlot}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"></td>
-		<td class="greybox">
-		</td>
-	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
@@ -174,6 +164,16 @@
 		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
 		<td class="greybox">
 			<span class="bold"><s:property value="%{basicProp.regdDocDate}" default="N/A"/></span>
+		</td>
+	</tr>
+	<tr class="extentSite">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="25%"><s:text name="extent.site"/> :</td>
+		<td class="greybox" width="">
+		   <span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
+		</td>
+		<td class="greybox" width="25%"></td>
+		<td class="greybox">
 		</td>
 	</tr>
 	<tr>

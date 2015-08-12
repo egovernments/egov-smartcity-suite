@@ -85,6 +85,7 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.opensymphony.xwork2.ActionContext;
 
 @Results({
-        @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
+    @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
     @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
     @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
     @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
@@ -108,8 +109,8 @@ import com.opensymphony.xwork2.ActionContext;
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
 
+    private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
-    private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public static final String ACK = "ack";
     public static final String SEARCH = "search";
     public static final String WORKFLOW_ERROR = "workFlowError";
@@ -135,6 +136,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     // Model and View data
     private Long mutationId;
@@ -157,6 +161,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String mode;
     private String mutationInitiatedBy;
     private String assessmentNoMessage;
+    private String taxDueErrorMsg;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -172,12 +177,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             wfErrorMsg = "Transfer of ownership is already initiated for the property";
             return WORKFLOW_ERROR;
         } */else {
-            final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL,
-                    WebUtils.extractRequestDomainURL(ServletActionContext.getRequest(), false), assessmentNo);
-            currentWaterTaxDue = transferOwnerService.getWaterTaxDues(wtmsRestURL, assessmentNo);
-            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0)
+            currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
+            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+                setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
-            else
+            } else
                 return NEW;
         }
     }
@@ -333,8 +337,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 basicproperty = propertyMutation.getBasicProperty();
             }
 
-            final Map<String, BigDecimal> propertyTaxDetails = transferOwnerService
-                    .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
+            final Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicproperty
+                    .getActiveProperty());
             currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
             currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
                     .subtract(propertyTaxDetails.get(CURR_COLL_STR));
@@ -556,4 +560,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
 
     }
+    public String getTaxDueErrorMsg() {
+        return taxDueErrorMsg;
+    }
+
+    public void setTaxDueErrorMsg(final String taxDueErrorMsg) {
+        this.taxDueErrorMsg = taxDueErrorMsg;
+    }
+
 }

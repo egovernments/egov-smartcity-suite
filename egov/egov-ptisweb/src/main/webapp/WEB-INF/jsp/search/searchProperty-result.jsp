@@ -50,6 +50,8 @@
 					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
 				} else if (selectedValue == 'ADD_OR_ALTER') {
 					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
+				} else if (selectedValue=='Bifurcation') {
+					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 				} else if (selectedValue == 'RevisionPetition') {
 					window.location = "../revPetition/revPetition-newForm.action?indexNumber=" + assessmentNum;
 				}
@@ -132,6 +134,9 @@
 											<s:if test="%{isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
+												</option>
+												<option value="Bifurcation">
+													<s:text name="Bifurcation"></s:text>
 												</option>
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>

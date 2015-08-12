@@ -134,9 +134,9 @@ public interface Property extends Auditable {
 
     public void setRemarks(String remarks);
 
-    public PropertyModifyReason getPropertyModifyReason();
+    public String getPropertyModifyReason();
 
-    public void setPropertyModifyReason(PropertyModifyReason propertyModifyReason);
+    public void setPropertyModifyReason(String propertyModifyReason);
 
     /*
      * public Set<PtDemandARV> getPtDemandARVSet(); public void setPtDemandARVSet(Set<PtDemandARV> ptDemandARVSet); public void

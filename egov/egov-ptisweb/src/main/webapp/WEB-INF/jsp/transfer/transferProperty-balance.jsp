@@ -42,7 +42,7 @@
 
 <html>
 <head>
-	<title>Tax Dues</title>
+	<title><s:text name="tax.dues"/></title>
 </head>
 <body>
 	<div class="formmainbox" align="center">
@@ -55,28 +55,28 @@
 				<td class="bluebox"></td>
 				<td class="bluebox"><s:text name="CurrentTax" /> :</td>
 				<td class="bluebox">
-					<span class="bold">Rs. <s:property default="N/A" value="%{currentPropertyTax}" /></span>
+					<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTax}" /></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="greybox"></td>
 				<td class="greybox"><s:text name="CurrentTaxDue" /> :</td>
 				<td class="greybox">
-					<span class="bold">Rs. <s:property default="N/A" value="%{currentPropertyTaxDue}" /></span>
+					<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue}" /></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="greybox"></td>
-				<td class="greybox">Water Tax Due :</td>
+				<td class="greybox"><s:text name="waterTaxDue"/> :</td>
 				<td class="greybox">
-					<span class="bold">Rs. <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>
+					<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="bluebox"></td>
 				<td class="bluebox"><s:text name="ArrearsDue" /> :</td>
 				<td class="bluebox">
-					<span class="bold">Rs. <s:property default="N/A" value="%{arrearPropertyTaxDue}" /></span>
+					<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{arrearPropertyTaxDue}" /></span>
 				</td>
 			</tr>
 			<tr>
@@ -86,7 +86,7 @@
 			</tr>
 		</table>
 		<div align="center" class="mandatory">
-				Above tax dues must be payed before initiating this property transfer.
+			<s:property value="%{taxDueErrorMsg}"/>
 		</div>
 	</div>
 </body>

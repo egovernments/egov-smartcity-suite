@@ -94,12 +94,12 @@
 				<br>	
 				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
 					<s:if test="%{isDemandActive}">
-						<input type="button" class="buttonsubmit" name="btnModifyProperty"
-							id="btnModifyProperty" value="Addition/Alteration of Assessment"
+						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration of Assessment"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=MODIFY&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
-						<input type="button" class="buttonsubmit" name="btnTrnsProperty"
-							id="btnTrnsProperty" value="Transfer Ownership"
-							onclick="window.location='../transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
+						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Bifurcation"
+							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
+						<input type="button" class="buttonsubmit" name="btnTrnsProperty" id="btnTrnsProperty" value="Transfer Ownership"
+							onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
 						<input type="button" name="generateBill" id="generateBill" value="Generate Bill" class="buttonsubmit"
 							onclick="window.location='../bills/billGeneration-generateBill.action?indexNumber=<s:property value="%{basicProperty.upicNo}" />';" />
 					</s:if>

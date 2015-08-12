@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.common;
 
+import static java.lang.Boolean.FALSE;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -383,6 +384,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (wfInitiator.equals(userAssignment)) {
                 property.transition(true).end().withSenderName(user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
+                property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
                 String stateValue = property.getCurrentState().getValue().split(":")[0] + ":"
                         + WF_STATE_REJECTED;
