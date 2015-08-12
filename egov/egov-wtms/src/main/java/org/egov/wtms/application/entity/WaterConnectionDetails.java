@@ -179,6 +179,11 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "demand")
     private EgDemand demand;
 
+    @Temporal(value = TemporalType.DATE)
+    private Date workOrderDate;
+    
+    private String workOrderNumber;
+    
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
@@ -416,6 +421,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public String getBplCardHolderName() {
         return bplCardHolderName;
+    }
+
+    public Date getWorkOrderDate() {
+        return workOrderDate;
+    }
+
+    public void setWorkOrderDate(Date workOrderDate) {
+        this.workOrderDate = workOrderDate;
+    }
+
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
     }
 
     public void setBplCardHolderName(final String bplCardHolderName) {

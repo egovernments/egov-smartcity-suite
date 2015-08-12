@@ -82,6 +82,36 @@
 			<artifactId>validation-api</artifactId>
 		</dependency>
 
+		<!-- REPORTS START -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-functions</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-javaflow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+		</dependency>
+		<!-- REPORTS END -->
+		
+		<dependency>
+			<groupId>com.alexnederlof</groupId>
+			<artifactId>jasperreports-plugin</artifactId>
+			<version>1.6</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+		</dependency>
+
 		<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>

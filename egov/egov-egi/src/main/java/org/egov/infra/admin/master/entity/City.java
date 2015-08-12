@@ -262,6 +262,7 @@ public class City extends AbstractAuditable {
         cityPrefs.put("citylat", getLatitude());
         cityPrefs.put("citylng", getLongitude());
         cityPrefs.put("cityCode", getCode());
+        cityPrefs.put("districtName",getDistrictName());
         return cityPrefs;
     }
 

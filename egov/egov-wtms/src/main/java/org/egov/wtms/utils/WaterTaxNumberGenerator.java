@@ -54,8 +54,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConsumerNumberGenerator {
+public class WaterTaxNumberGenerator {
     private static final String CONSUMER_NUMBER_SEQ_PREFIX = "SEQ_CONSUMER_NUMBER";
+    private static final String WORKORDER_NUMBER_SEQ_PREFIX = "SEQ_WORKORDER_NUMBER";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -70,7 +71,7 @@ public class ConsumerNumberGenerator {
     private WaterTaxUtils waterTaxUtils;
 
     @Transactional
-    public String generate() {
+    public String generateConsumerNumber() {
         try {
             final String sequenceName = CONSUMER_NUMBER_SEQ_PREFIX;
             Serializable sequenceNumber;
@@ -80,6 +81,23 @@ public class ConsumerNumberGenerator {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
             return String.format("%s%06d", waterTaxUtils.getCityCode(), sequenceNumber);
+        } catch (final SQLException e) {
+            throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
+        }
+    }
+    
+    @Transactional
+    public String generateWorkOrderNumber() {
+        try {
+            final String sequenceName = WORKORDER_NUMBER_SEQ_PREFIX;
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+            }
+            System.out.println(String.format("%s%06d","",sequenceNumber));
+            return String.format("%s%06d","",sequenceNumber);
         } catch (final SQLException e) {
             throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
         }

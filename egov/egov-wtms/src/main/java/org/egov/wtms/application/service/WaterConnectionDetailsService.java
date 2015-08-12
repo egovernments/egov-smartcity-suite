@@ -77,7 +77,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
-import org.egov.wtms.utils.ConsumerNumberGenerator;
+import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -134,7 +134,7 @@ public class WaterConnectionDetailsService {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private ConsumerNumberGenerator consumerNumberGenerator;
+    private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     @Autowired
     private ConsumerIndexService consumerIndexService;
@@ -456,7 +456,7 @@ public class WaterConnectionDetailsService {
                 && workFlowAction.equalsIgnoreCase(WaterTaxConstants.APPROVEWORKFLOWACTION)) {
 
             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
-                waterConnectionDetails.getConnection().setConsumerCode(consumerNumberGenerator.generate());
+                waterConnectionDetails.getConnection().setConsumerCode(waterTaxNumberGenerator.generateConsumerNumber());
 
             waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
