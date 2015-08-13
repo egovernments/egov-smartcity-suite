@@ -121,19 +121,13 @@ public abstract class GenericWorkFlowAction extends BaseFormAction {
 
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        if (null == getModel() || null == getModel().getId()) {
+        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState().getValue().endsWith("NEW")) {
             validActions = Arrays.asList(FORWARD);
         } else {
             if (getModel().getCurrentState() != null) {
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
                         .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
-                        getPendingActions(), getModel().getCreatedDate());
-            } else {
-                // FIXME This May not work
-                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED,
                         getPendingActions(), getModel().getCreatedDate());
             }
         }

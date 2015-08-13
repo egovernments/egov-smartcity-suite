@@ -39,24 +39,29 @@
 -->
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head> 
-    <title>
-    <s:if test="mode=='create' || mode=='edit'">
-    	<s:text name='NewProp.title'/>
-    	</s:if>
-    	<s:if test="mode=='view'">
+<head>
+<title><s:if test="mode=='create' || mode=='edit'">
+		<s:text name='NewProp.title' />
+	</s:if> <s:if test="mode=='view'">
     	View Property Form
-    	</s:if>
-    </title>
-	<sx:head/>	
-	<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+    	</s:if></title>
+<sx:head />
+<!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
+	type="text/javascript"></script>
+<link
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	rel="stylesheet" type="text/css" />
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
+	type="text/javascript"></script>
 
 </head>
 
@@ -69,7 +74,8 @@
 		</div>
 	</s:if>
 
-	<s:form name="CreatePropertyForm" action="createProperty-create" theme="simple" enctype="multipart/form-data">
+	<s:form name="CreatePropertyForm" action="createProperty-create"
+		theme="simple" enctype="multipart/form-data">
 
 		<s:push value="model">
 			<s:token />
@@ -85,19 +91,25 @@
 					<tr>
 						<%@  include file="createPropertyForm.jsp"%>
 					</tr>
-					<% System.out.println("hellllo.111................"); %>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-					</tr>
-					<tr>
-						<font size="2"><div align="left" class="mandatory1">
-								&nbsp;&nbsp;
-								<s:text name="mandtryFlds" />
-							</div></font>
-					</tr>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
+					<s:if test="%{propertyByEmployee == true}">
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+						</tr>
+						<tr>
+							<font size="2"><div align="left" class="mandatory1">
+									&nbsp;&nbsp;
+									<s:text name="mandtryFlds" />
+								</div></font>
+						</tr>
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+						</tr>
+					</s:if>
+					<s:else>
+						<tr>
+							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+						</tr>
+					</s:else>
 
 				</table>
 			</div>

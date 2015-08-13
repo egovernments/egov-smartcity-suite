@@ -495,6 +495,7 @@ public interface PropertyTaxConstants {
 	public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
 	public static final String WFLOW_ACTION_END = "END";
 	public static final String WFLOW_ACTION_READY_FOR_PAYMENT = "Ready For Payment";
+	public static final String WFLOW_ACTION_NEW = "NEW";
 
 	// WORKFLOW property states
 	public static final String WF_STATE_NEW = "New";
@@ -1007,5 +1008,10 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_NEW_ASSESSENT = "New Assessment";
     public static final String APPLICATION_TYPE_ALTER_ASSESSENT = "Alter Assessment";
     public static final String APPLICATION_TYPE_BIFURCATE_ASSESSENT = "Bifuracate Assessment";
+    
+    //AppConfig values
+    public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
+    public static final String PROPERTYTAX_WORKFLOWDESIGNATION = "PROPERTYTAXDESIGNATIONFORWORKFLOW";
+    public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
     
 }

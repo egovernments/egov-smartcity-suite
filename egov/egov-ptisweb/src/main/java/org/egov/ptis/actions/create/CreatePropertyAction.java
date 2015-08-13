@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
@@ -149,9 +150,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-        @Result(name = "ack", location = "create/createProperty-ack.jsp"),
-        @Result(name = "view", location = "create/createProperty-view.jsp"),
-        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+    @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+    @Result(name = "view", location = "create/createProperty-view.jsp"),
+    @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
     /**
      *
@@ -239,7 +240,6 @@ public class CreatePropertyAction extends WorkflowAction {
     private String applicationNoMessage;
     private String assessmentNoMessage;
     private String propertyInitiatedBy;
-
     @Autowired
     private UserService userService;
 
@@ -397,8 +397,8 @@ public class CreatePropertyAction extends WorkflowAction {
                 + userDesgn);
         final String currState = property.getState().getValue();
         populateFormData();
-        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)) {
-            // populateFormData();
+        if (currState.endsWith(WF_STATE_REJECTED) || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)
+                || currState.endsWith(WFLOW_ACTION_NEW)) {
             mode = EDIT;
             return RESULT_NEW;
         } else {
@@ -528,8 +528,18 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        propertyInitiatedBy = property.getCreatedBy().getName();
-        setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
+        if (isEmployee(property.getCreatedBy()))
+            propertyInitiatedBy = property.getCreatedBy().getName();
+        else
+            propertyInitiatedBy = assignmentService
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
+        if(property.getState().getValue().equals("Closed")) {
+            propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
+            setAckMessage(MSG_REJECT_SUCCESS + " By ");
+        } else {
+            setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
+        }
         setApplicationNoMessage(" with application No :");
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
@@ -563,6 +573,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
         currDate = new Date();
         setUserInfo();
+        isEmployee(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -725,17 +736,17 @@ public class CreatePropertyAction extends WorkflowAction {
                 propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
                 propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
                 propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
-                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
-                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
-                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
-                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
-                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
-                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
-                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                propertyDetail.isBuildingPlanDetailsChecked());
+                        propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+                                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+                                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+                                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+                                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+                                propertyDetail.isBuildingPlanDetailsChecked());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -887,8 +898,7 @@ public class CreatePropertyAction extends WorkflowAction {
         ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
         ackBean.setApplicationNo(property.getApplicationNo());
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
-        final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH,
-                15);
+        final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(tempNoticeDate);
         reportParams.put("logoPath", imagePath);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
@@ -1444,7 +1454,7 @@ public class CreatePropertyAction extends WorkflowAction {
         return applicationNoMessage;
     }
 
-    public void setApplicationNoMessage(String applicationNoMessage) {
+    public void setApplicationNoMessage(final String applicationNoMessage) {
         this.applicationNoMessage = applicationNoMessage;
     }
 
@@ -1452,7 +1462,7 @@ public class CreatePropertyAction extends WorkflowAction {
         return assessmentNoMessage;
     }
 
-    public void setAssessmentNoMessage(String assessmentNoMessage) {
+    public void setAssessmentNoMessage(final String assessmentNoMessage) {
         this.assessmentNoMessage = assessmentNoMessage;
     }
 
@@ -1460,7 +1470,7 @@ public class CreatePropertyAction extends WorkflowAction {
         return propertyInitiatedBy;
     }
 
-    public void setPropertyInitiatedBy(String propertyInitiatedBy) {
+    public void setPropertyInitiatedBy(final String propertyInitiatedBy) {
         this.propertyInitiatedBy = propertyInitiatedBy;
     }
 
