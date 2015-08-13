@@ -39,16 +39,22 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.service.RoadCategoryService;
+import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +84,10 @@ public class UpdateConnectionController extends GenericConnectionController {
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private PositionMasterService positionMasterService;
+    private RoadCategoryService roadCategoryService;
+
+    @Autowired
+    protected UsageTypeService usageTypeService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -111,7 +120,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         model.addAttribute("statuscode", waterConnectionDetails.getEgwStatus().getCode());
         model.addAttribute("wfstate", waterConnectionDetails.getState().getId());
-        model.addAttribute("currentUser",waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
 
         return loadViewData(model, request, waterConnectionDetails);
     }
@@ -151,13 +160,18 @@ public class UpdateConnectionController extends GenericConnectionController {
                 model.addAttribute("approvalPositionExist",
                         waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
                                 0l, getAdditionalRule(), "edit"));
+                model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+                model.addAttribute("usageTypes",
+                        usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails.getConnectionType().toString()));
             } else
                 model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                         .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));
         } else if (waterConnectionDetails.getEgwStatus() != null
                 && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             model.addAttribute("mode", "edit");
-
+            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute("usageTypes",
+                    usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails.getConnectionType().toString()));
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "edit"));
         } else
@@ -171,6 +185,16 @@ public class UpdateConnectionController extends GenericConnectionController {
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
+
+        final ConnectionCategory connectionCategory = connectionCategoryService
+                .findBy(waterConnectionDetails.getCategory().getId());
+        if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
+                && waterConnectionDetails.getBplCardHolderName() != null)
+            waterConnectionDetails.setBplCardHolderName(null);
+        if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
+                request.getParameter("workFlowAction") != null
+                && request.getParameter("workFlowAction").equals(WaterTaxConstants.SUBMITWORKFLOWACTION))
+            populateEstimationDetails();
 
         Long approvalPosition = 0l;
         String approvalComent = "";
@@ -214,6 +238,26 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (waterConnectionDetails.getApprovalDate() == null)
             errors.rejectValue("approvalDate", "approvalDate.required");
+    }
+
+    private void populateEstimationDetails() {
+        final List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>();
+        if (!waterConnectionDetails.getEstimationDetails().isEmpty())
+            for (final ConnectionEstimationDetails estimationDetail : waterConnectionDetails.getEstimationDetails())
+                if (validEstimationDetail(estimationDetail)) {
+                    estimationDetail.setWaterConnectionDetails(waterConnectionDetails);
+                    estimationDetails.add(estimationDetail);
+                }
+
+        waterConnectionDetails.getEstimationDetails().clear();
+        waterConnectionDetails.setEstimationDetails(estimationDetails);
+    }
+
+    private boolean validEstimationDetail(final ConnectionEstimationDetails connectionEstimationDetails) {
+        if (connectionEstimationDetails == null
+                || connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() == null)
+            return false;
+        return true;
     }
 
     public String getAdditionalRule() {

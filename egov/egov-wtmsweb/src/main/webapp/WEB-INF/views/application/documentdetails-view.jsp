@@ -40,53 +40,41 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
-<form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
-id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">				
-<div class="page-container" id="page-container">
-	<form:hidden id="mode" path=""  value="${mode}"/>
-	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
-	<form:hidden path="" id="statuscode" value="${statuscode}"/>
-	<form:hidden path="" id="wfstate" value="${wfstate}"/> 
-	<input type="hidden" id="currentUser" value="${currentUser}"/>  
-	<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message  code="lbl.basicdetails"/>
-				</div>
-			</div>
-			<jsp:include page="commonappdetails-view.jsp"></jsp:include>
-	</div>
-	<c:if test="${statuscode != 'CREATED'}">
-		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
-	</c:if>
-	<c:if test="${statuscode=='CREATED'}">
-		<div class="panel panel-primary" data-collapsed="0">
-			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
-		</div>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include> 
-			<jsp:include page="estimationdetails.jsp"></jsp:include>
-	</c:if>				
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message  code="lbl.apphistory"/>
-				</div>
-			</div>
-			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
-		</div>	
-		<c:if test="${statuscode=='ESTIMATIONAMOUNTPAID'}">
-		<jsp:include page="sanctiondetails.jsp"></jsp:include>
-		</c:if>	
-		
-		
-</div>	
-	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-		<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-		</div>	
-		
-</form:form>
-<script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
-<script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th><spring:message code="lbl.slno" /></th>
+			<th><spring:message code="lbl.documentname" /></th>
+			<th><spring:message code="lbl.documentnumber" /></th>
+			<th><spring:message code="lbl.documentdate" /></th>
+			<c:if test="${null!=mode}">
+				<th><spring:message code="lbl.files"/></th>
+			</c:if>
+		</tr>
+	</thead>
+	<c:choose>
+		<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
+			<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">
+				<tbody>
+					<tr>
+						<td><c:out value="${serialNo.count}"/></td>
+						<td><c:out value="${docs.documentNames.documentName}" /></td>
+						<td><c:out value="${docs.documentNumber}" /></td>
+						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+						<c:if test="${null!=mode}">
+						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=Water Tax Management" target="_blank"> 
+								<c:out value="${file.fileName}"/></a>
+							</c:forEach>
+						</td>
+						</c:if>
+					</tr>
+				</tbody>
+			</c:forEach>
+		</c:when>
+		<c:otherwise>
+			<div class="col-md-3 col-xs-6 add-margin">No Documents found</div>
+		</c:otherwise>
+	</c:choose>
+</table>

@@ -77,14 +77,12 @@ public class ConnectionEstimationDetails extends AbstractAuditable {
     @Length(max = 1024)
     private String itemDescription;
 
-    @NotNull
     private double quantity;
 
     @SafeHtml
     @Length(max = 50)
     private String unitOfMeasurement;
 
-    @NotNull
     private double unitRate;
 
     @Override

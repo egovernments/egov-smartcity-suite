@@ -83,10 +83,8 @@ public class FieldInspectionDetails extends AbstractAuditable {
 
     private double pipelineDistance;
 
-    @NotNull
     private double diggingCharges;
 
-    @NotNull
     private double supervisionCharges;
 
     private double materialCharges;
