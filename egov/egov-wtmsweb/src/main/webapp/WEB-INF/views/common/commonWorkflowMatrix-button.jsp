@@ -56,6 +56,7 @@
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');
 			$('#approvalPosition').removeAttr('required');
+			$('#approvalComent').attr('required', 'required');	
 			} 
 	   document.forms[0].submit;
 	   return true;
@@ -68,7 +69,7 @@
 		<tr>
 			<td>
 		<c:forEach items="${validactionList}" var="validButtons">
-				<form:button type="submit" id="workFlowAction" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

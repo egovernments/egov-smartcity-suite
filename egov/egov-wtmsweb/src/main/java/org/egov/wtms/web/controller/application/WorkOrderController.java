@@ -54,6 +54,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class WorkOrderController {
     
     public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
@@ -107,7 +108,7 @@ public class WorkOrderController {
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails,final HttpSession session) {
         if(null!=connectionDetails ){
-            final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(connectionDetails.getConnection().getPropertyIdentifier(),
+            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
             String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";

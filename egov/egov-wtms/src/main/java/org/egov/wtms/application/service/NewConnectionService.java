@@ -34,6 +34,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -54,7 +55,7 @@ public class NewConnectionService {
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
 
     public String checkConnectionPresentForProperty(final String propertyID) {
         String validationMessage = "";
@@ -87,7 +88,7 @@ public class NewConnectionService {
 
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
         String errorMessage = "";
-        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
 
         if (assessmentDetails.getErrorDetails() != null && assessmentDetails.getErrorDetails().getErrorCode() != null)

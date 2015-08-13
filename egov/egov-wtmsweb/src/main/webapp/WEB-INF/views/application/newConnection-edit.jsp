@@ -83,9 +83,15 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 		
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-		<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-		</div>	
+			<div class="buttonbottom" align="center">
+		<td><c:forEach items="${validactionList}" var="validButtons">
+				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+						<c:out value="${validButtons}" /> </form:button>
+			</c:forEach>
+			<input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-primary" onclick="window.close();" /></td>
+		  	</div>	
+		  	
 		
 </form:form>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>

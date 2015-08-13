@@ -95,7 +95,7 @@ public class WaterTaxUtils {
     private BoundaryService boundaryService;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -233,11 +233,7 @@ public class WaterTaxUtils {
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn) {
-        // TODO: In db there 2 assignment present for General and Revenue
-        // department so For General Department and Commissioner Designation
-        // related employee dont have access to view inbox so as off now using
-        // get(1) Means Revenue Department Commissioner
-        return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(1).getPosition();
+      return assignmentService.findPrimaryAssignmentForDesignationName(commissionerDesgn).get(0).getPosition();
     }
 
     public String getApproverUserName(final Long approvalPosition) {
@@ -286,10 +282,7 @@ public class WaterTaxUtils {
     }
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
-        // TODO: refering findByDepartmentDesignationAndBoundary  API needs
-        // to change according to get all employees of Passed Boundary(which is
-        // BoundaryType of "Zone")
-        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(asessmentNumber,
+       final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         Assignment assignmentObj = null;
         final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByName(assessmentDetails

@@ -35,6 +35,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -52,7 +53,7 @@ public class AdditionalConnectionService {
     private ResourceBundleMessageSource messageSource;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -64,7 +65,7 @@ public class AdditionalConnectionService {
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
         final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
                 .getAdditionalConnectionDetailsInWorkflow(propertyID, ConnectionStatus.INPROGRESS);
-        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(propertyID,
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {

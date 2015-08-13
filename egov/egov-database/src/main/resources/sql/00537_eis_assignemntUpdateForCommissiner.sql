@@ -1,0 +1,2 @@
+update egeis_assignment set designation=(select id from eg_designation where name='Executive engineer') where department in(select id from eg_department where name='General')
+and designation in(select id from eg_designation where name='Commissioner');

@@ -76,6 +76,7 @@ import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -118,7 +119,7 @@ public class ConnectionDemandService {
     private ConnectionBillService connectionBillService;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -341,8 +342,8 @@ public class ConnectionDemandService {
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
-        final AssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(waterConnectionDetails.getConnection().getPropertyIdentifier(),
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.
+                getAssessmentDetailsForFlag(waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);

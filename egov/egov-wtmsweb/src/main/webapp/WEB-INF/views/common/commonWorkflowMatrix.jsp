@@ -65,7 +65,8 @@
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
-<form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>			
+<form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				
 				<div class="row show-row">
 					<div class="col-md-3 col-xs-6 add-margin">

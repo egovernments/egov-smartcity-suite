@@ -77,6 +77,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -119,7 +120,7 @@ public class WaterConnectionDetailsService {
     private ConnectionDemandService connectionDemandService;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
     private EisCommonService eisCommonService;
@@ -201,19 +202,19 @@ public class WaterConnectionDetailsService {
     }
 
     private void sendSmsAndEmail(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
-        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_MOBILE_EMAIL);
         final String email = assessmentDetails.getPrimaryEmail();
         final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
         if (waterConnectionDetails != null && waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode() != null
-                && waterConnectionDetails.getEgwStatus() != null
+                && waterConnectionDetails.getEgwStatus() != null 
                 && waterConnectionDetails.getEgwStatus().getCode() != null)
             if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     && waterConnectionDetails.getEgwStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
-                    && waterConnectionDetails.getStateHistory() == null && !workFlowAction.equals("Reject")) {
+                    && waterConnectionDetails.getStateHistory().isEmpty() && !workFlowAction.equals("Reject")) {
                 buildSMS(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE, mobileNumber);
                 buildEmail(waterConnectionDetails, WaterTaxConstants.SMSEMAILTYPENEWCONNCREATE, email);
             } else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
@@ -404,7 +405,7 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                 && waterConnectionDetails.getEgwStatus().getCode()
                 .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)) {
-            final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(
+            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_MOBILE_EMAIL);
             final String email = assessmentDetails.getPrimaryEmail();
@@ -507,7 +508,7 @@ public class WaterConnectionDetailsService {
 
     private void updateIndexes(final WaterConnectionDetails waterConnectionDetails) {
 
-        final AssessmentDetails assessmentDetails = propertyExternalService.loadAssessmentDetails(
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS);
 

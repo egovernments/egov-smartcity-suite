@@ -60,6 +60,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private String referenceNumber;
 
     @Autowired
-    private PropertyExternalService propertyExternalService;
+    private PropertyExtnUtils propertyExtnUtils;
     @Autowired
     private UserService userService;
     @Autowired
@@ -101,8 +102,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getBillAddress() {
-        final AssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(getWaterConnectionDetails().getConnection().getPropertyIdentifier(),PropertyExternalService.FLAG_FULL_DETAILS);
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(getWaterConnectionDetails().getConnection().getPropertyIdentifier(),PropertyExternalService.FLAG_FULL_DETAILS);
         return buildAddressDetails(assessmentDetails);
     }
 
