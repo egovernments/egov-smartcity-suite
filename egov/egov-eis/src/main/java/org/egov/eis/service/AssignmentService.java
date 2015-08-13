@@ -230,8 +230,9 @@ public class AssignmentService {
     }
 
     /**
-     * Get list of primary assignments for deparment,designation,fromdate and todate
-     * 
+     * Get list of primary assignments for deparment,designation,fromdate and
+     * todate
+     *
      * @param deptId
      * @param desigId
      * @param fromDate
@@ -245,7 +246,7 @@ public class AssignmentService {
 
     /**
      * Get all assignments for department,designation and givendate
-     * 
+     *
      * @param deptId
      * @param desigId
      * @param givenDate
@@ -255,16 +256,16 @@ public class AssignmentService {
             final Date givenDate) {
         return assignmentRepository.findAllAssignmentsByDeptDesigAndGivenDate(deptId, desigId, givenDate);
     }
-    
-    public List<Assignment> findByEmployeeAndGivenDate(final Long empId,final Date givenDate) {
+
+    public List<Assignment> findByEmployeeAndGivenDate(final Long empId, final Date givenDate) {
         return assignmentRepository.findByEmployeeAndGivenDate(empId, givenDate);
     }
-    
+
     public List<Assignment> findPrimaryAssignmentForDesignationName(final String name) {
         return assignmentRepository.findPrimaryAssignmentForDesignationName(name);
     }
-    public List<Assignment>  findByDesignationAndBoundary( final Long desigId,
-            final Long boundaryId) {
-        return assignmentRepository.findByDepartmentDesignationAndBoundary( desigId, boundaryId);
+
+    public List<Assignment> findByDesignationAndBoundary(final Long desigId, final Long boundaryId) {
+        return assignmentRepository.findByDepartmentDesignationAndBoundary(desigId, boundaryId);
     }
 }

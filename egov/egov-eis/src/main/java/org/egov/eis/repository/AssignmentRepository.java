@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -115,19 +114,18 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             + " A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> findAllAssignmentsByDeptDesigAndGivenDate(@Param("deptId") Long deptId,
             @Param("desigId") Long desigId, @Param("givenDate") Date givenDate);
-    
+
     @Query(" from Assignment A where A.department.id=:deptId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.fromDate ")
-    public List<Assignment> findAllByDepartmentAndDate(@Param("deptId")Long deptId,@Param("givenDate")Date givenDate);
-    
+    public List<Assignment> findAllByDepartmentAndDate(@Param("deptId") Long deptId, @Param("givenDate") Date givenDate);
+
     @Query(" from Assignment A where A.employee.id=:empId and A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.fromDate ")
-    public List<Assignment> findByEmployeeAndGivenDate(@Param("empId")Long empId,@Param("givenDate")Date givenDate);
-    
+    public List<Assignment> findByEmployeeAndGivenDate(@Param("empId") Long empId, @Param("givenDate") Date givenDate);
+
     @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.designation.name=:name and A.primary=true")
     public List<Assignment> findPrimaryAssignmentForDesignationName(@Param("name") String name);
-    
-   
-    @Query(" select A from Assignment A inner join A.employee EMP inner join  EMP.jurisdictions as JRDN  where  JRDN.boundary.id=:boundaryId AND A.designation.id=:desigId and  A.fromDate<=current_date and A.toDate>=current_date order by A.fromDate ")
-    public List<Assignment> findByDepartmentDesignationAndBoundary( @Param("desigId") final Long desigId, @Param("boundaryId") final Long boundaryId);
 
-    
+    @Query(" select A from Assignment A inner join A.employee EMP inner join  EMP.jurisdictions as JRDN  where  JRDN.boundary.id=:boundaryId AND A.designation.id=:desigId and  A.fromDate<=current_date and A.toDate>=current_date order by A.fromDate ")
+    public List<Assignment> findByDepartmentDesignationAndBoundary(@Param("desigId") final Long desigId,
+            @Param("boundaryId") final Long boundaryId);
+
 }
