@@ -1,0 +1,2 @@
+update  eg_wf_matrix set nextstate='Clerk approved',nextaction='Asst.engineer approval pending' where id in(
+select id from eg_wf_matrix where objecttype='WaterConnectionDetails' and currentstate='Rejected') ;

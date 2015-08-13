@@ -110,10 +110,8 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("additionalRule", getAdditionalRule());
-        model.addAttribute("statuscode", "");
         model.addAttribute("currentUser",
                 waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
         return "newconnection-form";

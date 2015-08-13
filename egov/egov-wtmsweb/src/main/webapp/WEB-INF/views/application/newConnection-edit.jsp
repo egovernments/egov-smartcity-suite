@@ -47,8 +47,8 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path=""  value="${mode}"/>
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
-	<form:hidden path="" id="statuscode" value="${statuscode}"/>
-	<form:hidden path="" id="wfstate" value="${wfstate}"/> 
+	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.egwStatus.code}"/>
+	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -79,8 +79,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 		<c:if test="${statuscode=='ESTIMATIONAMOUNTPAID'}">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
-		
-		
+			
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">

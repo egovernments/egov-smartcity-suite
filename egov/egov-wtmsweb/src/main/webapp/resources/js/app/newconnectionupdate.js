@@ -69,8 +69,6 @@ $(document).ready(function()
 
 	
 });
-
-
 function validateDateRange(fromDate, toDate) {
 	if (fromDate != "" && toDate != "") {
 		var stsplit = fromDate.split("/");

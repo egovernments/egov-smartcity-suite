@@ -115,25 +115,18 @@ public class UpdateConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
         waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
-        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", getAdditionalRule());
-        model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
-        model.addAttribute("statuscode", waterConnectionDetails.getEgwStatus().getCode());
-        model.addAttribute("wfstate", waterConnectionDetails.getState().getId());
-        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-
         return loadViewData(model, request, waterConnectionDetails);
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
+        model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        model.addAttribute(
-                "connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(
-                        waterConnectionDetails.getConnectionType().name()));
-
+        model.addAttribute("connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
@@ -142,41 +135,30 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     private void appendModeBasedOnApplicationCreator(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
-
         final Boolean recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(waterConnectionDetails.getCreatedBy());
-        if (recordCreatedBYNonEmployee.equals(true)) {
-            if (null == request.getAttribute("mode") && waterConnectionDetails.getState().getHistory().isEmpty()) {
-                model.addAttribute("mode", "noedit");
-                model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                        .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(),
-                                "noedit"));
-            }
-            // "edit" mode for AE inbox record
-            else if (request.getAttribute("mode") == null
-                    && waterConnectionDetails.getEgwStatus().getCode()
-                            .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
-                    && waterConnectionDetails.getState().getHistory() != null) {
-                model.addAttribute("mode", "edit");
-                model.addAttribute("approvalPositionExist",
-                        waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails,
-                                0l, getAdditionalRule(), "edit"));
-                model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
-                model.addAttribute("usageTypes",
-                        usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails.getConnectionType().toString()));
-            } else
-                model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                        .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));
-        } else if (waterConnectionDetails.getEgwStatus() != null
-                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
+        // if record from csc to Clerk
+        if (recordCreatedBYNonEmployee && null == request.getAttribute("mode")
+                && waterConnectionDetails.getState().getHistory().isEmpty()) {
+            model.addAttribute("mode", "noedit");
+            model.addAttribute("approvalPositionExist", waterConnectionDetailsService
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "noedit"));
+        }
+        // "edit" mode for AE inbox record FROM CSC and Record from Clerk
+        else if ((recordCreatedBYNonEmployee && request.getAttribute("mode") == null
+                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) && waterConnectionDetails
+                .getState().getHistory() != null)
+                || (!recordCreatedBYNonEmployee && waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode()
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED))) {
             model.addAttribute("mode", "edit");
-            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
-            model.addAttribute("usageTypes",
-                    usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails.getConnectionType().toString()));
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "edit"));
-        } else
+            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute("usageTypes", usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails
+                    .getConnectionType().toString()));
+        } else {// other than AE
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));
+        } // "" mode for once reject from A.e to Clerk
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
     }
@@ -196,7 +178,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setBplCardHolderName(null);
             populateEstimationDetails();
         }
-
         Long approvalPosition = 0l;
         String approvalComent = "";
         String workFlowAction = "";

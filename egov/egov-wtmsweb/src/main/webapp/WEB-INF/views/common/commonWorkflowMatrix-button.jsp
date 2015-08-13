@@ -64,7 +64,6 @@
 </script>
 
 <div class="buttonbottom" align="center">
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<table>
 		<tr>
 			<td>
