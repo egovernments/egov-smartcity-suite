@@ -108,6 +108,9 @@ public class WaterConnectionDetails extends StateAware {
     @NotNull
     @JoinColumn(name = "connection", nullable = false)
     private WaterConnection connection;
+    @Valid
+    @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ExistingConnectionDetails existingConnection;
 
     // @Column(name = "applicationNumber", unique = true)
     @SafeHtml
@@ -443,4 +446,11 @@ public class WaterConnectionDetails extends StateAware {
         this.bplCardHolderName = bplCardHolderName;
     }
 
+	public ExistingConnectionDetails getExistingConnection() {
+		return existingConnection;
+	}
+
+	public void setExistingConnection(ExistingConnectionDetails existingConnection) {
+		this.existingConnection = existingConnection;
+	}
 }

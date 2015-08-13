@@ -200,7 +200,18 @@ public class WaterConnectionDetailsService {
 
         return savedWaterConnectionDetails;
     }
+    @Transactional
+    public WaterConnectionDetails createExisting(final WaterConnectionDetails waterConnectionDetails) {
+    	waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
+    	waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
+    	final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
 
+        //TODO Updation of Demand should be done here  also fixupdate indexes
+       // updateIndexes(savedWaterConnectionDetails);
+        return savedWaterConnectionDetails;
+    }
+    
     private void sendSmsAndEmail(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),

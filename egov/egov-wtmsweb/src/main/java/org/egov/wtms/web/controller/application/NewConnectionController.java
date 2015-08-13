@@ -36,8 +36,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -117,6 +119,19 @@ public class NewConnectionController extends GenericConnectionController {
         return "newconnection-form";
     }
 
+    @RequestMapping(value = "/newConnection-dataEntryForm", method = GET)
+    public String dataEntryForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final Model model) {
+        waterConnectionDetails.setApplicationDate(new Date());
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+        Map<Long,String> connectionTypeMap=new HashMap<Long, String>();
+        
+        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),WaterTaxConstants.PRIMARYCONNECTION);
+        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+        model.addAttribute("radioButtonMap", connectionTypeMap);		
+        return "newconnection-dataEntryForm";
+    }
+      
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
@@ -172,6 +187,26 @@ public class NewConnectionController extends GenericConnectionController {
                 + waterTaxUtils.getApproverUserName(approvalPosition);
         return "redirect:/application/application-success?pathVars=" + pathVars;
     }
+    
+    @RequestMapping(value = "/newConnection-createExisting", method = POST)
+    public String createExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request, final Model model,@RequestParam String  workFlowAction) {
+            validatePropertyID(waterConnectionDetails, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+            Map<Long,String> connectionTypeMap=new HashMap<Long, String>();
+            
+            connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),WaterTaxConstants.PRIMARYCONNECTION);
+            connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+            model.addAttribute("radioButtonMap", connectionTypeMap);		
+            return "newconnection-dataEntryForm";
+        }
+        waterConnectionDetailsService.createExisting(waterConnectionDetails);
+    
+       return "redirect:/application/view/"+waterConnectionDetails.getConnection().getConsumerCode();  
+    }
+    
 
     private void validateDocuments(final List<ApplicationDocuments> applicationDocs,
             final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,

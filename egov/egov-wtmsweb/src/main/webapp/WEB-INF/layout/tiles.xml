@@ -102,4 +102,8 @@
         <put-attribute name="page-title" value="title.collect.tax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/collecttax-redirection.jsp"/>
     </definition>
+    <definition name="newconnection-dataEntryForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryForm.jsp"/>
+    </definition>
 </tiles-definitions>

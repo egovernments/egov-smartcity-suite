@@ -124,5 +124,8 @@ public class WaterTaxConstants {
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
-
+   
+    //this is just another name to new connection
+   	public static final String PRIMARYCONNECTION = "Primary Connection";
+   	public static final String CONN_NAME_ADDNLCONNECTION = "Additional Connection";
 }
