@@ -70,7 +70,7 @@ public class SMSService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public boolean sendSMS(final String message, final String mobileNumber) {
+    public boolean sendSMS(final String mobileNumber, final String message) {
 
         if (applicationProperties.smsEnabled()) {
             try {

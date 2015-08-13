@@ -175,7 +175,7 @@ public class EscalationService {
                 if (superiorUser != null && superiorUser.getEmailId() != null)
                     emailService.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
                 if (superiorUser != null && superiorUser.getMobileNumber() != null)
-                    smsService.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
+                    smsService.sendSMS("91" + superiorUser.getMobileNumber(), smsBody.toString());
             }
         }
     }
