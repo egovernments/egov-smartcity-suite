@@ -96,7 +96,6 @@ public class WaterTaxNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            System.out.println(String.format("%s%06d","",sequenceNumber));
             return String.format("%s%06d","",sequenceNumber);
         } catch (final SQLException e) {
             throw new EGOVRuntimeException("Error occurred while generating Consumer Number", e);
