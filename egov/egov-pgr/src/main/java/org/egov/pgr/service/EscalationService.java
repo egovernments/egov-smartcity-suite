@@ -49,8 +49,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.messaging.email.EmailService;
-import org.egov.infra.messaging.sms.SMSService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
@@ -76,9 +75,6 @@ public class EscalationService {
     private final EscalationRepository escalationRepository;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
@@ -93,8 +89,7 @@ public class EscalationService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
-    @Autowired
-    private SMSService smsService;
+    private MessagingService messagingService;
 
     @Autowired
     private PgrApplicationProperties pgrApplicationProperties;
@@ -172,10 +167,10 @@ public class EscalationService {
                         .append(", The complaint Number (").append(complaint.getCrn())
                         .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
                         .append(formattedEscalationDate);
-                if (superiorUser != null && superiorUser.getEmailId() != null)
-                    emailService.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
-                if (superiorUser != null && superiorUser.getMobileNumber() != null)
-                    smsService.sendSMS("91" + superiorUser.getMobileNumber(), smsBody.toString());
+                if (superiorUser != null) {
+                    messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
+                    messagingService.sendSMS( superiorUser.getMobileNumber(), smsBody.toString());
+                }
             }
         }
     }

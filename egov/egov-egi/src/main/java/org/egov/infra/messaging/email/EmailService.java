@@ -51,7 +51,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EmailService {
+class EmailService {
 
     public static final String MAILSENDER = "mailSender";
 
@@ -64,7 +64,7 @@ public class EmailService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public boolean sendMail(final String toEmail, final String mailBody, final String subject) {
+    public boolean sendMail(final String toEmail, final String subject, final String mailBody) {
         boolean isSent = false;
         if (applicationProperties.emailEnabled()) {
 

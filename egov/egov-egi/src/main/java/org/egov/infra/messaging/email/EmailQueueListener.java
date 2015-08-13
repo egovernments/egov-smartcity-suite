@@ -63,8 +63,7 @@ public class EmailQueueListener implements MessageListener {
     public void onMessage(final Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("message"),
-                    emailMessage.getString("subject"));
+            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"), emailMessage.getString("message"));
         } catch (final JMSException e) {
             LOG.error("Email sending failed for reason {}", e);
         }

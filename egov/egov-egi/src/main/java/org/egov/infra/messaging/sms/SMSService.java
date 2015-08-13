@@ -59,7 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SMSService {
+class SMSService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
     private static final String SENDERID_PARAM_NAME = "sms.sender.req.param.name";
     private static final String USERNAME_PARAM_NAME = "sms.sender.username.req.param.name";
