@@ -273,9 +273,9 @@ public class AssignmentService {
     }
 
     public List<Assignment> findByDesignationAndBoundary(final Long desigId, final Long boundaryId) {
-        return assignmentRepository.findByDepartmentDesignationAndBoundary(desigId, boundaryId);
+        return assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
     }
-
+    
     /**
      * Gets all assignments for a particular department,designation and given
      * boundary or all the employees under that boundary
@@ -287,9 +287,21 @@ public class AssignmentService {
      */
     public List<Assignment> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
             final Long boundaryId) {
+        
+        List<Assignment> assignments = null;
+        if(null==deptId)
+            assignments = assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
+        else if(null==desigId)
+            assignments = assignmentRepository.findByDepartmentAndBoundary(deptId, getBoundaries(boundaryId));
+        else
+            assignments = assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, getBoundaries(boundaryId));
+        return assignments;
+    }
+    
+    private Set<Long> getBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
         boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
-        return assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, bndIds);
+        return bndIds;
     }
 }

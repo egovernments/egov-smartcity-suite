@@ -122,4 +122,10 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.isHistory='N' AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
+    
+    @Query("from Boundary BND where BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
+    List<Boundary> findAllChildrenWithOutParent(@Param("parentId") Long parentId);
+    
+    @Query("from Boundary BND where BND.isHistory='N' AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
+    List<Boundary> findActiveChildrenWithOutParent(@Param("parentId") Long parentId);
 }

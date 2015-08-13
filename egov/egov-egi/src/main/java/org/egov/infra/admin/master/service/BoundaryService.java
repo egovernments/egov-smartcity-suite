@@ -226,4 +226,12 @@ public class BoundaryService {
     public List<Boundary> findActiveChildrenWithParent(final Long parentBoundaryId) {
         return boundaryRepository.findActiveChildrenWithParent(parentBoundaryId);
     }
+    
+    public List<Boundary> findAllChildrenWithoutParent(final Long parentBoundaryId) {
+        return boundaryRepository.findAllChildrenWithOutParent(parentBoundaryId);
+    }
+    
+    public List<Boundary> findActiveChildrenWitouthParent(final Long parentBoundaryId) {
+        return boundaryRepository.findActiveChildrenWithOutParent(parentBoundaryId);
+    }
 }
