@@ -166,7 +166,6 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         createUserIfNotExist(propertyMutation.getTransfereeInfos());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
-        //propertyMutation.transition().start();
         processAndStoreDocument(propertyMutation.getDocuments());
         basicPropertyService.persist(basicProperty);
     }
@@ -276,6 +275,7 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         return reportService.createReport(reportInput);
     }
 
+    @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -288,6 +288,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
         noticeBean.setCurrentInstallment(PropertyTaxUtil.getCurrentInstallment().getDescription());
         final ReportRequest reportInput = new ReportRequest("transferProperty_notice", noticeBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
+        propertyMutation.transition().end();
+        basicProperty.setUnderWorkflow(false);
+        basicPropertyService.persist(basicProperty);
         return reportService.createReport(reportInput);
     }
 

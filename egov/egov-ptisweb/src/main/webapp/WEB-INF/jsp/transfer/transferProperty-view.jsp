@@ -314,9 +314,9 @@
 							</tr>
 						</table>
 					</div>
-					<tr>
+				<tr>
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-				   </tr>
+				</tr>
 				</s:elseif>
 			</table>
 		</s:push>
