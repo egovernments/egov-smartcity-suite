@@ -67,6 +67,7 @@ import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
+import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -143,7 +144,7 @@ public class ComplaintController extends ApiController {
                 asList(Index.PGR.toString()),
                 asList(IndexType.COMPLAINT.toString()),
                 searchRequest.searchQuery(), searchRequest.searchFilters(),
-                Sort.NULL, org.egov.search.domain.Page.NULL);
+                Sort.by().field("common.createdDate", SortOrder.DESC), org.egov.search.domain.Page.NULL);               
         return getResponseHandler().success(searchResult.getDocuments());
     }
 

@@ -16,9 +16,11 @@ public class CustomTokenEnhancer extends TokenEnhancerChain{
         DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) accessToken;
         SecureUser su = (SecureUser) authentication.getUserAuthentication()
 				.getPrincipal();              
-        Map<String, Object> info = new LinkedHashMap<String, Object>();
-        info.put("userId", su.getUserId());
-        info.put("userName", su.getUsername());
+        Map<String, Object> info = new LinkedHashMap<String, Object>();        
+        info.put("Id", su.getUserId());
+        info.put("name", su.getUser().getName());
+        info.put("mobileNumber", su.getUser().getMobileNumber());
+        info.put("emailId", su.getUser().getEmailId());
         token.setAdditionalInformation(info);
         return super.enhance(token, authentication);
     }

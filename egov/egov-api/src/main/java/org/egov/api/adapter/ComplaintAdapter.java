@@ -23,10 +23,11 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
             jo.addProperty("lat", complaint.getLat());
             jo.addProperty("lng", complaint.getLng());
         }
-        if (complaint.getComplaintType() != null)
+        if (complaint.getComplaintType() != null) {
             jo.addProperty("complaintTypeId", complaint.getComplaintType().getId());
-        if (complaint.getComplaintType() != null)
             jo.addProperty("complaintTypeName", complaint.getComplaintType().getName());
+            jo.addProperty("complaintTypeImage", complaint.getComplaintType().getCode()+".jpg");
+        }                 
         if (complaint.getLandmarkDetails() != null)
             jo.addProperty("landmarkDetails", complaint.getLandmarkDetails());
         jo.addProperty("createdDate", complaint.getCreatedDate().toString());
