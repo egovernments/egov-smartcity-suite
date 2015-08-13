@@ -46,7 +46,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE
 import java.math.BigDecimal;
 
 import org.egov.commons.Installment;
-import org.egov.ptis.constants.PropertyTaxConstants;
 
 public class BillDetailBean {
 
@@ -93,8 +92,8 @@ public class BillDetailBean {
 	public String toString() {
 		return new StringBuilder(200).append("BillDetailBean [").append("installment=")
 				.append(installment).append(", reasonMaster=").append(reasonMaster)
-				.append(", description=").append(description).append("glCode=").append(glCode)
-				.append(", orderNo=").append(orderNo).append("key=").append(key)
+				.append(", description=").append(description).append(", glCode=").append(glCode)
+				.append(", orderNo=").append(orderNo).append(", key=").append(key)
 				.append(", isActualDemand=").append(isActualDemand).append("]").toString();
 	}
 

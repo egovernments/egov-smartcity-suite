@@ -969,7 +969,20 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED = "Payment update fail due other issues";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_UPDATE_FAILED_WITH_INPUT = "106";
     public static final String THIRD_PARTY_ERR_MSG_PAYMENT_UPDATE_FAILED_WITH_INPUT = "Payment update fail due to input data issues";
+    public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND = "11";
+    public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
+    public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "12";
+    public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED = "Assessment number is required";
+    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "13";
+    public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED = "Payment mode is required";
+    public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID = "14";
+    public static final String THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID = "Payment mode is invalid";
+    public static final String THIRD_PARTY_PAYMENT_MODE_CASH = "CASH";
+    public static final String THIRD_PARTY_PAYMENT_MODE_CHEQUE = "CHEQUE";
     
+	public static final String TOTAL_AMOUNT = "amount";
+    public final static String PAID_BY = "paidBy";
+
     // Collection modes List
     public static final Map<Character, String> COLL_MODES_MAP = new HashMap<Character, String>() {
             {

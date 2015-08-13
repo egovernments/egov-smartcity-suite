@@ -333,8 +333,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
 	@Override
 	public List<BasicProperty> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Query qry = getCurrentSession().createQuery("from BasicPropertyImpl BP where BP.active='Y'");
+		return qry.list();
 	}
 
 	@Override
@@ -408,5 +408,18 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 			}
 		}
 		return isDoorNoExist;
+	}
+
+	@Override
+	public Boolean isAssessmentNoExist(String assessmentNo) {
+		Boolean isAssessmentNoExist = Boolean.FALSE;
+		if(null != assessmentNo && !assessmentNo.trim().equals("")) {
+			Query doorNoQuery = getCurrentSession().createQuery("from BasicPropertyImpl bp where bp.upicNo =:assessmentNo");
+			doorNoQuery.setString("assessmentNo", assessmentNo.trim());
+			if (null != doorNoQuery.list() && !doorNoQuery.list().isEmpty()) {
+				isAssessmentNoExist = Boolean.TRUE;
+			}
+		}
+		return isAssessmentNoExist;
 	}
 }

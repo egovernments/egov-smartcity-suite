@@ -41,10 +41,13 @@ package org.egov.ptis.domain.service.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -52,16 +55,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
+import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
+import org.egov.dcb.bean.Payment;
+import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.model.TaxDetails;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -75,13 +89,15 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
+import org.egov.ptis.domain.model.ReceiptDetails;
+import org.egov.ptis.domain.service.bill.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyExternalService {
 	public static final Integer FLAG_MOBILE_EMAIL = 0;
 	public static final Integer FLAG_TAX_DETAILS = 1;
 	public static final Integer FLAG_FULL_DETAILS = 2;
-
+	public static final int FLAG_NONE = 0;
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
 	@Autowired
@@ -92,6 +108,16 @@ public class PropertyExternalService {
 	private BasicProperty basicProperty;
 	private Property property;
 	AssessmentDetails assessmentDetail;
+
+	private BillService billService;
+	@Autowired
+	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+	@Autowired
+	PropertyTaxUtil propertyTaxUtil;
+	@Autowired
+	private PTBillServiceImpl ptBillServiceImpl;
+	@Autowired
+	private PropertyTaxBillable propertyTaxBillable;
 
 	public AssessmentDetails loadAssessmentDetails(String propertyId, Integer flag) {
 		assessmentDetail = new AssessmentDetails();
@@ -189,8 +215,8 @@ public class PropertyExternalService {
 			if (null != propertyDetail) {
 				assessmentDetail.getPropertyDetails().setPropertyType(propertyDetail.getPropertyTypeMaster().getType());
 				if (propertyDetail.getPropertyUsage() != null) {
-					assessmentDetail.getPropertyDetails().setPropertyUsage(
-							propertyDetail.getPropertyUsage().getUsageName());
+					assessmentDetail.getPropertyDetails()
+							.setPropertyUsage(propertyDetail.getPropertyUsage().getUsageName());
 				}
 				if(null!=propertyDetail.getNo_of_floors())
 				    assessmentDetail.getPropertyDetails().setNoOfFloors(propertyDetail.getNo_of_floors());
@@ -282,26 +308,27 @@ public class PropertyExternalService {
 		}
 		return propertyTaxDetails;
 	}
-	
-	public List<PropertyTaxDetails> getPropertyTaxDetails(String circleName, String zoneName, 
-			String wardName, String blockName, String ownerName, String doorNo) {
+
+	public List<PropertyTaxDetails> getPropertyTaxDetails(String circleName, String zoneName, String wardName,
+			String blockName, String ownerName, String doorNo) {
 		List<PropertyTaxDetails> propTxDetailsList = null;
-		List<BasicProperty> basicPropertyList = basicPropertyDAO.getBasicPropertiesForTaxDetails(circleName, zoneName, wardName, blockName, ownerName, doorNo);
+		List<BasicProperty> basicPropertyList = basicPropertyDAO.getBasicPropertiesForTaxDetails(circleName, zoneName,
+				wardName, blockName, ownerName, doorNo);
 		if (null != basicPropertyList) {
 			propTxDetailsList = new ArrayList<PropertyTaxDetails>();
-			for(BasicProperty basicProperty : basicPropertyList) {
+			for (BasicProperty basicProperty : basicPropertyList) {
 				PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
 				propTxDetailsList.add(propertyTaxDetails);
 			}
 		}
 		return propTxDetailsList;
 	}
-	
-	// TODO: Needs to check whether this method is required or not. 
+
+	// TODO: Needs to check whether this method is required or not.
 	// Also existing authentication functionality can be used
 	public Boolean authenticateUser(String username, String password) {
 		Boolean isAuthenticated = false;
-		if (username.equals("ESEVATPT") && password.equals("ESEVA123")) {
+		if (username.equals("mahesh") && password.equals("demo")) {
 			isAuthenticated = true;
 		}
 		return isAuthenticated;
@@ -347,7 +374,7 @@ public class PropertyExternalService {
 		Set<String> demandYearSet = ptDemandDAO.getDemandYears(applicationNo);
 		Map<String, BigDecimal> demandYearPenaltyMap = null;
 		if (null != demandYearSet && !demandYearSet.isEmpty()) {
-			demandYearPenaltyMap =  getDemandYearPenalty(applicationNo);
+			demandYearPenaltyMap = getDemandYearPenalty(applicationNo);
 			List<Object> list = ptDemandDAO.getPropertyTaxDetails(applicationNo);
 			Object[] demandYearsArr = demandYearSet.toArray();
 			String currentDemandYear = (String) demandYearsArr[demandYearsArr.length - 1];
@@ -486,5 +513,98 @@ public class PropertyExternalService {
 			propertyTaxDetails.setErrorDetails(errorDetails);
 		}
 		return propertyTaxDetails;
+	}
+
+	public ReceiptDetails payPropertyTax(String assessmentNo, String paymentMode, BigDecimal totalAmount, String paidBy,
+			String username, String password) {
+		ReceiptDetails receiptDetails = null;
+		ErrorDetails errorDetails = null;
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+		propertyTaxBillable.setBasicProperty(basicProperty);
+		propertyTaxBillable.setUserId(Long.valueOf("16"));
+		EgovThreadLocals.setUserId(Long.valueOf("16"));
+		billService = (BillService)beanProvider.getBean("billService");
+		propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
+				.getPropertyID().getWard().getBoundaryNum().toString()));
+		propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
+		propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
+		EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
+		
+		CollectionHelper collectionHelper = new CollectionHelper(egBill);
+		Map<String, String> paymentDetailsMap = new HashMap<String, String>();
+		paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, totalAmount.toString());
+		paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, paidBy);
+		Payment payment = Payment.create(paymentMode, paymentDetailsMap);
+		BillReceiptInfo billReceiptInfo =  collectionHelper.executeCollection(payment);
+		
+		if(null != billReceiptInfo) {
+			receiptDetails = new ReceiptDetails();
+			receiptDetails.setReceiptNo(billReceiptInfo.getReceiptNum());
+			receiptDetails.setReceiptDate(formatDate(billReceiptInfo.getReceiptDate()));
+			receiptDetails.setPayeeName(billReceiptInfo.getPayeeName());
+			receiptDetails.setPayeeAddress(billReceiptInfo.getPayeeAddress());
+			receiptDetails.setBillReferenceNo(billReceiptInfo.getBillReferenceNum());
+			receiptDetails.setServiceName(billReceiptInfo.getServiceName());
+			receiptDetails.setDescription(billReceiptInfo.getDescription());
+			receiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
+			receiptDetails.setTotalAmountPaid(billReceiptInfo.getTotalAmount());
+			receiptDetails.setCollectionType(billReceiptInfo.getCollectionType());
+			
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+			
+			receiptDetails.setErrorDetails(errorDetails);
+		}
+		return receiptDetails;
+	}
+	/**
+	 * This method is used to validate the payment details to do the payments.
+	 * 
+	 * @param assessmentNo
+	 *            - assessment number or property number
+	 * @param paymentMode
+	 *            - mode of payment
+	 * @param totalAmount
+	 *            - total amount
+	 * @param paidBy
+	 *            - name of the payer
+	 * @return
+	 */
+	public ErrorDetails validatePaymentDetails(String assessmentNo, String paymentMode, BigDecimal totalAmount, String paidBy) {
+		ErrorDetails errorDetails = null;
+		if(assessmentNo == null || assessmentNo.trim().length() == 0) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
+		} else {
+			if(assessmentNo.trim().length() > 0 && assessmentNo.trim().length() < 10) {
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
+				errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
+			}
+			if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+				errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+			}
+		}
+		
+		if(paymentMode == null || paymentMode.trim().length() == 0) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED);
+		} else if (!PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH.equalsIgnoreCase(paymentMode.trim())
+				&& !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(paymentMode.trim())) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
+		}
+		return errorDetails;
+	}
+
+	private String formatDate(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+		return sdf.format(date);
 	}
 }

@@ -115,10 +115,9 @@ public class CollectionHelper {
 		}
 
 		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
-		BillInfoImpl billInfo = null;
 
 		LOG.debug("CollectionHelper.executeCollection(): collection is from the field...");
-		billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F);
+		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F);
 
 		return collectionService.createReceipt(billInfo, paymentInfoList);
 	}

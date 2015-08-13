@@ -91,4 +91,6 @@ public interface BasicPropertyDAO {
 	public Boolean isOwnerNameExist(String ownerName);
 	
 	public Boolean isDoorNoExist(String doorNo);
+	
+	public Boolean isAssessmentNoExist(String assessmentNo);
 }
