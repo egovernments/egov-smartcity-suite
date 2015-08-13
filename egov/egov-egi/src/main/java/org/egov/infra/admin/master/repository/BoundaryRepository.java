@@ -91,7 +91,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findActiveChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
     
-    @Query("from Boundary BND where BND.isHistory='N' AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
+    @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
     List<Boundary> findActiveChildrenWithParent(@Param("parentId") Long parentId);
 
     @Query("select b from Boundary b where b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
@@ -126,6 +126,9 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("from Boundary BND where BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
     List<Boundary> findAllChildrenWithOutParent(@Param("parentId") Long parentId);
     
-    @Query("from Boundary BND where BND.isHistory='N' AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
+    @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'.'||'%'")
     List<Boundary> findActiveChildrenWithOutParent(@Param("parentId") Long parentId);
+    
+    @Query("from Boundary BND where BND.isHistory=false AND BND.parent.id=:parentId)")
+    List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 }

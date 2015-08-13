@@ -133,8 +133,12 @@ public class BoundaryController {
 
         boundary.setBoundaryType(boundaryTypeObj);
         boundary.setHistory(false);
-        int childrenSize = boundaryService.findAllChildrenWithoutParent(boundary.getParent().getId()).size()+1;
-        boundary.setMaterializedPath(boundary.getParent().getMaterializedPath()+"."+childrenSize);
+        int childrenSize = boundaryService.findActiveImmediateChildrenWithOutParent(boundary.getParent().getId()).size();
+        //reset the materialized path if the parent boundary is changed
+        if(!boundary.getMaterializedPath().equalsIgnoreCase(boundary.getParent().getMaterializedPath()+"."+childrenSize)){
+            childrenSize+=1;
+            boundary.setMaterializedPath(boundary.getParent().getMaterializedPath()+"."+childrenSize);
+        }
 
         boundaryService.updateBoundary(boundary);
 

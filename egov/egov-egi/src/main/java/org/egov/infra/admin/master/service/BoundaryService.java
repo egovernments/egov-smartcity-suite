@@ -234,4 +234,8 @@ public class BoundaryService {
     public List<Boundary> findActiveChildrenWitouthParent(final Long parentBoundaryId) {
         return boundaryRepository.findActiveChildrenWithOutParent(parentBoundaryId);
     }
+    
+    public List<Boundary> findActiveImmediateChildrenWithOutParent(final Long parentBoudaryId) {
+        return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentBoudaryId);
+    }
 }
