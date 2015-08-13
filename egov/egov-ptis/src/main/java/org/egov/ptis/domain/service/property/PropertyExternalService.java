@@ -56,15 +56,19 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
+import org.egov.lib.admbndry.CrossHeirarchyImpl;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
@@ -76,16 +80,29 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.RoofType;
+import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.WallType;
+import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.ArrearDetails;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.LocalityDetails;
+import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
@@ -118,6 +135,12 @@ public class PropertyExternalService {
 	private PTBillServiceImpl ptBillServiceImpl;
 	@Autowired
 	private PropertyTaxBillable propertyTaxBillable;
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+	private EntityManager entityManager;
+	@Autowired
+	private BoundaryService boundaryService;
 
 	public AssessmentDetails loadAssessmentDetails(String propertyId, Integer flag) {
 		assessmentDetail = new AssessmentDetails();
@@ -558,6 +581,283 @@ public class PropertyExternalService {
 		}
 		return receiptDetails;
 	}
+	
+	public ErrorDetails payWaterTax(String consumerNo, String paymentMode, BigDecimal totalAmount, String paidBy,
+			String username, String password) {
+		ErrorDetails errorDetails = validatePaymentDetails(consumerNo, paymentMode, totalAmount, paidBy);
+		if(null != errorDetails) {
+			return errorDetails;
+		} else {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+		}
+		return errorDetails;
+	}
+	
+	public List<MasterCodeNamePairDetails> getPropertyTypeMasterDetails() {
+		List<MasterCodeNamePairDetails> propTypeMasterDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<PropertyTypeMaster> propertyTypeMasters = propertyTypeMasterDAO.findAll();
+		for(PropertyTypeMaster propertyTypeMaster : propertyTypeMasters) {
+			MasterCodeNamePairDetails propTypeMasterDetails = new MasterCodeNamePairDetails();
+			propTypeMasterDetails.setCode(propertyTypeMaster.getCode());
+			propTypeMasterDetails.setName(propertyTypeMaster.getType());
+			propTypeMasterDetailsList.add(propTypeMasterDetails);
+		}
+		return propTypeMasterDetailsList;
+	}
+	
+	public List<MasterCodeNamePairDetails> getPropertyTypeCategoryDetails(String categoryCode) {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		Map<String, String> codeNameMap = null;
+		PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
+		if (null != propertyTypeMasters) {
+			if (propertyTypeMasters.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+				codeNameMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+			} else {
+				codeNameMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+			}
+			if (null != codeNameMap && !codeNameMap.isEmpty()) {
+				for (String code : codeNameMap.keySet()) {
+					MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
+					mstrCodeNamepairDetails.setCode(code);
+					mstrCodeNamepairDetails.setName(codeNameMap.get(code));
+					mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
+				}
+			}
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getApartmentsAndComplexes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<Apartment> apartmentList = (List<Apartment>)entityManager.createQuery("from Apartment").getResultList();
+		if (null != apartmentList) {
+			for (Apartment apartment : apartmentList) {
+				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+				mstrCodeNamePairDetails.setCode(apartment.getCode());
+				mstrCodeNamePairDetails.setName(apartment.getName());
+				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+			}
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getReasonsForCreateProperty() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		Query qry = entityManager.createQuery("from PropertyMutationMaster pmm where pmm.type = :type");
+		qry.setParameter("type", PropertyTaxConstants.PROP_CREATE_RSN);
+		List<PropertyMutationMaster> propMutationMasterList = (List<PropertyMutationMaster>)qry.getResultList();
+		if (null != propMutationMasterList) {
+			for (PropertyMutationMaster propMutationMaster : propMutationMasterList) {
+				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+				mstrCodeNamePairDetails.setCode(propMutationMaster.getCode());
+				mstrCodeNamePairDetails.setName(propMutationMaster.getMutationName());
+				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+			}
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public List<MasterCodeNamePairDetails> getLocalities() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+				PropertyTaxConstants.LOCALITY, PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
+		if (null != localityList) {
+			for (Boundary boundary : localityList) {
+				MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+				mstrCodeNamePairDetails.setCode(boundary.getBoundaryNum().toString().concat("~").concat(boundary.getName()));
+				mstrCodeNamePairDetails.setName(boundary.getName());
+				mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+			}
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public LocalityDetails getLocalityDetailsByBoundaryNo(Long boundaryNo, String name) {
+		LocalityDetails localityDetails = null;
+		Query qry = entityManager.createQuery("from Boundary b where b.boundaryNum = :boundaryNo and b.name = :name");
+		qry.setParameter("boundaryNo", boundaryNo);
+		qry.setParameter("name", name);
+		List list = qry.getResultList();
+		if(null != list && !list.isEmpty()) {
+			localityDetails = new LocalityDetails();
+			Boundary boundary =  (Boundary)list.get(0);
+			qry = entityManager.createQuery("from CrossHeirarchyImpl cr where cr.child = :child");
+			qry.setParameter("child", boundary);
+			list = qry.getResultList();
+			if(null != list && !list.isEmpty()) {
+				CrossHeirarchyImpl crossHeirarchyImpl = (CrossHeirarchyImpl)list.get(0);
+				qry = entityManager.createQuery("from Boundary b where b.id = :id");
+				qry.setParameter("id", crossHeirarchyImpl.getParent().getId());
+				list = qry.getResultList();
+				if(null != list && !list.isEmpty()) {
+					Boundary block = (Boundary)list.get(0);
+					localityDetails.setBlockName(block.getName());
+					qry = entityManager.createQuery("from Boundary b where b.id = :id");
+					qry.setParameter("id", block.getParent().getId());
+					list = qry.getResultList();
+					if(null != list && !list.isEmpty()) {
+						Boundary ward = (Boundary)list.get(0);
+						localityDetails.setWardName(ward.getName());
+						qry = entityManager.createQuery("from Boundary b where b.id = :id");
+						qry.setParameter("id", ward.getParent().getId());
+						list = qry.getResultList();
+						if(null != list && !list.isEmpty()) {
+							Boundary zone = (Boundary)list.get(0);
+							localityDetails.setZoneName(zone.getName());
+						}
+					}
+				}
+			}
+		}
+		return localityDetails;
+	}
+	
+	public List<MasterCodeNamePairDetails> getElectionWards() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+				PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE, PropertyTaxConstants.ELECTION_HIERARCHY_TYPE);
+		for (Boundary boundary : electionWardList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(boundary.getBoundaryNum().toString());
+			mstrCodeNamePairDetails.setName(boundary.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	public List<MasterCodeNamePairDetails> getEnumerationBlocks() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<Boundary> enumerationBlockList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+				PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE, PropertyTaxConstants.ELECTION_HIERARCHY_TYPE);
+		for (Boundary boundary : enumerationBlockList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(boundary.getBoundaryNum().toString());
+			mstrCodeNamePairDetails.setName(boundary.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getFloorTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<FloorType> floorTypeList = (List<FloorType>)entityManager.createQuery("from FloorType order by name").getResultList();
+		for (FloorType floorType : floorTypeList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(floorType.getCode());
+			mstrCodeNamePairDetails.setName(floorType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getRoofTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<RoofType> roofTypeList = (List<RoofType>)entityManager.createQuery("from RoofType order by name").getResultList();
+		for (RoofType roofType : roofTypeList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(roofType.getCode());
+			mstrCodeNamePairDetails.setName(roofType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getWallTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<WallType> wallTypeList = (List<WallType>)entityManager.createQuery("from WallType order by name").getResultList();
+		for (WallType wallType : wallTypeList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(wallType.getCode());
+			mstrCodeNamePairDetails.setName(wallType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getWoodTypes() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<WoodType> woodTypeList = (List<WoodType>)entityManager.createQuery("from WoodType order by name").getResultList();
+		for (WoodType woodType : woodTypeList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(woodType.getCode());
+			mstrCodeNamePairDetails.setName(woodType.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getBuildingClassifications() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<StructureClassification> structClsfList = (List<StructureClassification>)entityManager.createQuery("from StructureClassification").getResultList();
+		for (StructureClassification structClsf : structClsfList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(structClsf.getConstrTypeCode());
+			mstrCodeNamePairDetails.setName(structClsf.getTypeName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getNatureOfUsages() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<PropertyUsage> usageList = (List<PropertyUsage>)entityManager.createQuery("from PropertyUsage order by usageName").getResultList();
+		for (PropertyUsage propUsage : usageList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(propUsage.getUsageCode());
+			mstrCodeNamePairDetails.setName(propUsage.getUsageName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getOccupancies() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<PropertyOccupation> propOccupList = (List<PropertyOccupation>)entityManager.createQuery("from PropertyOccupation").getResultList();
+		for (PropertyOccupation propOccup : propOccupList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(propOccup.getOccupancyCode());
+			mstrCodeNamePairDetails.setName(propOccup.getOccupation());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getExemptionCategories() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<TaxExeptionReason> taxExeptionReasonList = (List<TaxExeptionReason>)entityManager.createQuery("from TaxExeptionReason order by name").getResultList();
+		for (TaxExeptionReason taxExeptionReason : taxExeptionReasonList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(taxExeptionReason.getCode());
+			mstrCodeNamePairDetails.setName(taxExeptionReason.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MasterCodeNamePairDetails> getApproverDepartments() {
+		List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		List<Department> approverDepartmentList = (List<Department>)entityManager.createQuery("from Department order by name").getResultList();
+		for (Department approverDepartment : approverDepartmentList) {
+			MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
+			mstrCodeNamePairDetails.setCode(approverDepartment.getCode());
+			mstrCodeNamePairDetails.setName(approverDepartment.getName());
+			mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
+		}
+		return mstrCodeNamePairDetailsList;
+	}
+	
 	/**
 	 * This method is used to validate the payment details to do the payments.
 	 * 
