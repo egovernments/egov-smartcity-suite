@@ -186,12 +186,9 @@ public class ConnectionDemandService {
         final HashMap<String, Double> splitAmount = new HashMap<>();
         if (demand != null && demand.getEgDemandDetails() != null && demand.getEgDemandDetails().size() > 0)
             for (final EgDemandDetails detail : demand.getEgDemandDetails())
-                if (WaterTaxConstants.WATERTAX_CONNECTION_CHARGE
+                if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE
                         .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                    splitAmount.put(WaterTaxConstants.WATERTAX_CONNECTION_CHARGE, detail.getAmount().doubleValue());
-                else if (WaterTaxConstants.WATERTAX_SECURITY_CHARGE
-                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                    splitAmount.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, detail.getAmount().doubleValue());
+                    splitAmount.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE
                         .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -375,7 +372,7 @@ public class ConnectionDemandService {
         return billNo.toString();
     }
 
-    public EgDemand getDemandByInstAndConsumerCode(final Installment installment, final String consumerCode) {
-        return waterConnectionDetailsRepository.findByConsumerCodeAndInstallment(installment, consumerCode).getDemand();
+    public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {
+        return waterConnectionDetailsRepository.findByApplicationNumberAndInstallment(installment, consumerCode).getDemand();
     }
 }

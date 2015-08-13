@@ -80,7 +80,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private AssessmentDetails assessmentDetails;
     private Long userId;
     private EgBillType billType;
-    private Boolean isCallbackForApportion = Boolean.TRUE;
+    private Boolean isCallbackForApportion = Boolean.FALSE;
     private String referenceNumber;
 
     @Autowired
@@ -185,7 +185,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        return true;
+        return false;
     }
 
     @Override
@@ -217,7 +217,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDescription() {
-        return "Water Tax Bill Number: " + getWaterConnectionDetails().getConnection().getConsumerCode();
+        return "Water Tax Bill Number: " + getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override
@@ -232,7 +232,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getPropertyId() {
-        return getWaterConnectionDetails().getConnection().getConsumerCode();
+        return getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override

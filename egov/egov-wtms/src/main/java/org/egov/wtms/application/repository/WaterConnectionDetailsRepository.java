@@ -72,9 +72,9 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConnectionAndConnectionStatus(WaterConnection waterConnection,
             ConnectionStatus connectionStatus);
 
-    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode=:consumerCode and wcd.demand.egInstallmentMaster=:installment")
-    WaterConnectionDetails findByConsumerCodeAndInstallment(@Param("installment") Installment installment,
-            @Param("consumerCode") String consumerCode);
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationNumber=:applicationNumber and wcd.demand.egInstallmentMaster=:installment")
+    WaterConnectionDetails findByApplicationNumberAndInstallment(@Param("installment") Installment installment,
+            @Param("applicationNumber") String applicationNumber);
 
     // TODO - Need to re-check this query once closure of connection is
     // implemented. I.e. Whether we allow to close additional

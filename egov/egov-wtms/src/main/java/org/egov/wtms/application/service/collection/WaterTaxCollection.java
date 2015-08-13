@@ -127,9 +127,10 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method saveCollectionDetails");
 
         LOGGER.info("saveCollectionDetails : Start get demandDetailList");
-        final StringBuffer query = new StringBuffer("select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ").
-                        append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ").
-                        append("WHERE dmdet.egDemand.id = :demand");
+        final StringBuffer query = new StringBuffer(
+                "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
+                        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                        .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -183,65 +184,41 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     /*
-     * private void updateCollForRcptCancel(EgDemand demand, BillReceiptInfo
-     * billRcptInfo) { LOGGER.debug(
-     * "reconcileCollForRcptCancel : Updating Collection Started For Demand : "
-     * + demand + " with BillReceiptInfo - " + billRcptInfo);
-     * cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum())); if
-     * (demand.getAmtCollected() != null) {
-     * demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.
-     * getTotalAmount())); } updateDmdDetForRcptCancel(demand, billRcptInfo);
-     * LOGGER.debug(
-     * "reconcileCollForRcptCancel : Updating Collection finished For Demand : "
-     * + demand); } private EgDemand cancelBill(Long billId) { EgDemand egDemand
-     * = null; if (billId != null) { EgBill egBill = egBillDAO.findById(billId,
-     * false); egBill.setIs_Cancelled("Y"); } return egDemand; } private void
-     * updateDmdDetForRcptCancel(EgDemand demand, BillReceiptInfo billRcptInfo)
-     * { LOGGER.debug("Entering method updateDmdDetForRcptCancel");
-     * ReceiptAccountInfo rebateRcptAccInfo = null; Map<String,
-     * ReceiptAccountInfo> rebateReceiptAccInfoByInstallment =
-     * getRebteReceiptAccountInfosByInstallment(billRcptInfo); for
-     * (ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails()) { if
-     * ((rcptAccInfo.getCrAmount() != null &&
-     * rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) &&
-     * !rcptAccInfo.getIsRevenueAccount()) { String[] desc =
-     * rcptAccInfo.getDescription().split("-", 2); String reason =
-     * desc[0].trim(); String installment = desc[1].trim(); EgDemandReasonMaster
-     * demandReasonMaster = null; rebateRcptAccInfo =
-     * rebateReceiptAccInfoByInstallment.get(installment); for (EgDemandDetails
-     * demandDetail : demand.getEgDemandDetails()) { demandReasonMaster =
-     * demandDetail.getEgDemandReason().getEgDemandReasonMaster(); if
-     * (reason.equals(demandReasonMaster.getReasonMaster())) { if
-     * (reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE) ||
-     * installment.equals(demandDetail.getEgDemandReason().
-     * getEgInstallmentMaster() .getDescription())) { if (rebateRcptAccInfo !=
-     * null) { if (demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) > 0 &&
-     * (demandReasonMaster.getCode().equals(DEMANDRSN_CODE_GENERAL_TAX) ||
-     * demandReasonMaster .getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)))
-     * { demandDetail.setAmtRebate(demandDetail.getAmtRebate().subtract(
-     * rebateRcptAccInfo.getDrAmount())); } } if
-     * (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
-     * { throw new EGOVRuntimeException(
-     * "updateDmdDetForRcptCancel : Exception while updating cancel receipt, " +
-     * "to be deducted amount " + rcptAccInfo.getCrAmount() +
-     * " is greater than the collected amount " + demandDetail.getAmtCollected()
-     * + " for demandDetail " + demandDetail); }
-     * demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract(
-     * rcptAccInfo.getCrAmount())); LOGGER.info("Deducted Collected amount Rs."
-     * + rcptAccInfo.getCrAmount() + " for tax : " + reason +
-     * " and installment : " + installment); } } } } }
-     * updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-     * LOGGER.debug("Exiting method updateDmdDetForRcptCancel"); } private
-     * Map<String, ReceiptAccountInfo>
-     * getRebteReceiptAccountInfosByInstallment(BillReceiptInfo billRcptInfo) {
-     * Map<String, ReceiptAccountInfo> rebateReceiptAccInfoByInstallment = new
-     * HashMap<String, ReceiptAccountInfo>(); for (ReceiptAccountInfo
-     * rcptAccInfo : billRcptInfo.getAccountDetails()) { if
-     * (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE) ||
-     * rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.
-     * GLCODE_FOR_ADVANCE_REBATE)) { rebateReceiptAccInfoByInstallment
-     * .put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo);
-     * } } return rebateReceiptAccInfoByInstallment; }
+     * private void updateCollForRcptCancel(EgDemand demand, BillReceiptInfo billRcptInfo) { LOGGER.debug(
+     * "reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand + " with BillReceiptInfo - " +
+     * billRcptInfo); cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum())); if (demand.getAmtCollected() != null) {
+     * demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo. getTotalAmount())); }
+     * updateDmdDetForRcptCancel(demand, billRcptInfo); LOGGER.debug(
+     * "reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand); } private EgDemand cancelBill(Long
+     * billId) { EgDemand egDemand = null; if (billId != null) { EgBill egBill = egBillDAO.findById(billId, false);
+     * egBill.setIs_Cancelled("Y"); } return egDemand; } private void updateDmdDetForRcptCancel(EgDemand demand, BillReceiptInfo
+     * billRcptInfo) { LOGGER.debug("Entering method updateDmdDetForRcptCancel"); ReceiptAccountInfo rebateRcptAccInfo = null;
+     * Map<String, ReceiptAccountInfo> rebateReceiptAccInfoByInstallment = getRebteReceiptAccountInfosByInstallment(billRcptInfo);
+     * for (ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails()) { if ((rcptAccInfo.getCrAmount() != null &&
+     * rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) && !rcptAccInfo.getIsRevenueAccount()) { String[] desc =
+     * rcptAccInfo.getDescription().split("-", 2); String reason = desc[0].trim(); String installment = desc[1].trim();
+     * EgDemandReasonMaster demandReasonMaster = null; rebateRcptAccInfo = rebateReceiptAccInfoByInstallment.get(installment); for
+     * (EgDemandDetails demandDetail : demand.getEgDemandDetails()) { demandReasonMaster =
+     * demandDetail.getEgDemandReason().getEgDemandReasonMaster(); if (reason.equals(demandReasonMaster.getReasonMaster())) { if
+     * (reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE) || installment.equals(demandDetail.getEgDemandReason().
+     * getEgInstallmentMaster() .getDescription())) { if (rebateRcptAccInfo != null) { if
+     * (demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) > 0 &&
+     * (demandReasonMaster.getCode().equals(DEMANDRSN_CODE_GENERAL_TAX) || demandReasonMaster
+     * .getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))) { demandDetail.setAmtRebate(demandDetail.getAmtRebate().subtract(
+     * rebateRcptAccInfo.getDrAmount())); } } if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0) { throw
+     * new EGOVRuntimeException( "updateDmdDetForRcptCancel : Exception while updating cancel receipt, " +
+     * "to be deducted amount " + rcptAccInfo.getCrAmount() + " is greater than the collected amount " +
+     * demandDetail.getAmtCollected() + " for demandDetail " + demandDetail); }
+     * demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract( rcptAccInfo.getCrAmount())); LOGGER.info(
+     * "Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason + " and installment : " +
+     * installment); } } } } } updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum()); LOGGER.debug(
+     * "Exiting method updateDmdDetForRcptCancel"); } private Map<String, ReceiptAccountInfo>
+     * getRebteReceiptAccountInfosByInstallment(BillReceiptInfo billRcptInfo) { Map<String, ReceiptAccountInfo>
+     * rebateReceiptAccInfoByInstallment = new HashMap<String, ReceiptAccountInfo>(); for (ReceiptAccountInfo rcptAccInfo :
+     * billRcptInfo.getAccountDetails()) { if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE) ||
+     * rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants. GLCODE_FOR_ADVANCE_REBATE)) {
+     * rebateReceiptAccInfoByInstallment .put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo); } } return
+     * rebateReceiptAccInfoByInstallment; }
      */
     @Override
     protected Module module() {
@@ -252,7 +229,8 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("Entered into getCurrentDemand");
 
         final EgBill egBill = egBillDAO.findById(billId, false);
-        final EgDemand egDemand = connectionDemandService.getDemandByInstAndConsumerCode(getCurrentInstallment(),egBill.getConsumerId());
+        final EgDemand egDemand = connectionDemandService.getDemandByInstAndApplicationNumber(getCurrentInstallment(),
+                egBill.getConsumerId());
         LOGGER.debug("Exiting from getCurrentDemand");
         return egDemand;
     }

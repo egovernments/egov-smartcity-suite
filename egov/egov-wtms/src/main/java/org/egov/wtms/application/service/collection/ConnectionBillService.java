@@ -120,7 +120,7 @@ public class ConnectionBillService extends BillServiceInterface {
                         + demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
                 billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
-                billdetail.setAdditionalFlag(1);
+                billdetail.setAdditionalFlag(Integer.valueOf(1));
                 billdetail.setCreateDate(currentDate);
                 billdetail.setModifiedDate(currentDate);
                 billdetail.setOrderNo(i++);

@@ -70,9 +70,9 @@ public class GenericBillGeneratorController {
         this.connectionDemandService = connectionDemandService;
     }
 
-    @RequestMapping(value = "/generatebill/{consumerCode}", method = GET)
-    public String showCollectFeeForm(final Model model, @PathVariable final String consumerCode) {
-        return "redirect:/application/collecttax-view?consumerCode=" + consumerCode;
+    @RequestMapping(value = "/generatebill/{applicationCode}", method = GET)
+    public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
+        return "redirect:/application/collecttax-view?applicationCode=" + applicationCode;
     }
 
     @RequestMapping(value = "/collecttax-view", method = GET)
@@ -89,11 +89,11 @@ public class GenericBillGeneratorController {
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 
-    @RequestMapping(value = "/generatebill/{consumerCode}", method = POST)
+    @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String consumerCode, final Model model) {
-        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
-        model.addAttribute("collectxml", connectionDemandService.generateBill(consumerCode));
+            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode, final Model model) {
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode));
         return "collecttax-redirection";
     }
 
