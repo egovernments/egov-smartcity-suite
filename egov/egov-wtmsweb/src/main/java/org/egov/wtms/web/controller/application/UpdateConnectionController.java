@@ -186,15 +186,16 @@ public class UpdateConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
 
-        final ConnectionCategory connectionCategory = connectionCategoryService
-                .findBy(waterConnectionDetails.getCategory().getId());
-        if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
-                && waterConnectionDetails.getBplCardHolderName() != null)
-            waterConnectionDetails.setBplCardHolderName(null);
         if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
                 request.getParameter("workFlowAction") != null
-                && request.getParameter("workFlowAction").equals(WaterTaxConstants.SUBMITWORKFLOWACTION))
+                && request.getParameter("workFlowAction").equals(WaterTaxConstants.SUBMITWORKFLOWACTION)) {
+            final ConnectionCategory connectionCategory = connectionCategoryService
+                    .findBy(waterConnectionDetails.getCategory().getId());
+            if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(WaterTaxConstants.CATEGORY_BPL)
+                    && waterConnectionDetails.getBplCardHolderName() != null)
+                waterConnectionDetails.setBplCardHolderName(null);
             populateEstimationDetails();
+        }
 
         Long approvalPosition = 0l;
         String approvalComent = "";
