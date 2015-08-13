@@ -139,8 +139,7 @@ public class CitizenController extends ApiController {
             Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();            
             citizenUpdate.setDob(dt);
             citizenUpdate.setPan(citizen.get("pan").toString());
-            citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());
-            citizenUpdate.setLocale(citizen.get("locale").toString());
+            citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());            
             citizenService.update(citizenUpdate);
             return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("msg.citizen.update.success"));
 
