@@ -41,6 +41,7 @@ package org.egov.eis.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -127,5 +128,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" select A from Assignment A inner join A.employee EMP inner join  EMP.jurisdictions as JRDN  where  JRDN.boundary.id=:boundaryId AND A.designation.id=:desigId and  A.fromDate<=current_date and A.toDate>=current_date order by A.fromDate ")
     public List<Assignment> findByDepartmentDesignationAndBoundary(@Param("desigId") final Long desigId,
             @Param("boundaryId") final Long boundaryId);
+    
+    @Query(" from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join fetch EMP.jurisdictions as JRDN "
+            + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
+            + " and JRDN.boundary.id in :boundaryIds")
+    public List<Assignment> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
+            @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
 }

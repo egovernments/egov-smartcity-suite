@@ -41,12 +41,16 @@ package org.egov.eis.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +66,9 @@ public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
     private final HeadOfDepartmentsRepository employeeDepartmentRepository;
+
+    @Autowired
+    private BoundaryService boundaryService;
 
     @Autowired
     public AssignmentService(final AssignmentRepository assignmentRepository,
@@ -267,5 +274,22 @@ public class AssignmentService {
 
     public List<Assignment> findByDesignationAndBoundary(final Long desigId, final Long boundaryId) {
         return assignmentRepository.findByDepartmentDesignationAndBoundary(desigId, boundaryId);
+    }
+
+    /**
+     * Gets all assignments for a particular department,designation and given
+     * boundary or all the employees under that boundary
+     *
+     * @param deptId
+     * @param desigId
+     * @param boundaryId
+     * @return List of assignment objects
+     */
+    public List<Assignment> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
+            final Long boundaryId) {
+        final Set<Long> bndIds = new HashSet<Long>();
+        final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
+        boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
+        return assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId, bndIds);
     }
 }
