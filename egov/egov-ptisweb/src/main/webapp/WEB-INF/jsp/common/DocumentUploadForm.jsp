@@ -39,6 +39,12 @@
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<script>
+	function viewDocument(fileStoreId) {
+		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=PTIS";
+		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+	}
+</script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
@@ -59,15 +65,27 @@
 					</tr>
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
-							<td class="blueborderfortd" align="center">
+							<td class="blueborderfortd" style="text-align: left">
 								<span class="bold"><s:property value="#status.index + 1"/></span>
 							</td>
 							<td class="blueborderfortd" style="text-align: left">
 								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
 								<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
 							</td>
-							<td class="blueborderfortd" align="center">
-								<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+							<td class="blueborderfortd" style="text-align: left">
+								<s:if test="%{documents.isEmpty()}">
+									<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" />
+								</s:if>
+								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
+									<span class="bold">N/A</span>
+								</s:elseif>
+								<s:else>
+									<s:iterator value="%{documents[#status.index].files}">
+										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+					 						<s:property value="%{fileName}"/>
+										</a> 
+									</s:iterator>	
+								</s:else>
 							</td>
 						</tr>
 					</s:iterator>

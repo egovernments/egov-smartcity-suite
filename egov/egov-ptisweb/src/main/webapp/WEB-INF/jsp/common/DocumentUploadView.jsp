@@ -39,6 +39,12 @@
 -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<script>
+	function viewDocument(fileStoreId) {
+		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=PTIS";
+		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+	}
+</script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
@@ -55,7 +61,7 @@
 					<tr>
 						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
 						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd">Upload File</th>
+						<th class="bluebgheadtd">File</th>
 					</tr>
 					<s:iterator value="documentTypes" status="status" var="documentType">
 						<tr>
@@ -66,9 +72,16 @@
 								<span class="bold"><s:property	value="%{name}" /></span>
 							</td>
 							<td class="blueborderfortd" style="text-align: center">
-								<s:iterator value="%{documents[#status.index].files}">
-									<span class="bold"><s:property value="%{fileName}" default="N/A"/></span>
-								</s:iterator>
+								<s:if test="%{documents.isEmpty() || documents[#status.index].files.isEmpty()}">
+									<span class="bold">N/A</span>
+								</s:if>
+								<s:else>
+									<s:iterator value="%{documents[#status.index].files}">
+										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+					 						<s:property value="%{fileName}"/>
+										</a> 
+									</s:iterator>	
+								</s:else>
 							</td>
 						</tr>
 					</s:iterator>
