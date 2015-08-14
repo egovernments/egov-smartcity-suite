@@ -45,9 +45,7 @@
 <head>
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='NewProp.title' />
-	</s:if> <s:if test="mode=='view'">
-    	View Property Form
-    	</s:if></title>
+	</s:if></title>
 <sx:head />
 <!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script

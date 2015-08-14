@@ -374,7 +374,7 @@ public class PropertyService {
         final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
                 "from PropertyStatus where statusCode=?", statusCode);
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode))
+                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode) || PROP_CREATE_RSN_BIFUR.equals(statusCode))
             propStatVal.setIsActive("W");
         else
             propStatVal.setIsActive("Y");
@@ -2030,7 +2030,7 @@ public class PropertyService {
             } else {
                 parentProperty = basicProperty.getActiveProperty();
             }
-            validateArea(propertyModel, parentProperty, children);
+            errorMsg = validateArea(propertyModel, parentProperty, children);
         }
         return errorMsg;
     }
@@ -2079,7 +2079,7 @@ public class PropertyService {
     public Boolean isPropertyBifurcated(final BasicProperty basicProperty) {
         Boolean propBifurcated = Boolean.FALSE;
         for (final Property property : basicProperty.getPropertySet())
-            if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason())
+            if ((PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(property.getPropertyModifyReason()) || PROP_CREATE_RSN_BIFUR.equalsIgnoreCase(property.getPropertyModifyReason()))
                     && !STATUS_WORKFLOW.equals(property.getStatus())) {
                 propBifurcated = Boolean.TRUE;
                 break;

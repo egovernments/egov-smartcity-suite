@@ -55,6 +55,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
@@ -90,6 +91,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Area;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -130,6 +132,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
@@ -150,9 +153,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-    @Result(name = "ack", location = "create/createProperty-ack.jsp"),
-    @Result(name = "view", location = "create/createProperty-view.jsp"),
-    @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+        @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+        @Result(name = "view", location = "create/createProperty-view.jsp"),
+        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
     /**
      *
@@ -240,6 +243,7 @@ public class CreatePropertyAction extends WorkflowAction {
     private String applicationNoMessage;
     private String assessmentNoMessage;
     private String propertyInitiatedBy;
+
     @Autowired
     private UserService userService;
 
@@ -345,6 +349,10 @@ public class CreatePropertyAction extends WorkflowAction {
             setRegdDocDate(basicProp.getRegdDocDate());
             setRegdDocNo(basicProp.getRegdDocNo());
             setMutationId(basicProp.getPropertyMutationMaster().getId());
+            final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService().find(
+                    "From PropertyStatusValues where basicProperty.id = ?", basicProp.getId());
+            if (null != statusValues.getReferenceBasicProperty())
+                setParentIndex(statusValues.getReferenceBasicProperty().getUpicNo());
             if (null != basicProp.getAddress()) {
                 setHouseNumber(basicProp.getAddress().getHouseNoBldgApt());
                 setPinCode(basicProp.getAddress().getPinCode());
@@ -532,14 +540,13 @@ public class CreatePropertyAction extends WorkflowAction {
             propertyInitiatedBy = property.getCreatedBy().getName();
         else
             propertyInitiatedBy = assignmentService
-                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-                    .getEmployee().getUsername();
-        if(property.getState().getValue().equals("Closed")) {
+            .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+            .getEmployee().getUsername();
+        if (property.getState().getValue().equals("Closed")) {
             propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
-        } else {
+        } else
             setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : ");
-        }
         setApplicationNoMessage(" with application No :");
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
@@ -681,6 +688,7 @@ public class CreatePropertyAction extends WorkflowAction {
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
         property.setBasicProperty(basicProperty);
+        property.setPropertyModifyReason(propertyMutationMaster.getCode());
 
         /*
          * isfloorDetailsRequired is used to check if floor details have to be
@@ -736,17 +744,17 @@ public class CreatePropertyAction extends WorkflowAction {
                 propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
                 propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
                 propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
-                        propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
-                                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
-                                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
-                                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
-                                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-                                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-                                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
-                                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
-                                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                                propertyDetail.isBuildingPlanDetailsChecked());
+                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+                propertyDetail.isBuildingPlanDetailsChecked());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -881,6 +889,29 @@ public class CreatePropertyAction extends WorkflowAction {
             if (isBlank(corrPinCode) && corrPinCode.length() < 6)
                 addActionError(getText("mandatory.corr.pincode.size"));
         }
+
+        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+            final Area area = new Area();
+            area.setArea(new Float(areaOfPlot));
+            property.getPropertyDetail().setSitalArea(area);
+        }
+        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
+                "from PropertyMutationMaster pmm where pmm.id=?", mutationId);
+        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+            if (StringUtils.isNotBlank(parentIndex)) {
+                final BasicProperty basicProperty = basicPropertyService.find(
+                        "From BasicPropertyImpl where upicNo = ? ", parentIndex);
+                if (null != basicProperty) {
+                    final String errorKey = propService.validationForBifurcation(property, basicProperty,
+                            propertyMutationMaster.getCode());
+                    if (!isBlank(errorKey))
+                        addActionError(getText(errorKey));
+                } else
+                    addActionError(getText("error.parent"));
+
+            } else
+                addActionError("error.parent.index");
+
         validateApproverDetails();
         super.validate();
     }

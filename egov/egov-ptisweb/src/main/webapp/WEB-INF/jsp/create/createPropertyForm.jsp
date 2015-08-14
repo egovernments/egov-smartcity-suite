@@ -231,13 +231,7 @@
 			</div>
 		</td>
 	</tr>
-    <s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn) || 
-		@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(model.state.nextAction)}">
-		<%@ include file="../common/DocumentUploadView.jsp"%>
-	</s:if>
-	<s:else>
-		<%@ include file="../common/DocumentUploadForm.jsp"%>
-	</s:else> 
+   <%@ include file="../common/DocumentUploadForm.jsp"%>
 </table>
 <script type="text/javascript">
 	function showDocumentManager() {

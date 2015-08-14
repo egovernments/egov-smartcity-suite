@@ -100,6 +100,8 @@
 		<td class="greybox" width="">
 			<span class="bold"><s:property value="%{propertyDetail.propertyMutationMaster.mutationName}" default="N/A"/></span>
 		</td>
+		<td class="greybox"><s:text name="prntPropAssessmentNum" />:</td>
+		<td class="greybox"><span class="bold"><s:property value="%{parentIndex}" default="N/A"/></span></td>
 	</tr>
 	<tr class="extentSite">
 		<td class="greybox" width="5%">&nbsp;</td>
