@@ -97,6 +97,9 @@
 	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
 	<s:push value="model">
 	<s:token />
+		<s:if test="%{hasActionMessages()}">
+		<div class="messagestyle"><s:actionmessage theme="simple" /></div>
+	</s:if>
 	<div class="errorstyle" id="lblError" style="display:none;"></div>
 	<s:actionerror/>  <s:fielderror />
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabs-tableparent">

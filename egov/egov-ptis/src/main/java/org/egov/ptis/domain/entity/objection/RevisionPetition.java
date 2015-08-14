@@ -77,7 +77,7 @@ public class RevisionPetition extends StateAware implements Auditable{
 	@Length(max = 50, message = "objection.objectionNumber.length")
 	private String objectionNumber;
 
-	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.receivedOn.futuredate")
+	/*@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.receivedOn.futuredate")*/
 	@org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.receivedOn")
 	private Date recievedOn;
 

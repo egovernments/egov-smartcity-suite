@@ -112,6 +112,7 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -126,6 +127,7 @@ import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
@@ -1934,24 +1936,54 @@ public class PropertyService {
     /**
      * Creates or Updates Application index
      * 
-     * @param property
+     * @param stateAwareObject
      * @param applictionType
      */
-    public void updateIndexes(final PropertyImpl property, final String applictionType) {
-        final ApplicationIndex applicationIndex = applicationIndexService
-                .findByApplicationNumber(property.getApplicationNo());
-        final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo();
-        if (null == applicationIndex) {
-            final ApplicationIndexBuilder applicationIndexBuilder =
-                    new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, property.getApplicationNo(),
-                            property.getCreatedDate(), applictionType,
-                            property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
-            applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
-        } else {
-            applicationIndex.setStatus(property.getState().getValue());
-            applicationIndexService.updateApplicationIndex(applicationIndex);
-        }
-    }
+    public void updateIndexes(final StateAware stateAwareObject, final String applictionType) {
+        //   PropertyImpl property= (PropertyImpl) propertyObj;   
+         
+           if(applictionType!=null && ( applictionType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT) ||
+                   applictionType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)||
+                   applictionType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT)))
+           {
+               PropertyImpl   property= (PropertyImpl) stateAwareObject; 
+              
+               final ApplicationIndex applicationIndex = applicationIndexService
+                       .findByApplicationNumber(property.getApplicationNo());
+               final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo();
+               if (null == applicationIndex) {
+                   final ApplicationIndexBuilder applicationIndexBuilder =
+                           new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, property.getApplicationNo(),
+                                   property.getCreatedDate(), applictionType,
+                                   property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
+                   applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+               } else {
+                   applicationIndex.setStatus(property.getState().getValue());
+                   applicationIndexService.updateApplicationIndex(applicationIndex);
+               }
+               
+           }  else if(applictionType!=null && ( applictionType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION)))
+                   {
+               RevisionPetition property=(RevisionPetition) stateAwareObject;
+               
+               final ApplicationIndex applicationIndex = applicationIndexService
+                       .findByApplicationNumber(property.getObjectionNumber());
+               final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber();
+               if (null == applicationIndex) {
+                   final ApplicationIndexBuilder applicationIndexBuilder =
+                           new ApplicationIndexBuilder(PropertyTaxConstants.PTMODULENAME, property.getObjectionNumber(),
+                                   (property.getCreatedDate()!=null?property.getCreatedDate():new Date()), applictionType,
+                                   property.getBasicProperty().getFullOwnerName(), property.getState().getValue(), url);
+                   applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+               } else {
+                   applicationIndex.setStatus(property.getState().getValue());
+                   applicationIndexService.updateApplicationIndex(applicationIndex);
+               }
+               
+                   }
+     
+       
+   }
 
     /**
      * Returns whether assessment has demand dues or not

@@ -93,6 +93,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -109,6 +110,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -148,6 +150,7 @@ import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
@@ -163,74 +166,79 @@ import org.springframework.beans.factory.annotation.Autowired;
 		@Result(name = "view", location = "objection-view.jsp"), @Result(name = "ack", location = "objection-ack.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
-	private static final long serialVersionUID = 1L;
-	private  String REJECTED = "Rejected";
-	public static final String STRUTS_RESULT_MESSAGE = "message";
-	public static final String NOTICE = "notice";
-	private final Logger LOGGER = Logger.getLogger(RevisionPetitionAction.class);
-	private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
-	private RevisionPetition objection = new RevisionPetition();
-	private String propertyId;
-	private Map<String, Object> viewMap;
-	private RevisionPetitionService revisionPetitionService; 
-	protected WorkflowService<RevisionPetition> objectionWorkflowService;
-	private String ownerName;
-	private String propertyAddress;
-	private PersistenceService<Property, Long> propertyImplService;
-	private String propTypeId;
-	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private String[] floorNoStr = new String[100];
-	
-	private PropertyService propService;
-	private PropertyStatusValues propStatVal;
-	private String reasonForModify;
-	private TreeMap<Integer, String> floorNoMap;
-	private Map<String, String> deviationPercentageMap;
-	private TreeMap<String, String> hearingTimingMap;
-	
-	private List<DocumentType> documentTypes = new ArrayList<>();
-	  private String northBoundary;
-	    private String southBoundary;
-	    private String eastBoundary;
-	    private String westBoundary;
+        private static final long serialVersionUID = 1L;
+        private String REJECTED = "Rejected";
+        public static final String STRUTS_RESULT_MESSAGE = "message";
+        private static final String REVISION_PETITION_CREATED="CREATED";
+        private static final String REVISION_PETITION_HEARINGNOTICEGENERATED="HEARINGNOTICEGENERATED";
+        private static final String REVISION_PETITION_ENDORESEMENTGENERATED="ENDORESEMTNTGENERATED";
+        public static final String NOTICE = "notice";
+        private final Logger LOGGER = Logger.getLogger(RevisionPetitionAction.class);
+        private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
+        private RevisionPetition objection = new RevisionPetition();
+        private String propertyId;
+        private Map<String, Object> viewMap;
+        private RevisionPetitionService revisionPetitionService;
+        protected WorkflowService<RevisionPetition> objectionWorkflowService;
+        private String ownerName;
+        private String propertyAddress;
+        private PersistenceService<Property, Long> propertyImplService;
+        private String propTypeId;
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        private String[] floorNoStr = new String[100];
+    
+        private PropertyService propService;
+        private PropertyStatusValues propStatVal;
+        private String reasonForModify;
+        private TreeMap<Integer, String> floorNoMap;
+        private Map<String, String> deviationPercentageMap;
+        private TreeMap<String, String> hearingTimingMap;
+    
+        private List<DocumentType> documentTypes = new ArrayList<>();
+        private String northBoundary;
+        private String southBoundary;
+        private String eastBoundary;
+        private String westBoundary;
         private Map<String, String> propTypeCategoryMap;
-	private Integer reportId = -1;
-	@Autowired
-	private PropertyStatusValuesDAO propertyStatusValuesDAO;
-	@Autowired
-	private ReportService reportService;
-	@Autowired
-	private NoticeService noticeService;
-	@Autowired
-	private BasicPropertyDAO basicPropertyDAO;
-	 private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	@Autowired
-	protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
-	
+        private Integer reportId = -1;
+        @Autowired
+        private PropertyStatusValuesDAO propertyStatusValuesDAO;
+        @Autowired
+        private ReportService reportService;
+        @Autowired
+        private NoticeService noticeService;
+        @Autowired
+        private BasicPropertyDAO basicPropertyDAO;
+        private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+        @Autowired
+        protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
+    
         private boolean isShowAckMessage;
-	@Autowired
-	private PtDemandDao ptDemandDAO;
-
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private PropertyStatusDAO propertyStatusDAO;
-
-	@Autowired
-	private EgwStatusHibernateDAO egwStatusDAO;
-	@Autowired
-	private EisCommonService eisCommonService;
-	@Autowired
-	PositionMasterService positionMasterService;
-	
-	@Autowired
-	DesignationService designationService;
-	@Autowired
-	private EmployeeService employeeService;
-	@Autowired
-	private ApplicationNumberGenerator applicationNumberGenerator;
-
+        @Autowired
+        private PtDemandDao ptDemandDAO;
+    
+        @Autowired
+        private UserService userService;
+    
+        @Autowired
+        private PropertyStatusDAO propertyStatusDAO;
+    
+        @Autowired
+        private EgwStatusHibernateDAO egwStatusDAO;
+        @Autowired
+        private EisCommonService eisCommonService;
+        @Autowired
+        PositionMasterService positionMasterService;
+    
+        @Autowired
+        DesignationService designationService;
+        @Autowired
+        private EmployeeService employeeService;
+        @Autowired
+        private ApplicationNumberGenerator applicationNumberGenerator;
+        @Autowired
+        private MessagingService messagingService;
+        private SMSEmailService sMSEmailService;
 	public RevisionPetitionAction() {
 
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
@@ -252,50 +260,49 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void prepare() {
-		// to merge the new values from jsp with existing
-		if (objection.getId() != null) {
-			objection = revisionPetitionService.findById(objection.getId(), false);
-
-		}
-		super.prepare();
-		setUserInfo();
-		//setupWorkflowDetails();
-		documentTypes = propService.getPropertyModificationDocumentTypes();
-		List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
-		List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
-		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
-				"from PropertyTypeMaster order by orderNo");
-		List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
-				"from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
-		List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
-		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
-		List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
-		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
-		setFloorNoMap(CommonServices.floorMap());
-		addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
-		addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
-		     final List<String> apartmentsList = getPersistenceService().findAllBy(
-		                "from Apartment order by name");
-		        final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-		                "from TaxExeptionReason order by name");
-		         
-		addDropdownData("wallType", wallTypes);
-		addDropdownData("woodType", woodTypes);
-		addDropdownData("PropTypeMaster", propTypeList);
-		addDropdownData("OccupancyList", propOccList);
-		addDropdownData("UsageList", usageList);
-		addDropdownData("MutationList", propMutList);
-		addDropdownData("StructureList", StructureList);
-		addDropdownData("AgeFactorList", ageFacList);
+            public void prepare() {
+                // to merge the new values from jsp with existing
+                if (objection.getId() != null) {
+                    objection = revisionPetitionService.findById(objection.getId(), false);
+        
+                }
+                super.prepare();
+                setUserInfo();
+                // setupWorkflowDetails();
+                documentTypes = propService.getPropertyModificationDocumentTypes();
+                List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
+                List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
+                List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
+                        "from PropertyTypeMaster order by orderNo");
+                List<PropertyMutationMaster> propMutList = getPersistenceService().findAllBy(
+                        "from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
+                List<String> StructureList = getPersistenceService().findAllBy("from StructureClassification");
+                List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
+                List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
+                List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+                setFloorNoMap(CommonServices.floorMap());
+                addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
+                addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
+                final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+                final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
+                        "from TaxExeptionReason order by name");
+        
+                addDropdownData("wallType", wallTypes);
+                addDropdownData("woodType", woodTypes);
+                addDropdownData("PropTypeMaster", propTypeList);
+                addDropdownData("OccupancyList", propOccList);
+                addDropdownData("UsageList", usageList);
+                addDropdownData("MutationList", propMutList);
+                addDropdownData("StructureList", StructureList);
+                addDropdownData("AgeFactorList", ageFacList);
                 addDropdownData("apartments", apartmentsList);
                 addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
-                
+        
                 populatePropertyTypeCategory();
                 setDeviationPercentageMap(DEVIATION_PERCENTAGE);
                 setHearingTimingMap(HEARING_TIMINGS);
-               
-	}
+        
+            }
 
 	@SkipValidation
 	@Action(value = "/revPetition/revPetition-newForm")
@@ -319,29 +326,32 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	public String create() {
 		LOGGER.debug("ObjectionAction | Create | start " + objection);
 		//setupWorkflowDetails();
+		if(objection.getRecievedOn()==null)
+		{
+		    addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
+                    return NEW;
+		    
+		}
+		else if (objection.getRecievedOn()!=null && objection.getRecievedOn()
+	                .after(new Date())) {
 
+	            addActionMessage(getText("objection.receivedOn.futuredate"));
+	            return NEW;
+	        } else
+	        {
 		objection.setObjectionNumber(applicationNumberGenerator.generate());
 
 		objection.getBasicProperty().setStatus(
 				propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
-		/*EgwStatus egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
-				PropertyTaxConstants.OBJECTION_CREATED);
-		objection.setEgwStatus(egwStatus);
 		
-		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
-			// FIX ME
-			// objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
-		} else {
-			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-		}
-		 */
 		updateStateAndStatus(objection);
 		addActionMessage(getText("objection.success") + objection.getObjectionNumber());
-		revisionPetitionService.applyAuditing(objection.getState());
 		revisionPetitionService.createRevisionPetition(objection);
+		revisionPetitionService.applyAuditing(objection.getState());
+		sendEmailandSms(objection,REVISION_PETITION_CREATED);
 		//objectionService.persist(objection);
 		LOGGER.debug("ObjectionAction | Create | End " + objection);
+	        }
 		return STRUTS_RESULT_MESSAGE;
 	}
 
@@ -374,7 +384,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(),
                     hearingNoticePdf);// Save Notice
             // objectionService.update(objection);
+            
             revisionPetitionService.updateRevisionPetition(objection);
+            sendEmailandSms(objection,REVISION_PETITION_HEARINGNOTICEGENERATED);
             LOGGER.debug("ObjectionAction | addHearingDate | End " + objection);
         }
         return STRUTS_RESULT_MESSAGE;
@@ -560,6 +572,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 if (hasErrors()) {
                     return "view";
                 }
+                if (objection.getDateOfOutcome()!=null && objection.getDateOfOutcome()
+                        .after(new Date())) {
+
+                    addActionMessage(getText("dateOfOutcome.greaterThan.todaydate"));
+                    return "view";
+                }else
+                if (objection.getDateOfOutcome()!=null && objection.getRecievedOn()
+                        .after(objection.getDateOfOutcome())) {
+
+                    addActionMessage(getText("dateOfOutcome.greaterThan.recievedOn"));
+                    return "view";
+                }
+                
                 if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
         
                     if (objection.getObjectionRejected()) {
@@ -596,7 +621,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         */
                // propertyImplService.merge(objection.getProperty());
                // objectionService.update(objection);
+                
                 revisionPetitionService.updateRevisionPetition(objection);   
+                sendEmailandSms(objection,REVISION_PETITION_ENDORESEMENTGENERATED);
                 addActionMessage(getText("objection.outcome.success"));
                 LOGGER.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
                 return STRUTS_RESULT_MESSAGE;
@@ -799,6 +826,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                        
                         objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
                                 .withComments(approverComments);
+                        
                     } else {
                         updateStateAndStatus(objection); //If objection not rejected, then print special notice.
                     }
@@ -866,9 +894,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
                             .withComments(approverComments);
                 }
-                
-                generateSpecialNotice(objection.getProperty(),(BasicPropertyImpl) objection.getBasicProperty());
-                
+        
+                generateSpecialNotice(objection.getProperty(), (BasicPropertyImpl) objection.getBasicProperty());
+        
                 revisionPetitionService.updateRevisionPetition(objection);
                 getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
                 /* return STRUTS_RESULT_MESSAGE; */
@@ -895,6 +923,58 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 return NOTICE;
             }
 
+        public void sendEmailandSms(final RevisionPetition objection, final String applicationType) {
+    
+            if (objection != null) {
+                final User user = objection.getBasicProperty().getPrimaryOwner();
+                final String mobileNumber = user.getMobileNumber();
+                final String emailid = user.getEmailId();
+                final String applicantName = user.getName();
+                final List<String> args = new ArrayList<String>();
+                args.add(applicantName);
+                String smsMsg = "";
+                String emailSubject = "";
+                String emailBody = "";
+    
+                if (applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
+    
+                    args.add(objection.getObjectionNumber());
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.revPetitioncreate.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.revPetitioncreate.email.subject");
+                        emailBody = getText("msg.revPetitioncreate.email", args);
+                    }
+                } else if (applicationType.equalsIgnoreCase(REVISION_PETITION_HEARINGNOTICEGENERATED)) {
+    
+                    if (objection.getHearings() != null && objection.getHearings().size() > 0) {
+                        args.add(DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(),
+                                "dd/MM/yyyy"));
+                        args.add(objection.getHearings().get(0).getHearingVenue());
+                        args.add(objection.getHearings().get(0).getHearingTime());
+                        args.add(sMSEmailService.getCityName());
+                        if (mobileNumber != null)
+                            smsMsg = getText("msg.revPetitionHearingNotice.sms", args);
+                        if (emailid != null) {
+                            emailSubject = getText("msg.revPetitionHearingNotice.email.subject");
+                            emailBody = getText("msg.revPetitionHearingNotice.email", args);
+                        }
+                    }
+                } else if (applicationType.equalsIgnoreCase(REVISION_PETITION_ENDORESEMENTGENERATED)) {
+                    args.add(sMSEmailService.getCityName());
+                    if (mobileNumber != null)
+                        smsMsg = getText("msg.revPetitionEndoresement.sms", args);
+                    if (emailid != null) {
+                        emailSubject = getText("msg.revPetitionHearingNotice.email.subject");
+                        emailBody = getText("msg.revPetitionEndoresement.email", args);
+                    }
+                }
+                if (mobileNumber != null)
+                    messagingService.sendSMS(mobileNumber, smsMsg);
+                if (emailid != null)
+                    messagingService.sendEmail(emailid, emailSubject, emailBody);
+            }
+        }
 	
 	private void setFloorDetails(final Property property) {
 	        LOGGER.debug("Entered into setFloorDetails, Property: " + property);
@@ -1023,7 +1103,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.start().withNextAction(wfmatrix.getPendingActions()).withStateValue(wfmatrix.getCurrentState())
                         .withOwner(position).withSenderName(loggedInUser.getName()).withOwner(user)
                         .withComments(approverComments);
-    
+                propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+                sendEmailandSms(objection,REVISION_PETITION_CREATED);
+                
                 }
               else if(workFlowAction!=null && !"".equals(workFlowAction) && 
                       !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)){
@@ -1048,7 +1130,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                   {
                       workFlowTransition(objection, workFlowAction,approverComments,wfmatrix,position,loggedInUser);
                   }
-              } 
+                  // Update elastic search index on each workflow.
+                  propService.updateIndexes(objection, PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+                  
+              }else if(workFlowAction!=null && !"".equals(workFlowAction) && 
+                      WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)){
+                  addActionMessage(getText("file.save"));
+              }
 	    
 	    }
 	public void workFlowTransition(RevisionPetition objection,
@@ -1642,6 +1730,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
             this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
+        }
+
+        public SMSEmailService getsMSEmailService() {
+            return sMSEmailService;
+        }
+
+        public void setsMSEmailService(SMSEmailService sMSEmailService) {
+            this.sMSEmailService = sMSEmailService;
         }      
 	    
 }
