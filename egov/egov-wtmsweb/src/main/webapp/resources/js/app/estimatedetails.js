@@ -223,13 +223,14 @@ $(document).ready(function()
         calculateTotalAmount();
 	});	
 	
-	$(".btn-primary").click(function() { 
+	/*$(".btn-primary").click(function() { 
 		var action = document.getElementById("workFlowAction").value;
 		if(action == 'Submit') {
 			if($('#estimationCharges')) {
 				var estimationCharge = $('#estimationCharges').val();
 		    	if(estimationCharge <= 0) {
 		    		alert("Estimation charges is mandatory. So please enter atleast any one of Digging Charges/Supervision Charges/Material Charges!");
+		    		$('#estimationCharges').focus('');
 		    		return false;	
 		    	}
 		    	else {
@@ -239,7 +240,7 @@ $(document).ready(function()
 			}	    	
 		}
 		return;
-	});	
+	});	*/
 	
 });
 

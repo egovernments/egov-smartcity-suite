@@ -124,14 +124,14 @@
 							<spring:message code="lbl.diggingcharges" />							 
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="4" id="diggingCharges" value="0.00" path="fieldInspectionDetails.diggingCharges" onblur="calculateEstimationCharges();" />
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="diggingCharges" value="0.00" path="fieldInspectionDetails.diggingCharges" onblur="calculateEstimationCharges();" />
 							<form:errors path="fieldInspectionDetails.diggingCharges" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.supervisioncharges" />						
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="4" id="supervisionCharges" value="0.00" path="fieldInspectionDetails.supervisionCharges" onblur="calculateEstimationCharges();" />
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="supervisionCharges" value="0.00" path="fieldInspectionDetails.supervisionCharges" onblur="calculateEstimationCharges();" />
 							<form:errors path="fieldInspectionDetails.supervisionCharges" cssClass="add-margin error-msg" />
 							
 						</div>
@@ -143,11 +143,11 @@
 							<spring:message code="lbl.materialcharges" />							
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="4" id="materialCharges" value="0.00" path="fieldInspectionDetails.materialCharges" onblur="calculateEstimationCharges();" />
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="materialCharges" value="0.00" path="fieldInspectionDetails.materialCharges" onblur="calculateEstimationCharges();" />
 							<form:errors path="fieldInspectionDetails.materialCharges" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.estimationcharges" /><span class="mandatory">							
+							<spring:message code="lbl.estimationcharges" /><span class="mandatory"></span>						
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
 							<form:input class="form-control text-right" id="estimationCharges" value="0.00" path="fieldInspectionDetails.estimationCharges" disabled="true"/>
@@ -155,8 +155,19 @@
 						</div>
 					</div>
 				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.attachdocument"/>							
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin">
+							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
+						</div>
+					</div>
+			   </div>
 			</div>				
 		</div>
 	</div>
 </div>
 <script src="<c:url value='/resources/js/app/estimatedetails.js'/>"></script>
+<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>

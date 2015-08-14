@@ -66,6 +66,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -108,6 +109,7 @@ public class WaterConnectionDetails extends StateAware {
     @NotNull
     @JoinColumn(name = "connection", nullable = false)
     private WaterConnection connection;
+
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ExistingConnectionDetails existingConnection;
@@ -184,9 +186,13 @@ public class WaterConnectionDetails extends StateAware {
 
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
-    
+
     private String workOrderNumber;
-    
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "filestoreid")
+    private FileStoreMapper fileStore;
+
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
@@ -430,7 +436,7 @@ public class WaterConnectionDetails extends StateAware {
         return workOrderDate;
     }
 
-    public void setWorkOrderDate(Date workOrderDate) {
+    public void setWorkOrderDate(final Date workOrderDate) {
         this.workOrderDate = workOrderDate;
     }
 
@@ -438,7 +444,7 @@ public class WaterConnectionDetails extends StateAware {
         return workOrderNumber;
     }
 
-    public void setWorkOrderNumber(String workOrderNumber) {
+    public void setWorkOrderNumber(final String workOrderNumber) {
         this.workOrderNumber = workOrderNumber;
     }
 
@@ -446,11 +452,19 @@ public class WaterConnectionDetails extends StateAware {
         this.bplCardHolderName = bplCardHolderName;
     }
 
-	public ExistingConnectionDetails getExistingConnection() {
-		return existingConnection;
-	}
+    public ExistingConnectionDetails getExistingConnection() {
+        return existingConnection;
+    }
 
-	public void setExistingConnection(ExistingConnectionDetails existingConnection) {
-		this.existingConnection = existingConnection;
-	}
+    public void setExistingConnection(final ExistingConnectionDetails existingConnection) {
+        this.existingConnection = existingConnection;
+    }
+
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(final FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
 }

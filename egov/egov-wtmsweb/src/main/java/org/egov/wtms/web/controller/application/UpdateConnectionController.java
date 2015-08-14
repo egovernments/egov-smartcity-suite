@@ -40,12 +40,15 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
@@ -66,6 +69,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -144,21 +149,22 @@ public class UpdateConnectionController extends GenericConnectionController {
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "noedit"));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
-        else if ((recordCreatedBYNonEmployee && request.getAttribute("mode") == null
-                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) && waterConnectionDetails
-                .getState().getHistory() != null)
-                || (!recordCreatedBYNonEmployee && waterConnectionDetails.getEgwStatus() != null && waterConnectionDetails.getEgwStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED))) {
+        else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
+                && waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
+                && waterConnectionDetails
+                        .getState().getHistory() != null
+                || !recordCreatedBYNonEmployee && waterConnectionDetails.getEgwStatus() != null
+                        && waterConnectionDetails.getEgwStatus().getCode()
+                                .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             model.addAttribute("mode", "edit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "edit"));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails
                     .getConnectionType().toString()));
-        } else {// other than AE
+        } else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));
-        } // "" mode for once reject from A.e to Clerk
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
     }
@@ -166,7 +172,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
+            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
 
         if (waterConnectionDetails.getEgwStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED) &&
                 request.getParameter("workFlowAction") != null
@@ -177,6 +183,14 @@ public class UpdateConnectionController extends GenericConnectionController {
                     && waterConnectionDetails.getBplCardHolderName() != null)
                 waterConnectionDetails.setBplCardHolderName(null);
             populateEstimationDetails();
+
+            // Attach any other file during field inspection and estimation
+            final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
+            Iterator<FileStoreMapper> fsIterator = null;
+            if (fileStoreSet != null && !fileStoreSet.isEmpty())
+                fsIterator = fileStoreSet.iterator();
+            if (fsIterator != null && fsIterator.hasNext())
+                waterConnectionDetails.setFileStore(fsIterator.next());
         }
         Long approvalPosition = 0l;
         String approvalComent = "";

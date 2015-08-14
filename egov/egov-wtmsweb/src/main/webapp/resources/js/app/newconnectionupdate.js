@@ -89,35 +89,46 @@ $(document).ready(function()
 		$(".btn-primary").click(function() { 
 			var action = document.getElementById("workFlowAction").value;
 			 var status=$('#statuscode').val();
-			
-			    document.getElementById("mode").value=mode;
-			    var applicationDate = $('#applicationDate').html();
-			    var approvalDate = $('#approvalDate').val();
-				if(status=='ESTIMATIONAMOUNTPAID' && action=='Approve' ){
-				if(approvalDate =='')
-				{
-					$('#approvalDate').attr('required', 'required');	
-				}
-			    if(applicationDate !='' && approvalDate != '') {
-					if(!validateDateRange(applicationDate, approvalDate)) {
-						alert("The Approval Date can not be less than the Date of Application.");
-						$('#approvalDate').val('');
-						return false;			
-					}
-					else{
-				    		validateWorkFlowApprover(action);
-					    	document.forms[0].submit();	
-					}
-					
-				}
-			    }
+			 if(status=='CREATED' && action == 'Submit') {
+				if($('#estimationCharges')) {
+					var estimationCharge = $('#estimationCharges').val();
+			    	if(estimationCharge <= 0) {
+			    		alert("Estimation charges is mandatory. So please enter atleast any one of Digging Charges/Supervision Charges/Material Charges!");
+			      		return false;	
+			    	}
 			    	else {
 			    		validateWorkFlowApprover(action);
 				    	document.forms[0].submit();	
 			    	}
+				}	     	
+			 }
+			 else {
+			    document.getElementById("mode").value=mode;
+			    var applicationDate = $('#applicationDate').html();
+			    var approvalDate = $('#approvalDate').val();
+				if(status=='ESTIMATIONAMOUNTPAID' && action=='Approve' ) {
+					if(approvalDate =='') {
+						$('#approvalDate').attr('required', 'required');	
+					}
+					if(applicationDate !='' && approvalDate != '') {
+						if(!validateDateRange(applicationDate, approvalDate)) {
+							alert("The Approval Date can not be less than the Date of Application.");
+							$('#approvalDate').val('');
+							return false;			
+						}
+						else{
+					    		validateWorkFlowApprover(action);
+						    	document.forms[0].submit();	
+						}
+					
+					}
+			    }
+		    	else {
+		    		validateWorkFlowApprover(action);
+			    	document.forms[0].submit();	
+		    	}
+			 }
 			return;
 		});	
 	
 });
-
-

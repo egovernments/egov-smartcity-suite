@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
-id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">				
+id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path=""  value="${mode}"/>
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
