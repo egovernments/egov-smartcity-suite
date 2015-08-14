@@ -59,15 +59,7 @@ public class AjaxConnectionController {
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
-
-    @RequestMapping(value = "/ajax-connectionTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<UsageType> getUsageTypesByConnectionType(@RequestParam final String connectionType) {
-        List<UsageType> usageTypes = new ArrayList<UsageType>(0);
-        usageTypes = usageTypeService.getAllUsageTypesByConnectionType(connectionType);
-        usageTypes.forEach(usageType -> usageType.toString());
-        return usageTypes;
-    }
-
+ 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
             @RequestParam final Long propertyType) {

@@ -56,32 +56,7 @@ $(document).ready(function(){
 	
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
-	
-	$('#connectionType').change(function(){
-		$.ajax({
-			url: "/wtms/ajax-connectionTypes",     
-			type: "GET",
-			data: {
-				connectionType: $('#connectionType').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				
-				console.log("success"+response);
-				$('#usageType').empty();
-				$('#usageType').append($("<option value=''>Select from below</option>"));
-				$.each(response, function(index, value) {
-					
-								
-					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
+		
 	$('#connectionCategorie').change(function(){
 		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
 			$("#cardHolderDiv").show();
