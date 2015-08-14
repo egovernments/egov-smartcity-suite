@@ -52,6 +52,7 @@ import java.util.Map;
 
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -154,6 +155,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private CityService cityService;
 
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -373,4 +377,9 @@ public class PropertyTransferService extends PersistenceService<PropertyMutation
     public void updateMutationCollection(final PropertyMutation propertyMutation) {
         persist(propertyMutation);
     }
-}
+    
+    public String getCityName() {
+        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
+    }
+    
+    }

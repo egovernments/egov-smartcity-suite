@@ -272,4 +272,23 @@ public class PropertyMutation extends StateAware {
             ownerName.deleteCharAt(ownerName.length() - 2);
         return ownerName.toString();
     }
+
+    public User getPrimaryTransferee() {
+        User user = new User();
+        for (final User transferee : getTransfereeInfos()) {
+            user = transferee;
+            break;
+        }
+        return user;
+    }
+
+    public User getPrimaryTransferor() {
+        User user = new User();
+        for (final User transferee : getTransferorInfos()) {
+            user = transferee;
+            break;
+        }
+        return user;
+
+    }
 }
