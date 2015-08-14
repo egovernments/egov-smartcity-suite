@@ -125,19 +125,19 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.designation.name=:name and A.primary=true")
     public List<Assignment> findPrimaryAssignmentForDesignationName(@Param("name") String name);
 
-    @Query(" from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join fetch EMP.jurisdictions as JRDN "
+    @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
             + " and JRDN.boundary.id in :boundaryIds")
     public List<Assignment> findByDesignationAndBoundary(@Param("desigId") final Long desigId,
             @Param("boundaryIds") final Set<Long> boundaryIds);
 
-    @Query(" from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join fetch EMP.jurisdictions as JRDN "
+    @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
             + " and JRDN.boundary.id in :boundaryIds")
     public List<Assignment> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
-    @Query(" from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join fetch EMP.jurisdictions as JRDN "
+    @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
             + " and JRDN.boundary.id in :boundaryIds")
     public List<Assignment> findByDepartmentAndBoundary(@Param("deptId") final Long deptId,
