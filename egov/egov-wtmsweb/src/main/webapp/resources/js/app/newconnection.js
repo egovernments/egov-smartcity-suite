@@ -51,11 +51,11 @@ $(document).ready(function(){
 		$('#approvalPosition').removeAttr('required');
 		}
 	
-	loadConnectionCategories();
 	var documentName = $('#documentName').val();
-    
-	$(".check-text:contains('"+documentName+"')").parent().hide();
- 	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	var other ="Other"
+	
+	$('#cardHolderDiv').hide();
+	$('#bplCardHolderName').removeAttr('required');
 	
 	$('#connectionType').change(function(){
 		$.ajax({
@@ -82,32 +82,23 @@ $(document).ready(function(){
 			}
 		});
 	});
-	
-	$('#connectionCategorie').change(function () {
-		loadConnectionCategories();
-    });
-	
-		
-	function loadConnectionCategories(){
-		var connectionCategory = $('#connectionCategorie').val();
-		
-	    var toAppend = '';
-	    var documentName = $('#documentName').val();
-	    if (connectionCategory == 1) {
-	    	$("#cardHolderDiv").show();
+	$('#connectionCategorie').change(function(){
+		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
+			$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    	$("#bplCardHolderName").val();
-	    	$(".check-text:contains('"+documentName+"')").parent().show();
 			$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
-	    }
-	    else{
-	    	$("#cardHolderDiv").hide();
+			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
+		}
+		else  {
+			$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
-	    	$(".check-text:contains('"+documentName+"')").parent().hide();
-	    	
-	    }
-	}
-
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
+	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
+		}
+	});
+	
 	$('#propertyIdentifier').blur(function(){
 		validatePrimaryConnection();		
 	});
@@ -126,12 +117,10 @@ $(document).ready(function(){
 					console.log("success"+response);
 					if(response != '') {
 						resetPropertyDetails();
-						alert(response);
 					}
 					else {
 						loadPropertyDetails();
 					}
-					
 				}, 
 				error: function (response) {
 					console.log("failed");
@@ -145,7 +134,7 @@ $(document).ready(function(){
 	function loadPropertyDetails() {
 		propertyID=$('#propertyIdentifier').val()
 		allowIfPTDueExists = $('#allowIfPTDueExists').val() 
-		alert(allowIfPTDueExists+"ssss")
+		
 		if(propertyID != '') {
 			$.ajax({
 				url: "/ptis/rest/property/"+propertyID,      

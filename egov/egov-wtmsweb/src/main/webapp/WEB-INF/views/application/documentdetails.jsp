@@ -62,10 +62,10 @@
  	<div class="col-sm-3 add-margin check-text">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<input type="checkbox" >&nbsp;<c:out value="${docs.documentName}"/> 
+				<input type="checkbox" checked checked >&nbsp;<c:out value="${docs.documentName}"/> 
 			</c:when>
 			<c:otherwise>
-				<input type="checkbox" >&nbsp;<c:out value="${docs.documentName}"/> 
+				<input type="checkbox" disabled>&nbsp;<c:out value="${docs.documentName}"/> 
 			</c:otherwise>		
 		</c:choose> 
 		<form:hidden id="applicationDocs${status.index}documentNames.id" path="applicationDocs[${status.index}].documentNames.id" value="${docs.id}" /> 
