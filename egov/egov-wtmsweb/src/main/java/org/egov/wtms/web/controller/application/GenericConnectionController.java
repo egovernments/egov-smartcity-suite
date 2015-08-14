@@ -54,8 +54,6 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
@@ -101,22 +99,18 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private DepartmentService departmentService;
 
-
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
-    }
-    
-    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
-        return connectionCategoryService.getAllActiveConnectionCategory();
     }
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
     }
 
-    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
-        return pipeSizeService.getAllActivePipeSize();
-    }
+    /*
+     * public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() { return
+     * pipeSizeService.getAllActivePipeSize(); }
+     */
 
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
@@ -128,14 +122,18 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), WaterTaxConstants.MODULE_NAME);
-                } catch (final Exception e) {
-                    throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), WaterTaxConstants.MODULE_NAME);
+                        } catch (final Exception e) {
+                            throw new EGOVRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
         else
             return null;
     }
@@ -143,8 +141,8 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     protected void processAndStoreApplicationDocuments(final WaterConnectionDetails waterConnectionDetails) {
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-                applicationDocument
-                        .setDocumentNames(documentNamesService.load(applicationDocument.getDocumentNames().getId()));
+                applicationDocument.setDocumentNames(documentNamesService.load(applicationDocument.getDocumentNames()
+                        .getId()));
                 applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
@@ -156,5 +154,5 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
             return false;
         return true;
     }
-  
+
 }

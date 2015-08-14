@@ -40,52 +40,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<script src="<c:url value='/resources/js/app/connectiondetails.js'/>"></script>	
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.connection.details" />
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.connectiontype" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${connectionTypes}" />
-		</form:select>
-		<form:errors path="connectionType" cssClass="add-margin error-msg" />
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.usagetype" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="usageType" data-first-option="false" id="usageType"
-			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${usageTypes}" itemValue="id"
-				itemLabel="name" />
-		</form:select>
-		<form:errors path="usageType" cssClass="add-margin error-msg" />
-	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.category" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="category" data-first-option="false" id="connectionCategorie"
-			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${connectionCategories}" itemValue="id"
-				itemLabel="name" />
-		</form:select>
-		<form:errors path="category" cssClass="add-margin error-msg" />
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
+    <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="waterSource" data-first-option="false"
@@ -98,12 +60,24 @@
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />
 	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.connectiontype" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${connectionTypes}" />
+		</form:select>
+		<form:errors path="connectionType" cssClass="add-margin error-msg" />
+	</div>
+	
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
+    <label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.propertytype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="propertyType" data-first-option="false"
+		<form:select path="propertyType" data-first-option="false" id="propertyType"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
@@ -114,14 +88,43 @@
 		<form:errors path="propertyType" cssClass="add-margin error-msg" />					
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.category" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="category" data-first-option="false" id="connectionCategorie"
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${connectionCategories}" itemValue="id"
+				itemLabel="name" />
+		</form:select>
+		<form:errors path="category" cssClass="add-margin error-msg" />
+	</div>
+	
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.usagetype" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:select path="usageType" data-first-option="false" id="usageType"
+			cssClass="form-control" required="required">
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${usageTypes}" itemValue="id"
+				itemLabel="name" />
+		</form:select>
+		<form:errors path="usageType" cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="pipeSize" data-first-option="false"
+		<form:select path="pipeSize" data-first-option="false" id="pipeSize"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${pipeSizes}" itemValue="id"
+			<form:options items="${pipeSizes}" itemValue="id" 
 				itemLabel="code" />
 		</form:select>		
 		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
@@ -159,4 +162,5 @@
 			<form:errors path="connectionReason" cssClass="add-margin error-msg" />		
 		</div>
 </div>	
-</c:if>				
+</c:if>	
+		

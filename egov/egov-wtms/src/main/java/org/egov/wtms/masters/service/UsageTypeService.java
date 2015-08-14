@@ -41,6 +41,8 @@ package org.egov.wtms.masters.service;
 
 import java.util.List;
 
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.UsageTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,10 +105,22 @@ public class UsageTypeService {
     }
 
     public List<UsageType> getActiveUsageTypes() {
-        return usageTypeRepository.findByActiveTrueOrderByNameAsc();
+        return usageTypeRepository.findByActiveTrueOrderByIdAsc();
     }
 
     public List<UsageType> getAllUsageTypesByConnectionType(final String connectionType) {
         return usageTypeRepository.getAllUsageTypesByConnectionType(connectionType);
+    }
+
+    public List<UsageType> getAllUsageTypesByPropertyType(final Long propertyType) {
+        return usageTypeRepository.getAllUsageTypesByPropertyType(propertyType);
+    }
+
+    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType) {
+        return usageTypeRepository.getAllCategoryTypesByPropertyType(propertyType);
+    }
+
+    public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
+        return usageTypeRepository.getAllPipeSizesByPropertyType(propertyType);
     }
 }

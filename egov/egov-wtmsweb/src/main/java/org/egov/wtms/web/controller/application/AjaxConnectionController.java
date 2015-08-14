@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.wtms.application.service.NewConnectionService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,31 @@ public class AjaxConnectionController {
         usageTypes = usageTypeService.getAllUsageTypesByConnectionType(connectionType);
         usageTypes.forEach(usageType -> usageType.toString());
         return usageTypes;
+    }
+
+    @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
+            @RequestParam final Long propertyType) {
+        List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
+        categoryTypes = usageTypeService.getAllCategoryTypesByPropertyType(propertyType);
+        categoryTypes.forEach(categoryType -> categoryType.toString());
+        return categoryTypes;
+    }
+
+    @RequestMapping(value = "/ajax-UsageTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<UsageType> getAllUsageTypesByPropertyType(@RequestParam final Long propertyType) {
+        List<UsageType> usageTypes = new ArrayList<UsageType>(0);
+        usageTypes = usageTypeService.getAllUsageTypesByPropertyType(propertyType);
+        usageTypes.forEach(usageType -> usageType.toString());
+        return usageTypes;
+    }
+
+    @RequestMapping(value = "/ajax-PipeSizesByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<PipeSize> getAllPipeSizesByPropertyType(@RequestParam final Long propertyType) {
+        List<PipeSize> pipesizes = new ArrayList<PipeSize>(0);
+        pipesizes = usageTypeService.getAllPipeSizesByPropertyType(propertyType);
+        pipesizes.forEach(pipesize -> pipesize.toString());
+        return pipesizes;
     }
 
 }
