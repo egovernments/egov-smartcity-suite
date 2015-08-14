@@ -129,7 +129,7 @@ $(document).ready(function(){
 					var formatted_long = format_lat_long(imagelongt.toString());
 					$.ajax({
 						type: "POST",
-						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
+						url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
 						dataType: 'json',
 						success : function(data){
 							$('#location').typeahead('val', data.results[0].formatted_address);
@@ -270,7 +270,7 @@ $(document).ready(function(){
 	function getAddress(lat, lng){
 		$.ajax({
 			type: "POST",
-			url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
+			url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
 			dataType: 'json',
 			success : function(data){
 				 address = data.results[0].formatted_address;
@@ -352,7 +352,7 @@ $(document).ready(function(){
 		lng = location.lng();
 		$.ajax({
 			type: "POST",
-			url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
+			url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
 			dataType: 'json',
 			success : function(data){
 				 address = data.results[0].formatted_address;

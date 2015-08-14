@@ -2032,7 +2032,7 @@ ul li a span{
 #normal .centerMarker{
 position:absolute;
 /*url of the marker*/
-background:url(http://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
+background:url(https://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
 /*center the marker*/
 top:50%;left:50%;
 z-index:1;
