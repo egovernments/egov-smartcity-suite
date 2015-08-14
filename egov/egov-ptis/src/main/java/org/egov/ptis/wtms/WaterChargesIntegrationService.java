@@ -40,7 +40,7 @@
 
 package org.egov.ptis.wtms;
 
-public interface WaterChargesInfo {
+public interface WaterChargesIntegrationService {
 
 	public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(String PropertyId);
 

@@ -53,6 +53,6 @@
          <constructor-arg index="0" ref="WaterConnectionDetailsPersistenceService"/>
     </bean>
         
-    <bean id="waterChargesInfoImpl" class="org.egov.wtms.integration.WaterChargesInfoImpl" scope="prototype">
+    <bean id="waterChargesIntegrationServiceImpl" class="org.egov.wtms.integration.WaterChargesIntegrationServiceImpl" scope="prototype">
 	</bean>
 </beans>

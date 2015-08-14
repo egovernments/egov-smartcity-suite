@@ -46,10 +46,10 @@ import java.util.List;
 
 import org.egov.ptis.wtms.ConsumerConsumtion;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
-import org.egov.ptis.wtms.WaterChargesInfo;
+import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.joda.time.DateTime;
 
-public class WaterChargesInfoImpl implements WaterChargesInfo {
+public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
 
     @Override
     public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(final String PropertyId) {
