@@ -23,11 +23,11 @@ insert into egwtr_property_usage(id,usagetype,propertytype,version) values(nextv
 (select  id from egwtr_usage_type where code='HOTEL'), (select id from egwtr_property_type where code ='NON-RESIDENTIAL'),0);
 
 insert into egwtr_property_pipe_size(id,pipesize,propertytype,version) values(nextval('seq_egwtr_property_pipesize'),
-(select  id from egwtr_pipesize where code='1/4 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL',0);
+(select  id from egwtr_pipesize where code='1/4 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL'),0);
 insert into egwtr_property_pipe_size(id,pipesize,propertytype,version) values(nextval('seq_egwtr_property_pipesize'),
-(select  id from egwtr_pipesize where code='1/2 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL',0);
+(select  id from egwtr_pipesize where code='1/2 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL'),0);
 insert into egwtr_property_pipe_size(id,pipesize,propertytype,version) values(nextval('seq_egwtr_property_pipesize'),
-(select  id from egwtr_pipesize where code='3/4 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL',0);
+(select  id from egwtr_pipesize where code='3/4 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL'),0);
 insert into egwtr_property_pipe_size(id,pipesize,propertytype,version) values(nextval('seq_egwtr_property_pipesize'),
 (select  id from egwtr_pipesize where code='1 Inch'), (select id from egwtr_property_type where code ='RESIDENTIAL'),0);
 insert into egwtr_property_pipe_size(id,pipesize,propertytype,version) values(nextval('seq_egwtr_property_pipesize'),
