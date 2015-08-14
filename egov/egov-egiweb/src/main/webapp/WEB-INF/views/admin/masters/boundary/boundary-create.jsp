@@ -89,6 +89,8 @@
 						</div>
 					</div>
 					  <div class="panel-body custom-form">
+					  <c:choose>
+					  	<c:when test="${not empty parentBoundary}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">
 									<spring:message code="lbl.parent.boundary.name" />
@@ -103,7 +105,23 @@
 		                            <form:errors path="name" cssClass="error-msg"/>
 	                        	</div>
 	                        </div>
-	                        
+	                 	</c:when>
+	                 	<c:otherwise>
+	                 		<div class="form-group">
+								<label class="col-sm-3 control-label">
+									<spring:message code="lbl.parent.boundary.name" />
+								</label>
+								<div class="col-sm-6 add-margin">
+		                            <form:select path="parent"
+		                                         id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error">
+		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
+		                            </form:select>
+		                            <form:errors path="name" cssClass="error-msg"/>
+	                        	</div>
+	                        </div>
+	                 	</c:otherwise>
+	                   </c:choose>     
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.boundary.name"/><span class="mandatory"></span>

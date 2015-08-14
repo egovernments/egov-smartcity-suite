@@ -69,25 +69,25 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
             @Param("boundaryNum") Long boundaryNum);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType = :boundaryType AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.boundaryNum")
+    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType = :boundaryType AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.boundaryNum")
     List<Boundary> findActiveBoundariesByBoundaryTypeAndAsOnDate(@Param("boundaryType") BoundaryType boundaryType,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.id=:id AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
+    @Query("select b from Boundary b where b.isHistory=false AND b.id=:id AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
     Boundary findActiveBoundaryByIdAndAsOnDate(@Param("id") Long id, @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.id = :id ")
+    @Query("select b from Boundary b where b.isHistory=false AND b.id = :id ")
     Boundary findActiveBoundaryById(@Param("id") Long id);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType.id =:boundaryTypeId order by b.name")
+    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType.id =:boundaryTypeId order by b.name")
     List<Boundary> findActiveBoundariesByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType.hierarchyType = :hierarchyType AND b.boundaryType.hierarchy = :hierarchyLevel AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
+    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType.hierarchyType = :hierarchyType AND b.boundaryType.hierarchy = :hierarchyLevel AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveBoundariesByHierarchyTypeAndLevelAndAsOnDate(
             @Param("hierarchyType") HierarchyType hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
+    @Query("select b from Boundary b where b.isHistory=false AND b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
     
@@ -98,12 +98,12 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryNum = :boundaryNum AND b.boundaryType.name = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
+    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryNum = :boundaryNum AND b.boundaryType.name = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
     Boundary findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(@Param("boundaryNum") Long boundaryNum,
             @Param("boundaryType") String boundaryType, @Param("hierarchyTypeCode") String hierarchyTypeCode,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.id")
+    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.id")
     List<Boundary> findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
@@ -111,7 +111,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
             @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select b from Boundary b where b.isHistory='N' and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
+    @Query("select b from Boundary b where b.isHistory=false and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
     List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,
             @Param("boundaryTypeId") Long boundaryTypeId);
 
@@ -119,7 +119,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     Boundary findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(@Param("boundaryType") String boundaryType,
             @Param("hierarchyType") String hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
+    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
     
@@ -131,4 +131,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     
     @Query("from Boundary BND where BND.isHistory=false AND BND.parent.id=:parentId)")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
+    
+    @Query("from Boundary BND where BND.parent is null")
+    List<Boundary> findAllParents();
 }

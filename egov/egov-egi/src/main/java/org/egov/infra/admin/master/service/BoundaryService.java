@@ -238,4 +238,34 @@ public class BoundaryService {
     public List<Boundary> findActiveImmediateChildrenWithOutParent(final Long parentBoudaryId) {
         return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentBoudaryId);
     }
+    
+    public List<Boundary> findAllParents() {
+        return boundaryRepository.findAllParents();
+    }
+    
+    public String getMaterializedPath(final Boundary child,final Boundary parent) {
+      String mpath="";
+      int childSize=0;
+      if(null==parent){
+          mpath = String.valueOf(boundaryRepository.findAllParents().size()+1);
+      }
+      else
+          childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getId()).size();
+      if(mpath.isEmpty()){
+          if(null!=child){
+              if(!child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath()+"."+childSize)){
+                  childSize+=1;
+                  mpath = parent.getMaterializedPath()+"."+childSize;
+              }
+              else
+                  mpath = child.getMaterializedPath();
+          }
+          else {
+              childSize+=1;
+              mpath = parent.getMaterializedPath()+"."+childSize;
+          }
+      }
+          
+      return mpath;
+    }
 }

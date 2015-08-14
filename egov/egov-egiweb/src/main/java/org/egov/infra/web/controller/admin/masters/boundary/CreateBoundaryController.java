@@ -79,8 +79,7 @@ public class CreateBoundaryController {
 
         boundary.setBoundaryType(boundaryType);
         boundary.setHistory(false);
-        int childrenSize = boundaryService.findActiveImmediateChildrenWithOutParent(boundary.getParent().getId()).size()+1;
-        boundary.setMaterializedPath(boundary.getParent().getMaterializedPath()+"."+childrenSize);
+        boundary.setMaterializedPath(boundaryService.getMaterializedPath(null, boundary.getParent()));
         
         boundaryService.createBoundary(boundary);
         
