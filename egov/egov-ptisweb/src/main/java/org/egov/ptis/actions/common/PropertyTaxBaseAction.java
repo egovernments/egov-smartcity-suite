@@ -389,10 +389,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private Position getUserPositionByZone(final BasicProperty basicProperty) {
         final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
         final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        final List<Employee> employee = employeeService.findByDepartmentDesignationAndBoundary(department.getId(),
+        final List<Assignment> assignment = (List<Assignment>)assignmentService.findByDepartmentDesignationAndBoundary(department.getId(),
                 designation.getId(), basicProperty.getPropertyID().getZone().getId());
-        final List<Assignment> assignment = employee.get(0).getAssignments();
-        approverName = employee.get(0).getUsername();
+        approverName = assignment.get(0).getEmployee().getUsername();
         return assignment.get(0).getPosition();
     }
 
