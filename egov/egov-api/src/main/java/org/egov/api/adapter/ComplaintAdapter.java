@@ -10,13 +10,13 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
 
     @Override
     public JsonElement serialize(Complaint complaint, Type type, JsonSerializationContext context) {
-        JsonObject jo = new JsonObject();
+        JsonObject jo = new JsonObject(); 
         jo.addProperty("detail", complaint.getDetails());
         jo.addProperty("crn", complaint.getCrn());
         jo.addProperty("status", complaint.getStatus().getName());
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
-        jo.addProperty("complainantName", complaint.getComplainant().getName());
+        jo.addProperty("complainantName", complaint.getCreatedBy().getName());
         if (complaint.getLocation() != null) {
             jo.addProperty("locationName", complaint.getLocation().getLocalName());
         } else if (complaint.getLat() > 0 && complaint.getLat() > 0) {

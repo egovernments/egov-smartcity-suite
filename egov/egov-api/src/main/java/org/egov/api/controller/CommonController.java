@@ -140,4 +140,34 @@ public class CommonController extends ApiController {
 
     }
 
+    // -----------------------------------------------------------------
+    /**
+     * This will send OTP to the user
+     * 
+     * @param request
+     * @return Citizen
+     */
+    @RequestMapping(value = ApiUrl.CITIZEN_SEND_OTP, method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> sendOTP(HttpServletRequest request) {
+        ApiResponse res = ApiResponse.newInstance();
+        String identity = request.getParameter("identity");
+        String msg = "";
+        Citizen citizen = null;
+        try {
+            if (identity.matches("\\d{10}")) {
+                citizen = citizenService.getCitizenByUserName(identity);
+            } else if (identity.contains("@") && identity.contains(".")) {
+                citizen = citizenService.getCitizenByEmailId(identity);
+            }
+            if (citizen == null) {
+                return res.error(getMessage("user.not.found"));
+            }
+            citizenService.sendActivationMessage(citizen);
+            return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("sendOTP.success"));
+        } catch (Exception e) {
+            msg = e.getMessage();
+        }
+        return res.error(msg);
+    }
+
 }
