@@ -65,69 +65,59 @@ $(document).ready(function()
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		}
+		
+		function validateDateRange(fromDate, toDate) {
+			if (fromDate != "" && toDate != "") {
+				var stsplit = fromDate.split("/");
+				var ensplit = toDate.split("/");
+				
+				startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
+				endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
+				
+		        // Check the date range, 86400000 is the number of milliseconds in one day
+		        var difference = (endDate - startDate) / (86400000 * 7);
+		        if (difference < 0) {
+					return false;
+					} 
+		        else {
+					return true;
+				}	
+		    }
+		    return true;		
+		}
 	
-
+		$(".btn-primary").click(function() { 
+			var action = document.getElementById("workFlowAction").value;
+			 var status=$('#statuscode').val();
+			
+			    document.getElementById("mode").value=mode;
+			    var applicationDate = $('#applicationDate').html();
+			    var approvalDate = $('#approvalDate').val();
+				if(status=='ESTIMATIONAMOUNTPAID' && action=='Approve' ){
+				if(approvalDate =='')
+				{
+					$('#approvalDate').attr('required', 'required');	
+				}
+			    if(applicationDate !='' && approvalDate != '') {
+					if(!validateDateRange(applicationDate, approvalDate)) {
+						alert("The Approval Date can not be less than the Date of Application.");
+						$('#approvalDate').val('');
+						return false;			
+					}
+					else{
+				    		validateWorkFlowApprover(action);
+					    	document.forms[0].submit();	
+					}
+					
+				}
+			    }
+			    	else {
+			    		validateWorkFlowApprover(action);
+				    	document.forms[0].submit();	
+			    	}
+			return;
+		});	
 	
 });
-function validateDateRange(fromDate, toDate) {
-	if (fromDate != "" && toDate != "") {
-		var stsplit = fromDate.split("/");
-		var ensplit = toDate.split("/");
-		
-		startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
-		endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
-		
-        // Check the date range, 86400000 is the number of milliseconds in one day
-        var difference = (endDate - startDate) / (86400000 * 7);
-        if (difference < 0) {
-			return false;
-			} 
-        else {
-			return true;
-		}	
-    }
-    return true;		
-}
-function validateWorkFlowApprover(name) {
-	document.getElementById("workFlowAction").value=name;
-    var approverPosId = document.getElementById("approvalPosition");
-    var mode =$('#mode').val();
-    var status=$('#statuscode').val();
-    document.getElementById("mode").value=mode;
-    var applicationDate = $('#applicationDate').html();
-    var approvalDate = $('#approvalDate').val();
-	var rejectbutton=document.getElementById("workFlowAction").value;
-	if(rejectbutton!=null && rejectbutton=='Reject')
-		{
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-		$('#approvalComent').attr('required', 'required');	
-		document.forms[0].submit;
-		return true;
-		}
-	if(status=='ESTIMATIONAMOUNTPAID' && rejectbutton=='Approve' ){
-		if(approvalDate =='')
-			{
-			$('#approvalDate').attr('required', 'required');	
-			}
-    if(applicationDate !='' && approvalDate != '') {
-		if(!validateDateRange(applicationDate, approvalDate)) {
-			alert("The Approval Date can not be less than the Date of Application.");
-			$('#approvalDate').val('');
-			return false;			
-		}
-		else
-			{
-			document.forms[0].submit;
-			return true;
-			}
-	}
-    }
-	else{
-			document.forms[0].submit;
-			return true;
-			
-		}
-   
-}
+
+

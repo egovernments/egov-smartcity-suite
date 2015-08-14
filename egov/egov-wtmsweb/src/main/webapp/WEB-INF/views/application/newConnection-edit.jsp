@@ -58,10 +58,10 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 	</div>
-	<c:if test="${statuscode != 'CREATED'}">
+	<c:if test="${waterConnectionDetails.egwStatus.code != 'CREATED'}">
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${statuscode=='CREATED'}">
+	<c:if test="${waterConnectionDetails.egwStatus.code =='CREATED'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
@@ -76,22 +76,14 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered">
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
-		<c:if test="${statuscode=='ESTIMATIONAMOUNTPAID'}">
+		<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONAMOUNTPAID'}">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
 			
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-		<td><c:forEach items="${validactionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
-						<c:out value="${validButtons}" /> </form:button>
-			</c:forEach>
-			<input type="button" name="button2" id="button2" value="Close"
-				class="btn btn-primary" onclick="window.close();" /></td>
-		  	</div>	
-		  	
-		
+	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
+	
 </form:form>
 <script src="<c:url value='/resources/js/app/applicationsuccess.js'/>"></script>
 <script src="<c:url value='/resources/js/app/newconnectionupdate.js'/>"></script>
