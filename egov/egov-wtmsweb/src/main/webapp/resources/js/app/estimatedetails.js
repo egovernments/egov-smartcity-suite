@@ -49,10 +49,7 @@ $(document).ready(function()
     });
 	
 	function loadConnectionCategories(){
-		var connectionCategory = $('#connectionCategorie').val();
-		
-	    var toAppend = '';
-	    if (connectionCategory == 1) {
+	    if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0)  {
 	    	$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    }
