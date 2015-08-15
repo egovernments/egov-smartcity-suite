@@ -286,6 +286,9 @@
 						</td>
 						</s:if>
 					</tr>
+					<tr>
+		                  <%@ include file="../common/DocumentUploadView.jsp"%>
+	                </tr>
 				</table>
 				<s:if test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@TRANSFER_FEE_COLLECTED)}">

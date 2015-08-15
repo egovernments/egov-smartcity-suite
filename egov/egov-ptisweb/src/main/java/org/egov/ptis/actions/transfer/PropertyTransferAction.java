@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -99,18 +100,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.opensymphony.xwork2.ActionContext;
 
 @Results({
-        @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
-        @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
-        @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
-        @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
-        @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
-        @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
-        @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
-        @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
-        @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
-        @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
-        @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
-                "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }) })
+    @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
+    @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
+    @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
+    @Result(name = PropertyTransferAction.WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
+    @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
+    @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
+    @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
+    @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
+    @Result(name = PropertyTransferAction.SEARCH, location = "transfer/transferProperty-search.jsp"),
+    @Result(name = PropertyTransferAction.COLLECT_FEE, location = "collection/collectPropertyTax-view.jsp"),
+    @Result(name = PropertyTransferAction.REDIRECT_SUCCESS, location = PropertyTransferAction.REDIRECT_SUCCESS, type = "redirectAction", params = {
+            "assessmentNo", "${assessmentNo}", "mutationId", "${mutationId}" }) })
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
 
@@ -170,6 +171,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String mutationInitiatedBy;
     private String assessmentNoMessage;
     private String taxDueErrorMsg;
+    
+    private Map<String, String> guardianRelationMap;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -321,10 +324,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void calculateMutationFee() throws IOException {
         if (marketValue > 0)
             ServletActionContext
-            .getResponse()
-            .getWriter()
-                    .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason,
-                    propertyMutation)));
+                    .getResponse()
+                    .getWriter()
+            .write(String.valueOf(transferOwnerService.calculateMutationFee(marketValue, transferReason,
+                            propertyMutation)));
         else
             ServletActionContext.getResponse().getWriter().write("0");
     }
@@ -357,6 +360,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
+            setGuardianRelationMap(GUARDIAN_RELATION);
         }
     }
 
@@ -391,9 +395,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (propertyMutation.getTransfereeInfos().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");
         else
-            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos())
+            for (final User propOwnerInfo : propertyMutation.getTransfereeInfos()) {
                 if (StringUtils.isBlank(propOwnerInfo.getName()))
                     addActionError(getText("mandatory.ownerName"));
+                if (StringUtils.isBlank(propOwnerInfo.getAadhaarNumber()))
+                    addActionError(getText("mandatory.adharNo"));
+                if (StringUtils.isBlank(propOwnerInfo.getSalutation()))
+                    addActionError(getText("mandatory.salutation"));
+                if (StringUtils.isBlank(propOwnerInfo.getMobileNumber()))
+                    addActionError(getText("mandatory.mobilenumber"));
+                if (StringUtils.isBlank(propOwnerInfo.getEmailId()))
+                    addActionError(getText("mandatory.emailId"));
+            }
 
         if (getMutationId() != null) {
             if (propertyMutation.getMutationFee() == null)
@@ -407,6 +420,111 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
 
         super.validate();
+    }
+    
+    public void transitionWorkFlow(final PropertyMutation propertyMutation) {
+        final DateTime currentDate = new DateTime();
+        final User user = transferOwnerService.getLoggedInUser();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final String designationName = userAssignment.getDesignation().getName();
+        Position pos = null;
+
+        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
+                    .getCreatedBy().getId());
+            if (wfInitiator.equals(userAssignment))
+                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final String stateValue = WF_STATE_REJECTED;
+                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
+            }
+
+        } else {
+            if (null != approverPositionId && approverPositionId != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+            else if (COMMISSIONER_DESGN.equals(designationName)) {
+                final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
+                        .getCreatedBy().getId());
+                pos = wfInitiator.getPosition();
+            }
+            if (null == propertyMutation.getState()) {
+                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                        null, null, getAdditionalRule(), null, null);
+                propertyMutation.transition().start().withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
+            } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                        .withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                        null, null, getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
+                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+        if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
+            final String approvalmesg = " Succesfully Forwarded to : ";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        } else if (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
+            final String approvalmesg = " Succesfully Cancelled.";
+            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
+        }
+
+    }
+
+    public void buildSMS(final PropertyMutation propertyMutation) {
+        String transferorMobileNumber = propertyMutation.getPrimaryTransferor().getMobileNumber();
+        final String transfereeMobileNumber = propertyMutation.getPrimaryTransferee().getMobileNumber();
+        final List<String> argsForTransferor = new ArrayList<String>();
+        final List<String> argsForTransferee = new ArrayList<String>();
+        String smsMsgForTransferor = "";
+        String smsMsgForTransferee = "";
+        if (null != propertyMutation && null != propertyMutation.getState()) {
+            final State mutationState = propertyMutation.getState();
+            if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
+                smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
+            } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                smsMsgForTransferor = getText("msg.rejecttransferproperty.sms", argsForTransferor);
+                smsMsgForTransferee = getText("msg.rejecttransferproperty.sms", argsForTransferee);
+            } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getMarketValue().toString());
+                argsForTransferee.add(propertyMutation.getMutationFee().toString());
+                transferorMobileNumber = "";
+                smsMsgForTransferee = getText("msg.paymenttransferproperty.sms", argsForTransferee);
+            } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
+                argsForTransferor.add(propertyMutation.getFullTranferorName());
+                argsForTransferor.add(propertyMutation.getFullTranfereeName());
+                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferor.add(transferOwnerService.getCityName());
+                argsForTransferee.add(propertyMutation.getFullTranferorName());
+                argsForTransferee.add(propertyMutation.getFullTranfereeName());
+                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                argsForTransferee.add(transferOwnerService.getCityName());
+                smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
+                smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
+            }
+        }
+        messagingService.sendSMS(transferorMobileNumber, smsMsgForTransferor);
+        messagingService.sendSMS(transfereeMobileNumber, smsMsgForTransferee);
     }
 
     public BigDecimal getCurrentPropertyTax() {
@@ -518,117 +636,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.assessmentNoMessage = assessmentNoMessage;
     }
 
-    public void transitionWorkFlow(final PropertyMutation propertyMutation) {
-        final DateTime currentDate = new DateTime();
-        final User user = transferOwnerService.getLoggedInUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        final String designationName = userAssignment.getDesignation().getName();
-        Position pos = null;
-
-        if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
-                    .getCreatedBy().getId());
-            if (wfInitiator.equals(userAssignment))
-                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                .withDateInfo(currentDate.toDate());
-            else {
-                final String stateValue = WF_STATE_REJECTED;
-                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_REVENUE_CLERK_APPROVAL_PENDING);
-            }
-
-        } else {
-            if (null != approverPositionId && approverPositionId != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
-            else if (COMMISSIONER_DESGN.equals(designationName)) {
-                final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
-                        .getCreatedBy().getId());
-                pos = wfInitiator.getPosition();
-            }
-            if (null == propertyMutation.getState()) {
-                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                        null, null, getAdditionalRule(), null, null);
-                propertyMutation.transition().start().withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
-                .withDateInfo(currentDate.toDate());
-            else {
-                final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                        null, null, getAdditionalRule(), propertyMutation.getCurrentState().getValue(), null);
-                propertyMutation.transition(true).withSenderName(user.getName()).withComments(approverComments)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            }
-        }
-        if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase("----Choose----")) {
-            final String approvalmesg = " Succesfully Forwarded to : ";
-            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
-        } else if (workFlowAction != null && workFlowAction.equalsIgnoreCase("cancel")) {
-            final String approvalmesg = " Succesfully Cancelled.";
-            ackMessage = ackMessage == null ? approvalmesg : ackMessage + approvalmesg;
-        }
-
-    }
-
-    public void buildSMS(final PropertyMutation propertyMutation) {
-        String transferorMobileNumber = propertyMutation.getPrimaryTransferor().getMobileNumber();
-        final String transfereeMobileNumber = propertyMutation.getPrimaryTransferee().getMobileNumber();
-        final List<String> argsForTransferor = new ArrayList<String>();
-        final List<String> argsForTransferee = new ArrayList<String>();
-        String smsMsgForTransferor = "";
-        String smsMsgForTransferee = "";
-        if (null != propertyMutation && null != propertyMutation.getState()) {
-            final State mutationState = propertyMutation.getState();
-            if (mutationState.getValue().equals(WF_STATE_REVENUE_CLERK_APPROVED)) {
-                argsForTransferor.add(propertyMutation.getFullTranferorName());
-                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(transferOwnerService.getCityName());
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(transferOwnerService.getCityName());
-                smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
-                smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
-            } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
-                argsForTransferor.add(propertyMutation.getFullTranferorName());
-                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(transferOwnerService.getCityName());
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(transferOwnerService.getCityName());
-                smsMsgForTransferor = getText("msg.rejecttransferproperty.sms", argsForTransferor);
-                smsMsgForTransferee = getText("msg.rejecttransferproperty.sms", argsForTransferee);
-            } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getMarketValue().toString());
-                argsForTransferee.add(propertyMutation.getMutationFee().toString());
-                transferorMobileNumber = "";
-                smsMsgForTransferee = getText("msg.paymenttransferproperty.sms", argsForTransferee);
-            } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
-                argsForTransferor.add(propertyMutation.getFullTranferorName());
-                argsForTransferor.add(propertyMutation.getFullTranfereeName());
-                argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferor.add(transferOwnerService.getCityName());
-                argsForTransferee.add(propertyMutation.getFullTranferorName());
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
-                argsForTransferee.add(transferOwnerService.getCityName());
-                smsMsgForTransferor = getText("msg.approvetransferproperty.sms", argsForTransferor);
-                smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
-            }
-        }
-        messagingService.sendSMS(transferorMobileNumber, smsMsgForTransferor);
-        messagingService.sendSMS(transfereeMobileNumber, smsMsgForTransferee);
-    }
-
     public String getTaxDueErrorMsg() {
         return taxDueErrorMsg;
     }
 
     public void setTaxDueErrorMsg(final String taxDueErrorMsg) {
         this.taxDueErrorMsg = taxDueErrorMsg;
+    }
+
+    public Map<String, String> getGuardianRelationMap() {
+        return guardianRelationMap;
+    }
+
+    public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
+        this.guardianRelationMap = guardianRelationMap;
     }
 
 }
