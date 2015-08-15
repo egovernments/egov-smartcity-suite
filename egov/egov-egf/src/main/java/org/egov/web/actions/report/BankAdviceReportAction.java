@@ -68,14 +68,12 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
-import org.egov.eb.domain.master.entity.EBDetails;
-import org.egov.eb.utils.EBUtils;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -456,7 +454,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         
         return "reportview";
     }
-	@ValidationErrorPage(NEW)
+	/*@ValidationErrorPage(NEW)
 @Action(value="/report/bankAdviceReport-exportText")
     public String exportText() {
 		try
@@ -502,7 +500,7 @@ public class BankAdviceReportAction extends BaseFormAction {
 		
 		return "txtresult";
 		
-	}
+	}*/
 	
 	 private List getBankAdviceReportList() {
 	    	

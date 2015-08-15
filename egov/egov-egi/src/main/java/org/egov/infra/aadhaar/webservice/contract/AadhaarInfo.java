@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -37,59 +36,30 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.aadhaar.contract;
+package org.egov.infra.aadhaar.webservice.contract;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.egov.infra.admin.master.entity.User;
+import com.google.gson.GsonBuilder;
 
-public class AadhaarInfo implements Serializable {
+public interface AadhaarInfo extends Serializable {
 
-    private static final long serialVersionUID = 6091570091083799419L;
+    String getName();
 
-    private String aadhaarNo;
-    private String email;
-    private String mobile;
-    private String ownerName;
+    String getMobile();
 
-    public String getAadhaarNo() {
-        return aadhaarNo;
-    }
+    String getDob();
 
-    public void setAadhaarNo(final String aadhaarNo) {
-        this.aadhaarNo = aadhaarNo;
-    }
+    String getUid();
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(final String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public void setOwnerName(final String ownerName) {
-        this.ownerName = ownerName;
-    }
-
-    public static AadhaarInfo createFrom(final User user) {
-        final AadhaarInfo aadhaarInfo = new AadhaarInfo();
-        aadhaarInfo.setAadhaarNo(user.getAadhaarNumber());
-        aadhaarInfo.setEmail(user.getEmailId());
-        aadhaarInfo.setMobile(user.getMobileNumber());
-        aadhaarInfo.setOwnerName(user.getName());
-        return aadhaarInfo;
+    default String toJSON() {
+        final Map<String, String> aadhaarInfo = new HashMap<>();
+        aadhaarInfo.put("name", getName());
+        aadhaarInfo.put("phone", getMobile());
+        aadhaarInfo.put("dob", getDob());
+        aadhaarInfo.put("uid", getUid());
+        return new GsonBuilder().create().toJson(aadhaarInfo);
     }
 }

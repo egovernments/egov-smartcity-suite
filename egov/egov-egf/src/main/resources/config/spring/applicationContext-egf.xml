@@ -394,40 +394,40 @@
      <bean id="egfRecordStatusService" class="org.egov.services.voucher.EgfRecordStatusService"  scope="prototype">
       <property name="type" value="org.egov.commons.EgfRecordStatus" />
      </bean>
-     <bean id="eBConsumerService" class="org.egov.eb.service.master.EBConsumerService" parent="persistenceService" scope="prototype">
+     <!-- <bean id="eBConsumerService" class="org.egov.eb.service.master.EBConsumerService" parent="persistenceService" scope="prototype">
       <property name="type" value="org.egov.eb.domain.master.entity.EBConsumer" />
-     </bean>
+     </bean> -->
      <bean id="accountdetailkeyService" class="org.egov.services.masters.AccountdetailkeyService" >
       <property name="type" value="org.egov.commons.Accountdetailkey" />
       <property name="persistenceService" ref="persistenceService" /> 
      </bean>
-     <bean id="ebDetailsService" class="org.egov.eb.service.master.EBDetailsService" parent="persistenceService" scope="prototype">
+     <!-- <bean id="ebDetailsService" class="org.egov.eb.service.master.EBDetailsService" parent="persistenceService" scope="prototype">
       <property name="type" value="org.egov.eb.domain.master.entity.EBDetails" />
-     </bean>
+     </bean> -->
      <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" parent="persistenceService" scope="prototype">
       <property name="type" value="org.egov.commons.SubScheme" />
      </bean>
 
-     <bean id="targetAreaService" class="org.egov.eb.service.master.TargetAreaService" parent="persistenceService" scope="prototype">
+     <!-- <bean id="targetAreaService" class="org.egov.eb.service.master.TargetAreaService" parent="persistenceService" scope="prototype">
 	   <property name="type" value="org.egov.eb.domain.master.entity.TargetArea" />
-     </bean>
+     </bean> -->
      
-     <bean id="billInfoService" class="org.egov.eb.service.bill.EBBillInfoService" scope="prototype" >
+    <!--  <bean id="billInfoService" class="org.egov.eb.service.bill.EBBillInfoService" scope="prototype" >
          <property name="ebConsumerService" ref="eBConsumerService" />
          <property name="ebDetailsService" ref="ebDetailsService" />
          <property name="targetAreaService" ref="targetAreaService" />
          <property name="ebDetailsWorkflowService" ref="ebDetailsWorkflowService" />
           <property name="ebSchedulerLogService" ref="ebSchedulerLogService" />
      </bean>
-     
+      -->
     <!--  <bean id="ebDetailsWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
        <constructor-arg ref="ebDetailsService"/>       
     </bean>
  -->
-     <bean id="receiptInfoService" class="org.egov.eb.service.receipt.EBReceiptInfoService"  scope="prototype" />         
+     <!-- <bean id="receiptInfoService" class="org.egov.eb.service.receipt.EBReceiptInfoService"  scope="prototype" />         
       
      <bean id="ebSchedulerLogService" class="org.egov.eb.service.transaction.EbSchedulerLogService" parent="persistenceService" >
 		<property name="type" value="org.egov.eb.domain.transaction.entity.EbSchedulerLog" />
-	</bean>
+	</bean> -->
 	
 </beans>

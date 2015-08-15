@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -39,9 +38,9 @@
  */
 package org.egov.infra.web.controller.common;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.egov.infra.aadhaar.contract.AadhaarInfo;
+import org.egov.infra.aadhaar.webservice.client.AadhaarInfoServiceClient;
 import org.egov.infra.web.rest.error.ErrorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,20 +52,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/aadhaar")
 public class AadhaarInfoController {
 
-    @RequestMapping(value = "/{aadhaarNo}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarInfo(@PathVariable final String aadhaarNo) {
-        try {
-            // TODO info has to be collected from uiadi server
-            final AadhaarInfo aadhaarInfo = new AadhaarInfo();
-            aadhaarInfo.setAadhaarNo(aadhaarNo);
-            aadhaarInfo.setEmail(RandomStringUtils.randomAlphabetic(20) + "@gmail.com");
-            aadhaarInfo.setMobile(RandomStringUtils.randomNumeric(9));
-            aadhaarInfo.setOwnerName(RandomStringUtils.randomAlphabetic(5));
-            return new ResponseEntity<AadhaarInfo>(aadhaarInfo, HttpStatus.OK);
-        } catch (final Exception e) {
+    @Autowired
+    private AadhaarInfoServiceClient aadhaarInfoServiceClient;
 
+    @RequestMapping(value = "/{uid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> aadhaarInfo(@PathVariable final String uid) {
+        try {
+            return new ResponseEntity<String>(aadhaarInfoServiceClient.getAadhaarInfo(uid).toJSON(), HttpStatus.OK);
+        } catch (final Exception e) {
             return new ResponseEntity<ErrorResponse>(new ErrorResponse("INFRA-001",
-                    "User detail not found in uidai server for aadhaar no : " + aadhaarNo, HttpStatus.NOT_FOUND),
+                    "User detail not found in uidai server for aadhaar no : " + uid, HttpStatus.NOT_FOUND),
                     HttpStatus.NOT_FOUND);
         }
     }
