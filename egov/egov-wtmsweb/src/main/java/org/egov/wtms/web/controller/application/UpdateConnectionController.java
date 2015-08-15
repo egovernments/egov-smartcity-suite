@@ -160,8 +160,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "edit"));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
-            model.addAttribute("usageTypes", usageTypeService.getAllUsageTypesByConnectionType(waterConnectionDetails
-                    .getConnectionType().toString()));
+            model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         } else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));

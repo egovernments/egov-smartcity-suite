@@ -54,7 +54,10 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
@@ -107,10 +110,17 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return waterSourceService.getAllActiveWaterSourceTypes();
     }
 
-    /*
-     * public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() { return
-     * pipeSizeService.getAllActivePipeSize(); }
-     */
+    public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
+        return connectionCategoryService.getAllActiveConnectionCategory();
+    }
+
+    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
+        return usageTypeService.getActiveUsageTypes();
+    }
+
+    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
+        return pipeSizeService.getAllActivePipeSize();
+    }
 
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
