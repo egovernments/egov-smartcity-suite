@@ -102,12 +102,12 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     private DepartmentService departmentService;
 
-    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
-        return waterConnectionDetailsService.getConnectionTypesMap();
-    }
-
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
+    }
+    
+    public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
+        return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
     public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {

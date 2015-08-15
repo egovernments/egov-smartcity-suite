@@ -258,4 +258,5 @@ public class UpdateConnectionController extends GenericConnectionController {
     public String getAdditionalRule() {
         return "NEW CONNECTION";
     }
+    
 }
