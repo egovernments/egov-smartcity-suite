@@ -60,7 +60,9 @@
 </div>			
 <div class="row text-center">
 	<div class="add-margin">
+	<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONNOTICEGENERATED'}">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+	</c:if>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>

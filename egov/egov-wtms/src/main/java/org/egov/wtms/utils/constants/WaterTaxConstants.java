@@ -128,4 +128,7 @@ public class WaterTaxConstants {
     //this is just another name to new connection
    	public static final String PRIMARYCONNECTION = "Primary Connection";
    	public static final String CONN_NAME_ADDNLCONNECTION = "Additional Connection";
+   	
+   	public static final String NEW_CONNECTION_MATRIX_ADDL_RULE = "NEW CONNECTION";
+   	public static final String FEE_COLLECTION_COMMENT = "Water connection fee collected";
 }

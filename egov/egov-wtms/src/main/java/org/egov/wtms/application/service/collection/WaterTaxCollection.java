@@ -63,7 +63,14 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +90,18 @@ public class WaterTaxCollection extends TaxCollection {
     private ConnectionDemandService connectionDemandService;
     @Autowired
     private InstallmentDao installmentDao;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
+
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -108,6 +127,30 @@ public class WaterTaxCollection extends TaxCollection {
 
         LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
         LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
+
+        LOGGER.debug("WaterConnectionDetails : Updating WaterConnectionDetails status and transition started");
+        updateWaterConnectionDetails(demand);
+        LOGGER.debug("WaterConnectionDetails : Updating WaterConnectionDetails status and transition finished");
+    }
+
+    public void updateWaterConnectionDetails(final EgDemand demand) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .getWaterConnectionDetailsByDemand(demand);
+        waterConnectionDetails.setEgwStatus(waterTaxUtils
+                .getStatusByCodeAndModuleType(WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+        Long approvalPosition = Long.valueOf(0);
+        final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
+                .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
+                waterConnectionDetails.getCurrentState().getValue(), null);
+        final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation());
+        if (posobj != null)
+            approvalPosition = posobj.getId();
+        waterConnectionDetailsService.createMatrixWorkflowTransition(waterConnectionDetails,
+                approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
+                null);
+        waterConnectionDetailsService.sendSmsAndEmail(waterConnectionDetails, null);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
+        waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
 
     }
 

@@ -80,19 +80,26 @@
                           <c:out value="Not Applicable" />
                         </c:otherwise>          
                     </c:choose>
+                    </div>
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.connectioncharge"/></div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXCONCHARGE}" /></div>
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.donationcharge"/></div>  
 					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${feeDetails.WTAXDONATION}" />
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.securitycharge"/></div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${feeDetails.WTAXSECURITY}" /></div>
+						<c:choose>
+						<c:when test="${not empty feeDetails.WTAXDONATION}">
+							<c:out value="${feeDetails.WTAXDONATION}" />
+						</c:when>
+						<c:otherwise>Not Applicable</c:otherwise>
+					</c:choose></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.estimationcharges"/></div>
+					<div class="col-xs-3 add-margin view-content">
+					<c:choose>
+						<c:when test="${not empty feeDetails.WTAXFIELDINSPEC}">
+							<c:out value="${feeDetails.WTAXFIELDINSPEC}" />
+						</c:when>
+						<c:otherwise>Not Applicable</c:otherwise>
+					</c:choose></div>
 				</div>
 				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
 				<div class="row add-border">
@@ -105,7 +112,6 @@
 			</div>
 		</div>					
 	</div>
-</div>
 	<table class="table table-bordered">
 		<thead>
 			<tr>

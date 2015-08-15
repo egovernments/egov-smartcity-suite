@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemand;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -92,5 +93,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String consumerCode, ConnectionStatus connectionStatus);
+    
+    WaterConnectionDetails findByDemand(EgDemand demand);
 
 }
