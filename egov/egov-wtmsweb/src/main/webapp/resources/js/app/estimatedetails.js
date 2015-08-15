@@ -40,33 +40,9 @@
 $(document).ready(function()
 {	
 	if($('#pipelineDistance') != null && $('#pipelineDistance').val() == 0.0)
-		$('#pipelineDistance').val('');
+		$('#pipelineDistance').val('');	
 	
 	loadConnectionCategories();
-	 
-	$('#connectionType').change(function(){
-		$.ajax({
-			url: "/wtms/ajax-connectionTypes",     
-			type: "GET",
-			data: {
-				connectionType: $('#connectionType').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				
-				console.log("success"+response);
-				$('#usageType').empty();
-				$('#usageType').append($("<option value=''>Select from below</option>"));
-				$.each(response, function(index, value) {
-					$('#usageType').append($('<option>').text(value.name).attr('value', value.id))
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
 	
 	$('#connectionCategorie').change(function () {
 		loadConnectionCategories();
@@ -86,7 +62,6 @@ $(document).ready(function()
 	    }
 	}
 	
-
 	$("#addRowId").click(function(){	
 		addRow();
 	});	
@@ -278,4 +253,5 @@ function calculateEstimationCharges() {
 	
 	estimationCharge = eval(diggingCharges) + eval(supervisionCharges) + eval(materialCharges);
 	$('#estimationCharges').val(estimationCharge);
+	$('#estimationChargesHidden').val(estimationCharge);
 }

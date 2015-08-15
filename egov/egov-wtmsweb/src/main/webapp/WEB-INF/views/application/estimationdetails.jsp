@@ -149,8 +149,9 @@
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.estimationcharges" /><span class="mandatory"></span>						
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control text-right" id="estimationCharges" value="0.00" path="fieldInspectionDetails.estimationCharges" disabled="true"/>
+						<div class="col-md-3 col-xs-6 add-margin"> 
+							<input class="form-control text-right" id="estimationCharges" value="0.00" name="estimationCharges" disabled/>
+							<form:hidden path="fieldInspectionDetails.estimationCharges" id="estimationChargesHidden" /> 
 							<form:errors path="fieldInspectionDetails.estimationCharges" cssClass="add-margin error-msg" />
 						</div>
 					</div>
