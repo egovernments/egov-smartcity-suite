@@ -221,8 +221,8 @@
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].salutation" maxlength="10" size="10" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+											<s:select name="transfereeInfos[%{#status.index}].salutation" id="transfereeInfos[%{#status.index}].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }"
+				                                   cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20"
@@ -242,8 +242,8 @@
 								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardianRelation" maxlength="10" size="10" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[%{#status.index}].guardianRelation}"
+				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
 								        </td>
 								         <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
