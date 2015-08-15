@@ -215,8 +215,8 @@
 										   <s:textfield name="transfereeInfos[0].aadhaarNumber" size="12" maxlength="12" value=""></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].salutation" maxlength="10" size="10" id="salutation"  value="" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								            <s:select name="transfereeInfos[0].salutation" id="transfereeInfos[0].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }" value="%{transfereeInfos[0].salutation}"
+				                             cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].name" maxlength="100" size="20" id="ownerName"  value="" 
@@ -236,8 +236,8 @@
 								        	<s:hidden name="transfereeInfos[0].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[0].guardianRelation" maxlength="10" size="10" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        		 <s:select id="transfereeInfos[0].guardianRelation" name="transfereeInfos[0].guardianRelation" value="%{transfereeInfos[0].guardianRelation}"
+				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
 								        </td>
 								         <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[0].guardian" maxlength="100" size="20" 
@@ -256,8 +256,8 @@
 										   <s:textfield name="transfereeInfos[%{#status.index}].aadhaarNumber" size="12" maxlength="12"></s:textfield>
 										</td>
 										<td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].salutation" maxlength="10" size="10"
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								        	<s:select name="transfereeInfos[%{#status.index}].salutation" id="transfereeInfos[%{#status.index}].salutation" headerValue="Choose" 	headerKey="" list="#{'Mr':'Mr','Ms':'Ms','Mrs':'Mrs' }"
+				                                   cssClass="selectwk"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].name" maxlength="100" size="20"
@@ -277,8 +277,9 @@
 								        	<s:hidden name="transfereeInfos[%{#status.index}].type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:textfield name="transfereeInfos[%{#status.index}].guardianRelation" maxlength="10" size="10" 
-								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
+								         <s:select id="transfereeInfos[%{#status.index}].guardianRelation" name="transfereeInfos[%{#status.index}].guardianRelation" value="%{transfereeInfos[%{#status.index}].guardianRelation}"
+				                                     headerValue="Choose" headerKey="" list="guardianRelationMap"/>
+								
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfos[%{#status.index}].guardian" maxlength="100" size="20"
@@ -341,7 +342,7 @@
 						<td class="greybox">
 							<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
 							<s:textfield name="deedDate" id="deedDate" maxlength="10"
-								value="%{docDate}"
+								value="%{docDate}" autocomplete="off"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);"
 								cssClass="datepicker" />
@@ -356,7 +357,8 @@
 						</td>
 					</tr>
 
-                     <tr>
+                    <%@ include file="../common/DocumentUploadForm.jsp"%>
+                     <%-- <tr>
 						<td colspan="5">
 						<table class="tablebottom" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tbody>
@@ -390,7 +392,7 @@
 							</tbody>
 						</table>
 					</td>
-				 </tr>
+				 </tr> --%>
 
 				</table>
         		<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -452,7 +454,6 @@
 				}
 			}
 		}
-		jQuery('#nameTable tr:eq(1) td img[alt="Remove"]').hide();
 </script>
 </body>
 </html>
