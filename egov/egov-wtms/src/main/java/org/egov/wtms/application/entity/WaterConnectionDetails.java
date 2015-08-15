@@ -189,6 +189,8 @@ public class WaterConnectionDetails extends StateAware {
 
     private String workOrderNumber;
 
+    private double donationCharges;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
@@ -466,5 +468,13 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setFileStore(final FileStoreMapper fileStore) {
         this.fileStore = fileStore;
+    }
+
+    public double getDonationCharges() {
+        return donationCharges;
+    }
+
+    public void setDonationCharges(final double donationCharges) {
+        this.donationCharges = donationCharges;
     }
 }
