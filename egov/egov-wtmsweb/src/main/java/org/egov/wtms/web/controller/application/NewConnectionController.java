@@ -109,7 +109,7 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-        model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser",
                 waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
@@ -179,7 +179,7 @@ public class NewConnectionController extends GenericConnectionController {
         }
 
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent, getAdditionalRule(), workFlowAction);
+                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
 
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverUserName(approvalPosition);
@@ -287,10 +287,6 @@ public class NewConnectionController extends GenericConnectionController {
     @Override
     public StateAware getModel() {
         return waterconnection;
-    }
-
-    public String getAdditionalRule() {
-        return "NEW CONNECTION";
     }
 
 }

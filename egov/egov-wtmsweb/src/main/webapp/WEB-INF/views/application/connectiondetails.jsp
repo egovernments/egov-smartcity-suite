@@ -140,7 +140,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.no.of.persons" /></label> 
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfPerson" path="numberOfPerson" required="required" />
+			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfPerson" path="numberOfPerson" />
 			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
 		</div>
 </div>

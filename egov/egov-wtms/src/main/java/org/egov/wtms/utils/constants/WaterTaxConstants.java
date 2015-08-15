@@ -131,4 +131,9 @@ public class WaterTaxConstants {
    	
    	public static final String NEW_CONNECTION_MATRIX_ADDL_RULE = "NEW CONNECTION";
    	public static final String FEE_COLLECTION_COMMENT = "Water connection fee collected";
+   
+   public static final String ADDRULE_FOR_NEW_CONNECTION="NEWCONNECTION";
+   public static final String ADDRULE_FOR_ADD_CONNECTION="ADDNLCONNECTION";
+   public static final String ADDRULE_FOR_CHANGE_OF_USE="CHANGEOFUSE";
+   public static final String WF_WORKORDER_BUTTON = "Generate WorkOrder";
 }

@@ -89,6 +89,10 @@ $(document).ready(function()
 		$(".btn-primary").click(function() { 
 			var action = document.getElementById("workFlowAction").value;
 			 var status=$('#statuscode').val();
+			 if(action == 'Generate WorkOrder' && status=='APPROVED') {
+				 document.forms[0].submit();	
+			 }
+			 
 			 if(status=='CREATED' && action == 'Submit') {
 				if($('#estimationCharges')) {
 					var estimationCharge = $('#estimationCharges').val();

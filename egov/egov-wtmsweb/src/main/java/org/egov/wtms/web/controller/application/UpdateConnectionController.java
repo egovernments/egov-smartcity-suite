@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -58,6 +59,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +98,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     @Autowired
     public UpdateConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -126,7 +131,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("additionalRule", getAdditionalRule());
+        model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
@@ -146,7 +151,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getState().getHistory().isEmpty()) {
             model.addAttribute("mode", "noedit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "noedit"));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), "noedit"));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
@@ -158,12 +163,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             model.addAttribute("mode", "edit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), "edit"));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), "edit"));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         } else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, getAdditionalRule(), ""));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), ""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
     }
@@ -199,6 +204,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
                 && waterConnectionDetails.getEgwStatus() != null
                 && waterConnectionDetails.getEgwStatus().getCode() != null
@@ -212,12 +218,21 @@ public class UpdateConnectionController extends GenericConnectionController {
             mode = request.getParameter("mode");
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(
-                    waterConnectionDetails, approvalPosition, getAdditionalRule(), mode);
+                    waterConnectionDetails, approvalPosition, waterConnectionDetails.getApplicationType().getCode(), mode);
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
 
         if (!resultBinder.hasErrors()) {
-            waterConnectionDetailsService.updateNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, getAdditionalRule(), workFlowAction, mode);
+            if(null!=workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)){
+                waterConnectionDetails.setWorkOrderDate(new Date());
+                waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
+            }
+            
+            waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
+                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
+            
+            if(null!=workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)){
+                return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
+            }
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);
@@ -255,8 +270,4 @@ public class UpdateConnectionController extends GenericConnectionController {
         return true;
     }
 
-    public String getAdditionalRule() {
-        return "NEW CONNECTION";
-    }
-    
 }

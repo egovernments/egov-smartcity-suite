@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
@@ -93,16 +94,13 @@ public class WorkOrderController {
     @Autowired
     private WaterConnectionDetailsService wcdService;
     
-    @RequestMapping(value = "/workorder/{applicationNumber}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(@PathVariable final String applicationNumber,final HttpSession session) {
-        final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(applicationNumber);
+    @RequestMapping(value = "/workorder", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,final HttpSession session) {
+        final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(request.getParameter("pathVar"));
         validateWorkOrder(connectionDetails, true);
         if(!errorMessage.isEmpty()){
             return redirect();
         }
-        connectionDetails.setWorkOrderDate(new Date());
-        connectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-        //TODO : workflow transition,sms and email
         return generateReport(connectionDetails,session);
     }
 
@@ -147,7 +145,7 @@ public class WorkOrderController {
         if(isView && null==connectionDetails.getWorkOrderNumber()){
             errorMessage = messageSource.getMessage("err.validate.workorder.view", new String[] {connectionDetails.getApplicationNumber()}, null);
         }
-        else if(!isView && !connectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_APPROVED)){
+        else if(!isView && !connectionDetails.getEgwStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)){
             errorMessage = messageSource.getMessage("err.validate.workorder.view", new String[] {connectionDetails.getApplicationNumber()}, null);
         }
     }
