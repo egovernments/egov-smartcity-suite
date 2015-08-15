@@ -650,7 +650,7 @@ public class ReceiptAction extends BaseFormAction {
 		long startTimeMillis = System.currentTimeMillis();
 		if (manualReceiptNumber != null && manualReceiptDate !=null){
 			CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(manualReceiptDate);
-			rhForValidation = receiptHeaderService.findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE, manualReceiptNumber, /*modelPayeeList.iterator().next().getReceiptHeaders().iterator().next().getService().getCode(),*/ financialYear.getStartingDate(), financialYear.getEndingDate(), CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
+			rhForValidation = receiptHeaderService.findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE, manualReceiptNumber, receiptHeader.getService().getCode(), financialYear.getStartingDate(), financialYear.getEndingDate(), CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
 		}
 		
 		if (rhForValidation == null) {
