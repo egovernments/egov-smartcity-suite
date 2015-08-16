@@ -349,13 +349,13 @@
 						</td>
 					</tr>
 					
-					<tr>
+				<%-- 	<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
 								<s:text name="docsectiontitle" /> 
 							</div>
 						</td>
-					</tr>
+					</tr> --%>
 
                     <%@ include file="../common/DocumentUploadForm.jsp"%>
                      <%-- <tr>
@@ -395,6 +395,7 @@
 				 </tr> --%>
 
 				</table>
+				<s:if test="%{propertyByEmployee == true}">
         		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
@@ -402,8 +403,13 @@
 					<tr>
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
-
 				</table>
+				</s:if>
+				<s:else>
+				<tr align="center">
+					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+				</tr>
+				</s:else>
 				</s:push>
 			</s:form>
 			<div align="left" class="mandatory1" style="font-size: 11px">

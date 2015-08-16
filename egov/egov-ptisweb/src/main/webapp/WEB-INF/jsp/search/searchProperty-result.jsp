@@ -130,7 +130,8 @@
 										<option value="ViewProperty">
 											<s:text name="viewProp"></s:text>
 										</option>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase())}">
+										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
+										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_CSC_OPERATOR.toUpperCase())}">
 											<s:if test="%{isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>

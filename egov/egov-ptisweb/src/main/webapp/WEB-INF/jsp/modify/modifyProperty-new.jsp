@@ -125,11 +125,17 @@
 				<s:hidden id="modifyRsn" name="modifyRsn" value="%{modifyRsn}" />
 				<s:hidden id="ownerName" name="ownerName" value="%{ownerName}" />
 				<s:hidden id="propAddress" name="propAddress" value="%{propAddress}" />
-
+                <s:if test="%{propertyByEmployee == true}">
 				<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 				<div class="buttonbottom" align="center">
 					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
 				</div>
+				</s:if>
+				<s:else>
+				<div class="buttonbottom" align="center">
+					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp" %>
+				</div>
+				</s:else>
 			</div>
 		</s:push>
 	</s:form>

@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
@@ -171,6 +172,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String mutationInitiatedBy;
     private String assessmentNoMessage;
     private String taxDueErrorMsg;
+    private Boolean propertyByEmployee = Boolean.TRUE;
     
     private Map<String, String> guardianRelationMap;
 
@@ -268,9 +270,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String reject() {
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
-        mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
         buildSMS(propertyMutation);
-        setAckMessage("Transfer of ownership data rejected successfuly and forwarded to initiator : ");
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
+            mutationInitiatedBy = propertyMutation.getCreatedBy().getName();
+        else
+            mutationInitiatedBy = assignmentService
+                    .getPrimaryAssignmentForPositon(propertyMutation.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
+        if (propertyMutation.getState().getValue().equals("Closed")) {
+            mutationInitiatedBy = transferOwnerService.getLoggedInUser().getUsername();
+            setAckMessage("Transfer of ownership data rejected successfuly By ");
+        } else
+            setAckMessage("Transfer of ownership data rejected successfuly and forwarded to initiator : ");
         setAssessmentNoMessage(" with assessment number : ");
         return ACK;
     }
@@ -342,6 +353,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Override
     public void prepare() {
         super.prepare();
+        propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
@@ -426,12 +438,29 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final DateTime currentDate = new DateTime();
         final User user = transferOwnerService.getLoggedInUser();
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        final String designationName = userAssignment.getDesignation().getName();
         Position pos = null;
+        Assignment wfInitiator = null;
+        
+        if (!propertyByEmployee) {
+            currentState = "Created";
+            Assignment assignment = propertyService.getUserPositionByZone(basicproperty);
+            approverPositionId = assignment.getPosition().getId();
+            approverName = assignment.getEmployee().getUsername();
+        } else {
+            currentState = null;
+        }
+        
+        if (null != propertyMutation.getId())
+            if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
+            else if (!propertyMutation.getStateHistory().isEmpty())
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition()
+                        .getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
-                    .getCreatedBy().getId());
             if (wfInitiator.equals(userAssignment))
                 propertyMutation.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
                         .withDateInfo(currentDate.toDate());
@@ -445,14 +474,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else {
             if (null != approverPositionId && approverPositionId != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
-            else if (COMMISSIONER_DESGN.equals(designationName)) {
-                final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation
-                        .getCreatedBy().getId());
+            else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
                 pos = wfInitiator.getPosition();
             }
             if (null == propertyMutation.getState()) {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                        null, null, getAdditionalRule(), null, null);
+                        null, null, getAdditionalRule(), currentState, null);
                 propertyMutation.transition().start().withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
@@ -650,6 +677,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
         this.guardianRelationMap = guardianRelationMap;
+    }
+
+    public Boolean getPropertyByEmployee() {
+        return propertyByEmployee;
+    }
+
+    public void setPropertyByEmployee(Boolean propertyByEmployee) {
+        this.propertyByEmployee = propertyByEmployee;
     }
 
 }

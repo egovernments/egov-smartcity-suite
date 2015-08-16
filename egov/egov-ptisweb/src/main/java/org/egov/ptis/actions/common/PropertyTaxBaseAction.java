@@ -108,6 +108,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
@@ -145,11 +146,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-    @Autowired
-    private DesignationService designationService;
-    @Autowired
-    private DepartmentService departmentService;
+    private PropertyService propertyService;
     @Autowired
     private EmployeeService employeeService;
     private SMSEmailService sMSEmailService;
@@ -376,25 +373,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         LOGGER.debug("Exit from setUserInfo");
     }
 
-    protected Boolean isEmployee(final User user) {
-        for (final Role role : user.getRoles())
-            for (final AppConfigValues appconfig : getThirdPartyUserRoles())
-                if (role != null && role.getName().equals(appconfig.getValue())) {
-                    propertyByEmployee = false;
-                    break;
-                }
-        return propertyByEmployee;
-    }
-
-    private Position getUserPositionByZone(final BasicProperty basicProperty) {
-        final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
-        final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
-        final List<Assignment> assignment = (List<Assignment>)assignmentService.findByDepartmentDesignationAndBoundary(department.getId(),
-                designation.getId(), basicProperty.getPropertyID().getZone().getId());
-        approverName = assignment.get(0).getEmployee().getUsername();
-        return assignment.get(0).getPosition();
-    }
-
     public void transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
@@ -404,10 +382,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            approverPositionId = getUserPositionByZone(property.getBasicProperty()).getId();
+            Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
+            approverPositionId = assignment.getPosition().getId();
+            approverName = assignment.getEmployee().getUsername();
+        } else {
+            currentState = null;
         }
         if (null != property.getId())
-            if (isEmployee(property.getCreatedBy()))
+            if (propertyService.isEmployee(property.getCreatedBy()))
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
             else if (!property.getStateHistory().isEmpty())
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
@@ -514,33 +496,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
         messagingService.sendSMS(mobileNumber, smsMsg);
-    }
-
-    public String getDepartmentForWorkFlow() {
-        String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-                PROPERTYTAX_WORKFLOWDEPARTEMENT);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            department = appConfigValue.get(0).getValue();
-        return department;
-    }
-
-    public String getDesignationForThirdPartyUser() {
-        String designation = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-                PROPERTYTAX_WORKFLOWDESIGNATION);
-        if (null != appConfigValue && !appConfigValue.isEmpty())
-            designation = appConfigValue.get(0).getValue();
-        return designation;
-    }
-
-    public List<AppConfigValues> getThirdPartyUserRoles() {
-
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                PTMODULENAME, PROPERTYTAX_ROLEFORNONEMPLOYEE);
-
-        return !appConfigValueList.isEmpty() ? appConfigValueList : null;
-
     }
 
     public WorkflowBean getWorkflowBean() {

@@ -56,6 +56,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
@@ -99,8 +102,17 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -114,6 +126,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
@@ -201,6 +214,16 @@ public class PropertyService {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PropertyStatusValuesDAO propertyStatusValuesDAO;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private DesignationService designationService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    protected AssignmentService assignmentService;
 
     public PropertyImpl createProperty(final PropertyImpl property, String areaOfPlot, final String mutationCode,
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
@@ -2133,6 +2156,50 @@ public class PropertyService {
         else
             area = area.add(BigDecimal.valueOf(propertyDetail.getSitalArea().getArea()));
         return area;
+    }
+    
+    public Boolean isEmployee(final User user) {
+        for (final Role role : user.getRoles())
+            for (final AppConfigValues appconfig : getThirdPartyUserRoles())
+                if (role != null && role.getName().equals(appconfig.getValue())) {
+                    return false;
+                }
+        return true;
+    }
+
+    public Assignment getUserPositionByZone(final BasicProperty basicProperty) {
+        final Designation designation = designationService.getDesignationByName(getDesignationForThirdPartyUser());
+        final Department department = departmentService.getDepartmentByName(getDepartmentForWorkFlow());
+        final List<Assignment> assignment = (List<Assignment>)assignmentService.findByDepartmentDesignationAndBoundary(department.getId(),
+                designation.getId(), basicProperty.getPropertyID().getZone().getId());
+        return assignment.get(0);
+    }
+    
+    public String getDepartmentForWorkFlow() {
+        String department = "";
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PROPERTYTAX_WORKFLOWDEPARTEMENT);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            department = appConfigValue.get(0).getValue();
+        return department;
+    }
+
+    public String getDesignationForThirdPartyUser() {
+        String designation = "";
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PROPERTYTAX_WORKFLOWDESIGNATION);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            designation = appConfigValue.get(0).getValue();
+        return designation;
+    }
+
+    public List<AppConfigValues> getThirdPartyUserRoles() {
+
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                PTMODULENAME, PROPERTYTAX_ROLEFORNONEMPLOYEE);
+
+        return !appConfigValueList.isEmpty() ? appConfigValueList : null;
+
     }
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {

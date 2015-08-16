@@ -153,9 +153,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Namespace("/create")
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = "new", location = "create/createProperty-new.jsp"),
-        @Result(name = "ack", location = "create/createProperty-ack.jsp"),
-        @Result(name = "view", location = "create/createProperty-view.jsp"),
-        @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
+    @Result(name = "ack", location = "create/createProperty-ack.jsp"),
+    @Result(name = "view", location = "create/createProperty-view.jsp"),
+    @Result(name = CreatePropertyAction.PRINTACK, location = "create/createProperty-printAck.jsp") })
 public class CreatePropertyAction extends WorkflowAction {
     /**
      *
@@ -536,12 +536,12 @@ public class CreatePropertyAction extends WorkflowAction {
         basicPropertyService.persist(basicProp);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         buildSMS(property, APPLICATION_TYPE_NEW_ASSESSENT);
-        if (isEmployee(property.getCreatedBy()))
+        if (propService.isEmployee(property.getCreatedBy()))
             propertyInitiatedBy = property.getCreatedBy().getName();
         else
             propertyInitiatedBy = assignmentService
-            .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
-            .getEmployee().getUsername();
+                    .getPrimaryAssignmentForPositon(property.getStateHistory().get(0).getOwnerPosition().getId())
+                    .getEmployee().getUsername();
         if (property.getState().getValue().equals("Closed")) {
             propertyInitiatedBy = securityUtils.getCurrentUser().getUsername();
             setAckMessage(MSG_REJECT_SUCCESS + " By ");
@@ -580,7 +580,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
         currDate = new Date();
         setUserInfo();
-        isEmployee(securityUtils.getCurrentUser());
+        propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -744,17 +744,17 @@ public class CreatePropertyAction extends WorkflowAction {
                 propertyDetail.getPropertyOccupation(), propertyDetail.getPropertyMutationMaster(),
                 propertyDetail.getComZone(), propertyDetail.getCornerPlot(),
                 propertyDetail.getExtentSite() != null ? propertyDetail.getExtentSite() : 0.0,
-                propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
-                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
-                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
-                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
-                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
-                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
-                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
-                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
-                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
-                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
-                propertyDetail.isBuildingPlanDetailsChecked());
+                        propertyDetail.getExtentAppartenauntLand() != null ? propertyDetail.getExtentAppartenauntLand() : 0.0,
+                                propertyDetail.getFloorType(), propertyDetail.getRoofType(), propertyDetail.getWallType(),
+                                propertyDetail.getWoodType(), propertyDetail.isLift(), propertyDetail.isToilets(),
+                                propertyDetail.isWaterTap(), propertyDetail.isStructure(), propertyDetail.isElectricity(),
+                                propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
+                                propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(),
+                                propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
+                                propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
+                                propertyDetail.getBuildingPermissionNo(), propertyDetail.getBuildingPermissionDate(),
+                                propertyDetail.getDeviationPercentage(), propertyDetail.isAppurtenantLandChecked(),
+                                propertyDetail.isBuildingPlanDetailsChecked());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -897,20 +897,21 @@ public class CreatePropertyAction extends WorkflowAction {
         }
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.id=?", mutationId);
-        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
-            if (StringUtils.isNotBlank(parentIndex)) {
-                final BasicProperty basicProperty = basicPropertyService.find(
-                        "From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                if (null != basicProperty) {
-                    final String errorKey = propService.validationForBifurcation(property, basicProperty,
-                            propertyMutationMaster.getCode());
-                    if (!isBlank(errorKey))
-                        addActionError(getText(errorKey));
-                } else
-                    addActionError(getText("error.parent"));
+        if (mode.equals(CREATE)) 
+            if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+                if (StringUtils.isNotBlank(parentIndex)) {
+                    final BasicProperty basicProperty = basicPropertyService.find(
+                            "From BasicPropertyImpl where upicNo = ? ", parentIndex);
+                    if (null != basicProperty) {
+                        final String errorKey = propService.validationForBifurcation(property, basicProperty,
+                                propertyMutationMaster.getCode());
+                        if (!isBlank(errorKey))
+                            addActionError(getText(errorKey));
+                    } else
+                        addActionError(getText("error.parent"));
 
-            } else
-                addActionError("error.parent.index");
+                } else
+                    addActionError("error.parent.index");
 
         validateApproverDetails();
         super.validate();
