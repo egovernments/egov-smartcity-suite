@@ -69,6 +69,9 @@ public class EgBillRegisterHibernateDAO extends GenericHibernateDAO{
 		 egBillRegisterService.setType(EgBillregister.class);
 	}
 	
+	public EgBillRegisterHibernateDAO(){
+	    super(EgBillregister.class, HibernateUtil.getCurrentSession());
+	}
 	
 	public List<String> getDistinctEXpType(){
 		session =HibernateUtil.getCurrentSession();

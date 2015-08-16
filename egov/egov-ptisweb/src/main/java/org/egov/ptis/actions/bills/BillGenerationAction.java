@@ -49,7 +49,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
@@ -60,13 +59,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MOD
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -97,8 +95,6 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.docmgmt.DocumentManagerService;
-import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -140,7 +136,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private ReportService reportService;
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private PersistenceService<Property, Long> propertyImplService;
-	private DocumentManagerService<DocumentObject> documentManagerService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private PTBillServiceImpl ptBillServiceImpl;
 	private WorkflowService<PropertyImpl> propertyWorkflowService;
@@ -586,15 +581,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
 	public void setBillNo(String billNo) {
 		this.billNo = billNo;
-	}
-
-	public DocumentManagerService<DocumentObject> getDocumentManagerService() {
-		return documentManagerService;
-	}
-
-	public void setDocumentManagerService(
-			DocumentManagerService<DocumentObject> documentManagerService) {
-		this.documentManagerService = documentManagerService;
 	}
 
 	public PropertyTaxNumberGenerator getPropertyTaxNumberGenerator() {

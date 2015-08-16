@@ -59,7 +59,6 @@ public final class EGovConfig {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EGovConfig.class);
 
-	private static final String CONFIG_FILE_NAME = "egov_config.xml";
 	private static Map<String, XMLConfiguration> configurationMap = new HashMap<String, XMLConfiguration>();
 	private static Map<String, Properties> propertiesMap = new HashMap<String, Properties>();
 
@@ -138,23 +137,6 @@ public final class EGovConfig {
 	}
 
 	/**
-	 * This is the real implementation. It will return the value of the property of the default egov-config.xml file. The next step is that it will look for the property. If it is not found in the category, it will look inside the default category (inheritance). If it still cannot find the property,
-	 * it will return the defaultValue.
-	 * @param key - name of the property to searcfor
-	 * @param defaultValue - the defaultValue that will be returned if the property cannot be found
-	 * @param categoryName - the name of the category
-	 * @return String
-	 */
-	public static String getProperty(final String key, final String defaultValue, final String categoryName) {
-		try {
-			return getProperty(CONFIG_FILE_NAME, key, defaultValue, categoryName);
-		} catch (final Exception exp) {
-			LOGGER.error("Error occurred in getProperty", exp);
-			throw new EGOVRuntimeException("Error occurred in getProperty", exp);
-		}
-	}
-
-	/**
 	 * Gets the boolean property.
 	 * @param xmlFileName the xml file name
 	 * @param name the name
@@ -164,18 +146,6 @@ public final class EGovConfig {
 	 */
 	public static boolean getBooleanProperty(final String xmlFileName, final String name, final boolean defaultValue, final String categoryName) {
 		final Boolean output = getXMLConfiguration(xmlFileName).getBoolean(categoryName + "." + name);
-		return output ? output : defaultValue;
-	}
-
-	/**
-	 * Gets the boolean property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @param categoryName the category name
-	 * @return the boolean property
-	 */
-	public static boolean getBooleanProperty(final String name, final boolean defaultValue, final String categoryName) {
-		final Boolean output = getBooleanProperty(CONFIG_FILE_NAME, name, defaultValue, categoryName);
 		return output ? output : defaultValue;
 	}
 
@@ -191,16 +161,6 @@ public final class EGovConfig {
 		return output ? output : defaultValue;
 	}
 
-	/**
-	 * Gets the boolean property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @return the boolean property
-	 */
-	public static boolean getBooleanProperty(final String name, final boolean defaultValue) {
-		final Boolean output = getBooleanProperty(CONFIG_FILE_NAME, name, defaultValue);
-		return output ? output : defaultValue;
-	}
 
 	/**
 	 * Gets the double property.
@@ -211,17 +171,6 @@ public final class EGovConfig {
 	 */
 	public static double getDoubleProperty(final String xmlFileName, final String name, final double defaultValue) {
 		final double output = getXMLConfiguration(xmlFileName).getDouble(name);
-		return output == 0 ? defaultValue : output;
-	}
-
-	/**
-	 * Gets the double property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @return the double property
-	 */
-	public static double getDoubleProperty(final String name, final double defaultValue) {
-		final double output = getDoubleProperty(CONFIG_FILE_NAME, name, defaultValue);
 		return output == 0 ? defaultValue : output;
 	}
 
@@ -238,17 +187,6 @@ public final class EGovConfig {
 		return output == 0 ? defaultValue : output;
 	}
 
-	/**
-	 * Gets the double property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @param category the category
-	 * @return the double property
-	 */
-	public static double getDoubleProperty(final String name, final double defaultValue, final String category) {
-		final double output = getDoubleProperty(CONFIG_FILE_NAME, name, defaultValue, category);
-		return output == 0 ? defaultValue : output;
-	}
 
 	/**
 	 * Gets the int property.
@@ -261,18 +199,6 @@ public final class EGovConfig {
 		final int output = getXMLConfiguration(xmlFileName).getInt(name);
 		return output == 0 ? defaultValue : output;
 	}
-
-	/**
-	 * Gets the int property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @return the int property
-	 */
-	public static int getIntProperty(final String name, final int defaultValue) {
-		final int output = getIntProperty(CONFIG_FILE_NAME, name, defaultValue);
-		return output == 0 ? defaultValue : output;
-	}
-
 	/**
 	 * Gets the int property.
 	 * @param xmlFileName the xml file name
@@ -287,18 +213,6 @@ public final class EGovConfig {
 	}
 
 	/**
-	 * Gets the int property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @param category the category
-	 * @return the int property
-	 */
-	public static int getIntProperty(final String name, final int defaultValue, final String category) {
-		final int output = getIntProperty(CONFIG_FILE_NAME, name, defaultValue, category);
-		return output == 0 ? defaultValue : output;
-	}
-
-	/**
 	 * Gets the long property.
 	 * @param xmlFileName the xml file name
 	 * @param name the name
@@ -309,18 +223,6 @@ public final class EGovConfig {
 		final long output = getXMLConfiguration(xmlFileName).getLong(name);
 		return output == 0 ? defaultValue : output;
 	}
-
-	/**
-	 * Gets the long property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @return the long property
-	 */
-	public static long getLongProperty(final String name, final long defaultValue) {
-		final long output = getLongProperty(CONFIG_FILE_NAME, name, defaultValue);
-		return output == 0 ? defaultValue : output;
-	}
-
 	/**
 	 * Gets the long property.
 	 * @param xmlFileName the xml file name
@@ -331,18 +233,6 @@ public final class EGovConfig {
 	 */
 	public static long getLongProperty(final String xmlFileName, final String name, final long defaultValue, final String categoryName) {
 		final long output = getXMLConfiguration(xmlFileName).getLong(categoryName + "." + name);
-		return output == 0 ? defaultValue : output;
-	}
-
-	/**
-	 * Gets the long property.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @param categoryName the category name
-	 * @return the long property
-	 */
-	public static long getLongProperty(final String name, final long defaultValue, final String categoryName) {
-		final long output = getLongProperty(CONFIG_FILE_NAME, name, defaultValue, categoryName);
 		return output == 0 ? defaultValue : output;
 	}
 
@@ -358,15 +248,6 @@ public final class EGovConfig {
 
 	/**
 	 * Gets the array.
-	 * @param name the name
-	 * @return the array
-	 */
-	public static String[] getArray(final String name) {
-		return getArray(CONFIG_FILE_NAME, name);
-	}
-
-	/**
-	 * Gets the array.
 	 * @param xmlFileName the xml file name
 	 * @param name the name
 	 * @param defaultValue the default value
@@ -377,16 +258,6 @@ public final class EGovConfig {
 		return str.length == 0 ? defaultValue : str;
 	}
 
-	/**
-	 * Gets the array.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @return the array
-	 */
-	public static String[] getArray(final String name, final String[] defaultValue) {
-		final String[] str = getArray(CONFIG_FILE_NAME, name, defaultValue);
-		return str.length == 0 ? defaultValue : str;
-	}
 
 	/**
 	 * Gets the array.
@@ -398,18 +269,6 @@ public final class EGovConfig {
 	 */
 	public static String[] getArray(final String xmlFileName, final String name, final String[] defaultValue, final String category) {
 		final String[] str = getXMLConfiguration(xmlFileName).getStringArray(category + "." + name);
-		return str.length == 0 ? defaultValue : str;
-	}
-
-	/**
-	 * Gets the array.
-	 * @param name the name
-	 * @param defaultValue the default value
-	 * @param category the category
-	 * @return the array
-	 */
-	public static String[] getArray(final String name, final String[] defaultValue, final String category) {
-		final String[] str = getArray(CONFIG_FILE_NAME, name, defaultValue, category);
 		return str.length == 0 ? defaultValue : str;
 	}
 

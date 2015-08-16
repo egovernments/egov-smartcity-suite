@@ -86,8 +86,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.docmgmt.DocumentManagerService;
-import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
@@ -140,7 +138,6 @@ public class SearchNoticesAction extends SearchFormAction {
     private String fileName;
     private InputStream fileStream;
     private Long contentLength;
-    DocumentManagerService<DocumentObject> documentManagerService;
     private String partNo;
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
@@ -813,10 +810,6 @@ public class SearchNoticesAction extends SearchFormAction {
 
     public void setContentLength(final Long contentLength) {
         this.contentLength = contentLength;
-    }
-
-    public void setDocumentManagerService(final DocumentManagerService<DocumentObject> documentManagerService) {
-        this.documentManagerService = documentManagerService;
     }
 
     public String getPartNo() {

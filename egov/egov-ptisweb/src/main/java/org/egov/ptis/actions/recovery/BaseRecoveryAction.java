@@ -73,8 +73,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.docmgmt.DocumentManagerService;
-import org.egov.infstr.docmgmt.DocumentObject;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
@@ -108,7 +106,6 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	protected PersistenceService<BasicProperty, Long> basicPropertyService;
-	private DocumentManagerService<DocumentObject> documentManagerService;
 	protected FinancialUtil financialUtil;
 	protected NoticeService noticeService;
 	private InstallmentDao instalDao;
@@ -382,10 +379,6 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	public Date getCurrentDate() {
 
 		return new Date();
-	}
-
-	public void setDocumentManagerService(DocumentManagerService<DocumentObject> documentManagerService) {
-		this.documentManagerService = documentManagerService;
 	}
 
 	public void setFinancialUtil(FinancialUtil financialUtil) {

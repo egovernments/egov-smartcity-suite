@@ -36,7 +36,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.config.AppData;
 import org.egov.infstr.models.BankAccountServiceMap;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -1226,14 +1225,6 @@ public class CollectionObjectFactory {
 		return instrVoucher;
 	}
 
-	public AppData createAppData(String module, String key, String value) {
-		AppData appData = new AppData();
-		appData.setModule(module);
-		appData.setKey(key);
-		appData.setValue(value);
-		session.saveOrUpdate(appData);
-		return appData;
-	}
 	
 	public ReceiptDetail createReceiptDetailWithoutHeader() {
 		ReceiptDetail receiptDetail = new ReceiptDetail();

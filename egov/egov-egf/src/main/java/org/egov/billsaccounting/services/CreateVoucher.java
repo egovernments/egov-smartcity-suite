@@ -812,7 +812,7 @@ public class CreateVoucher {
                          if(voucherheader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)||voucherheader.getType().equals(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
                          {
                                  LOGGER.error("Calling StartWorkflow...in create voucher.....for ......ContraJournalVoucher......"+voucherheader.getType()+" ----"+voucherheader.getName());
-                                 EgBillRegisterHibernateDAO egBillRegDao=BillsDaoFactory.getDAOFactory().getEgBillRegisterHibernateDAO();
+                                 EgBillRegisterHibernateDAO egBillRegDao=new EgBillRegisterHibernateDAO();
                                  String billtype = egBillRegDao.getBillTypeforVoucher(voucherheader);
                                  if(billtype==null)
                                  {

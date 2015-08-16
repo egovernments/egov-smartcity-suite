@@ -61,9 +61,9 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.config.AppData;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.services.instrument.InstrumentService;
@@ -131,9 +131,9 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 			
 			bouncedToDate = DateUtils.add(bouncedToDate,Calendar.DAY_OF_MONTH , 1);
 			
-			AppData appData = (AppData) appConfigValuesService.getConfigValuesByModuleAndKey(
+			AppConfigValues appData = appConfigValuesService.getConfigValuesByModuleAndKey(
 							CollectionConstants.MODULE_NAME_COLLECTIONS,
-							CollectionConstants.BOUNCEDINSTRUPDATE_RECONDATE);
+							CollectionConstants.BOUNCEDINSTRUPDATE_RECONDATE).get(0);
 			bouncedFromDate = sdf.parse(appData.getValue());
 			
 			bouncedFromDate = DateUtils.add(bouncedFromDate, Calendar.DAY_OF_MONTH, -1);
