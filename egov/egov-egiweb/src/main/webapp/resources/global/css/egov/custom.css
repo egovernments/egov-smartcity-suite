@@ -88,7 +88,8 @@ a
 	outline: none;
 }
 
-a:focus{
+a:focus, a:hover{
+    text-decoration:none;
 	outline:0;
 	border:0;
 }
@@ -1356,6 +1357,7 @@ ul.nav-tabs>li.active>a:after {
 	overflow:auto;
 }
 
+
 .login-toggle
 {
 	background:#e6e6e6;
@@ -1414,6 +1416,7 @@ ul.nav-tabs>li.active>a:after {
 	border-width: 10px;
 	margin-left: -10px;
 }
+
 
 .btn-login{
 	padding: 10px 16px;
@@ -1803,9 +1806,9 @@ ul.nav-tabs>li.active>a:after {
 }
 
 
-.input-group .form-control:not(:first-child):not(:last-child) {
+/*.input-group .form-control:not(:first-child):not(:last-child) {
 	border-radius: 4px;
-}
+}*/
 
 
 
@@ -2032,7 +2035,7 @@ ul li a span{
 #normal .centerMarker{
 position:absolute;
 /*url of the marker*/
-background:url(https://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
+background:url(http://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
 /*center the marker*/
 top:50%;left:50%;
 z-index:1;
@@ -2064,9 +2067,9 @@ border-top: 1px solid #ccc;
 	cursor:pointer;
 }
 
-.form-group .input-group .input-group-addon i{
+/*.form-group .input-group .input-group-addon i{
 	color:#fff;
-}
+}*/
 .g-recaptcha div { margin: auto}
 
 table.dataTable.nopointer tbody tr:hover {
@@ -2085,4 +2088,132 @@ cursor:auto;
 
 .table-input{
 	height: 30px;
+}
+
+/*index.jsp*/
+body.index, .page-container{
+    background:#fff;
+}
+.top-space{
+    padding:50px 20px;   
+}
+
+.side-space{
+    padding:0 40px;  
+}
+
+.large-title{
+    font-size:22px;
+    margin-bottom: 15px;
+}
+
+.medium-title{
+    font-size:15px;
+    margin-bottom: 10px;
+}
+
+.signin-formcontent{
+    width:84%;
+    margin:0 auto;
+}
+
+#signinform{
+    border: 1px solid #f2f2f2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding:15px 22px 10px 10px;
+}
+
+.signin-title{
+    font-size: 22px;
+    padding: 0 0 0 18px;
+}
+
+.form-group .input-group .input-group-addon i {
+  color: #6b4f2c;
+}
+
+.signin-leftpadding{
+    padding-left: 18px;
+}
+
+.feature-top{
+    padding:20px 0 10px 0;
+    font-size: 28px;
+    border-top: 1px solid #eee;
+}
+
+.sub-feature-title{
+    font-size: 17px;
+}
+
+.label-font{
+    font-size:16px;
+}
+
+.top-community-space{
+    padding-top:20px;
+}
+
+.community-card {
+  margin: 4px 0px;
+  padding: 10px;
+}
+
+.community-card i{
+  font-size:22px;
+}
+
+.community-card span a{
+    color:#333;
+}
+
+.community-card i.a{
+    color:#F7CA18;
+}
+
+.community-card i.b{
+    color:#F89406;
+}
+
+.community-card i.c{
+    color:#00C853;
+}
+
+.btn-custom{
+  color: #fff;
+  background-color: #3A539B;
+  border-color: #3A539B;
+}
+
+@media (max-width: 980px){
+	.signup-formcontent{
+        width:100%;
+        margin:0 auto;
+    }
+    .top-space{
+        padding:0;   
+    }
+} 
+
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+  outline: none;
+  /* outline: 5px auto -webkit-focus-ring-color; */
+  outline-offset: 0px;
+}
+
+.btn-custom:hover, .btn-custom:focus, .btn-custom.focus, .btn-custom:active, .btn-custom.active, .open > .dropdown-toggle.btn-custom {
+  color: #fff;
+  /*background-color: #f5861f;
+  border-color: #f5861f;*/
+}
+
+.rounded-circle{
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  line-height: 54px;
+  background:#fff;
+    text-align: center;
+    border:1px solid #ddd;
 }
