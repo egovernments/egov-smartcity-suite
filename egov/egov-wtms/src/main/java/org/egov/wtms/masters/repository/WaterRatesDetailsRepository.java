@@ -41,14 +41,21 @@ package org.egov.wtms.masters.repository;
 
 import java.util.List;
 
+import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WaterRatesDetailsRepository extends JpaRepository<WaterRatesDetails, Long> {
 
 	List<WaterRatesDetails> findAllByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
-
+	
+	 @Query(" from WaterRatesDetails A where A.waterRatesHeader.connectionType=:connectionType and A.waterRatesHeader.usageType=:usageType and A.startingUnits <= :noofunits and A.endingUnits >= :noofunits and A.waterRatesHeader.active=true")
+	 WaterRatesDetails findByWaterRate(@Param("connectionType")ConnectionType connectionType,@Param("usageType") UsageType usageType, @Param("noofunits") Long noofunits);
+	
 }

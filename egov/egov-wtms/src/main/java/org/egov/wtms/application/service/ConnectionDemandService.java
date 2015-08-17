@@ -374,4 +374,19 @@ public class ConnectionDemandService {
     public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {
         return waterConnectionDetailsRepository.findByApplicationNumberAndInstallment(installment, consumerCode).getDemand();
     }
+    
+    public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,BigDecimal billAmount)
+    {
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(),"Yearly");
+        EgDemand demandObj= waterConnectionDetails.getDemand();
+        final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
+        dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()), WaterTaxConstants.WATERTAXREASONCODE, installment));//WATERTAXREASONCODE
+        demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
+        demandObj.setEgInstallmentMaster(installment);
+        demandObj.getEgDemandDetails().addAll(dmdDetailSet);
+        demandObj.setModifiedDate(new Date());
+        waterConnectionDetails.setDemand(demandObj);
+        return waterConnectionDetails;
+    }
 }

@@ -112,6 +112,7 @@
 			</div>
 		</div>					
 	</div>
+	<c:if test="${mode !='meterEntry'}">
 	<table class="table table-bordered">
 	<c:if test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
 		<thead>
@@ -151,3 +152,4 @@
 			</c:otherwise>
 		</c:choose>
 	</table>
+	</c:if>

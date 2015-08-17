@@ -138,4 +138,6 @@ public class WaterTaxConstants {
     public static final String ADDRULE_FOR_CHANGE_OF_USE = "CHANGEOFUSE";
     public static final String WF_WORKORDER_BUTTON = "Generate WorkOrder";
     public static final String YEARLY = "Yearly";
+    
+    public static final String WATERTAXREASONCODE = "WTAXCHARGES"; 
 }

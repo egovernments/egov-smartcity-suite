@@ -211,6 +211,18 @@ public class WaterConnectionDetails extends StateAware {
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
 
+    @OrderBy("id desc")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MeterReadingConnectionDetails> meterConnection = new ArrayList<MeterReadingConnectionDetails>(0);
+
+    public List<MeterReadingConnectionDetails> getMeterConnection() {
+        return meterConnection;
+    }
+
+    public void setMeterConnection(final List<MeterReadingConnectionDetails> meterConnection) {
+        this.meterConnection = meterConnection;
+    }
+    
     @Override
     public Long getId() {
         return id;

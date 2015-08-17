@@ -66,12 +66,12 @@ jQuery(document).ready(function($) {
 									if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined && full.resource.clauses.applicationcode == 'ADDNLCONNECTION') {
 										if (full.resource.clauses.status == 'ACTIVE') {
 										if (userrole == "CSC Operator") {
-										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
 										} else if (userrole == "ULB Operator") {
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="8">Enter Meter Reading</option></select>');
 										}													
 										else if(userrole=='Super User'){
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
 											
 										}
 									} else if ((userrole == 'CSC Operator' || userrole == 'ULB Operator' )
@@ -86,12 +86,12 @@ jQuery(document).ready(function($) {
 										&& full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 									if (full.resource.clauses.status == 'ACTIVE') {
 										if (userrole == "CSC Operator") {
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
 										} else if (userrole == "ULB Operator") {
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="8">Enter Meter Reading</option></select>');
 										}
 										else if(userrole=='Super User'){
-											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option></select>');
+											return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="3">Disconnection</option><option value="4">Reconnection</option><option value="5">Holding connection</option><option value="6">Collect Fees</option><option value="8">Enter Meter Reading</option></select>');
 										}
 									} else if ((userrole == 'CSC Operator' )&& full.resource.clauses.status == 'DISCONNECTED') {
 										return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">Reconnection</option></select>');
@@ -160,10 +160,16 @@ jQuery(document).ready(function($) {
 										} else if (this.value == 7) {
 											// window.location.href="excecutiondate.html"
 										}
+										else if (this.value == 8) {
+											var url = '/wtms/application/meterEntry/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
 
 									});
 
-					$('#aplicationSearchResults').on('click','tbody tr td.row-detail',
+						$('#aplicationSearchResults').on('click','tbody tr td.row-detail',
 									function() {
 										var consumerNumber = tableContainer.fnGetData(this);
 										var url = '/wtms/application/view/'+ consumerNumber;

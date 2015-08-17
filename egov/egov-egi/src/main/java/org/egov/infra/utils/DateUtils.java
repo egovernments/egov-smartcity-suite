@@ -41,6 +41,8 @@ package org.egov.infra.utils;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Months;
 
 public class DateUtils {
 
@@ -67,8 +69,14 @@ public class DateUtils {
     public static Date[] getStartAndEndOfDay(final Date startDate, final Date endDate) {
         return new Date[] { startOfDay(startDate), endOfDay(endDate) };
     }
+
+    public static int getNumberOfYearPassesed(final Date startDate, final Date endDate) {
+        return new DateTime(endDate).getYear() - new DateTime(startDate).getYear();
+    }
     
-	public static int getNumberOfYearPassesed(final Date startDate,	final Date endDate) {
-		return (new DateTime(endDate).getYear()) - (new DateTime(startDate).getYear());
-	}
+    public static int noOfMonths(final Date startDate, final Date endDate) {
+        DateTime sDate = new DateTime(startDate);
+        DateTime eDate = new DateTime(endDate);
+        return Months.monthsBetween(sDate.withDayOfMonth(sDate.getDayOfMonth()), eDate.withDayOfMonth(eDate.getDayOfMonth())).getMonths();
+    }
 }

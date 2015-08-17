@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -96,4 +97,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     
     WaterConnectionDetails findByDemand(EgDemand demand);
 
+    @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by id desc")
+    List<MeterReadingConnectionDetails> findPreviousMeterReadingReading( @Param("waterConnDetId") Long waterConnDetId);
+     
 }
