@@ -353,7 +353,7 @@ public class CollectionCommon {
                 for (BillAccountDetails billAccount : billDetail.getAccounts()) {
                     CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(billAccount.getGlCode());
                     CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
-                    //TODO: Need to check for isActualCommand
+                    //TODO: Need to check for getIsActualDemand()
                     /*if (billAccount.getIsActualDemand()) {*/
 						totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
 					/*}*/
