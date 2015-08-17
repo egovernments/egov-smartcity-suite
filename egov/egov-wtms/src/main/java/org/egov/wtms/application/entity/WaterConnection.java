@@ -83,7 +83,6 @@ public class WaterConnection extends AbstractAuditable {
     @JoinColumn(name = "meter")
     private MeterCost meter;
     
-    @SafeHtml
     private Long initialReading;
 
     @Override
