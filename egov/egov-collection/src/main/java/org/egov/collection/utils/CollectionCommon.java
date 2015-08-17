@@ -353,9 +353,10 @@ public class CollectionCommon {
                 for (BillAccountDetails billAccount : billDetail.getAccounts()) {
                     CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(billAccount.getGlCode());
                     CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
-                    if (billAccount.getIsActualDemand()) {
+                    //TODO: Need to check for isActualCommand
+                    /*if (billAccount.getIsActualDemand()) {*/
 						totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
-					}
+					/*}*/
                     ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
