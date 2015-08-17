@@ -70,7 +70,7 @@ public class TokenService {
     }
     
     public Token findByTokenNumberandService(final String tokenNumber, final String service) {
-    	return tokenRepository.findByTokenNumberandService(tokenNumber, service);
+    	return tokenRepository.findByTokenNumberAndService(tokenNumber, service);
     }
     
     /**
@@ -131,7 +131,7 @@ public class TokenService {
      */
 
 	public void redeem(String tokenNumber, String service) {
-		Token token = tokenRepository.findByTokenNumberandService(tokenNumber, service);
+		Token token = tokenRepository.findByTokenNumberAndService(tokenNumber, service);
 		if (token == null) {
 	        throw new EGOVRuntimeException("Token " + tokenNumber + " does not exist!");
 	    }		
