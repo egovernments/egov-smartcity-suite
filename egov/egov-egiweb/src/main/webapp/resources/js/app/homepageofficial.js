@@ -40,6 +40,8 @@
 
 $(document).ready(function()
 {	
+	$.fn.dataTable.moment( 'DD/MM/YYYY h:mm a' );
+	
 	$('.page-container.horizontal-menu header.navbar .navbar-right > li, .page-container.horizontal-menu header.navbar .navbar-right > li ul li').hover(
 			function() {
 				$(this).children('ul').show();
@@ -119,7 +121,8 @@ $(document).ready(function()
 						{ "data": "id","visible": false, "searchable": false },
 						{ "data": "link","visible": false, "searchable": false }
 						
-					]
+					],
+					"aaSorting": [[0, 'desc']]
 		});
 		
 		e.stopPropagation();
@@ -204,7 +207,8 @@ function worklist(){
 			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
 			{ "data": "id","visible": false, "searchable": false },
 			{ "data": "link","visible": false, "searchable": false }
-		] 
+		] ,
+		"aaSorting": [[0, 'desc']]
 	});
 }
 
@@ -225,7 +229,8 @@ function drafts(){
 		{ "data": "details","width": "20%" },
 		{ "data": "id","visible": false, "searchable": false },
 		{ "data": "link","visible": false, "searchable": false }
-	] 
+	] ,
+	"aaSorting": [[0, 'desc']]
 });
 }
 
@@ -236,7 +241,8 @@ function notifications(){
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
-		"autoWidth": false
+		"autoWidth": false,
+		"aaSorting": [[0, 'desc']]
 	});
 }
 

@@ -415,6 +415,8 @@
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
 		<script type="text/javascript">
