@@ -47,7 +47,6 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 
 import org.egov.infra.aadhaar.webservice.contract.AadhaarInfo;
-import org.egov.infra.aadhaar.webservice.contract.AadhaarInfoImpl;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,7 +77,7 @@ public class AadhaarInfoServiceClient {
 
     private AadhaarInfo retriveAadhaarInfo(final SOAPMessage soapResponseMessage) throws Exception {
         final Unmarshaller unmarshaller = JAXBContext
-                .newInstance(AadhaarInfoImpl.class).createUnmarshaller();
+                .newInstance(Class.forName(applicationProperties.getProperty("aadhaar.info.ws.client.impl.class.fqn"))).createUnmarshaller();
         return (AadhaarInfo) unmarshaller.unmarshal(soapResponseMessage.getSOAPBody().extractContentAsDocument());
     }
 

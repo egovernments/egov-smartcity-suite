@@ -42,6 +42,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.gson.GsonBuilder;
 
 public interface AadhaarInfo extends Serializable {
@@ -55,11 +57,12 @@ public interface AadhaarInfo extends Serializable {
     String getUid();
 
     default String toJSON() {
-        final Map<String, String> aadhaarInfo = new HashMap<>();
+        final Map<String, Object> aadhaarInfo = new HashMap<>();
         aadhaarInfo.put("name", getName());
         aadhaarInfo.put("phone", getMobile());
         aadhaarInfo.put("dob", getDob());
         aadhaarInfo.put("uid", getUid());
+        aadhaarInfo.put("valid", StringUtils.isNotBlank(getUid()));
         return new GsonBuilder().create().toJson(aadhaarInfo);
     }
 }
