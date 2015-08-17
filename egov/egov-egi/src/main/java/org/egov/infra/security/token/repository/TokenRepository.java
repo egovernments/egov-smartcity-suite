@@ -37,9 +37,9 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.token.repository;
+package org.egov.infra.security.token.repository;
 
-import org.egov.infra.token.entity.Token;
+import org.egov.infra.security.token.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

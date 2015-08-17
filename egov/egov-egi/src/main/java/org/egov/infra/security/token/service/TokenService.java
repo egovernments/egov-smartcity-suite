@@ -36,7 +36,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.token.service;
+package org.egov.infra.security.token.service;
 
 import java.util.Date;
 import java.util.UUID;
@@ -44,8 +44,8 @@ import java.util.UUID;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.token.entity.Token;
-import org.egov.infra.token.repository.TokenRepository;
+import org.egov.infra.security.token.entity.Token;
+import org.egov.infra.security.token.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

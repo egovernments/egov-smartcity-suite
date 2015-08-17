@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.token.entity;
+package org.egov.infra.security.token.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
