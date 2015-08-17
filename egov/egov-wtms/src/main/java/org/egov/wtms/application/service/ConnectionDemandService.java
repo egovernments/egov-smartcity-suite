@@ -146,20 +146,18 @@ public class ConnectionDemandService {
         }
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
-        double totalFee = 0.0;
+        // Not updating demand amount collected for new connection as per the discussion.
+        // double totalFee = 0.0;
 
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
-        for (final String demandReason : feeDetails.keySet()) {
+        for (final String demandReason : feeDetails.keySet())
             dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-            totalFee += (Double) feeDetails.get(demandReason);
-        }
+        // totalFee += (Double) feeDetails.get(demandReason);
 
         final EgDemand egDemand = new EgDemand();
-        egDemand.setBaseDemand(BigDecimal.valueOf(totalFee));
         egDemand.setEgInstallmentMaster(installment);
         egDemand.getEgDemandDetails().addAll(dmdDetailSet);
         egDemand.setIsHistory("N");
-        egDemand.setMinAmtPayable(BigDecimal.valueOf(totalFee));
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
         return egDemand;

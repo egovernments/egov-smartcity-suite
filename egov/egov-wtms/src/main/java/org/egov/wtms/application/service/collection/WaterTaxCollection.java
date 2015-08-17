@@ -158,9 +158,11 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
         LOGGER.info("updateCollForRcptCreate : Total amount collected : " + totalAmount);
-        demand.addCollected(totalAmount);
-        if (demand.getMinAmtPayable() != null && demand.getMinAmtPayable().compareTo(BigDecimal.ZERO) > 0)
-            demand.setMinAmtPayable(BigDecimal.ZERO);
+        // Not updating demand amount collected for new connection as per the discussion.
+        /*
+         * demand.addCollected(totalAmount); if (demand.getMinAmtPayable() != null &&
+         * demand.getMinAmtPayable().compareTo(BigDecimal.ZERO) > 0) demand.setMinAmtPayable(BigDecimal.ZERO);
+         */
         updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
         LOGGER.debug("updateCollForRcptCreate : Updating Demand For Collection finished...");
     }
