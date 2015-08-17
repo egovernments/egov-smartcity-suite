@@ -200,16 +200,21 @@ public class WaterConnectionDetailsService {
 
     @Transactional
     public WaterConnectionDetails createExisting(final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
-        waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                WaterTaxConstants.APPLICATION_STATUS_APPROVED, WaterTaxConstants.MODULETYPE));
-        final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
-                .save(waterConnectionDetails);
+    	waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
+    	waterConnectionDetails.setEgwStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                WaterTaxConstants.APPLICATION_STATUS_SANCTIONED, WaterTaxConstants.MODULETYPE));
+    	if(waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(WaterTaxConstants.ADDNLCONNECTION))
+    	{
+    		WaterConnectionDetails primaryConnectionDetails = getPrimaryConnectionDetailsByPropertyIdentifier(waterConnectionDetails.getConnection().getPropertyIdentifier());
+    		waterConnectionDetails.getConnection().setParentConnection(primaryConnectionDetails.getConnection());
+    	}
+    	final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
 
-        // TODO Updation of Demand should be done here also fixupdate indexes
         // updateIndexes(savedWaterConnectionDetails);
+    	// TODO Updation of Demand should be done here also fixupdate indexes
         return savedWaterConnectionDetails;
     }
+
 
     public void sendSmsAndEmail(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(

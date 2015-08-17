@@ -56,6 +56,24 @@ $(document).ready(function(){
 	
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
+	
+	
+	
+	$('#connectionType').change(function(){
+		if($('#legacy'))
+		{
+			//alert($('#legacy').val())
+			//alert($('#connectionType').val())
+			if($('#connectionType').val()=='METERED')
+			{
+				$('#metereddetails').show();	
+			}
+			else
+			{
+				$('#metereddetails').hide();
+			}
+		}
+	});
 		
 	$('#connectionCategorie').change(function(){
 		if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0) {  
@@ -91,7 +109,29 @@ $(document).ready(function(){
 				success: function (response) { 
 					console.log("success"+response);
 					if(response != '') {
-						resetPropertyDetails();
+						
+						if($('#legacy'))
+						{
+							//alert($('#legacy').val());
+							
+							var radioValue = $("input[name='applicationType']:checked").val();
+							 $('#frm input[type="radio"]').each(function(){
+							      $(this).checked = false;  
+							  });
+							 $('input[type="radio"]').val=radioValue;
+				           if(radioValue==2)
+							 loadPropertyDetails();
+							else{
+								resetPropertyDetails();
+								alert(response);
+							}
+
+						}
+						else
+						{	
+							resetPropertyDetails();
+							alert(response);
+						}
 					}
 					else {
 						loadPropertyDetails();
@@ -119,7 +159,10 @@ $(document).ready(function(){
 					console.log("success"+response);
 					
 					if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-						resetPropertyDetails();
+						if($('#legacy')==none)
+						{
+					    resetPropertyDetails();
+						}
 						alert(response.errorDetails.errorMessage);
 					}
 					else {	

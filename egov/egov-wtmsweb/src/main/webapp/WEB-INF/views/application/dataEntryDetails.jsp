@@ -40,21 +40,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.consumerno" /></label>
-	<div class="col-sm-3 add-margin">
-		<form:input path="connection.consumerCode"  class="form-control text-left"/>
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.connectiondate" /></label>
-	<div class="col-sm-3 add-margin">
-		 <input type=text name="executionDate" class="form-control datepicker" data-date-end-date="0d" 
-								id="executionDate" data-inputmask="'mask': 'd/m/y'"/>   
-	</div>
-</div>
-
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.feedetails" />
@@ -65,27 +50,32 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.monthlyfees" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.monthlyFee" class="form-control text-right" />  
+		<form:input path="existingConnection.monthlyFee" class="form-control text-right"  />  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.donationcharges" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.donationCharges" class="form-control text-right" />
+		<form:input path="existingConnection.donationCharges" class="form-control text-right"  />
 	</div>
 </div>
-<div class="form-group">
+<div class="form-group">  
+
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.arrears" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" id="existingConnection.arrears"   value="0.00"> 
-	</div>	
+		<form:input path="existingConnection.arrears"    class="form-control text-right" /> 
+		<form:errors path="existingConnection.arrears" cssClass="add-margin error-msg" />	
+	</div>	  
 </div>	
+<div  id="metereddetails" >  
+
+
 
 <div class="form-group">	
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.metercost" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="existingConnection.meterCost" class="form-control text-right" />  
+		<form:input path="existingConnection.meterCost" class="form-control text-right"  />  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.metername" /></label>
@@ -100,6 +90,11 @@
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.meterNo"  class="form-control text-left"/>   
 	</div>
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.previousreading" /></label>
+	<div class="col-sm-3 add-margin">
+	<form:input path="existingConnection.previousReading"  class="form-control text-right"/>    
+	</div>  
 	
 </div>
 
@@ -107,13 +102,15 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.previousreading" /></label>
 	<div class="col-sm-3 add-margin">
-	<form:input path="existingConnection.previousReading"  class="form-control text-right"/>  
+	<form:input path="existingConnection.readingDate"  class="form-control datepicker" data-date-end-date="0d"
+								id="readingDate" data-inputmask="'mask': 'd/m/y'" />       
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.currentreading" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="existingConnection.currentReading" class="form-control text-right" />
 	</div>
+</div>
 </div>
 <div class="buttonbottom" align="center">
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>

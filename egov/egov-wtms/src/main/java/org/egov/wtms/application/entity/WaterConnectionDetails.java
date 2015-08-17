@@ -190,6 +190,7 @@ public class WaterConnectionDetails extends StateAware {
     private String workOrderNumber;
 
     private double donationCharges;
+    private Boolean legacy=false;
     
     @Temporal(value = TemporalType.DATE)
     private Date executionDate;
@@ -488,4 +489,12 @@ public class WaterConnectionDetails extends StateAware {
     public void setExecutionDate(Date executionDate) {
         this.executionDate = executionDate;
     }
+    
+    public Boolean getLegacy() {
+		return legacy;
+	}
+
+	public void setLegacy(Boolean legacy) {
+		this.legacy = legacy;
+	}
 }

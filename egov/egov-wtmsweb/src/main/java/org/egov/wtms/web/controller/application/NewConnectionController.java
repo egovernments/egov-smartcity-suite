@@ -56,15 +56,18 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -129,7 +132,11 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("radioButtonMap", connectionTypeMap);		
         return "newconnection-dataEntryForm";
     }
-      
+    @RequestMapping(value = "/newConnection-existingMessage/{consumerCode}", method = GET)
+    public String dataEntryMessage(final Model model, @PathVariable final String consumerCode) {
+       	model.addAttribute("consumerCode", consumerCode);
+        return "newconnection-dataEntryMessage";
+    }
     @RequestMapping(value = "/newConnection-create", method = POST)
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
@@ -191,6 +198,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,@RequestParam String  workFlowAction) {
             validatePropertyID(waterConnectionDetails, resultBinder);
+            validateExisting(waterConnectionDetails, resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             Map<Long,String> connectionTypeMap=new HashMap<Long, String>();
@@ -201,8 +209,8 @@ public class NewConnectionController extends GenericConnectionController {
             return "newconnection-dataEntryForm";
         }
         waterConnectionDetailsService.createExisting(waterConnectionDetails);
-    
-       return "redirect:/application/view/"+waterConnectionDetails.getConnection().getConsumerCode();  
+        return "redirect:newConnection-existingMessage/"+waterConnectionDetails.getConnection().getConsumerCode();
+      // return "redirect:/application/view/"+waterConnectionDetails.getConnection().getConsumerCode();  
     }
     
 
@@ -283,6 +291,19 @@ public class NewConnectionController extends GenericConnectionController {
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
     }
+    
+    private void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
+        if (waterConnectionDetails.getConnectionType() != null
+                && waterConnectionDetails.getConnectionType()==ConnectionType.METERED) {
+        	
+        	if( waterConnectionDetails.getExistingConnection().getArrears()==null )
+    			{
+        		errors.rejectValue("existingConnection.arrears", "err.required");
+       			}
+          
+        }
+    }
+    
     @ModelAttribute
     @Override
     public StateAware getModel() {

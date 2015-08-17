@@ -50,6 +50,7 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
+			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
 			<div class="panel panel-primary" data-collapsed="0">
@@ -66,13 +67,35 @@
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.consumerno" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="connection.consumerCode"
+								class="form-control text-left" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.connectiondate" /></label>
+						<div class="col-sm-3 add-margin">
+							<input type=text name="executionDate"  
+								class="form-control datepicker" data-date-end-date="0d"
+								id="executionDate" data-inputmask="'mask': 'd/m/y'" />
+						</div>
+					</div>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
 					<jsp:include page="dataEntryDetails.jsp"></jsp:include>	
 					
 				</div>
 			</div>			
 		<script>
-		function validate()		{return ture;}
+		function validate()		{
+			var radioValue = $("input[name='applicationType']:checked").val();
+			alert(radioValue);
+            var ar=document.getElementsByName('applicationType');
+            ar[0].value=radioValue;
+          //  alert(radioValue);
+			
+			return ture;}
 		</script>
 		</form:form>
 	</div>

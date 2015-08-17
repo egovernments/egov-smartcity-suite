@@ -1,5 +1,7 @@
 package org.egov.wtms.application.entity;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -31,9 +35,7 @@ public class ExistingConnectionDetails extends AbstractAuditable {
     @JoinColumn(name = "connectiondetailsid", nullable = false)
     private WaterConnectionDetails waterConnectionDetails;
 	private Double monthlyFee;
-	@NotNull
 	private Double donationCharges;
-	@NotNull
 	private Double arrears;
 	private Double meterCost;
 	@SafeHtml
@@ -44,6 +46,8 @@ public class ExistingConnectionDetails extends AbstractAuditable {
 	private String meterNo;
 	private Long previousReading;
 	private Long currentReading;
+	@Temporal(value = TemporalType.DATE)
+	private Date readingDate;
 	public Long getId() {
 		return id;
 	}
@@ -104,6 +108,12 @@ public class ExistingConnectionDetails extends AbstractAuditable {
 	}
 	public void setCurrentReading(Long currentReading) {
 		this.currentReading = currentReading;
+	}
+	public Date getReadingDate() {
+		return readingDate;
+	}
+	public void setReadingDate(Date readingDate) {
+		this.readingDate = readingDate;
 	}
 	
 	

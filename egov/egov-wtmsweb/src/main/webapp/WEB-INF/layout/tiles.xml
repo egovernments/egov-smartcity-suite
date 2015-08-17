@@ -106,4 +106,8 @@
         <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryForm.jsp"/>
     </definition>
+     <definition name="newconnection-dataEntryMessage" extends="base_layout">
+        <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryMessage.jsp"/>
+    </definition>
 </tiles-definitions>
