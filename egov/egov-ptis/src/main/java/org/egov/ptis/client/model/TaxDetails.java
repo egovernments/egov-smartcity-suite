@@ -21,7 +21,13 @@ public class TaxDetails implements Serializable {
 		this.generalTax = generalTax;
 	}
 	public BigDecimal getTotalTax() {
-		return getGeneralTax().add(getEduCess()).add(getLibCess()).add(getSewarageTax()).add(getPenalty()).add(getUnAuthPenalty());
+		//TODO: Need to check the all the taxes
+		if(getGeneralTax() != null && getEduCess() != null && getLibCess() != null && getSewarageTax() != null && getPenalty() != null && getUnAuthPenalty() != null) {
+			return getGeneralTax().add(getEduCess()).add(getLibCess()).add(getSewarageTax()).add(getPenalty()).add(getUnAuthPenalty());
+		} else {
+			return BigDecimal.ZERO;
+		}
+		//return getGeneralTax().add(getEduCess()).add(getLibCess()).add(getSewarageTax()).add(getPenalty()).add(getUnAuthPenalty());
 	}
 	public void setTotalTax(BigDecimal totalTax) {
 		this.totalTax = totalTax;
