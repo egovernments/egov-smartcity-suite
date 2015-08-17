@@ -46,23 +46,46 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.GsonBuilder;
 
-public interface AadhaarInfo extends Serializable {
+public abstract class AadhaarInfo implements Serializable {
 
-    String getName();
+    private static final long serialVersionUID = 1932252864573711817L;
+    protected String name;
+    protected String phone;
+    protected String dob;
+    protected String uid;
+    protected String eid;
+    protected String gender;
+    protected String careof;
+    protected boolean valid;
 
-    String getMobile();
+    abstract String getName();
 
-    String getDob();
+    abstract String getPhone();
 
-    String getUid();
+    abstract String getDob();
 
-    default String toJSON() {
+    abstract String getUid();
+
+    abstract String getGender();
+
+    abstract String getCareof();
+
+    abstract String getEid();
+
+    public boolean getValid() {
+        return StringUtils.isNotBlank(getUid()) || StringUtils.isNotBlank(getEid());
+    }
+
+    public String toJSON() {
         final Map<String, Object> aadhaarInfo = new HashMap<>();
         aadhaarInfo.put("name", getName());
-        aadhaarInfo.put("phone", getMobile());
+        aadhaarInfo.put("phone", getPhone());
         aadhaarInfo.put("dob", getDob());
         aadhaarInfo.put("uid", getUid());
-        aadhaarInfo.put("valid", StringUtils.isNotBlank(getUid()));
+        aadhaarInfo.put("careof", getCareof());
+        aadhaarInfo.put("eid", getEid());
+        aadhaarInfo.put("gender", getGender());
+        aadhaarInfo.put("valid", getValid());
         return new GsonBuilder().create().toJson(aadhaarInfo);
     }
 }

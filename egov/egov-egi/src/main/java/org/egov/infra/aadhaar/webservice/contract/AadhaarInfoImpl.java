@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "getAadhaarInfoResponse", namespace = "http://srdhuidinfoservices/ecentric/com/xsd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AadhaarInfoImpl implements AadhaarInfo {
+public class AadhaarInfoImpl extends AadhaarInfo {
 
     private static final long serialVersionUID = 6091570091083799419L;
 
@@ -54,22 +54,37 @@ public class AadhaarInfoImpl implements AadhaarInfo {
 
     @Override
     public String getName() {
-        return returns.name;
+        return name = returns.name;
     }
 
     @Override
-    public String getMobile() {
-        return returns.phoneNo;
+    public String getPhone() {
+        return phone = returns.phoneNo;
     }
 
     @Override
     public String getDob() {
-        return returns.dob;
+        return dob = returns.dob;
+    }
+
+    @Override
+    public String getGender() {
+        return gender = returns.gender;
+    }
+
+    @Override
+    public String getCareof() {
+        return careof = returns.careof;
     }
 
     @Override
     public String getUid() {
-        return returns.uid;
+        return uid = returns.uid.equals("101") ? "" : returns.uid;
+    }
+
+    @Override
+    public String getEid() {
+        return eid = returns.eid.equals("101") ? "" : returns.eid;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
