@@ -40,10 +40,13 @@ package org.egov.infra.web.controller.common;
 
 import org.egov.infra.aadhaar.webservice.client.AadhaarInfoServiceClient;
 import org.egov.infra.web.rest.error.ErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,17 +55,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/aadhaar")
 public class AadhaarInfoController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AadhaarInfoController.class);
+
     @Autowired
     private AadhaarInfoServiceClient aadhaarInfoServiceClient;
 
     @RequestMapping(value = "/{uid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarInfo(@PathVariable final String uid) {
-        try {
-            return new ResponseEntity<String>(aadhaarInfoServiceClient.getAadhaarInfo(uid).toJSON(), HttpStatus.OK);
-        } catch (final Exception e) {
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse("INFRA-001",
-                    "User detail not found in uidai server for aadhaar no : " + uid, HttpStatus.NOT_FOUND),
-                    HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> aadhaarInfo(@PathVariable final String uid) throws Exception {
+        return new ResponseEntity<String>(aadhaarInfoServiceClient.getAadhaarInfo(uid).toJSON(), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> exceptionHandler(final Exception ex) {
+        LOG.error("Error occurred while contacting SRDH web service", ex);
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse("INFRA-001",
+                "Detail not found in uidai server for the given aadhaar no", HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }
