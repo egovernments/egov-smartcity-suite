@@ -30,6 +30,7 @@
  */
 package org.egov.wtms.application.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,12 +42,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.wtms.masters.entity.MeterCost;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_connection")
+@Unique(id = "id", tableName = "egwtr_connection", columnName = { "meterSerialNumber" }, fields = { "meterSerialNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = WaterConnection.SEQ_CONNECTION, sequenceName = WaterConnection.SEQ_CONNECTION, allocationSize = 1)
 public class WaterConnection extends AbstractAuditable {
 
@@ -72,6 +75,7 @@ public class WaterConnection extends AbstractAuditable {
     private String bpaIdentifier;
 
     @SafeHtml
+    @Column(name = "meterserialnumber", unique = true)
     @Length(min = 3, max = 50)
     private String meterSerialNumber;
 
