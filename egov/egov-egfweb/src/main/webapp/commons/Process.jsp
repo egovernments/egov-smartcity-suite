@@ -54,6 +54,10 @@ String accountCode=request.getParameter("glCode");
 String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = 1 and glcode like '"+accountCode+"'|| '%' order by glcode ";
 rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 }
+else if(request.getParameter("type").equalsIgnoreCase("getAllBankName")){
+String query="select name||'`-`'||id as \"code\" from bank where  isactive = 1 order by name ";
+rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list()
+}	
 else if(request.getParameter("type").equalsIgnoreCase("coaDetailCodeType")){
 
 String accountCode=request.getParameter("glCode");
