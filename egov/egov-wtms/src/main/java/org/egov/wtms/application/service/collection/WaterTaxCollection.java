@@ -280,7 +280,7 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Override
     public Installment getCurrentInstallment() {
-        return installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date());
+        return installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
     }
 }

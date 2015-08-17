@@ -124,16 +124,17 @@ public class WaterTaxConstants {
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
-   
-    //this is just another name to new connection
-   	public static final String PRIMARYCONNECTION = "Primary Connection";
-   	public static final String CONN_NAME_ADDNLCONNECTION = "Additional Connection";
-   	
-   	public static final String NEW_CONNECTION_MATRIX_ADDL_RULE = "NEW CONNECTION";
-   	public static final String FEE_COLLECTION_COMMENT = "Water connection fee collected";
-   
-   public static final String ADDRULE_FOR_NEW_CONNECTION="NEWCONNECTION";
-   public static final String ADDRULE_FOR_ADD_CONNECTION="ADDNLCONNECTION";
-   public static final String ADDRULE_FOR_CHANGE_OF_USE="CHANGEOFUSE";
-   public static final String WF_WORKORDER_BUTTON = "Generate WorkOrder";
+
+    // this is just another name to new connection
+    public static final String PRIMARYCONNECTION = "Primary Connection";
+    public static final String CONN_NAME_ADDNLCONNECTION = "Additional Connection";
+
+    public static final String NEW_CONNECTION_MATRIX_ADDL_RULE = "NEWCONNECTION";
+    public static final String FEE_COLLECTION_COMMENT = "Water connection fee collected";
+
+    public static final String ADDRULE_FOR_NEW_CONNECTION = "NEWCONNECTION";
+    public static final String ADDRULE_FOR_ADD_CONNECTION = "ADDNLCONNECTION";
+    public static final String ADDRULE_FOR_CHANGE_OF_USE = "CHANGEOFUSE";
+    public static final String WF_WORKORDER_BUTTON = "Generate WorkOrder";
+    public static final String YEARLY = "Yearly";
 }

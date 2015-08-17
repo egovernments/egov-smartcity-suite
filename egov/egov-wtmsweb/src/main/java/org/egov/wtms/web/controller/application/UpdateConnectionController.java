@@ -98,7 +98,7 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
@@ -151,7 +151,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getState().getHistory().isEmpty()) {
             model.addAttribute("mode", "noedit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), "noedit"));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
+                            waterConnectionDetails.getApplicationType().getCode(), "noedit"));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if (recordCreatedBYNonEmployee && request.getAttribute("mode") == null
@@ -163,12 +164,14 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 .equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)) {
             model.addAttribute("mode", "edit");
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), "edit"));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
+                            waterConnectionDetails.getApplicationType().getCode(), "edit"));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         } else
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails.getApplicationType().getCode(), ""));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
+                            waterConnectionDetails.getApplicationType().getCode(), ""));
         if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
             model.addAttribute("mode", "");
     }
@@ -187,7 +190,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     && waterConnectionDetails.getBplCardHolderName() != null)
                 waterConnectionDetails.setBplCardHolderName(null);
             populateEstimationDetails();
-
+            waterConnectionDetails.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
             // Attach any other file during field inspection and estimation
             final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
             Iterator<FileStoreMapper> fsIterator = null;
@@ -204,7 +207,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-        
+
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
                 && waterConnectionDetails.getEgwStatus() != null
                 && waterConnectionDetails.getEgwStatus().getCode() != null
@@ -222,17 +225,18 @@ public class UpdateConnectionController extends GenericConnectionController {
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
 
         if (!resultBinder.hasErrors()) {
-            if(null!=workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)){
+            if (null != workFlowAction && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
             }
-            
+
             waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                     approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, mode);
-            
-            if(null!=workFlowAction && !workFlowAction.isEmpty() && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)){
+
+            if (null != workFlowAction && !workFlowAction.isEmpty()
+                    && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
                 return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
-            }
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverUserName(approvalPosition);

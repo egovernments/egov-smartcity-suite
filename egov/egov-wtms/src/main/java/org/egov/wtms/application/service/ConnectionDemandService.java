@@ -140,11 +140,12 @@ public class ConnectionDemandService {
             donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
                     .findByCategoryandUsage(waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType()));
 
-        if (donationDetails != null)
+        if (donationDetails != null) {
             feeDetails.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, donationDetails.getAmount());
-
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date());
+            waterConnectionDetails.setDonationCharges(donationDetails.getAmount());
+        }
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
         double totalFee = 0.0;
 
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
@@ -298,8 +299,8 @@ public class ConnectionDemandService {
 
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
-        currInst = installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date());
+        currInst = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
@@ -339,9 +340,9 @@ public class ConnectionDemandService {
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.
-                getAssessmentDetailsForFlag(waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS);
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
@@ -362,7 +363,7 @@ public class ConnectionDemandService {
     public String generateBillNumber(final String wardNo) {
         final StringBuffer billNo = new StringBuffer();
         final Module module = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
-        installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(module, new Date(), WaterTaxConstants.YEARLY);
         // FIX ME
         /*
          * String index = sequenceNumberGenerator.getNextNumberWithFormat( BILLGEN_SEQNAME_PREFIX + wardNo, 7, '0',
