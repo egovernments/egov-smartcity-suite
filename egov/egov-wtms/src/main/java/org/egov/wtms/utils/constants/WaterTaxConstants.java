@@ -62,6 +62,7 @@ public class WaterTaxConstants {
     public static final String SMSEMAILTYPEADDITONALCONNAPPROVE = "additionalconnapprove";
     public static final String SMSEMAILTYPENEWCONNAPPROVE = "newconnapprove";
     public static final String SMSEMAILTYPENEWCONNCREATE = "newconncreate";
+    public static final String SMSEMAILTYPENEWCONNEXECUTION = "newconnexecutiondate";
     public static final String CATEGORY_BPL = "BPL";
     public static final String WATERTAX_FIELDINSPECTION_CHARGE = "WTAXFIELDINSPEC";
     // User Roles

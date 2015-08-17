@@ -113,6 +113,7 @@
 		</div>					
 	</div>
 	<table class="table table-bordered">
+	<c:if test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.slno" /></th>
@@ -124,6 +125,7 @@
 				</c:if>
 			</tr>
 		</thead>
+		</c:if>
 		<c:choose>
 			<c:when test="${!waterConnectionDetails.applicationDocs.isEmpty()}">
 				<c:forEach items="${waterConnectionDetails.applicationDocs}" var="docs" varStatus="serialNo">

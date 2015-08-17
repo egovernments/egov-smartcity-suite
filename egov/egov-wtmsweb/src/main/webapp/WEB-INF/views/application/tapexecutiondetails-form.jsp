@@ -58,8 +58,14 @@
 					<c:if test="${waterConnectionDetails.connectionType=='METERED'}">
 						<div class="col-sm-3 control-label text-right"><spring:message code="lbl.metermake" /><span class="mandatory"></span></div>
 							<div class="col-sm-3 add-margin">
-							<form:input id="connection.meter.meterMake" path="connection.meter.meterMake" class="form-control" required="required" />
-							<form:errors path="connection.meter.meterMake" cssClass="add-margin error-msg" />
+							<form:select path="connection.meter" data-first-option="false"
+								cssClass="form-control" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${meterCostMasters}" itemValue="id" itemLabel="meterMake" />
+							</form:select>
+							<form:errors path="connection.meter" cssClass="add-margin error-msg" />
 						</div>
 					</div>	
 					<div class="form-group">
@@ -67,14 +73,14 @@
 							<spring:message code="lbl.initialreading"/><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" id="connection" path="connection.initialReading" required="required" />
+							<form:input class="form-control patternvalidation" id="connection" path="connection.initialReading" data-pattern="number" required="required" />
 							<form:errors path="connection.initialReading" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-sm-3 control-label text-right">
 							<spring:message code="lbl.meter.serial.no"/><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" id="meterSerialNumber" path="connection.meterSerialNumber" required="required" />
+							<form:input class="form-control patternvalidation" id="meterSerialNumber" path="connection.meterSerialNumber" data-pattern="alphanumericwithspace-hyphen-underscore" required="required" />
 							<form:errors path="connection.meterSerialNumber" cssClass="add-margin error-msg" />
 						</div>
 					</c:if>

@@ -50,6 +50,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.egwStatus.code}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
+	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -79,6 +80,9 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${waterConnectionDetails.egwStatus.code == 'ESTIMATIONAMOUNTPAID'}">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
+		<c:if test="${waterConnectionDetails.egwStatus.code == 'WORKORDERGENERATED'}">
+			<jsp:include page="tapexecutiondetails-form.jsp"></jsp:include>
+		</c:if>
 			
 </div>	
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>

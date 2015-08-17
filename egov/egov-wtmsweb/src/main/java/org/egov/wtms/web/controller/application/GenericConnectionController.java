@@ -55,12 +55,14 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
@@ -101,6 +103,13 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private MeterCostService meterCostService;
+    
+    public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
+        return meterCostService.findAll();
+    }
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
