@@ -73,7 +73,7 @@ public class WaterConnection extends AbstractAuditable {
 
     @SafeHtml
     @Length(min = 3, max = 50)
-    private String meterNumber;
+    private String meterSerialNumber;
 
     @ManyToOne
     @JoinColumn(name = "parentConnection")
@@ -82,6 +82,9 @@ public class WaterConnection extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "meter")
     private MeterCost meter;
+    
+    @SafeHtml
+    private Long initialReading;
 
     @Override
     public Long getId() {
@@ -117,12 +120,12 @@ public class WaterConnection extends AbstractAuditable {
         this.bpaIdentifier = bpaIdentifier;
     }
 
-    public String getMeterNumber() {
-        return meterNumber;
+    public String getMeterSerialNumber() {
+        return meterSerialNumber;
     }
 
-    public void setMeterNumber(final String meterNumber) {
-        this.meterNumber = meterNumber;
+    public void setMeterSerialNumber(final String meterSerialNumber) {
+        this.meterSerialNumber = meterSerialNumber;
     }
 
     public WaterConnection getParentConnection() {
@@ -139,6 +142,14 @@ public class WaterConnection extends AbstractAuditable {
 
     public void setMeter(final MeterCost meter) {
         this.meter = meter;
+    }
+
+    public Long getInitialReading() {
+        return initialReading;
+    }
+
+    public void setInitialReading(Long initialReading) {
+        this.initialReading = initialReading;
     }
 
 }

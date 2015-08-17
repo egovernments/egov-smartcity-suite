@@ -190,6 +190,9 @@ public class WaterConnectionDetails extends StateAware {
     private String workOrderNumber;
 
     private double donationCharges;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date executionDate;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid")
@@ -476,5 +479,13 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setDonationCharges(final double donationCharges) {
         this.donationCharges = donationCharges;
+    }
+
+    public Date getExecutionDate() {
+        return executionDate;
+    }
+
+    public void setExecutionDate(Date executionDate) {
+        this.executionDate = executionDate;
     }
 }
