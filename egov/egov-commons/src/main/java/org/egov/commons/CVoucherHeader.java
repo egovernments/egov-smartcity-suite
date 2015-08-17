@@ -61,7 +61,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.annotation.Search;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
@@ -196,7 +195,6 @@ public class CVoucherHeader extends StateAware {
     /**
      * @return Returns the voucherDate.
      */
-    @Search(searchOp = Search.Operator.between)
     public Date getVoucherDate() {
         return voucherDate;
     }
@@ -212,7 +210,6 @@ public class CVoucherHeader extends StateAware {
     /**
      * @return Returns the voucherNumber.
      */
-    @Search(searchOp = Search.Operator.contains)
     public String getVoucherNumber() {
         return voucherNumber;
     }

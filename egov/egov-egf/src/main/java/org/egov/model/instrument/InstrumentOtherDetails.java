@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.commons.CVoucherHeader;
-import org.egov.infstr.annotation.Introspection;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -55,12 +54,9 @@ import org.egov.infstr.models.BaseModel;
  */
 public class InstrumentOtherDetails extends BaseModel {
 
-	@Introspection
 	private InstrumentHeader instrumentHeaderId;
-	@Introspection
 	private CVoucherHeader payinslipId;
 	private Date instrumentStatusDate;
-	@Introspection
 	private BigDecimal reconciledAmount;
 	private Date reconciledOn;
 	private String  dishonorBankRefNo;

@@ -1,5 +1,4 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -40,23 +39,19 @@
 package org.egov.infstr.models;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.annotation.Introspection;
 import org.hibernate.search.annotations.DocumentId;
 
 public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /*
-     * Base class cannot be indexed only subclasses can be indexed for Lucene
-     * refer:
+     * Base class cannot be indexed only subclasses can be indexed for Lucene refer:
      * http://opensource.atlassian.com/projects/hibernate/browse/HSEARCH-333
      */
     @DocumentId
@@ -108,36 +103,6 @@ public class BaseModel implements Serializable {
 
     public List<ValidationError> validate() {
         return new ArrayList<ValidationError>();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append("{ ");
-        sb.append("class : ").append(this.getClass().getSimpleName()).append(", ");
-        try {
-            final Field[] fields = this.getClass().getDeclaredFields();
-            for (final Field field : fields)
-                try {
-                    if (field.isAnnotationPresent(Introspection.class)) {
-                        if (!field.isAccessible())
-                            field.setAccessible(true);
-                        final Object val = field.get(this);
-                        if (val != null) {
-                            final String fieldName = field.getAnnotation(Introspection.class).value();
-                            sb.append(fieldName.trim().equals("") ? field.getName() : fieldName).append(" : ").append(val)
-                                    .append(", ");
-                        }
-                    }
-                } catch (final Exception e) {
-                    throw new EGOVRuntimeException("Internal Server Error ", e);
-                }
-        } catch (final Exception e) {
-            sb.append(e.toString());
-        }
-        sb.append(" }");
-        sb.deleteCharAt(sb.lastIndexOf(","));
-        return sb.toString();
     }
 
     @Override

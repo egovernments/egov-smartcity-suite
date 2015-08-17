@@ -1,5 +1,4 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/*    eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -38,8 +37,6 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.infra.persistence.entity;
-
-import org.egov.infstr.event.listener.HibernateEventListener;
 
 /**
  * A marker interface to identify non jpa entities which extends

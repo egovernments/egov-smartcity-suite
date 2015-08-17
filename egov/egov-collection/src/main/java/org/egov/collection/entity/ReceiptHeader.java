@@ -60,7 +60,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.annotation.Search;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.model.instrument.InstrumentHeader;
@@ -196,7 +195,6 @@ public class ReceiptHeader extends StateAware implements Auditable{
 		this.receipttype = receipttype;
 	}
 
-	@Search(searchOp = Search.Operator.contains)	
 	public String getReceiptnumber() {
 		return this.receiptnumber;
 	}

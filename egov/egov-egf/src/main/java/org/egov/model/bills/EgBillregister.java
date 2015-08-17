@@ -53,7 +53,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -62,11 +61,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.annotation.Search;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
@@ -211,7 +208,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	@Search(searchOp = Search.Operator.contains)
 	public String getBillnumber() {
 		return this.billnumber;
 	}
@@ -219,7 +215,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 	public void setBillnumber(String billnumber) {
 		this.billnumber = billnumber;
 	}
-	@Search(searchOp = Search.Operator.between)
 	public Date getBilldate() {
 		return this.billdate;
 	}
